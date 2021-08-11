@@ -1,118 +1,97 @@
 import { MenuEntry } from '@pancakeswap/uikit'
 import { ContextApi } from 'contexts/Localization/types'
+import { ReactComponent as FarmIcon } from 'assets/svg/icon/FarmIcon.svg'
+import { ReactComponent as PoolIcon } from 'assets/svg/icon/PoolIcon.svg'
+import { ReactComponent as PredictionIcon } from 'assets/svg/icon/PredictionIcon.svg'
+import { ReactComponent as IFOIcon } from 'assets/svg/icon/IFOIcon.svg'
+import { ReactComponent as MoreIcon } from 'assets/svg/icon/MoreIcon.svg'
+import { ReactComponent as ChartIcon }  from 'assets/svg/icon/chart-swap.svg'
 
-const config: (t: ContextApi['t']) => MenuEntry[] = (t) => [
+export const links = [
   {
-    label: t('Home'),
+    label: 'Home',
     icon: 'HomeIcon',
     href: '/',
   },
   {
-    label: t('Trade'),
+    label: 'Swap & charts',
     icon: 'TradeIcon',
-    items: [
-      {
-        label: t('Exchange'),
-        href: '/swap',
-      },
-      {
-        label: t('Liquidity'),
-        href: '/pool',
-      },
-      {
-        label: t('LP Migration'),
-        href: 'https://v1exchange.pancakeswap.finance/#/migrate',
-      },
-    ],
+    href: '/swap',
   },
   {
-    label: t('Farms'),
+    label: 'Farms',
     icon: 'FarmIcon',
-    href: '/farms',
+    href: 'https://farm.sphynxswap.finance/farms'
   },
   {
-    label: t('Pools'),
+    label: 'Pools',
     icon: 'PoolIcon',
-    href: '/pools',
+    href: 'https://farm.sphynxswap.finance/pools'
   },
   {
-    label: t('Prediction (BETA)'),
-    icon: 'PredictionsIcon',
-    href: '/prediction',
-  },
-  {
-    label: t('Lottery'),
-    icon: 'TicketIcon',
-    href: '/lottery',
-  },
-  {
-    label: t('Collectibles'),
+    label: 'NFT Marketplace (coming soon)',
     icon: 'NftIcon',
-    href: '/collectibles',
+    href: '/'
   },
   {
-    label: t('Team Battle'),
-    icon: 'TeamBattleIcon',
-    href: '/competition',
+    label: 'Prediction (coming soon)',
+    icon: 'PredictionsIcon',
+    href: '/',
   },
   {
-    label: t('Teams & Profile'),
-    icon: 'GroupsIcon',
+    label: 'IFO',
+    icon: 'IfoIcon',
     items: [
       {
-        label: t('Leaderboard'),
-        href: '/teams',
+        label: 'PancakeSwap',
+        href: 'https://pancakeswap.info/token/0xF952Fc3ca7325Cc27D15885d37117676d25BfdA6',
       },
       {
-        label: t('Task Center'),
-        href: '/profile/tasks',
+        label: 'CoinGecko',
+        href: 'https://www.coingecko.com/en/coins/goose-finance',
       },
       {
-        label: t('Your Profile'),
-        href: '/profile',
+        label: 'CoinMarketCap',
+        href: 'https://coinmarketcap.com/currencies/goose-finance/',
+      },
+      {
+        label: 'AstroTools',
+        href: 'https://app.astrotools.io/pancake-pair-explorer/0x19e7cbecdd23a16dfa5573df54d98f7caae03019',
       },
     ],
   },
   {
-    label: t('Info'),
-    icon: 'InfoIcon',
-    href: 'https://pancakeswap.info',
-  },
-  {
-    label: t('IFO'),
-    icon: 'IfoIcon',
-    href: '/ifo',
-  },
-  {
-    label: t('More'),
+    label: '... More',
     icon: 'MoreIcon',
     items: [
       {
-        label: t('Contact'),
+        label: 'Contact',
         href: 'https://docs.pancakeswap.finance/contact-us',
       },
       {
-        label: t('Voting'),
+        label: 'Voting',
         href: '/voting',
       },
       {
-        label: t('Github'),
+        label: 'Github',
         href: 'https://github.com/pancakeswap',
       },
       {
-        label: t('Docs'),
+        label: 'Docs',
         href: 'https://docs.pancakeswap.finance',
       },
       {
-        label: t('Blog'),
+        label: 'Blog',
         href: 'https://pancakeswap.medium.com',
       },
       {
-        label: t('Merch'),
+        label: 'Merch',
         href: 'https://pancakeswap.creator-spring.com/',
       },
     ],
-  },
+  }
 ]
+
+const config: (t: ContextApi['t']) => MenuEntry[] = (t) => links
 
 export default config

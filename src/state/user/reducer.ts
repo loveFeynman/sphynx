@@ -68,7 +68,7 @@ export const initialState: UserState = {
   pairs: {},
   timestamp: currentTimestamp(),
   audioPlay: true,
-  isDark: false,
+  isDark: true,
   userFarmStakedOnly: FarmStakedOnly.ON_FINISHED,
 }
 

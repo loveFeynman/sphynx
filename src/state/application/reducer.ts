@@ -3,10 +3,14 @@ import { updateBlockNumber } from './actions'
 
 export interface ApplicationState {
   readonly blockNumber: { readonly [chainId: number]: number }
+  menuToggled: boolean
+  swapType: string
 }
 
 const initialState: ApplicationState = {
   blockNumber: {},
+  menuToggled: false,
+  swapType: 'swap'
 }
 
 export default createReducer(initialState, (builder) =>

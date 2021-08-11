@@ -1,11 +1,38 @@
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
-import { AppState } from '../index'
+import { toggleMenu as _toggleMenu, setSwapType as _setSwapType } from './actions'
+import { AppState, AppDispatch } from '../index'
 
 export function useBlockNumber(): number | undefined {
   const { chainId } = useActiveWeb3React()
 
   return useSelector((state: AppState) => state.application.blockNumber[chainId ?? -1])
+}
+
+export function useMenuToggle() {
+  const dispatch = useDispatch<AppDispatch>();
+  const menuToggled = useSelector<
+    AppState,
+    AppState['application']['menuToggled']
+  >((state) => state.application.menuToggled);
+
+  const toggleMenu = (open: boolean) =>
+    dispatch(_toggleMenu(open));
+
+  return { menuToggled, toggleMenu };
+}
+
+export function useSwapType() {
+  const dispatch = useDispatch<AppDispatch>();
+  const swapType = useSelector<
+    AppState,
+    AppState['application']['swapType']
+  >((state) => state.application.swapType);
+
+  const setSwapType = (stype: string) =>
+    dispatch(_setSwapType(stype));
+
+  return { swapType, setSwapType };
 }
 
 export default useBlockNumber
