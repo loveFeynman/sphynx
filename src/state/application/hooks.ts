@@ -1,6 +1,7 @@
 import { useSelector, useDispatch } from 'react-redux'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
-import { toggleMenu as _toggleMenu, setSwapType as _setSwapType } from './actions'
+import { Version } from 'hooks/useToggledVersion'
+import { toggleMenu as _toggleMenu, setVersion as _setVersion, setSwapType as _setSwapType } from './actions'
 import { AppState, AppDispatch } from '../index'
 
 export function useBlockNumber(): number | undefined {
@@ -20,6 +21,19 @@ export function useMenuToggle() {
     dispatch(_toggleMenu(open));
 
   return { menuToggled, toggleMenu };
+}
+
+export function useSetVersion() {
+  const dispatch = useDispatch<AppDispatch>();
+  const versionSet = useSelector<
+    AppState,
+    AppState['application']['versionSet']
+  >((state) => state.application.versionSet);
+
+  const setVersion = (version: Version) =>
+    dispatch(_setVersion(version));
+
+  return { versionSet, setVersion };
 }
 
 export function useSwapType() {
