@@ -8,11 +8,11 @@ import { ReactComponent as MoreIcon } from 'assets/svg/icon/MoreIcon.svg'
 import { ReactComponent as ChartIcon }  from 'assets/svg/icon/chart-swap.svg'
 
 export const links = [
-  {
-    label: 'Home',
-    icon: 'HomeIcon',
-    href: '/',
-  },
+  // {
+  //   label: 'Home',
+  //   icon: 'HomeIcon',
+  //   href: '/',
+  // },
   {
     label: 'Swap & charts',
     icon: 'ChartIcon',

@@ -19,7 +19,7 @@ interface Props {
 const AppHeaderContainer = styled(Flex)`
   align-items: center;
   justify-content: space-between;
-  padding: 24px;
+  padding: 10px;
   width: 100%;
 `
 

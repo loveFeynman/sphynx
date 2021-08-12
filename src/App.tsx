@@ -250,7 +250,7 @@ const App: React.FC = () => {
           <SuspenseWithChunkError fallback={<PageLoader />}>
             <Switch>
               <Route path="/" exact>
-                <Home />
+                <Redirect to="/swap" />
               </Route>
               {/* <Route exact path="/farms/auction">
                 <FarmAuction />
