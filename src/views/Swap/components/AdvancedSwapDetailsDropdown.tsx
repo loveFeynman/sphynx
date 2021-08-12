@@ -10,10 +10,13 @@ const AdvancedDetailsFooter = styled.div<{ show: boolean }>`
   width: 100%;
   max-width: 400px;
   border-radius: 20px;
-  background-color: ${({ theme }) => theme.colors.invertedContrast};
+  // background-color: ${({ theme }) => theme.colors.invertedContrast};
 
   transform: ${({ show }) => (show ? 'translateY(0%)' : 'translateY(-100%)')};
+  // opacity: ${({ show }) => (show ? 1 : 0)};
   transition: transform 300ms ease-in-out;
+  z-index: ${({ show }) => (show ? 1 : -1)};
+  position: relative;
 `
 
 export default function AdvancedSwapDetailsDropdown({ trade, ...rest }: AdvancedSwapDetailsProps) {

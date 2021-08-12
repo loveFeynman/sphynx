@@ -102,7 +102,7 @@ export default function ContractPanel({value}: ContractPanelProps){
   const [ addressSearch, setAddressSearch ] = useState('');
   // localStorage.setItem('InputAddress', addressSearch);
   
-    const dispatch=useDispatch();
+    const dispatch = useDispatch();
     // const [loader,setLoader]=useState(false)
 
   // console.log("addressSearch",addressSearch)
@@ -136,25 +136,21 @@ export default function ContractPanel({value}: ContractPanelProps){
         desktopSize="30px"
         mobileSize="15px"
       />:""} */}
- 
       
       <ContractPanelWrapper>
-      <ContractCard>
-        <CopyHelper toCopy={value ? value.contractAddress : addressSearch}>
-          &nbsp;
-        </CopyHelper>
-        <input placeholder='' value={addressSearch} onChange={handlerChange}  />
-        <Button size='sm' onClick={()=>dispatch(typeInput({input :addressSearch }))}>Submit</Button>
-      </ContractCard>
-      <SocialIconsWrapper>
-        <TwitterIcon />
-        <SocialIcon2 />
-        <TelegramIcon />
-      </SocialIconsWrapper>
-    </ContractPanelWrapper>
-
-  
-    
+        <ContractCard>
+          <CopyHelper toCopy={value ? value.contractAddress : addressSearch}>
+            &nbsp;
+          </CopyHelper>
+          <input placeholder='' value={addressSearch} onChange={handlerChange}  />
+          <Button scale='sm' onClick={()=>dispatch(typeInput({input :addressSearch }))}>Submit</Button>
+        </ContractCard>
+        <SocialIconsWrapper>
+          <TwitterIcon />
+          <SocialIcon2 />
+          <TelegramIcon />
+        </SocialIconsWrapper>
+      </ContractPanelWrapper>
     </>
 
   )

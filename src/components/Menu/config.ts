@@ -15,7 +15,7 @@ export const links = [
   },
   {
     label: 'Swap & charts',
-    icon: 'TradeIcon',
+    icon: 'ChartIcon',
     href: '/swap',
   },
   {
@@ -30,7 +30,7 @@ export const links = [
   },
   {
     label: 'NFT Marketplace (coming soon)',
-    icon: 'NftIcon',
+    icon: 'PredictionsIcon',
     href: '/'
   },
   {

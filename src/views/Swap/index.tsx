@@ -71,7 +71,7 @@ import SwapWarningModal from './components/SwapWarningModal'
 import { HotTokenType, TokenDetailProps, HistoricalDataProps } from './components/types'
 
 
-const ArrowContainer = styled.div`
+const ArrowContainer = styled(ArrowWrapper)`
   width: 32px;
   height: 32px;
   display: flex;
@@ -688,6 +688,7 @@ export default function Swap({ history }: RouteComponentProps) {
           <Card bgColor='rgba(0, 0, 0, 0.2)' borderRadius='8px' padding='0 10px 20px 10px'>
             { swapType === 'swap' &&
               <Wrapper id="swap-page">
+                <AppHeader title={t('Exchange')} />
                 <AutoColumn gap="md">
                   <CurrencyInputPanel
                     label={independentField === Field.OUTPUT && !showWrap && trade ? t('From (estimated)') : t('From')}
@@ -702,16 +703,15 @@ export default function Swap({ history }: RouteComponentProps) {
                   />
                   <AutoColumn justify="space-between">
                     <AutoRow justify={isExpertMode ? 'space-between' : 'center'} style={{ padding: '0 1rem' }}>
-                      <ArrowWrapper clickable>
-                        <ArrowDownIcon
-                          width="16px"
-                          onClick={() => {
-                            setApprovalSubmitted(false) // reset 2 step UI for approvals
-                            onSwitchTokens()
-                          }}
-                          color={currencies[Field.INPUT] && currencies[Field.OUTPUT] ? 'primary' : 'text'}
-                        />
-                      </ArrowWrapper>
+                      <ArrowContainer clickable
+                        onClick={() => {
+                          setApprovalSubmitted(false) // reset 2 step UI for approvals
+                          onSwitchTokens()
+                        }}
+                        color={currencies[Field.INPUT] && currencies[Field.OUTPUT] ? 'primary' : 'text'}
+                      >
+                        <DownArrow />
+                      </ArrowContainer>
                       {recipient === null && !showWrap && isExpertMode ? (
                         <Button variant="text" id="add-recipient-button" onClick={() => onChangeRecipient('')}>
                           {t('+ Add a send (optional)')}
@@ -744,7 +744,7 @@ export default function Swap({ history }: RouteComponentProps) {
                     </>
                   ) : null}
       
-                  {showWrap ? null : (
+                  {/* {showWrap ? null : (
                     <AutoColumn gap="8px" style={{ padding: '0 16px' }}>
                       {Boolean(trade) && (
                         <RowBetween align="center">
@@ -765,7 +765,21 @@ export default function Swap({ history }: RouteComponentProps) {
                         </RowBetween>
                       )}
                     </AutoColumn>
-                  )}
+                  )} */}
+
+                  <Flex justifyContent='space-between' alignItems='center' marginTop='20px'>
+                    <Flex alignItems='center'>
+                      <HelpIcon />
+                      <SlippageText><span>Slippage Tolerance</span><b>: {allowedSlippage / 100}%</b></SlippageText>
+                    </Flex>
+                    {currencies[Field.INPUT] && currencies[Field.OUTPUT] &&
+                      <Flex alignItems='center'>
+                        <SlippageText><b>1 {currencies[Field.INPUT]?.symbol} = { trade?.executionPrice.toSignificant(6) } {currencies[Field.OUTPUT]?.symbol}</b></SlippageText>
+                        <HelpIcon1 />
+                      </Flex>                
+                    }
+                  </Flex>
+
                 </AutoColumn>
                 <Box mt="1rem">
                   {swapIsUnsupported ? (

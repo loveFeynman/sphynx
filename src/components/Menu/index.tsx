@@ -12,7 +12,7 @@ import { ReactComponent as TwitterIcon } from 'assets/svg/icon/TwitterIcon.svg'
 import { ReactComponent as SocialIcon2 } from 'assets/svg/icon/SocialIcon2.svg'
 import { ReactComponent as TelegramIcon } from 'assets/svg/icon/TelegramIcon.svg'
 import Web3 from 'web3';
-// import axios from 'axios'
+import axios from 'axios'
 import config, { links } from './config'
 import UserMenu from './UserMenu'
 import GlobalSettings from './GlobalSettings'
@@ -218,12 +218,12 @@ const Menu = (props) => {
   }`
 
   const fetchData = async () =>{
-    // if(account){
-    //   const queryResult= await axios.post('https://graphql.bitquery.io/',{query: getDataQuery});
-    //   if(queryResult.data.data){
-    //     setAllTokens(queryResult.data.data.ethereum.address[0].balances)
-    //   }
-    // }
+    if(account){
+      const queryResult= await axios.post('https://graphql.bitquery.io/',{query: getDataQuery});
+      if(queryResult.data.data){
+        setAllTokens(queryResult.data.data.ethereum.address[0].balances)
+      }
+    }
   }
 
   useEffect(()=>{

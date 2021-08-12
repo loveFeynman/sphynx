@@ -9,10 +9,11 @@ import QuestionHelper from '../QuestionHelper'
 
 interface Props {
   title: string
-  subtitle: string
+  subtitle?: string
   helper?: string
   backTo?: string
-  noConfig?: boolean
+  noConfig?: boolean,
+  showHistory?: boolean
 }
 
 const AppHeaderContainer = styled(Flex)`
@@ -20,10 +21,9 @@ const AppHeaderContainer = styled(Flex)`
   justify-content: space-between;
   padding: 24px;
   width: 100%;
-  border-bottom: 1px solid ${({ theme }) => theme.colors.cardBorder};
 `
 
-const AppHeader: React.FC<Props> = ({ title, subtitle, helper, backTo, noConfig = false }) => {
+const AppHeader: React.FC<Props> = ({ title, subtitle, helper, backTo, noConfig = false, showHistory }) => {
   const [expertMode] = useExpertModeManager()
 
   return (
@@ -35,15 +35,15 @@ const AppHeader: React.FC<Props> = ({ title, subtitle, helper, backTo, noConfig 
           </IconButton>
         )}
         <Flex flexDirection="column">
-          <Heading as="h2" mb="8px">
+          <Heading as="h2" mb="8px" color="white">
             {title}
           </Heading>
-          <Flex alignItems="center">
+          {subtitle && <Flex alignItems="center">
             {helper && <QuestionHelper text={helper} mr="4px" />}
             <Text color="textSubtle" fontSize="14px">
               {subtitle}
             </Text>
-          </Flex>
+          </Flex>}
         </Flex>
       </Flex>
       {!noConfig && (
@@ -51,7 +51,10 @@ const AppHeader: React.FC<Props> = ({ title, subtitle, helper, backTo, noConfig 
           <NotificationDot show={expertMode}>
             <GlobalSettings />
           </NotificationDot>
-          <Transactions />
+          {showHistory ? (
+            <Transactions />
+          ) : (<></>)
+          }
         </Flex>
       )}
     </AppHeaderContainer>

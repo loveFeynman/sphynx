@@ -120,7 +120,7 @@ export default function HotTokenBar({
           {
             tokens ? tokens.map((token, key) => {
               return (
-                <li>
+                <li key={`${token.symbol}${key + 1}`}>
                   <HotToken
                     index={key + 1}
                     dexId={token.dexId}

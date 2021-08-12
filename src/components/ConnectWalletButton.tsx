@@ -10,7 +10,7 @@ const ConnectWalletButton = (props) => {
 
   return (
     <Button onClick={onPresentConnectModal} {...props}>
-      {t('Connect Wallet')}
+      {t('Connect')}
     </Button>
   )
 }

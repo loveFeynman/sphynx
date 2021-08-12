@@ -240,7 +240,7 @@ const App: React.FC = () => {
                 </div>
               </AccountWrapper>
             :
-              <ConnectWalletButton scale="sm" />
+              <ConnectWalletButton />
           }
         </TopBar>
         <BannerWrapper>
