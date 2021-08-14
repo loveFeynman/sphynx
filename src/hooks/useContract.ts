@@ -36,7 +36,11 @@ import { ERC20_BYTES32_ABI } from '../config/abi/erc20'
 import ERC20_ABI from '../config/abi/erc20.json'
 import WETH_ABI from '../config/abi/weth.json'
 import { MULTICALL_ABI, MULTICALL_NETWORKS } from '../config/constants/multicall'
+import { PANCAKE_FACTORY_ADDRESSES, PANCAKE_FACTORY_ABI } from '../config/constants/pancakeswap'
+import { ROUTER_ADDRESS, PANCAKE_ROUTER_ADDRESS } from '../config/constants'
 import { getContract } from '../utils'
+import { RouterType } from './useRouterType'
+import { useSetRouterType } from '../state/application/hooks'
 
 /**
  * Helper hooks to get specific contracts (by ABI)
@@ -186,6 +190,16 @@ function useContract(address: string | undefined, ABI: any, withSignerIfPossible
       return null
     }
   }, [address, ABI, library, withSignerIfPossible, account])
+}
+
+export function useRouterAddress() {
+  const { routerType } = useSetRouterType()
+  return routerType === RouterType.pancake ? PANCAKE_ROUTER_ADDRESS : ROUTER_ADDRESS
+}
+
+export function usePancakeswapContract(): Contract | null {
+  const { chainId } = useActiveWeb3React()
+  return useContract(chainId && PANCAKE_FACTORY_ADDRESSES[chainId], PANCAKE_FACTORY_ABI, false)
 }
 
 export function useTokenContract(tokenAddress?: string, withSignerIfPossible?: boolean): Contract | null {

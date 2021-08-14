@@ -16,7 +16,7 @@ import { AutoRow, RowBetween } from 'components/Layout/Row'
 import ConnectWalletButton from 'components/ConnectWalletButton'
 import { AppHeader, AppBody } from 'components/App'
 
-import { useSetVersion, useSwapType } from 'state/application/hooks'
+import { useSetRouterType, useSwapType } from 'state/application/hooks'
 import { ReactComponent as DownArrow } from 'assets/svg/icon/DownArrow.svg'
 import { ReactComponent as HelpIcon } from 'assets/svg/icon/HelpIcon.svg'
 import { ReactComponent as HelpIcon1 } from 'assets/svg/icon/HelpIcon1.svg'
@@ -53,6 +53,7 @@ import useActiveWeb3React from '../../hooks/useActiveWeb3React'
 import { useCurrency, useAllTokens } from '../../hooks/Tokens'
 import { ApprovalState, useApproveCallbackFromTrade } from '../../hooks/useApproveCallback'
 import { useSwapCallback } from '../../hooks/useSwapCallback'
+import useRouterType, { RouterType } from '../../hooks/useRouterType'
 import useWrapCallback, { WrapType } from '../../hooks/useWrapCallback'
 import { Field } from '../../state/swap/actions'
 import {
@@ -319,7 +320,7 @@ export default function Swap({ history }: RouteComponentProps) {
 
   // swap state
   const { independentField, typedValue, recipient } = useSwapState()
-  const { v2Trade, currencyBalances, parsedAmount, currencies, inputError: swapInputError } = useDerivedSwapInfo()
+  const { pancakeTrade, v2Trade, currencyBalances, parsedAmount, currencies, inputError: swapInputError } = useDerivedSwapInfo()
 
   const {
     wrapType,
@@ -327,10 +328,14 @@ export default function Swap({ history }: RouteComponentProps) {
     inputError: wrapInputError,
   } = useWrapCallback(currencies[Field.INPUT], currencies[Field.OUTPUT], typedValue)
   const showWrap: boolean = wrapType !== WrapType.NOT_APPLICABLE
-  const { versionSet } = useSetVersion()
+  const { routerType } = useSetRouterType()
   const { swapType } = useSwapType();
-  const toggledVersion = versionSet
-  const trade = showWrap ? undefined : v2Trade
+  const trade = showWrap
+    ? undefined
+    : {
+      [RouterType.sphynx]: v2Trade,
+      [RouterType.pancake]: pancakeTrade
+    } [routerType]
 
   const parsedAmounts = showWrap
     ? {

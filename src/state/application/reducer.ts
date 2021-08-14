@@ -1,23 +1,23 @@
 import { createReducer } from '@reduxjs/toolkit'
-import { Version } from 'hooks/useToggledVersion'
+import { RouterType } from 'hooks/useRouterType'
 import { 
   updateBlockNumber,
   toggleMenu,
-  setVersion,
+  setRouterType,
   setSwapType
 } from './actions'
 
 export interface ApplicationState {
   readonly blockNumber: { readonly [chainId: number]: number }
   menuToggled: boolean
-  versionSet: Version
+  routerType: RouterType
   swapType: string
 }
 
 const initialState: ApplicationState = {
   blockNumber: {},
   menuToggled: false,
-  versionSet: Version.v2,
+  routerType: RouterType.sphynx,
   swapType: 'swap'
 }
 
@@ -34,8 +34,8 @@ export default createReducer(initialState, (builder) =>
   .addCase(toggleMenu, state => {
     state.menuToggled = !state.menuToggled
   })
-  .addCase(setVersion, (state, { payload }) => {
-    state.versionSet = payload
+  .addCase(setRouterType, (state, { payload }) => {
+    state.routerType = payload
   })
   .addCase(setSwapType, (state, { payload }) => {
     state.swapType = payload
