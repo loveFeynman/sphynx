@@ -46,7 +46,7 @@ import TransactionCard from './components/TransactionCard'
 import ContractPanel from './components/ContractPanel'
 
 import LiquidityWidget from '../Pool/LiquidityWidget'
-import LineChart from './components/LineChart'
+import {TVChartContainer} from './TVChartContainer'
 
 import { INITIAL_ALLOWED_SLIPPAGE } from '../../config/constants'
 import useActiveWeb3React from '../../hooks/useActiveWeb3React'
@@ -898,35 +898,17 @@ export default function Swap({ history }: RouteComponentProps) {
         </div>
         <div>
           <FullHeightColumn>
-            <ContractPanel  value={handleChange}
-            />
+            <ContractPanel value={handleChange} />
              {/* tokenInfo={currentToken} */}
-            <CoinStatsBoard
-             
-            />
-
-           {/* <div id="tv_chart_container">
-             {datafeed}
-              </div>  */}
-       
-            <LineChart  width='100%' height={350} />
-            {/* <TradingViewWidget
-              symbol={currentToken?.symbol}
-              theme={Themes.DARK}
-              locale="en"
-              autosize
-            /> */}
+            <CoinStatsBoard />
+            <TVChartContainer />
           </FullHeightColumn>
         </div>
         <div>
-            {/* tokenInfo={currentToken} */}
-          <TokenInfo  />
-        
+          <TokenInfo />
         </div>
         <div>
-          <TransactionCard
-        
-          />
+          <TransactionCard />
         </div>
         <BottomCard style={{ backgroundImage: `url(${FarmBanner})` }}>
           <h1>Farms</h1>

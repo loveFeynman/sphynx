@@ -5,7 +5,7 @@ import { BoxesLoader } from "react-awesome-loaders";
 import axios from 'axios'
 import { useSelector } from 'react-redux';
 import styled from 'styled-components'
-import { AppDispatch, AppState } from '../../../state'
+import { AppState } from '../../../state'
 
 
 
@@ -26,10 +26,8 @@ const LineChart: React.FC<LineChartProps> = ({
 }) => {
 
   const [loader, setLoader] = useState(false)
-  // const input= localStorage.getItem('InputAddress');
   const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
 
-  // console.log("input in chart", input);
   const options = {
     chart: {
       height,
@@ -74,18 +72,7 @@ const LineChart: React.FC<LineChartProps> = ({
       {
         x: moment(new Date(1538780400000)).format('YYYY:mm:DD'),
         y: [6632.01, 6643.59, 6620, 6630.11]
-      },
-      {
-        x: moment(new Date(1538782200000)).format('YYYY:mm:DD'),
-        y: [6630.71, 6648.95, 6623.34, 6635.65]
-      },
-      {
-        x: moment(new Date(1538784000000)).format('YYYY:mm:DD'),
-        y: [6635.65, 6651, 6629.67, 6638.24]
-      },
-
-
-      ]
+      }]
     }
   ])
 
@@ -122,43 +109,7 @@ const LineChart: React.FC<LineChartProps> = ({
       }
     }
   }`
-
-  // const fetchData = async () =>{
-
-
-  //   if(input){
-  //     // console.log('in here:::::::')
-  //       setLoader(true);
-  //     const queryResult= await axios.post('https://graphql.bitquery.io/',{query: getDataQuery});
-
-  //     const values :any = [
-  //       {
-  //         data : []
-  //       }
-  //     ];
-
-  //     if(queryResult.data.data){
-  //       queryResult.data.data.ethereum.dexTrades.map(e =>{
-  //         values[0].data.push({
-  //           x : e.timeInterval.minute,
-  //           y : [parseFloat(e.open_price),parseFloat(e.maximum_price), parseFloat(e.minimum_price) , parseFloat(e.close_price) ]
-  //         });
-  //         return {}
-  //       })
-  //       setPriceData(values);
-  //       setLoader(false);
-  //     }
-
-  //   }
-
-
-  //   }
-
-  // const interval = setInterval(() => {
-  //   // console.log('This will run every second!');
-  //   setLoader(true);
-  // }, 1000);
-  // return () => clearInterval(interval);
+  
   useEffect(() => {
 
     const fetchData = async () => {

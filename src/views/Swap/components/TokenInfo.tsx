@@ -4,14 +4,7 @@ import { Flex, Text } from '@pancakeswap/uikit'
 import { ReactComponent as MoreIcon2 } from 'assets/svg/icon/MoreIcon2.svg' 
 import axios from 'axios';
 import { useSelector } from 'react-redux';
-import { AppDispatch, AppState } from '../../../state'
-
-
-
-// eslint-disable-next-line import/no-cycle
-
-
-// import { TokenDetailProps } from './types'
+import { AppState } from '../../../state'
 
 const TextWrapper = styled.div`
   border-top: 1px solid rgba(255, 255, 255, 0.1);
@@ -73,31 +66,33 @@ export default function TokenInfo() {
   });
 
   const getTableData =   () => {
-    axios.post("https://api.sphynxswap.finance/tokenStats",{address:input || "0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82"})
+    try{
+      axios.post("https://api.sphynxswap.finance/tokenStats",{address:input})
         .then((response) => {
             setalldata(response.data)
         });
-       }  
-     
 
-useEffect(() => {
+    }
+    catch(err){
+       // eslint-disable-next-line no-console
+      // console.log(err);
+      alert("Invalid Address: get token stats")
+      
+    }
+  }
 
-  getTableData();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-},[input])
+  useEffect(() => {
+    getTableData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [input])
   
   return (
     <TokenInfoContainer>
-    <Flex alignItems="center" justifyContent='space-between'>
+      <Flex alignItems="center" justifyContent='space-between'>
         <Flex alignItems='center'>
-          {/* { */}
-            {/* tokenInfo ? */}
-              <IconWrapper size={32}>
-                <Text>{alldata.symbol}</Text> 
-              </IconWrapper>
-              {/* :  */}
-          {/* } */}
-          {/* <Text color='white'>{id ? createdAt : ''}</Text> */}
+          <IconWrapper size={32}>
+            <Text>{alldata.symbol}</Text> 
+          </IconWrapper>
         </Flex>
         <Flex style={{ width: 40 }}>
           <MoreIcon2 />
@@ -112,22 +107,13 @@ useEffect(() => {
           <Text>Market Cap:<span style={{ fontSize: '70%' }}>(includes locked, excludes burned)</span></Text>
           <Text>{alldata.marketCap}</Text>
         </TextWrapper>
-        {/* <TextWrapper>
-          <Text>Pc v2| DOGESON/BNB LP Holdings:</Text>
-          <Text>{alldata.txs})|Chart|Holders
-          </Text>
-        </TextWrapper> */}
-          <TextWrapper>
+        <TextWrapper>
           <Text>Transactions</Text>
           <Text>{alldata.txs}</Text>
         </TextWrapper>
-        {/* <TextWrapper>
-          <Text>Transactions</Text>
-          <Text>{id ? numeral(id).format('0,0') : ''}</Text>
-        </TextWrapper> */}
         <TextWrapper>
           <Text>Contract Address</Text>
-          <Text>{!input?"0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82":input}</Text>
+          <Text>{input}</Text>
         </TextWrapper>
         <TextWrapper>
           <Text>Holders</Text>

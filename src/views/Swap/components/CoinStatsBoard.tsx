@@ -1,7 +1,11 @@
 import React, {useEffect,useState, useContext } from 'react'
+import { useSelector } from 'react-redux';
+import {utils} from "ethers";
+import axios from 'axios';
 import styled, { ThemeContext } from 'styled-components'
 import { Text, Flex } from '@pancakeswap/uikit'
 import Column from 'components/Column'
+import { AppState } from '../../../state'
 
 const IconWrapper = styled.div<{ size?: number }>`
   display: flex;
@@ -45,6 +49,17 @@ const StyledWrapper = styled.div`
         line-height: 16px;
       }
     }
+    & h2 {
+      font-size: 14px;
+      line-height: 16px;
+      font-weight: bold;
+      &.success {
+        color: #00AC1C;
+      }
+      &.error {
+        color: #EA3943;
+      }
+    }
   }
 
   ${({ theme }) => theme.mediaQueries.md} {
@@ -56,21 +71,59 @@ const StyledWrapper = styled.div`
 `
 
 export default function CoinStatsBoard() {
-  const theme = useContext(ThemeContext)
+  // const theme = useContext(ThemeContext)
+
+  const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input);
+  // console.log("input in marketcap==========",input);
+  const [alldata, setalldata] = useState({
+    address : '',
+    price : '',
+    change : '',
+    volume : '',
+    liquidityV2 : '',
+    liquidityV2BNB:''
+  });
+
+  const [linkIcon, setLinkIcon] = useState('https://r.poocoin.app/smartchain/assets/0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82/logo.png')
+    // const pricedecimal=parseFloat(alldata.price).toFixed(5);
+    const changedecimal:any=parseFloat(alldata.change).toFixed(3);
+    // const set=Math.sign(changedecimal);
+    const volumedecimal=parseFloat(alldata.volume).toFixed(3);
+    const liquidityV2decimal=parseFloat(alldata.liquidityV2).toFixed(3);
+    const liquidityV2BNBdecimal=parseFloat(alldata.liquidityV2BNB).toFixed(3);
+ 
+    const getTableData =   () => {
+      try{
+        axios.post("https://api.sphynxswap.finance/chartStats",{address:input})
+        .then((response) => {
+            setalldata(response.data)
+            setLinkIcon(`https://r.poocoin.app/smartchain/assets/${input ? utils.getAddress(input) : '0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82'}/logo.png`);
+        });
+
+      }
+      catch(err){
+        // eslint-disable-next-line no-console
+        console.log(err)
+        
+      }
+    }
+    useEffect(() => {
+      getTableData();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    },[input])
 
   return (
     <StyledWrapper>
-  
       <Column>
         <Flex>
         {/* { */}
           {/* tokenInfo ? */}
             <IconWrapper size={32}>
-              <img src="" alt="Coin icon" />
+              <img src={linkIcon} alt="Coin icon" />
             </IconWrapper>
         <div>
           <Text>Coin</Text>
-          <Text>0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c</Text>
+          <Text>{input}</Text>
         </div>
         </Flex>
       </Column>
@@ -80,18 +133,17 @@ export default function CoinStatsBoard() {
       </Column>
       <Column>
         <Text>24h Change</Text>
-        {/* {tokenInfo ? `${tokenInfo.priceChange24H.toFixed(2)}%` : ''} */}
-        <Text>24%</Text>
+        <Text><h2 className={Math.sign(changedecimal)===-1 ? 'error':'success'}> {changedecimal }%</h2></Text>
+        {/* <Text>{changedecimal}%</Text> */}
       </Column>
       <Column>
         <Text>24h Volume</Text>
-        {/* {tokenInfo ? numeral(tokenInfo.volumne24H).format('0,0.00') : ''} */}
-        <Text>100</Text>
+        <Text>$ {volumedecimal}</Text>
       </Column>
       <Column>
         <Text>Liquidity</Text>
-        {/* {tokenInfo ? numeral(tokenInfo.liquidity).format('$0,0.00') : ''} */}
-        <Text>0.02</Text>
+        <Text style={{color:'white'}}> $ {liquidityV2decimal}</Text>
+        <Text>BNB {liquidityV2BNBdecimal} </Text>
       </Column>
       <Column>
         <Text>MarketCap</Text>

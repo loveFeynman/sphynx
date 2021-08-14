@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
 
-import { Text ,Button} from '@pancakeswap/uikit'
+import { Text, Button } from '@pancakeswap/uikit'
 
 import { ReactComponent as TwitterIcon } from 'assets/svg/icon/TwitterIcon.svg'
 // eslint-disable-next-line import/no-cycle
@@ -102,41 +102,16 @@ export default function ContractPanel({value}: ContractPanelProps){
   const [ addressSearch, setAddressSearch ] = useState('');
   // localStorage.setItem('InputAddress', addressSearch);
   
-    const dispatch = useDispatch();
-    // const [loader,setLoader]=useState(false)
+  const dispatch = useDispatch();
+  // const [loader,setLoader]=useState(false)
 
   // console.log("addressSearch",addressSearch)
-     const handlerChange=(e)=>{
-      setAddressSearch(e.target.value)
-     }
-
-    //  const InputSubmit=(e)=>{
-    //    e.preventDefault();
-    //   //  setLoader(true);
-    //   //  console.log("click");
-     
-    //  }
-    // useEffect(() => {
-    //   const getalldata=()=>{
-    //     axios.get(`http://192.168.18.65:8080/v1.0/dogeson/info/contract/${addressSearch}`).then((response)=>{
-    //       console.log("get api",response)
-    //     })
-    // }
-
-    //    getalldata();
-    // },[addressSearch]);
+  const handlerChange=(e)=>{
+    setAddressSearch(e.target.value)
+  }
     
   return (
-    <> 
-    {/* {loader?<BoxesLoader
-    
-        boxColor="#8b2a9b"
-        shadowColor="#aa8929"
-        style={{ marginBottom: "20px" }}
-        desktopSize="30px"
-        mobileSize="15px"
-      />:""} */}
-      
+    <>
       <ContractPanelWrapper>
         <ContractCard>
           <CopyHelper toCopy={value ? value.contractAddress : addressSearch}>
@@ -152,7 +127,6 @@ export default function ContractPanel({value}: ContractPanelProps){
         </SocialIconsWrapper>
       </ContractPanelWrapper>
     </>
-
   )
 }
 

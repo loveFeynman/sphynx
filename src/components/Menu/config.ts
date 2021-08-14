@@ -15,32 +15,32 @@ export const links = [
   // },
   {
     label: 'Swap & charts',
-    icon: 'ChartIcon',
+    icon: ChartIcon,
     href: '/swap',
   },
   {
     label: 'Farms',
-    icon: 'FarmIcon',
+    icon: FarmIcon,
     href: 'https://farm.sphynxswap.finance/farms'
   },
   {
     label: 'Pools',
-    icon: 'PoolIcon',
+    icon: PoolIcon,
     href: 'https://farm.sphynxswap.finance/pools'
   },
   {
     label: 'NFT Marketplace (coming soon)',
-    icon: 'PredictionsIcon',
+    icon: PredictionIcon,
     href: '/'
   },
   {
     label: 'Prediction (coming soon)',
-    icon: 'PredictionsIcon',
+    icon: PredictionIcon,
     href: '/',
   },
   {
     label: 'IFO',
-    icon: 'IfoIcon',
+    icon: IFOIcon,
     items: [
       {
         label: 'PancakeSwap',
@@ -62,7 +62,7 @@ export const links = [
   },
   {
     label: '... More',
-    icon: 'MoreIcon',
+    icon: MoreIcon,
     items: [
       {
         label: 'Contact',
