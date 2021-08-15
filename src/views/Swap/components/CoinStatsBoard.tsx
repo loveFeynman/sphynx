@@ -1,8 +1,8 @@
-import React, {useEffect,useState, useContext } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux';
 import {utils} from "ethers";
 import axios from 'axios';
-import styled, { ThemeContext } from 'styled-components'
+import styled from 'styled-components'
 import { Text, Flex } from '@pancakeswap/uikit'
 import Column from 'components/Column'
 import { AppState } from '../../../state'
@@ -150,9 +150,6 @@ export default function CoinStatsBoard() {
         {/* {tokenInfo ? numeral(tokenInfo.marketCap).format('$0,0.00') : ''} */}
         <Text>200</Text>
       </Column>
-
-          
-    
     </StyledWrapper>
   )
 }

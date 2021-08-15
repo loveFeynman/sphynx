@@ -14,9 +14,9 @@ import { FullHeightColumn } from 'components/Column'
 import Column, { AutoColumn } from 'components/Layout/Column'
 import { AutoRow, RowBetween } from 'components/Layout/Row'
 import ConnectWalletButton from 'components/ConnectWalletButton'
-import { AppHeader, AppBody } from 'components/App'
+import { AppHeader } from 'components/App'
 
-import { useSetRouterType, useSwapType } from 'state/application/hooks'
+import { useSwapType } from 'state/application/hooks'
 import { ReactComponent as DownArrow } from 'assets/svg/icon/DownArrow.svg'
 import { ReactComponent as HelpIcon } from 'assets/svg/icon/HelpIcon.svg'
 import { ReactComponent as HelpIcon1 } from 'assets/svg/icon/HelpIcon1.svg'
@@ -25,8 +25,8 @@ import SwapBanner from 'assets/images/DogeBanner1.png'
 import FarmBanner from 'assets/images/SphynxFarmbanner.jpg'
 import StakingBanner from 'assets/images/SphynxStakebanner.jpg'
 
-import moment from 'moment';
-import axios from 'axios';
+// import moment from 'moment';
+// import axios from 'axios';
 
 import AddressInputPanel from './components/AddressInputPanel'
 import Card, { GreyCard } from '../../components/Card'
@@ -35,7 +35,7 @@ import CurrencyInputPanel from '../../components/CurrencyInputPanel'
 import AdvancedSwapDetailsDropdown from './components/AdvancedSwapDetailsDropdown'
 import confirmPriceImpactWithoutFee from './components/confirmPriceImpactWithoutFee'
 import { ArrowWrapper, SwapCallbackError, Wrapper } from './components/styleds'
-import TradePrice from './components/TradePrice'
+// import TradePrice from './components/TradePrice'
 import ImportTokenWarningModal from './components/ImportTokenWarningModal'
 import ProgressSteps from './components/ProgressSteps'
 import HotTokenBar from './components/HotTokenBar'
@@ -48,12 +48,12 @@ import ContractPanel from './components/ContractPanel'
 import LiquidityWidget from '../Pool/LiquidityWidget'
 import {TVChartContainer} from './TVChartContainer'
 
-import { INITIAL_ALLOWED_SLIPPAGE } from '../../config/constants'
+// import { INITIAL_ALLOWED_SLIPPAGE } from '../../config/constants'
 import useActiveWeb3React from '../../hooks/useActiveWeb3React'
 import { useCurrency, useAllTokens } from '../../hooks/Tokens'
 import { ApprovalState, useApproveCallbackFromTrade } from '../../hooks/useApproveCallback'
 import { useSwapCallback } from '../../hooks/useSwapCallback'
-import useRouterType, { RouterType } from '../../hooks/useRouterType'
+// import useRouterType, { RouterType } from '../../hooks/useRouterType'
 import useWrapCallback, { WrapType } from '../../hooks/useWrapCallback'
 import { Field } from '../../state/swap/actions'
 import {
@@ -69,7 +69,7 @@ import CircleLoader from '../../components/Loader/CircleLoader'
 import Page from '../Page'
 import SwapWarningModal from './components/SwapWarningModal'
 
-import { HotTokenType, TokenDetailProps, HistoricalDataProps } from './components/types'
+import { HotTokenType, TokenDetailProps } from './components/types'
 
 
 const ArrowContainer = styled(ArrowWrapper)`
@@ -87,14 +87,14 @@ const ArrowContainer = styled(ArrowWrapper)`
   }
 `
 
-const ArrowContent = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: -4px 0;
-  z-index: 3;
-  position: relative;
-`
+// const ArrowContent = styled.div`
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+//   margin: -4px 0;
+//   z-index: 3;
+//   position: relative;
+// `
 
 const SlippageText = styled.p`
   font-size: 10px;
@@ -107,89 +107,89 @@ const SlippageText = styled.p`
   }
 `
 
-const InfoCard = styled.div`
-  padding: 32px;
-  border-radius: 24px;
-  color: white;
-  background: rgba(0, 0, 0, 0.4);
-  margin-bottom: 24px;
-  & h1 {
-    font-size: 32px;
-    line-height: 38px;
-    font-weight: bold;
-  }
-  & h2 {
-    font-size: 28px;
-    line-height: 32px;
-    font-weight: bold;
-  }
-  & p {
-    font-size: 16px;
-    line-height: 19px;
-    font-weight: 300;
-  }
-  ${({ theme }) => theme.mediaQueries.md} {
-    & h1 {
-      font-size: 36px;
-      line-height: 42px;
-    }
-    & h2 {
-      font-size: 32px;
-      line-height: 37px;
-    }
-    & p {
-      font-size: 18px;
-      line-height: 21px;
-    }  
-  }
-`
+// const InfoCard = styled.div`
+//   padding: 32px;
+//   border-radius: 24px;
+//   color: white;
+//   background: rgba(0, 0, 0, 0.4);
+//   margin-bottom: 24px;
+//   & h1 {
+//     font-size: 32px;
+//     line-height: 38px;
+//     font-weight: bold;
+//   }
+//   & h2 {
+//     font-size: 28px;
+//     line-height: 32px;
+//     font-weight: bold;
+//   }
+//   & p {
+//     font-size: 16px;
+//     line-height: 19px;
+//     font-weight: 300;
+//   }
+//   ${({ theme }) => theme.mediaQueries.md} {
+//     & h1 {
+//       font-size: 36px;
+//       line-height: 42px;
+//     }
+//     & h2 {
+//       font-size: 32px;
+//       line-height: 37px;
+//     }
+//     & p {
+//       font-size: 18px;
+//       line-height: 21px;
+//     }  
+//   }
+// `
 
-const InfoCardWrapper = styled.div`
-  ${({ theme }) => theme.mediaQueries.md} {
-    display: flex;
-    margin-top: 20px;
-    & > div {
-      flex: 1;
-      &:first-child {
-        margin-right: 10px;
-      }
-      &:last-child {
-        margin-left: 10px;
-      }
-    }
-  }
-`
+// const InfoCardWrapper = styled.div`
+//   ${({ theme }) => theme.mediaQueries.md} {
+//     display: flex;
+//     margin-top: 20px;
+//     & > div {
+//       flex: 1;
+//       &:first-child {
+//         margin-right: 10px;
+//       }
+//       &:last-child {
+//         margin-left: 10px;
+//       }
+//     }
+//   }
+// `
 
-const CountDownContainer = styled.div`
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  max-width: 600px;
-  width: 100%;
-  margin: 16px auto;
-`
+// const CountDownContainer = styled.div`
+//   display: flex;
+//   justify-content: space-between;
+//   flex-wrap: wrap;
+//   max-width: 600px;
+//   width: 100%;
+//   margin: 16px auto;
+// `
 
-const CountDownItem = styled.div`
-  color: white;
-  text-align: center;
-  margin: 12px;
-  & > div {
-    width: 94px;
-    height: 94px;
-    background:#8b2a9b ;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 36px;
-    font-weight: bold;
-    border-radius: 24px;
-  }
-  & > p {
-    font-size: 16px;
-    font-weight: bold;
-    margin-top: 4px;
-  }
-`
+// const CountDownItem = styled.div`
+//   color: white;
+//   text-align: center;
+//   margin: 12px;
+//   & > div {
+//     width: 94px;
+//     height: 94px;
+//     background:#8b2a9b ;
+//     display: flex;
+//     align-items: center;
+//     justify-content: center;
+//     font-size: 36px;
+//     font-weight: bold;
+//     border-radius: 24px;
+//   }
+//   & > p {
+//     font-size: 16px;
+//     font-weight: bold;
+//     margin-top: 4px;
+//   }
+// `
 
 const PoolWrapper = styled.div`
   & > div {
@@ -263,11 +263,11 @@ const BottomCard = styled.div`
   }
 `
 
-const Label = styled(Text)`
-  font-size: 12px;
-  font-weight: bold;
-  color: ${({ theme }) => theme.colors.secondary};
-`
+// const Label = styled(Text)`
+//   font-size: 12px;
+//   font-weight: bold;
+//   color: ${({ theme }) => theme.colors.secondary};
+// `
 
 export default function Swap({ history }: RouteComponentProps) {
   const [address, setaddress] = useState('');
@@ -328,7 +328,7 @@ export default function Swap({ history }: RouteComponentProps) {
     inputError: wrapInputError,
   } = useWrapCallback(currencies[Field.INPUT], currencies[Field.OUTPUT], typedValue)
   const showWrap: boolean = wrapType !== WrapType.NOT_APPLICABLE
-  const { routerType } = useSetRouterType()
+  // const { routerType } = useSetRouterType()
   const { swapType } = useSwapType();
   const trade = showWrap ? undefined : v2Trade
 
@@ -431,7 +431,7 @@ export default function Swap({ history }: RouteComponentProps) {
   }, [priceImpactWithoutFee, swapCallback, tradeToConfirm])
 
   // errors
-  const [showInverted, setShowInverted] = useState<boolean>(false)
+  // const [showInverted, setShowInverted] = useState<boolean>(false)
 
   // warnings on slippage
   const priceImpactSeverity = warningSeverity(priceImpactWithoutFee)
@@ -560,9 +560,8 @@ export default function Swap({ history }: RouteComponentProps) {
   }, [timeNow, countDownDeadline])
   // const [historicalData, setHistoricalData = useState<HistoricalDataProps[] | null>(null)
 
-  const countSeconds = useMemo(() => moment(countDownDeadline).diff(moment(timeNow), 'seconds')
-  , [timeNow, countDownDeadline])
-
+  // const countSeconds = useMemo(() => moment(countDownDeadline).diff(moment(timeNow), 'seconds')
+  // , [timeNow, countDownDeadline])
 
   useEffect(() => {
     const init = async () => {

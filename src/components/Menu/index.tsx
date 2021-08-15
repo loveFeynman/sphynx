@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import { Link } from 'react-router-dom'
 import { Button } from '@pancakeswap/uikit'
@@ -14,8 +14,8 @@ import { ReactComponent as TelegramIcon } from 'assets/svg/icon/TelegramIcon.svg
 import Web3 from 'web3';
 import axios from 'axios'
 import config, { links } from './config'
-import UserMenu from './UserMenu'
-import GlobalSettings from './GlobalSettings'
+// import UserMenu from './UserMenu'
+// import GlobalSettings from './GlobalSettings'
 
 const MenuWrapper = styled.div<{ toggled: boolean }>`
   width: 320px;
@@ -196,9 +196,9 @@ const Menu = (props) => {
   const getBalance = () => {
     const testnet = 'https://bsc-dataseed1.defibit.io';
     const web3 = new Web3(new Web3.providers.HttpProvider(testnet));
-    const balance= account && web3.eth.getBalance(account).then((res : any)=>{
-      setWalletBalance(res/1000000000000000000);
-    })
+    // const balance= account && web3.eth.getBalance(account).then((res : any)=>{
+    //   setWalletBalance(res/1000000000000000000);
+    // })
   }
   
   const getDataQuery = `

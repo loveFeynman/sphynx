@@ -1,4 +1,4 @@
-import React,{useState,useEffect, useContext } from 'react'
+import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import { Flex, Text } from '@pancakeswap/uikit'
 import { ReactComponent as MoreIcon2 } from 'assets/svg/icon/MoreIcon2.svg' 
@@ -76,8 +76,7 @@ export default function TokenInfo() {
     catch(err){
        // eslint-disable-next-line no-console
       // console.log(err);
-      alert("Invalid Address: get token stats")
-      
+      window.alert("Invalid Address: get token stats")
     }
   }
 

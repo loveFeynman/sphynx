@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Flex, Link } from '@pancakeswap/uikit'
+import { Link } from '@pancakeswap/uikit'
 import Marquee from "react-fast-marquee";
 import { ReactComponent as HelpIcon } from 'assets/svg/icon/HelpIcon.svg'
 import { ReactComponent as DownRedArrowIcon} from 'assets/svg/icon/DownRedArrowIcon.svg'
@@ -75,6 +75,13 @@ const RankingColor = [
   '#C5C5C5'
 ]
 
+const Ranking = styled.span<{
+  index1: number
+}>`
+  padding-right: 8px;
+  color: ${({index1}) => RankingColor[index1 - 1]};
+`
+
 const HotToken = ({
   index,
   dexId,
@@ -88,12 +95,6 @@ const HotToken = ({
   symbol: string,
   direction: string | undefined,
 }) => {
-  const Ranking = styled.span<{
-    index1: number
-  }>`
-    padding-right: 8px;
-    color: ${({index1}) => RankingColor[index1 - 1]};
-  `
   return (
     <StyledLink href={`/#/swap/${dexId}`} fontSize="14px">
       <Ranking index1={index}>#{index}</Ranking>

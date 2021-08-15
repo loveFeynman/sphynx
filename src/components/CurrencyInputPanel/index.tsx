@@ -9,7 +9,7 @@ import { useCurrencyBalance } from '../../state/wallet/hooks'
 import CurrencySearchModal from '../SearchModal/CurrencySearchModal'
 import { CurrencyLogo, DoubleCurrencyLogo } from '../Logo'
 
-import { RowBetween } from '../Layout/Row'
+// import { RowBetween } from '../Layout/Row'
 import { Input as NumericalInput } from './NumericalInput'
 
 const InputRow = styled.div<{ selected: boolean }>`
@@ -68,13 +68,13 @@ const CurrencySelectButton = styled(Button).attrs({ variant: 'text', scale: 'xs'
 //   padding: 0.75rem 1rem 0 1rem;
 // `
 
-const MaxButtonWrapper = styled.div`
-  & button {
-    background-color: #8B2A9B;
-    color: white;
-    margin-left: 4px;
-  }
-`
+// const MaxButtonWrapper = styled.div`
+//   & button {
+//     background-color: #8B2A9B;
+//     color: white;
+//     margin-left: 4px;
+//   }
+// `
 
 const InputPanel = styled.div<{ hideInput?: boolean }>`
   display: flex;
@@ -116,7 +116,7 @@ export default function CurrencyInputPanel({
   onCurrencySelect,
   currency,
   disableCurrencySelect = false,
-  hideBalance = false,
+ hideBalance = false,
   pair = null, // used for double token logo
   hideInput = false,
   otherCurrency,
@@ -124,9 +124,9 @@ export default function CurrencyInputPanel({
   showCommonBases,
 }: CurrencyInputPanelProps) {
   const { account } = useActiveWeb3React()
-  const selectedCurrencyBalance = useCurrencyBalance(account ?? undefined, currency ?? undefined)
+  // const selectedCurrencyBalance = useCurrencyBalance(account ?? undefined, currency ?? undefined)
   const { t } = useTranslation()
-  const translatedLabel = label || t('Input')
+  // const translatedLabel = label || t('Input')
 
   const [onPresentCurrencyModal] = useModal(
     <CurrencySearchModal

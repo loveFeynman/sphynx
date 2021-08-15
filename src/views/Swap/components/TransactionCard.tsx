@@ -1,8 +1,8 @@
 import React,{useState,useEffect} from 'react'
 import styled from 'styled-components'
 import { Flex } from '@pancakeswap/uikit'
-import { useWeb3React } from '@web3-react/core'
-import moment from 'moment'
+// import { useWeb3React } from '@web3-react/core'
+// import moment from 'moment'
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { AppState } from '../../../state'
@@ -117,8 +117,7 @@ const TransactionCard = () => {
     catch (err) {
       // eslint-disable-next-line no-console
       // console.log(err);
-      alert("Invalid Address: fetch data")
-
+      window.alert("Invalid Address: fetch data")
     }
   }
   useEffect(()=>{

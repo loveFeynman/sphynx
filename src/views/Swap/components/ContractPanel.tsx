@@ -10,13 +10,11 @@ import { ReactComponent as TelegramIcon } from 'assets/svg/icon/TelegramIcon.svg
 // import { BoxesLoader } from "react-awesome-loaders";
 
 import CopyHelper from 'components/AccountDetails/Copy'
-import axios from 'axios';
+// import axios from 'axios';
 import { useDispatch } from 'react-redux'
 import {typeInput} from '../../../state/input/actions'
 // import { GetInputData } from '../index';
-import { TokenDetailProps } from './types'
-
-
+// import { TokenDetailProps } from './types'
 
 export interface ContractPanelProps {
   value: any
@@ -129,6 +127,3 @@ export default function ContractPanel({value}: ContractPanelProps){
     </>
   )
 }
-
-
-
