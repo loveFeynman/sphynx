@@ -320,7 +320,7 @@ export default function Swap({ history }: RouteComponentProps) {
 
   // swap state
   const { independentField, typedValue, recipient } = useSwapState()
-  const { pancakeTrade, v2Trade, currencyBalances, parsedAmount, currencies, inputError: swapInputError } = useDerivedSwapInfo()
+  const { v2Trade, currencyBalances, parsedAmount, currencies, inputError: swapInputError } = useDerivedSwapInfo()
 
   const {
     wrapType,
@@ -330,12 +330,7 @@ export default function Swap({ history }: RouteComponentProps) {
   const showWrap: boolean = wrapType !== WrapType.NOT_APPLICABLE
   const { routerType } = useSetRouterType()
   const { swapType } = useSwapType();
-  const trade = showWrap
-    ? undefined
-    : {
-      [RouterType.sphynx]: v2Trade,
-      [RouterType.pancake]: pancakeTrade
-    } [routerType]
+  const trade = showWrap ? undefined : v2Trade
 
   const parsedAmounts = showWrap
     ? {

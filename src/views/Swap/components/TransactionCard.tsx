@@ -109,7 +109,6 @@ const TransactionCard = () => {
       if (input) {
         // setLoader(true);
         const queryResult = await axios.post('https://graphql.bitquery.io/', { query: getDataQuery })
-        console.log('bitquery=', queryResult.data.data.ethereum.dexTrades)
         if (queryResult.data.data)
           setTableData(queryResult.data.data.ethereum.dexTrades)
         // setLoader(false);
