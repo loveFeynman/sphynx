@@ -328,7 +328,6 @@ export default function Swap({ history }: RouteComponentProps) {
     inputError: wrapInputError,
   } = useWrapCallback(currencies[Field.INPUT], currencies[Field.OUTPUT], typedValue)
   const showWrap: boolean = wrapType !== WrapType.NOT_APPLICABLE
-  // const { routerType } = useSetRouterType()
   const { swapType } = useSwapType();
   const trade = showWrap ? undefined : v2Trade
 

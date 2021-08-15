@@ -27,6 +27,7 @@ import useTransactionDeadline from '../../hooks/useTransactionDeadline'
 import { Field } from '../../state/mint/actions'
 import { useDerivedMintInfo, useMintActionHandlers, useMintState } from '../../state/mint/hooks'
 
+import { useSetRouterType } from '../../state/application/hooks'
 import { useTransactionAdder } from '../../state/transactions/hooks'
 import { useIsExpertMode, useUserSlippageTolerance } from '../../state/user/hooks'
 import { calculateGasMargin, calculateSlippageAmount, getRouterContract } from '../../utils'
@@ -45,6 +46,8 @@ export default function AddLiquidity({
   history,
 }: RouteComponentProps<{ currencyIdA?: string; currencyIdB?: string }>) {
   const { account, chainId, library } = useActiveWeb3React()
+  const { routerType } = useSetRouterType()
+
   const { t } = useTranslation()
 
   const currencyA = useCurrency(currencyIdA)
@@ -124,8 +127,8 @@ export default function AddLiquidity({
   const addTransaction = useTransactionAdder()
 
   async function onAdd() {
-    if (!chainId || !library || !account) return
-    const router = getRouterContract(chainId, library, account)
+    if (!routerType || !chainId || !library || !account) return
+    const router = getRouterContract(routerType, chainId, library, account)
 
     const { [Field.CURRENCY_A]: parsedAmountA, [Field.CURRENCY_B]: parsedAmountB } = parsedAmounts
     if (!parsedAmountA || !parsedAmountB || !currencyA || !currencyB || !deadline) {

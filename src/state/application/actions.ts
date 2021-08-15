@@ -1,5 +1,5 @@
 import { createAction } from '@reduxjs/toolkit'
-import { RouterType } from 'hooks/useRouterType'
+import { RouterType } from 'config/constants'
 
 export const updateBlockNumber = createAction<{ chainId: number; blockNumber: number }>('application/updateBlockNumber')
 

@@ -37,9 +37,8 @@ import ERC20_ABI from '../config/abi/erc20.json'
 import WETH_ABI from '../config/abi/weth.json'
 import { MULTICALL_ABI, MULTICALL_NETWORKS } from '../config/constants/multicall'
 import { PANCAKE_FACTORY_ADDRESSES, PANCAKE_FACTORY_ABI } from '../config/constants/pancakeswap'
-import { ROUTER_ADDRESS, PANCAKE_ROUTER_ADDRESS } from '../config/constants'
+import { ROUTER_ADDRESS, PANCAKE_ROUTER_ADDRESS, RouterType } from '../config/constants'
 import { getContract } from '../utils'
-import { RouterType } from './useRouterType'
 import { useSetRouterType } from '../state/application/hooks'
 
 /**

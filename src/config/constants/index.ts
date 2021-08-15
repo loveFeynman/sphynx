@@ -6,6 +6,13 @@ export const ROUTER_ADDRESS = '0x5AC47dB87272EB158f1A69f00BAD9Bf8D311E5E6' // '0
 
 export const PANCAKE_ROUTER_ADDRESS = '0x10ED43C718714eb63d5aA57B78B54704E256024E'
 
+export enum RouterType {
+  sphynx = 'sphynx',
+  pancake = 'pancake'
+}
+
+export const DEFAULT_ROUTER_TYPE: RouterType = RouterType.sphynx
+
 // a list of tokens by chain
 type ChainTokenList = {
   readonly [chainId in ChainId]: Token[]

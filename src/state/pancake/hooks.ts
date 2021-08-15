@@ -12,8 +12,8 @@ import {
   WETH,
 } from '@pancakeswap/sdk'
 import { useMemo } from 'react'
+import { RouterType } from 'config/constants'
 import { usePancakeswapContract } from 'hooks/useContract'
-import { RouterType } from 'hooks/useRouterType'
 import { useSingleCallResult } from 'state/multicall/hooks'
 import { useBNBBalances, useTokenBalance } from 'state/wallet/hooks'
 

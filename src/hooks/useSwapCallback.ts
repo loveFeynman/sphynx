@@ -4,6 +4,7 @@ import { JSBI, Percent, Router, SwapParameters, Trade, TradeType } from '@pancak
 import { useMemo } from 'react'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import { BIPS_BASE, INITIAL_ALLOWED_SLIPPAGE } from '../config/constants'
+import { useSetRouterType } from '../state/application/hooks'
 import { useTransactionAdder } from '../state/transactions/hooks'
 import { calculateGasMargin, getRouterContract, isAddress, shortenAddress } from '../utils'
 import isZero from '../utils/isZero'
@@ -45,15 +46,16 @@ function useSwapCallArguments(
   recipientAddressOrName: string | null, // the ENS name or address of the recipient of the trade, or null if swap should be returned to sender
 ): SwapCall[] {
   const { account, chainId, library } = useActiveWeb3React()
+  const { routerType } = useSetRouterType()
 
   const { address: recipientAddress } = useENS(recipientAddressOrName)
   const recipient = recipientAddressOrName === null ? account : recipientAddress
   const deadline = useTransactionDeadline()
 
   return useMemo(() => {
-    if (!trade || !recipient || !library || !account || !chainId || !deadline) return []
+    if (!trade || !recipient || !library || !routerType || !account || !chainId || !deadline) return []
 
-    const contract: Contract | null = getRouterContract(chainId, library, account)
+    const contract: Contract | null = getRouterContract(routerType, chainId, library, account)
     if (!contract) {
       return []
     }
@@ -81,7 +83,7 @@ function useSwapCallArguments(
     }
 
     return swapMethods.map((parameters) => ({ parameters, contract }))
-  }, [account, allowedSlippage, chainId, deadline, library, recipient, trade])
+  }, [account, allowedSlippage, routerType, chainId, deadline, library, recipient, trade])
 }
 
 // returns a function that will execute a swap, if the parameters are all valid

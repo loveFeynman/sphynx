@@ -1,5 +1,5 @@
 import { createReducer } from '@reduxjs/toolkit'
-import { RouterType } from 'hooks/useRouterType'
+import { RouterType } from 'config/constants'
 import { 
   updateBlockNumber,
   toggleMenu,

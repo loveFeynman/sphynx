@@ -24,6 +24,7 @@ import { useCurrency } from '../../hooks/Tokens'
 import { usePairContract, useRouterAddress } from '../../hooks/useContract'
 import useTransactionDeadline from '../../hooks/useTransactionDeadline'
 
+import { useSetRouterType } from '../../state/application/hooks'
 import { useTransactionAdder } from '../../state/transactions/hooks'
 import StyledInternalLink from '../../components/Links'
 import { calculateGasMargin, calculateSlippageAmount, getRouterContract } from '../../utils'
@@ -52,6 +53,8 @@ export default function RemoveLiquidity({
 }: RouteComponentProps<{ currencyIdA: string; currencyIdB: string }>) {
   const [currencyA, currencyB] = [useCurrency(currencyIdA) ?? undefined, useCurrency(currencyIdB) ?? undefined]
   const { account, chainId, library } = useActiveWeb3React()
+  const { routerType } = useSetRouterType()
+
   const [tokenA, tokenB] = useMemo(
     () => [wrappedCurrency(currencyA, chainId), wrappedCurrency(currencyB, chainId)],
     [currencyA, currencyB, chainId],
@@ -180,12 +183,12 @@ export default function RemoveLiquidity({
   // tx sending
   const addTransaction = useTransactionAdder()
   async function onRemove() {
-    if (!chainId || !library || !account || !deadline) throw new Error('missing dependencies')
+    if (!routerType || !chainId || !library || !account || !deadline) throw new Error('missing dependencies')
     const { [Field.CURRENCY_A]: currencyAmountA, [Field.CURRENCY_B]: currencyAmountB } = parsedAmounts
     if (!currencyAmountA || !currencyAmountB) {
       throw new Error('missing currency amounts')
     }
-    const router = getRouterContract(chainId, library, account)
+    const router = getRouterContract(routerType, chainId, library, account)
 
     const amountsMin = {
       [Field.CURRENCY_A]: calculateSlippageAmount(currencyAmountA, allowedSlippage)[0],

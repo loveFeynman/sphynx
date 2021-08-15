@@ -1,6 +1,6 @@
 import { useSelector, useDispatch } from 'react-redux'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
-import { RouterType } from 'hooks/useRouterType'
+import { RouterType } from 'config/constants'
 import { toggleMenu as _toggleMenu, setRouterType as _setRouterType, setSwapType as _setSwapType } from './actions'
 import { AppState, AppDispatch } from '../index'
 
