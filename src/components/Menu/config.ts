@@ -1,4 +1,5 @@
-import { MenuEntry } from '@pancakeswap/uikit'
+// import { MenuEntry } from '@pancakeswap/uikit'
+import { SVGProps } from "react";
 import { ContextApi } from 'contexts/Localization/types'
 import { ReactComponent as FarmIcon } from 'assets/svg/icon/FarmIcon.svg'
 import { ReactComponent as PoolIcon } from 'assets/svg/icon/PoolIcon.svg'
@@ -91,6 +92,18 @@ export const links = [
     ],
   }
 ]
+
+interface MenuSubEntry {
+  label: string;
+  href: string;
+}
+
+interface MenuEntry {
+  label: string;
+  icon: React.FunctionComponent<SVGProps<SVGSVGElement>>;
+  items?: MenuSubEntry[];
+  href?: string;
+}
 
 const config: (t: ContextApi['t']) => MenuEntry[] = (t) => links
 
