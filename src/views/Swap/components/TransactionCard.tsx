@@ -52,7 +52,7 @@ const TableWrapper = styled.div`
 `
 
 const TransactionCard = () => {
-  const [tableData, setTableData]=useState([]);
+  const [tableData, setTableData] = useState([]);
   const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
 
   const getDataQuery = `
@@ -127,7 +127,7 @@ const TransactionCard = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps 
   }, [input])
 
-  const filterTableData = tableData.map((val: any) => {
+  const filterTableData = tableData === null ? [] : tableData.map((val: any) => {
 		const link = `https://bscscan.com/tx/${val.transaction.hash}`;
 		  const today:Date = new Date(val.block.timestamp.time);
 		  today.setHours(today.getHours() + 5);

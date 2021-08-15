@@ -153,8 +153,8 @@ export function useDerivedSwapInfo(): {
     [Field.OUTPUT]: outputCurrency ?? undefined,
   }
 
-  // get pancake trade
-  const pancakeTrade = usePancakeswapTrade(isExactIn, currencies[Field.INPUT], currencies[Field.OUTPUT], parsedAmount)
+  // get pancake trade, todo
+  const pancakeTrade = null // usePancakeswapTrade(isExactIn, currencies[Field.INPUT], currencies[Field.OUTPUT], parsedAmount)
 
   let inputError: string | undefined
   if (!account) {

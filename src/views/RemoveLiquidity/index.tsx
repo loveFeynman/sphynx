@@ -21,11 +21,8 @@ import { CurrencyLogo, DoubleCurrencyLogo } from '../../components/Logo'
 import { ROUTER_ADDRESS, PANCAKE_ROUTER_ADDRESS } from '../../config/constants'
 import useActiveWeb3React from '../../hooks/useActiveWeb3React'
 import { useCurrency } from '../../hooks/Tokens'
-import { usePairContract } from '../../hooks/useContract'
+import { usePairContract, useRouterAddress } from '../../hooks/useContract'
 import useTransactionDeadline from '../../hooks/useTransactionDeadline'
-
-import { RouterType } from '../../hooks/useRouterType'
-import { useSetRouterType } from '../../state/application/hooks'
 
 import { useTransactionAdder } from '../../state/transactions/hooks'
 import StyledInternalLink from '../../components/Links'
@@ -96,8 +93,7 @@ export default function RemoveLiquidity({
   // pair contract
   const pairContract: Contract | null = usePairContract(pair?.liquidityToken?.address)
 
-  const { routerType } = useSetRouterType()
-  const routerAddress = routerType === RouterType.pancake ? PANCAKE_ROUTER_ADDRESS : ROUTER_ADDRESS
+  const routerAddress = useRouterAddress()
 
   // allowance handling
   const [signatureData, setSignatureData] = useState<{ v: number; r: string; s: string; deadline: number } | null>(null)

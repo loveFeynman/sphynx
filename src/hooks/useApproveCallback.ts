@@ -3,17 +3,13 @@ import { TransactionResponse } from '@ethersproject/providers'
 import { Trade, TokenAmount, CurrencyAmount, ETHER } from '@pancakeswap/sdk'
 import { useCallback, useMemo } from 'react'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
-import { ROUTER_ADDRESS, PANCAKE_ROUTER_ADDRESS } from '../config/constants'
 import useTokenAllowance from './useTokenAllowance'
 import { Field } from '../state/swap/actions'
-
-import { RouterType } from './useRouterType'
-import { useSetRouterType } from '../state/application/hooks'
 
 import { useTransactionAdder, useHasPendingApproval } from '../state/transactions/hooks'
 import { computeSlippageAdjustedAmounts } from '../utils/prices'
 import { calculateGasMargin } from '../utils'
-import { useTokenContract } from './useContract'
+import { useTokenContract, useRouterAddress } from './useContract'
 
 export enum ApprovalState {
   UNKNOWN,
@@ -109,7 +105,7 @@ export function useApproveCallbackFromTrade(trade?: Trade, allowedSlippage = 0) 
     [trade, allowedSlippage],
   )
 
-  const { routerType } = useSetRouterType()
+  const routerAddress = useRouterAddress()
 
-  return useApproveCallback(amountToApprove, routerType ? PANCAKE_ROUTER_ADDRESS : ROUTER_ADDRESS)
+  return useApproveCallback(amountToApprove, routerAddress)
 }
