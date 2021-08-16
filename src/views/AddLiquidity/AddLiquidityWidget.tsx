@@ -475,7 +475,7 @@ export default function AddLiquidityWidget({
       </AppBody>
       {!addIsUnsupported ? (
         pair && !noLiquidity && pairState !== PairState.INVALID ? (
-          <AutoColumn style={{ width: '100%', maxWidth: '400px', marginTop: '1rem' }}>
+          <AutoColumn style={{ width: '100%', maxWidth: '400px', marginTop: '1rem', padding: '1px 1px 3px 1px' }}>
             <MinimalPositionCard showUnwrapped={oneCurrencyIsWETH} pair={pair} />
           </AutoColumn>
         ) : null

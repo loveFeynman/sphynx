@@ -71,8 +71,7 @@ export function MinimalPositionCard({ pair, showUnwrapped = false }: PositionCar
   return (
     <>
       {userPoolBalance && JSBI.greaterThan(userPoolBalance.raw, JSBI.BigInt(0)) ? (
-        <Card>
-          <CardBody>
+        <LightCard>
             <AutoColumn gap="16px">
               <FixedHeightRow>
                 <RowFixed>
@@ -125,8 +124,7 @@ export function MinimalPositionCard({ pair, showUnwrapped = false }: PositionCar
                 </FixedHeightRow>
               </AutoColumn>
             </AutoColumn>
-          </CardBody>
-        </Card>
+        </LightCard>
       ) : (
         <LightCard>
           <Text fontSize="14px" style={{ textAlign: 'center' }}>
