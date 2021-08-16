@@ -84,7 +84,7 @@ export default function LiquidityWidget() {
     )
   }
   
-  const { swapType, setSwapType } = useSwapType();
+  const { swapType, setSwapType } = useSwapType()
 
   return (
       <AppBody>
@@ -94,7 +94,7 @@ export default function LiquidityWidget() {
           :
           <>
             <AppHeader title={t('Your Liquidity')} subtitle={t('Remove liquidity to receive tokens back')} />
-            <Body>
+            <Body style={{ padding: '24px 0px' }}>
               {renderBody()}
               {account && !v2IsLoading && (
                 <Flex flexDirection="column" alignItems="center" mt="24px">
@@ -107,7 +107,7 @@ export default function LiquidityWidget() {
                 </Flex>
               )}
             </Body>
-            <CardFooter style={{ textAlign: 'center' }}>
+            <CardFooter style={{ textAlign: 'center', padding: '24px 0px 0px' }}>
               <Button id="join-pool-button" onClick={() => { setSwapType('addLiquidity') }} width="100%" startIcon={<AddIcon color="white" />}>
                 {t('Add Liquidity')}
               </Button>

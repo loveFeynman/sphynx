@@ -96,7 +96,7 @@ export function getRouterContract(routerType: RouterType, _: number, library: We
   if (routerType === RouterType.pancake) {
     return getContract(PANCAKE_ROUTER_ADDRESS, IUniswapV2Router02ABI, library, account)
   }
-  return getContract(ROUTER_ADDRESS, IUniswapV2Router01ABI, library, account) // todo
+  return getContract(ROUTER_ADDRESS, IUniswapV2Router02ABI, library, account) // todo
 }
 
 export function escapeRegExp(string: string): string {

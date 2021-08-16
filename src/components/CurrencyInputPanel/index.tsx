@@ -81,13 +81,13 @@ const InputPanel = styled.div<{ hideInput?: boolean }>`
   flex-flow: column nowrap;
   position: relative;
   border-radius: ${({ hideInput }) => (hideInput ? '8px' : '20px')};
-  background-color: ${({ theme }) => theme.colors.background};
+  background-color: ${({ theme }) => theme.colors.background} !important;
   // z-index: 1;
 `
 
 const Container = styled.div<{ hideInput: boolean }>`
   border-radius: 16px;
-  background-color: rgba(0, 0, 0, 0.4);
+  // background-color: rgba(0, 0, 0, 0.4);
 `
 
 interface CurrencyInputPanelProps {

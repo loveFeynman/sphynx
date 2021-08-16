@@ -192,6 +192,9 @@ const SlippageText = styled.p`
 // `
 
 const PoolWrapper = styled.div`
+  position: relative;
+  padding: 1rem;
+
   & > div {
     background: transparent;
     & div {

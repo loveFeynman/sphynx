@@ -97,8 +97,6 @@ export default function RemoveLiquidity({
   const pairContract: Contract | null = usePairContract(pair?.liquidityToken?.address)
 
   const routerAddress = useRouterAddress()
-  // test code
-  console.log('RemoveLiquidity, routerAddress=', routerAddress)
 
   // allowance handling
   const [signatureData, setSignatureData] = useState<{ v: number; r: string; s: string; deadline: number } | null>(null)
@@ -461,7 +459,7 @@ export default function RemoveLiquidity({
     <Page>
       <AppBody>
         <AppHeader
-          backTo="/pool"
+          backTo="liquidity"
           title={t('Remove %assetA%-%assetB% liquidity', {
             assetA: currencyA?.symbol ?? '',
             assetB: currencyB?.symbol ?? '',

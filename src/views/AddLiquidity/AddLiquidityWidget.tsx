@@ -1,4 +1,5 @@
 import React, { useCallback, useState } from 'react'
+import styled from 'styled-components'
 import { BigNumber } from '@ethersproject/bignumber'
 import { TransactionResponse } from '@ethersproject/providers'
 import { Currency, currencyEquals, ETHER, TokenAmount, WETH } from '@pancakeswap/sdk'
@@ -15,7 +16,7 @@ import CurrencyInputPanel from '../../components/CurrencyInputPanel'
 import { DoubleCurrencyLogo } from '../../components/Logo'
 import { AppHeader, AppBody } from '../../components/App'
 import { MinimalPositionCard } from '../../components/PositionCard'
-import Row, { RowBetween } from '../../components/Layout/Row'
+import Row, { AutoRow, RowBetween } from '../../components/Layout/Row'
 import ConnectWalletButton from '../../components/ConnectWalletButton'
 
 // import { ROUTER_ADDRESS, PANCAKE_ROUTER_ADDRESS } from '../../config/constants'
@@ -39,6 +40,20 @@ import { currencyId } from '../../utils/currencyId'
 import PoolPriceBar from './PoolPriceBar'
 import Page from '../Page'
 
+const ArrowContainer = styled(ColumnCenter)`
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid rgb(255, 255, 255);
+  border-radius: 12px;
+  margin: 0;
+  & svg {
+    width: 14px;
+    height: 16px;
+  }
+`
 
 export default function AddLiquidityWidget({
   currencyIdA,
@@ -121,9 +136,7 @@ export default function AddLiquidityWidget({
   )
 
   const routerAddress = useRouterAddress()
-  // test code
-  console.log('AddLiquidityWidget, routerAddress=', routerAddress)
-
+  
   // check whether the user has approved the router on the tokens
   const [approvalA, approveACallback] = useApproveCallback(parsedAmounts[Field.CURRENCY_A], routerAddress)
   const [approvalB, approveBCallback] = useApproveCallback(parsedAmounts[Field.CURRENCY_B], routerAddress)
@@ -265,33 +278,33 @@ export default function AddLiquidityWidget({
   const handleCurrencyASelect = useCallback(
     (currencyA_: Currency) => {
       const newCurrencyIdA = currencyId(currencyA_)
-      if (newCurrencyIdA === currencyIdB) {
-        setCurrencyA1(currencyIdB);
-        setCurrencyB1(currencyIdA || 'ETH');
+      if (newCurrencyIdA === currencyB1) {
+        setCurrencyA1(currencyB1);
+        setCurrencyB1(currencyA1 || 'ETH');
       } else {
         setCurrencyA1(newCurrencyIdA);
-        setCurrencyB1(currencyIdB || 'ETH');
+        setCurrencyB1(currencyB1 || 'ETH');
       }
     },
-    [currencyIdB, currencyIdA],
+    [currencyB1, currencyA1],
   )
   const handleCurrencyBSelect = useCallback(
     (currencyB_: Currency) => {
       const newCurrencyIdB = currencyId(currencyB_)
-      if (currencyIdA === newCurrencyIdB) {
-        if (currencyIdB) {
-          setCurrencyA1(currencyIdB);
+      if (currencyA1 === newCurrencyIdB) {
+        if (currencyB1) {
+          setCurrencyA1(currencyB1);
           setCurrencyB1(newCurrencyIdB);
         } else {
           setCurrencyA1(newCurrencyIdB);
           setCurrencyB1('ETH');
         }
       } else {
-        setCurrencyA1(currencyIdA || 'ETH');
+        setCurrencyA1(currencyA1 || 'ETH');
         setCurrencyB1(newCurrencyIdB);
       }
     },
-    [currencyIdA, currencyIdB],
+    [currencyA1, currencyB1],
   )
 
   const handleDismissConfirmation = useCallback(() => {
@@ -320,7 +333,7 @@ export default function AddLiquidityWidget({
   )
 
   return (
-    <Page>
+    <>
       <AppBody>
         <AppHeader
           title={t('Add Liquidity')}
@@ -328,10 +341,10 @@ export default function AddLiquidityWidget({
           helper={t(
             'Liquidity providers earn a 0.17% trading fee on all trades made for that token pair, proportional to their share of the liquidity pool.',
           )}
-          backTo="/pool"
+          backTo="liquidity"
         />
-        <CardBody>
-          <AutoColumn gap="20px">
+        <>
+          <AutoColumn gap="md">
             {noLiquidity && (
               <ColumnCenter>
                 <Message variant="warning">
@@ -357,9 +370,13 @@ export default function AddLiquidityWidget({
               id="add-liquidity-input-tokena"
               showCommonBases
             />
-            <ColumnCenter>
-              <AddIcon width="16px" />
-            </ColumnCenter>
+            <AutoColumn justify="space-between">
+              <AutoRow justify="center" style={{ padding: '0 1rem' }}>
+                <ArrowContainer>
+                  <AddIcon width="16px" />
+                </ArrowContainer>
+              </AutoRow>
+            </AutoColumn>
             <CurrencyInputPanel
               value={formattedAmounts[Field.CURRENCY_B]}
               onUserInput={onFieldBInput}
@@ -454,17 +471,17 @@ export default function AddLiquidityWidget({
               </AutoColumn>
             )}
           </AutoColumn>
-        </CardBody>
+        </>
       </AppBody>
       {!addIsUnsupported ? (
         pair && !noLiquidity && pairState !== PairState.INVALID ? (
-          <AutoColumn style={{ minWidth: '20rem', width: '100%', maxWidth: '400px', marginTop: '1rem' }}>
+          <AutoColumn style={{ width: '100%', maxWidth: '400px', marginTop: '1rem' }}>
             <MinimalPositionCard showUnwrapped={oneCurrencyIsWETH} pair={pair} />
           </AutoColumn>
         ) : null
       ) : (
         <UnsupportedCurrencyFooter currencies={[currencies.CURRENCY_A, currencies.CURRENCY_B]} />
       )}
-    </Page>
+    </>
   )
 }

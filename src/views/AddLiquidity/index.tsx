@@ -117,8 +117,6 @@ export default function AddLiquidity({
   )
 
   const routerAddress = useRouterAddress()
-  // test code
-  console.log('AddLiquidity, routerAddress=', routerAddress)
 
   // check whether the user has approved the router on the tokens
   const [approvalA, approveACallback] = useApproveCallback(parsedAmounts[Field.CURRENCY_A], routerAddress)
@@ -319,7 +317,7 @@ export default function AddLiquidity({
           helper={t(
             'Liquidity providers earn a 0.17% trading fee on all trades made for that token pair, proportional to their share of the liquidity pool.',
           )}
-          backTo="/pool"
+          backTo="liquidity"
         />
         <CardBody>
           <AutoColumn gap="20px">
