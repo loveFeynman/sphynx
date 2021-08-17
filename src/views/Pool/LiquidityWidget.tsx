@@ -104,7 +104,7 @@ export default function LiquidityWidget() {
               <AppHeader title={t('Your Liquidity')} subtitle={t('Remove liquidity to receive tokens back')} />
               <CardBody style={{ padding: '24px 0px' }}>
                 {renderBody()}
-                {account && !v2IsLoading && (
+                {/* {account && !v2IsLoading && (
                   <Flex flexDirection="column" alignItems="center" mt="24px">
                     <Text color="textSubtle" mb="8px">
                       {t("Don't see a pool you joined?")}
@@ -113,7 +113,7 @@ export default function LiquidityWidget() {
                       {t('Find other LP tokens')}
                     </Button>
                   </Flex>
-                )}
+                )} */}
               </CardBody>
               <CardFooter style={{ textAlign: 'center', padding: '24px 0px 0px' }}>
                 <Button id="join-pool-button" onClick={() => { setSwapType('addLiquidity') }} width="100%" startIcon={<AddIcon color="white" />}>

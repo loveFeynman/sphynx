@@ -590,55 +590,57 @@ export default function RemoveLiquidityWidget({
 
           {showDetailed && (
             <Box my="16px">
-              <CurrencyInputPanel
-                value={formattedAmounts[Field.LIQUIDITY]}
-                onUserInput={onLiquidityInput}
-                onMax={() => {
-                  onUserInput(Field.LIQUIDITY_PERCENT, '100')
-                }}
-                showMaxButton={!atMaxAmount}
-                disableCurrencySelect
-                currency={pair?.liquidityToken}
-                pair={pair}
-                id="liquidity-amount"
-                onCurrencySelect={() => null}
-              />
-              <AutoColumn justify="space-between">
-                <AutoRow justify="center" style={{ padding: '0 1rem' }}>
-                  <ArrowContainer>
-                  <ArrowDownIcon width="24px" my="16px" />
-                  </ArrowContainer>
-                </AutoRow>
+              <AutoColumn gap="md">
+                <CurrencyInputPanel
+                  value={formattedAmounts[Field.LIQUIDITY]}
+                  onUserInput={onLiquidityInput}
+                  onMax={() => {
+                    onUserInput(Field.LIQUIDITY_PERCENT, '100')
+                  }}
+                  showMaxButton={!atMaxAmount}
+                  disableCurrencySelect
+                  currency={pair?.liquidityToken}
+                  pair={pair}
+                  id="liquidity-amount"
+                  onCurrencySelect={() => null}
+                />
+                <AutoColumn justify="space-between">
+                  <AutoRow justify="center" style={{ padding: '0 1rem' }}>
+                    <ArrowContainer>
+                    <ArrowDownIcon width="24px" my="16px" />
+                    </ArrowContainer>
+                  </AutoRow>
+                </AutoColumn>
+                <CurrencyInputPanel
+                  hideBalance
+                  value={formattedAmounts[Field.CURRENCY_A]}
+                  onUserInput={onCurrencyAInput}
+                  onMax={() => onUserInput(Field.LIQUIDITY_PERCENT, '100')}
+                  showMaxButton={!atMaxAmount}
+                  currency={currencyA}
+                  label={t('Output')}
+                  onCurrencySelect={handleSelectCurrencyA}
+                  id="remove-liquidity-tokena"
+                />
+                <AutoColumn justify="space-between">
+                  <AutoRow justify="center" style={{ padding: '0 1rem' }}>
+                    <ArrowContainer>
+                      <AddIcon width="24px" my="16px" />
+                    </ArrowContainer>
+                  </AutoRow>
+                </AutoColumn>
+                <CurrencyInputPanel
+                  hideBalance
+                  value={formattedAmounts[Field.CURRENCY_B]}
+                  onUserInput={onCurrencyBInput}
+                  onMax={() => onUserInput(Field.LIQUIDITY_PERCENT, '100')}
+                  showMaxButton={!atMaxAmount}
+                  currency={currencyB}
+                  label={t('Output')}
+                  onCurrencySelect={handleSelectCurrencyB}
+                  id="remove-liquidity-tokenb"
+                />
               </AutoColumn>
-              <CurrencyInputPanel
-                hideBalance
-                value={formattedAmounts[Field.CURRENCY_A]}
-                onUserInput={onCurrencyAInput}
-                onMax={() => onUserInput(Field.LIQUIDITY_PERCENT, '100')}
-                showMaxButton={!atMaxAmount}
-                currency={currencyA}
-                label={t('Output')}
-                onCurrencySelect={handleSelectCurrencyA}
-                id="remove-liquidity-tokena"
-              />
-              <AutoColumn justify="space-between">
-                <AutoRow justify="center" style={{ padding: '0 1rem' }}>
-                  <ArrowContainer>
-                    <AddIcon width="24px" my="16px" />
-                  </ArrowContainer>
-                </AutoRow>
-              </AutoColumn>
-              <CurrencyInputPanel
-                hideBalance
-                value={formattedAmounts[Field.CURRENCY_B]}
-                onUserInput={onCurrencyBInput}
-                onMax={() => onUserInput(Field.LIQUIDITY_PERCENT, '100')}
-                showMaxButton={!atMaxAmount}
-                currency={currencyB}
-                label={t('Output')}
-                onCurrencySelect={handleSelectCurrencyB}
-                id="remove-liquidity-tokenb"
-              />
             </Box>
           )}
           {pair && (

@@ -13,7 +13,7 @@ const AdvancedDetailsFooter = styled.div<{ show: boolean }>`
   // background-color: ${({ theme }) => theme.colors.invertedContrast};
 
   transform: ${({ show }) => (show ? 'translateY(0%)' : 'translateY(-100%)')};
-  // opacity: ${({ show }) => (show ? 1 : 0)};
+  opacity: ${({ show }) => (show ? 1 : 0)};
   transition: transform 300ms ease-in-out;
   z-index: ${({ show }) => (show ? 1 : -1)};
   position: relative;
