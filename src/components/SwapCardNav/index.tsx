@@ -35,7 +35,7 @@ const SwapCardNav = () => {
     <Button className={swapType === 'swap' ? 'active' : ''} id="auto-nav-link" onClick={() => { setSwapType('swap') }}>
       {t('Swap')}
     </Button>
-    <Button className={swapType === 'liquidity' || swapType === 'addLiquidity' ? 'active' : ''} id="dgsn-nav-link" onClick={() => { setSwapType('liquidity') }}>
+    <Button className={swapType === 'liquidity' || swapType === 'addLiquidity' || swapType === 'removeLiquidity' ? 'active' : ''} id="dgsn-nav-link" onClick={() => { setSwapType('liquidity') }}>
       {t('Liquidity')}
     </Button>
   </StyledNav>

@@ -889,10 +889,10 @@ export default function Swap({ history }: RouteComponentProps) {
               </Wrapper>
             }
             {
-              (swapType === 'liquidity' || swapType === 'addLiquidity') &&
-              <PoolWrapper id="pool-page">
+              (swapType === 'liquidity' || swapType === 'addLiquidity' || swapType === 'removeLiquidity') &&
+              <Wrapper id="pool-page">
                 <LiquidityWidget />
-              </PoolWrapper>
+              </Wrapper>
             }
           </Card>
           <AdvancedSwapDetailsDropdown trade={trade} />

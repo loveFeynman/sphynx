@@ -6,5 +6,7 @@ export const updateBlockNumber = createAction<{ chainId: number; blockNumber: nu
 export const toggleMenu = createAction<boolean>('app/toggleMenu')
 export const setRouterType = createAction<RouterType>('app/useSetRouterType')
 export const setSwapType = createAction<string>('app/setSwapType')
+export const setLiquidityPairA = createAction<string>('app/setLiquidityPairA')
+export const setLiquidityPairB = createAction<string>('app/setLiquidityPairB')
 
 export default updateBlockNumber

@@ -1,7 +1,13 @@
 import { useSelector, useDispatch } from 'react-redux'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import { RouterType } from 'config/constants'
-import { toggleMenu as _toggleMenu, setRouterType as _setRouterType, setSwapType as _setSwapType } from './actions'
+import {
+  toggleMenu as _toggleMenu,
+  setRouterType as _setRouterType,
+  setSwapType as _setSwapType,
+  setLiquidityPairA as _setLiquidityPairA,
+  setLiquidityPairB as _setLiquidityPairB
+} from './actions'
 import { AppState, AppDispatch } from '../index'
 
 export function useBlockNumber(): number | undefined {
@@ -47,6 +53,32 @@ export function useSwapType() {
     dispatch(_setSwapType(stype));
 
   return { swapType, setSwapType };
+}
+
+export function useLiquidityPairA() {
+  const dispatch = useDispatch<AppDispatch>();
+  const liquidityPairA = useSelector<
+    AppState,
+    AppState['application']['liquidityPairA']
+  >((state) => state.application.liquidityPairA);
+
+  const setLiquidityPairA = (stype: string) =>
+    dispatch(_setLiquidityPairA(stype));
+
+  return { liquidityPairA, setLiquidityPairA };
+}
+
+export function useLiquidityPairB() {
+  const dispatch = useDispatch<AppDispatch>();
+  const liquidityPairB = useSelector<
+    AppState,
+    AppState['application']['liquidityPairB']
+  >((state) => state.application.liquidityPairB);
+
+  const setLiquidityPairB = (stype: string) =>
+    dispatch(_setLiquidityPairB(stype));
+
+  return { liquidityPairB, setLiquidityPairB };
 }
 
 export default useBlockNumber

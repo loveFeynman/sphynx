@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom'
 import { useTranslation } from 'contexts/Localization'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import AddLiquidityWidget from 'views/AddLiquidity/AddLiquidityWidget'
+import RemoveLiquidityWidget from 'views/RemoveLiquidity/RemoveLiquidityWidget'
 import FullPositionCard from '../../components/PositionCard'
 import { useTokenBalancesWithLoadingIndicator } from '../../state/wallet/hooks'
 import { usePairs } from '../../hooks/usePairs'
@@ -25,6 +26,7 @@ export default function LiquidityWidget() {
 
   // fetch the user's balances of all tracked V2 LP tokens
   const trackedTokenPairs = useTrackedTokenPairs()
+  // console.log('trackedTokenPairs=', trackedTokenPairs) // todo
   const tokenPairsWithLiquidityTokens = useMemo(
     () => trackedTokenPairs.map((tokens) => ({ liquidityToken: toV2LiquidityToken(tokens), tokens })),
     [trackedTokenPairs],
@@ -48,10 +50,13 @@ export default function LiquidityWidget() {
   )
 
   const v2Pairs = usePairs(liquidityTokensWithBalances.map(({ tokens }) => tokens))
+  // console.log('v2Pairs=', v2Pairs) // todo
   const v2IsLoading =
     fetchingV2PairBalances || v2Pairs?.length < liquidityTokensWithBalances.length || v2Pairs?.some((V2Pair) => !V2Pair)
+  // console.log('v2IsLoading=', v2IsLoading) // todo
 
   const allV2PairsWithLiquidity = v2Pairs.map(([, pair]) => pair).filter((v2Pair): v2Pair is Pair => Boolean(v2Pair))
+  // console.log('allV2PairsWithLiquidity=', allV2PairsWithLiquidity) // todo
 
   const renderBody = () => {
     if (!account) {
@@ -87,33 +92,37 @@ export default function LiquidityWidget() {
   const { swapType, setSwapType } = useSwapType()
 
   return (
-      <AppBody>
+      <div>
       {
         swapType === 'addLiquidity' ? 
           <AddLiquidityWidget currencyIdA='ETH' />
-          :
-          <>
-            <AppHeader title={t('Your Liquidity')} subtitle={t('Remove liquidity to receive tokens back')} />
-            <Body style={{ padding: '24px 0px' }}>
-              {renderBody()}
-              {account && !v2IsLoading && (
-                <Flex flexDirection="column" alignItems="center" mt="24px">
-                  <Text color="textSubtle" mb="8px">
-                    {t("Don't see a pool you joined?")}
-                  </Text>
-                  <Button id="import-pool-link" variant="secondary" scale="sm" as={Link} to="/find">
-                    {t('Find other LP tokens')}
-                  </Button>
-                </Flex>
-              )}
-            </Body>
-            <CardFooter style={{ textAlign: 'center', padding: '24px 0px 0px' }}>
-              <Button id="join-pool-button" onClick={() => { setSwapType('addLiquidity') }} width="100%" startIcon={<AddIcon color="white" />}>
-                {t('Add Liquidity')}
-              </Button>
-            </CardFooter>
-          </>
+          : (
+            swapType === 'removeLiquidity' ?
+              <RemoveLiquidityWidget />
+            :
+            <>
+              <AppHeader title={t('Your Liquidity')} subtitle={t('Remove liquidity to receive tokens back')} />
+              <CardBody style={{ padding: '24px 0px' }}>
+                {renderBody()}
+                {account && !v2IsLoading && (
+                  <Flex flexDirection="column" alignItems="center" mt="24px">
+                    <Text color="textSubtle" mb="8px">
+                      {t("Don't see a pool you joined?")}
+                    </Text>
+                    <Button id="import-pool-link" variant="secondary" scale="sm" as={Link} to="/find">
+                      {t('Find other LP tokens')}
+                    </Button>
+                  </Flex>
+                )}
+              </CardBody>
+              <CardFooter style={{ textAlign: 'center', padding: '24px 0px 0px' }}>
+                <Button id="join-pool-button" onClick={() => { setSwapType('addLiquidity') }} width="100%" startIcon={<AddIcon color="white" />}>
+                  {t('Add Liquidity')}
+                </Button>
+              </CardFooter>
+            </>
+          )
       }
-      </AppBody>
+      </div>
   )
 }

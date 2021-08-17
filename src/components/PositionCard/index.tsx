@@ -14,6 +14,7 @@ import {
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { useTranslation } from 'contexts/Localization'
+import { useSwapType, useLiquidityPairA, useLiquidityPairB } from 'state/application/hooks'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import useTotalSupply from '../../hooks/useTotalSupply'
 
@@ -148,6 +149,9 @@ export default function FullPositionCard({ pair, ...props }: PositionCardProps) 
   const currency1 = unwrappedToken(pair.token1)
 
   const [showMore, setShowMore] = useState(false)
+  const { swapType, setSwapType } = useSwapType()
+  const { liquidityPairA, setLiquidityPairA } = useLiquidityPairA()
+  const { liquidityPairB, setLiquidityPairB } = useLiquidityPairB()
 
   const userPoolBalance = useTokenBalance(account ?? undefined, pair.liquidityToken)
   const totalPoolTokens = useTotalSupply(pair.liquidityToken)
@@ -232,8 +236,11 @@ export default function FullPositionCard({ pair, ...props }: PositionCardProps) 
           {userPoolBalance && JSBI.greaterThan(userPoolBalance.raw, BIG_INT_ZERO) && (
             <Flex flexDirection="column">
               <Button
-                as={Link}
-                to={`/remove/${currencyId(currency0)}/${currencyId(currency1)}`}
+                onClick={() => {
+                  setSwapType('removeLiquidity')
+                  setLiquidityPairA(currencyId(currency0))
+                  setLiquidityPairB(currencyId(currency1))
+                }}
                 variant="primary"
                 width="100%"
                 mb="8px"
@@ -241,8 +248,11 @@ export default function FullPositionCard({ pair, ...props }: PositionCardProps) 
                 Remove
               </Button>
               <Button
-                as={Link}
-                to={`/add/${currencyId(currency0)}/${currencyId(currency1)}`}
+                onClick={() => {
+                  setSwapType('addLiquidity')
+                  setLiquidityPairA(currencyId(currency0))
+                  setLiquidityPairB(currencyId(currency1))
+                }}
                 variant="text"
                 startIcon={<AddIcon color="primary" />}
                 width="100%"

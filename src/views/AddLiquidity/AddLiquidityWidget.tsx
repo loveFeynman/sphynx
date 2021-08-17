@@ -28,7 +28,7 @@ import useTransactionDeadline from '../../hooks/useTransactionDeadline'
 import { Field } from '../../state/mint/actions'
 import { useDerivedMintInfo, useMintActionHandlers, useMintState } from '../../state/mint/hooks'
 
-import { useSetRouterType } from '../../state/application/hooks'
+import { useSetRouterType, useLiquidityPairA, useLiquidityPairB } from '../../state/application/hooks'
 import { useTransactionAdder } from '../../state/transactions/hooks'
 import { useIsExpertMode, useUserSlippageTolerance } from '../../state/user/hooks'
 import { calculateGasMargin, calculateSlippageAmount, getRouterContract } from '../../utils'
@@ -49,10 +49,6 @@ const ArrowContainer = styled(ColumnCenter)`
   border: 3px solid rgb(255, 255, 255);
   border-radius: 12px;
   margin: 0;
-  & svg {
-    width: 14px;
-    height: 16px;
-  }
 `
 
 export default function AddLiquidityWidget({
@@ -65,8 +61,11 @@ export default function AddLiquidityWidget({
   const { account, chainId, library } = useActiveWeb3React()
   const { routerType } = useSetRouterType()
 
-  const [ currencyA1, setCurrencyA1 ] = useState(currencyIdA || 'ETH');
-  const [ currencyB1, setCurrencyB1 ] = useState(currencyIdB || 'ETH');
+  const { liquidityPairA, setLiquidityPairA } = useLiquidityPairA()
+  const { liquidityPairB, setLiquidityPairB } = useLiquidityPairB()
+
+  const [ currencyA1, setCurrencyA1 ] = useState(liquidityPairA || 'ETH')
+  const [ currencyB1, setCurrencyB1 ] = useState(liquidityPairB || 'ETH')
   const { t } = useTranslation()
 
   const currencyA = useCurrency(currencyA1)
@@ -279,11 +278,11 @@ export default function AddLiquidityWidget({
     (currencyA_: Currency) => {
       const newCurrencyIdA = currencyId(currencyA_)
       if (newCurrencyIdA === currencyB1) {
-        setCurrencyA1(currencyB1);
-        setCurrencyB1(currencyA1 || 'ETH');
+        setCurrencyA1(currencyB1)
+        setCurrencyB1(currencyA1 || 'ETH')
       } else {
-        setCurrencyA1(newCurrencyIdA);
-        setCurrencyB1(currencyB1 || 'ETH');
+        setCurrencyA1(newCurrencyIdA)
+        setCurrencyB1(currencyB1 || 'ETH')
       }
     },
     [currencyB1, currencyA1],
@@ -293,15 +292,15 @@ export default function AddLiquidityWidget({
       const newCurrencyIdB = currencyId(currencyB_)
       if (currencyA1 === newCurrencyIdB) {
         if (currencyB1) {
-          setCurrencyA1(currencyB1);
-          setCurrencyB1(newCurrencyIdB);
+          setCurrencyA1(currencyB1)
+          setCurrencyB1(newCurrencyIdB)
         } else {
-          setCurrencyA1(newCurrencyIdB);
-          setCurrencyB1('ETH');
+          setCurrencyA1(newCurrencyIdB)
+          setCurrencyB1('ETH')
         }
       } else {
-        setCurrencyA1(currencyA1 || 'ETH');
-        setCurrencyB1(newCurrencyIdB);
+        setCurrencyA1(currencyA1 || 'ETH')
+        setCurrencyB1(newCurrencyIdB)
       }
     },
     [currencyA1, currencyB1],
@@ -334,7 +333,7 @@ export default function AddLiquidityWidget({
 
   return (
     <>
-      <AppBody>
+      <div>
         <AppHeader
           title={t('Add Liquidity')}
           subtitle={t('Add liquidity to receive LP tokens')}
@@ -373,7 +372,7 @@ export default function AddLiquidityWidget({
             <AutoColumn justify="space-between">
               <AutoRow justify="center" style={{ padding: '0 1rem' }}>
                 <ArrowContainer>
-                  <AddIcon width="16px" />
+                  <AddIcon width="24px" />
                 </ArrowContainer>
               </AutoRow>
             </AutoColumn>
@@ -472,7 +471,7 @@ export default function AddLiquidityWidget({
             )}
           </AutoColumn>
         </>
-      </AppBody>
+      </div>
       {!addIsUnsupported ? (
         pair && !noLiquidity && pairState !== PairState.INVALID ? (
           <AutoColumn style={{ width: '100%', maxWidth: '400px', marginTop: '1rem', padding: '1px 1px 3px 1px' }}>

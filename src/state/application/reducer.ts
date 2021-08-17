@@ -4,7 +4,9 @@ import {
   updateBlockNumber,
   toggleMenu,
   setRouterType,
-  setSwapType
+  setSwapType,
+  setLiquidityPairA,
+  setLiquidityPairB
 } from './actions'
 
 export interface ApplicationState {
@@ -12,13 +14,17 @@ export interface ApplicationState {
   menuToggled: boolean
   routerType: RouterType
   swapType: string
+  liquidityPairA: string
+  liquidityPairB: string
 }
 
 const initialState: ApplicationState = {
   blockNumber: {},
   menuToggled: false,
   routerType: RouterType.sphynx,
-  swapType: 'swap'
+  swapType: 'swap',
+  liquidityPairA: null,
+  liquidityPairB: null
 }
 
 export default createReducer(initialState, (builder) =>
@@ -39,6 +45,12 @@ export default createReducer(initialState, (builder) =>
   })
   .addCase(setSwapType, (state, { payload }) => {
     state.swapType = payload
+  })
+  .addCase(setLiquidityPairA, (state, { payload }) => {
+    state.liquidityPairA = payload
+  })
+  .addCase(setLiquidityPairB, (state, { payload }) => {
+    state.liquidityPairB = payload
   })
 
 )
