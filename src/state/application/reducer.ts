@@ -1,5 +1,5 @@
 import { createReducer } from '@reduxjs/toolkit'
-import { RouterType } from 'config/constants'
+import { RouterType } from '@pancakeswap/sdk'
 import { 
   updateBlockNumber,
   toggleMenu,

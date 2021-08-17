@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
+import { RouterType } from '@pancakeswap/sdk'
 import { useTranslation } from 'contexts/Localization'
 import { useSetRouterType } from 'state/application/hooks'
-import { RouterType } from 'config/constants'
 import {  Button } from '@pancakeswap/uikit'
 
 const StyledNav = styled.div`

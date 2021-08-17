@@ -28,7 +28,7 @@ import {
 
 // Imports below migrated from Exchange useContract.ts
 import { Contract } from '@ethersproject/contracts'
-import { ChainId, WETH } from '@pancakeswap/sdk'
+import { ChainId, WETH, RouterType } from '@pancakeswap/sdk'
 import { abi as IUniswapV2PairABI } from '@uniswap/v2-core/build/IUniswapV2Pair.json'
 import ENS_PUBLIC_RESOLVER_ABI from '../config/abi/ens-public-resolver.json'
 import ENS_ABI from '../config/abi/ens-registrar.json'
@@ -37,7 +37,7 @@ import ERC20_ABI from '../config/abi/erc20.json'
 import WETH_ABI from '../config/abi/weth.json'
 import { MULTICALL_ABI, MULTICALL_NETWORKS } from '../config/constants/multicall'
 import { PANCAKE_FACTORY_ADDRESSES, PANCAKE_FACTORY_ABI } from '../config/constants/pancakeswap'
-import { ROUTER_ADDRESS, PANCAKE_ROUTER_ADDRESS, RouterType } from '../config/constants'
+import { ROUTER_ADDRESS, PANCAKE_ROUTER_ADDRESS } from '../config/constants'
 import { getContract } from '../utils'
 import { useSetRouterType } from '../state/application/hooks'
 

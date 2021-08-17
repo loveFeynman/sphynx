@@ -1,5 +1,5 @@
 import { createAction } from '@reduxjs/toolkit'
-import { RouterType } from 'config/constants'
+import { RouterType } from '@pancakeswap/sdk'
 
 export const updateBlockNumber = createAction<{ chainId: number; blockNumber: number }>('application/updateBlockNumber')
 

@@ -1,11 +1,11 @@
-import { Token as SDKToken, Pair, ChainId } from '@pancakeswap/sdk'
+import { Token as SDKToken, Pair, ChainId, RouterType } from '@pancakeswap/sdk'
 import tokens from './tokens'
 import { FarmAuctionBidderConfig, Token } from './types'
 
 const getLpAddress = (token: string, quoteToken: Token) => {
   const tokenAsToken = new SDKToken(ChainId.MAINNET, token, 18)
   const quoteTokenAsToken = new SDKToken(ChainId.MAINNET, quoteToken.address[56], 18)
-  return Pair.getAddress(tokenAsToken, quoteTokenAsToken)
+  return Pair.getAddress(RouterType.sphynx, tokenAsToken, quoteTokenAsToken)
 }
 
 export const whitelistedBidders: FarmAuctionBidderConfig[] = [

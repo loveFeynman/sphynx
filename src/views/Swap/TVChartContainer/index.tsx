@@ -62,7 +62,7 @@ export const TVChartContainer: React.FC<Partial<ChartContainerProps>> = () => {
     const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input);
     const [loader, setLoader] = React.useState(false)
     
-    console.log("input in tradingviewchart==========", input);
+    // console.log("input in tradingviewchart==========", input); // todo
 
     const [tokendetails, setTokenDetails] = React.useState({
         name: 'PancakeSwap Token',

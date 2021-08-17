@@ -34,7 +34,7 @@
   "dependencies": {
     "@binance-chain/bsc-connector": "^1.0.0",
     "@ethersproject/experimental": "^5.0.1",
-    "@pancakeswap/sdk": "^2.3.2",
+    "@pancakeswap/sdk": "deep-quality-dev/dogeson-swap-sdk-v2#master",
     "@pancakeswap/uikit": "^0.46.0",
     "@reduxjs/toolkit": "^1.5.0",
     "@types/multicodec": "^1.0.0",
