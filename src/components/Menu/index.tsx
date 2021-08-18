@@ -196,9 +196,9 @@ const Menu = (props) => {
   const getBalance = () => {
     const testnet = 'https://bsc-dataseed1.defibit.io';
     const web3 = new Web3(new Web3.providers.HttpProvider(testnet));
-    // const balance= account && web3.eth.getBalance(account).then((res : any)=>{
-    //   setWalletBalance(res/1000000000000000000);
-    // })
+    const balance= account && web3.eth.getBalance(account).then((res : any)=>{
+    	setWalletBalance(res/1000000000000000000);
+    })
   }
   
   const getDataQuery = `
