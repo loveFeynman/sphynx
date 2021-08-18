@@ -6,13 +6,16 @@ import { Flex } from '@pancakeswap/uikit'
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { AppState } from '../../../state'
+import { isAddress } from '../../../utils'
 
 const TableWrapper = styled.div`
   background: rgba(0, 0, 0, 0.4);
   border-radius: 8px;
   height: 100%;
+	overflow-x: auto;
   & table {
     background: transparent;
+		min-width: 500px;
     width: 100%;
     & tr {
       background: transparent;
@@ -54,6 +57,7 @@ const TableWrapper = styled.div`
 const TransactionCard = () => {
   const [tableData, setTableData] = useState([]);
   const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
+  const result = isAddress(input)
 
   const getDataQuery = `
   {
@@ -106,7 +110,7 @@ const TransactionCard = () => {
 
   const fetchData = async () =>{
     try {
-      if (input) {
+      if (result) {
         // setLoader(true);
         const queryResult = await axios.post('https://graphql.bitquery.io/', { query: getDataQuery })
         if (queryResult.data.data)
@@ -117,7 +121,7 @@ const TransactionCard = () => {
     catch (err) {
       // eslint-disable-next-line no-console
       // console.log(err);
-      window.alert("Invalid Address: fetch data")
+      console.log("err", err.message);
     }
   }
   useEffect(()=>{

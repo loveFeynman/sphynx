@@ -28,7 +28,6 @@ export default function LiquidityWidget() {
 
   // fetch the user's balances of all tracked V2 LP tokens
   const trackedTokenPairs = useTrackedTokenPairs()
-  console.log('trackedTokenPairs=', trackedTokenPairs) // todo
   const tokenPairsWithLiquidityTokens = useMemo(
     () => trackedTokenPairs.map((tokens) => ({ liquidityToken: toV2LiquidityToken([routerType, ...tokens]), tokens })),
     [trackedTokenPairs, routerType],

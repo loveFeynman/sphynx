@@ -43,7 +43,8 @@ const CurrencySelectButton = styled(Button).attrs({ variant: 'text', scale: 'xs'
 
   :focus,
   :hover {
-    background-color: ${({ theme }) => darken(0.05, theme.colors.input)};
+    // background-color: ${({ theme }) => darken(0.05, theme.colors.input)};
+    opacity: 0.6;
   }
 
   & > div {
@@ -68,13 +69,18 @@ const CurrencySelectButton = styled(Button).attrs({ variant: 'text', scale: 'xs'
 //   padding: 0.75rem 1rem 0 1rem;
 // `
 
-// const MaxButtonWrapper = styled.div`
-//   & button {
-//     background-color: #8B2A9B;
-//     color: white;
-//     margin-left: 4px;
-//   }
-// `
+const MaxButtonWrapper = styled.div`
+  & button {
+    background-color: #8B2A9B;
+    color: white;
+    margin-left: 4px;
+    &:hover {
+      background-color: #8B2A9B !important;
+      opacity: 0.6;
+    }
+  }
+`
+
 
 const InputPanel = styled.div<{ hideInput?: boolean }>`
   display: flex;
@@ -126,7 +132,7 @@ export default function CurrencyInputPanel({
   const { account } = useActiveWeb3React()
   // const selectedCurrencyBalance = useCurrencyBalance(account ?? undefined, currency ?? undefined)
   const { t } = useTranslation()
-  // const translatedLabel = label || t('Input')
+  const translatedLabel = label || t('Input')
 
   const [onPresentCurrencyModal] = useModal(
     <CurrencySearchModal
@@ -195,10 +201,12 @@ export default function CurrencyInputPanel({
                   onUserInput(val)
                 }}
               />
-              {account && currency && showMaxButton && label !== 'To' && (
-                <Button onClick={onMax} scale="sm" variant="text">
-                  MAX
-                </Button>
+              {account && currency && showMaxButton && translatedLabel !== 'To' && (
+                <MaxButtonWrapper>
+                  <Button onClick={onMax} scale="sm" variant="text">
+                    MAX
+                  </Button>
+                </MaxButtonWrapper>
               )}
             </>
           )}

@@ -25,20 +25,26 @@ const IconWrapper = styled.div<{ size?: number }>`
   }
 `
 
-const StyledWrapper = styled.div`
+const Container = styled.div`
+  width: 100%;
   background-color: rgba(0, 0, 0, 0.4);
   border-radius: 12px 12px 0px 0px;
-  padding: 12px;
+  overflow-x: auto;
+`
+
+const StyledWrapper = styled.div`
+  padding: 8px 16px 0;
   display: flex;
   flex-direction: column;
+  min-width: 760px;
 
   & > div {
     margin: 0 0 12px;
     & > div, & > div > div > div {
       &:first-child {
         color: white;
-        font-size: 16px;
-        line-height: 19px;
+        font-size: 14px;
+        line-height: 16px;
         font-weight: 500;
         margin-bottom: 2px;
       }
@@ -84,6 +90,8 @@ export default function CoinStatsBoard() {
     liquidityV2BNB:''
   });
 
+  const [tokenData, setTokenData] = useState<any>(null)
+
   const [linkIcon, setLinkIcon] = useState('https://r.poocoin.app/smartchain/assets/0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82/logo.png')
     // const pricedecimal=parseFloat(alldata.price).toFixed(5);
     const changedecimal:any=parseFloat(alldata.change).toFixed(3);
@@ -92,19 +100,22 @@ export default function CoinStatsBoard() {
     const liquidityV2decimal=parseFloat(alldata.liquidityV2).toFixed(3);
     const liquidityV2BNBdecimal=parseFloat(alldata.liquidityV2BNB).toFixed(3);
  
-    const getTableData =   () => {
+    const getTableData = () => {
       try{
+        axios.post("https://api.sphynxswap.finance/tokenStats",{address:input})
+          .then((response) => {
+            console.log('ccc', response.data);
+            setTokenData(response.data)
+          });
         axios.post("https://api.sphynxswap.finance/chartStats",{address:input})
-        .then((response) => {
+          .then((response) => {
             setalldata(response.data)
             setLinkIcon(`https://r.poocoin.app/smartchain/assets/${input ? utils.getAddress(input) : '0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82'}/logo.png`);
-        });
-
+          });
       }
       catch(err){
         // eslint-disable-next-line no-console
         console.log(err)
-        
       }
     }
     useEffect(() => {
@@ -113,43 +124,42 @@ export default function CoinStatsBoard() {
     },[input])
 
   return (
-    <StyledWrapper>
-      <Column>
-        <Flex>
-        {/* { */}
-          {/* tokenInfo ? */}
+    <Container>
+      <StyledWrapper>
+        <Column>
+          <Flex>
+          {/* { */}
+            {/* tokenInfo ? */}
             <IconWrapper size={32}>
-              <img src={linkIcon} alt="Coin icon" />
-            </IconWrapper>
-        <div>
-          <Text>Coin</Text>
-          <Text>{input}</Text>
-        </div>
-        </Flex>
-      </Column>
-      <Column>
-        <Text>Price</Text>
-        <Text>2000</Text>
-      </Column>
-      <Column>
-        <Text>24h Change</Text>
-        <Text><h2 className={Math.sign(changedecimal)===-1 ? 'error':'success'}> {changedecimal }%</h2></Text>
-        {/* <Text>{changedecimal}%</Text> */}
-      </Column>
-      <Column>
-        <Text>24h Volume</Text>
-        <Text>$ {volumedecimal}</Text>
-      </Column>
-      <Column>
-        <Text>Liquidity</Text>
-        <Text style={{color:'white'}}> $ {liquidityV2decimal}</Text>
-        <Text>BNB {liquidityV2BNBdecimal} </Text>
-      </Column>
-      <Column>
-        <Text>MarketCap</Text>
-        {/* {tokenInfo ? numeral(tokenInfo.marketCap).format('$0,0.00') : ''} */}
-        <Text>200</Text>
-      </Column>
-    </StyledWrapper>
+                <img src={linkIcon} alt="Coin icon" />
+              </IconWrapper>
+          {tokenData &&
+            <div>
+              <Text>{tokenData.symbol}</Text>
+              <Text>{tokenData.marketCap.substring(tokenData.marketCap.indexOf('$'))}</Text>
+            </div>
+          }
+          </Flex>
+        </Column>
+        <Column>
+          <Text>Price</Text>
+          <Text>$ {Number(alldata.price).toLocaleString()}</Text>
+        </Column>
+        <Column>
+          <Text>24h Change</Text>
+          <Text><h2 className={Math.sign(changedecimal)===-1 ? 'error':'success'}> {changedecimal }%</h2></Text>
+          {/* <Text>{changedecimal}%</Text> */}
+        </Column>
+        <Column>
+          <Text>24h Volume</Text>
+          <Text>$ {Number(volumedecimal).toLocaleString()}</Text>
+        </Column>
+        <Column>
+          <Text>Liquidity</Text>
+          <Text style={{color:'white', fontSize: 14, lineHeight: '16px'}}> $ {Number(liquidityV2decimal).toLocaleString()}</Text>
+          <Text><h2 className='success'>BNB {Number(liquidityV2BNBdecimal).toLocaleString()}</h2></Text>
+        </Column>
+      </StyledWrapper>
+    </Container>
   )
 }

@@ -184,8 +184,6 @@ export const TVChartContainer: React.FC<Partial<ChartContainerProps>> = () => {
             //  limit: 2000,
             // };
 
-
-
             try {
                 const data = await makeApiRequest1(input);
                 // setLoader(true);
@@ -320,7 +318,6 @@ export const TVChartContainer: React.FC<Partial<ChartContainerProps>> = () => {
           {loader ?
           <div style={{ position: 'absolute', left: 567, top: 150 }}>
             <BoxesLoader
-
               boxColor="#8b2a9b"
               shadowColor="#aa8929"
               style={{ marginBottom: "20px", }}
@@ -329,7 +326,6 @@ export const TVChartContainer: React.FC<Partial<ChartContainerProps>> = () => {
             />
           </div>
           : ""
-
         }
         <div
             id={ChartContainerProps.containerId}

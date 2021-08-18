@@ -81,6 +81,10 @@ const ArrowContainer = styled(ArrowWrapper)`
   border: 3px solid rgb(255, 255, 255);
   border-radius: 12px;
   margin: 0;
+  cursor: pointer;
+  &:hover {
+    transform: scale(1.2);
+  }
   & svg {
     width: 14px;
     height: 16px;
