@@ -31,7 +31,7 @@ export interface ChartContainerProps {
     autosize: ChartingLibraryWidgetOptions['autosize'];
     studiesOverrides: ChartingLibraryWidgetOptions['studies_overrides'];
     containerId: ChartingLibraryWidgetOptions['container_id'];
-} 
+}
 
 const ChartContainerProps = {
     symbol: 'AAPL',
@@ -292,7 +292,6 @@ export const TVChartContainer: React.FC<Partial<ChartContainerProps>> = () => {
         //   });
         // });
     }
-
 
     //   const tvWidget: IChartingLibraryWidget | null = null;
     // const getnewWidget=()=>{

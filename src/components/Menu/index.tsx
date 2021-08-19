@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
-import { Link } from 'react-router-dom'
-import { Button } from '@pancakeswap/uikit'
+// import { Link } from 'react-router-dom'
+import { Button, Link } from '@pancakeswap/uikit'
 import { useMenuToggle } from 'state/application/hooks'
 import { useWeb3React } from '@web3-react/core'
 import MainLogo from 'assets/images/MainLogo.png'
@@ -261,7 +261,7 @@ const Menu = (props) => {
 
   return (
     <MenuWrapper toggled={menuToggled}>
-      <Link  to="/swap"><img src={MainLogo} alt='Main Logo' /></Link>
+      <Link href="/swap"><img src={MainLogo} alt='Main Logo' /></Link>
       <MenuIconWrapper>
         {!menuToggled && <span>Main Menu</span>
         }
@@ -319,9 +319,15 @@ const Menu = (props) => {
           <p><b>Socials</b></p>
           <SocialIconsWrapper toggled={menuToggled}>
             <div>
-              <TwitterIcon />
-              <SocialIcon2 />
-              <TelegramIcon />
+              <Link external href="https://twitter.com/sphynxswap?s=21">
+                <TwitterIcon />
+              </Link>
+              <Link external href="https://Www.Sphynxtoken.co">
+                <SocialIcon2 />
+              </Link>
+              <Link external href="https://t.me/sphynxswap">
+                <TelegramIcon />
+              </Link>
             </div>
           </SocialIconsWrapper>
         </SocialWrapper>

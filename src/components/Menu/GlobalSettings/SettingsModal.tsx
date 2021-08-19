@@ -96,9 +96,10 @@ const SettingsModal: React.FC<InjectedModalProps> = ({ onDismiss }) => {
               ml="4px"
             />
           </Flex>
-          <PancakeToggleWrapper>
+          <Toggle id="toggle-set-audio-mode-button" scale="md" checked={audioPlay} onChange={toggleSetAudioMode} />
+          {/* <PancakeToggleWrapper>
             <PancakeToggle checked={audioPlay} onChange={toggleSetAudioMode} scale="md" />
-          </PancakeToggleWrapper>
+          </PancakeToggleWrapper> */}
         </Flex>
       </Flex>
     </Modal>

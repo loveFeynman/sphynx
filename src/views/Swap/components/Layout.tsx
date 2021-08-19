@@ -3,6 +3,7 @@ import styled from 'styled-components'
 const Cards = styled.div`
   display: flex;
   flex-wrap: wrap;
+  padding-bottom: 20px;
   & > div {
     width: 100%;
     margin-bottom: 24px;

@@ -22,7 +22,7 @@ import { ReactComponent as HelpIcon } from 'assets/svg/icon/HelpIcon.svg'
 import { ReactComponent as HelpIcon1 } from 'assets/svg/icon/HelpIcon1.svg'
 import BinanceLogo from 'assets/images/binance-logo.png'
 import SwapBanner from 'assets/images/DogeBanner1.png'
-import FarmBanner from 'assets/images/SphynxFarmbanner.jpg'
+import FarmBanner from 'assets/images/SphynxFarmbanner.png'
 import StakingBanner from 'assets/images/SphynxStakebanner.jpg'
 
 // import moment from 'moment';
@@ -226,7 +226,7 @@ const BottomCard = styled.div`
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center center;
-  background-color: rgba(0, 0, 0, 0.4);
+  background-color: transparent; // rgba(0, 0, 0, 0.4);
   height: 480px;
   filter: drop-shadow(0 2px 12px rgba(37, 51, 66, 0.15));
   border-radius: 8px;
@@ -242,8 +242,10 @@ const BottomCard = styled.div`
     top: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.4);
+    background-color: transparent; // rgba(0, 0, 0, 0.4);
     z-index: 1;
+    border: 1px solid rgba(0,0,0,0.4);
+    border-radius: 12px;
   }
   & h1, & button {
     position: absolute;
