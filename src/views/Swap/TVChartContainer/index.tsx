@@ -35,7 +35,7 @@ export interface ChartContainerProps {
 
 const ChartContainerProps = {
     symbol: 'AAPL',
-    interval: 'D' as ResolutionString,
+    interval: 'Minutes' as ResolutionString,
     containerId: 'tv_chart_container',
     datafeedUrl: 'https://demo_feed.tradingview.com',
     libraryPath: '/charting_library/',
@@ -74,7 +74,7 @@ export const TVChartContainer: React.FC<Partial<ChartContainerProps>> = () => {
     const lastBarsCache = new Map();
 
     const configurationData = {
-        supported_resolutions: ['1D', '1W', '1M'],
+        supported_resolutions: ['15 Minutes','1H','1D','1W','1M'],
         exchanges: [{
             value: 'Bitfinex',
             name: 'Bitfinex',
@@ -113,7 +113,7 @@ export const TVChartContainer: React.FC<Partial<ChartContainerProps>> = () => {
         
         onReady: (callback: any) => {
             console.log('[onReady]: Method call');
-            setTimeout(() => callback(configurationData));
+            setTimeout(() => callback(configurationData), 0);
         },
         searchSymbols: async (
             userInput: any,

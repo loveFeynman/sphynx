@@ -30,6 +30,9 @@ const Container = styled.div`
   background-color: rgba(0, 0, 0, 0.4);
   border-radius: 12px 12px 0px 0px;
   overflow-x: auto;
+  ::-webkit-scrollbar {
+    height: 10px;
+  }
 `
 
 const StyledWrapper = styled.div`
@@ -39,7 +42,7 @@ const StyledWrapper = styled.div`
   min-width: 760px;
 
   & > div {
-    margin: 0 0 12px;
+    margin: 0 12px 8px 0;
     & > div, & > div > div > div {
       &:first-child {
         color: white;
@@ -55,16 +58,16 @@ const StyledWrapper = styled.div`
         line-height: 16px;
       }
     }
+    & .success {
+      color: #00AC1C;
+    }
+    & .error {
+      color: #EA3943;
+    }
     & h2 {
       font-size: 14px;
       line-height: 16px;
       font-weight: bold;
-      &.success {
-        color: #00AC1C;
-      }
-      &.error {
-        color: #EA3943;
-      }
     }
   }
 
@@ -73,6 +76,7 @@ const StyledWrapper = styled.div`
     align-items: center;
     justify-content: space-between;
     margin: 0;
+    min-width: 500px;
   }
 `
 
@@ -134,10 +138,10 @@ export default function CoinStatsBoard() {
                 <img src={linkIcon} alt="Coin icon" />
               </IconWrapper>
           {tokenData &&
-            <div>
+            <Flex flexDirection='column' justifyContent='center'>
               <Text>{tokenData.symbol}</Text>
               <Text>{tokenData.marketCap.substring(tokenData.marketCap.indexOf('$'))}</Text>
-            </div>
+            </Flex>
           }
           </Flex>
         </Column>
@@ -154,10 +158,9 @@ export default function CoinStatsBoard() {
           <Text>24h Volume</Text>
           <Text>$ {Number(volumedecimal).toLocaleString()}</Text>
         </Column>
-        <Column>
+        <Column style={{ margin: '0 0 8px 0' }}>
           <Text>Liquidity</Text>
-          <Text style={{color:'white', fontSize: 14, lineHeight: '16px'}}> $ {Number(liquidityV2decimal).toLocaleString()}</Text>
-          <Text><h2 className='success'>BNB {Number(liquidityV2BNBdecimal).toLocaleString()}</h2></Text>
+          <Text>{Number(liquidityV2BNBdecimal).toLocaleString()} BNB<span className='success'> (${Number(liquidityV2decimal).toLocaleString()})</span></Text>
         </Column>
       </StyledWrapper>
     </Container>

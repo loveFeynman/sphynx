@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 
-import { Text, Button } from '@pancakeswap/uikit'
+import { Text, Button, Link } from '@pancakeswap/uikit'
 
 import { ReactComponent as TwitterIcon } from 'assets/svg/icon/TwitterIcon.svg'
 // eslint-disable-next-line import/no-cycle
@@ -188,15 +188,21 @@ export default function ContractPanel({value}: ContractPanelProps){
               })}
               
             </span> : 
-              <MenuItem >no record</MenuItem>}
+              <span style={{ padding: '0 16px' }}>no record</span>}
             </Menu>:""}
           </MenuWrapper>
           <Button scale='sm' onClick={submitFuntioncall} disabled={show} >Submit</Button>
         </ContractCard>
         <SocialIconsWrapper>
-          <TwitterIcon />
-          <SocialIcon2 />
-          <TelegramIcon />
+          <Link external href="https://twitter.com/sphynxswap?s=21">
+            <TwitterIcon />
+          </Link>
+          <Link external href="https://www.sphynxtoken.co">
+            <SocialIcon2 />
+          </Link>
+          <Link external href="https://t.me/sphynxswap">
+            <TelegramIcon />
+          </Link>
         </SocialIconsWrapper>
       </ContractPanelWrapper>
     </>

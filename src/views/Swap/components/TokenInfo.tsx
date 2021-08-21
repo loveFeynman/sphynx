@@ -3,8 +3,11 @@ import styled from 'styled-components'
 import { Flex, Text } from '@pancakeswap/uikit'
 import { ReactComponent as MoreIcon2 } from 'assets/svg/icon/MoreIcon2.svg' 
 import axios from 'axios';
-import { useSelector } from 'react-redux';
-import { AppState } from '../../../state'
+import { useSelector, useDispatch } from 'react-redux';
+
+import { AppState, AppDispatch } from '../../../state'
+import { selectCurrency, Field } from '../../../state/swap/actions';
+import { isAddress } from '../../../utils'
 
 const TextWrapper = styled.div`
   border-top: 1px solid rgba(255, 255, 255, 0.1);
@@ -50,12 +53,11 @@ const TokenInfoContainer = styled.div`
 `
 // {tokenInfo}: {tokenInfo?: TokenDetailProps | null}
 export default function TokenInfo() {
-  
-  //  const input= localStorage.getItem('InputAddress');
-  //   console.log("inputaddress1",input);
-    const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
+  const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
+  const result = isAddress(input)
+  // eslint-disable-next-line no-console
 
-    // console.log("input in chart",input);
+  const dispatch = useDispatch<AppDispatch>()
 
   const [alldata, setalldata] = useState({
     holders : '',
@@ -65,13 +67,20 @@ export default function TokenInfo() {
     totalSupply : ''
   });
 
-  const getTableData =   () => {
+  const getTableData = async () => {
     try{
-      axios.post("https://api.sphynxswap.finance/tokenStats",{address:input})
-        .then((response) => {
+      if (result) {
+        await axios.post("https://api.sphynxswap.finance/tokenStats", { address: input })
+          .then((response) => {
             setalldata(response.data)
-        });
-
+              dispatch(
+              selectCurrency({
+                field : Field.INPUT,
+                currencyId : input
+              })
+            )
+          });
+      }
     }
     catch(err){
        // eslint-disable-next-line no-console

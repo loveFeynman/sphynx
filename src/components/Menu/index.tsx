@@ -261,7 +261,7 @@ const Menu = (props) => {
 
   return (
     <MenuWrapper toggled={menuToggled}>
-      <Link href="/swap"><img src={MainLogo} alt='Main Logo' /></Link>
+      <Link external href="https://sphynxtoken.co"><img src={MainLogo} alt='Main Logo' /></Link>
       <MenuIconWrapper>
         {!menuToggled && <span>Main Menu</span>
         }
@@ -322,7 +322,7 @@ const Menu = (props) => {
               <Link external href="https://twitter.com/sphynxswap?s=21">
                 <TwitterIcon />
               </Link>
-              <Link external href="https://Www.Sphynxtoken.co">
+              <Link external href="https://www.sphynxtoken.co">
                 <SocialIcon2 />
               </Link>
               <Link external href="https://t.me/sphynxswap">

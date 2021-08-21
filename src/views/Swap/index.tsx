@@ -25,7 +25,7 @@ import SwapBanner from 'assets/images/DogeBanner1.png'
 import FarmBanner from 'assets/images/SphynxFarmbanner.png'
 import StakingBanner from 'assets/images/SphynxStakebanner.jpg'
 
-// import moment from 'moment';
+import moment from 'moment';
 // import axios from 'axios';
 
 import AddressInputPanel from './components/AddressInputPanel'
@@ -281,7 +281,6 @@ const BottomCard = styled.div`
 export default function Swap({ history }: RouteComponentProps) {
   const [address, setaddress] = useState('');
   function handleChange(value) {
-    console.log("console parent::::" , address)
     setaddress(value);
   }
 
@@ -568,117 +567,115 @@ export default function Swap({ history }: RouteComponentProps) {
   }, [timeNow, countDownDeadline])
   // const [historicalData, setHistoricalData = useState<HistoricalDataProps[] | null>(null)
 
-  // const countSeconds = useMemo(() => moment(countDownDeadline).diff(moment(timeNow), 'seconds')
-  // , [timeNow, countDownDeadline])
+  const countSeconds = useMemo(() => moment(countDownDeadline).diff(moment(timeNow), 'seconds')
+  , [timeNow, countDownDeadline])
 
-  useEffect(() => {
-    const init = async () => {
-      // const tokens = await getHotTokens()
-      // setHotTokens(tokens.data.tokens)
-      const hotTokendata = [
-        {
-          name: 'Cumino',
-          symbol: 'Cumino',
-          dexId: '117bccac249c0c5fcde923a80ac0af53',
-          contractAddress: '0xfec01d8cefc67ed90d8fcad445ef04603ad546d2',
-        },
-        {
-          name: 'UFO',
-          symbol: 'UFO',
-          dexId: '117bccac249c0c5fcde923a80ac0af53',
-          contractAddress: '0xfec01d8cefc67ed90d8fcad445ef04603ad546d2',
-          direction: 'up'
-        },
-        {
-          name: 'Astra',
-          symbol: 'Astra',
-          dexId: '117bccac249c0c5fcde923a80ac0af53',
-          contractAddress: '0xfec01d8cefc67ed90d8fcad445ef04603ad546d2',
-          direction: 'up'
-        },
-        {
-          name: 'Starl',
-          symbol: 'Starl',
-          dexId: '117bccac249c0c5fcde923a80ac0af53',
-          contractAddress: '0xfec01d8cefc67ed90d8fcad445ef04603ad546d2',
-        },
-        {
-          name: 'Floki',
-          symbol: 'Floki',
-          dexId: '117bccac249c0c5fcde923a80ac0af53',
-          contractAddress: '0xfec01d8cefc67ed90d8fcad445ef04603ad546d2',
-          direction: 'down'
-        },
-        {
-          name: 'Dext',
-          symbol: 'Dext',
-          dexId: '117bccac249c0c5fcde923a80ac0af53',
-          contractAddress: '0xfec01d8cefc67ed90d8fcad445ef04603ad546d2',
-        },
-        {
-          name: 'Dext',
-          symbol: 'Dext',
-          dexId: '117bccac249c0c5fcde923a80ac0af53',
-          contractAddress: '0xfec01d8cefc67ed90d8fcad445ef04603ad546d2',
-          direction: 'up'
-        },
-        {
-          name: 'F9',
-          symbol: 'F9',
-          dexId: '117bccac249c0c5fcde923a80ac0af53',
-          contractAddress: '0xfec01d8cefc67ed90d8fcad445ef04603ad546d2',
-          direction: 'down'
-        },
-        {
-          name: 'BTC',
-          symbol: 'BTC',
-          dexId: '117bccac249c0c5fcde923a80ac0af53',
-          contractAddress: '0xfec01d8cefc67ed90d8fcad445ef04603ad546d2',
-        },
-        {
-          name: 'THUN',
-          symbol: 'THUN',
-          dexId: '117bccac249c0c5fcde923a80ac0af53',
-          contractAddress: '0xfec01d8cefc67ed90d8fcad445ef04603ad546d2',
-        }
-      ]
-      setHotTokens(hotTokendata)
+  // useEffect(() => {
+  //   const init = async () => {
+  //     // const tokens = await getHotTokens()
+  //     // setHotTokens(tokens.data.tokens)
+  //     const hotTokendata = [
+  //       {
+  //         name: 'Cumino',
+  //         symbol: 'Cumino',
+  //         dexId: '117bccac249c0c5fcde923a80ac0af53',
+  //         contractAddress: '0xfec01d8cefc67ed90d8fcad445ef04603ad546d2',
+  //       },
+  //       {
+  //         name: 'UFO',
+  //         symbol: 'UFO',
+  //         dexId: '117bccac249c0c5fcde923a80ac0af53',
+  //         contractAddress: '0xfec01d8cefc67ed90d8fcad445ef04603ad546d2',
+  //         direction: 'up'
+  //       },
+  //       {
+  //         name: 'Astra',
+  //         symbol: 'Astra',
+  //         dexId: '117bccac249c0c5fcde923a80ac0af53',
+  //         contractAddress: '0xfec01d8cefc67ed90d8fcad445ef04603ad546d2',
+  //         direction: 'up'
+  //       },
+  //       {
+  //         name: 'Starl',
+  //         symbol: 'Starl',
+  //         dexId: '117bccac249c0c5fcde923a80ac0af53',
+  //         contractAddress: '0xfec01d8cefc67ed90d8fcad445ef04603ad546d2',
+  //       },
+  //       {
+  //         name: 'Floki',
+  //         symbol: 'Floki',
+  //         dexId: '117bccac249c0c5fcde923a80ac0af53',
+  //         contractAddress: '0xfec01d8cefc67ed90d8fcad445ef04603ad546d2',
+  //         direction: 'down'
+  //       },
+  //       {
+  //         name: 'Dext',
+  //         symbol: 'Dext',
+  //         dexId: '117bccac249c0c5fcde923a80ac0af53',
+  //         contractAddress: '0xfec01d8cefc67ed90d8fcad445ef04603ad546d2',
+  //       },
+  //       {
+  //         name: 'Dext',
+  //         symbol: 'Dext',
+  //         dexId: '117bccac249c0c5fcde923a80ac0af53',
+  //         contractAddress: '0xfec01d8cefc67ed90d8fcad445ef04603ad546d2',
+  //         direction: 'up'
+  //       },
+  //       {
+  //         name: 'F9',
+  //         symbol: 'F9',
+  //         dexId: '117bccac249c0c5fcde923a80ac0af53',
+  //         contractAddress: '0xfec01d8cefc67ed90d8fcad445ef04603ad546d2',
+  //         direction: 'down'
+  //       },
+  //       {
+  //         name: 'BTC',
+  //         symbol: 'BTC',
+  //         dexId: '117bccac249c0c5fcde923a80ac0af53',
+  //         contractAddress: '0xfec01d8cefc67ed90d8fcad445ef04603ad546d2',
+  //       },
+  //       {
+  //         name: 'THUN',
+  //         symbol: 'THUN',
+  //         dexId: '117bccac249c0c5fcde923a80ac0af53',
+  //         contractAddress: '0xfec01d8cefc67ed90d8fcad445ef04603ad546d2',
+  //       }
+  //     ]
+  //     setHotTokens(hotTokendata)
       
-      const currentTokenInfo = {
-        iconSmall: BinanceLogo,
-        iconLarge: BinanceLogo,
-        iconThumb: BinanceLogo,
-        name: 'BNB',
-        symbol: 'BNB',
-        contractAddress: '0xfec01d8cefc67ed90d8fcad445ef04603ad546d2',
-        website: '',
-        price: 0.984754,
-        priceChange24H: 2.5,
-        volumne24H: 177938,
-        liquidity: 5359493,
-        marketCap: 13377791,
-        totalSupply: 0,
-        bnbLPHoldings: 0,
-        bnbLPHoldingsUSD: 0,
-        transactions: 0,
-        holders: 0
-      }
-      setCurrentToken(currentTokenInfo);
-      // TODO, Get first token info
-      // const tokenInfo = await getTokenInfo(tokens.data.tokens[3].dexId)
-      // setCurrentToken(tokenInfo.data.token ?? null)
+  //     const currentTokenInfo = {
+  //       iconSmall: BinanceLogo,
+  //       iconLarge: BinanceLogo,
+  //       iconThumb: BinanceLogo,
+  //       name: 'BNB',
+  //       symbol: 'BNB',
+  //       contractAddress: '0xfec01d8cefc67ed90d8fcad445ef04603ad546d2',
+  //       website: '',
+  //       price: 0.984754,
+  //       priceChange24H: 2.5,
+  //       volumne24H: 177938,
+  //       liquidity: 5359493,
+  //       marketCap: 13377791,
+  //       totalSupply: 0,
+  //       bnbLPHoldings: 0,
+  //       bnbLPHoldingsUSD: 0,
+  //       transactions: 0,
+  //       holders: 0
+  //     }
+  //     setCurrentToken(currentTokenInfo);
+  //     // TODO, Get first token info
+  //     // const tokenInfo = await getTokenInfo(tokens.data.tokens[3].dexId)
+  //     // setCurrentToken(tokenInfo.data.token ?? null)
 
-      // const historical = await getHistoricalData(tokenInfo.geckoId, 200)
-      // setHistoricalData(historical.data.bars ?? null)
-    }
-    init()
-  }, [])
+  //     // const historical = await getHistoricalData(tokenInfo.geckoId, 200)
+  //     // setHistoricalData(historical.data.bars ?? null)
+  //   }
+  //   init()
+  // }, [])
 
   return (
     <Page>
-      <HotTokenBar
-        tokens={hotTokens}
-      />
+      <HotTokenBar />
       <SwapRightBanner>
         <img src={SwapBanner} alt='Swap Banner' />
       </SwapRightBanner>
