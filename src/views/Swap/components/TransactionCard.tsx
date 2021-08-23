@@ -107,7 +107,6 @@ const TransactionCard = () => {
       quotePrice
       }
     }
-    
   }`
 
   const fetchData = async () =>{

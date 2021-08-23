@@ -196,7 +196,7 @@ export function useRouterAddress() {
   return routerType === RouterType.pancake ? PANCAKE_ROUTER_ADDRESS : ROUTER_ADDRESS
 }
 
-export function usePancakeswapContract(): Contract | null {
+export function usePcsFactoryContract(): Contract | null {
   const { chainId } = useActiveWeb3React()
   return useContract(chainId && PANCAKE_FACTORY_ADDRESSES[chainId], PANCAKE_FACTORY_ABI, false)
 }

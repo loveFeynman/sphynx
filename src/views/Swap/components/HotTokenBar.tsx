@@ -141,7 +141,7 @@ export default function HotTokenBar() {
  
      }
    }
-   console.log("data in hotbar==================================",data)
+   // console.log("data in hotbar==================================",data)
   React.useEffect(()=>{
    fetchData()
   // eslint-disable-next-line react-hooks/exhaustive-deps
