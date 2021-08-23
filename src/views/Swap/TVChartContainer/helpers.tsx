@@ -9,10 +9,10 @@ export async function makeApiRequest(path:any) {
         throw new Error(`CryptoCompare request error: ${error.status}`);
     }
 }
-export async function makeApiRequest1(path:any) {
+export async function makeApiRequest1(path:any, routerVersion: any) {
     try {
         // console.log("here in api reuest",path)
-        const response = await fetch(`https://api.sphynxswap.finance/chart/${path}`, {
+        const response = await fetch(`https://api.sphynxswap.finance/${routerVersion}/chart/${path}`, {
             method : "GET",
             headers: {
                 'Content-Type': 'application/json'

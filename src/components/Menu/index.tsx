@@ -151,7 +151,7 @@ const SocialWrapper = styled.div`
 
 const TokenListWrapper = styled.div`
   overflow-y: auto;
-  max-height: 300px;
+  max-height: 330px;
 `
 
 const SocialIconsWrapper = styled.div<{toggled: boolean}>`
@@ -290,17 +290,14 @@ const Menu = (props) => {
          { 
          account?
          <div>
-
-         
           <TokenListWrapper>
-          {tokenData}
-        </TokenListWrapper>
-         <ButtonWrapper style={{ margin: '10px 0' }} onClick={() => {setShowAllToken(!showAllToken)}}>
-         <p><b>{ showAllToken ? 'Show Some Tokens' : 'Show All Tokens' }</b></p>
-       </ButtonWrapper>
-       </div>
+            {showAllToken ? tokenData : tokenData.slice(0, 3)}
+          </TokenListWrapper>
+          <ButtonWrapper style={{ margin: '10px 0' }} onClick={() => {setShowAllToken(!showAllToken)}}>
+            <p><b>{ showAllToken ? 'Show Some Tokens' : 'Show All Tokens' }</b></p>
+          </ButtonWrapper>
+        </div>
         :""
-
          }
                  
         {

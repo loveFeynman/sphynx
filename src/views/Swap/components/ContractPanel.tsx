@@ -45,11 +45,36 @@ const ContractCard = styled(Text)`
   display: flex;
   align-items: center;
   margin: 12px 0;
+  & button:last-child {
+    background: #8B2A9B;
+  }
+  ${({ theme }) => theme.mediaQueries.md} {
+    margin: 0;
+  }
+`
+const MenuWrapper = styled.div`
+  position: absolute;
+  width: 100%;
+  background: #131313;
+  color: #eee;
+  margin-top: 12px;
+  overflow-y: auto;
+  max-height: 100vh;
+  ${({ theme }) => theme.mediaQueries.md} {
+    max-height: 600px;
+  }
+`
+const SearchInputWrapper = styled.div`
+  flex: 1;
+  position: relative;
+  z-index: 2;
+  ${({ theme }) => theme.mediaQueries.sm} {
+    min-width: 420px;
+  }
   & input {
     background: transparent;
     border: none;
-    flex: 1;
-    overflow: hidden;
+    width: 100%;
     box-shadow: none;
     outline: none;
     color: #F7931A;
@@ -57,27 +82,6 @@ const ContractCard = styled(Text)`
     &::placeholder {
       color: red
     }
-  }
-  & button:last-child {
-    background: #8B2A9B;
-  }
-  ${({ theme }) => theme.mediaQueries.sm} {
-    & input {
-      min-width: 420px;
-    }
-  }
-  ${({ theme }) => theme.mediaQueries.md} {
-    margin: 0;
-  }
-`
-
-const MenuWrapper = styled.div`
-  & button {
-    background: transparent !important;
-    outline: none;
-    box-shadow: none !important;
-    padding: 0 12px;
-    border: none;
   }
 `
 
@@ -92,6 +96,16 @@ const SocialIconsWrapper = styled.div`
     margin: 0 11px;
   }
 `
+
+const ContractPanelOverlay = styled.div`
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  left: 0;
+  top: 0;
+`
+
 // {token} : ContractPanelProps) 
 export default function ContractPanel({value}: ContractPanelProps){
 
@@ -108,14 +122,14 @@ export default function ContractPanel({value}: ContractPanelProps){
   const handlerChange = (e: any) => {
     try {
       
-        axios.get(`https://api.sphynxswap.finance/search/${e.target.value}`)
-          .then((response) => {
-              // setalldata(response.data)
-              // console.log("response",response.data);
-              setdata(response.data);
-          })
+      axios.get(`https://api.sphynxswap.finance/search/${e.target.value}`)
+        .then((response) => {
+          // setalldata(response.data)
+          // console.log("response",response.data);
+          setdata(response.data);
+        })
     } catch(err) {
-        // eslint-disable-next-line no-console
+      // eslint-disable-next-line no-console
       // console.log(err);
       // alert("Invalid Address")
       console.log("errr",err.message);
@@ -169,28 +183,25 @@ export default function ContractPanel({value}: ContractPanelProps){
           <CopyHelper toCopy={value ? value.contractAddress : addressSearch}>
             &nbsp;
           </CopyHelper>
-          <input placeholder='' value={addressSearch} onKeyPress={handleKeyPress} onChange={handlerChange}  />
-          <MenuWrapper>
-            <Button aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick}>
-              <ArrowDropDownIcon/>
-            </Button>
-              {showDrop ? <Menu
-              id="simple-menu"
-              anchorEl={anchorEl}
-              keepMounted
-              open={Boolean(anchorEl)}
-              onClose={handleClose}
-            >{data.length > 0 ?
-            <span>
-              {data?.map((item:any )=>{
-                //  {console.log('d==>', item)}
-                return <MenuItem onClick={()=> dispatch(typeInput({ input: item.address })) && setAnchorEl(null)}>{item.name}<br/>{item.symbol}<br/>{item.address}</MenuItem>
-              })}
-              
-            </span> : 
-              <span style={{ padding: '0 16px' }}>no record</span>}
-            </Menu>:""}
-          </MenuWrapper>
+          <SearchInputWrapper>
+            <input placeholder='' value={addressSearch} onFocus={() => setShowDrop(true)} onKeyPress={handleKeyPress} onChange={handlerChange} />
+            {
+            showDrop &&
+            <MenuWrapper>
+              {/* <Button aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick}>
+                <ArrowDropDownIcon />
+              </Button> */}
+              {data.length > 0 ?
+                <span>
+                  {data?.map((item: any) => {
+                    return <MenuItem onClick={() => { dispatch(typeInput({ input: item.address })) }}>{item.name}<br />{item.symbol}<br />{item.address}</MenuItem>
+                  })}
+
+                </span> :
+                <span style={{ padding: '0 16px' }}>no record</span>}
+            </MenuWrapper>
+            }
+          </SearchInputWrapper>
           <Button scale='sm' onClick={submitFuntioncall} disabled={show} >Submit</Button>
         </ContractCard>
         <SocialIconsWrapper>
@@ -204,6 +215,7 @@ export default function ContractPanel({value}: ContractPanelProps){
             <TelegramIcon />
           </Link>
         </SocialIconsWrapper>
+        { showDrop && <ContractPanelOverlay onClick={() => setShowDrop(false) } />}
       </ContractPanelWrapper>
     </>
   )

@@ -9,10 +9,10 @@ import {
     ResolutionString,
 } from '../../../charting_library';
 import axios from 'axios';
-import { BoxesLoader } from "react-awesome-loaders";
 import { makeApiRequest, generateSymbol, makeApiRequest1 } from './helpers';
 import { useSelector } from 'react-redux';
 import { AppDispatch, AppState } from '../../../state'
+import { isAddress } from '../../../utils'
 
 
 // eslint-disable-next-line import/extensions
@@ -56,8 +56,11 @@ function getLanguageFromURL(): LanguageCode | null {
 
 export const TVChartContainer: React.FC<Partial<ChartContainerProps>> = () => {
 
-    const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input);
-
+    const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
+    const routerVersion = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.routerVersion)
+    
+    const result = isAddress(input)
+    
     const [tokendetails, setTokenDetails] = React.useState({
         name: 'PancakeSwap Token',
         pair: 'Cake/BNB',
@@ -73,8 +76,8 @@ export const TVChartContainer: React.FC<Partial<ChartContainerProps>> = () => {
             value: 'Bitfinex',
             name: 'Bitfinex',
             desc: 'Bitfinex',
-        }
-            // ...
+        }   
+            // Bitfinex
         ],
     };
     async function getAllSymbols() {
@@ -179,23 +182,21 @@ export const TVChartContainer: React.FC<Partial<ChartContainerProps>> = () => {
             // };
 
             try {
-                const data = await makeApiRequest1(input);
-                // setLoader(true);
-                if (!firstDataRequest) {
-                    // "noData" should be set if there is no data in the requested period.
-                    onHistoryCallback([], {
-                        noData: true,
-                    });
-                    return;
+                const data = await makeApiRequest1(input, routerVersion);
+                if (result) {
+                    // setLoader(true);
+                    if (!firstDataRequest) {
+                        // "noData" should be set if there is no data in the requested period.
+                        onHistoryCallback([], {
+                            noData: true,
+                        });
+                        return;
+                    }
                 }
-
-                console.log("responsedata", data);
 
                 let bars: any = [];
                 // if(data.data.data){
                 data.map((bar: any, i: any) => {
-                    // console.log("time from api",bar.time);
-
                     const obj = {
                         time: new Date(bar.time).toString(),
                         low: (bar.low)*(bar.baseLow),
@@ -209,12 +210,10 @@ export const TVChartContainer: React.FC<Partial<ChartContainerProps>> = () => {
                         obj.isLastBar = true
                         obj.isBarClosed = false
                     }
-                    // console.log("here==",obj)
                     bars = [...bars, obj];
                     return {}
                 })
                 //   }
-                console.log("here===========", bars)
                 // eslint-disable-next-line no-console
 
                 // if (firstDataRequest) {
@@ -224,7 +223,6 @@ export const TVChartContainer: React.FC<Partial<ChartContainerProps>> = () => {
                 });
                 // setLoader(false);
                 // }
-                // console.log(`[getBars]: returned ${bars.length} bar(s)`);
                 onHistoryCallback(bars, {
                     noData: false,
                 });
@@ -232,7 +230,7 @@ export const TVChartContainer: React.FC<Partial<ChartContainerProps>> = () => {
             }
             catch (error) {
 
-                console.log('[getBars]: Get error', error);
+                console.log('[getBars]: Get error', error.message);
                 onErrorCallback(error);
             }
         },
@@ -267,7 +265,7 @@ export const TVChartContainer: React.FC<Partial<ChartContainerProps>> = () => {
             studies_overrides: ChartContainerProps.studiesOverrides,
         };
 
-        tvWidget = new widget(widgetOptions);
+        tvWidget = await new widget(widgetOptions);
         // this.tvWidget = widget
 
         //  tvWidget.onChartReady(() => {

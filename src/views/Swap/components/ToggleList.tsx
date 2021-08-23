@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { useDispatch } from 'react-redux'
 import styled from 'styled-components'
 
 import { Text, Button, Link } from '@pancakeswap/uikit'
@@ -7,6 +8,7 @@ import './dropdown.css'
 import axios from 'axios';
 import {Button as materialButton,Menu,MenuItem} from '@material-ui/core';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
+import { typeRouterVersion } from '../../../state/input/actions'
 
 const MenuWrapper = styled.div`
   padding: 0 4px;
@@ -38,18 +40,20 @@ const MenuTitle = styled.div`
 
 export default function ToggleList() {
 
-  const [anchorEl, setAnchorEl] = useState(null);
-  const [showDrop, setShowDrop] = useState(false);
-  const [selectedItem, setSelectedItem] = useState('');
-  const data = ["V1", "V2"];
+  const dispatch = useDispatch()
+
+  const [anchorEl, setAnchorEl] = useState(null)
+  const [showDrop, setShowDrop] = useState(false)
+  const [selectedItem, setSelectedItem] = useState('')
+  const data = ["V1", "V2"]
 
   const handleClick = (event:any) => {
-    setAnchorEl(event.currentTarget);
-    setShowDrop(true);
+    setAnchorEl(event.currentTarget)
+    setShowDrop(true)
   };
   const handleClose = () => {
-    setAnchorEl(null);
-  };
+    setAnchorEl(null)
+  }
     
   return (
     <>
@@ -69,10 +73,10 @@ export default function ToggleList() {
         >{data.length > 0 ?
         <span>
           {data?.map((item:any )=>{
-            return <MenuItem onClick={()=> {
+            return <MenuItem key={item} onClick={()=> {
               setSelectedItem(item)
               setAnchorEl(null)
-              console.log(selectedItem)
+              dispatch(typeRouterVersion({ routerVersion: item }))
             }}>{item}</MenuItem>
           })}
         </span> : 
