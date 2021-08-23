@@ -44,6 +44,7 @@ import Cards from './components/Layout'
 import CoinStatsBoard from './components/CoinStatsBoard'
 import TransactionCard from './components/TransactionCard'
 import ContractPanel from './components/ContractPanel'
+import ToggleList from './components/ToggleList'
 
 import LiquidityWidget from '../Pool/LiquidityWidget'
 import {TVChartContainer} from './TVChartContainer'
@@ -904,6 +905,7 @@ export default function Swap({ history }: RouteComponentProps) {
           <FullHeightColumn>
             <ContractPanel value={handleChange} />
              {/* tokenInfo={currentToken} */}
+            <ToggleList />
             <CoinStatsBoard />
             <TVChartContainer />
           </FullHeightColumn>

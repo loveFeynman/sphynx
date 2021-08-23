@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux';
+import ReactLoading from 'react-loading';
 import {utils} from "ethers";
 import axios from 'axios';
 import styled from 'styled-components'
 import { Text, Flex } from '@pancakeswap/uikit'
 import Column from 'components/Column'
+import { isAddress } from 'utils'
 import { AppState } from '../../../state'
 
 const IconWrapper = styled.div<{ size?: number }>`
@@ -84,7 +86,8 @@ export default function CoinStatsBoard() {
   // const theme = useContext(ThemeContext)
 
   const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input);
-  // console.log("input in marketcap==========",input);
+  const result = isAddress(input)
+  
   const [alldata, setalldata] = useState({
     address : '',
     price : '',
@@ -97,15 +100,16 @@ export default function CoinStatsBoard() {
   const [tokenData, setTokenData] = useState<any>(null)
 
   const [linkIcon, setLinkIcon] = useState('https://r.poocoin.app/smartchain/assets/0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82/logo.png')
-    // const pricedecimal=parseFloat(alldata.price).toFixed(5);
-    const changedecimal:any=parseFloat(alldata.change).toFixed(3);
-    // const set=Math.sign(changedecimal);
-    const volumedecimal=parseFloat(alldata.volume).toFixed(3);
-    const liquidityV2decimal=parseFloat(alldata.liquidityV2).toFixed(3);
-    const liquidityV2BNBdecimal=parseFloat(alldata.liquidityV2BNB).toFixed(3);
- 
-    const getTableData = () => {
-      try{
+  // const pricedecimal=parseFloat(alldata.price).toFixed(5);
+  const changedecimal:any=parseFloat(alldata.change).toFixed(3);
+  // const set=Math.sign(changedecimal);
+  const volumedecimal=parseFloat(alldata.volume).toFixed(3);
+  const liquidityV2decimal=parseFloat(alldata.liquidityV2).toFixed(3);
+  const liquidityV2BNBdecimal=parseFloat(alldata.liquidityV2BNB).toFixed(3);
+
+  const getTableData = () => {
+    try{
+      if (result) {
         axios.post("https://api.sphynxswap.finance/tokenStats",{address:input})
           .then((response) => {
             console.log('ccc', response.data);
@@ -117,15 +121,16 @@ export default function CoinStatsBoard() {
             setLinkIcon(`https://r.poocoin.app/smartchain/assets/${input ? utils.getAddress(input) : '0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82'}/logo.png`);
           });
       }
-      catch(err){
-        // eslint-disable-next-line no-console
-        console.log(err)
-      }
     }
-    useEffect(() => {
-      getTableData();
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    },[input])
+    catch(err){
+      // eslint-disable-next-line no-console
+      console.log(err)
+    }
+  }
+  useEffect(() => {
+    getTableData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[input])
 
   return (
     <Container>
@@ -147,7 +152,8 @@ export default function CoinStatsBoard() {
         </Column>
         <Column>
           <Text>Price</Text>
-          <Text>$ {Number(alldata.price).toLocaleString()}</Text>
+          {/* <Text>$ {Number(alldata.price).toLocaleString()}</Text> */}
+          <Text>${alldata.price}</Text>
         </Column>
         <Column>
           <Text>24h Change</Text>
@@ -160,7 +166,8 @@ export default function CoinStatsBoard() {
         </Column>
         <Column style={{ margin: '0 0 8px 0' }}>
           <Text>Liquidity</Text>
-          <Text>{Number(liquidityV2BNBdecimal).toLocaleString()} BNB<span className='success'> (${Number(liquidityV2decimal).toLocaleString()})</span></Text>
+          {/* <Text>{Number(liquidityV2BNBdecimal).toLocaleString()} BNB<span className='success'> (${Number(liquidityV2decimal).toLocaleString()})</span></Text> */}
+          <Text>{liquidityV2BNBdecimal} BNB<span className='success'> (${liquidityV2decimal})</span></Text>
         </Column>
       </StyledWrapper>
     </Container>

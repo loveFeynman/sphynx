@@ -35,7 +35,7 @@ export interface ChartContainerProps {
 
 const ChartContainerProps = {
     symbol: 'AAPL',
-    interval: 'Minutes' as ResolutionString,
+    interval: 'D' as ResolutionString,
     containerId: 'tv_chart_container',
     datafeedUrl: 'https://demo_feed.tradingview.com',
     libraryPath: '/charting_library/',
@@ -48,9 +48,6 @@ const ChartContainerProps = {
     studiesOverrides: {},
 };
 
-
-
-
 function getLanguageFromURL(): LanguageCode | null {
     const regex = new RegExp('[\\?&]lang=([^&#]*)');
     const results = regex.exec(location.search);
@@ -60,9 +57,6 @@ function getLanguageFromURL(): LanguageCode | null {
 export const TVChartContainer: React.FC<Partial<ChartContainerProps>> = () => {
 
     const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input);
-    const [loader, setLoader] = React.useState(false)
-    
-    // console.log("input in tradingviewchart==========", input); // todo
 
     const [tokendetails, setTokenDetails] = React.useState({
         name: 'PancakeSwap Token',
@@ -74,7 +68,7 @@ export const TVChartContainer: React.FC<Partial<ChartContainerProps>> = () => {
     const lastBarsCache = new Map();
 
     const configurationData = {
-        supported_resolutions: ['15 Minutes','1H','1D','1W','1M'],
+        supported_resolutions: ['1H','1D','1W','1M'],
         exchanges: [{
             value: 'Bitfinex',
             name: 'Bitfinex',
@@ -314,7 +308,7 @@ export const TVChartContainer: React.FC<Partial<ChartContainerProps>> = () => {
 
     return (
         <>
-          {loader ?
+          {/* {loader ?
           <div style={{ position: 'absolute', left: 567, top: 150 }}>
             <BoxesLoader
               boxColor="#8b2a9b"
@@ -325,7 +319,7 @@ export const TVChartContainer: React.FC<Partial<ChartContainerProps>> = () => {
             />
           </div>
           : ""
-        }
+        } */}
         <div
             id={ChartContainerProps.containerId}
             className={'TVChartContainer'}

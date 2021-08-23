@@ -2,11 +2,13 @@ import React from 'react'
 import styled from 'styled-components'
 import { Link } from '@pancakeswap/uikit'
 import Marquee from "react-fast-marquee";
+import { useDispatch } from 'react-redux';
 import axios from 'axios';
 import { ReactComponent as HelpIcon } from 'assets/svg/icon/HelpIcon.svg'
-import { ReactComponent as DownRedArrowIcon} from 'assets/svg/icon/DownRedArrowIcon.svg'
-import { ReactComponent as UpGreenArrowIcon} from 'assets/svg/icon/UpGreenArrowIcon.svg'
+// import { ReactComponent as DownRedArrowIcon} from 'assets/svg/icon/DownRedArrowIcon.svg'
+// import { ReactComponent as UpGreenArrowIcon} from 'assets/svg/icon/UpGreenArrowIcon.svg'
 import { HotTokenType } from './types'
+import { typeInput } from '../../../state/input/actions'
 
 export interface HotTokenBarProps {
   tokens?: HotTokenType[] | null
@@ -43,45 +45,45 @@ const BarIntro = styled.div`
   }
 `
 
-const StyledLink = styled(Link)`
-  display: flex;
-  align-items: center;
-  width: fit-content;
-  margin-left: 16px;
-  &:hover {
-    text-decoration: none;
-  }
-  & svg {
-    margin-right: 8px;
-  }
-  & span:last-child {
-    font-weight: bold;
-    color: white;
-    text-transform: uppercase;
-  }
-`;
+// const StyledLink = styled(Link)`
+//   display: flex;
+//   align-items: center;
+//   width: fit-content;
+//   margin-left: 16px;
+//   &:hover {
+//     text-decoration: none;
+//   }
+//   & svg {
+//     margin-right: 8px;
+//   }
+//   & span:last-child {
+//     font-weight: bold;
+//     color: white;
+//     text-transform: uppercase;
+//   }
+// `;
 
-const RankingColor = [
-  '#F7931A',
-  '#ACACAC',
-  '#6E441E',
-  '#C5C5C5',
-  '#C5C5C5',
-  '#C5C5C5',
-  '#C5C5C5',
-  '#C5C5C5',
-  '#C5C5C5',
-  '#C5C5C5',
-  '#C5C5C5',
-  '#C5C5C5'
-]
+// const RankingColor = [
+//   '#F7931A',
+//   '#ACACAC',
+//   '#6E441E',
+//   '#C5C5C5',
+//   '#C5C5C5',
+//   '#C5C5C5',
+//   '#C5C5C5',
+//   '#C5C5C5',
+//   '#C5C5C5',
+//   '#C5C5C5',
+//   '#C5C5C5',
+//   '#C5C5C5'
+// ]
 
-const Ranking = styled.span<{
-  index1: number
-}>`
-  padding-right: 8px;
-  color: ${({index1}) => RankingColor[index1 - 1]};
-`
+// const Ranking = styled.span<{
+//   index1: number
+// }>`
+//   padding-right: 8px;
+//   color: ${({index1}) => RankingColor[index1 - 1]};
+// `
 
 export default function HotTokenBar() {
   const [data,setData]=React.useState([{
@@ -91,47 +93,46 @@ export default function HotTokenBar() {
     }
   }])
 
- const date:any = new Date();
- date.setDate(date.getDate() - 13);
- // console.log("data in hotbar==================================",data)
- const d:any = new Date()
- const getDataQuery = `
- {
-   ethereum(network: bsc) {
-     transfers(
-       options: {desc: "count", limit: 15, offset: 0}
-       amount: {gt: 0}
-       date: {since: "${date.toISOString()}", till: "${d.toISOString()}"}
-       currency: {notIn: ["BNB", "WBNB", "BTCB", "ETH", "BUSD", "USDT", "USDC", "DAI"]}
-     ) {
-       currency {
-         symbol
-         address
-         name
-       }
-       count
-       senders: count(uniq: senders)
-       receivers: count(uniq: receivers)
-       days: count(uniq: dates)
-       from_date: minimum(of: date)
-       till_date: maximum(of: date)
-       amount
-     }
-   }
-  
- }`
-   
+  const dispatch = useDispatch();
+
+  const date:any = new Date();
+  date.setDate(date.getDate() - 13);
+  // console.log("data in hotbar==================================",data)
+  const d:any = new Date()
+  const getDataQuery = `
+  {
+    ethereum(network: bsc) {
+      transfers(
+        options: {desc: "count", limit: 15, offset: 0}
+        amount: {gt: 0}
+        date: {since: "${date.toISOString()}", till: "${d.toISOString()}"}
+        currency: {notIn: ["BNB", "WBNB", "BTCB", "ETH", "BUSD", "USDT", "USDC", "DAI"]}
+      ) {
+        currency {
+          symbol
+          address
+          name
+        }
+        count
+        senders: count(uniq: senders)
+        receivers: count(uniq: receivers)
+        days: count(uniq: dates)
+        from_date: minimum(of: date)
+        till_date: maximum(of: date)
+        amount
+      }
+    }
+    
+  }`
 
    const fetchData = async () => {
      try {
-       
          // setLoader(true);
          const queryResult = await axios.post('https://graphql.bitquery.io/', { query: getDataQuery });
          console.log('bbb', queryResult)
          // setData(queryResult);
          if (queryResult.data.data){
          setData(queryResult.data.data.ethereum.transfers)
-        
      }
    }
      catch (err) {
@@ -148,6 +149,7 @@ export default function HotTokenBar() {
   },[])
 
  return (
+   <>
    <StyledBar>
      <BarIntro><span>Top Pairs</span> <HelpIcon /></BarIntro>
      <FlowBar>
@@ -157,7 +159,9 @@ export default function HotTokenBar() {
             data.map((elem:any) => {
              return (
                <li style={{color:'white',padding:'20'}}>
-                 < a href="##" style={{marginRight: 32}}>{elem.currency.symbol}</a>
+               < a href="##" style={{marginRight: 32,textDecoration:'none'}} 
+               onClick={()=> dispatch(typeInput({ input: elem.currency.address }))}
+               >{elem.currency.symbol}</a>
                  {/* < a href="##">{elem.currency.name}</a> */}
                  {/* <HotToken
                    index={key + 1}
@@ -175,5 +179,6 @@ export default function HotTokenBar() {
      </FlowBar>
      <div className="paddingRight: 30px" />
    </StyledBar>
+   </>
  )
 }

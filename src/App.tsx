@@ -1,9 +1,11 @@
-import React, { lazy } from 'react'
+import React, { lazy, useState } from 'react'
 import { Router, Redirect, Route, Switch } from 'react-router-dom'
+import { useSelector } from 'react-redux';
 import styled from 'styled-components'
 import { ResetCSS, Button } from '@pancakeswap/uikit'
 import BigNumber from 'bignumber.js'
 import useEagerConnect from 'hooks/useEagerConnect'
+import { AppState } from 'state'
 import { usePollBlockNumber } from 'state/block/hooks'
 import { usePollCoreFarmData } from 'state/farms/hooks'
 import { useFetchProfile } from 'state/profile/hooks'
@@ -16,6 +18,7 @@ import { ReactComponent as SearchIcon } from 'assets/svg/icon/SearchIcon.svg'
 import { ReactComponent as EmptyAvatar } from 'assets/svg/icon/EmptyAvatar.svg'
 import { ReactComponent as ChevronDown } from 'assets/svg/icon/ChevronDown.svg'
 import PyramidImage from 'assets/images/pyramid.png'
+import Loader from 'components/myLoader/Loader'
 
 import Menu from './components/Menu'
 import SuspenseWithChunkError from './components/SuspenseWithChunkError'
@@ -188,8 +191,6 @@ const BannerWrapper = styled.div`
 
 const PageContent = styled.div`
   width: 100%;
-  z-index: 2;
-  position: relative;
 `
 
 // This config is required for number formatting
@@ -204,134 +205,146 @@ const App: React.FC = () => {
   useFetchProfile()
   usePollCoreFarmData()
 
-  
   const { account } = useWeb3React();
   const { menuToggled, toggleMenu } = useMenuToggle();
+  const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input);
+  const [showLoader, setShowLoader] = useState<any>(false);
   // const { isXl } = useMatchBreakpoints();
   // const history = useHistory();
   // history.push('/swap')
 
+  React.useEffect(()=>{
+    setTimeout(() => {
+      setShowLoader(true)
+    }, 3000);
+    setShowLoader(false)
+  }, [input])
+
   return (
-    <Router history={history}>
-      <ResetCSS />
-      <GlobalStyle />
-      <Menu />
-      
-      <BodyWrapper toggled={menuToggled}>
-        <BodyOverlay toggled={menuToggled} />
-        <TopBar>
-          <Button onClick={() => {toggleMenu(!menuToggled)}}>
-            <svg viewBox='0 0 24 24' width='24px'>
-              <path d="M4 18H20C20.55 18 21 17.55 21 17C21 16.45 20.55 16 20 16H4C3.45 16 3 16.45 3 17C3 17.55 3.45 18 4 18ZM4 13H20C20.55 13 21 12.55 21 12C21 11.45 20.55 11 20 11H4C3.45 11 3 11.45 3 12C3 12.55 3.45 13 4 13ZM3 7C3 7.55 3.45 8 4 8H20C20.55 8 21 7.55 21 7C21 6.45 20.55 6 20 6H4C3.45 6 3 6.45 3 7Z" />
-            </svg>
-          </Button>
-          <SearchWrapper />
-          {
-            account ?
-              <AccountWrapper>
-                <div>Connected</div>
-                <div>
-                  <EmptyAvatar />
-                  <p>{ account.substring(0, 8) }...{ account.substr(account.length - 4) }</p>
-                  <ChevronDown />
-                </div>
-              </AccountWrapper>
-            :
-              <ConnectWalletButton />
-          }
-        </TopBar>
-        <BannerWrapper>
-          <img src={PyramidImage} alt='Pyramid' />
-        </BannerWrapper>
-        <PageContent>
-          <SuspenseWithChunkError fallback={<PageLoader />}>
-            <Switch>
-              <Route path="/" exact>
-                <Redirect to="/swap" />
-              </Route>
-              {/* <Route exact path="/farms/auction">
-                <FarmAuction />
-              </Route>
-              <Route path="/farms">
-                <Farms />
-              </Route>
-              <Route path="/pools">
-                <Pools />
-              </Route>
-              <Route path="/lottery">
-                <Lottery />
-              </Route>
-              <Route path="/ifo">
-                <Ifos />
-              </Route>
-              <Route path="/collectibles">
-                <Collectibles />
-              </Route>
-              <Route exact path="/teams">
-                <Teams />
-              </Route>
-              <Route path="/teams/:id">
-                <Team />
-              </Route>
-              <Route path="/profile">
-                <Profile />
-              </Route>
-              <Route path="/competition">
-                <TradingCompetition />
-              </Route>
-              <Route path="/prediction">
-                <Predictions />
-              </Route>
-              <Route exact path="/voting">
-                <Voting />
-              </Route>
-              <Route exact path="/voting/proposal/create">
-                <CreateProposal />
-              </Route>
-              <Route path="/voting/proposal/:id">
-                <Proposal />
-              </Route> */}
+    <>
+      {!showLoader ?  <Loader/>:
+        <Router history={history}>
+          <ResetCSS />
+          <GlobalStyle />
+          <Menu />
+          
+          <BodyWrapper toggled={menuToggled}>
+            <BodyOverlay toggled={menuToggled} />
+            <TopBar>
+              <Button onClick={() => {toggleMenu(!menuToggled)}}>
+                <svg viewBox='0 0 24 24' width='24px'>
+                  <path d="M4 18H20C20.55 18 21 17.55 21 17C21 16.45 20.55 16 20 16H4C3.45 16 3 16.45 3 17C3 17.55 3.45 18 4 18ZM4 13H20C20.55 13 21 12.55 21 12C21 11.45 20.55 11 20 11H4C3.45 11 3 11.45 3 12C3 12.55 3.45 13 4 13ZM3 7C3 7.55 3.45 8 4 8H20C20.55 8 21 7.55 21 7C21 6.45 20.55 6 20 6H4C3.45 6 3 6.45 3 7Z" />
+                </svg>
+              </Button>
+              <SearchWrapper />
+              {
+                account ?
+                  <AccountWrapper>
+                    <div>Connected</div>
+                    <div>
+                      <EmptyAvatar />
+                      <p>{ account.substring(0, 8) }...{ account.substr(account.length - 4) }</p>
+                      <ChevronDown />
+                    </div>
+                  </AccountWrapper>
+                :
+                  <ConnectWalletButton />
+              }
+            </TopBar>
+            <BannerWrapper>
+              <img src={PyramidImage} alt='Pyramid' />
+            </BannerWrapper>
+            <PageContent>
+              <SuspenseWithChunkError fallback={<PageLoader />}>
+                <Switch>
+                  <Route path="/" exact>
+                    <Redirect to="/swap" />
+                  </Route>
+                  {/* <Route exact path="/farms/auction">
+                    <FarmAuction />
+                  </Route>
+                  <Route path="/farms">
+                    <Farms />
+                  </Route>
+                  <Route path="/pools">
+                    <Pools />
+                  </Route>
+                  <Route path="/lottery">
+                    <Lottery />
+                  </Route>
+                  <Route path="/ifo">
+                    <Ifos />
+                  </Route>
+                  <Route path="/collectibles">
+                    <Collectibles />
+                  </Route>
+                  <Route exact path="/teams">
+                    <Teams />
+                  </Route>
+                  <Route path="/teams/:id">
+                    <Team />
+                  </Route>
+                  <Route path="/profile">
+                    <Profile />
+                  </Route>
+                  <Route path="/competition">
+                    <TradingCompetition />
+                  </Route>
+                  <Route path="/prediction">
+                    <Predictions />
+                  </Route>
+                  <Route exact path="/voting">
+                    <Voting />
+                  </Route>
+                  <Route exact path="/voting/proposal/create">
+                    <CreateProposal />
+                  </Route>
+                  <Route path="/voting/proposal/:id">
+                    <Proposal />
+                  </Route> */}
 
-              {/* Using this format because these components use routes injected props. We need to rework them with hooks */}
-              <Route exact strict path="/swap" component={Swap} />
-              <Route exact strict path="/swap/:outputCurrency" component={RedirectToSwap} />
-              <Route exact strict path="/send" component={RedirectPathToSwapOnly} />
-              <Route exact strict path="/find" component={PoolFinder} />
-              <Route exact strict path="/liquidity" component={Liquidity} />
-              <Route exact strict path="/create" component={RedirectToAddLiquidity} />
-              <Route exact path="/add" component={AddLiquidity} />
-              <Route exact path="/add/:currencyIdA" component={RedirectOldAddLiquidityPathStructure} />
-              <Route exact path="/add/:currencyIdA/:currencyIdB" component={RedirectDuplicateTokenIds} />
-              <Route exact path="/create" component={AddLiquidity} />
-              <Route exact path="/create/:currencyIdA" component={RedirectOldAddLiquidityPathStructure} />
-              <Route exact path="/create/:currencyIdA/:currencyIdB" component={RedirectDuplicateTokenIds} />
-              <Route exact strict path="/remove/:tokens" component={RedirectOldRemoveLiquidityPathStructure} />
-              <Route exact strict path="/remove/:currencyIdA/:currencyIdB" component={RemoveLiquidity} />
+                  {/* Using this format because these components use routes injected props. We need to rework them with hooks */}
+                  <Route exact strict path="/swap" component={Swap} />
+                  <Route exact strict path="/swap/:outputCurrency" component={RedirectToSwap} />
+                  <Route exact strict path="/send" component={RedirectPathToSwapOnly} />
+                  <Route exact strict path="/find" component={PoolFinder} />
+                  <Route exact strict path="/liquidity" component={Liquidity} />
+                  <Route exact strict path="/create" component={RedirectToAddLiquidity} />
+                  <Route exact path="/add" component={AddLiquidity} />
+                  <Route exact path="/add/:currencyIdA" component={RedirectOldAddLiquidityPathStructure} />
+                  <Route exact path="/add/:currencyIdA/:currencyIdB" component={RedirectDuplicateTokenIds} />
+                  <Route exact path="/create" component={AddLiquidity} />
+                  <Route exact path="/create/:currencyIdA" component={RedirectOldAddLiquidityPathStructure} />
+                  <Route exact path="/create/:currencyIdA/:currencyIdB" component={RedirectDuplicateTokenIds} />
+                  <Route exact strict path="/remove/:tokens" component={RedirectOldRemoveLiquidityPathStructure} />
+                  <Route exact strict path="/remove/:currencyIdA/:currencyIdB" component={RemoveLiquidity} />
 
-              {/* Redirect */}
-              {/* <Route path="/pool">
-                <Redirect to="/liquidity" />
-              </Route>
-              <Route path="/staking">
-                <Redirect to="/pools" />
-              </Route>
-              <Route path="/syrup">
-                <Redirect to="/pools" />
-              </Route>
-              <Route path="/nft">
-                <Redirect to="/collectibles" />
-              </Route> */}
+                  {/* Redirect */}
+                  {/* <Route path="/pool">
+                    <Redirect to="/liquidity" />
+                  </Route>
+                  <Route path="/staking">
+                    <Redirect to="/pools" />
+                  </Route>
+                  <Route path="/syrup">
+                    <Redirect to="/pools" />
+                  </Route>
+                  <Route path="/nft">
+                    <Redirect to="/collectibles" />
+                  </Route> */}
 
-              {/* 404 */}
-              <Route component={NotFound} />
-            </Switch>
-          </SuspenseWithChunkError>
-        </PageContent>
-      </BodyWrapper>
-      <EasterEgg iterations={2} />
-      <ToastListener />
-      <DatePickerPortal />
-    </Router>
+                  {/* 404 */}
+                  <Route component={NotFound} />
+                </Switch>
+              </SuspenseWithChunkError>
+            </PageContent>
+          </BodyWrapper>
+          <EasterEgg iterations={2} />
+          <ToastListener />
+          <DatePickerPortal />
+        </Router>
+      }
+    </>
   )
 }
 

@@ -28,7 +28,7 @@ export interface ContractPanelProps {
 const ContractPanelWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  margin-bottom: 28px;
+  // margin-bottom: 28px;
   ${({ theme }) => theme.mediaQueries.sm} {
     flex-direction: row;
     justify-content: space-between;
