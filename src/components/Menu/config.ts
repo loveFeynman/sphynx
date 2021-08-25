@@ -40,35 +40,50 @@ export const links = [
     href: '/',
   },
   {
-    label: '... More',
+    label: 'CoinMarketCaps',
     icon: MoreIcon,
-    items: [
-      {
-        label: 'Contact',
-        href: 'https://docs.pancakeswap.finance/contact-us',
-      },
-      {
-        label: 'Voting',
-        href: '/voting',
-      },
-      {
-        label: 'Github',
-        href: 'https://github.com/pancakeswap',
-      },
-      {
-        label: 'Docs',
-        href: 'https://docs.pancakeswap.finance',
-      },
-      {
-        label: 'Blog',
-        href: 'https://pancakeswap.medium.com',
-      },
-      {
-        label: 'Merch',
-        href: 'https://pancakeswap.creator-spring.com/',
-      },
-    ],
-  }
+    href: 'https://coinmarketcap.com/',
+  },
+  {
+    label: 'CoinGecko',
+    icon: MoreIcon,
+    href: 'https://www.coingecko.com/',
+  },
+  {
+    label: 'Learning Hub',
+    icon: MoreIcon,
+    href: 'https://cryptolearnhub.com/',
+  },
+  // {
+  //   label: '... More',
+  //   icon: MoreIcon,
+  //   items: [
+  //     {
+  //       label: 'Contact',
+  //       href: 'https://docs.pancakeswap.finance/contact-us',
+  //     },
+  //     {
+  //       label: 'Voting',
+  //       href: '/voting',
+  //     },
+  //     {
+  //       label: 'Github',
+  //       href: 'https://github.com/pancakeswap',
+  //     },
+  //     {
+  //       label: 'Docs',
+  //       href: 'https://docs.pancakeswap.finance',
+  //     },
+  //     {
+  //       label: 'Blog',
+  //       href: 'https://pancakeswap.medium.com',
+  //     },
+  //     {
+  //       label: 'Merch',
+  //       href: 'https://pancakeswap.creator-spring.com/',
+  //     },
+  //   ],
+  // }
 ]
 
 interface MenuSubEntry {

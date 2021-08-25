@@ -21,6 +21,7 @@ import PyramidImage from 'assets/images/pyramid.png'
 import Loader from 'components/myLoader/Loader'
 
 import Menu from './components/Menu'
+import UserMenu from './components/Menu/UserMenu'
 import SuspenseWithChunkError from './components/SuspenseWithChunkError'
 import { ToastListener } from './contexts/ToastsContext'
 import PageLoader from './components/Loader/PageLoader'
@@ -102,22 +103,22 @@ const TopBar = styled.div`
   width: 100%;
   margin-top: 32px;
   flex-wrap: wrap;
-  & button:first-child {
-    background: transparent;
-    padding: 0;
-    outline: none;
-    border: none;
-    box-shadow: none;
-    margin-right: 12px;
-    margin-bottom: 8px;
-    height: 32px;
-    & svg path {
-      fill: white;
-    }
-    ${({ theme }) => theme.mediaQueries.xl} {
-      display: none;
-    }
-  }
+  // & button:first-child {
+  //   background: transparent;
+  //   padding: 0;
+  //   outline: none;
+  //   border: none;
+  //   box-shadow: none;
+  //   margin-right: 12px;
+  //   margin-bottom: 8px;
+  //   height: 32px;
+  //   & svg path {
+  //     fill: white;
+  //   }
+  //   ${({ theme }) => theme.mediaQueries.xl} {
+  //     display: none;
+  //   }
+  // }
 `
 const SearchWrapper = styled.div`
   display: flex;
@@ -233,20 +234,18 @@ const App: React.FC = () => {
           <BodyWrapper toggled={menuToggled}>
             <BodyOverlay toggled={menuToggled} />
             <TopBar>
-              <Button onClick={() => {toggleMenu(!menuToggled)}}>
+              {/* <Button onClick={() => {toggleMenu(!menuToggled)}}>
                 <svg viewBox='0 0 24 24' width='24px'>
                   <path d="M4 18H20C20.55 18 21 17.55 21 17C21 16.45 20.55 16 20 16H4C3.45 16 3 16.45 3 17C3 17.55 3.45 18 4 18ZM4 13H20C20.55 13 21 12.55 21 12C21 11.45 20.55 11 20 11H4C3.45 11 3 11.45 3 12C3 12.55 3.45 13 4 13ZM3 7C3 7.55 3.45 8 4 8H20C20.55 8 21 7.55 21 7C21 6.45 20.55 6 20 6H4C3.45 6 3 6.45 3 7Z" />
                 </svg>
-              </Button>
+              </Button> */}
               <SearchWrapper />
               {
                 account ?
                   <AccountWrapper>
                     <div>Connected</div>
                     <div>
-                      <EmptyAvatar />
-                      <p>{ account.substring(0, 8) }...{ account.substr(account.length - 4) }</p>
-                      <ChevronDown />
+                      <UserMenu />
                     </div>
                   </AccountWrapper>
                 :

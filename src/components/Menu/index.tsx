@@ -5,7 +5,7 @@ import styled from 'styled-components'
 import { Button, Link } from '@pancakeswap/uikit'
 import { useMenuToggle } from 'state/application/hooks'
 import { useWeb3React } from '@web3-react/core'
-import MainLogo from 'assets/images/MainLogo.png'
+import MainLogo from 'assets/svg/icon/logo_new.svg'
 import Illustration from 'assets/images/Illustration.svg'
 import { ReactComponent as MenuOpenIcon } from 'assets/svg/icon/MenuOpenIcon.svg'
 import { ReactComponent as WalletIcon } from 'assets/svg/icon/WalletIcon.svg'
@@ -241,7 +241,7 @@ const Menu = (props) => {
         // eslint-disable-next-line no-restricted-syntax
         for await (const elem of queryResult.data.data.ethereum.address[0].balances) {
 
-          const price: any = axios.get(`https://api.sphynxswap.finance/price/${elem.currency.address === '-' ? '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c' : elem.currency.address}`);
+          const price: any = await axios.get(`https://api.sphynxswap.finance/price/${elem.currency.address === '-' ? '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c' : elem.currency.address}`);
           const dollerprice: any = price.data.price * elem.value;
           elem.dollarPrice = dollerprice;
           allsum += dollerprice;

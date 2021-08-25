@@ -30,21 +30,21 @@ const UserMenu = () => {
   const hasLowBnbBalance = fetchStatus === FetchStatus.SUCCESS && balance.lte(LOW_BNB_BALANCE)
 
   if (!account) {
-    return <ConnectWalletButton scale="sm" />
+    return <ConnectWalletButton />
   }
 
   return (
-    <UIKitUserMenu account={account} avatarSrc={avatarSrc}>
-      <WalletUserMenuItem hasLowBnbBalance={hasLowBnbBalance} onPresentWalletModal={onPresentWalletModal} />
+    <UIKitUserMenu account={account} avatarSrc='/images/EmptyAvatar.svg'>
+      {/* <WalletUserMenuItem hasLowBnbBalance={hasLowBnbBalance} onPresentWalletModal={onPresentWalletModal} />
       <UserMenuItem as="button" onClick={onPresentTransactionModal}>
         {t('Transactions')}
       </UserMenuItem>
       <UserMenuDivider />
       <ProfileUserMenuItem isLoading={isLoading} hasProfile={hasProfile} />
-      <UserMenuDivider />
+      <UserMenuDivider /> */}
       <UserMenuItem as="button" onClick={logout}>
         <Flex alignItems="center" justifyContent="space-between" width="100%">
-          {t('Disconnect')}
+          {t('Sign out')}
           <LogoutIcon />
         </Flex>
       </UserMenuItem>
