@@ -2,12 +2,13 @@ import React from 'react'
 import styled from 'styled-components'
 import { Link } from '@pancakeswap/uikit'
 import Marquee from "react-fast-marquee";
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import { ReactComponent as HelpIcon } from 'assets/svg/icon/HelpIcon.svg'
 // import { ReactComponent as DownRedArrowIcon} from 'assets/svg/icon/DownRedArrowIcon.svg'
 // import { ReactComponent as UpGreenArrowIcon} from 'assets/svg/icon/UpGreenArrowIcon.svg'
 import { HotTokenType } from './types'
+import { AppState } from '../../../state'
 import { typeInput } from '../../../state/input/actions'
 
 export interface HotTokenBarProps {
@@ -93,12 +94,14 @@ export default function HotTokenBar() {
     }
   }])
 
+  const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
   const dispatch = useDispatch();
 
   const date:any = new Date();
-  date.setDate(date.getDate() - 13);
+  date.setDate(date.getDate() - 2);
   // console.log("data in hotbar==================================",data)
   const d:any = new Date()
+  d.setDate(d.getDate() - 2);
   const getDataQuery = `
   {
     ethereum(network: bsc) {
@@ -146,7 +149,7 @@ export default function HotTokenBar() {
   React.useEffect(()=>{
    fetchData()
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[])
+  },[input])
 
  return (
    <>

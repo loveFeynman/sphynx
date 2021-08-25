@@ -4,6 +4,7 @@ import { Flex } from '@pancakeswap/uikit'
 // import { useWeb3React } from '@web3-react/core'
 // import moment from 'moment'
 import axios from 'axios';
+import moment from 'moment-timezone'
 import { useSelector } from 'react-redux';
 import { AppState } from '../../../state'
 import { isAddress } from '../../../utils'
@@ -61,6 +62,9 @@ const TransactionCard = () => {
   const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
   const result = isAddress(input)
 
+  const [bnb,setBnb]=useState(0);
+  const [tokenprice,setTokenPrice]=useState(0);
+
   const getDataQuery = `
   {
   ethereum(network: bsc) {
@@ -68,6 +72,7 @@ const TransactionCard = () => {
       options: {desc: ["block.height", "tradeIndex"], limit: 100, offset: 0}
       date: {since: "2021-08-05", till: null}
       baseCurrency: {is: "${input}"}
+      quoteCurrency:{is : "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"}
       ) {
       block {
         timestamp {
@@ -104,6 +109,12 @@ const TransactionCard = () => {
         address
         name
       }
+      sellCurrency {
+        symbol
+        address
+        name
+        }
+      price
       quotePrice
       }
     }
@@ -114,7 +125,11 @@ const TransactionCard = () => {
       if (result) {
         // setLoader(true);
         const queryResult = await axios.post('https://graphql.bitquery.io/', { query: getDataQuery })
-        if (queryResult.data.data)
+        const bnbprice:any= await axios.get(`https://api.sphynxswap.finance/price/${input}`);
+				const Tprice:any= await axios.get(`https://api.sphynxswap.finance/price/0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c`);
+				setBnb(Tprice.data.price);
+			    setTokenPrice(bnbprice.data.price)
+				if (queryResult.data.data)
           setTableData(queryResult.data.data.ethereum.dexTrades)
         // setLoader(false);
       }
@@ -132,8 +147,13 @@ const TransactionCard = () => {
 
   const filterTableData = tableData === null ? [] : tableData.map((val: any) => {
 		const link = `https://bscscan.com/tx/${val.transaction.hash}`;
-		  const today:Date = new Date(val.block.timestamp.time);
-		  today.setHours(today.getHours() + 5);
+		// eslint-disable-next-line no-console
+		
+		  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+		  // eslint-disable-next-line no-console
+      const currentTime = moment().tz(timezone).format();
+		  // eslint-disable-next-line no-console
+		  const today:any = new Date(currentTime);
 		//   const  time=new Date(val.block.timestamp.time)
 		//   console.log(time)
 		//   const  addhour=today.getHours()+5;
@@ -147,8 +167,8 @@ const TransactionCard = () => {
 					<a href={link} target="blank"><Flex alignItems='center'><h2 className={val.baseCurrency.symbol === val.buyCurrency.symbol ? 'success' : 'error'}>{today.toLocaleTimeString()}</h2></Flex></a>
 				</td>
 				<td><a href={link} target="blank"><h2 className={val.baseCurrency.symbol === val.buyCurrency.symbol ? 'success' : 'error'}> {Number(val.baseAmount).toLocaleString()}</h2></a></td>
-				<td><a href={link} target="blank"><h2 className={val.baseCurrency.symbol === val.buyCurrency.symbol ? 'success' : 'error'}>{(val.quotePrice * 335).toLocaleString()}</h2></a></td>
-				<td><a href={link} target="blank"><h2 className={val.baseCurrency.symbol === val.buyCurrency.symbol ? 'success' : 'error'}>${(val.quoteAmount * 335).toLocaleString()}</h2></a></td>
+				<td><a href={link} target="blank"><h2 className={val.baseCurrency.symbol === val.buyCurrency.symbol ? 'success' : 'error'}>{(val.quotePrice*bnb)}</h2></a></td> 
+				<td><a href={link} target="blank"><h2 className={val.baseCurrency.symbol === val.buyCurrency.symbol ? 'success' : 'error'}>${(val.baseAmount*tokenprice)}</h2></a></td>
 				<td><a href={link} target="blank"><h2 className={val.baseCurrency.symbol === val.buyCurrency.symbol ? 'success' : 'error'}>{val.exchange.fullName}</h2></a></td>
 			</tr>
 		)

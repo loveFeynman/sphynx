@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { useDispatch } from 'react-redux'
 import styled from 'styled-components'
 // import { Link } from 'react-router-dom'
 import { Button, Link } from '@pancakeswap/uikit'
@@ -14,6 +15,7 @@ import { ReactComponent as TelegramIcon } from 'assets/svg/icon/TelegramIcon.svg
 import Web3 from 'web3';
 import axios from 'axios'
 import config, { links } from './config'
+import { typeInput } from '../../state/input/actions'
 // import UserMenu from './UserMenu'
 // import GlobalSettings from './GlobalSettings'
 
@@ -102,8 +104,12 @@ const TokenItemWrapper = styled.div<{ toggled: boolean }>`
   justify-content: space-between;
   padding: ${(props) => (props.toggled ? '4px' : '8px 12px')};
   position: relative;
-  & div {
-    width: ${(props) => (props.toggled ? '100%' : 'auto')};
+  cursor: pointer;
+  & > div:first-child {
+    width: ${(props) => (props.toggled ? '100%' : '66%')};
+  }
+  & > div:last-child {
+    width: ${(props) => (props.toggled ? '100%' : '32%')};
   }
   & div p:last-child {
     margin-top: 8px;
@@ -154,7 +160,7 @@ const TokenListWrapper = styled.div`
   max-height: 330px;
 `
 
-const SocialIconsWrapper = styled.div<{toggled: boolean}>`
+const SocialIconsWrapper = styled.div<{ toggled: boolean }>`
   display: flex;
   height: ${(props) => props.toggled ? 'auto' : '48px'};
   & div {
@@ -185,7 +191,9 @@ const Menu = (props) => {
   const [ showAllToken, setShowAllToken ] = useState(true);
 
   const [walletbalance, setWalletBalance] = useState(0);
+  const dispatch = useDispatch();
 
+  const [sum, setSum] = useState(0);
   const [getAllToken, setAllTokens] = useState([]);
   
   // const { isDark, toggleTheme } = useTheme()
@@ -217,10 +225,28 @@ const Menu = (props) => {
     }
   }`
 
-  const fetchData = async () =>{
-    if(account){
-      const queryResult= await axios.post('https://graphql.bitquery.io/',{query: getDataQuery});
-      if(queryResult.data.data){
+  const fetchData = async () => {
+    if (account) {
+      // const g= await axios.get('https://api.sphynxswap.finance/price/0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82');
+      // // eslint-disable-next-line no-console
+      // console.log("price============>",g);
+
+      const queryResult = await axios.post('https://graphql.bitquery.io/', { query: getDataQuery });
+      // const addres=setAddress(queryResult.data.data.ethereum.address[0].balances.currency.address)
+      // console.log("address============>",addres);
+      if (queryResult.data.data) {
+        // queryResult.data.data.ethereum.address[0].balances.forEach(async (elem, index)=>{
+        let allsum: any = 0;
+
+        // eslint-disable-next-line no-restricted-syntax
+        for await (const elem of queryResult.data.data.ethereum.address[0].balances) {
+
+          const price: any = axios.get(`https://api.sphynxswap.finance/price/${elem.currency.address === '-' ? '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c' : elem.currency.address}`);
+          const dollerprice: any = price.data.price * elem.value;
+          elem.dollarPrice = dollerprice;
+          allsum += dollerprice;
+        }
+        setSum(allsum)
         setAllTokens(queryResult.data.data.ethereum.address[0].balances)
       }
     }
@@ -228,34 +254,40 @@ const Menu = (props) => {
 
   useEffect(()=>{
     fetchData()
-    getBalance()
+    // getBalance()
 
 // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [account])
 
-  const tokenData = getAllToken.map((elem : any) => {
-    const {currency,value } = elem;
-    const link = `https://bscscan.com/token/${currency.address}`
+  const tokenData = getAllToken.map((elem: any) => {
+    const { currency, value, dollarPrice } = elem;
+    //  const link = `https://bscscan.com/token/${currency.address}`
+
     return (
       <>
-        <TokenItemWrapper toggled={menuToggled}>
+        <TokenItemWrapper toggled={menuToggled} onClick={() => { dispatch(typeInput({ input: currency.address })) }}>
           <div>
-            <a href={`${link}`} target="blank" >
             <p><b>{currency.symbol}</b></p>
+            <p><b>${Number(dollarPrice).toLocaleString()}</b></p>
+          </div>
+          <div>
             <p><b>{value}</b></p>
-            </a>
-            
+            <p />
           </div>
           {/* {
-            !menuToggled &&
-            <div>
-              <p><b>{currency.symbol }</b></p>
-              <p><b>${ value}</b></p>
-            </div>
+                  !menuToggled &&
+                  <div>
+                    <p><b>{currency.symbol }</b></p>
+                    <p><b>${ value}</b></p>
+                  </div>
 
-          } */}
+                } */}
+
         </TokenItemWrapper>
+
+
       </>
+
     )
   })
 
@@ -282,23 +314,23 @@ const Menu = (props) => {
             !menuToggled && <p>Wallet</p>
           }
         </div>
-        {!menuToggled && <p><b>{account?walletbalance.toLocaleString():''}</b></p>
+        {!menuToggled && <p><b>{account ? Number(sum).toLocaleString() : ""}</b></p>
         }
       </WalletHeading>
       <MenuContentWrapper toggled={menuToggled}>
        
-         { 
-         account?
-         <div>
-          <TokenListWrapper>
-            {showAllToken ? tokenData : tokenData.slice(0, 3)}
-          </TokenListWrapper>
-          <ButtonWrapper style={{ margin: '10px 0' }} onClick={() => {setShowAllToken(!showAllToken)}}>
-            <p><b>{ showAllToken ? 'Show Some Tokens' : 'Show All Tokens' }</b></p>
-          </ButtonWrapper>
-        </div>
-        :""
-         }
+        {
+          account ?
+            <div>
+              <TokenListWrapper>
+                {showAllToken ? tokenData : tokenData.slice(0, 3)}
+              </TokenListWrapper>
+              <ButtonWrapper style={{ margin: '10px 0' }} onClick={() => { setShowAllToken(!showAllToken) }}>
+                <p><b>{showAllToken ? 'Show Some Tokens' : 'Show All Tokens'}</b></p>
+              </ButtonWrapper>
+            </div>
+            : ""
+        }
                  
         {
           links.map((link) => {

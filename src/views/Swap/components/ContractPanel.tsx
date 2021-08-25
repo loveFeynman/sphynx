@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import styled from 'styled-components'
 
 import { Text, Button, Link } from '@pancakeswap/uikit'
@@ -15,7 +16,7 @@ import './dropdown.css'
 import axios from 'axios';
 import {Button as materialButton,Menu,MenuItem} from '@material-ui/core';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
-import { useDispatch } from 'react-redux'
+import { AppState } from '../../../state'
 import {typeInput} from '../../../state/input/actions'
 // import { GetInputData } from '../index';
 // import { TokenDetailProps } from './types'
@@ -114,11 +115,21 @@ export default function ContractPanel({value}: ContractPanelProps){
   // const [showDrop, setshowDrop] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const [showDrop,setShowDrop]=useState(false);
+  const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input);
 
+  const checksumAddress = isAddress(input)
   // eslint-disable-next-line no-console
   // console.log("result===============================>",result)  // => true
   const [data,setdata]=useState([])
   const dispatch = useDispatch();
+  const [website, setWebsite]=useState('');
+
+  const getWebsite=async()=>{
+    const web:any=await axios.get(`https://api.sphynxswap.finance/socials/${checksumAddress}`);
+    console.log("web===============>",web)
+    setWebsite(web.data.data.website);
+  }
+
   const handlerChange = (e: any) => {
     try {
       
@@ -164,6 +175,7 @@ export default function ContractPanel({value}: ContractPanelProps){
   }
 
   useEffect(() => {
+    getWebsite();
     const listener = event => {
       if (event.code === "Enter" || event.code === "NumpadEnter") {
         // console.log("Enter key was pressed. Run your function.");
@@ -174,7 +186,8 @@ export default function ContractPanel({value}: ContractPanelProps){
     return () => {
       document.removeEventListener("keydown", listener);
     };
-  }, []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [checksumAddress ]);
     
   return (
     <>
@@ -208,7 +221,7 @@ export default function ContractPanel({value}: ContractPanelProps){
           <Link external href="https://twitter.com/sphynxswap?s=21">
             <TwitterIcon />
           </Link>
-          <Link external href="https://www.sphynxtoken.co">
+          <Link external href={website}>
             <SocialIcon2 />
           </Link>
           <Link external href="https://t.me/sphynxswap">

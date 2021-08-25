@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux';
 import ReactLoading from 'react-loading';
@@ -145,7 +146,7 @@ export default function CoinStatsBoard() {
           {tokenData &&
             <Flex flexDirection='column' justifyContent='center'>
               <Text>{tokenData.symbol}</Text>
-              <Text>{tokenData.marketCap.substring(tokenData.marketCap.indexOf('$'))}</Text>
+              <Text>{tokenData.marketCap}</Text>
             </Flex>
           }
           </Flex>

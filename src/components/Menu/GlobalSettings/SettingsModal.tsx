@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
-import { Text, PancakeToggle, Toggle, Flex, Modal, InjectedModalProps } from '@pancakeswap/uikit'
+import { Text, PancakeToggle, Toggle, Flex, Modal, InjectedModalProps, Button } from '@pancakeswap/uikit'
 import { useAudioModeManager, useExpertModeManager, useUserSingleHopOnly } from 'state/user/hooks'
 import { useTranslation } from 'contexts/Localization'
 import { useSwapActionHandlers } from 'state/swap/hooks'
@@ -14,6 +14,14 @@ const PancakeToggleWrapper = styled.div`
   .pancakes {
     position: absolute;
   }
+`
+
+const ApplyButton = styled(Button)`
+  position: absolute;
+  right: 0;
+  bottom: 16px;
+  background-color: #8b2a9b !important;
+  outline: none;
 `
 
 const SettingsModal: React.FC<InjectedModalProps> = ({ onDismiss }) => {
@@ -88,7 +96,7 @@ const SettingsModal: React.FC<InjectedModalProps> = ({ onDismiss }) => {
             }}
           />
         </Flex>
-        <Flex justifyContent="space-between" alignItems="center">
+        <Flex justifyContent="space-between" alignItems="center" mb="24px">
           <Flex alignItems="center">
             <Text>{t('Flippy sounds')}</Text>
             <QuestionHelper
@@ -100,6 +108,9 @@ const SettingsModal: React.FC<InjectedModalProps> = ({ onDismiss }) => {
           {/* <PancakeToggleWrapper>
             <PancakeToggle checked={audioPlay} onChange={toggleSetAudioMode} scale="md" />
           </PancakeToggleWrapper> */}
+        </Flex>
+        <Flex justifyContent="space-between" alignItems="center">
+          <ApplyButton className='selected' onClick={onDismiss}>Apply</ApplyButton>
         </Flex>
       </Flex>
     </Modal>

@@ -222,10 +222,12 @@ const App: React.FC = () => {
 
   return (
     <>
-      {!showLoader ?  <Loader/>:
-        <Router history={history}>
-          <ResetCSS />
-          <GlobalStyle />
+      <Router history={history}>
+        <ResetCSS />
+        <GlobalStyle />
+
+        {!showLoader ?  <Loader/>:
+        <>
           <Menu />
           
           <BodyWrapper toggled={menuToggled}>
@@ -342,8 +344,9 @@ const App: React.FC = () => {
           <EasterEgg iterations={2} />
           <ToastListener />
           <DatePickerPortal />
-        </Router>
-      }
+        </>
+        }
+      </Router>
     </>
   )
 }

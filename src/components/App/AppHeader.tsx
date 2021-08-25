@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
 import { Text, Flex, Heading, IconButton, ArrowBackIcon, NotificationDot } from '@pancakeswap/uikit'
 import { Link } from 'react-router-dom'
@@ -33,6 +33,7 @@ const AppHeader: React.FC<Props> = ({ title, subtitle, helper, backTo, noConfig 
   const [expertMode] = useExpertModeManager()
   
   const { swapType, setSwapType } = useSwapType()
+  const [ autoFocused, setAutoFocused ] = useState(true);
 
   return (
     <AppHeaderContainer>
