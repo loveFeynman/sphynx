@@ -17,11 +17,11 @@ const PancakeToggleWrapper = styled.div`
 `
 
 const ApplyButton = styled(Button)`
-  position: absolute;
-  right: 0;
   bottom: 16px;
-  background-color: #8b2a9b !important;
   outline: none;
+  &.selected {
+    background-color: #8b2a9b !important;
+  }
 `
 
 const SettingsModal: React.FC<InjectedModalProps> = ({ onDismiss }) => {
@@ -110,6 +110,7 @@ const SettingsModal: React.FC<InjectedModalProps> = ({ onDismiss }) => {
           </PancakeToggleWrapper> */}
         </Flex>
         <Flex justifyContent="space-between" alignItems="center">
+          <Text>{t(' ')}</Text>
           <ApplyButton className='selected' onClick={onDismiss}>Apply</ApplyButton>
         </Flex>
       </Flex>

@@ -702,7 +702,7 @@ export default function Swap({ history }: RouteComponentProps) {
           <Card bgColor='rgba(0, 0, 0, 0.2)' borderRadius='8px' padding='0 10px 20px 10px'>
             { swapType === 'swap' &&
               <Wrapper id="swap-page">
-                <AppHeader title={t('Swap')} />
+                <AppHeader title={t('Swap')} showAuto />
                 <AutoColumn gap="md">
                   <CurrencyInputPanel
                     label={independentField === Field.OUTPUT && !showWrap && trade ? t('From (estimated)') : t('From')}

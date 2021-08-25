@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import styled from 'styled-components'
 import { Text, Button, Input, Flex, Box } from '@pancakeswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 import { useUserSlippageTolerance, useUserTransactionTTL } from 'state/user/hooks'
@@ -13,6 +14,13 @@ enum SlippageError {
 enum DeadlineError {
   InvalidInput = 'InvalidInput',
 }
+
+const SlippageButton = styled(Button)`  
+  outline: none;
+  &.selected {
+    background-color: #8b2a9b !important;
+  }
+`
 
 const SlippageTabs = () => {
   const [userSlippageTolerance, setUserslippageTolerance] = useUserSlippageTolerance()
@@ -83,7 +91,7 @@ const SlippageTabs = () => {
           />
         </Flex>
         <Flex flexWrap="wrap">
-          <Button
+          <SlippageButton
             mt="4px"
             mr="4px"
             scale="sm"
@@ -92,10 +100,11 @@ const SlippageTabs = () => {
               setUserslippageTolerance(10)
             }}
             variant={userSlippageTolerance === 10 ? 'primary' : 'tertiary'}
+            className={userSlippageTolerance === 10 ? 'selected' : ''}
           >
             0.1%
-          </Button>
-          <Button
+          </SlippageButton>
+          <SlippageButton
             mt="4px"
             mr="4px"
             scale="sm"
@@ -104,10 +113,11 @@ const SlippageTabs = () => {
               setUserslippageTolerance(50)
             }}
             variant={userSlippageTolerance === 50 ? 'primary' : 'tertiary'}
+            className={userSlippageTolerance === 50 ? 'selected' : ''}
           >
             0.5%
-          </Button>
-          <Button
+          </SlippageButton>
+          <SlippageButton
             mr="4px"
             mt="4px"
             scale="sm"
@@ -116,9 +126,10 @@ const SlippageTabs = () => {
               setUserslippageTolerance(100)
             }}
             variant={userSlippageTolerance === 100 ? 'primary' : 'tertiary'}
+            className={userSlippageTolerance === 100 ? 'selected' : ''}
           >
             1.0%
-          </Button>
+          </SlippageButton>
           <Flex alignItems="center">
             <Box width="76px" mt="4px">
               <Input
