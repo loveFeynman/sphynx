@@ -139,14 +139,15 @@ export default function CoinStatsBoard() {
         <Column>
           <Flex>
           {/* { */}
-            {/* tokenInfo ? */}
-            <IconWrapper size={32}>
-                <img src={linkIcon} alt="Coin icon" />
-              </IconWrapper>
-          {tokenData &&
+          {/* tokenInfo ? */}
+          <IconWrapper size={32}>
+            <img src={linkIcon} alt="Coin icon" />
+          </IconWrapper>
+          {
+            tokenData &&
             <Flex flexDirection='column' justifyContent='center'>
               <Text>{tokenData.symbol}</Text>
-              <Text>{tokenData.marketCap}</Text>
+              <Text>$ {Number(tokenData.marketCap).toLocaleString()}</Text>
             </Flex>
           }
           </Flex>

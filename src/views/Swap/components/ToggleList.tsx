@@ -17,7 +17,7 @@ const ToggleWrapper = styled.div`
   height: 40px;
   width: 420px;
   border-radius: 16px;
-  margin: 12px 0;
+  // margin: 12px 0;
   padding: 0 4px;
   background: rgba(0, 0, 0, 0.4);
   display: flex;
@@ -73,7 +73,7 @@ export default function ToggleList() {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [selectedItem, setSelectedItem] = React.useState('V1')
   
-  const [showDrop,setShowDrop] = useState(false)
+  const [showDrop, setShowDrop] = useState(false)
 
   const open = Boolean(anchorEl);
 

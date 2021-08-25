@@ -8,6 +8,7 @@ import { ReactComponent as TwitterIcon } from 'assets/svg/icon/TwitterIcon.svg'
 // eslint-disable-next-line import/no-cycle
 import { ReactComponent as SocialIcon2 } from 'assets/svg/icon/SocialIcon2.svg'
 import { ReactComponent as TelegramIcon } from 'assets/svg/icon/TelegramIcon.svg'
+import { ReactComponent as BscscanIcon } from 'assets/svg/icon/Bscscan.svg'
 // import { BoxesLoader } from "react-awesome-loaders";
 
 import CopyHelper from 'components/AccountDetails/Copy'
@@ -16,11 +17,12 @@ import './dropdown.css'
 import axios from 'axios';
 import {Button as materialButton,Menu,MenuItem} from '@material-ui/core';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
+import ToggleList from './ToggleList'
 import { AppState } from '../../../state'
 import {typeInput} from '../../../state/input/actions'
 // import { GetInputData } from '../index';
 // import { TokenDetailProps } from './types'
-import { isAddress } from '../../../utils'
+import { isAddress, getBscScanLink } from '../../../utils'
 
 export interface ContractPanelProps {
   value: any
@@ -30,6 +32,7 @@ const ContractPanelWrapper = styled.div`
   display: flex;
   flex-direction: column;
   // margin-bottom: 28px;
+  margin-bottom: 12px;
   ${({ theme }) => theme.mediaQueries.sm} {
     flex-direction: row;
     justify-content: space-between;
@@ -217,7 +220,11 @@ export default function ContractPanel({value}: ContractPanelProps){
           </SearchInputWrapper>
           <Button scale='sm' onClick={submitFuntioncall} disabled={show} >Submit</Button>
         </ContractCard>
+        <ToggleList />
         <SocialIconsWrapper>
+          <Link href={getBscScanLink(checksumAddress === false ? '' : checksumAddress, 'token')} external>
+            <BscscanIcon />
+          </Link>
           <Link external href="https://twitter.com/sphynxswap?s=21">
             <TwitterIcon />
           </Link>

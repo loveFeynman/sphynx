@@ -86,8 +86,10 @@ const WalletHeading = styled.div<{ toggled: boolean }>`
   align-items: center;
   background: #8B2A9B;
   width: 100%;
-  height: 56px;
+  // height: 56px;
   padding: ${(props) => props.toggled ? '0' : '0 48px'};
+  padding-top: 12px;
+  padding-bottom: 12px;
   & div {
     display: flex;
     align-items: center;
@@ -112,12 +114,13 @@ const TokenItemWrapper = styled.div<{ toggled: boolean }>`
     width: ${(props) => (props.toggled ? '100%' : '32%')};
   }
   & div p:last-child {
-    margin-top: 8px;
+    margin-top: ${(props) => (props.toggled ? '0px' : '8px')};
   }
   & p {
     overflow: hidden;
     text-overflow: ellipsis;
     width: 100%;
+    font-size: ${(props) => (props.toggled ? '10px' : '14px')}
   }
 `
 
@@ -127,17 +130,19 @@ const ButtonWrapper = styled.div`
   justify-content: center;
   align-items: center;
   text-align: center;
-  height: 56px;
+  // height: 56px;
+  padding-top: 12px;
+  padding-bottom: 12px;
   border-radius: 8px;
   cursor: pointer;
 `
 
 const MenuItem = styled.a`
   width: 100%;
-  height: 56px;
+  // height: 56px;
   display: flex;
   align-items: center;
-  padding: 0 24px;
+  padding: 12px 24px;
   border-radius: 10px;
   text-decoration: none !important;
   & p {
@@ -266,14 +271,27 @@ const Menu = (props) => {
     return (
       <>
         <TokenItemWrapper toggled={menuToggled} onClick={() => { dispatch(typeInput({ input: currency.address })) }}>
-          <div>
-            <p><b>{currency.symbol}</b></p>
-            <p><b>${Number(dollarPrice).toLocaleString()}</b></p>
-          </div>
-          <div>
-            <p><b>{value}</b></p>
-            <p />
-          </div>
+          {
+            menuToggled ?
+            <>
+              <div>
+                <p><b>{currency.symbol}</b></p>
+                <p><b>${Number(dollarPrice).toFixed(2).toLocaleString()}</b></p>
+                <p><b>{Number(value).toFixed(2).toLocaleString()}</b></p>
+              </div>
+            </> :
+            <>
+              <div>
+                <p><b>{currency.symbol}</b></p>
+                <p><b>${Number(dollarPrice).toFixed(2).toLocaleString()}</b></p>
+              </div>
+              <div>
+                <p><b>{Number(value).toFixed(2).toLocaleString()}</b></p>
+                <p />
+              </div>
+            </>
+          }
+          
           {/* {
                   !menuToggled &&
                   <div>
@@ -314,14 +332,12 @@ const Menu = (props) => {
             !menuToggled && <p>Wallet</p>
           }
         </div>
-        {!menuToggled && <p><b>{account ? Number(sum).toLocaleString() : ""}</b></p>
+        {!menuToggled && <p><b>{account ? Number(sum).toFixed(2).toLocaleString() : ""}</b></p>
         }
       </WalletHeading>
-      <MenuContentWrapper toggled={menuToggled}>
-       
-        {
+      {
           account ?
-            <div>
+            <div style={{ width: '100%', padding: '0px 24px' }}>
               <TokenListWrapper>
                 {showAllToken ? tokenData : tokenData.slice(0, 3)}
               </TokenListWrapper>
@@ -331,6 +347,7 @@ const Menu = (props) => {
             </div>
             : ""
         }
+      <MenuContentWrapper toggled={menuToggled}>
                  
         {
           links.map((link) => {

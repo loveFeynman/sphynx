@@ -7,6 +7,9 @@ import { ReactComponent as PredictionIcon } from 'assets/svg/icon/PredictionIcon
 import { ReactComponent as IFOIcon } from 'assets/svg/icon/IFOIcon.svg'
 import { ReactComponent as MoreIcon } from 'assets/svg/icon/MoreIcon.svg'
 import { ReactComponent as ChartIcon }  from 'assets/svg/icon/chart-swap.svg'
+import { ReactComponent as CoingeckoIcon }  from 'assets/svg/icon/Coingecko.svg'
+import { ReactComponent as CoinMarketCapsIcon }  from 'assets/svg/icon/CoinMarketCaps.svg'
+import { ReactComponent as LearningHubIcon }  from 'assets/svg/icon/LearningHub.svg'
 
 export const links = [
   // {
@@ -40,18 +43,18 @@ export const links = [
     href: '/',
   },
   {
-    label: 'CoinMarketCaps',
-    icon: MoreIcon,
+    label: 'CoinMarketCap',
+    icon: CoinMarketCapsIcon,
     href: 'https://coinmarketcap.com/',
   },
   {
     label: 'CoinGecko',
-    icon: MoreIcon,
+    icon: CoingeckoIcon,
     href: 'https://www.coingecko.com/',
   },
   {
     label: 'Learning Hub',
-    icon: MoreIcon,
+    icon: LearningHubIcon,
     href: 'https://cryptolearnhub.com/',
   },
   // {

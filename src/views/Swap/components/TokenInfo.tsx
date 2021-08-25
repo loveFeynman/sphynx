@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components'
-import { Flex, Text } from '@pancakeswap/uikit'
-import { ReactComponent as MoreIcon2 } from 'assets/svg/icon/MoreIcon2.svg' 
+import { Flex, Text, Link } from '@pancakeswap/uikit'
+// import { ReactComponent as MoreIcon2 } from 'assets/svg/icon/MoreIcon2.svg' 
+import { ReactComponent as BscscanIcon } from 'assets/svg/icon/Bscscan.svg'
 import axios from 'axios';
 import CopyHelper from 'components/AccountDetails/Copy'
 
 import { AppState, AppDispatch } from '../../../state'
 import { selectCurrency, Field } from '../../../state/swap/actions';
-import { isAddress } from '../../../utils'
+import { isAddress, getBscScanLink } from '../../../utils'
 
 const TextWrapper = styled.div`
   border-top: 1px solid rgba(255, 255, 255, 0.1);
@@ -116,7 +117,9 @@ export default function TokenInfo() {
           </IconWrapper>
         </Flex>
         <Flex style={{ width: 40 }}>
-          <MoreIcon2 />
+          <Link href={getBscScanLink(result === false ? '' : result, 'token')} external>
+            <BscscanIcon />
+          </Link>
         </Flex>
       </Flex>
       <Flex flexDirection="column">
@@ -126,7 +129,7 @@ export default function TokenInfo() {
         </TextWrapper>
         <TextWrapper>
           <Text>Market Cap:</Text>
-          <Text>{Number(alldata.marketCap).toLocaleString()}</Text>
+          <Text>$ {Number(alldata.marketCap).toLocaleString()}</Text>
         </TextWrapper>
         <TextWrapper>
           <Text>Transactions</Text>

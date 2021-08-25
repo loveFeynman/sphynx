@@ -4,7 +4,7 @@ import { Link } from '@pancakeswap/uikit'
 import Marquee from "react-fast-marquee";
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
-import { ReactComponent as HelpIcon } from 'assets/svg/icon/HelpIcon.svg'
+// import { ReactComponent as HelpIcon } from 'assets/svg/icon/HelpIcon.svg'
 // import { ReactComponent as DownRedArrowIcon} from 'assets/svg/icon/DownRedArrowIcon.svg'
 // import { ReactComponent as UpGreenArrowIcon} from 'assets/svg/icon/UpGreenArrowIcon.svg'
 import { HotTokenType } from './types'
@@ -18,7 +18,6 @@ export interface HotTokenBarProps {
 const StyledBar = styled.div`
   width: 100%;
   display: flex;
-  margin-bottom: 30px;
   & span {
     font-family: 'Roboto Regular'
   }
@@ -154,7 +153,7 @@ export default function HotTokenBar() {
  return (
    <>
    <StyledBar>
-     <BarIntro><span>Top Pairs</span> <HelpIcon /></BarIntro>
+     <BarIntro><span>Top Pairs</span></BarIntro>
      <FlowBar>
        <Marquee gradient={false}>
          <ul style={{ display: 'flex', listStyle: 'none', justifyContent: 'center', width: 'calc(100% - 120px)' }}>

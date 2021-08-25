@@ -38,13 +38,11 @@ import { ArrowWrapper, SwapCallbackError, Wrapper } from './components/styleds'
 // import TradePrice from './components/TradePrice'
 import ImportTokenWarningModal from './components/ImportTokenWarningModal'
 import ProgressSteps from './components/ProgressSteps'
-import HotTokenBar from './components/HotTokenBar'
 import TokenInfo from './components/TokenInfo'
 import Cards from './components/Layout'
 import CoinStatsBoard from './components/CoinStatsBoard'
 import TransactionCard from './components/TransactionCard'
 import ContractPanel from './components/ContractPanel'
-import ToggleList from './components/ToggleList'
 
 import LiquidityWidget from '../Pool/LiquidityWidget'
 import {TVChartContainer} from './TVChartContainer'
@@ -685,13 +683,12 @@ export default function Swap({ history }: RouteComponentProps) {
 
   return (
     <Page>
-      <HotTokenBar />
       {/* <SwapRightBanner>
         <img src={SwapBanner} alt='Swap Banner' />
       </SwapRightBanner> */}
       <Cards>
         <div>
-          <div style={{ height: 48, marginBottom: 20 }}>
+          <div style={{ height: 48, marginTop: 60, marginBottom: 25 }}>
             <Flex alignItems='center' justifyContent='center' style={{ marginBottom: 8 }}>
               <SwapCardNav />
             </Flex>
@@ -783,13 +780,11 @@ export default function Swap({ history }: RouteComponentProps) {
 
                   <Flex justifyContent='space-between' alignItems='center' marginTop='20px'>
                     <Flex alignItems='center'>
-                      <HelpIcon />
                       <SlippageText><span>Slippage Tolerance</span><b>: {allowedSlippage / 100}%</b></SlippageText>
                     </Flex>
                     {currencies[Field.INPUT] && currencies[Field.OUTPUT] &&
                       <Flex alignItems='center'>
                         <SlippageText><b>1 {currencies[Field.INPUT]?.symbol} = { trade?.executionPrice.toSignificant(6) } {currencies[Field.OUTPUT]?.symbol}</b></SlippageText>
-                        <HelpIcon1 />
                       </Flex>                
                     }
                   </Flex>
@@ -914,7 +909,6 @@ export default function Swap({ history }: RouteComponentProps) {
           <FullHeightColumn>
             <ContractPanel value={handleChange} />
              {/* tokenInfo={currentToken} */}
-            <ToggleList />
             <CoinStatsBoard />
             <TVChartContainer />
           </FullHeightColumn>
