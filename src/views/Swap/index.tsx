@@ -21,7 +21,7 @@ import { ReactComponent as DownArrow } from 'assets/svg/icon/DownArrow.svg'
 import { ReactComponent as HelpIcon } from 'assets/svg/icon/HelpIcon.svg'
 import { ReactComponent as HelpIcon1 } from 'assets/svg/icon/HelpIcon1.svg'
 import BinanceLogo from 'assets/images/binance-logo.png'
-import SwapBanner from 'assets/images/DogeBanner1.png'
+// import SwapBanner from 'assets/images/DogeBanner1.png'
 import FarmBanner from 'assets/images/farmbanner.png'
 import StakingBanner from 'assets/images/stakebanner.png'
 
@@ -686,9 +686,9 @@ export default function Swap({ history }: RouteComponentProps) {
   return (
     <Page>
       <HotTokenBar />
-      <SwapRightBanner>
+      {/* <SwapRightBanner>
         <img src={SwapBanner} alt='Swap Banner' />
-      </SwapRightBanner>
+      </SwapRightBanner> */}
       <Cards>
         <div>
           <div style={{ height: 48, marginBottom: 20 }}>
