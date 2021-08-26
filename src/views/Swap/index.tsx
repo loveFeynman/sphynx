@@ -918,7 +918,7 @@ export default function Swap({ history }: RouteComponentProps) {
             <ChartContainer height={chartHeight}>
               <Rnd
                 size={{ width: '100%', height: chartHeight }}
-                onResizeStop={(e, direction, ref, delta, position) => {
+                onResize={(e, direction, ref, delta, position) => {
                   setChartHeight(ref.style.height)
                 }}
               >

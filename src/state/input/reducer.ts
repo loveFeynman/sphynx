@@ -9,7 +9,7 @@ interface InputState {
 
 const initialState : InputState = {
   input: '0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82',
-  routerVersion: 'v1'
+  routerVersion: 'v2'
 };
 
 

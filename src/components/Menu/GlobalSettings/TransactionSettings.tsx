@@ -15,8 +15,9 @@ enum DeadlineError {
   InvalidInput = 'InvalidInput',
 }
 
-const SlippageButton = styled(Button)`  
+const SlippageButton = styled(Button)`
   outline: none;
+  color: white;
   &.selected {
     background-color: #8b2a9b !important;
   }
