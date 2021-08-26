@@ -12,7 +12,7 @@ export async function makeApiRequest(path:any) {
 export async function makeApiRequest1(path:any, routerVersion: any) {
     try {
         // console.log("here in api reuest",path)
-        const response = await fetch(`https://api.sphynxswap.finance/${routerVersion}/chart/${path}`, {
+        const response = await fetch(`https://api.sphynxswap.finance/${routerVersion === 'V1' ? 'v1' : ''}/chart/${path}`, {
             method : "GET",
             headers: {
                 'Content-Type': 'application/json'

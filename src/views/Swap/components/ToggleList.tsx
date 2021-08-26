@@ -72,7 +72,7 @@ export default function ToggleList() {
   const dispatch = useDispatch()
 
   const [anchorEl, setAnchorEl] = React.useState(null);
-  const [selectedItem, setSelectedItem] = React.useState('V1')
+  const [selectedItem, setSelectedItem] = React.useState('V1 Pancake')
   
   const [showDrop, setShowDrop] = useState(false)
 
@@ -100,15 +100,15 @@ export default function ToggleList() {
         showDrop &&
         <MenuWrapper>
           <MenuItem onClick={() => {
-            setSelectedItem('V1')
+            setSelectedItem('V1 Pancake')
             dispatch(typeRouterVersion({ routerVersion: 'V1' }))
             handleClose()
-          }}>V1</MenuItem>
+          }}>V1 Pancake</MenuItem>
           <MenuItem onClick={() => {
-            setSelectedItem('V2')
+            setSelectedItem('V2 Pancake')
             dispatch(typeRouterVersion({ routerVersion: 'V2' }))
             handleClose()
-          }}>V2</MenuItem>
+          }}>V2 Pancake</MenuItem>
         </MenuWrapper>
       }
       { showDrop && <ContractPanelOverlay onClick={() => setShowDrop(false) } />}

@@ -155,7 +155,7 @@ export default function CoinStatsBoard() {
         <Column>
           <Text>Price</Text>
           {/* <Text>$ {Number(alldata.price).toLocaleString()}</Text> */}
-          <Text>${alldata.price}</Text>
+          <Text>${Number(alldata.price).toFixed(3).toLocaleString()}</Text>
         </Column>
         <Column>
           <Text>24h Change</Text>

@@ -332,7 +332,7 @@ const Menu = (props) => {
             !menuToggled && <p>Wallet</p>
           }
         </div>
-        {!menuToggled && <p><b>{account ? Number(sum).toFixed(2).toLocaleString() : ""}</b></p>
+        {!menuToggled && <p><b>{account ? `$ ${Number(sum).toFixed(2).toLocaleString()}` : ""}</b></p>
         }
       </WalletHeading>
       {

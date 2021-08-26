@@ -155,7 +155,7 @@ export default function HotTokenBar() {
    <StyledBar>
      <BarIntro><span>Top Pairs</span></BarIntro>
      <FlowBar>
-       <Marquee gradient={false}>
+       <Marquee gradient={false} className="marquee-container" style={{ overflow: 'hidden !important' }}>
          <ul style={{ display: 'flex', listStyle: 'none', justifyContent: 'center', width: 'calc(100% - 120px)' }}>
          {
             data.map((elem:any) => {

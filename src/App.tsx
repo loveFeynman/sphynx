@@ -210,6 +210,7 @@ const App: React.FC = () => {
   const { account } = useWeb3React();
   const { menuToggled, toggleMenu } = useMenuToggle();
   const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input);
+  const routerVersion = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.routerVersion)
   const [showLoader, setShowLoader] = useState<any>(false);
   // const { isXl } = useMatchBreakpoints();
   // const history = useHistory();
@@ -220,7 +221,7 @@ const App: React.FC = () => {
       setShowLoader(true)
     }, 3000);
     setShowLoader(false)
-  }, [input])
+  }, [input, routerVersion])
 
   return (
     <>

@@ -32,6 +32,10 @@ const GlobalStyle = createGlobalStyle`
       color: white;
     }
   }
+
+  .marquee-container {
+    overflow: hidden !important;
+  }
 `
 
 export default GlobalStyle

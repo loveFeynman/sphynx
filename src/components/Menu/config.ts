@@ -33,16 +33,6 @@ export const links = [
     href: 'https://farm.sphynxswap.finance/pools'
   },
   {
-    label: 'NFT Marketplace (coming soon)',
-    icon: PredictionIcon,
-    href: '/'
-  },
-  {
-    label: 'Prediction (coming soon)',
-    icon: PredictionIcon,
-    href: '/',
-  },
-  {
     label: 'CoinMarketCap',
     icon: CoinMarketCapsIcon,
     href: 'https://coinmarketcap.com/',
@@ -56,6 +46,16 @@ export const links = [
     label: 'Learning Hub',
     icon: LearningHubIcon,
     href: 'https://cryptolearnhub.com/',
+  },
+  {
+    label: 'NFT Marketplace (coming soon)',
+    icon: PredictionIcon,
+    href: '/'
+  },
+  {
+    label: 'Prediction (coming soon)',
+    icon: PredictionIcon,
+    href: '/',
   },
   // {
   //   label: '... More',
