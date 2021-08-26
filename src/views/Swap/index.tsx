@@ -5,6 +5,7 @@ import { Button, Text, ArrowDownIcon, Box, useModal, Flex } from '@pancakeswap/u
 import { useIsTransactionUnsupported } from 'hooks/Trades'
 import UnsupportedCurrencyFooter from 'components/UnsupportedCurrencyFooter'
 import { RouteComponentProps } from 'react-router-dom'
+import { Rnd } from 'react-rnd';
 import { useTranslation } from 'contexts/Localization'
 import SwapWarningTokens from 'config/constants/swapWarningTokens'
 import { getAddress } from 'utils/addressHelpers'
@@ -280,11 +281,13 @@ const BottomGrouping = styled(Box)`
   }
 `
 
-// const Label = styled(Text)`
-//   font-size: 12px;
-//   font-weight: bold;
-//   color: ${({ theme }) => theme.colors.secondary};
-// `
+const ChartContainer = styled.div<{height: string}> `
+  position: relative;
+  height: ${(props) => props.height};
+  .react-draggable {
+    transform: translate(0, 0) !important;
+  }
+`
 
 export default function Swap({ history }: RouteComponentProps) {
   const [address, setaddress] = useState('');
@@ -561,6 +564,8 @@ export default function Swap({ history }: RouteComponentProps) {
   const [hotTokens, setHotTokens] = useState<HotTokenType[] | null>(null)
   const [timeNow, setTimeNow] = useState(Date.now())
   const countDownDeadline = new Date(Date.UTC(2021, 6, 1, 0, 0, 0, 0)).getTime();
+
+  const [ chartHeight, setChartHeight ] = useState('550px');
 
   useEffect(() => {
     let timeout;
@@ -910,7 +915,16 @@ export default function Swap({ history }: RouteComponentProps) {
             <ContractPanel value={handleChange} />
              {/* tokenInfo={currentToken} */}
             <CoinStatsBoard />
-            <TVChartContainer />
+            <ChartContainer height={chartHeight}>
+              <Rnd
+                size={{ width: '100%', height: chartHeight }}
+                onResizeStop={(e, direction, ref, delta, position) => {
+                  setChartHeight(ref.style.height)
+                }}
+              >
+                <TVChartContainer/>
+              </Rnd>
+            </ChartContainer>
           </FullHeightColumn>
         </div>
         <div>

@@ -36,7 +36,8 @@ const ContractPanelWrapper = styled.div`
   ${({ theme }) => theme.mediaQueries.sm} {
     flex-direction: row;
     justify-content: space-between;
-    align-items: center;   
+    align-items: center;
+    flex-wrap: wrap;  
   }
 `
 

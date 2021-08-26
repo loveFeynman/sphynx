@@ -15,7 +15,8 @@ const ToggleWrapper = styled.div`
   position: relative;
   z-index: 2;
   height: 40px;
-  width: 420px;
+  min-width: 200px;
+  flex: 1;
   border-radius: 16px;
   // margin: 12px 0;
   padding: 0 4px;
@@ -23,7 +24,7 @@ const ToggleWrapper = styled.div`
   display: flex;
   align-items: center;
   ${({ theme }) => theme.mediaQueries.sm} {
-    min-width: 420px;
+    min-width: 200px;
   }
   & button {
     background: transparent !important;
@@ -48,7 +49,7 @@ const MenuWrapper = styled.div`
 `
 
 const MenuTitle = styled.div`
-  width: 400px;
+  width: 100%;
   height: 35px;
   background: transparent;
   color: white;
@@ -89,7 +90,7 @@ export default function ToggleList() {
     
   return (
     <ToggleWrapper>
-      <Button aria-controls="fade-menu1" aria-haspopup="true" onClick={handleClick}>
+      <Button aria-controls="fade-menu1" aria-haspopup="true" onClick={handleClick} style={{ width: '100%' }}>
         <MenuTitle>
           <span>{selectedItem}</span>
         </MenuTitle>
