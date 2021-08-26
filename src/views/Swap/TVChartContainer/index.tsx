@@ -65,7 +65,7 @@ export const TVChartContainer: React.FC<Partial<ChartContainerProps>> = () => {
         name: 'PancakeSwap Token',
         pair: 'Cake/BNB',
         sybmol: 'CAKE',
-        version: 'Pancake v2',
+        version: 'Pancake ' + routerVersion,
     });
 
     const lastBarsCache = new Map();
@@ -146,6 +146,8 @@ export const TVChartContainer: React.FC<Partial<ChartContainerProps>> = () => {
             const response = await axios.get(`https://api.sphynxswap.finance/tokenDetails/${input}`);
             setTokenDetails(response.data)
 
+            const version = response.data.version.indexOf(' ') > 0 ? (response.data.version.split(' ')[0] + ' ' + routerVersion) : response.data.version
+
             const symbolInfo = {
                 ticker: response.data.pair,
                 name: response.data.pair,
@@ -153,7 +155,7 @@ export const TVChartContainer: React.FC<Partial<ChartContainerProps>> = () => {
                 type: 'crypto',
                 session: '24x7',
                 timezone: 'Etc/UTC',
-                exchange: response.data.version,
+                exchange: version,
                 minmov: 1,
                 pricescale: 100,
                 has_intraday: false,

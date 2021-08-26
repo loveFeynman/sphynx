@@ -2,7 +2,7 @@ import { createAction } from '@reduxjs/toolkit'
 
 export interface Field {
   input : ''
-  typeRouterVersion: 'V1'
+  typeRouterVersion: 'v1'
   type:"INPUT_ADDRESS"
 }
 

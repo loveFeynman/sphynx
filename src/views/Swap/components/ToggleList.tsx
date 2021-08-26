@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import styled from 'styled-components'
 
 // eslint-disable-next-line import/no-unresolved
@@ -9,6 +9,7 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Fade from '@material-ui/core/Fade';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
+import { AppState } from '../../../state'
 import { typeRouterVersion } from '../../../state/input/actions'
 
 const ToggleWrapper = styled.div`
@@ -69,14 +70,13 @@ const ContractPanelOverlay = styled.div`
 
 export default function ToggleList() {
 
+  const routerVersion = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.routerVersion)
   const dispatch = useDispatch()
 
   const [anchorEl, setAnchorEl] = React.useState(null);
-  const [selectedItem, setSelectedItem] = React.useState('V1 Pancake')
+  const [selectedItem, setSelectedItem] = React.useState(routerVersion === 'v1' ? 'V1 Pancake' : 'V2 Pancake')
   
   const [showDrop, setShowDrop] = useState(false)
-
-  const open = Boolean(anchorEl);
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget)
@@ -101,12 +101,12 @@ export default function ToggleList() {
         <MenuWrapper>
           <MenuItem onClick={() => {
             setSelectedItem('V1 Pancake')
-            dispatch(typeRouterVersion({ routerVersion: 'V1' }))
+            dispatch(typeRouterVersion({ routerVersion: 'v1' }))
             handleClose()
           }}>V1 Pancake</MenuItem>
           <MenuItem onClick={() => {
             setSelectedItem('V2 Pancake')
-            dispatch(typeRouterVersion({ routerVersion: 'V2' }))
+            dispatch(typeRouterVersion({ routerVersion: 'v2' }))
             handleClose()
           }}>V2 Pancake</MenuItem>
         </MenuWrapper>
