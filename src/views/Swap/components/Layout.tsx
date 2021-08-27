@@ -4,6 +4,7 @@ const Cards = styled.div`
   display: flex;
   flex-wrap: wrap;
   padding-bottom: 20px;
+  width: 100%;
   & > div {
     width: 100%;
     margin-bottom: 20px;
