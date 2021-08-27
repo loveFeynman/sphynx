@@ -6,7 +6,7 @@ const Cards = styled.div`
   padding-bottom: 20px;
   & > div {
     width: 100%;
-    margin-bottom: 24px;
+    margin-bottom: 20px;
     ${({ theme }) => theme.mediaQueries.md} {
       &:nth-child(2n + 1) {
         width: 320px;

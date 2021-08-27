@@ -921,6 +921,7 @@ export default function Swap({ history }: RouteComponentProps) {
                 onResize={(e, direction, ref, delta, position) => {
                   setChartHeight(ref.style.height)
                 }}
+                minHeight='550px'
               >
                 <TVChartContainer/>
               </Rnd>

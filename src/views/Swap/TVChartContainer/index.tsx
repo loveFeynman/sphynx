@@ -1,5 +1,6 @@
 /* eslint-disable */
 import * as React from 'react';
+import styled from 'styled-components'
 import './index.css';
 import {
     widget,
@@ -11,9 +12,20 @@ import {
 import axios from 'axios';
 import { makeApiRequest, generateSymbol, makeApiRequest1 } from './helpers';
 import { useSelector } from 'react-redux';
+import { ReactComponent as UpDownArrow } from 'assets/svg/icon/UpDownArrow.svg'
 import { AppDispatch, AppState } from '../../../state'
 import { isAddress } from '../../../utils'
 
+
+const UpDownArrowBox = styled.div`
+  width: 100%;
+  height: 10px;
+  text-align: center;
+  & svg {
+    width: 14px;
+    height: 16px;
+  }
+`
 
 // eslint-disable-next-line import/extensions
 
@@ -307,7 +319,8 @@ export const TVChartContainer: React.FC<Partial<ChartContainerProps>> = () => {
 
 
     return (
-        <>
+        <div
+            className={'TVChartContainer'}>
           {/* {loader ?
           <div style={{ position: 'absolute', left: 567, top: 150 }}>
             <BoxesLoader
@@ -320,11 +333,15 @@ export const TVChartContainer: React.FC<Partial<ChartContainerProps>> = () => {
           </div>
           : ""
         } */}
-        <div
-            id={ChartContainerProps.containerId}
-            className={'TVChartContainer'}
-        />
-        </>
+            <div
+                id={ChartContainerProps.containerId}
+                style={{ height: '100%', paddingBottom: '10px' }}
+            />
+            {/* <div style={{ height: '10px' }}>&nbsp;</div> */}
+            <UpDownArrowBox>
+                <UpDownArrow />
+            </UpDownArrowBox>
+        </div>
 
     )
 

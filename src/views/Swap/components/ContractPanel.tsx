@@ -136,13 +136,16 @@ export default function ContractPanel({value}: ContractPanelProps){
 
   const handlerChange = (e: any) => {
     try {
-      
-      axios.get(`https://api.sphynxswap.finance/search/${e.target.value}`)
+      if (e.target.value !== null && e.target.value.length > 0) {
+        axios.get(`https://api.sphynxswap.finance/search/${e.target.value}`)
         .then((response) => {
           // setalldata(response.data)
           // console.log("response",response.data);
           setdata(response.data);
         })
+      } else {
+        setdata([]);
+      }
     } catch(err) {
       // eslint-disable-next-line no-console
       // console.log(err);
