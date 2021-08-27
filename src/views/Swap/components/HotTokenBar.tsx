@@ -1,9 +1,13 @@
-import React from 'react'
+/* eslint-disable no-script-url */
+/* eslint-disable jsx-a11y/anchor-is-valid */
+/* eslint-disable no-console */
+import React,{useState,useCallback} from 'react'
 import styled from 'styled-components'
 import { Link } from '@pancakeswap/uikit'
 import Marquee from "react-fast-marquee";
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
+import ReactLoading from 'react-loading';
 // import { ReactComponent as HelpIcon } from 'assets/svg/icon/HelpIcon.svg'
 // import { ReactComponent as DownRedArrowIcon} from 'assets/svg/icon/DownRedArrowIcon.svg'
 // import { ReactComponent as UpGreenArrowIcon} from 'assets/svg/icon/UpGreenArrowIcon.svg'
@@ -92,7 +96,7 @@ export default function HotTokenBar() {
       name:''
     }
   }])
-
+ const [loader,setLoader]=useState(false)
   const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
   const dispatch = useDispatch();
 
@@ -105,7 +109,7 @@ export default function HotTokenBar() {
   {
     ethereum(network: bsc) {
       transfers(
-        options: {desc: "count", limit: 15, offset: 0}
+        options: {desc: "count", limit: 10, offset: 0}
         amount: {gt: 0}
         date: {since: "${date.toISOString()}", till: "${d.toISOString()}"}
         currency: {notIn: ["BNB", "WBNB", "BTCB", "ETH", "BUSD", "USDT", "USDC", "DAI"]}
@@ -127,43 +131,58 @@ export default function HotTokenBar() {
     
   }`
 
-   const fetchData = async () => {
-     try {
-         // setLoader(true);
-         const queryResult = await axios.post('https://graphql.bitquery.io/', { query: getDataQuery });
-         console.log('bbb', queryResult)
-         // setData(queryResult);
-         if (queryResult.data.data){
-         setData(queryResult.data.data.ethereum.transfers)
-     }
-   }
-     catch (err) {
-       // eslint-disable-next-line no-console
-       // alert("Invalid Address");
-       // <Redirect to="/swap" />
+  const handleClick = useCallback(async() => {
+  
+      setLoader(true);
+      const queryResult = await axios.post('https://graphql.bitquery.io/', { query: getDataQuery });
+      // setData(queryResult);
+      if (queryResult.data.data){
+      setData(queryResult.data.data.ethereum.transfers)
+      setLoader(false);
+      }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+    
+  //  const fetchData = async () => {
+  //    try {
+  //        setLoader(true);
+  //        const queryResult = await axios.post('https://graphql.bitquery.io/', { query: getDataQuery });
+     
+  //        if (queryResult.data.data){
+  //        setData(queryResult.data.data.ethereum.transfers)
+  //        setLoader(false);
+  //    }
+  //  }
+  //    catch (err) {
+     
  
-     }
-   }
+  //    }
+  //  }
    // console.log("data in hotbar==================================",data)
   React.useEffect(()=>{
-   fetchData()
+    handleClick()
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[input])
+  },[])
 
  return (
    <>
    <StyledBar>
      <BarIntro><span>Top Pairs</span></BarIntro>
+    
      <FlowBar>
+     {loader?<div style={{display: 'flex', justifyContent: 'center'}}>
+     <ReactLoading type="spin" color="green" height='2%' width='2%'  />
+     </div>:
        <Marquee gradient={false} className="marquee-container" style={{ overflow: 'hidden !important' }}>
+     
          <ul style={{ display: 'flex', listStyle: 'none', justifyContent: 'center', width: 'calc(100% - 120px)' }}>
-         {
-            data.map((elem:any) => {
+            {
+            data.map((elem:any,index) => {
              return (
                <li style={{color:'white',padding:'20'}}>
-               < a href="##" style={{marginRight: 32,textDecoration:'none'}} 
+               <a href="javascript:void(null)" style={{marginRight: 25,textDecoration:'none'}} 
                onClick={()=> dispatch(typeInput({ input: elem.currency.address }))}
-               >{elem.currency.symbol}</a>
+               >{`${index+1}. ${elem.currency.symbol}`}</a>
                  {/* < a href="##">{elem.currency.name}</a> */}
                  {/* <HotToken
                    index={key + 1}
@@ -175,10 +194,13 @@ export default function HotTokenBar() {
                </li>
              )
            })
-         }
+          }
          </ul>
+
        </Marquee>
+     }
      </FlowBar>
+   
      <div className="paddingRight: 30px" />
    </StyledBar>
    </>

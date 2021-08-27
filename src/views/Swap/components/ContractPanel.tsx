@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import styled from 'styled-components'
@@ -126,12 +127,20 @@ export default function ContractPanel({value}: ContractPanelProps){
   // console.log("result===============================>",result)  // => true
   const [data,setdata]=useState([])
   const dispatch = useDispatch();
-  const [website, setWebsite]=useState('');
+  // const [website, setWebsite]=useState('');
+  
+  const [social,setSocial]=useState({
+    website:'',
+    twitter:'',
+    telegram:'',
+  })
 
+  // const find=social.links.find(elem=>elem)
+  // console.log("socials",social.links)
   const getWebsite=async()=>{
     const web:any=await axios.get(`https://api.sphynxswap.finance/socials/${checksumAddress}`);
-    console.log("web===============>",web)
-    setWebsite(web.data.data.website);
+    // console.log("web===============>",web)
+    setSocial(web.data.data);
   }
 
   const handlerChange = (e: any) => {
@@ -141,7 +150,7 @@ export default function ContractPanel({value}: ContractPanelProps){
         .then((response) => {
           // setalldata(response.data)
           // console.log("response",response.data);
-          setdata(response.data);
+          setdata(response.data.data);
         })
       } else {
         setdata([]);
@@ -194,7 +203,7 @@ export default function ContractPanel({value}: ContractPanelProps){
       document.removeEventListener("keydown", listener);
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [checksumAddress ]);
+  }, [input]);
     
   return (
     <>
@@ -229,10 +238,10 @@ export default function ContractPanel({value}: ContractPanelProps){
           <Link href={getBscScanLink(checksumAddress === false ? '' : checksumAddress, 'token')} external>
             <BscscanIcon />
           </Link>
-          <Link external href="https://twitter.com/sphynxswap?s=21">
+          <Link external href={social.twitter}>
             <TwitterIcon />
           </Link>
-          <Link external href={website}>
+          <Link external href={social.website}>
             <SocialIcon2 />
           </Link>
           <Link external href="https://t.me/sphynxswap">

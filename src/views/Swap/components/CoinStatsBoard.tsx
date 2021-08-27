@@ -113,7 +113,7 @@ export default function CoinStatsBoard() {
       if (result) {
         axios.post("https://api.sphynxswap.finance/tokenStats",{address:input})
           .then((response) => {
-            console.log('ccc', response.data);
+          
             setTokenData(response.data)
           });
         axios.post("https://api.sphynxswap.finance/chartStats",{address:input})
