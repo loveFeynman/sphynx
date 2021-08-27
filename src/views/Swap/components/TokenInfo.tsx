@@ -68,6 +68,7 @@ const TokenInfoContainer = styled.div`
 // {tokenInfo}: {tokenInfo?: TokenDetailProps | null}
 export default function TokenInfo() {
   const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
+
   const result = isAddress(input)
   // eslint-disable-next-line no-console
 

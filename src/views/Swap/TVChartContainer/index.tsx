@@ -121,7 +121,7 @@ export const TVChartContainer: React.FC<Partial<ChartContainerProps>> = () => {
     const feed = {
         
         onReady: (callback: any) => {
-            console.log('[onReady]: Method call');
+            // console.log('[onReady]: Method call');
             setTimeout(() => callback(configurationData), 0);
         },
         searchSymbols: async (
@@ -130,7 +130,7 @@ export const TVChartContainer: React.FC<Partial<ChartContainerProps>> = () => {
             symbolType: any,
             onResultReadyCallback: any,
         ) => {
-            console.log('[searchSymbols]: Method call');
+            // console.log('[searchSymbols]: Method call');
             const symbols = await getAllSymbols();
             const newSymbols = symbols.filter(symbol => {
                 const isExchangeValid = exchange === '' || symbol.exchange === exchange;
@@ -146,7 +146,7 @@ export const TVChartContainer: React.FC<Partial<ChartContainerProps>> = () => {
             onSymbolResolvedCallback: any,
             onResolveErrorCallback: any,
         ) => {
-            console.log('[resolveSymbol]: Method call', symbolName);
+            // console.log('[resolveSymbol]: Method call', symbolName);
             // const symbols = await getAllSymbols();
             // const symbolItem = symbols.find(({full_name,
             // }) => full_name === symbolName);
@@ -178,7 +178,7 @@ export const TVChartContainer: React.FC<Partial<ChartContainerProps>> = () => {
                 data_status: 'streaming',
             };
             // eslint-disable-next-line no-console
-            console.log('[resolveSymbol]: Symbol resolved', symbolName);
+            // console.log('[resolveSymbol]: Symbol resolved', symbolName);
             onSymbolResolvedCallback(symbolInfo);
         },
         getBars: async (symbolInfo: any, resolution: any, periodParams: any, onHistoryCallback: any, onErrorCallback: any) => {
@@ -244,7 +244,7 @@ export const TVChartContainer: React.FC<Partial<ChartContainerProps>> = () => {
             }
             catch (error) {
 
-                console.log('[getBars]: Get error', error.message);
+                // console.log('[getBars]: Get error', error.message);
                 onErrorCallback(error);
             }
         },

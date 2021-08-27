@@ -42,7 +42,6 @@ const StyledWrapper = styled.div`
   padding: 8px 16px 0;
   display: flex;
   flex-direction: column;
-  min-width: 760px;
 
   & > div {
     margin: 0 12px 8px 0;
@@ -113,7 +112,7 @@ export default function CoinStatsBoard() {
       if (result) {
         axios.post("https://api.sphynxswap.finance/tokenStats",{address:input})
           .then((response) => {
-            console.log('ccc', response.data);
+          
             setTokenData(response.data)
           });
         axios.post("https://api.sphynxswap.finance/chartStats",{address:input})

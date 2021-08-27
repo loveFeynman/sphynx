@@ -190,17 +190,17 @@ const IllustrationWrapper = styled.div`
 `
 
 const Menu = (props) => {
-  
+
   const { account } = useWeb3React()
   const { menuToggled, toggleMenu } = useMenuToggle();
-  const [ showAllToken, setShowAllToken ] = useState(true);
+  const [showAllToken, setShowAllToken] = useState(true);
 
   const [walletbalance, setWalletBalance] = useState(0);
   const dispatch = useDispatch();
 
   const [sum, setSum] = useState(0);
   const [getAllToken, setAllTokens] = useState([]);
-  
+
   // const { isDark, toggleTheme } = useTheme()
   // const cakePriceUsd = usePriceCakeBusd()
   // const { profile } = useProfile()
@@ -209,11 +209,11 @@ const Menu = (props) => {
   const getBalance = () => {
     const testnet = 'https://bsc-dataseed1.defibit.io';
     const web3 = new Web3(new Web3.providers.HttpProvider(testnet));
-    const balance= account && web3.eth.getBalance(account).then((res : any)=>{
-    	setWalletBalance(res/1000000000000000000);
+    const balance = account && web3.eth.getBalance(account).then((res: any) => {
+      setWalletBalance(res / 1000000000000000000);
     })
   }
-  
+
   const getDataQuery = `
   {
     ethereum(network: bsc) {
@@ -243,25 +243,33 @@ const Menu = (props) => {
         // queryResult.data.data.ethereum.address[0].balances.forEach(async (elem, index)=>{
         let allsum: any = 0;
 
-        // eslint-disable-next-line no-restricted-syntax
-        for await (const elem of queryResult.data.data.ethereum.address[0].balances) {
+        const balances = queryResult.data.data.ethereum.address[0].balances;
 
-          const price: any = await axios.get(`https://api.sphynxswap.finance/price/${elem.currency.address === '-' ? '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c' : elem.currency.address}`);
-          const dollerprice: any = price.data.price * elem.value;
+        // for await (const elem of queryResult.data.data.ethereum.address[0].balances) {
+          const promises = balances.map(elem => {
+            return axios.get(`https://api.sphynxswap.finance/price/${elem.currency.address === '-' ? '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c' : elem.currency.address}`);
+          })
+          const prices : any = await Promise.all(promises);
+          let i = 0;
+          // eslint-disable-next-line no-restricted-syntax
+        for(const elem of balances){
+          const dollerprice: any = prices[i].data.price * elem.value;
           elem.dollarPrice = dollerprice;
           allsum += dollerprice;
+          i++;
         }
+        
         setSum(allsum)
-        setAllTokens(queryResult.data.data.ethereum.address[0].balances)
+        setAllTokens(balances)
       }
     }
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     fetchData()
     // getBalance()
 
-// eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [account])
 
   const tokenData = getAllToken.map((elem: any) => {
@@ -273,25 +281,25 @@ const Menu = (props) => {
         <TokenItemWrapper toggled={menuToggled} onClick={() => { dispatch(typeInput({ input: currency.address })) }}>
           {
             menuToggled ?
-            <>
-              <div>
-                <p><b>{currency.symbol}</b></p>
-                <p><b>${Number(dollarPrice).toFixed(2).toLocaleString()}</b></p>
-                <p><b>{Number(value).toFixed(2).toLocaleString()}</b></p>
-              </div>
-            </> :
-            <>
-              <div>
-                <p><b>{currency.symbol}</b></p>
-                <p><b>${Number(dollarPrice).toFixed(2).toLocaleString()}</b></p>
-              </div>
-              <div>
-                <p><b>{Number(value).toFixed(2).toLocaleString()}</b></p>
-                <p />
-              </div>
-            </>
+              <>
+                <div>
+                  <p><b>{currency.symbol}</b></p>
+                  <p><b>${Number(dollarPrice).toFixed(2).toLocaleString()}</b></p>
+                  <p><b>{Number(value).toFixed(2).toLocaleString()}</b></p>
+                </div>
+              </> :
+              <>
+                <div>
+                  <p><b>{currency.symbol}</b></p>
+                  <p><b>${Number(dollarPrice).toFixed(2).toLocaleString()}</b></p>
+                </div>
+                <div>
+                  <p><b>{Number(value).toFixed(2).toLocaleString()}</b></p>
+                  <p />
+                </div>
+              </>
           }
-          
+
           {/* {
                   !menuToggled &&
                   <div>
@@ -316,12 +324,12 @@ const Menu = (props) => {
         {!menuToggled && <span>Main Menu</span>
         }
         <Button onClick={() => { toggleMenu(!menuToggled) }}>
-          { menuToggled ?
+          {menuToggled ?
             <svg viewBox='0 0 24 24' width='24px'>
               <path d="M4 18H20C20.55 18 21 17.55 21 17C21 16.45 20.55 16 20 16H4C3.45 16 3 16.45 3 17C3 17.55 3.45 18 4 18ZM4 13H20C20.55 13 21 12.55 21 12C21 11.45 20.55 11 20 11H4C3.45 11 3 11.45 3 12C3 12.55 3.45 13 4 13ZM3 7C3 7.55 3.45 8 4 8H20C20.55 8 21 7.55 21 7C21 6.45 20.55 6 20 6H4C3.45 6 3 6.45 3 7Z" />
             </svg>
             :
-            <MenuOpenIcon />         
+            <MenuOpenIcon />
           }
         </Button>
       </MenuIconWrapper>
@@ -336,19 +344,19 @@ const Menu = (props) => {
         }
       </WalletHeading>
       {
-          account ?
-            <div style={{ width: '100%', padding: '0px 24px' }}>
-              <TokenListWrapper>
-                {showAllToken ? tokenData : tokenData.slice(0, 3)}
-              </TokenListWrapper>
-              <ButtonWrapper style={{ margin: '10px 0' }} onClick={() => { setShowAllToken(!showAllToken) }}>
-                <p><b>{showAllToken ? 'Show Some Tokens' : 'Show All Tokens'}</b></p>
-              </ButtonWrapper>
-            </div>
-            : ""
-        }
+        account ?
+          <div style={{ width: '100%', padding: '0px 24px' }}>
+            <TokenListWrapper>
+              {showAllToken ? tokenData : tokenData.slice(0, 3)}
+            </TokenListWrapper>
+            <ButtonWrapper style={{ margin: '10px 0' }} onClick={() => { setShowAllToken(!showAllToken) }}>
+              <p><b>{showAllToken ? 'Show Some Tokens' : 'Show All Tokens'}</b></p>
+            </ButtonWrapper>
+          </div>
+          : ""
+      }
       <MenuContentWrapper toggled={menuToggled}>
-                 
+
         {
           links.map((link) => {
             const Icon = link.icon
@@ -356,10 +364,11 @@ const Menu = (props) => {
               <MenuItem href={link.href}>
                 <Icon />
                 {
-                  !menuToggled && <p><b>{ link.label }</b></p>
+                  !menuToggled && <p><b>{link.label}</b></p>
                 }
               </MenuItem>
-          )})
+            )
+          })
         }
         <SocialWrapper>
           <p><b>Socials</b></p>
@@ -377,10 +386,10 @@ const Menu = (props) => {
             </div>
           </SocialIconsWrapper>
         </SocialWrapper>
-        {!menuToggled && 
+        {!menuToggled &&
           <IllustrationWrapper>
             <img src={Illustration} alt='Illustration' />
-          </IllustrationWrapper>      
+          </IllustrationWrapper>
         }
       </MenuContentWrapper>
     </MenuWrapper>

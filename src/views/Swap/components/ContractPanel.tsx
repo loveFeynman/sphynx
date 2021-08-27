@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import styled from 'styled-components'
@@ -126,21 +127,42 @@ export default function ContractPanel({value}: ContractPanelProps){
   // console.log("result===============================>",result)  // => true
   const [data,setdata]=useState([])
   const dispatch = useDispatch();
-  const [website, setWebsite]=useState('');
+  // const [website, setWebsite]=useState('');
+  
+  const [social,setSocial]=useState({
+    website:''
+  })
 
+  const [twitterUrl, setTwitter] = useState('')
+  const [telegramUrl, setTelegram] = useState('')
+
+
+  // const find=social.links.find(elem=>elem)
+  // console.log("socials",social.links)
   const getWebsite=async()=>{
     const web:any=await axios.get(`https://api.sphynxswap.finance/socials/${checksumAddress}`);
-    console.log("web===============>",web)
-    setWebsite(web.data.data.website);
+    // console.log("web===============>",web)
+
+    const links = web.data.data.links || [];
+    const twitter = links.find(e=> e.name === "twitter")
+    const telegram = links.find(e=> e.name === "telegram");
+
+    if(twitter){
+      setTwitter(twitter.url)
+    }
+
+    if(telegram){
+      setTelegram(telegram.url)
+    }
+
+    setSocial(web.data.data);
   }
 
   const handlerChange = (e: any) => {
     try {
-      if (e.target.value !== null && e.target.value.length > 0) {
+      if (e.target.value && e.target.value.length > 0) {
         axios.get(`https://api.sphynxswap.finance/search/${e.target.value}`)
         .then((response) => {
-          // setalldata(response.data)
-          // console.log("response",response.data);
           setdata(response.data);
         })
       } else {
@@ -194,7 +216,7 @@ export default function ContractPanel({value}: ContractPanelProps){
       document.removeEventListener("keydown", listener);
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [checksumAddress ]);
+  }, [input]);
     
   return (
     <>
@@ -229,13 +251,13 @@ export default function ContractPanel({value}: ContractPanelProps){
           <Link href={getBscScanLink(checksumAddress === false ? '' : checksumAddress, 'token')} external>
             <BscscanIcon />
           </Link>
-          <Link external href="https://twitter.com/sphynxswap?s=21">
+          <Link external href={twitterUrl}>
             <TwitterIcon />
           </Link>
-          <Link external href={website}>
+          <Link external href={social.website}>
             <SocialIcon2 />
           </Link>
-          <Link external href="https://t.me/sphynxswap">
+          <Link external href={telegramUrl}>
             <TelegramIcon />
           </Link>
         </SocialIconsWrapper>
