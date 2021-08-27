@@ -946,11 +946,11 @@ export default function Swap({ history }: RouteComponentProps) {
         </BottomCard>
       </Cards>
 
-      {!swapIsUnsupported ? (
+      {/* {!swapIsUnsupported ? (
         <AdvancedSwapDetailsDropdown trade={trade} />
       ) : (
         <UnsupportedCurrencyFooter currencies={[currencies.INPUT, currencies.OUTPUT]} />
-      )}
+      )} */}
     </Page>
   )
 }
