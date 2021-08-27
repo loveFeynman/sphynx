@@ -73,6 +73,15 @@ const tokens = {
     decimals: 18,
     projectLink: 'https://pancakeswap.finance/',
   },
+  sphynx: {
+    symbol: 'SPHYNX',
+    address: {
+      56: '0x1b318e1C45147e8c4834d16BBed4c9994cf76f86',
+      97: '0x1b318e1C45147e8c4834d16BBed4c9994cf76f86',
+    },
+    decimals: 18,
+    projectLink: 'https://sphynxswap.finance/',
+  },
   babycake: {
     symbol: 'BABYCAKE',
     address: {

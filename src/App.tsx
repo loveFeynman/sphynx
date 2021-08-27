@@ -32,6 +32,8 @@ import history from './routerHistory'
 // Views included in the main bundle
 // import Pools from './views/Pools'
 import Swap from './views/Swap'
+import Farms from './views/Farms'
+import Pools from './views/Pools'
 import {
   RedirectDuplicateTokenIds,
   RedirectOldAddLiquidityPathStructure,
@@ -103,6 +105,7 @@ const TopBar = styled.div`
   align-items: center;
   width: 100%;
   margin-top: 32px;
+  margin-bottom: 32px;
   flex-wrap: wrap;
   // & button:first-child {
   //   background: transparent;
@@ -266,14 +269,15 @@ const App: React.FC = () => {
                   <Route path="/" exact>
                     <Redirect to="/swap" />
                   </Route>
-                  {/* <Route exact path="/farms/auction">
-                    <FarmAuction />
-                  </Route>
                   <Route path="/farms">
                     <Farms />
                   </Route>
                   <Route path="/pools">
                     <Pools />
+                  </Route>
+
+                  {/* <Route exact path="/farms/auction">
+                    <FarmAuction />
                   </Route>
                   <Route path="/lottery">
                     <Lottery />

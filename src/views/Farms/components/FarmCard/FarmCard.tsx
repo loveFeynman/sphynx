@@ -6,7 +6,7 @@ import { Farm } from 'state/types'
 import { getBscScanLink } from 'utils'
 import { useTranslation } from 'contexts/Localization'
 import ExpandableSectionButton from 'components/ExpandableSectionButton'
-import { BASE_ADD_LIQUIDITY_URL } from 'config'
+import { BASE_SWAP_URL } from 'config'
 import { getAddress } from 'utils/addressHelpers'
 import getLiquidityUrlPathParts from 'utils/getLiquidityUrlPathParts'
 import DetailsSection from './DetailsSection'
@@ -22,18 +22,20 @@ export interface FarmWithStakedValue extends Farm {
 
 const StyledCard = styled(Card)`
   align-self: baseline;
-`
-
+  `
+  
 const FarmCardInnerContainer = styled(Flex)`
   flex-direction: column;
   justify-content: space-around;
   padding: 24px;
+  background-color: ${({theme}) => theme.colors.input};
 `
 
 const ExpandingWrapper = styled.div`
   padding: 24px;
   border-top: 2px solid ${({ theme }) => theme.colors.cardBorder};
   overflow: hidden;
+  background-color: ${({theme}) => theme.colors.input};
 `
 
 interface FarmCardProps {
@@ -55,15 +57,15 @@ const FarmCard: React.FC<FarmCardProps> = ({ farm, displayApr, removed, cakePric
       : ''
 
   const lpLabel = farm.lpSymbol && farm.lpSymbol.toUpperCase().replace('PANCAKE', '')
-  const earnLabel = farm.dual ? farm.dual.earnLabel : t('CAKE + Fees')
+  const earnLabel = farm.dual ? farm.dual.earnLabel : t('Sphynx + Fees')
 
   const liquidityUrlPathParts = getLiquidityUrlPathParts({
     quoteTokenAddress: farm.quoteToken.address,
     tokenAddress: farm.token.address,
   })
-  const addLiquidityUrl = `${BASE_ADD_LIQUIDITY_URL}/${liquidityUrlPathParts}`
+  const addLiquidityUrl = `${BASE_SWAP_URL}`
   const lpAddress = getAddress(farm.lpAddresses)
-  const isPromotedFarm = farm.token.symbol === 'CAKE'
+  const isPromotedFarm = farm.token.symbol === 'SPHYNX'
 
   return (
     <StyledCard isActive={isPromotedFarm}>
@@ -100,7 +102,10 @@ const FarmCard: React.FC<FarmCardProps> = ({ farm, displayApr, removed, cakePric
           <Text>{t('Earn')}:</Text>
           <Text bold>{earnLabel}</Text>
         </Flex>
-        <CardActionsContainer farm={farm} account={account} addLiquidityUrl={addLiquidityUrl} />
+        <CardActionsContainer
+          farm={farm}
+          account={account}
+          addLiquidityUrl={addLiquidityUrl} />
       </FarmCardInnerContainer>
 
       <ExpandingWrapper>
@@ -112,7 +117,7 @@ const FarmCard: React.FC<FarmCardProps> = ({ farm, displayApr, removed, cakePric
           <DetailsSection
             removed={removed}
             bscScanAddress={getBscScanLink(lpAddress, 'address')}
-            infoAddress={`https://pancakeswap.info/pool/${lpAddress}`}
+            infoAddress={`https://sphynxswap.finance/pool/${lpAddress}`}
             totalValueFormatted={totalValueFormatted}
             lpLabel={lpLabel}
             addLiquidityUrl={addLiquidityUrl}

@@ -3,8 +3,9 @@ import styled from 'styled-components'
 import ApyButton from 'views/Farms/components/FarmCard/ApyButton'
 import { Address } from 'config/constants/types'
 import BigNumber from 'bignumber.js'
-import { BASE_ADD_LIQUIDITY_URL } from 'config'
+import { BASE_SWAP_URL } from 'config'
 import getLiquidityUrlPathParts from 'utils/getLiquidityUrlPathParts'
+import { getAddress } from 'utils/addressHelpers'
 import { Skeleton } from '@pancakeswap/uikit'
 
 export interface AprProps {
@@ -50,7 +51,7 @@ const Apr: React.FC<AprProps> = ({
   hideButton = false,
 }) => {
   const liquidityUrlPathParts = getLiquidityUrlPathParts({ quoteTokenAddress, tokenAddress })
-  const addLiquidityUrl = `${BASE_ADD_LIQUIDITY_URL}/${liquidityUrlPathParts}`
+  const addLiquidityUrl = `${BASE_SWAP_URL}`
 
   return originalValue !== 0 ? (
     <Container>

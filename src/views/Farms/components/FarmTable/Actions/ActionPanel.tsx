@@ -2,6 +2,7 @@ import React from 'react'
 import styled, { keyframes, css } from 'styled-components'
 import { useTranslation } from 'contexts/Localization'
 import { LinkExternal, Text } from '@pancakeswap/uikit'
+import { BASE_SWAP_URL } from 'config'
 import { FarmWithStakedValue } from 'views/Farms/components/FarmCard/FarmCard'
 import getLiquidityUrlPathParts from 'utils/getLiquidityUrlPathParts'
 import { getAddress } from 'utils/addressHelpers'
@@ -51,7 +52,8 @@ const Container = styled.div<{ expanded }>`
           ${collapseAnimation} 300ms linear forwards
         `};
   overflow: hidden;
-  background: ${({ theme }) => theme.colors.background};
+  background: ${({ theme }) => theme.colors.input};
+  border-bottom: 1px solid ${({ theme }) => theme.colors.cardBorder};
   display: flex;
   width: 100%;
   flex-direction: column-reverse;
@@ -82,7 +84,6 @@ const TagsContainer = styled.div`
   display: flex;
   align-items: center;
   margin-top: 25px;
-
   ${({ theme }) => theme.mediaQueries.sm} {
     margin-top: 16px;
   }
@@ -150,14 +151,15 @@ const ActionPanel: React.FunctionComponent<ActionPanelProps> = ({
   })
   const lpAddress = getAddress(farm.lpAddresses)
   const bsc = getBscScanLink(lpAddress, 'address')
-  const info = `https://pancakeswap.info/pool/${lpAddress}`
+  const info = `${BASE_SWAP_URL}/pool/${lpAddress}`
+  const addLiquidityUrl = `${BASE_SWAP_URL}`
 
   return (
     <Container expanded={expanded}>
       <InfoContainer>
         {isActive && (
           <StakeContainer>
-            <StyledLinkExternal href={`/add/${liquidityUrlPathParts}`}>
+            <StyledLinkExternal href={addLiquidityUrl}>
               {t('Get %symbol%', { symbol: lpLabel })}
             </StyledLinkExternal>
           </StakeContainer>
