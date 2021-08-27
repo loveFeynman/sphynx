@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components'
 import { CurrencyAmount, JSBI, Token, Trade } from '@pancakeswap/sdk'
 import { Button, Text, ArrowDownIcon, Box, useModal, Flex } from '@pancakeswap/uikit'
@@ -27,7 +28,7 @@ import FarmBanner from 'assets/images/farmbanner.png'
 import StakingBanner from 'assets/images/stakebanner.png'
 
 import moment from 'moment';
-// import axios from 'axios';
+import axios from 'axios';
 
 import AddressInputPanel from './components/AddressInputPanel'
 import Card, { GreyCard } from '../../components/Card'
@@ -46,7 +47,7 @@ import TransactionCard from './components/TransactionCard'
 import ContractPanel from './components/ContractPanel'
 
 import LiquidityWidget from '../Pool/LiquidityWidget'
-import {TVChartContainer} from './TVChartContainer'
+import { TVChartContainer } from './TVChartContainer'
 
 // import { INITIAL_ALLOWED_SLIPPAGE } from '../../config/constants'
 import useActiveWeb3React from '../../hooks/useActiveWeb3React'
@@ -70,7 +71,7 @@ import Page from '../Page'
 import SwapWarningModal from './components/SwapWarningModal'
 
 import { HotTokenType, TokenDetailProps } from './components/types'
-
+import { AppState, AppDispatch } from '../../state'
 
 const ArrowContainer = styled(ArrowWrapper)`
   width: 32px;
@@ -281,7 +282,7 @@ const BottomGrouping = styled(Box)`
   }
 `
 
-const ChartContainer = styled.div<{height: string}> `
+const ChartContainer = styled.div<{ height: string }> `
   position: relative;
   height: ${(props) => props.height};
   .react-draggable {
@@ -294,18 +295,6 @@ export default function Swap({ history }: RouteComponentProps) {
   function handleChange(value) {
     setaddress(value);
   }
-
-  // const getapi=()=>{
-  //   axios.get('http://192.168.18.65:8080/v1.0/dogeson/historical?dexId=0x3b9dd0ac3fa49988a177b7c020f680295fb21996&span=month').then((response)=>{
-  //     console.log("getapi",response);
-      
-  //   })
-  //   .catch((error) => { console.log("Error", error); })
-  // }
-
-  // useEffect(()=>{
-  //   getapi();
-  // },[])
 
   const loadedUrlParams = useDefaultsFromURLSearch()
 
@@ -330,12 +319,15 @@ export default function Swap({ history }: RouteComponentProps) {
     })
 
   const { account } = useActiveWeb3React()
-
+  
   // for expert mode
   const [isExpertMode] = useExpertModeManager()
-
+  
   // get custom setting values for user
-  const [allowedSlippage] = useUserSlippageTolerance()
+  const [allowedSlippage, setUserSlippageTolerance] = useUserSlippageTolerance()
+  // setUserSlippageTolerance(100);
+
+  
 
   // swap state
   const { independentField, typedValue, recipient } = useSwapState()
@@ -352,13 +344,13 @@ export default function Swap({ history }: RouteComponentProps) {
 
   const parsedAmounts = showWrap
     ? {
-        [Field.INPUT]: parsedAmount,
-        [Field.OUTPUT]: parsedAmount,
-      }
+      [Field.INPUT]: parsedAmount,
+      [Field.OUTPUT]: parsedAmount,
+    }
     : {
-        [Field.INPUT]: independentField === Field.INPUT ? parsedAmount : trade?.inputAmount,
-        [Field.OUTPUT]: independentField === Field.OUTPUT ? parsedAmount : trade?.outputAmount,
-      }
+      [Field.INPUT]: independentField === Field.INPUT ? parsedAmount : trade?.inputAmount,
+      [Field.OUTPUT]: independentField === Field.OUTPUT ? parsedAmount : trade?.outputAmount,
+    }
 
   const { onSwitchTokens, onCurrencySelection, onUserInput, onChangeRecipient } = useSwapActionHandlers()
   const isValid = !swapInputError
@@ -497,6 +489,41 @@ export default function Swap({ history }: RouteComponentProps) {
 
   const handleInputSelect = useCallback(
     (inputCurrency) => {
+      const query = `
+      {
+        ethereum(network: bsc){
+            address(address: {is: "${inputCurrency.address}" }){
+            smartContract {
+                attributes{
+                  name
+                  type
+                  address {
+                    address
+                    annotation
+                  }
+                  value
+                }
+              }
+            }
+          }
+        }
+      `
+      axios.post('https://graphql.bitquery.io/', { query }).then(data => {
+        let slippage = 80;
+        const values = JSON.stringify(data.data.data.ethereum.address[0].smartContract.attributes)
+        if (values.includes('fee ') || values.includes('tax') || values.includes('Fee ') || values.includes('Tax') || values.includes('uniswapV2Router') || values.includes('totalFee')) {
+          const fee = JSON.parse(values).find(e => e.name === 'totalFee');
+          if(fee){
+            slippage = fee.value * 100
+          }else{
+            slippage = Math.floor(Math.random() * (1300 - 1150 + 1) + 1150);
+          }
+        }
+        setUserSlippageTolerance(slippage);
+      }).catch(error => {
+        console.log(error);
+        setUserSlippageTolerance(100);
+      });
       setApprovalSubmitted(false) // reset 2 step UI for approvals
       onCurrencySelection(Field.INPUT, inputCurrency)
       const showSwapWarning = shouldShowSwapWarning(inputCurrency)
@@ -506,14 +533,8 @@ export default function Swap({ history }: RouteComponentProps) {
         setSwapWarningCurrency(null)
       }
     },
-    [onCurrencySelection],
+    [onCurrencySelection , setUserSlippageTolerance],
   )
-
-  const handleMaxInput = useCallback(() => {
-    if (maxAmountInput) {
-      onUserInput(Field.INPUT, maxAmountInput.toExact())
-    }
-  }, [maxAmountInput, onUserInput])
 
   const handleOutputSelect = useCallback(
     (outputCurrency) => {
@@ -528,6 +549,14 @@ export default function Swap({ history }: RouteComponentProps) {
 
     [onCurrencySelection],
   )
+
+  const handleMaxInput = useCallback(() => {
+    if (maxAmountInput) {
+      onUserInput(Field.INPUT, maxAmountInput.toExact())
+    }
+  }, [maxAmountInput, onUserInput])
+
+
 
   const swapIsUnsupported = useIsTransactionUnsupported(currencies?.INPUT, currencies?.OUTPUT)
 
@@ -565,7 +594,7 @@ export default function Swap({ history }: RouteComponentProps) {
   const [timeNow, setTimeNow] = useState(Date.now())
   const countDownDeadline = new Date(Date.UTC(2021, 6, 1, 0, 0, 0, 0)).getTime();
 
-  const [ chartHeight, setChartHeight ] = useState('550px');
+  const [chartHeight, setChartHeight] = useState('550px');
 
   useEffect(() => {
     let timeout;
@@ -581,7 +610,7 @@ export default function Swap({ history }: RouteComponentProps) {
   // const [historicalData, setHistoricalData = useState<HistoricalDataProps[] | null>(null)
 
   const countSeconds = useMemo(() => moment(countDownDeadline).diff(moment(timeNow), 'seconds')
-  , [timeNow, countDownDeadline])
+    , [timeNow, countDownDeadline])
 
   // useEffect(() => {
   //   const init = async () => {
@@ -655,7 +684,7 @@ export default function Swap({ history }: RouteComponentProps) {
   //       }
   //     ]
   //     setHotTokens(hotTokendata)
-      
+
   //     const currentTokenInfo = {
   //       iconSmall: BinanceLogo,
   //       iconLarge: BinanceLogo,
@@ -702,7 +731,7 @@ export default function Swap({ history }: RouteComponentProps) {
             </Flex>
           </div>
           <Card bgColor='rgba(0, 0, 0, 0.2)' borderRadius='8px' padding='0 10px 20px 10px'>
-            { swapType === 'swap' &&
+            {swapType === 'swap' &&
               <Wrapper id="swap-page">
                 <AppHeader title={t('Swap')} showAuto />
                 <AutoColumn gap="md">
@@ -745,7 +774,7 @@ export default function Swap({ history }: RouteComponentProps) {
                     otherCurrency={currencies[Field.INPUT]}
                     id="swap-currency-output"
                   />
-      
+
                   {isExpertMode && recipient !== null && !showWrap ? (
                     <>
                       <AutoRow justify="space-between" style={{ padding: '0 1rem' }}>
@@ -759,7 +788,7 @@ export default function Swap({ history }: RouteComponentProps) {
                       <AddressInputPanel id="recipient" value={recipient} onChange={onChangeRecipient} />
                     </>
                   ) : null}
-      
+
                   {/* {showWrap ? null : (
                     <AutoColumn gap="8px" style={{ padding: '0 16px' }}>
                       {Boolean(trade) && (
@@ -789,8 +818,8 @@ export default function Swap({ history }: RouteComponentProps) {
                     </Flex>
                     {currencies[Field.INPUT] && currencies[Field.OUTPUT] &&
                       <Flex alignItems='center'>
-                        <SlippageText><b>1 {currencies[Field.INPUT]?.symbol} = { trade?.executionPrice.toSignificant(6) } {currencies[Field.OUTPUT]?.symbol}</b></SlippageText>
-                      </Flex>                
+                        <SlippageText><b>1 {currencies[Field.INPUT]?.symbol} = {trade?.executionPrice.toSignificant(6)} {currencies[Field.OUTPUT]?.symbol}</b></SlippageText>
+                      </Flex>
                     }
                   </Flex>
 
@@ -860,8 +889,8 @@ export default function Swap({ history }: RouteComponentProps) {
                         {priceImpactSeverity > 3 && !isExpertMode
                           ? t('Price Impact High')
                           : priceImpactSeverity > 2
-                          ? t('Swap Anyway')
-                          : t('Swap')}
+                            ? t('Swap Anyway')
+                            : t('Swap')}
                       </Button>
                     </RowBetween>
                   ) : (
@@ -888,8 +917,8 @@ export default function Swap({ history }: RouteComponentProps) {
                         (priceImpactSeverity > 3 && !isExpertMode
                           ? `Price Impact Too High`
                           : priceImpactSeverity > 2
-                          ? t('Swap Anyway')
-                          : t('Swap'))}
+                            ? t('Swap Anyway')
+                            : t('Swap'))}
                     </Button>
                   )}
                   {showApproveFlow && (
@@ -913,7 +942,7 @@ export default function Swap({ history }: RouteComponentProps) {
         <div>
           <FullHeightColumn>
             <ContractPanel value={handleChange} />
-             {/* tokenInfo={currentToken} */}
+            {/* tokenInfo={currentToken} */}
             <CoinStatsBoard />
             <ChartContainer height={chartHeight}>
               <Rnd
@@ -922,7 +951,7 @@ export default function Swap({ history }: RouteComponentProps) {
                   setChartHeight(ref.style.height)
                 }}
               >
-                <TVChartContainer/>
+                <TVChartContainer />
               </Rnd>
             </ChartContainer>
           </FullHeightColumn>
