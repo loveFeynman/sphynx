@@ -232,7 +232,6 @@ const BottomCard = styled.div`
   border-radius: 8px;
   overflow: hidden;
   position: relative;
-  margin-bottom: -60px !important;
   ${({ theme }) => theme.mediaQueries.md} {
     width: 320px !important;
   }
@@ -946,11 +945,11 @@ export default function Swap({ history }: RouteComponentProps) {
         </BottomCard>
       </Cards>
 
-      {!swapIsUnsupported ? (
+      {/* {!swapIsUnsupported ? (
         <AdvancedSwapDetailsDropdown trade={trade} />
       ) : (
         <UnsupportedCurrencyFooter currencies={[currencies.INPUT, currencies.OUTPUT]} />
-      )}
+      )} */}
     </Page>
   )
 }

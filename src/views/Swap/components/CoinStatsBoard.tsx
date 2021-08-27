@@ -42,7 +42,6 @@ const StyledWrapper = styled.div`
   padding: 8px 16px 0;
   display: flex;
   flex-direction: column;
-  min-width: 760px;
 
   & > div {
     margin: 0 12px 8px 0;
