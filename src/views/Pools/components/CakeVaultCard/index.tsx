@@ -17,6 +17,7 @@ import RecentCakeProfitRow from './RecentCakeProfitRow'
 
 const StyledCardBody = styled(CardBody)<{ isLoading: boolean }>`
   min-height: ${({ isLoading }) => (isLoading ? '0' : '254px')};
+  background-color: ${({theme}) => theme.colors.input}
 `
 
 interface CakeVaultProps {
@@ -45,8 +46,8 @@ const CakeVaultCard: React.FC<CakeVaultProps> = ({ pool, showStakedOnly }) => {
       <StyledCardHeader
         isStaking={accountHasSharesStaked}
         isAutoVault
-        earningToken={tokens.cake}
-        stakingToken={tokens.cake}
+        earningToken={tokens.sphynx}
+        stakingToken={tokens.sphynx}
       />
       <StyledCardBody isLoading={isLoading}>
         <AprRow pool={pool} performanceFee={performanceFeeAsDecimal} />

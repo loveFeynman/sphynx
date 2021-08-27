@@ -14,7 +14,7 @@ interface PoolsTableProps {
 const StyledTable = styled.div`
   border-radius: ${({ theme }) => theme.radii.card};
 
-  background-color: ${({ theme }) => theme.card.background};
+  background-color: ${({ theme }) => theme.colors.input};
   > div:not(:last-child) {
     border-bottom: 2px solid ${({ theme }) => theme.colors.disabled};
   }
@@ -22,7 +22,7 @@ const StyledTable = styled.div`
 
 const StyledTableBorder = styled.div`
   border-radius: ${({ theme }) => theme.radii.card};
-  background-color: ${({ theme }) => theme.colors.cardBorder};
+  background-color: ${({ theme }) => theme.colors.input};
   padding: 1px 1px 3px 1px;
   background-size: 400% 400%;
 `
@@ -54,9 +54,9 @@ const PoolsTable: React.FC<PoolsTableProps> = ({ pools, userDataLoaded, account 
           />
         ))}
         <ScrollButtonContainer>
-          <Button variant="text" onClick={scrollToTop}>
+          <Button variant="text" onClick={scrollToTop} style={{ color: 'white' }}>
             {t('To Top')}
-            <ChevronUpIcon color="primary" />
+            <ChevronUpIcon color="white" />
           </Button>
         </ScrollButtonContainer>
       </StyledTable>

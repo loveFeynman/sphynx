@@ -1,4 +1,5 @@
 import BigNumber from 'bignumber.js'
+import styled from 'styled-components'
 import React from 'react'
 import { CardBody, Flex, Text, CardRibbon } from '@pancakeswap/uikit'
 import ConnectWalletButton from 'components/ConnectWalletButton'
@@ -10,6 +11,10 @@ import { StyledCard } from './StyledCard'
 import CardFooter from './CardFooter'
 import StyledCardHeader from './StyledCardHeader'
 import CardActions from './CardActions'
+
+const StyledCardBody = styled(CardBody)`
+  background-color: ${({theme}) => theme.colors.input}
+`
 
 const PoolCard: React.FC<{ pool: Pool; account: string }> = ({ pool, account }) => {
   const { sousId, stakingToken, earningToken, isFinished, userData } = pool
@@ -28,7 +33,7 @@ const PoolCard: React.FC<{ pool: Pool; account: string }> = ({ pool, account }) 
         stakingToken={stakingToken}
         isFinished={isFinished && sousId !== 0}
       />
-      <CardBody>
+      <StyledCardBody>
         <AprRow pool={pool} />
         <Flex mt="24px" flexDirection="column">
           {account ? (
@@ -42,7 +47,7 @@ const PoolCard: React.FC<{ pool: Pool; account: string }> = ({ pool, account }) 
             </>
           )}
         </Flex>
-      </CardBody>
+      </StyledCardBody>
       <CardFooter pool={pool} account={account} />
     </StyledCard>
   )
