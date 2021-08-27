@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import React,{useState,useEffect} from 'react'
 import styled from 'styled-components'
 import { Flex } from '@pancakeswap/uikit'
@@ -136,7 +137,6 @@ const TransactionCard = () => {
     }
     catch (err) {
       // eslint-disable-next-line no-console
-      // console.log(err);
       console.log("err", err.message);
     }
   }
@@ -148,23 +148,19 @@ const TransactionCard = () => {
   const filterTableData = tableData === null ? [] : tableData.map((val: any) => {
 		const link = `https://bscscan.com/tx/${val.transaction.hash}`;
 		// eslint-disable-next-line no-console
+
+      const t=val.block.timestamp.time;
+	    const d :any=new Date(t);
+      const localtime=d.toUTCString();
+      
+      // console.log("localtime============",localtime);
+      
 		
-		  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-		  // eslint-disable-next-line no-console
-      const currentTime = moment().tz(timezone).format();
-		  // eslint-disable-next-line no-console
-		  const today:any = new Date(currentTime);
-		//   const  time=new Date(val.block.timestamp.time)
-		//   console.log(time)
-		//   const  addhour=today.getHours()+5;
-		  
-		//   const onlytime=today.getHours(5)
-		      // eslint-disable-next-line no-console
-		//   console.log("onlytime",onlytime)
+
 		return (
 			<tr>
 				<td>
-					<a href={link} target="blank"><Flex alignItems='center'><h2 className={val.baseCurrency.symbol === val.buyCurrency.symbol ? 'success' : 'error'}>{today.toLocaleTimeString()}</h2></Flex></a>
+					<a href={link} target="blank"><Flex alignItems='center'><h2 className={val.baseCurrency.symbol === val.buyCurrency.symbol ? 'success' : 'error'}>{(localtime)}</h2></Flex></a>
 				</td>
 				<td><a href={link} target="blank"><h2 className={val.baseCurrency.symbol === val.buyCurrency.symbol ? 'success' : 'error'}> {Number(val.baseAmount).toLocaleString()}</h2></a></td>
 				<td><a href={link} target="blank"><h2 className={val.baseCurrency.symbol === val.buyCurrency.symbol ? 'success' : 'error'}>{(val.quotePrice*bnb)}</h2></a></td> 
@@ -211,3 +207,15 @@ const TransactionCard = () => {
 }
 
 export default TransactionCard
+
+
+	  // const offset = new Date().getTimezoneOffset();
+    // console.log(offset);
+    // const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    // let t:any=timezone
+    // console.log("t=========================",t)
+    // t=val.block.timestamp.time
+    // // // eslint-disable-next-line no-console
+    // const currentTime = moment().tz(t).format();
+    // // // eslint-disable-next-line no-console
+    // const today:any = new Date(currentTime);

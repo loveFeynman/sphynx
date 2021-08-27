@@ -4,9 +4,10 @@ const Cards = styled.div`
   display: flex;
   flex-wrap: wrap;
   padding-bottom: 20px;
+  width: 100%;
   & > div {
     width: 100%;
-    margin-bottom: 24px;
+    margin-bottom: 20px;
     ${({ theme }) => theme.mediaQueries.md} {
       &:nth-child(2n + 1) {
         width: 320px;
