@@ -106,7 +106,7 @@ function periodLengthSeconds(resolution, requiredPeriodsCount) {
         daysCount = 7 * requiredPeriodsCount;
     }
     else {
-        daysCount = requiredPeriodsCount * parseInt(resolution) / (24 * 60);
+        daysCount = requiredPeriodsCount * parseInt(resolution) / 60;
     }
     return daysCount * 24 * 60 * 60;
 }
