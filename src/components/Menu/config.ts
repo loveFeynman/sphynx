@@ -20,17 +20,17 @@ export const links = [
   {
     label: 'Swap & charts',
     icon: ChartIcon,
-    href: '/swap',
+    href: '/#/swap',
   },
   {
     label: 'Farms',
     icon: FarmIcon,
-    href: '/farms' // 'https://farm.sphynxswap.finance/farms'
+    href: '/#/farms' // 'https://farm.sphynxswap.finance/farms'
   },
   {
     label: 'Pools',
     icon: PoolIcon,
-    href: '/pools' // 'https://farm.sphynxswap.finance/pools'
+    href: '/#/pools' // 'https://farm.sphynxswap.finance/pools'
   },
   {
     label: 'CoinMarketCap',

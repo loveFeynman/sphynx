@@ -173,7 +173,7 @@ export default function HotTokenBar() {
      {loader?<div style={{display: 'flex', justifyContent: 'center'}}>
      <ReactLoading type="spin" color="green" height='2%' width='2%'  />
      </div>:
-       <Marquee gradient={false} className="marquee-container" style={{ overflow: 'hidden !important' }}>
+       <Marquee gradient={false} speed={40} className="marquee-container" style={{ overflow: 'hidden !important' }}>
      
          <ul style={{ display: 'flex', listStyle: 'none', justifyContent: 'center', width: 'calc(100% - 120px)' }}>
             {
