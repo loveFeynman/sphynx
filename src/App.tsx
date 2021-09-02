@@ -1,5 +1,5 @@
 import React, { lazy, useState } from 'react'
-import { Router, Redirect, Route, Switch } from 'react-router-dom'
+import { HashRouter as Router, Redirect, Route, Switch } from 'react-router-dom'
 import { useSelector } from 'react-redux';
 import styled from 'styled-components'
 import { ResetCSS, Button } from '@pancakeswap/uikit'
@@ -230,7 +230,7 @@ const App: React.FC = () => {
 
   return (
     <>
-      <Router history={history}>
+      <Router>
         <ResetCSS />
         <GlobalStyle />
 
@@ -265,12 +265,12 @@ const App: React.FC = () => {
                   <Route path="/" exact>
                     <Redirect to="/swap" />
                   </Route>
-                  <Route path="/farms">
+                  {/* <Route path="/farms">
                     <Farms />
                   </Route>
                   <Route path="/pools">
                     <Pools />
-                  </Route>
+                  </Route> */}
 
                   {/* <Route exact path="/farms/auction">
                     <FarmAuction />
@@ -311,6 +311,9 @@ const App: React.FC = () => {
 
                   {/* Using this format because these components use routes injected props. We need to rework them with hooks */}
                   <Route exact strict path="/swap" component={Swap} />
+                  <Route exact strict path="/farms" component={Farms} />
+                  <Route exact strict path="/pools" component={Pools} />
+
                   <Route exact strict path="/swap/:outputCurrency" component={RedirectToSwap} />
                   <Route exact strict path="/send" component={RedirectPathToSwapOnly} />
                   <Route exact strict path="/find" component={PoolFinder} />
