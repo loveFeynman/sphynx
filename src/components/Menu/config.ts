@@ -20,7 +20,7 @@ export const links = [
   {
     label: 'Swap & charts',
     icon: ChartIcon,
-    href: '/swap',
+    href: '/#/swap',
   },
   {
     label: 'Farms',
