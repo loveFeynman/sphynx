@@ -1,6 +1,5 @@
 import React, { lazy, useState } from 'react'
-import { HashRouter as Router, Redirect, Route, Switch } from 'react-router-dom'
-import { useSelector } from 'react-redux';
+import { Router, Redirect, Route, Switch } from 'react-router-dom'
 import styled from 'styled-components'
 import { ResetCSS, Button, useMatchBreakpoints } from '@pancakeswap/uikit'
 import BigNumber from 'bignumber.js'
@@ -20,7 +19,7 @@ import { ReactComponent as EmptyAvatar } from 'assets/svg/icon/EmptyAvatar.svg'
 import { ReactComponent as ChevronDown } from 'assets/svg/icon/ChevronDown.svg'
 import PyramidImage from 'assets/images/pyramid.png'
 import Loader from 'components/myLoader/Loader'
-
+import { useSelector } from 'react-redux';
 import HotTokenBar from './views/Swap/components/HotTokenBar'
 import Menu from './components/Menu'
 import UserMenu from './components/Menu/UserMenu'
@@ -42,6 +41,8 @@ import {
 } from './views/AddLiquidity/redirects'
 import RedirectOldRemoveLiquidityPathStructure from './views/RemoveLiquidity/redirects'
 import { RedirectPathToSwapOnly, RedirectToSwap } from './views/Swap/redirects'
+
+
 
 // Route-based code splitting
 // Only pool is included in the main bundle because of it's the most visited page
@@ -222,7 +223,6 @@ const App: React.FC = () => {
   useEagerConnect()
   useFetchProfile()
   usePollCoreFarmData()
-
   const { account } = useWeb3React();
   const { menuToggled, toggleMenu } = useMenuToggle();
   const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input);
@@ -241,7 +241,7 @@ const App: React.FC = () => {
 
   return (
     <>
-      <Router>
+      <Router history={history}>
         <ResetCSS />
         <GlobalStyle />
 

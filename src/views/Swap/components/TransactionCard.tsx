@@ -150,8 +150,15 @@ const TransactionCard = () => {
 		// eslint-disable-next-line no-console
 
       const t=val.block.timestamp.time;
-	    const d :any=new Date(t);
-      const localtime=d.toUTCString();
+      const localdate= new Date(t)
+      const d =  new Date(localdate.getTime()+localdate.getTimezoneOffset()*60*1000)
+      const offset = localdate.getTimezoneOffset() / 60;
+      const hours = localdate.getHours();
+      const lcl=d.setHours(hours - offset);
+      const date=new Date(lcl)
+      // const d = new Date(Date.UTC(localdate.getFullYear(), localdate.getMonth(), localdate.getDate(),  localdate.getHours(), localdate.getMinutes(), localdate.getSeconds()));
+	    // const d :any=new Date(localdate.getTime()+ localdate.getTimezoneOffset()*60*1000);
+      // const localtime=d;
       
       // console.log("localtime============",localtime);
       
@@ -160,7 +167,7 @@ const TransactionCard = () => {
 		return (
 			<tr>
 				<td>
-					<a href={link} target="blank"><Flex alignItems='center'><h2 className={val.baseCurrency.symbol === val.buyCurrency.symbol ? 'success' : 'error'}>{(localtime)}</h2></Flex></a>
+					<a href={link} target="blank"><Flex alignItems='center'><h2 className={val.baseCurrency.symbol === val.buyCurrency.symbol ? 'success' : 'error'}>{(date.toString().split('GMT')[0])}</h2></Flex></a>
 				</td>
 				<td><a href={link} target="blank"><h2 className={val.baseCurrency.symbol === val.buyCurrency.symbol ? 'success' : 'error'}> {Number(val.baseAmount).toLocaleString()}</h2></a></td>
 				<td><a href={link} target="blank"><h2 className={val.baseCurrency.symbol === val.buyCurrency.symbol ? 'success' : 'error'}>{(val.quotePrice*bnb)}</h2></a></td> 
