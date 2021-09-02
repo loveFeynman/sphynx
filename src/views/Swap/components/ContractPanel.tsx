@@ -65,7 +65,10 @@ const MenuWrapper = styled.div`
   color: #eee;
   margin-top: 12px;
   overflow-y: auto;
-  max-height: 100vh;
+  max-height: 90vh;
+  & .selectedItem {
+    background: rgba(0, 0, 0, 0.4);
+  }
   ${({ theme }) => theme.mediaQueries.md} {
     max-height: 600px;
   }
@@ -73,7 +76,7 @@ const MenuWrapper = styled.div`
 const SearchInputWrapper = styled.div`
   flex: 1;
   position: relative;
-  z-index: 2;
+  z-index: 3;
   ${({ theme }) => theme.mediaQueries.sm} {
     min-width: 420px;
   }
@@ -135,6 +138,7 @@ export default function ContractPanel({value}: ContractPanelProps){
 
   const [twitterUrl, setTwitter] = useState('')
   const [telegramUrl, setTelegram] = useState('')
+  const [selectedItemIndex, setSelectedItemIndex] = useState(-1);
 
 
   // const find=social.links.find(elem=>elem)
@@ -203,6 +207,22 @@ export default function ContractPanel({value}: ContractPanelProps){
     }
   }
 
+  const onSearchKeyDown = (event) => {
+    if (event.key === 'ArrowDown') {
+      if (selectedItemIndex < data.length - 1) {
+        setSelectedItemIndex(selectedItemIndex + 1);
+      } else {
+        setSelectedItemIndex(0);
+      }
+    } else if (event.key === 'ArrowUp') {
+      if (selectedItemIndex > 0) {
+        setSelectedItemIndex(selectedItemIndex - 1);
+      } else {
+        setSelectedItemIndex(data.length - 1);
+      }
+    }
+  }
+
   useEffect(() => {
     getWebsite();
     const listener = event => {
@@ -226,7 +246,7 @@ export default function ContractPanel({value}: ContractPanelProps){
             &nbsp;
           </CopyHelper>
           <SearchInputWrapper>
-            <input placeholder='Enter token name / address' value={addressSearch} onFocus={() => setShowDrop(true)} onKeyPress={handleKeyPress} onChange={handlerChange} />
+            <input placeholder='Enter token name / address' value={addressSearch} onFocus={() => setShowDrop(true)} onKeyPress={handleKeyPress} onKeyUp={onSearchKeyDown} onChange={handlerChange} />
             {
             showDrop &&
             <MenuWrapper>
@@ -235,8 +255,8 @@ export default function ContractPanel({value}: ContractPanelProps){
               </Button> */}
               {data.length > 0 ?
                 <span>
-                  {data?.map((item: any) => {
-                    return <MenuItem onClick={() => { dispatch(typeInput({ input: item.address })) }}>{item.name}<br />{item.symbol}<br />{item.address}</MenuItem>
+                  {data?.map((item: any, index: number) => {
+                    return <MenuItem className={index === selectedItemIndex ? 'selectedItem' : ''} onClick={() => { dispatch(typeInput({ input: item.address })) }}>{item.name}<br />{item.symbol}<br />{item.address}</MenuItem>
                   })}
 
                 </span> :

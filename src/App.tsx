@@ -1,8 +1,7 @@
 import React, { lazy, useState } from 'react'
 import { Router, Redirect, Route, Switch } from 'react-router-dom'
-import { useSelector } from 'react-redux';
 import styled from 'styled-components'
-import { ResetCSS, Button } from '@pancakeswap/uikit'
+import { ResetCSS, Button, useMatchBreakpoints } from '@pancakeswap/uikit'
 import BigNumber from 'bignumber.js'
 import useEagerConnect from 'hooks/useEagerConnect'
 import { AppState } from 'state'
@@ -13,13 +12,14 @@ import { useMenuToggle } from 'state/application/hooks'
 import { useWeb3React } from '@web3-react/core'
 import { DatePickerPortal } from 'components/DatePicker'
 import ConnectWalletButton from 'components/ConnectWalletButton'
+import { ReactComponent as MenuOpenIcon } from 'assets/svg/icon/MenuOpenIcon.svg'
 
 import { ReactComponent as SearchIcon } from 'assets/svg/icon/SearchIcon.svg'
 import { ReactComponent as EmptyAvatar } from 'assets/svg/icon/EmptyAvatar.svg'
 import { ReactComponent as ChevronDown } from 'assets/svg/icon/ChevronDown.svg'
 import PyramidImage from 'assets/images/pyramid.png'
 import Loader from 'components/myLoader/Loader'
-
+import { useSelector } from 'react-redux';
 import HotTokenBar from './views/Swap/components/HotTokenBar'
 import Menu from './components/Menu'
 import UserMenu from './components/Menu/UserMenu'
@@ -41,6 +41,8 @@ import {
 } from './views/AddLiquidity/redirects'
 import RedirectOldRemoveLiquidityPathStructure from './views/RemoveLiquidity/redirects'
 import { RedirectPathToSwapOnly, RedirectToSwap } from './views/Swap/redirects'
+
+
 
 // Route-based code splitting
 // Only pool is included in the main bundle because of it's the most visited page
@@ -200,6 +202,16 @@ const PageContent = styled.div`
   width: 100%;
 `
 
+const MenuOpenButton = styled(Button)`
+  background: transparent;
+  outline: none;
+  padding: 0;
+  & svg {
+    fill: white;
+    width: 32px;
+  }
+`
+
 // This config is required for number formatting
 BigNumber.config({
   EXPONENTIAL_AT: 1000,
@@ -211,13 +223,12 @@ const App: React.FC = () => {
   useEagerConnect()
   useFetchProfile()
   usePollCoreFarmData()
-
   const { account } = useWeb3React();
   const { menuToggled, toggleMenu } = useMenuToggle();
   const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input);
   const routerVersion = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.routerVersion)
   const [showLoader, setShowLoader] = useState<any>(false);
-  // const { isXl } = useMatchBreakpoints();
+  const { isSm } = useMatchBreakpoints();
   // const history = useHistory();
   // history.push('/swap')
 
@@ -241,9 +252,18 @@ const App: React.FC = () => {
           <BodyWrapper toggled={menuToggled}>
             <BodyOverlay toggled={menuToggled} />
             <TopBar>
-              <div style={{ width: `calc(100% - ${account ? 320 : 150}px`}}>
-                <HotTokenBar />
-              </div>
+              {
+                isSm ?
+                <MenuOpenButton onClick={() => toggleMenu(!menuToggled)}>
+                  <svg viewBox='0 0 24 24' width='24px'>
+                    <path d="M4 18H20C20.55 18 21 17.55 21 17C21 16.45 20.55 16 20 16H4C3.45 16 3 16.45 3 17C3 17.55 3.45 18 4 18ZM4 13H20C20.55 13 21 12.55 21 12C21 11.45 20.55 11 20 11H4C3.45 11 3 11.45 3 12C3 12.55 3.45 13 4 13ZM3 7C3 7.55 3.45 8 4 8H20C20.55 8 21 7.55 21 7C21 6.45 20.55 6 20 6H4C3.45 6 3 6.45 3 7Z" />
+                  </svg>
+                </MenuOpenButton>
+                :
+                <div style={{ width: `calc(100% - ${account ? 320 : 150}px`}}>
+                  <HotTokenBar />
+                </div>
+              }
               {
                 account ?
                 <AccountWrapper>
@@ -256,6 +276,12 @@ const App: React.FC = () => {
                 <ConnectWalletButton />
               }
             </TopBar>
+            {
+              isSm &&
+              <div style={{ width: '100%'}}>
+                <HotTokenBar />
+              </div>
+            }
             <BannerWrapper>
               <img src={PyramidImage} alt='Pyramid' />
             </BannerWrapper>
@@ -265,12 +291,12 @@ const App: React.FC = () => {
                   <Route path="/" exact>
                     <Redirect to="/swap" />
                   </Route>
-                  <Route path="/farms">
+                  {/* <Route path="/farms">
                     <Farms />
                   </Route>
                   <Route path="/pools">
                     <Pools />
-                  </Route>
+                  </Route> */}
 
                   {/* <Route exact path="/farms/auction">
                     <FarmAuction />
@@ -311,6 +337,9 @@ const App: React.FC = () => {
 
                   {/* Using this format because these components use routes injected props. We need to rework them with hooks */}
                   <Route exact strict path="/swap" component={Swap} />
+                  <Route exact strict path="/farms" component={Farms} />
+                  <Route exact strict path="/pools" component={Pools} />
+
                   <Route exact strict path="/swap/:outputCurrency" component={RedirectToSwap} />
                   <Route exact strict path="/send" component={RedirectPathToSwapOnly} />
                   <Route exact strict path="/find" component={PoolFinder} />
