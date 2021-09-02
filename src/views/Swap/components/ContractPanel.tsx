@@ -86,7 +86,7 @@ const SearchInputWrapper = styled.div`
     color: #F7931A;
     font-size: 16px;
     &::placeholder {
-      color: red
+      color: #8f80ba
     }
   }
 `
@@ -226,7 +226,7 @@ export default function ContractPanel({value}: ContractPanelProps){
             &nbsp;
           </CopyHelper>
           <SearchInputWrapper>
-            <input placeholder='' value={addressSearch} onFocus={() => setShowDrop(true)} onKeyPress={handleKeyPress} onChange={handlerChange} />
+            <input placeholder='Enter token name / address' value={addressSearch} onFocus={() => setShowDrop(true)} onKeyPress={handleKeyPress} onChange={handlerChange} />
             {
             showDrop &&
             <MenuWrapper>

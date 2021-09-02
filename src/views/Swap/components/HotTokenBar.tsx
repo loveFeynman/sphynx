@@ -179,7 +179,7 @@ export default function HotTokenBar() {
             {
             data.map((elem:any,index) => {
              return (
-               <li style={{color:'white',padding:'20'}}>
+               <li key={`${index+1}.${elem.currency.symbol}`} style={{color:'white',padding:'20'}}>
                <a href="javascript:void(null)" style={{marginRight: 25,textDecoration:'none'}} 
                onClick={()=> dispatch(typeInput({ input: elem.currency.address }))}
                >{`${index+1}. ${elem.currency.symbol}`}</a>

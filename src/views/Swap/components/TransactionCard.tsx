@@ -145,7 +145,7 @@ const TransactionCard = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps 
   }, [input])
 
-  const filterTableData = tableData === null ? [] : tableData.map((val: any) => {
+  const filterTableData = tableData === null ? [] : tableData.map((val: any, index) => {
 		const link = `https://bscscan.com/tx/${val.transaction.hash}`;
 		// eslint-disable-next-line no-console
 
@@ -158,7 +158,7 @@ const TransactionCard = () => {
 		
 
 		return (
-			<tr>
+			<tr key={`${index + 1}.${val.transaction.hash}`}>
 				<td>
 					<a href={link} target="blank"><Flex alignItems='center'><h2 className={val.baseCurrency.symbol === val.buyCurrency.symbol ? 'success' : 'error'}>{(localtime)}</h2></Flex></a>
 				</td>
