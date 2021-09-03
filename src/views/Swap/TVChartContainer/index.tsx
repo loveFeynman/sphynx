@@ -1,6 +1,7 @@
 /* eslint-disable */
 import * as React from 'react';
 import styled from 'styled-components'
+import TransactionNav from 'components/TransactionNav';
 import './index.css';
 import {
     widget,
@@ -16,10 +17,8 @@ import { ReactComponent as UpDownArrow } from 'assets/svg/icon/UpDownArrow.svg'
 import { AppDispatch, AppState } from '../../../state'
 import { isAddress } from '../../../utils'
 
-
 const UpDownArrowBox = styled.div`
   width: 100%;
-  height: 10px;
   text-align: center;
   & svg {
     width: 14px;
@@ -341,6 +340,9 @@ export const TVChartContainer: React.FC<Partial<ChartContainerProps>> = () => {
             <UpDownArrowBox>
                 <UpDownArrow />
             </UpDownArrowBox>
+            <div style={{ display: 'flex', justifyContent: 'center', marginTop: 12}}>
+                <TransactionNav />
+            </div>
         </div>
 
     )

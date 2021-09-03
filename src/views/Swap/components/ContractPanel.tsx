@@ -33,12 +33,20 @@ const ContractPanelWrapper = styled.div`
   display: flex;
   flex-direction: column;
   // margin-bottom: 28px;
-  margin-bottom: 12px;
+  & > div {
+    margin-bottom: 12px;
+  }
   ${({ theme }) => theme.mediaQueries.sm} {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;  
+    & > div {
+      margin-right: 12px;
+      &:last-child {
+        margin-right: 0;
+      }
+    }
   }
 `
 
@@ -239,51 +247,48 @@ export default function ContractPanel({value}: ContractPanelProps){
   }, [input]);
     
   return (
-    <>
-      <ContractPanelWrapper>
-        <ContractCard>
-          <CopyHelper toCopy={value ? value.contractAddress : addressSearch}>
-            &nbsp;
-          </CopyHelper>
-          <SearchInputWrapper>
-            <input placeholder='Enter token name / address' value={addressSearch} onFocus={() => setShowDrop(true)} onKeyPress={handleKeyPress} onKeyUp={onSearchKeyDown} onChange={handlerChange} />
-            {
-            showDrop &&
-            <MenuWrapper>
-              {/* <Button aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick}>
-                <ArrowDropDownIcon />
-              </Button> */}
-              {data.length > 0 ?
-                <span>
-                  {data?.map((item: any, index: number) => {
-                    return <MenuItem className={index === selectedItemIndex ? 'selectedItem' : ''} onClick={() => { dispatch(typeInput({ input: item.address })) }}>{item.name}<br />{item.symbol}<br />{item.address}</MenuItem>
-                  })}
-
-                </span> :
-                <span style={{ padding: '0 16px' }}>no record</span>}
-            </MenuWrapper>
-            }
-          </SearchInputWrapper>
-          <Button scale='sm' onClick={submitFuntioncall} disabled={show} >Submit</Button>
-        </ContractCard>
-        <ToggleList />
-        <SocialIconsWrapper>
-          <Link href={getBscScanLink(checksumAddress === false ? '' : checksumAddress, 'token')} external>
-            <BscscanIcon />
-          </Link>
-          <Link external href={twitterUrl}>
-            <TwitterIcon />
-          </Link>
-          <Link external href={social.website}>
-            <SocialIcon2 />
-          </Link>
-          <Link external href={telegramUrl}>
-            <TelegramIcon />
-          </Link>
-        </SocialIconsWrapper>
-        { showDrop && <ContractPanelOverlay onClick={() => setShowDrop(false) } />}
-      </ContractPanelWrapper>
-    </>
+    <ContractPanelWrapper>
+      <ContractCard>
+        <CopyHelper toCopy={value ? value.contractAddress : addressSearch}>
+          &nbsp;
+        </CopyHelper>
+        <SearchInputWrapper>
+          <input placeholder='' value={addressSearch} onFocus={() => setShowDrop(true)} onKeyPress={handleKeyPress} onKeyUp={onSearchKeyDown} onChange={handlerChange} />
+          {
+          showDrop &&
+          <MenuWrapper>
+            {/* <Button aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick}>
+              <ArrowDropDownIcon />
+            </Button> */}
+            {data.length > 0 ?
+              <span>
+                {data?.map((item: any, index: number) => {
+                  return <MenuItem className={index === selectedItemIndex ? 'selectedItem' : ''} onClick={() => { dispatch(typeInput({ input: item.address })) }}>{item.name}<br />{item.symbol}<br />{item.address}</MenuItem>
+                })}
+              </span> :
+              <span style={{ padding: '0 16px' }}>no record</span>}
+          </MenuWrapper>
+          }
+        </SearchInputWrapper>
+        <Button scale='sm' onClick={submitFuntioncall} disabled={show} >Submit</Button>
+      </ContractCard>
+      <ToggleList />
+      <SocialIconsWrapper>
+        <Link href={getBscScanLink(checksumAddress === false ? '' : checksumAddress, 'token')} external>
+          <BscscanIcon />
+        </Link>
+        <Link external href={twitterUrl}>
+          <TwitterIcon />
+        </Link>
+        <Link external href={social.website}>
+          <SocialIcon2 />
+        </Link>
+        <Link external href={telegramUrl}>
+          <TelegramIcon />
+        </Link>
+      </SocialIconsWrapper>
+      { showDrop && <ContractPanelOverlay onClick={() => setShowDrop(false) } />}
+    </ContractPanelWrapper>
   )
 }
 
