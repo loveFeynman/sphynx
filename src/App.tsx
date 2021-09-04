@@ -1,5 +1,5 @@
 import React, { lazy, useState } from 'react'
-import { Router, Redirect, Route, Switch } from 'react-router-dom'
+import { HashRouter as Router, Redirect, Route, Switch } from 'react-router-dom'
 import styled from 'styled-components'
 import { ResetCSS, Button, useMatchBreakpoints } from '@pancakeswap/uikit'
 import BigNumber from 'bignumber.js'
@@ -241,7 +241,7 @@ const App: React.FC = () => {
 
   return (
     <>
-      <Router history={history}>
+      <Router>
         <ResetCSS />
         <GlobalStyle />
 
