@@ -32,8 +32,8 @@ import history from './routerHistory'
 // Views included in the main bundle
 // import Pools from './views/Pools'
 import Swap from './views/Swap'
-// import Farms from './views/Farms'
-// import Pools from './views/Pools'
+import Farms from './views/Farms'
+import Pools from './views/Pools'
 import {
   RedirectDuplicateTokenIds,
   RedirectOldAddLiquidityPathStructure,
@@ -47,8 +47,8 @@ import { RedirectPathToSwapOnly, RedirectToSwap } from './views/Swap/redirects'
 // Route-based code splitting
 // Only pool is included in the main bundle because of it's the most visited page
 // const Home = lazy(() => import('./views/Home'))
-const Farms = lazy(() => import('./views/Farms'))
-const Pools = lazy(() => import('./views/Pools'))
+// const Farms = lazy(() => import('./views/Farms'))
+// const Pools = lazy(() => import('./views/Pools'))
 
 // const FarmAuction = lazy(() => import('./views/FarmAuction'))
 // const Lottery = lazy(() => import('./views/Lottery'))
@@ -336,7 +336,7 @@ const App: React.FC = () => {
                   </Route> */}
 
                   {/* Using this format because these components use routes injected props. We need to rework them with hooks */}
-                  <Route exact strict path="/swap" component={Swap} />
+                  <Route path="/swap" component={Swap} />
                   <Route exact strict path="/farms" component={Farms} />
                   <Route exact strict path="/pools" component={Pools} />
 
