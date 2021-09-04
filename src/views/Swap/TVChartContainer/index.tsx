@@ -82,7 +82,7 @@ export const TVChartContainer: React.FC<Partial<ChartContainerProps>> = () => {
     const lastBarsCache = new Map();
 
     const configurationData = {
-        supported_resolutions: ['1H','1D','1W','1M'],
+        supported_resolutions: ['1','5','10','15','30','1H','1D','1W','1M'],
         exchanges: [{
             value: 'Bitfinex',
             name: 'Bitfinex',
@@ -169,8 +169,8 @@ export const TVChartContainer: React.FC<Partial<ChartContainerProps>> = () => {
                 exchange: version,
                 minmov: 1,
                 pricescale: 100,
-                has_intraday: false,
-                has_no_volume: true,
+                has_intraday: true,
+                has_no_volume: false,
                 has_weekly_and_monthly: false,
                 supported_resolutions: configurationData.supported_resolutions,
                 volume_precision: 2,
@@ -195,7 +195,7 @@ export const TVChartContainer: React.FC<Partial<ChartContainerProps>> = () => {
             // };
 
             try {
-                const data = await makeApiRequest1(input, routerVersion);
+                const data = await makeApiRequest1(input, routerVersion, resolution);
                 if (result) {
                     // setLoader(true);
                     if (!firstDataRequest) {
