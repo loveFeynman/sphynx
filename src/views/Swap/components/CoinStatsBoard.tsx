@@ -110,12 +110,12 @@ export default function CoinStatsBoard() {
   const getTableData = () => {
     try{
       if (result) {
-        axios.post("https://api.sphynxswap.finance/tokenStats",{address:input})
+        axios.post("http://54.253.20.246:9000/tokenStats",{address:input})
           .then((response) => {
           
             setTokenData(response.data)
           });
-        axios.post("https://api.sphynxswap.finance/chartStats",{address:input})
+        axios.post("http://54.253.20.246:9000/chartStats",{address:input})
           .then((response) => {
             setalldata(response.data)
             setLinkIcon(`https://r.poocoin.app/smartchain/assets/${input ? utils.getAddress(input) : '0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82'}/logo.png`);

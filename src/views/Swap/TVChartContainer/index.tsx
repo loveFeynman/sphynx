@@ -78,7 +78,7 @@ export const TVChartContainer: React.FC<Partial<ChartContainerProps>> = () => {
     version: 'Pancake ' + routerVersion,
   })
 
-  const lastBarsCache = new Map()
+  // const lastBarsCache = new Map()
 
   const configurationData = {
     supported_resolutions: ['1', '5', '10', '15', '30', '1H', '1D', '1W', '1M'],
@@ -142,7 +142,7 @@ export const TVChartContainer: React.FC<Partial<ChartContainerProps>> = () => {
       //     onResolveErrorCallback('cannot resolve symbol');
       //     return;
       // }
-      const response = await axios.get(`https://api.sphynxswap.finance/tokenDetails/${input}`)
+      const response = await axios.get(`http://54.253.20.246:9000/tokenDetails/${input}`)
       setTokenDetails(response.data)
 
       const version =
@@ -208,7 +208,7 @@ export const TVChartContainer: React.FC<Partial<ChartContainerProps>> = () => {
         // if(data.data.data){
         data.map((bar: any, i: any) => {
           const obj = {
-            time: new Date(bar.time).toString(),
+            time: new Date(bar.time).getTime(),
             low: bar.low * bar.baseLow,
             high: bar.high * bar.baseHigh,
             open: bar.open * bar.baseOpen,
@@ -227,9 +227,9 @@ export const TVChartContainer: React.FC<Partial<ChartContainerProps>> = () => {
         // eslint-disable-next-line no-console
 
         // if (firstDataRequest) {
-        lastBarsCache.set(symbolInfo.full_name, {
-          ...bars[bars.length - 1],
-        })
+        // lastBarsCache.set(symbolInfo.full_name, {
+        //   ...bars[bars.length - 1],
+        // })
         // setLoader(false);
         // }
         onHistoryCallback(bars, {

@@ -126,8 +126,8 @@ const TransactionCard = () => {
       if (result) {
         // setLoader(true);
         const queryResult = await axios.post('https://graphql.bitquery.io/', { query: getDataQuery })
-        const bnbprice:any= await axios.get(`https://api.sphynxswap.finance/price/${input}`);
-				const Tprice:any= await axios.get(`https://api.sphynxswap.finance/price/0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c`);
+        const bnbprice:any= await axios.get(`http://54.253.20.246:9000/price/${input}`);
+				const Tprice:any= await axios.get(`http://54.253.20.246:9000/price/0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c`);
 				setBnb(Tprice.data.price);
 			    setTokenPrice(bnbprice.data.price)
 				if (queryResult.data.data)

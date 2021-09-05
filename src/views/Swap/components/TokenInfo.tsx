@@ -85,7 +85,7 @@ export default function TokenInfo() {
   const getTableData = async () => {
     try{
       if (result) {
-        await axios.post("https://api.sphynxswap.finance/tokenStats", { address: input })
+        await axios.post("http://54.253.20.246:9000/tokenStats", { address: input })
           .then((response) => {
             setalldata(response.data)
               dispatch(
