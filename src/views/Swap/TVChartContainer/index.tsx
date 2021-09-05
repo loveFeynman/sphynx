@@ -22,15 +22,18 @@ const UpDownArrowBox = styled.div`
   text-align: center;
   position: relative;
   margin-top: 8px;
+`
+
+const ArrowWrapper = styled.div`
+  margin: auto;
+  width: 0;
+  cursor: row-resize;
   & svg {
-    position: absolute;
     width: 14px;
     height: 16px;
   }
   ${({ theme }) => theme.mediaQueries.sm} {
-    & svg {
-      margin-top: 4px;
-    }
+    margin-top: 4px;
   }
 `
 
@@ -94,8 +97,9 @@ export const TVChartContainer: React.FC<Partial<ChartContainerProps>> = () => {
   const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
   const routerVersion = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.routerVersion)
   const result = isAddress(input)
-  const [ draggable, setDraggable ] = React.useState(false)
+  const draggableArrow = React.useRef<any>(null)
   const [ chartHeight, setChartHeight ] = React.useState(350)
+  const [ dragPos, setDragPos ] = React.useState(0)
 
   const [tokendetails, setTokenDetails] = React.useState({
     name: 'PancakeSwap Token',
@@ -333,8 +337,16 @@ export const TVChartContainer: React.FC<Partial<ChartContainerProps>> = () => {
     getWidget()
   }, [input])
 
-  const handleDrag = () => {
-    // setChartHeight(chartHeight + draggableArrow.current.state.y)
+  const handleDragStart = (e) => {
+    setDragPos(e.pageY)
+  }
+
+  const handleDrag = (e) => {
+    if (chartHeight + e.pageY - dragPos > 350) {
+      setChartHeight(chartHeight + e.pageY - dragPos)
+    } else {
+      setChartHeight(350)
+    }
   }
 
   return (
@@ -356,7 +368,9 @@ export const TVChartContainer: React.FC<Partial<ChartContainerProps>> = () => {
       </ChartContainer>
       {/* <div style={{ height: '10px' }}>&nbsp;</div> */}
       <UpDownArrowBox>
-        <UpDownArrow />
+        <ArrowWrapper ref={draggableArrow} draggable='true' onDragStart={e => handleDragStart(e)} onDragOver={e => handleDrag(e)}>
+          <UpDownArrow />
+        </ArrowWrapper>
         <TransactionNavWrapper>
           <TransactionNav />
         </TransactionNavWrapper>
