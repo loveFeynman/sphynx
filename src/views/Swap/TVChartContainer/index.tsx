@@ -20,9 +20,27 @@ import { isAddress } from '../../../utils'
 const UpDownArrowBox = styled.div`
   width: 100%;
   text-align: center;
+  position: relative;
+  margin-top: 8px;
+  & > div {
+    display: flex;
+    justify-content: center;
+    margin: 8px 0 -18px;
+  }
   & svg {
     width: 14px;
     height: 16px;
+  }
+  ${({ theme }) => theme.mediaQueries.sm} {
+    & > div {
+      position: absolute;
+      left: 0;
+      top: 0;
+      margin: 0;
+    }
+    & svg {
+      margin-top: 4px;
+    }
   }
 `
 
@@ -325,10 +343,10 @@ export const TVChartContainer: React.FC<Partial<ChartContainerProps>> = () => {
       {/* <div style={{ height: '10px' }}>&nbsp;</div> */}
       <UpDownArrowBox>
         <UpDownArrow />
+        <div>
+          <TransactionNav />
+        </div>
       </UpDownArrowBox>
-      <div style={{ display: 'flex', justifyContent: 'center', marginTop: 12 }}>
-        <TransactionNav />
-      </div>
     </div>
   )
 }
