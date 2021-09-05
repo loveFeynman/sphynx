@@ -939,7 +939,7 @@ export default function Swap({ history }: RouteComponentProps) {
         </div>
         <div>
           <FullHeightColumn>
-            <ContractPanel value={handleChange} />
+            <ContractPanel value={address} />
             {/* tokenInfo={currentToken} */}
             <CoinStatsBoard />
             <ChartContainer height={chartHeight}>
