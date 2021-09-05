@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components'
 import { CurrencyAmount, JSBI, Token, Trade } from '@pancakeswap/sdk'
-import { Button, Text, ArrowDownIcon, Box, useModal, Flex } from '@pancakeswap/uikit'
+import { Button, Text, ArrowDownIcon, Box, useModal, Flex, Link } from '@pancakeswap/uikit'
 import { useIsTransactionUnsupported } from 'hooks/Trades'
 import UnsupportedCurrencyFooter from 'components/UnsupportedCurrencyFooter'
 import { RouteComponentProps } from 'react-router-dom'
@@ -965,12 +965,12 @@ export default function Swap({ history }: RouteComponentProps) {
         <BottomCard style={{ backgroundImage: `url(${FarmBanner})` }}>
           <h1>Farms</h1>
           <div />
-          <a href='https://farm.sphynxswap.finance/farms' target='_blank' rel='noreferrer'><Button>Start Farming</Button></a>
+          <Link external href='#/farms'><Button>Start Farming</Button></Link>
         </BottomCard>
         <BottomCard style={{ backgroundImage: `url(${StakingBanner})` }}>
           <h1>Staking</h1>
           <div />
-          <a href='https://farm.sphynxswap.finance/pools' target='_blank' rel='noreferrer'><Button>Start Staking</Button></a>
+          <Link external href='#/pools'><Button>Start Staking</Button></Link>
         </BottomCard>
       </Cards>
 

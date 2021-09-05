@@ -25,12 +25,12 @@ export const links = [
   {
     label: 'Farms',
     icon: FarmIcon,
-    href: '/#/farms' // 'https://farm.sphynxswap.finance/farms'
+    href: '/#/farms'
   },
   {
     label: 'Pools',
     icon: PoolIcon,
-    href: '/#/pools' // 'https://farm.sphynxswap.finance/pools'
+    href: '/#/pools'
   },
   {
     label: 'CoinMarketCap',

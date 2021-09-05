@@ -117,7 +117,7 @@ const FarmCard: React.FC<FarmCardProps> = ({ farm, displayApr, removed, cakePric
           <DetailsSection
             removed={removed}
             bscScanAddress={getBscScanLink(lpAddress, 'address')}
-            infoAddress={`https://sphynxswap.finance/pool/${lpAddress}`}
+            infoAddress={`#/pool/${lpAddress}`}
             totalValueFormatted={totalValueFormatted}
             lpLabel={lpLabel}
             addLiquidityUrl={addLiquidityUrl}

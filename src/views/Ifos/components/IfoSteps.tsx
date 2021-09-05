@@ -66,7 +66,7 @@ const IfoSteps: React.FC<Props> = ({ ifo, walletIfoData }) => {
                 {t('Profile Active!')}
               </Text>
             ) : (
-              <Button as={Link} href="/profile">
+              <Button as={Link} href="#/profile">
                 {t('Activate your Profile')}
               </Button>
             )}
