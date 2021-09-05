@@ -2,7 +2,7 @@
 
 export async function makeApiRequest(path: any) {
   try {
-    const response = await fetch(`http://54.253.20.246:9000/tokenDetails/${path}`)
+    const response = await fetch(`https://thesphynx.co/api/tokenDetails/${path}`)
     return response.json()
   } catch (error) {
     throw new Error(`CryptoCompare request error: ${error.status}`)
@@ -12,7 +12,7 @@ export async function makeApiRequest1(path: any, routerVersion: any, resolution:
   try {
     // console.log("here in api reuest",path)
     const response = await fetch(
-      `http://54.253.20.246:9000/${routerVersion === 'v1' ? 'v1/' : ''}chart/${path}?resolution=${resolution}`,
+      `https://thesphynx.co/api/${routerVersion === 'v1' ? 'v1/' : ''}chart/${path}?resolution=${resolution}`,
       {
         method: 'GET',
         headers: {
