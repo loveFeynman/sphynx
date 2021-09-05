@@ -11,7 +11,6 @@ import {
   ResolutionString,
 } from '../../../charting_library'
 import axios from 'axios'
-import Draggable from 'react-draggable'
 import { makeApiRequest, generateSymbol, makeApiRequest1 } from './helpers'
 import { useSelector } from 'react-redux'
 import { ReactComponent as UpDownArrow } from 'assets/svg/icon/UpDownArrow.svg'
@@ -24,6 +23,7 @@ const UpDownArrowBox = styled.div`
   position: relative;
   margin-top: 8px;
   & svg {
+    position: absolute;
     width: 14px;
     height: 16px;
   }
@@ -44,6 +44,11 @@ const TransactionNavWrapper = styled.div`
     top: 0;
     margin: 0;
   }
+`
+
+const ChartContainer = styled.div<{ height: number }> `
+  position: relative;
+  height: ${(props) => props.height}px;
 `
 
 // eslint-disable-next-line import/extensions
@@ -88,8 +93,9 @@ function getLanguageFromURL(): LanguageCode | null {
 export const TVChartContainer: React.FC<Partial<ChartContainerProps>> = () => {
   const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
   const routerVersion = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.routerVersion)
-
   const result = isAddress(input)
+  const [ draggable, setDraggable ] = React.useState(false)
+  const [ chartHeight, setChartHeight ] = React.useState(350)
 
   const [tokendetails, setTokenDetails] = React.useState({
     name: 'PancakeSwap Token',
@@ -327,6 +333,10 @@ export const TVChartContainer: React.FC<Partial<ChartContainerProps>> = () => {
     getWidget()
   }, [input])
 
+  const handleDrag = () => {
+    // setChartHeight(chartHeight + draggableArrow.current.state.y)
+  }
+
   return (
     <div className={'TVChartContainer'}>
       {/* {loader ?
@@ -341,7 +351,9 @@ export const TVChartContainer: React.FC<Partial<ChartContainerProps>> = () => {
           </div>
           : ""
         } */}
-      <div id={ChartContainerProps.containerId} style={{ height: '100%', paddingBottom: '10px' }} />
+      <ChartContainer height={chartHeight}>
+        <div id={ChartContainerProps.containerId} style={{ height: '100%', paddingBottom: '10px' }} />
+      </ChartContainer>
       {/* <div style={{ height: '10px' }}>&nbsp;</div> */}
       <UpDownArrowBox>
         <UpDownArrow />

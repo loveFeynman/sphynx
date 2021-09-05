@@ -280,14 +280,6 @@ const BottomGrouping = styled(Box)`
   }
 `
 
-const ChartContainer = styled.div<{ height: string }> `
-  position: relative;
-  height: ${(props) => props.height};
-  .react-draggable {
-    transform: translate(0, 0) !important;
-  }
-`
-
 export default function Swap({ history }: RouteComponentProps) {
   const [address, setaddress] = useState('');
   function handleChange(value) {
@@ -592,8 +584,6 @@ export default function Swap({ history }: RouteComponentProps) {
   const [timeNow, setTimeNow] = useState(Date.now())
   const countDownDeadline = new Date(Date.UTC(2021, 6, 1, 0, 0, 0, 0)).getTime();
 
-  const [chartHeight, setChartHeight] = useState('550px');
-
   useEffect(() => {
     let timeout;
     if (timeNow < countDownDeadline) {
@@ -720,7 +710,8 @@ export default function Swap({ history }: RouteComponentProps) {
       </SwapRightBanner> */}
       <Cards>
         <div>
-          <div style={{ height: 48, marginTop: 60, marginBottom: 25 }}>
+          <Text color='white' mb='12px'>Sphynx Dividend<br/>$</Text>
+          <div style={{ height: 48, marginBottom: 25 }}>
             <Flex alignItems='center' justifyContent='center' style={{ marginBottom: 8 }}>
               <SwapCardNav />
             </Flex>
@@ -942,9 +933,7 @@ export default function Swap({ history }: RouteComponentProps) {
             <ContractPanel value={address} />
             {/* tokenInfo={currentToken} */}
             <CoinStatsBoard />
-            <ChartContainer height={chartHeight}>
-              <TVChartContainer />
-            </ChartContainer>
+            <TVChartContainer />
           </FullHeightColumn>
         </div>
         <div>
