@@ -85,7 +85,7 @@ export default function TokenInfo() {
   const getTableData = async () => {
     try{
       if (result) {
-        await axios.post("http://54.253.20.246:9000/tokenStats", { address: input })
+        await axios.post("https://thesphynx.co/api/tokenStats", { address: input })
           .then((response) => {
             setalldata(response.data)
               dispatch(

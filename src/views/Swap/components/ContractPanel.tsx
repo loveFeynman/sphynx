@@ -152,7 +152,7 @@ export default function ContractPanel({value}: ContractPanelProps){
   // const find=social.links.find(elem=>elem)
   // console.log("socials",social.links)
   const getWebsite=async()=>{
-    const web:any=await axios.get(`http://54.253.20.246:9000/socials/${checksumAddress}`);
+    const web:any=await axios.get(`https://thesphynx.co/api/socials/${checksumAddress}`);
     // console.log("web===============>",web)
 
     const links = web.data.data.links || [];
@@ -173,7 +173,7 @@ export default function ContractPanel({value}: ContractPanelProps){
   const handlerChange = (e: any) => {
     try {
       if (e.target.value && e.target.value.length > 0) {
-        axios.get(`http://54.253.20.246:9000/search/${e.target.value}`)
+        axios.get(`https://thesphynx.co/api/search/${e.target.value}`)
         .then((response) => {
           setdata(response.data);
         })

@@ -162,7 +162,7 @@ export const TVChartContainer: React.FC<Partial<ChartContainerProps>> = () => {
       //     onResolveErrorCallback('cannot resolve symbol');
       //     return;
       // }
-      const response = await axios.get(`http://54.253.20.246:9000/tokenDetails/${input}`)
+      const response = await axios.get(`https://thesphynx.co/api/tokenDetails/${input}`)
       setTokenDetails(response.data)
 
       const version =
