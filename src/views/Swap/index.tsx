@@ -6,7 +6,6 @@ import { Button, Text, ArrowDownIcon, Box, useModal, Flex, Link } from '@pancake
 import { useIsTransactionUnsupported } from 'hooks/Trades'
 import UnsupportedCurrencyFooter from 'components/UnsupportedCurrencyFooter'
 import { RouteComponentProps } from 'react-router-dom'
-import { Rnd } from 'react-rnd';
 import { useTranslation } from 'contexts/Localization'
 import SwapWarningTokens from 'config/constants/swapWarningTokens'
 import { getAddress } from 'utils/addressHelpers'
@@ -944,15 +943,7 @@ export default function Swap({ history }: RouteComponentProps) {
             {/* tokenInfo={currentToken} */}
             <CoinStatsBoard />
             <ChartContainer height={chartHeight}>
-              <Rnd
-                size={{ width: '100%', height: chartHeight }}
-                onResize={(e, direction, ref, delta, position) => {
-                  setChartHeight(ref.style.height)
-                }}
-                minHeight='550px'
-              >
-                <TVChartContainer />
-              </Rnd>
+              <TVChartContainer />
             </ChartContainer>
           </FullHeightColumn>
         </div>

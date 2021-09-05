@@ -11,6 +11,7 @@ import {
   ResolutionString,
 } from '../../../charting_library'
 import axios from 'axios'
+import Draggable from 'react-draggable'
 import { makeApiRequest, generateSymbol, makeApiRequest1 } from './helpers'
 import { useSelector } from 'react-redux'
 import { ReactComponent as UpDownArrow } from 'assets/svg/icon/UpDownArrow.svg'
@@ -22,25 +23,26 @@ const UpDownArrowBox = styled.div`
   text-align: center;
   position: relative;
   margin-top: 8px;
-  & > div {
-    display: flex;
-    justify-content: center;
-    margin: 8px 0 -18px;
-  }
   & svg {
     width: 14px;
     height: 16px;
   }
   ${({ theme }) => theme.mediaQueries.sm} {
-    & > div {
-      position: absolute;
-      left: 0;
-      top: 0;
-      margin: 0;
-    }
     & svg {
       margin-top: 4px;
     }
+  }
+`
+
+const TransactionNavWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  margin: 8px 0 -18px;
+  ${({ theme }) => theme.mediaQueries.sm} {
+    position: absolute;
+    left: 0;
+    top: 0;
+    margin: 0;
   }
 `
 
@@ -343,9 +345,9 @@ export const TVChartContainer: React.FC<Partial<ChartContainerProps>> = () => {
       {/* <div style={{ height: '10px' }}>&nbsp;</div> */}
       <UpDownArrowBox>
         <UpDownArrow />
-        <div>
+        <TransactionNavWrapper>
           <TransactionNav />
-        </div>
+        </TransactionNavWrapper>
       </UpDownArrowBox>
     </div>
   )
