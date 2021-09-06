@@ -25,7 +25,7 @@ import BinanceLogo from 'assets/images/binance-logo.png'
 // import SwapBanner from 'assets/images/DogeBanner1.png'
 import FarmBanner from 'assets/images/farmbanner.png'
 import StakingBanner from 'assets/images/stakebanner.png'
-
+import BannerWrapper from 'components/BannerWrapper'
 import moment from 'moment';
 import axios from 'axios';
 
@@ -708,6 +708,7 @@ export default function Swap({ history }: RouteComponentProps) {
       {/* <SwapRightBanner>
         <img src={SwapBanner} alt='Swap Banner' />
       </SwapRightBanner> */}
+      <BannerWrapper />
       <Cards>
         <div>
           <DividendPanel />

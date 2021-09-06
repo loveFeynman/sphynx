@@ -39,7 +39,10 @@ const PoolControls = styled.div`
 
   justify-content: space-between;
   flex-direction: column;
-  margin-bottom: 32px;
+
+  & > div {
+    margin-bottom: 16px;
+  }
 
   ${({ theme }) => theme.mediaQueries.sm} {
     flex-direction: row;
@@ -236,6 +239,7 @@ const Pools: React.FC = () => {
 
   return (
     <>
+      <div style={{ height: 24 }} />
       <PageHeader>
         <Flex justifyContent="space-between" flexDirection={['column', null, null, 'row']}>
           <Flex flex="1" flexDirection="column" mr={['8px', 0]}>

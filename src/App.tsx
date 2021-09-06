@@ -17,7 +17,6 @@ import { ReactComponent as MenuOpenIcon } from 'assets/svg/icon/MenuOpenIcon.svg
 import { ReactComponent as SearchIcon } from 'assets/svg/icon/SearchIcon.svg'
 import { ReactComponent as EmptyAvatar } from 'assets/svg/icon/EmptyAvatar.svg'
 import { ReactComponent as ChevronDown } from 'assets/svg/icon/ChevronDown.svg'
-import PyramidImage from 'assets/images/pyramid.png'
 import Loader from 'components/myLoader/Loader'
 import { useSelector } from 'react-redux';
 import HotTokenBar from './views/Swap/components/HotTokenBar'
@@ -184,20 +183,6 @@ const AccountWrapper = styled.div`
   }
 `
 
-const BannerWrapper = styled.div`
-  width: 516px;
-  height: 516px;
-  position: absolute;
-  right: 0px;
-  bottom: 0px;
-  overflow: hidden;
-  & img {
-    position: absolute;
-    right: -40px;
-    bottom: -60px;
-  }
-`
-
 const PageContent = styled.div`
   width: 100%;
 `
@@ -291,9 +276,6 @@ const App: React.FC = () => {
             <TokenBarMobile style={{ width: '100%'}}>
               <HotTokenBar />
             </TokenBarMobile>
-            <BannerWrapper>
-              <img src={PyramidImage} alt='Pyramid' />
-            </BannerWrapper>
             <PageContent>
               <SuspenseWithChunkError fallback={<PageLoader />}>
                 <Switch>
