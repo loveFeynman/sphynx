@@ -31,17 +31,6 @@ const DividendPanel:React.FC = () => {
         <Text color='white' fontSize='14px'>Amount to be Distributed</Text>
         <Text color='white' fontSize='14px'>$ 12,000</Text>
       </Flex>
-      {/* {
-        detailsShown &&
-          <>
-            <Text color='white' textAlign='center' mt={3}>Distribution in:</Text>
-            <Text color='white' textAlign='center' mt={1}>6 days: 23 hrs: 43 min: 23 sec</Text>
-            <Flex justifyContent='space-between' mt={3}>
-              <Text color='white'>Previously Distributed</Text>
-              <Text color='white'>$ 11,232</Text>
-            </Flex>
-          </>
-      } */}
       <Button width='100%' height='36px' mt={2} onClick={() => onPresentDividendModal()}>
         Show Details
       </Button>
