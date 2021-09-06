@@ -281,6 +281,13 @@ const BottomGrouping = styled(Box)`
   }
 `
 
+const LeftCardWrapper = styled.div`
+  margin-top: 0;
+  ${({ theme }) => theme.mediaQueries.xl} {
+    margin-top: -48px;
+  }
+`
+
 export default function Swap({ history }: RouteComponentProps) {
   const [address, setaddress] = useState('');
   function handleChange(value) {
@@ -710,14 +717,9 @@ export default function Swap({ history }: RouteComponentProps) {
       </SwapRightBanner> */}
       <BannerWrapper />
       <Cards>
-        <div>
+        <LeftCardWrapper>
           <DividendPanel />
-        </div>
-        <div>
-          <ContractPanel value={address} />
-        </div>
-        <div>
-          <div style={{ height: 48, marginBottom: 25 }}>
+          <div style={{ height: 48, marginTop: 16, marginBottom: 25 }}>
             <Flex alignItems='center' justifyContent='center' style={{ marginBottom: 8 }}>
               <SwapCardNav />
             </Flex>
@@ -933,10 +935,11 @@ export default function Swap({ history }: RouteComponentProps) {
             }
           </Card>
           <AdvancedSwapDetailsDropdown trade={trade} />
-        </div>
+        </LeftCardWrapper>
         <div>
           <FullHeightColumn>
             {/* tokenInfo={currentToken} */}
+            <ContractPanel value={address} />
             <CoinStatsBoard />
             <TVChartContainer />
           </FullHeightColumn>
