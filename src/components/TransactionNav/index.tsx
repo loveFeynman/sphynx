@@ -24,6 +24,11 @@ const StyledNav = styled.div`
       color: white;  
     }
   }
+  & #transinfo-nav-link {
+    ${({ theme }) => theme.mediaQueries.md} {
+      display: none;
+    }
+  }
 `
 
 const TransactionNav = () => {
@@ -42,6 +47,9 @@ const TransactionNav = () => {
     </Button>
     <Button className={activeIndex === 2 ? 'active' : ''} id="transseller-nav-link" onClick={() => { setActiveIndex(2) }}>
       {t('Sellers')}
+    </Button>
+    <Button className={activeIndex === 3 ? 'active' : ''} id="transinfo-nav-link" onClick={() => { setActiveIndex(3) }}>
+      {t('Info')}
     </Button>
   </StyledNav>
 )}
