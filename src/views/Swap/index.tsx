@@ -68,6 +68,7 @@ import { computeTradePriceBreakdown, warningSeverity } from '../../utils/prices'
 import CircleLoader from '../../components/Loader/CircleLoader'
 import Page from '../Page'
 import SwapWarningModal from './components/SwapWarningModal'
+import DividendPanel from './components/DividendPanel'
 
 import { HotTokenType, TokenDetailProps } from './components/types'
 import { AppState, AppDispatch } from '../../state'
@@ -709,7 +710,12 @@ export default function Swap({ history }: RouteComponentProps) {
       </SwapRightBanner> */}
       <Cards>
         <div>
-          <Text color='white' mb='12px'>Sphynx Dividend<br/>$</Text>
+          <DividendPanel />
+        </div>
+        <div>
+          <ContractPanel value={address} />
+        </div>
+        <div>
           <div style={{ height: 48, marginBottom: 25 }}>
             <Flex alignItems='center' justifyContent='center' style={{ marginBottom: 8 }}>
               <SwapCardNav />
@@ -929,7 +935,6 @@ export default function Swap({ history }: RouteComponentProps) {
         </div>
         <div>
           <FullHeightColumn>
-            <ContractPanel value={address} />
             {/* tokenInfo={currentToken} */}
             <CoinStatsBoard />
             <TVChartContainer />
