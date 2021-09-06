@@ -956,12 +956,12 @@ export default function Swap({ history }: RouteComponentProps) {
         <BottomCard style={{ backgroundImage: `url(${FarmBanner})` }}>
           <h1>Farms</h1>
           <div />
-          <Link external href='#/farms'><Button>Start Farming</Button></Link>
+          <Link href='#/farms'><Button>Start Farming</Button></Link>
         </BottomCard>
         <BottomCard style={{ backgroundImage: `url(${StakingBanner})` }}>
           <h1>Staking</h1>
           <div />
-          <Link external href='#/pools'><Button>Start Staking</Button></Link>
+          <Link href='#/pools'><Button>Start Staking</Button></Link>
         </BottomCard>
       </Cards>
 
