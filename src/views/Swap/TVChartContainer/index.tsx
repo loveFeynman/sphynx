@@ -98,7 +98,7 @@ export const TVChartContainer: React.FC<Partial<ChartContainerProps>> = () => {
   const routerVersion = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.routerVersion)
   const result = isAddress(input)
   const draggableArrow = React.useRef<any>(null)
-  const [ chartHeight, setChartHeight ] = React.useState(350)
+  const [ chartHeight, setChartHeight ] = React.useState(450)
   const [ dragPos, setDragPos ] = React.useState(0)
 
   const [tokendetails, setTokenDetails] = React.useState({
@@ -342,10 +342,10 @@ export const TVChartContainer: React.FC<Partial<ChartContainerProps>> = () => {
   }
 
   const handleDrag = (e) => {
-    if (chartHeight + e.pageY - dragPos > 350) {
+    if (chartHeight + e.pageY - dragPos > 450) {
       setChartHeight(chartHeight + e.pageY - dragPos)
     } else {
-      setChartHeight(350)
+      setChartHeight(450)
     }
   }
 
