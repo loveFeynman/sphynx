@@ -11,7 +11,6 @@ import {
   ResolutionString,
 } from '../../../charting_library'
 import axios from 'axios'
-import Draggable from 'react-draggable'
 import { makeApiRequest, generateSymbol, makeApiRequest1 } from './helpers'
 import { useSelector } from 'react-redux'
 import { ReactComponent as UpDownArrow } from 'assets/svg/icon/UpDownArrow.svg'
@@ -23,27 +22,36 @@ const UpDownArrowBox = styled.div`
   text-align: center;
   position: relative;
   margin-top: 8px;
+`
+
+const ArrowWrapper = styled.div`
+  margin: auto;
+  width: 0;
+  cursor: row-resize;
   & svg {
     width: 14px;
     height: 16px;
   }
   ${({ theme }) => theme.mediaQueries.sm} {
-    & svg {
-      margin-top: 4px;
-    }
+    margin-top: 4px;
   }
 `
 
 const TransactionNavWrapper = styled.div`
   display: flex;
   justify-content: center;
-  margin: 8px 0 -18px;
-  ${({ theme }) => theme.mediaQueries.sm} {
+  margin: 8px 0 0;
+  ${({ theme }) => theme.mediaQueries.md} {
     position: absolute;
     left: 0;
     top: 0;
     margin: 0;
   }
+`
+
+const ChartContainer = styled.div<{ height: number }> `
+  position: relative;
+  height: ${(props) => props.height}px;
 `
 
 // eslint-disable-next-line import/extensions
@@ -88,8 +96,10 @@ function getLanguageFromURL(): LanguageCode | null {
 export const TVChartContainer: React.FC<Partial<ChartContainerProps>> = () => {
   const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
   const routerVersion = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.routerVersion)
-
   const result = isAddress(input)
+  const draggableArrow = React.useRef<any>(null)
+  const [ chartHeight, setChartHeight ] = React.useState(350)
+  const [ dragPos, setDragPos ] = React.useState(0)
 
   const [tokendetails, setTokenDetails] = React.useState({
     name: 'PancakeSwap Token',
@@ -327,6 +337,18 @@ export const TVChartContainer: React.FC<Partial<ChartContainerProps>> = () => {
     getWidget()
   }, [input])
 
+  const handleDragStart = (e) => {
+    setDragPos(e.pageY)
+  }
+
+  const handleDrag = (e) => {
+    if (chartHeight + e.pageY - dragPos > 350) {
+      setChartHeight(chartHeight + e.pageY - dragPos)
+    } else {
+      setChartHeight(350)
+    }
+  }
+
   return (
     <div className={'TVChartContainer'}>
       {/* {loader ?
@@ -341,10 +363,14 @@ export const TVChartContainer: React.FC<Partial<ChartContainerProps>> = () => {
           </div>
           : ""
         } */}
-      <div id={ChartContainerProps.containerId} style={{ height: '100%', paddingBottom: '10px' }} />
+      <ChartContainer height={chartHeight}>
+        <div id={ChartContainerProps.containerId} style={{ height: '100%', paddingBottom: '10px' }} />
+      </ChartContainer>
       {/* <div style={{ height: '10px' }}>&nbsp;</div> */}
       <UpDownArrowBox>
-        <UpDownArrow />
+        <ArrowWrapper ref={draggableArrow} draggable='true' onDragStart={e => handleDragStart(e)} onDragOver={e => handleDrag(e)}>
+          <UpDownArrow />
+        </ArrowWrapper>
         <TransactionNavWrapper>
           <TransactionNav />
         </TransactionNavWrapper>

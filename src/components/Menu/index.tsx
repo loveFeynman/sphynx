@@ -142,11 +142,12 @@ const MenuItem = styled.a`
   // height: 56px;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   padding: 12px 24px;
   border-radius: 10px;
   text-decoration: none !important;
   & p {
-    margin-left: 12px;
+    width: calc(100% - 32px);
   }
   &:hover {
     background: #8B2A9B;

@@ -261,7 +261,7 @@ export default function AddLiquidityWidget({
         currencies={currencies}
         parsedAmounts={parsedAmounts}
         noLiquidity={noLiquidity}
-        onAdd={onAdd}
+        onAdd={() => onAdd()}
         poolTokenPercentage={poolTokenPercentage}
       />
     )

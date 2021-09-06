@@ -33,6 +33,16 @@ export const links = [
     href: '/#/pools'
   },
   {
+    label: 'Sphynx bridge (coming soon)',
+    icon: IFOIcon,
+    href: '#',
+  },
+  {
+    label: 'Sphynx lottery',
+    icon: IFOIcon,
+    href: '#',
+  },
+  {
     label: 'CoinMarketCap',
     icon: CoinMarketCapsIcon,
     href: 'https://coinmarketcap.com/',

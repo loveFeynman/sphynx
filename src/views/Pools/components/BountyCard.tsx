@@ -24,6 +24,12 @@ import BountyModal from './BountyModal'
 const StyledCard = styled(Card)`
   width: 100%;
   flex: 1;
+  background: transparent;
+
+  & > div > div {
+    padding: 24px 0;
+  }
+  
   ${({ theme }) => theme.mediaQueries.sm} {
     min-width: 240px;
   }
@@ -70,7 +76,7 @@ const BountyCard = () => {
   return (
     <>
       {tooltipVisible && tooltip}
-      <StyledCard>
+      <StyledCard background='transparent'>
         <CardBody>
           <Flex flexDirection="column">
             <Flex alignItems="center" mb="12px">

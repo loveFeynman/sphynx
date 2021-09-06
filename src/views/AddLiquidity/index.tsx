@@ -243,7 +243,7 @@ export default function AddLiquidity({
         currencies={currencies}
         parsedAmounts={parsedAmounts}
         noLiquidity={noLiquidity}
-        onAdd={onAdd}
+        onAdd={() => onAdd()}
         poolTokenPercentage={poolTokenPercentage}
       />
     )

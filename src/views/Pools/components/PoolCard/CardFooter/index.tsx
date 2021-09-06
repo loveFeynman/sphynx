@@ -25,7 +25,7 @@ const CardFooterWrapper = styled(CardFooter)`
   background-color: ${({theme}) => theme.colors.input}
 `
 
-const Footer: React.FC<FooterProps> = ({ pool, account }) => {
+const Footer: React.FC<FooterProps> = ({ pool, account, totalCakeInVault }) => {
   const { isAutoVault } = pool
   const { t } = useTranslation()
   const [isExpanded, setIsExpanded] = useState(false)

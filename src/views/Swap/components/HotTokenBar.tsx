@@ -175,12 +175,12 @@ export default function HotTokenBar() {
      </div>:
        <Marquee gradient={false} speed={40} className="marquee-container" style={{ overflow: 'hidden !important' }}>
      
-         <ul style={{ display: 'flex', listStyle: 'none', justifyContent: 'center', width: 'calc(100% - 120px)' }}>
+         <ul style={{ display: 'flex', listStyle: 'none', justifyContent: 'center' }}>
             {
             data.map((elem:any,index) => {
              return (
-               <li key={`${index+1}.${elem.currency.symbol}`} style={{color:'white',padding:'20'}}>
-               <a href="javascript:void(null)" style={{marginRight: 25,textDecoration:'none'}} 
+               <li key={`${index+1}.${elem.currency.symbol}`} style={{color:'white',padding:'12'}}>
+               <a href="javascript:void(null)" style={{marginRight: 20, textDecoration:'none'}} 
                onClick={()=> dispatch(typeInput({ input: elem.currency.address }))}
                >{`${index+1}. ${elem.currency.symbol}`}</a>
                  {/* < a href="##">{elem.currency.name}</a> */}
