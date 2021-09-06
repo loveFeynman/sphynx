@@ -40,8 +40,8 @@ const ArrowWrapper = styled.div`
 const TransactionNavWrapper = styled.div`
   display: flex;
   justify-content: center;
-  margin: 8px 0 -18px;
-  ${({ theme }) => theme.mediaQueries.sm} {
+  margin: 8px 0 0;
+  ${({ theme }) => theme.mediaQueries.md} {
     position: absolute;
     left: 0;
     top: 0;

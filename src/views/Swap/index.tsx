@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components'
 import { CurrencyAmount, JSBI, Token, Trade } from '@pancakeswap/sdk'
-import { Button, Text, ArrowDownIcon, Box, useModal, Flex, Link } from '@pancakeswap/uikit'
+import { Button, Text, ArrowDownIcon, Box, useModal, Flex, Link, useMatchBreakpoints } from '@pancakeswap/uikit'
 import { useIsTransactionUnsupported } from 'hooks/Trades'
 import UnsupportedCurrencyFooter from 'components/UnsupportedCurrencyFooter'
 import { RouteComponentProps } from 'react-router-dom'
@@ -316,8 +316,7 @@ export default function Swap({ history }: RouteComponentProps) {
   // get custom setting values for user
   const [allowedSlippage, setUserSlippageTolerance] = useUserSlippageTolerance()
   // setUserSlippageTolerance(100);
-
-  
+  const { isMd } = useMatchBreakpoints()
 
   // swap state
   const { independentField, typedValue, recipient } = useSwapState()
@@ -936,9 +935,12 @@ export default function Swap({ history }: RouteComponentProps) {
             <TVChartContainer />
           </FullHeightColumn>
         </div>
-        <div>
-          <TokenInfo />
-        </div>
+        {
+          !isMd &&
+            <div>
+              <TokenInfo />
+            </div>        
+        }
         <div>
           <TransactionCard />
         </div>
