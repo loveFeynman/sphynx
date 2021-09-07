@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components'
+import { useLocation } from 'react-router'
 import { CurrencyAmount, JSBI, Token, Trade } from '@pancakeswap/sdk'
 import { Button, Text, ArrowDownIcon, Box, useModal, Flex, Link, useMatchBreakpoints } from '@pancakeswap/uikit'
 import { useIsTransactionUnsupported } from 'hooks/Trades'
@@ -28,6 +29,7 @@ import StakingBanner from 'assets/images/stakebanner.png'
 import BannerWrapper from 'components/BannerWrapper'
 import moment from 'moment';
 import axios from 'axios';
+import {typeInput} from 'state/input/actions'
 
 import AddressInputPanel from './components/AddressInputPanel'
 import Card, { GreyCard } from '../../components/Card'
@@ -284,13 +286,6 @@ const BottomGrouping = styled(Box)`
   }
 `
 
-const LeftCardWrapper = styled.div`
-  margin-top: 0;
-  ${({ theme }) => theme.mediaQueries.xl} {
-    margin-top: -48px;
-  }
-`
-
 const TokenInfoWrapper = styled.div`
   display: none;
   ${({ theme }) => theme.mediaQueries.md} {
@@ -298,10 +293,22 @@ const TokenInfoWrapper = styled.div`
   }
 `
 
+const SwapPage = styled(Page)`
+  padding: 0;
+`
+
 export default function Swap({ history }: RouteComponentProps) {
   const [address, setaddress] = useState('');
   function handleChange(value) {
     setaddress(value);
+  }
+
+  const dispatch = useDispatch()
+  const { pathname } = useLocation()
+  const tokenAddress = pathname.substr(6)
+
+  if (tokenAddress && tokenAddress !== '') {
+    dispatch(typeInput({ input: tokenAddress }))
   }
 
   const loadedUrlParams = useDefaultsFromURLSearch()
@@ -722,13 +729,13 @@ export default function Swap({ history }: RouteComponentProps) {
   // }, [])
 
   return (
-    <Page>
+    <SwapPage>
       {/* <SwapRightBanner>
         <img src={SwapBanner} alt='Swap Banner' />
       </SwapRightBanner> */}
       <BannerWrapper />
       <Cards>
-        <LeftCardWrapper>
+        <div>
           <DividendPanel />
           <div style={{ height: 48, marginTop: 16, marginBottom: 25 }}>
             <Flex alignItems='center' justifyContent='center' style={{ marginBottom: 8 }}>
@@ -946,7 +953,7 @@ export default function Swap({ history }: RouteComponentProps) {
             }
           </Card>
           <AdvancedSwapDetailsDropdown trade={trade} />
-        </LeftCardWrapper>
+        </div>
         <div>
           <FullHeightColumn>
             {/* tokenInfo={currentToken} */}
@@ -989,6 +996,6 @@ export default function Swap({ history }: RouteComponentProps) {
       ) : (
         <UnsupportedCurrencyFooter currencies={[currencies.INPUT, currencies.OUTPUT]} />
       )} */}
-    </Page>
+    </SwapPage>
   )
 }

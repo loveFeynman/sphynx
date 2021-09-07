@@ -108,7 +108,7 @@ const TopBar = styled.div`
   align-items: center;
   width: 100%;
   margin-top: 32px;
-  margin-bottom: 32px;
+  margin-bottom: 20px;
   flex-wrap: wrap;
   // & button:first-child {
   //   background: transparent;
@@ -202,6 +202,7 @@ const MenuOpenButton = styled(Button)`
 
 const TokenBarMobile = styled.div`
   width: 100%;
+  margin-bottom: 20px;
   ${({ theme }) => theme.mediaQueries.xl} {
     display: none;
   }

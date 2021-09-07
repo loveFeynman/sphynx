@@ -74,6 +74,9 @@ const MenuWrapper = styled.div`
   margin-top: 12px;
   overflow-y: auto;
   max-height: 90vh;
+  & a {
+    color: white !important;
+  }
   & .selectedItem {
     background: rgba(0, 0, 0, 0.4);
   }
@@ -263,7 +266,7 @@ export default function ContractPanel({value}: ContractPanelProps){
             {data.length > 0 ?
               <span>
                 {data?.map((item: any, index: number) => {
-                  return <MenuItem className={index === selectedItemIndex ? 'selectedItem' : ''} onClick={() => { dispatch(typeInput({ input: item.address })) }}>{item.name}<br />{item.symbol}<br />{item.address}</MenuItem>
+                  return <Link href={`#/swap/${item.address}`}><MenuItem className={index === selectedItemIndex ? 'selectedItem' : ''}>{item.name}<br />{item.symbol}<br />{item.address}</MenuItem></Link>
                 })}
               </span> :
               <span style={{ padding: '0 16px' }}>no record</span>}
