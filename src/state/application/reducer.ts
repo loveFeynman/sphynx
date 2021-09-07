@@ -5,6 +5,7 @@ import {
   toggleMenu,
   setRouterType,
   setSwapType,
+  setSwapTransCard,
   setLiquidityPairA,
   setLiquidityPairB
 } from './actions'
@@ -14,6 +15,7 @@ export interface ApplicationState {
   menuToggled: boolean
   routerType: RouterType
   swapType: string
+  swapTransCard: string
   liquidityPairA: string
   liquidityPairB: string
 }
@@ -23,6 +25,7 @@ const initialState: ApplicationState = {
   menuToggled: false,
   routerType: RouterType.sphynx,
   swapType: 'swap',
+  swapTransCard: 'tokenDX',
   liquidityPairA: null,
   liquidityPairB: null
 }
@@ -45,6 +48,9 @@ export default createReducer(initialState, (builder) =>
   })
   .addCase(setSwapType, (state, { payload }) => {
     state.swapType = payload
+  })
+  .addCase(setSwapTransCard, (state, { payload }) => {
+    state.swapTransCard = payload
   })
   .addCase(setLiquidityPairA, (state, { payload }) => {
     state.liquidityPairA = payload

@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import styled from 'styled-components'
 import { RouterType } from '@pancakeswap/sdk'
 import { useTranslation } from 'contexts/Localization'
-import { useSetRouterType } from 'state/application/hooks'
+import { useSwapTransCard } from 'state/application/hooks'
 import {  Button } from '@pancakeswap/uikit'
 import TokenInfo from 'views/Swap/components/TokenInfo'
 
@@ -58,8 +58,7 @@ const TokenInfoWrapper = styled.div<{ toggled: boolean }>`
 `
 
 const TransactionNav = () => {
-  const { setRouterType } = useSetRouterType()
-  const [ activeIndex, setActiveIndex ] = useState(0)
+  const { swapTransCard, setSwapTransCard } = useSwapTransCard()
   const [ infoToggled, toggleInfoBar ] = useState(false)
 
   const { t } = useTranslation()
@@ -67,16 +66,16 @@ const TransactionNav = () => {
   return (
   <>
     <StyledNav>
-      <Button className={activeIndex === 0 ? 'active' : ''} id="tokendv-nav-link" onClick={() => { setActiveIndex(0) }}>
+      <Button className={swapTransCard === 'tokenDX' ? 'active' : ''} id="tokendv-nav-link" onClick={() => { setSwapTransCard('tokenDX') }}>
         {t('Token DX')}
       </Button>
-      <Button className={activeIndex === 1 ? 'active' : ''} id="transbuyer-nav-link" onClick={() => { setActiveIndex(1) }}>
+      <Button className={swapTransCard === 'buyers' ? 'active' : ''} id="transbuyer-nav-link" onClick={() => { setSwapTransCard('buyers') }}>
         {t('Buyers')}
       </Button>
-      <Button className={activeIndex === 2 ? 'active' : ''} id="transseller-nav-link" onClick={() => { setActiveIndex(2) }}>
+      <Button className={swapTransCard === 'sellers' ? 'active' : ''} id="transseller-nav-link" onClick={() => { setSwapTransCard('sellers') }}>
         {t('Sellers')}
       </Button>
-      <Button className={activeIndex === 3 ? 'active' : ''} id="transinfo-nav-link" onClick={() => { setActiveIndex(3); toggleInfoBar(true) }}>
+      <Button className={swapTransCard === 'info' ? 'active' : ''} id="transinfo-nav-link" onClick={() => { setSwapTransCard('info'); toggleInfoBar(true) }}>
         {t('Info')}
       </Button>
     </StyledNav>

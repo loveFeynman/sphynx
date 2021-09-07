@@ -17,7 +17,7 @@ import { AutoRow, RowBetween } from 'components/Layout/Row'
 import ConnectWalletButton from 'components/ConnectWalletButton'
 import { AppHeader } from 'components/App'
 
-import { useSwapType } from 'state/application/hooks'
+import { useSwapType, useSwapTransCard } from 'state/application/hooks'
 import { ReactComponent as DownArrow } from 'assets/svg/icon/DownArrow.svg'
 import { ReactComponent as HelpIcon } from 'assets/svg/icon/HelpIcon.svg'
 import { ReactComponent as HelpIcon1 } from 'assets/svg/icon/HelpIcon1.svg'
@@ -67,6 +67,9 @@ import { maxAmountSpend } from '../../utils/maxAmountSpend'
 import { computeTradePriceBreakdown, warningSeverity } from '../../utils/prices'
 import CircleLoader from '../../components/Loader/CircleLoader'
 import Page from '../Page'
+
+import BuyersCard from './components/BuyersCard'
+import SellersCard from './components/SellersCard'
 import SwapWarningModal from './components/SwapWarningModal'
 import DividendPanel from './components/DividendPanel'
 
@@ -343,7 +346,8 @@ export default function Swap({ history }: RouteComponentProps) {
     inputError: wrapInputError,
   } = useWrapCallback(currencies[Field.INPUT], currencies[Field.OUTPUT], typedValue)
   const showWrap: boolean = wrapType !== WrapType.NOT_APPLICABLE
-  const { swapType } = useSwapType();
+  const { swapType } = useSwapType()
+  const { swapTransCard } = useSwapTransCard()
   const trade = showWrap ? undefined : v2Trade
 
   const parsedAmounts = showWrap
@@ -955,7 +959,18 @@ export default function Swap({ history }: RouteComponentProps) {
           <TokenInfo />
         </TokenInfoWrapper>
         <div>
-          <TransactionCard />
+          {
+            swapTransCard === 'tokenDX' &&
+            <TransactionCard />
+          }
+          {
+            swapTransCard === 'buyers' &&
+            <BuyersCard />
+          }
+          {
+            swapTransCard === 'sellers' &&
+            <SellersCard />
+          }
         </div>
         <BottomCard style={{ backgroundImage: `url(${FarmBanner})` }}>
           <h1>Farms</h1>
