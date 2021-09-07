@@ -60,12 +60,12 @@ export const links = [
   {
     label: 'NFT Marketplace (coming soon)',
     icon: PredictionIcon,
-    href: '/'
+    href: '#'
   },
   {
     label: 'Prediction (coming soon)',
     icon: PredictionIcon,
-    href: '/',
+    href: '#',
   },
   // {
   //   label: '... More',

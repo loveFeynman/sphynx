@@ -252,7 +252,7 @@ const App: React.FC = () => {
           <Menu />
           
           <BodyWrapper toggled={menuToggled}>
-            <BodyOverlay toggled={menuToggled} />
+            <BodyOverlay toggled={menuToggled} onClick={() => toggleMenu(false)} />
             <TopBar>
               <MenuOpenButton onClick={() => toggleMenu(!menuToggled)}>
                 <svg viewBox='0 0 24 24' width='24px'>

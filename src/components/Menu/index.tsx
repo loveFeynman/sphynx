@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import styled from 'styled-components'
 // import { Link } from 'react-router-dom'
+import { useLocation } from 'react-router'
 import { Button, Link } from '@pancakeswap/uikit'
 import { useMenuToggle } from 'state/application/hooks'
 import { useWeb3React } from '@web3-react/core'
@@ -138,8 +139,26 @@ const ButtonWrapper = styled.div`
 `
 
 const MenuItem = styled.a`
+  display: none;
+  ${({ theme }) => theme.mediaQueries.xl} {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 24px;
+    border-radius: 10px;
+    text-decoration: none !important;
+    & p {
+      width: calc(100% - 32px);
+    }
+    &:hover, &.active {
+      background: #8B2A9B;
+    }  
+  }
+`
+
+const MenuItemMobile = styled.a`
   width: 100%;
-  // height: 56px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -149,10 +168,14 @@ const MenuItem = styled.a`
   & p {
     width: calc(100% - 32px);
   }
-  &:hover {
+  &:hover, &.active {
     background: #8B2A9B;
   }
+  ${({ theme }) => theme.mediaQueries.xl} {
+    display: none;
+  }
 `
+
 const SocialWrapper = styled.div`
   margin: 10px 0 32px;
   & p {
@@ -198,6 +221,8 @@ const Menu = (props) => {
 
   const [walletbalance, setWalletBalance] = useState(0);
   const dispatch = useDispatch();
+  const { pathname } = useLocation();
+  const realPath = `/#${pathname}`;
 
   const [sum, setSum] = useState(0);
   const [getAllToken, setAllTokens] = useState([]);
@@ -357,17 +382,22 @@ const Menu = (props) => {
           : ""
       }
       <MenuContentWrapper toggled={menuToggled}>
-
         {
           links.map((link) => {
             const Icon = link.icon
             return (
-              <MenuItem href={link.href}>
-                <Icon />
-                {
-                  !menuToggled && <p><b>{link.label}</b></p>
-                }
-              </MenuItem>
+              <>
+                <MenuItem className={realPath.indexOf(link.href) > -1 && link.href !== '#' ? 'active' : ''} href={link.href}>
+                  <Icon />
+                  {
+                    !menuToggled && <p><b>{link.label}</b></p>
+                  }
+                </MenuItem>
+                <MenuItemMobile className={realPath.indexOf(link.href) > -1 && link.href !== '#' ? 'active' : ''} href={link.href} onClick={() => toggleMenu(false)}>
+                  <Icon />
+                  <p><b>{link.label}</b></p>
+                </MenuItemMobile>
+              </>
             )
           })
         }
