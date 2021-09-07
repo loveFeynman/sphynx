@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/static/css/main.7f9803d1.chunk.css",
-    "main.js": "/static/js/main.723cf1cc.chunk.js",
-    "main.js.map": "/static/js/main.723cf1cc.chunk.js.map",
+    "main.js": "/static/js/main.ab1f2dc1.chunk.js",
+    "main.js.map": "/static/js/main.ab1f2dc1.chunk.js.map",
     "runtime-main.js": "/static/js/runtime-main.9b03e27d.js",
     "runtime-main.js.map": "/static/js/runtime-main.9b03e27d.js.map",
     "static/css/2.ecdd39c8.chunk.css": "/static/css/2.ecdd39c8.chunk.css",
@@ -34,6 +34,7 @@
     "static/media/Illustration.1519b2c4.svg": "/static/media/Illustration.1519b2c4.svg",
     "static/media/LearningHub.92897ba7.svg": "/static/media/LearningHub.92897ba7.svg",
     "static/media/MenuOpenIcon.5e18b4e8.svg": "/static/media/MenuOpenIcon.5e18b4e8.svg",
+    "static/media/MoreIcon2.0b7f99ef.svg": "/static/media/MoreIcon2.0b7f99ef.svg",
     "static/media/PoolIcon.2fdc03ee.svg": "/static/media/PoolIcon.2fdc03ee.svg",
     "static/media/PredictionIcon.4fd8c54c.svg": "/static/media/PredictionIcon.4fd8c54c.svg",
     "static/media/SocialIcon2.a2ab173c.svg": "/static/media/SocialIcon2.a2ab173c.svg",
@@ -52,6 +53,6 @@
     "static/css/2.ecdd39c8.chunk.css",
     "static/js/2.d3b6d256.chunk.js",
     "static/css/main.7f9803d1.chunk.css",
-    "static/js/main.723cf1cc.chunk.js"
+    "static/js/main.ab1f2dc1.chunk.js"
   ]
 }
