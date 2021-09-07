@@ -288,6 +288,13 @@ const LeftCardWrapper = styled.div`
   }
 `
 
+const TokenInfoWrapper = styled.div`
+  display: none;
+  ${({ theme }) => theme.mediaQueries.md} {
+    display: block;
+  }
+`
+
 export default function Swap({ history }: RouteComponentProps) {
   const [address, setaddress] = useState('');
   function handleChange(value) {
@@ -944,12 +951,9 @@ export default function Swap({ history }: RouteComponentProps) {
             <TVChartContainer />
           </FullHeightColumn>
         </div>
-        {
-          !isMd &&
-            <div>
-              <TokenInfo />
-            </div>        
-        }
+        <TokenInfoWrapper>
+          <TokenInfo />
+        </TokenInfoWrapper>
         <div>
           <TransactionCard />
         </div>
