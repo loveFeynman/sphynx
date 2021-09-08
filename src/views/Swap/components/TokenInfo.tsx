@@ -88,10 +88,16 @@ export default function TokenInfo() {
         await axios.post("https://thesphynx.co/api/tokenStats", { address: input })
           .then((response) => {
             setalldata(response.data)
-              dispatch(
+            dispatch(
+              selectCurrency({
+                field : Field.INPUT,
+                currencyId : input
+              })
+            )
+            dispatch(
               selectCurrency({
                 field : Field.OUTPUT,
-                currencyId : input
+                currencyId : 'BNB'
               })
             )
           });
