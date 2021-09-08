@@ -34,3 +34,6 @@ export const LightGreyCard = styled(Card)`
 export const GreyCard = styled(Card)`
   background-color: ${({ theme }) => theme.colors.dropdown};
 `
+export const BlackCard = styled(Card)`
+  background-color: ${({ theme }) =>'#fff'};
+`
