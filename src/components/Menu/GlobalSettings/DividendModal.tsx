@@ -3,6 +3,13 @@ import styled from 'styled-components'
 import { Text, Flex, Modal, InjectedModalProps, Button } from '@pancakeswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 
+declare type Handler = () => void;
+
+interface DividendModalProps {
+  onDismiss?: Handler;
+  balance?: number;
+}
+
 const ApplyButton = styled(Button)`
   bottom: 16px;
   outline: none;
@@ -11,9 +18,10 @@ const ApplyButton = styled(Button)`
   }
 `
 
-const DividendModal: React.FC<InjectedModalProps> = ({ onDismiss }) => {
+const DividendModal: React.FC<DividendModalProps> = ({ onDismiss, balance }) => {
   const { t } = useTranslation()
 
+  console.log(balance);
   return (
     <Modal
       title={t('Sphynx Dividend')}
@@ -23,13 +31,13 @@ const DividendModal: React.FC<InjectedModalProps> = ({ onDismiss }) => {
     >
       <Flex justifyContent='space-between' mt={2}>
         <Text>Amount to be Distributed</Text>
-        <Text ml={3}>$ 12,000</Text>
+        <Text ml={3}>$ {balance}</Text>
       </Flex>
       <Text textAlign='center' mt={3}>Distribution in:</Text>
       <Text textAlign='center' mt={1}>6 days: 23 hrs: 43 min: 23 sec</Text>
       <Flex justifyContent='space-between' mt={3}>
         <Text>Previously Distributed</Text>
-        <Text>$ 11,232</Text>
+        <Text>$ {balance}</Text>
       </Flex>
       <Flex flexDirection="column" mt={3}>
         <ApplyButton className='selected' onClick={onDismiss}>Hide Details</ApplyButton>
