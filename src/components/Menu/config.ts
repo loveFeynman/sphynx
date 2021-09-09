@@ -40,7 +40,7 @@ export const links = [
   {
     label: 'Sphynx lottery',
     icon: IFOIcon,
-    href: '#',
+    href: '/#/lottery',
   },
   {
     label: 'CoinMarketCap',
