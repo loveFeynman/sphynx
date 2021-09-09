@@ -1,12 +1,12 @@
+/* eslint-disable array-callback-return */
+/* eslint-disable no-self-compare */
 /* eslint-disable no-console */
-import React,{useState,useEffect} from 'react'
-import styled from 'styled-components'
 import { Flex } from '@pancakeswap/uikit'
-// import { useWeb3React } from '@web3-react/core'
-// import moment from 'moment'
-import axios from 'axios';
-import moment from 'moment-timezone'
-import { useSelector } from 'react-redux';
+import axios from 'axios'
+import React, { useEffect, useState } from 'react'
+import { useSelector } from 'react-redux'
+import styled from 'styled-components'
+import { w3cwebsocket as W3CWebSocket } from 'websocket'
 import { AppState } from '../../../state'
 import { isAddress } from '../../../utils'
 
@@ -19,7 +19,7 @@ const TableWrapper = styled.div`
   overflow-x: auto;
   & table {
     background: transparent;
-		min-width: 420px;
+    min-width: 420px;
     width: 100%;
     & tr {
       background: transparent;
@@ -47,24 +47,23 @@ const TableWrapper = styled.div`
           line-height: 16px;
           font-weight: bold;
           &.success {
-            color: #00AC1C;
+            color: #00ac1c;
           }
           &.error {
-            color: #EA3943;
+            color: #ea3943;
           }
-        }  
+        }
       }
     }
   }
 `
 
 const TransactionCard = () => {
-  const [tableData, setTableData] = useState([]);
+  const [tokenData, setTokenData] = useState('')
   const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
   const result = isAddress(input)
-
-  const [bnb,setBnb]=useState(0);
-  const [tokenprice,setTokenPrice]=useState(0);
+  const [socketData, setSocketData]: any = useState({})
+  const [dataArr, setDataArr] = useState([])
 
   const getDataQuery = `
   {
@@ -121,83 +120,114 @@ const TransactionCard = () => {
     }
   }`
 
-  const fetchData = async () =>{
+  useEffect(() => {
+    const websocketUrl = tokenData
+      ? `wss://stream.binance.com:9443/ws/${tokenData}usdt@trade`
+      : `wss://stream.binance.com:9443/ws/cakeusdt@trade`
+    let socket = new W3CWebSocket(websocketUrl)
+
+    const array = []
+
+    socket.onmessage = (event: any) => {
+      if (array.length <= 30) {
+        array.unshift(JSON.parse(event.data))
+      } else {
+        array.pop()
+        array.unshift(JSON.parse(event.data))
+      }
+
+      return setDataArr(array)
+    }
+
+    // effect cleanup function
+    return () => {
+      // any socket closure logic, cleanup etc..
+      socket = null
+    }
+  }, [tokenData]) // <-- empty dependency array
+
+  const getTokenData = async () => {
     try {
       if (result) {
-        // setLoader(true);
-        const queryResult = await axios.post('https://graphql.bitquery.io/', { query: getDataQuery })
-        const bnbprice:any= await axios.get(`https://thesphynx.co/api/price/${input}`);
-				const Tprice:any= await axios.get(`https://thesphynx.co/api/price/0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c`);
-				setBnb(Tprice.data.price);
-			    setTokenPrice(bnbprice.data.price)
-				if (queryResult.data.data)
-          setTableData(queryResult.data.data.ethereum.dexTrades)
-        // setLoader(false);
+        const response: any = await axios.post('https://thesphynx.co/api/tokenStats', { address: input })
+        const id = response?.data.symbol.split(/[\s,]+/)[1].match(/(([^())]+))/)[1]
+        setTokenData(id.toLowerCase())
       }
-    }
-    catch (err) {
-      // eslint-disable-next-line no-console
-      console.log("err", err.message);
+    } catch (err) {
+      console.log(err)
     }
   }
-  useEffect(()=>{
-    fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps 
+
+  useEffect(() => {
+    getTokenData()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [input])
 
-  const filterTableData = tableData === null ? [] : tableData.map((val: any, index) => {
-		const link = `https://bscscan.com/tx/${val.transaction.hash}`;
-		// eslint-disable-next-line no-console
+  useEffect(() => {
+    dataArr.map((dt) => {
+      setSocketData(dt)
+    })
+  }, [dataArr])
+  // eslint-disable-next-line no-console
 
-      const t=val.block.timestamp.time;
-      const localdate= new Date(t)
-      const d =  new Date(localdate.getTime()+localdate.getTimezoneOffset()*60*1000)
-      const offset = localdate.getTimezoneOffset() / 60;
-      const hours = localdate.getHours();
-      const lcl=d.setHours(hours - offset);
-      const date=new Date(lcl)
-      // const d = new Date(Date.UTC(localdate.getFullYear(), localdate.getMonth(), localdate.getDate(),  localdate.getHours(), localdate.getMinutes(), localdate.getSeconds()));
-	    // const d :any=new Date(localdate.getTime()+ localdate.getTimezoneOffset()*60*1000);
-      // const localtime=d;
-      
-      // console.log("localtime============",localtime);
-      
-		
+  const t = socketData.T
+  const localdate = new Date(t)
+  const d = new Date(localdate.getTime() + localdate.getTimezoneOffset() * 60 * 1000)
+  const offset = localdate.getTimezoneOffset() / 60
+  const hours = localdate.getHours()
+  const lcl = d.setHours(hours - offset)
+  const date = new Date(lcl)
+  // const d = new Date(Date.UTC(localdate.getFullYear(), localdate.getMonth(), localdate.getDate(),  localdate.getHours(), localdate.getMinutes(), localdate.getSeconds()));
+  // const d :any=new Date(localdate.getTime()+ localdate.getTimezoneOffset()*60*1000);
+  // const localtime=d;
 
-		return (
-			<tr key={`${index + 1}.${val.transaction.hash}`}>
-				<td>
-					<a href={link} target="blank"><Flex alignItems='center'><h2 className={val.baseCurrency.symbol === val.buyCurrency.symbol ? 'success' : 'error'}>{(date.toString().split('GMT')[0])}</h2></Flex></a>
-				</td>
-				<td><a href={link} target="blank"><h2 className={val.baseCurrency.symbol === val.buyCurrency.symbol ? 'success' : 'error'}> {Number(val.baseAmount).toLocaleString()}</h2></a></td>
-				<td><a href={link} target="blank"><h2 className={val.baseCurrency.symbol === val.buyCurrency.symbol ? 'success' : 'error'}>{(val.quotePrice*bnb)}</h2></a></td> 
-				<td><a href={link} target="blank"><h2 className={val.baseCurrency.symbol === val.buyCurrency.symbol ? 'success' : 'error'}>${(val.baseAmount*tokenprice)}</h2></a></td>
-				<td><a href={link} target="blank"><h2 className={val.baseCurrency.symbol === val.buyCurrency.symbol ? 'success' : 'error'}>{val.exchange.fullName}</h2></a></td>
-			</tr>
-		)
-	})
-  
+  // console.log("localtime============",localtime);
+
   // eslint-disable-next-line no-console
   return (
-		<>
-			<TableWrapper>
-				<table>
-					<thead>
-						<tr>
-							<td>Time</td>
-							<td>Traded Tokens</td>
-							<td>Token Price</td>
-							<td>$Value</td>
-							<td>DEX</td>
-						</tr>
-					</thead>
-					<tbody>
-						{filterTableData}
-					</tbody>
-				</table>
-
-			</TableWrapper>
-			{/* {loader ?
+    <>
+      <TableWrapper>
+        <table>
+          <thead>
+            <tr>
+              <td style={{ width: '30%' }}>Time</td>
+              <td style={{ width: '24%' }}>Traded Tokens</td>
+              <td style={{ width: '22%' }}>Token Price</td>
+              <td style={{ width: '22%' }}>$Value</td>
+            </tr>
+          </thead>
+          <tbody>
+            {dataArr.map((data) => {
+              return (
+                <tr>
+                  <td style={{ width: '35%' }}>
+                    <Flex alignItems="center">
+                      <h2 className={data.m ? 'success' : 'error'}>{date.toString().split('GMT')[0]}</h2>
+                    </Flex>
+                  </td>
+                  <td style={{ width: '25%' }}>
+                    <h2 className={data.m ? 'success' : 'error'}> {Number(data.q).toFixed(6)}</h2>
+                  </td>
+                  <td style={{ width: '25%' }}>
+                    <h2 className={data.m ? 'success' : 'error'}>
+                      $
+                      {Number(data.p)
+                        .toFixed(4)
+                        .replace(/(\d)(?=(\d{3})+\.)/g, '$1,')}
+                    </h2>
+                  </td>
+                  <td style={{ width: '25%' }}>
+                    <h2 className={data.m ? 'success' : 'error'}>
+                      ${(data.p * data.q).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,')}
+                    </h2>
+                  </td>
+                </tr>
+              )
+            })}
+          </tbody>
+        </table>
+      </TableWrapper>
+      {/* {loader ?
 				<div style={{ display: 'flex', justifyContent: 'center' }}>
 					<BoxesLoader
 						boxColor="#8b2a9b"
@@ -209,20 +239,19 @@ const TransactionCard = () => {
 				</div>
 				: ""
 			} */}
-		</>
-	)
+    </>
+  )
 }
 
 export default TransactionCard
 
-
-	  // const offset = new Date().getTimezoneOffset();
-    // console.log(offset);
-    // const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    // let t:any=timezone
-    // console.log("t=========================",t)
-    // t=val.block.timestamp.time
-    // // // eslint-disable-next-line no-console
-    // const currentTime = moment().tz(t).format();
-    // // // eslint-disable-next-line no-console
-    // const today:any = new Date(currentTime);
+// const offset = new Date().getTimezoneOffset();
+// console.log(offset);
+// const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+// let t:any=timezone
+// console.log("t=========================",t)
+// t=val.block.timestamp.time
+// // // eslint-disable-next-line no-console
+// const currentTime = moment().tz(t).format();
+// // // eslint-disable-next-line no-console
+// const today:any = new Date(currentTime);
