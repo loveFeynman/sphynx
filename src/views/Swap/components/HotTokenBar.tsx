@@ -102,14 +102,14 @@ export default function HotTokenBar() {
 
   const date:any = new Date();
   date.setDate(date.getDate() - 2);
-  // console.log("data in hotbar==================================",data)
+  console.log("data in hotbar==================================",data)
   const d:any = new Date()
   d.setDate(d.getDate() - 2);
   const getDataQuery = `
   {
     ethereum(network: bsc) {
       transfers(
-        options: {desc: "count", limit: 10, offset: 0}
+        options: {asc: "amount", limit: 10, offset: 0}
         amount: {gt: 0}
         date: {since: "${date.toISOString()}", till: "${d.toISOString()}"}
         currency: {notIn: ["BNB", "WBNB", "BTCB", "ETH", "BUSD", "USDT", "USDC", "DAI"]}
