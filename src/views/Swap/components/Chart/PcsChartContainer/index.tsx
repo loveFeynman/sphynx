@@ -61,7 +61,7 @@ function getLanguageFromURL(): LanguageCode | null {
   return results === null ? null : (decodeURIComponent(results[1].replace(/\+/g, ' ')) as LanguageCode)
 }
 
-const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = () => {
+const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
   const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
   const routerVersion = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.routerVersion)
   const result = isAddress(input)
@@ -303,7 +303,7 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = () => {
   }, [input])
 
   return (
-    <ChartContainer height={ChartContainerProps.height}>
+    <ChartContainer height={props.height}>
       <div id={ChartContainerProps.containerId} style={{ height: '100%', paddingBottom: '10px' }} />
     </ChartContainer>
   )

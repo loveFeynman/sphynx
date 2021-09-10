@@ -63,7 +63,7 @@ function getLanguageFromURL(): LanguageCode | null {
   return results === null ? null : (decodeURIComponent(results[1].replace(/\+/g, ' ')) as LanguageCode)
 }
 
-const SphynxChartContainer: React.FC<Partial<ChartContainerProps>> = () => {
+const SphynxChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
 
   const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
   // const routerVersion = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.routerVersion)
@@ -228,7 +228,7 @@ const SphynxChartContainer: React.FC<Partial<ChartContainerProps>> = () => {
   }, [])
 
   return (
-    <ChartContainer height={ChartContainerProps.height}>
+    <ChartContainer height={props.height}>
       <div id={ChartContainerProps.containerId} style={{ height: '100%', paddingBottom: '10px' }} />
     </ChartContainer>
   )
