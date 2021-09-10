@@ -8,9 +8,9 @@ export const SNAPSHOT_HUB_API = `${SNAPSHOT_BASE_URL}/api/message`
 export const BITQUERY_API = 'https://graphql.bitquery.io'
 
 // Pancake Endpoint
-export const INFO_CLIENT = 'https://bsc.streamingfast.io/subgraphs/name/pancakeswap/exchange-v2'
-export const BLOCKS_CLIENT = 'https://api.thegraph.com/subgraphs/name/pancakeswap/blocks'
+// export const INFO_CLIENT = 'https://bsc.streamingfast.io/subgraphs/name/pancakeswap/exchange-v2'
+// export const BLOCKS_CLIENT = 'https://api.thegraph.com/subgraphs/name/pancakeswap/blocks'
 
 // Sphynx Endpoint
-// export const INFO_CLIENT = 'https://api.thegraph.com/subgraphs/name/deep-quality-dev/sphynx-exchange'
-// export const BLOCKS_CLIENT = 'https://api.thegraph.com/subgraphs/name/deep-quality-dev/sphynx-blocks'
+export const INFO_CLIENT = 'https://api.thegraph.com/subgraphs/name/deep-quality-dev/sphynx-exchange'
+export const BLOCKS_CLIENT = 'https://api.thegraph.com/subgraphs/name/deep-quality-dev/sphynx-blocks'
