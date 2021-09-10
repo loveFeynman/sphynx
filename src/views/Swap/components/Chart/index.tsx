@@ -79,10 +79,6 @@ const ChartContainer = () => {
       }
     })
 
-    console.log('RouterTypeToggle.length=', RouterTypeToggle.length)
-    console.log('isPancakeRouterNew=', isPancakeRouterNew)
-    console.log('routerVersion=', routerVersion)
-
     setIsPancakeRouter(isPancakeRouterNew)
 
   // eslint-disable-next-line react-hooks/exhaustive-deps

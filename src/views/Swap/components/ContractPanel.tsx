@@ -306,7 +306,7 @@ export default function ContractPanel({value}: ContractPanelProps){
               <span>
                 {data?.map((item: any, index: number) => {
                   return <Link href={`#/swap/${item.address}`}><MenuItem className={index === selectedItemIndex ? 'selectedItem' : ''} onClick={() => {
-                    dispatch(typeRouterVersion({ routerVersion: RouterTypeToggle[1].key }))
+                    dispatch(typeRouterVersion({ routerVersion: RouterTypeToggle[0].key }))
                   }}>{item.name}<br />{item.symbol}<br />{item.address}</MenuItem></Link>
                 })}
               </span> :

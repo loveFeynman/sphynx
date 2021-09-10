@@ -107,7 +107,7 @@ const ToggleList = ({ poolDatas }: {
     if (poolDatas.length > 0 && checksumAddress) {
       newMenuItems.push({
         key: checksumAddress,
-        value: 'Sphynx DEX'
+        value: 'SPHYNX DEX'
       })
     }
     // console.log('poolDatas.length=', poolDatas.length, ', checksumAddress=', checksumAddress)

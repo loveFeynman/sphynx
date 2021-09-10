@@ -73,13 +73,33 @@ const SphynxChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => 
     pair: ' ',
   })
 
-  const fetchPriceData = async() => {
+  const fetchPriceData = async(resolution) => {
     if (checksumAddress) {
-      const interval = 3600 // one hour per seconds
-      const DEFAULT_TIME_WINDOW: Duration = { weeks: 1 }
+      let interval = 3600 // one hour per seconds
+      let duration: Duration = { weeks: 1 }
+
+      if (resolution === '1') {
+        interval = 60
+        duration = { hours: 6 }
+      } else if (resolution === '5') {
+        interval = 300
+        duration = { hours: 12 }
+      } else if (resolution === '10') {
+        interval = 600
+        duration = { days: 1 }
+      } else if (resolution === '15') {
+        interval = 900
+        duration = { days: 2 }
+      } else if (resolution === '30') {
+        interval = 1800
+        duration = { days: 3 }
+      } else if (resolution === '1H') {
+        interval = 3600
+        duration = { weeks: 1 }
+      }
 
       const utcCurrentTime = getUnixTime(new Date()) * 1000
-      const startTimestamp = getUnixTime(startOfHour(sub(utcCurrentTime, DEFAULT_TIME_WINDOW)))
+      const startTimestamp = getUnixTime(startOfHour(sub(utcCurrentTime, duration)))
 
       const { error: fetchError3, data:priceData } = await fetchTokenPriceData(
         checksumAddress.toLocaleLowerCase(),
@@ -94,7 +114,7 @@ const SphynxChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => 
   // const lastBarsCache = new Map()
 
   const configurationData = {
-    supported_resolutions: ['1H']
+    supported_resolutions: ['1', '5', '10', '15', '30', '1H']
   }
   async function getAllSymbols() {
     let allSymbols: any = []
@@ -160,7 +180,7 @@ const SphynxChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => 
           }
         }
 
-        const data = await fetchPriceData()
+        const data = await fetchPriceData(resolution)
         // console.log(data)
 
         let bars: any = []

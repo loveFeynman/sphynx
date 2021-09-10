@@ -21,12 +21,12 @@ export interface ToggleMenuItem {
 
 export const RouterTypeToggle: ToggleMenuItem[] = [
   {
-    key: 'v1',
-    value: 'V1 Pancake'
+    key: 'v2',
+    value: 'V2 PANCAKE'
   },
   {
-    key: 'v2',
-    value: 'V2 Pancake'
+    key: 'v1',
+    value: 'V1 PANCAKE'
   }
 ]
 
