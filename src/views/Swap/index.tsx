@@ -48,7 +48,7 @@ import TransactionCard from './components/TransactionCard'
 import ContractPanel from './components/ContractPanel'
 
 import LiquidityWidget from '../Pool/LiquidityWidget'
-import { TVChartContainer } from './TVChartContainer'
+import ChartContainer from './components/Chart'
 
 // import { INITIAL_ALLOWED_SLIPPAGE } from '../../config/constants'
 import useActiveWeb3React from '../../hooks/useActiveWeb3React'
@@ -959,7 +959,7 @@ export default function Swap({ history }: RouteComponentProps) {
             {/* tokenInfo={currentToken} */}
             <ContractPanel value={address} />
             <CoinStatsBoard />
-            <TVChartContainer />
+            <ChartContainer />
           </FullHeightColumn>
         </div>
         <TokenInfoWrapper>

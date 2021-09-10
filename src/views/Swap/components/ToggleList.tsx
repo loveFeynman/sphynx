@@ -1,6 +1,10 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import styled from 'styled-components'
+
+import { PoolData } from 'state/info/types'
+import { ToggleMenuItem, RouterTypeToggle } from 'config/constants/types'
+import { getUnixTime, startOfHour, Duration, sub } from 'date-fns'
 
 // eslint-disable-next-line import/no-unresolved
 import './dropdown.css'
@@ -11,6 +15,7 @@ import Fade from '@material-ui/core/Fade';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import { AppState } from '../../../state'
 import { typeRouterVersion } from '../../../state/input/actions'
+import { isAddress } from '../../../utils'
 
 const ToggleWrapper = styled.div`
   position: relative;
@@ -59,7 +64,7 @@ const MenuTitle = styled.div`
   padding: 0px 12px;
 `
 
-const ContractPanelOverlay = styled.div`
+const PanelOverlay = styled.div`
   position: absolute;
   width: 100%;
   height: 100%;
@@ -68,51 +73,95 @@ const ContractPanelOverlay = styled.div`
   top: 0;
 `
 
-export default function ToggleList() {
+const ToggleList = ({ poolDatas }: {
+  poolDatas: PoolData[]
+}) => {
+
+  const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input);
+  const checksumAddress = isAddress(input)
 
   const routerVersion = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.routerVersion)
+
   const dispatch = useDispatch()
 
+  const [menuItems, setMenuItems] = useState([])
+
   const [anchorEl, setAnchorEl] = React.useState(null);
-  const [selectedItem, setSelectedItem] = React.useState(routerVersion === 'v1' ? 'V1 Pancake' : 'V2 Pancake')
+  const [selectedItem, setSelectedItem] = React.useState('')
   
   const [showDrop, setShowDrop] = useState(false)
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget)
     setShowDrop(true)
-  };
+  }
 
   const handleClose = () => {
     setAnchorEl(null)
     setShowDrop(false)
-  };
+  }
+
+  useEffect(() => {
+    // eslint-disable-next-line prefer-const
+    let newMenuItems: ToggleMenuItem[] = [...RouterTypeToggle]
+    if (poolDatas.length > 0 && checksumAddress) {
+      newMenuItems.push({
+        key: checksumAddress,
+        value: 'Sphynx DEX'
+      })
+    }
+    // console.log('poolDatas.length=', poolDatas.length, ', checksumAddress=', checksumAddress)
+    // console.log('toggleMenuItem=', newMenuItems)
+
+    // poolDatas.forEach((poolData: PoolData) => {
+    //   newMenuItems.push({
+    //     key: poolData.address,
+    //     value: `${poolData.token0.symbol}/${poolData.token1.symbol}`
+    //   })
+    // })
+    setMenuItems(newMenuItems)
+
+    let found = false
+    newMenuItems.forEach(item => {
+      if (item.key === routerVersion) {
+        found = true
+        setSelectedItem(item.value)
+      }
+    })
+    // if (!found) {
+    //   dispatch(typeRouterVersion({ routerVersion: RouterTypeToggle[1].key }))
+    //   setSelectedItem(RouterTypeToggle[1].value)
+    // }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [poolDatas, routerVersion])
     
   return (
-    <ToggleWrapper>
-      <Button aria-controls="fade-menu1" aria-haspopup="true" onClick={handleClick} style={{ width: '100%' }}>
-        <MenuTitle>
-          <span>{selectedItem}</span>
-        </MenuTitle>
-        <ArrowDropDownIcon style={{color: '#fff'}}/>
-      </Button>
-      {
-        showDrop &&
-        <MenuWrapper>
-          <MenuItem onClick={() => {
-            setSelectedItem('V1 Pancake')
-            dispatch(typeRouterVersion({ routerVersion: 'v1' }))
-            handleClose()
-          }}>V1 Pancake</MenuItem>
-          <MenuItem onClick={() => {
-            setSelectedItem('V2 Pancake')
-            dispatch(typeRouterVersion({ routerVersion: 'v2' }))
-            handleClose()
-          }}>V2 Pancake</MenuItem>
-        </MenuWrapper>
-      }
-      { showDrop && <ContractPanelOverlay onClick={() => setShowDrop(false) } />}
-    </ToggleWrapper>
+    <>
+      <ToggleWrapper>
+        <Button aria-controls="fade-menu1" aria-haspopup="true" onClick={handleClick} style={{ width: '100%' }}>
+          <MenuTitle>
+            <span>{selectedItem}</span>
+          </MenuTitle>
+          <ArrowDropDownIcon style={{color: '#fff'}}/>
+        </Button>
+        {
+          showDrop &&
+          <MenuWrapper>
+            {menuItems.map((item: any, index: number) => {
+              return <MenuItem onClick={() => {
+                setSelectedItem(item.value)
+                dispatch(typeRouterVersion({ routerVersion: item.key }))
+                handleClose()
+              }}>{item.value}</MenuItem>
+            })}
+          </MenuWrapper>
+        }
+      </ToggleWrapper>
+      { showDrop && <PanelOverlay onClick={() => {
+          setShowDrop(false) 
+        }} />}
+    </>
   )
 }
 
+export default ToggleList

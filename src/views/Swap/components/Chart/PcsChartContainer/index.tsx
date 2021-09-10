@@ -1,7 +1,6 @@
 /* eslint-disable */
 import * as React from 'react'
 import styled from 'styled-components'
-import TransactionNav from 'components/TransactionNav'
 import './index.css'
 import {
   widget,
@@ -9,45 +8,12 @@ import {
   LanguageCode,
   IChartingLibraryWidget,
   ResolutionString,
-} from '../../../charting_library'
+} from 'charting_library/charting_library'
 import axios from 'axios'
 import { makeApiRequest, generateSymbol, makeApiRequest1 } from './helpers'
 import { useSelector } from 'react-redux'
-import { ReactComponent as UpDownArrow } from 'assets/svg/icon/UpDownArrow.svg'
-import { AppDispatch, AppState } from '../../../state'
-import { isAddress } from '../../../utils'
-
-const UpDownArrowBox = styled.div`
-  width: 100%;
-  text-align: center;
-  position: relative;
-  margin-top: 8px;
-`
-
-const ArrowWrapper = styled.div`
-  margin: auto;
-  width: 0;
-  cursor: row-resize;
-  & svg {
-    width: 14px;
-    height: 16px;
-  }
-  ${({ theme }) => theme.mediaQueries.sm} {
-    margin-top: 4px;
-  }
-`
-
-const TransactionNavWrapper = styled.div`
-  display: flex;
-  justify-content: center;
-  margin: 8px 0 0;
-  ${({ theme }) => theme.mediaQueries.md} {
-    position: absolute;
-    left: 0;
-    top: 0;
-    margin: 0;
-  }
-`
+import { AppState } from 'state'
+import { isAddress } from 'utils'
 
 const ChartContainer = styled.div<{ height: number }> `
   position: relative;
@@ -70,6 +36,7 @@ export interface ChartContainerProps {
   autosize: ChartingLibraryWidgetOptions['autosize']
   studiesOverrides: ChartingLibraryWidgetOptions['studies_overrides']
   containerId: ChartingLibraryWidgetOptions['container_id']
+  height: number
 }
 
 const ChartContainerProps = {
@@ -85,6 +52,7 @@ const ChartContainerProps = {
   fullscreen: false,
   autosize: true,
   studiesOverrides: {},
+  height: 600
 }
 
 function getLanguageFromURL(): LanguageCode | null {
@@ -93,13 +61,10 @@ function getLanguageFromURL(): LanguageCode | null {
   return results === null ? null : (decodeURIComponent(results[1].replace(/\+/g, ' ')) as LanguageCode)
 }
 
-export const TVChartContainer: React.FC<Partial<ChartContainerProps>> = () => {
+const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = () => {
   const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
   const routerVersion = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.routerVersion)
   const result = isAddress(input)
-  const draggableArrow = React.useRef<any>(null)
-  const [ chartHeight, setChartHeight ] = React.useState(600)
-  const [ dragPos, setDragPos ] = React.useState(0)
 
   const [tokendetails, setTokenDetails] = React.useState({
     name: 'PancakeSwap Token',
@@ -337,44 +302,11 @@ export const TVChartContainer: React.FC<Partial<ChartContainerProps>> = () => {
     getWidget()
   }, [input])
 
-  const handleDragStart = (e) => {
-    setDragPos(e.pageY)
-  }
-
-  const handleDrag = (e) => {
-    if (chartHeight + e.pageY - dragPos > 600) {
-      setChartHeight(chartHeight + e.pageY - dragPos)
-    } else {
-      setChartHeight(600)
-    }
-  }
-
   return (
-    <div className={'TVChartContainer'}>
-      {/* {loader ?
-          <div style={{ position: 'absolute', left: 567, top: 150 }}>
-            <BoxesLoader
-              boxColor="#8b2a9b"
-              shadowColor="#aa8929"
-              style={{ marginBottom: "20px", }}
-              desktopSize="100px"
-              mobileSize="50px"
-            />
-          </div>
-          : ""
-        } */}
-      <ChartContainer height={chartHeight}>
-        <div id={ChartContainerProps.containerId} style={{ height: '100%', paddingBottom: '10px' }} />
-      </ChartContainer>
-      {/* <div style={{ height: '10px' }}>&nbsp;</div> */}
-      <UpDownArrowBox>
-        <ArrowWrapper ref={draggableArrow} draggable='true' onDragStart={e => handleDragStart(e)} onDragOver={e => handleDrag(e)}>
-          <UpDownArrow />
-        </ArrowWrapper>
-        <TransactionNavWrapper>
-          <TransactionNav />
-        </TransactionNavWrapper>
-      </UpDownArrowBox>
-    </div>
+    <ChartContainer height={ChartContainerProps.height}>
+      <div id={ChartContainerProps.containerId} style={{ height: '100%', paddingBottom: '10px' }} />
+    </ChartContainer>
   )
 }
+
+export default PcsChartContainer

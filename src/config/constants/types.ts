@@ -14,6 +14,22 @@ export interface Token {
   busdPrice?: string
 }
 
+export interface ToggleMenuItem {
+  key: string,
+  value: string
+}
+
+export const RouterTypeToggle: ToggleMenuItem[] = [
+  {
+    key: 'v1',
+    value: 'V1 Pancake'
+  },
+  {
+    key: 'v2',
+    value: 'V2 Pancake'
+  }
+]
+
 export enum PoolIds {
   poolBasic = 'poolBasic',
   poolUnlimited = 'poolUnlimited',
