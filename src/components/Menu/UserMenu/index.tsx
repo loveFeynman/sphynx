@@ -43,7 +43,7 @@ const UserMenu = () => {
         <UserMenuDivider />
         <ProfileUserMenuItem isLoading={isLoading} hasProfile={hasProfile} />
         <UserMenuDivider /> */}
-        <UserMenuItem as="button" onClick={logout}>
+        <UserMenuItem as="button" onClick={() => { logout() }}>
           <Flex alignItems="center" justifyContent="space-between" width="100%" height='100%'>
             {t('Sign out')}
             <LogoutIcon />
