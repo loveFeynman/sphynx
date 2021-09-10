@@ -16,10 +16,9 @@ const TableWrapper = styled.div`
   height: 100%;
   max-height: 500px;
   overflow: auto;
-  overflow-x: auto;
+  overflow-x: hidden;
   & table {
     background: transparent;
-    min-width: 420px;
     width: 100%;
     & tr {
       background: transparent;
