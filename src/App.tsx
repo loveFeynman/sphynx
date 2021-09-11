@@ -33,6 +33,7 @@ import history from './routerHistory'
 import Swap from './views/Swap'
 import Farms from './views/Farms'
 import Pools from './views/Pools'
+import Lottery from './views/LotterySphx'
 import Bridge from './views/Bridge'
 import {
   RedirectDuplicateTokenIds,
@@ -332,8 +333,8 @@ const App: React.FC = () => {
                   <Route path="/swap" component={Swap} />
                   <Route exact strict path="/farms" component={Farms} />
                   <Route exact strict path="/pools" component={Pools} />
+                  <Route exact strict path="/lottery" component={Lottery} />
                   <Route exact strict path="/bridge" component={Bridge} />
-
                   <Route exact strict path="/swap/:outputCurrency" component={RedirectToSwap} />
                   <Route exact strict path="/send" component={RedirectPathToSwapOnly} />
                   <Route exact strict path="/find" component={PoolFinder} />

@@ -34,12 +34,12 @@ export const links = [
     href: '/#/pools'
   },
   {
-    label: 'Sphynx lottery',
+    label: 'Lottery',
     icon: IFOIcon,
-    href: '#',
+    href: '/#/lottery',
   },
   {
-    label: 'bridge',
+    label: 'Bridge',
     icon: BridgeIcon,
     href: '/#/bridge' // 'https://farm.sphynxswap.finance/bridge'
   },
