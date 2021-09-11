@@ -33,6 +33,7 @@ import history from './routerHistory'
 import Swap from './views/Swap'
 import Farms from './views/Farms'
 import Pools from './views/Pools'
+import Bridge from './views/Bridge'
 import {
   RedirectDuplicateTokenIds,
   RedirectOldAddLiquidityPathStructure,
@@ -331,6 +332,7 @@ const App: React.FC = () => {
                   <Route path="/swap" component={Swap} />
                   <Route exact strict path="/farms" component={Farms} />
                   <Route exact strict path="/pools" component={Pools} />
+                  <Route exact strict path="/bridge" component={Bridge} />
 
                   <Route exact strict path="/swap/:outputCurrency" component={RedirectToSwap} />
                   <Route exact strict path="/send" component={RedirectPathToSwapOnly} />
