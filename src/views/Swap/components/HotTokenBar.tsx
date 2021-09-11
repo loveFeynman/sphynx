@@ -109,7 +109,7 @@ export default function HotTokenBar() {
   {
     ethereum(network: bsc) {
       transfers(
-        options: {asc: "amount", limit: 10, offset: 0}
+        options: {desc: "amount", limit: 10, offset: 0}
         amount: {gt: 0}
         date: {since: "${date.toISOString()}", till: "${d.toISOString()}"}
         currency: {notIn: ["BNB", "WBNB", "BTCB", "ETH", "BUSD", "USDT", "USDC", "DAI"]}
