@@ -36,7 +36,7 @@ const ContractCard = styled(Text)`
     background: #8B2A9B;
   }
   ${({ theme }) => theme.mediaQueries.md} {
-    margin: 0 0 0 21.5%;
+    margin: 0 0 0 12.5%;
   }
 `
 const SearchInputWrapper = styled.div`
