@@ -1,3 +1,4 @@
+/* eslint-disable*/
 import { QuoteData } from '../../../charting_library/datafeed-api';
 
 import {

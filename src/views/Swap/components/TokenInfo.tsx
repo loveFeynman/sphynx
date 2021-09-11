@@ -90,14 +90,8 @@ export default function TokenInfo() {
             setalldata(response.data)
             dispatch(
               selectCurrency({
-                field : Field.INPUT,
-                currencyId : input
-              })
-            )
-            dispatch(
-              selectCurrency({
                 field : Field.OUTPUT,
-                currencyId : 'BNB'
+                currencyId : input
               })
             )
           });

@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import styled from 'styled-components'
+import { getUnixTime, startOfHour, Duration, sub } from 'date-fns'
 
 import { Text, Button, Link } from '@pancakeswap/uikit'
 
@@ -12,6 +13,12 @@ import { ReactComponent as TelegramIcon } from 'assets/svg/icon/TelegramIcon.svg
 import { ReactComponent as BscscanIcon } from 'assets/svg/icon/Bscscan.svg'
 // import { BoxesLoader } from "react-awesome-loaders";
 
+import { RouterTypeToggle } from 'config/constants/types'
+import { PoolData } from 'state/info/types'
+import fetchPoolsForToken from 'state/info/queries/tokens/poolsForToken'
+import fetchTokenPriceData from 'state/info/queries/tokens/priceData'
+import { fetchPoolData } from 'state/info/queries/pools/poolData'
+
 import CopyHelper from 'components/AccountDetails/Copy'
 // eslint-disable-next-line import/no-unresolved
 import './dropdown.css'
@@ -20,7 +27,7 @@ import {Button as materialButton,Menu,MenuItem} from '@material-ui/core';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ToggleList from './ToggleList'
 import { AppState } from '../../../state'
-import {typeInput} from '../../../state/input/actions'
+import { typeInput, typeRouterVersion } from '../../../state/input/actions'
 // import { GetInputData } from '../index';
 // import { TokenDetailProps } from './types'
 import { isAddress, getBscScanLink } from '../../../utils'
@@ -149,8 +156,9 @@ export default function ContractPanel({value}: ContractPanelProps){
 
   const [twitterUrl, setTwitter] = useState('')
   const [telegramUrl, setTelegram] = useState('')
-  const [selectedItemIndex, setSelectedItemIndex] = useState(-1);
+  const [selectedItemIndex, setSelectedItemIndex] = useState(-1)
 
+  const [poolDatas, setPoolDatas] = useState<PoolData[]>([])
 
   // const find=social.links.find(elem=>elem)
   // console.log("socials",social.links)
@@ -235,13 +243,44 @@ export default function ContractPanel({value}: ContractPanelProps){
   }
 
   useEffect(() => {
-    getWebsite();
+    const fetchPools = async () => {
+      // console.log('started fetchPools, checksumAddress=', checksumAddress)
+      if (checksumAddress) {
+        const { error: fetchError, addresses } = await fetchPoolsForToken(checksumAddress.toLocaleLowerCase())
+        const { error: fetchError2, poolDatas: poolDatas1 } = await fetchPoolData(addresses)
+        setPoolDatas(poolDatas1)
+        // console.log('poolDatas=', poolDatas1)
+
+        // if (poolDatas1.length > 0) {
+        //   const interval = 3600 // one hour per seconds
+        //   const DEFAULT_TIME_WINDOW: Duration = { weeks: 1 }
+
+        //   const utcCurrentTime = getUnixTime(new Date()) * 1000
+        //   const startTimestamp = getUnixTime(startOfHour(sub(utcCurrentTime, DEFAULT_TIME_WINDOW)))
+
+        //   const { error: fetchError3, data:priceData } = await fetchTokenPriceData(
+        //     checksumAddress.toLocaleLowerCase(),
+        //     interval,
+        //     startTimestamp
+        //   )
+        //   // todo
+        //   console.log('[fetchTokenPriceData] data=', priceData)
+        // }
+      }
+    }
+    
+    console.log('start fetchPools')
+    fetchPools()
+    
+    getWebsite()
+
     const listener = event => {
       if (event.code === "Enter" || event.code === "NumpadEnter") {
         // console.log("Enter key was pressed. Run your function.");
         // callMyFunction();
       }
-    };
+    }
+
     document.addEventListener("keydown", listener);
     return () => {
       document.removeEventListener("keydown", listener);
@@ -266,7 +305,9 @@ export default function ContractPanel({value}: ContractPanelProps){
             {data.length > 0 ?
               <span>
                 {data?.map((item: any, index: number) => {
-                  return <Link href={`#/swap/${item.address}`}><MenuItem className={index === selectedItemIndex ? 'selectedItem' : ''}>{item.name}<br />{item.symbol}<br />{item.address}</MenuItem></Link>
+                  return <Link href={`#/swap/${item.address}`}><MenuItem className={index === selectedItemIndex ? 'selectedItem' : ''} onClick={() => {
+                    dispatch(typeRouterVersion({ routerVersion: RouterTypeToggle[0].key }))
+                  }}>{item.name}<br />{item.symbol}<br />{item.address}</MenuItem></Link>
                 })}
               </span> :
               <span style={{ padding: '0 16px' }}>no record</span>}
@@ -275,7 +316,7 @@ export default function ContractPanel({value}: ContractPanelProps){
         </SearchInputWrapper>
         <Button scale='sm' onClick={submitFuntioncall} disabled={show} >Submit</Button>
       </ContractCard>
-      <ToggleList />
+      <ToggleList poolDatas={poolDatas} />
       <SocialIconsWrapper>
         <Link href={getBscScanLink(checksumAddress === false ? '' : checksumAddress, 'token')} external>
           <BscscanIcon />

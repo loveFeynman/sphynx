@@ -42,7 +42,6 @@ const StyledWrapper = styled.div`
   padding: 8px 16px 0;
   display: flex;
   flex-wrap: wrap;
-
   & > div {
     margin: 0 12px 8px 0;
     width: calc(50% - 12px);
@@ -76,7 +75,6 @@ const StyledWrapper = styled.div`
       font-weight: bold;
     }
   }
-
   ${({ theme }) => theme.mediaQueries.md} {
     flex-wrap: nowrap;
     align-items: center;

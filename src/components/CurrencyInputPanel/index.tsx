@@ -87,12 +87,12 @@ const MaxButtonWrapper = styled.div`
 `
 
 
-const InputPanel = styled.div<{ hideInput?: boolean }>`
+const InputPanel = styled.div<{ hideInput?: boolean;  isBridge?: boolean }>`
   display: flex;
   flex-flow: column nowrap;
   position: relative;
   border-radius: ${({ hideInput }) => (hideInput ? '8px' : '20px')};
-  background-color: ${({ theme }) => theme.colors.background} !important;
+  background-color: ${({ isBridge }) =>(isBridge ? "none" : "rgb(0,0,0,0.4)")}
   // z-index: 1;
 `
 
@@ -110,6 +110,7 @@ interface CurrencyInputPanelProps {
   onCurrencySelect: (currency: Currency) => void
   currency?: Currency | null
   disableCurrencySelect?: boolean
+  isBridge?: boolean
   hideBalance?: boolean
   pair?: Pair | null
   hideInput?: boolean
@@ -127,6 +128,7 @@ export default function CurrencyInputPanel({
   onCurrencySelect,
   currency,
   disableCurrencySelect = false,
+  isBridge = false,
   hideBalance = false,
   pair = null, // used for double token logo
   hideInput = false,
@@ -148,7 +150,7 @@ export default function CurrencyInputPanel({
     />,
   )
   return (
-    <InputPanel id={id}>
+    <InputPanel id={id} isBridge={isBridge}>
       <Container hideInput={hideInput}>
         {/* {!hideInput && (
           <LabelRow>
@@ -191,7 +193,7 @@ export default function CurrencyInputPanel({
                         currency.symbol.length - 5,
                         currency.symbol.length,
                       )}`
-                    : currency?.symbol) || t('Select a currency')}
+                    : currency?.symbol) || (isBridge && disableCurrencySelect?t('SPX'):t('Select a currency'))}
                 </Text>
               )}
               {!disableCurrencySelect && <ChevronDownIcon />}
