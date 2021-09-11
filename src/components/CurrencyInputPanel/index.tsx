@@ -193,7 +193,7 @@ export default function CurrencyInputPanel({
                         currency.symbol.length - 5,
                         currency.symbol.length,
                       )}`
-                    : currency?.symbol) || isBridge && disableCurrencySelect?t('SPX'):t('Select a currency')}
+                    : currency?.symbol) || (isBridge && disableCurrencySelect?t('SPX'):t('Select a currency'))}
                 </Text>
               )}
               {!disableCurrencySelect && <ChevronDownIcon />}
