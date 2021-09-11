@@ -192,7 +192,7 @@ const StakeModal: React.FC<StakeModalProps> = ({
         {pendingTx ? t('Confirming') : t('Confirm')}
       </Button>
       {!isRemovingStake && (
-        <StyledLink external href="/swap">
+        <StyledLink external href="#/swap">
           <Button width="100%" mt="8px" variant="secondary">
             {t('Get %symbol%', { symbol: stakingToken.symbol })}
           </Button>

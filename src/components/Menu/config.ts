@@ -26,12 +26,22 @@ export const links = [
   {
     label: 'Farms',
     icon: FarmIcon,
-    href: '/#/farms' // 'https://farm.sphynxswap.finance/farms'
+    href: '/#/farms'
   },
   {
     label: 'Pools',
     icon: PoolIcon,
-    href: '/#/pools' // 'https://farm.sphynxswap.finance/pools'
+    href: '/#/pools'
+  },
+  {
+    label: 'Sphynx bridge (coming soon)',
+    icon: IFOIcon,
+    href: '#',
+  },
+  {
+    label: 'Sphynx lottery',
+    icon: IFOIcon,
+    href: '#',
   },
   {
     label: 'bridge',
@@ -56,12 +66,12 @@ export const links = [
   {
     label: 'NFT Marketplace (coming soon)',
     icon: PredictionIcon,
-    href: '/'
+    href: '#'
   },
   {
     label: 'Prediction (coming soon)',
     icon: PredictionIcon,
-    href: '/',
+    href: '#',
   },
   // {
   //   label: '... More',

@@ -80,7 +80,7 @@ const tokens = {
       97: '0x1b318e1C45147e8c4834d16BBed4c9994cf76f86',
     },
     decimals: 18,
-    projectLink: 'https://sphynxswap.finance/',
+    projectLink: 'https://thesphynx.co/',
   },
   babycake: {
     symbol: 'BABYCAKE',

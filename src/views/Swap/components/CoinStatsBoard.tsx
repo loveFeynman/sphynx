@@ -41,10 +41,13 @@ const Container = styled.div`
 const StyledWrapper = styled.div`
   padding: 8px 16px 0;
   display: flex;
-  flex-direction: column;
-
+  flex-wrap: wrap;
   & > div {
     margin: 0 12px 8px 0;
+    width: calc(50% - 12px);
+    &:first-child {
+      width: 100%;
+    }
     & > div, & > div > div > div {
       &:first-child {
         color: white;
@@ -72,13 +75,17 @@ const StyledWrapper = styled.div`
       font-weight: bold;
     }
   }
-
   ${({ theme }) => theme.mediaQueries.md} {
-    flex-direction: row;
+    flex-wrap: nowrap;
     align-items: center;
     justify-content: space-between;
     margin: 0;
     min-width: 500px;
+    & > div {
+      &:first-child {
+        min-width: 192px;
+      }  
+    }
   }
 `
 
@@ -110,12 +117,12 @@ export default function CoinStatsBoard() {
   const getTableData = () => {
     try{
       if (result) {
-        axios.post("https://api.sphynxswap.finance/tokenStats",{address:input})
+        axios.post("https://thesphynx.co/api/tokenStats",{address:input})
           .then((response) => {
           
             setTokenData(response.data)
           });
-        axios.post("https://api.sphynxswap.finance/chartStats",{address:input})
+        axios.post("https://thesphynx.co/api/chartStats",{address:input})
           .then((response) => {
             setalldata(response.data)
             setLinkIcon(`https://r.poocoin.app/smartchain/assets/${input ? utils.getAddress(input) : '0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82'}/logo.png`);

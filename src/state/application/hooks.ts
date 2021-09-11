@@ -5,6 +5,7 @@ import {
   toggleMenu as _toggleMenu,
   setRouterType as _setRouterType,
   setSwapType as _setSwapType,
+  setSwapTransCard as _setSwapTransCard,
   setLiquidityPairA as _setLiquidityPairA,
   setLiquidityPairB as _setLiquidityPairB
 } from './actions'
@@ -53,6 +54,19 @@ export function useSwapType() {
     dispatch(_setSwapType(stype));
 
   return { swapType, setSwapType };
+}
+
+export function useSwapTransCard() {
+  const dispatch = useDispatch<AppDispatch>();
+  const swapTransCard = useSelector<
+    AppState,
+    AppState['application']['swapTransCard']
+  >((state) => state.application.swapTransCard);
+
+  const setSwapTransCard = (stype: string) =>
+    dispatch(_setSwapTransCard(stype));
+
+  return { swapTransCard, setSwapTransCard };
 }
 
 export function useLiquidityPairA() {

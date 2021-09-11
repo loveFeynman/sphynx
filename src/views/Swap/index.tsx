@@ -1,12 +1,12 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components'
+import { useLocation } from 'react-router'
 import { CurrencyAmount, JSBI, Token, Trade } from '@pancakeswap/sdk'
-import { Button, Text, ArrowDownIcon, Box, useModal, Flex } from '@pancakeswap/uikit'
+import { Button, Text, ArrowDownIcon, Box, useModal, Flex, Link, useMatchBreakpoints } from '@pancakeswap/uikit'
 import { useIsTransactionUnsupported } from 'hooks/Trades'
 import UnsupportedCurrencyFooter from 'components/UnsupportedCurrencyFooter'
 import { RouteComponentProps } from 'react-router-dom'
-import { Rnd } from 'react-rnd';
 import { useTranslation } from 'contexts/Localization'
 import SwapWarningTokens from 'config/constants/swapWarningTokens'
 import { getAddress } from 'utils/addressHelpers'
@@ -18,7 +18,7 @@ import { AutoRow, RowBetween } from 'components/Layout/Row'
 import ConnectWalletButton from 'components/ConnectWalletButton'
 import { AppHeader } from 'components/App'
 
-import { useSwapType } from 'state/application/hooks'
+import { useSwapType, useSwapTransCard } from 'state/application/hooks'
 import { ReactComponent as DownArrow } from 'assets/svg/icon/DownArrow.svg'
 import { ReactComponent as HelpIcon } from 'assets/svg/icon/HelpIcon.svg'
 import { ReactComponent as HelpIcon1 } from 'assets/svg/icon/HelpIcon1.svg'
@@ -26,9 +26,10 @@ import BinanceLogo from 'assets/images/binance-logo.png'
 // import SwapBanner from 'assets/images/DogeBanner1.png'
 import FarmBanner from 'assets/images/farmbanner.png'
 import StakingBanner from 'assets/images/stakebanner.png'
-
+import BannerWrapper from 'components/BannerWrapper'
 import moment from 'moment';
 import axios from 'axios';
+import {typeInput} from 'state/input/actions'
 
 import AddressInputPanel from './components/AddressInputPanel'
 import Card, { GreyCard } from '../../components/Card'
@@ -47,7 +48,7 @@ import TransactionCard from './components/TransactionCard'
 import ContractPanel from './components/ContractPanel'
 
 import LiquidityWidget from '../Pool/LiquidityWidget'
-import { TVChartContainer } from './TVChartContainer'
+import ChartContainer from './components/Chart'
 
 // import { INITIAL_ALLOWED_SLIPPAGE } from '../../config/constants'
 import useActiveWeb3React from '../../hooks/useActiveWeb3React'
@@ -68,7 +69,11 @@ import { maxAmountSpend } from '../../utils/maxAmountSpend'
 import { computeTradePriceBreakdown, warningSeverity } from '../../utils/prices'
 import CircleLoader from '../../components/Loader/CircleLoader'
 import Page from '../Page'
+
+import BuyersCard from './components/BuyersCard'
+import SellersCard from './components/SellersCard'
 import SwapWarningModal from './components/SwapWarningModal'
+import DividendPanel from './components/DividendPanel'
 
 import { HotTokenType, TokenDetailProps } from './components/types'
 import { AppState, AppDispatch } from '../../state'
@@ -281,18 +286,29 @@ const BottomGrouping = styled(Box)`
   }
 `
 
-const ChartContainer = styled.div<{ height: string }> `
-  position: relative;
-  height: ${(props) => props.height};
-  .react-draggable {
-    transform: translate(0, 0) !important;
+const TokenInfoWrapper = styled.div`
+  display: none;
+  ${({ theme }) => theme.mediaQueries.md} {
+    display: block;
   }
+`
+
+const SwapPage = styled(Page)`
+  padding: 0;
 `
 
 export default function Swap({ history }: RouteComponentProps) {
   const [address, setaddress] = useState('');
   function handleChange(value) {
     setaddress(value);
+  }
+
+  const dispatch = useDispatch()
+  const { pathname } = useLocation()
+  const tokenAddress = pathname.substr(6)
+
+  if (tokenAddress && tokenAddress !== '') {
+    dispatch(typeInput({ input: tokenAddress }))
   }
 
   const loadedUrlParams = useDefaultsFromURLSearch()
@@ -325,8 +341,7 @@ export default function Swap({ history }: RouteComponentProps) {
   // get custom setting values for user
   const [allowedSlippage, setUserSlippageTolerance] = useUserSlippageTolerance()
   // setUserSlippageTolerance(100);
-
-  
+  const { isMd } = useMatchBreakpoints()
 
   // swap state
   const { independentField, typedValue, recipient } = useSwapState()
@@ -338,7 +353,8 @@ export default function Swap({ history }: RouteComponentProps) {
     inputError: wrapInputError,
   } = useWrapCallback(currencies[Field.INPUT], currencies[Field.OUTPUT], typedValue)
   const showWrap: boolean = wrapType !== WrapType.NOT_APPLICABLE
-  const { swapType } = useSwapType();
+  const { swapType } = useSwapType()
+  const { swapTransCard } = useSwapTransCard()
   const trade = showWrap ? undefined : v2Trade
 
   const parsedAmounts = showWrap
@@ -593,8 +609,6 @@ export default function Swap({ history }: RouteComponentProps) {
   const [timeNow, setTimeNow] = useState(Date.now())
   const countDownDeadline = new Date(Date.UTC(2021, 6, 1, 0, 0, 0, 0)).getTime();
 
-  const [chartHeight, setChartHeight] = useState('550px');
-
   useEffect(() => {
     let timeout;
     if (timeNow < countDownDeadline) {
@@ -715,13 +729,15 @@ export default function Swap({ history }: RouteComponentProps) {
   // }, [])
 
   return (
-    <Page>
+    <SwapPage>
       {/* <SwapRightBanner>
         <img src={SwapBanner} alt='Swap Banner' />
       </SwapRightBanner> */}
+      <BannerWrapper />
       <Cards>
         <div>
-          <div style={{ height: 48, marginTop: 60, marginBottom: 25 }}>
+          <DividendPanel />
+          <div style={{ height: 48, marginTop: 16, marginBottom: 25 }}>
             <Flex alignItems='center' justifyContent='center' style={{ marginBottom: 8 }}>
               <SwapCardNav />
             </Flex>
@@ -940,37 +956,38 @@ export default function Swap({ history }: RouteComponentProps) {
         </div>
         <div>
           <FullHeightColumn>
-            <ContractPanel value={handleChange} />
             {/* tokenInfo={currentToken} */}
+            <ContractPanel value={address} />
             <CoinStatsBoard />
-            <ChartContainer height={chartHeight}>
-              <Rnd
-                size={{ width: '100%', height: chartHeight }}
-                onResize={(e, direction, ref, delta, position) => {
-                  setChartHeight(ref.style.height)
-                }}
-                minHeight='550px'
-              >
-                <TVChartContainer />
-              </Rnd>
-            </ChartContainer>
+            <ChartContainer />
           </FullHeightColumn>
         </div>
-        <div>
+        <TokenInfoWrapper>
           <TokenInfo />
-        </div>
+        </TokenInfoWrapper>
         <div>
-          <TransactionCard />
+          {
+            swapTransCard === 'tokenDX' &&
+            <TransactionCard />
+          }
+          {
+            swapTransCard === 'buyers' &&
+            <BuyersCard />
+          }
+          {
+            swapTransCard === 'sellers' &&
+            <SellersCard />
+          }
         </div>
         <BottomCard style={{ backgroundImage: `url(${FarmBanner})` }}>
           <h1>Farms</h1>
           <div />
-          <a href='https://farm.sphynxswap.finance/farms' target='_blank' rel='noreferrer'><Button>Start Farming</Button></a>
+          <Link href='#/farms'><Button>Start Farming</Button></Link>
         </BottomCard>
         <BottomCard style={{ backgroundImage: `url(${StakingBanner})` }}>
           <h1>Staking</h1>
           <div />
-          <a href='https://farm.sphynxswap.finance/pools' target='_blank' rel='noreferrer'><Button>Start Staking</Button></a>
+          <Link href='#/pools'><Button>Start Staking</Button></Link>
         </BottomCard>
       </Cards>
 
@@ -979,6 +996,6 @@ export default function Swap({ history }: RouteComponentProps) {
       ) : (
         <UnsupportedCurrencyFooter currencies={[currencies.INPUT, currencies.OUTPUT]} />
       )} */}
-    </Page>
+    </SwapPage>
   )
 }

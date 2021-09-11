@@ -82,7 +82,7 @@ const FarmAuctionsBanner = () => {
         <LeftWrapper>
           <StyledSubheading>{t('20 Contenders...')}</StyledSubheading>
           <StyledHeading scale="xxl">{t('5 Winners')}</StyledHeading>
-          <Link href="/farms/auction">
+          <Link href="#/farms/auction">
             <Button>
               <Text color="invertedContrast" bold fontSize="16px" mr="4px">
                 {t('Farm Auctions')}
@@ -92,7 +92,7 @@ const FarmAuctionsBanner = () => {
           </Link>
         </LeftWrapper>
         <RightWrapper>
-          <img src="/images/decorations/auction-bunny.png" alt={t('auction bunny')} />
+          <img src="#/images/decorations/auction-bunny.png" alt={t('auction bunny')} />
         </RightWrapper>
       </Inner>
     </Wrapper>

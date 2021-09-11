@@ -77,10 +77,10 @@ const FarmAuction = () => {
     <>
       <StyledHeader>
         <Breadcrumbs>
-          <Link href="/" color="primary" style={{ fontWeight: 400 }}>
+          <Link href="#/" color="primary" style={{ fontWeight: 400 }}>
             {t('Home')}
           </Link>
-          <Link href="/farms" color="primary" style={{ fontWeight: 400 }}>
+          <Link href="#/farms" color="primary" style={{ fontWeight: 400 }}>
             {t('Farms')}
           </Link>
           <Text>{t('Community Farm Auction')}</Text>

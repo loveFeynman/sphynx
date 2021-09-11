@@ -102,14 +102,14 @@ export default function HotTokenBar() {
 
   const date:any = new Date();
   date.setDate(date.getDate() - 2);
-  // console.log("data in hotbar==================================",data)
+  console.log("data in hotbar==================================",data)
   const d:any = new Date()
   d.setDate(d.getDate() - 2);
   const getDataQuery = `
   {
     ethereum(network: bsc) {
       transfers(
-        options: {desc: "count", limit: 10, offset: 0}
+        options: {desc: "amount", limit: 10, offset: 0}
         amount: {gt: 0}
         date: {since: "${date.toISOString()}", till: "${d.toISOString()}"}
         currency: {notIn: ["BNB", "WBNB", "BTCB", "ETH", "BUSD", "USDT", "USDC", "DAI"]}
@@ -175,14 +175,12 @@ export default function HotTokenBar() {
      </div>:
        <Marquee gradient={false} speed={40} className="marquee-container" style={{ overflow: 'hidden !important' }}>
      
-         <ul style={{ display: 'flex', listStyle: 'none', justifyContent: 'center', width: 'calc(100% - 120px)' }}>
+         <ul style={{ display: 'flex', listStyle: 'none', justifyContent: 'center' }}>
             {
             data.map((elem:any,index) => {
              return (
-               <li key={`${index+1}.${elem.currency.symbol}`} style={{color:'white',padding:'20'}}>
-               <a href="javascript:void(null)" style={{marginRight: 25,textDecoration:'none'}} 
-               onClick={()=> dispatch(typeInput({ input: elem.currency.address }))}
-               >{`${index+1}. ${elem.currency.symbol}`}</a>
+               <li key={`${index+1}.${elem.currency.symbol}`} style={{color:'white',padding:'12'}}>
+               <a href={`#/swap/${elem.currency.address}`} style={{marginRight: 20, textDecoration:'none'}}>{`${index+1}. ${elem.currency.symbol}`}</a>
                  {/* < a href="##">{elem.currency.name}</a> */}
                  {/* <HotToken
                    index={key + 1}

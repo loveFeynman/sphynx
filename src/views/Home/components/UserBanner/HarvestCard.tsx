@@ -78,7 +78,7 @@ const HarvestCard = () => {
             </Text>
           </Flex>
           {numFarmsToCollect <= 0 ? (
-            <Link href="farms">
+            <Link href="#/farms">
               <Button width={['100%', null, null, 'auto']} variant="secondary">
                 <Text color="primary" bold>
                   {t('Start earning')}

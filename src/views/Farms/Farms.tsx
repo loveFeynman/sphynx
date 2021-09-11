@@ -37,7 +37,10 @@ const ControlContainer = styled.div`
 
   justify-content: space-between;
   flex-direction: column;
-  margin-bottom: 32px;
+
+  & > div {
+    margin-bottom: 16px;
+  }
 
   ${({ theme }) => theme.mediaQueries.sm} {
     flex-direction: row;
@@ -381,6 +384,7 @@ const Farms: React.FC = () => {
 
   return (
     <>
+      <div style={{ height: 24 }} />
       <PageHeader>
         <Heading as="h1" scale="xxl" color="white" mb="24px">
           {t('Farms')}
