@@ -225,6 +225,7 @@ export default function BridgeCard({ label, isSpynx = false }) {
             id="add-liquidity-input-tokena"
             showCommonBases
             disableCurrencySelect = {isSpynx}
+            isBridge
           />
         </CurrencyContainer>
         <BottomLabel>
