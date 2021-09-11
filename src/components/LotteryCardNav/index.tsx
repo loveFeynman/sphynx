@@ -1,6 +1,5 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Link } from 'react-router-dom'
 import { ButtonMenu, ButtonMenuItem } from '@pancakeswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 
@@ -27,16 +26,17 @@ const StyledNav = styled.div`
   & .inactive {
     background: #FFFFFF;
     color: black;
+    border: none;
   }
 `
 
-const Nav = ({ activeIndex = 0 }: { activeIndex?: number }) => {
+const Nav = ({ activeIndex = 0, setActiveIndex }: { activeIndex?: number; setActiveIndex?: any}) => {
   const { t } = useTranslation()
 
   return (
     <StyledNav>
-      <ButtonMenu activeIndex={activeIndex} scale="sm" variant="primary">
-        <ButtonMenuItem className={activeIndex === 0 ? 'active' : 'inactive'} id="next-lottery-nav-link">
+      <ButtonMenu activeIndex={activeIndex} scale="sm" variant="primary"  onItemClick={setActiveIndex}>
+        <ButtonMenuItem className={activeIndex === 0 ? 'active' : 'inactive'} id="next-lottery-nav-link" >
           {t('Next Draw')}
         </ButtonMenuItem>
         <ButtonMenuItem className={activeIndex === 1 ? 'active' : 'inactive'} id="past-lottery-nav-link">
