@@ -103,13 +103,14 @@ const ToggleList = ({ poolDatas }: {
 
   useEffect(() => {
     // eslint-disable-next-line prefer-const
-    let newMenuItems: ToggleMenuItem[] = [...RouterTypeToggle]
+    let newMenuItems: ToggleMenuItem[] = []
     if (poolDatas.length > 0 && checksumAddress) {
       newMenuItems.push({
         key: checksumAddress,
         value: 'SPHYNX DEX'
       })
     }
+    newMenuItems = [...newMenuItems, ...RouterTypeToggle]
     // console.log('poolDatas.length=', poolDatas.length, ', checksumAddress=', checksumAddress)
     // console.log('toggleMenuItem=', newMenuItems)
 

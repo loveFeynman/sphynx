@@ -95,7 +95,16 @@ const SphynxChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => 
         duration = { days: 3 }
       } else if (resolution === '1H') {
         interval = 3600
-        duration = { weeks: 1 }
+        duration = { months: 6 }
+      } else if (resolution === '1D') {
+        interval = 86400
+        duration = { months: 6 }
+      } else if (resolution === '1W') {
+        interval = 604800
+        duration = { years: 6 }
+      } else if (resolution === '1M') {
+        interval = 18144000
+        duration = { years: 12 }
       }
 
       const utcCurrentTime = getUnixTime(new Date()) * 1000
@@ -114,7 +123,7 @@ const SphynxChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => 
   // const lastBarsCache = new Map()
 
   const configurationData = {
-    supported_resolutions: ['1', '5', '10', '15', '30', '1H']
+    supported_resolutions: ['1', '5', '10', '15', '30', '1H', '1D', '1W', '1M']
   }
   async function getAllSymbols() {
     let allSymbols: any = []
