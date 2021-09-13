@@ -13,7 +13,7 @@ import ReactLoading from 'react-loading';
 // import { ReactComponent as UpGreenArrowIcon} from 'assets/svg/icon/UpGreenArrowIcon.svg'
 import { HotTokenType } from './types'
 import { AppState } from '../../../state'
-import { typeInput } from '../../../state/input/actions'
+import { setIsInput } from '../../../state/input/actions'
 
 export interface HotTokenBarProps {
   tokens?: HotTokenType[] | null
@@ -109,7 +109,7 @@ export default function HotTokenBar() {
   {
     ethereum(network: bsc) {
       transfers(
-        options: {asc: "amount", limit: 10, offset: 0}
+        options: {desc: "amount", limit: 10, offset: 0}
         amount: {gt: 0}
         date: {since: "${date.toISOString()}", till: "${d.toISOString()}"}
         currency: {notIn: ["BNB", "WBNB", "BTCB", "ETH", "BUSD", "USDT", "USDC", "DAI"]}
@@ -180,9 +180,7 @@ export default function HotTokenBar() {
             data.map((elem:any,index) => {
              return (
                <li key={`${index+1}.${elem.currency.symbol}`} style={{color:'white',padding:'12'}}>
-               <a href="javascript:void(null)" style={{marginRight: 20, textDecoration:'none'}} 
-               onClick={()=> dispatch(typeInput({ input: elem.currency.address }))}
-               >{`${index+1}. ${elem.currency.symbol}`}</a>
+               <a href={`#/swap/${elem.currency.address}`} style={{marginRight: 20, textDecoration:'none'}} onClick={() => { dispatch(setIsInput({ isInput: true })) }}>{`${index+1}. ${elem.currency.symbol}`}</a>
                  {/* < a href="##">{elem.currency.name}</a> */}
                  {/* <HotToken
                    index={key + 1}

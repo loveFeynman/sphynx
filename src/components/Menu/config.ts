@@ -3,6 +3,7 @@ import { SVGProps } from "react";
 import { ContextApi } from 'contexts/Localization/types'
 import { ReactComponent as FarmIcon } from 'assets/svg/icon/FarmIcon.svg'
 import { ReactComponent as PoolIcon } from 'assets/svg/icon/PoolIcon.svg'
+import { ReactComponent as BridgeIcon } from 'assets/svg/icon/Bridge.svg'
 import { ReactComponent as PredictionIcon } from 'assets/svg/icon/PredictionIcon.svg'
 import { ReactComponent as IFOIcon } from 'assets/svg/icon/IFOIcon.svg'
 import { ReactComponent as MoreIcon } from 'assets/svg/icon/MoreIcon.svg'
@@ -33,14 +34,14 @@ export const links = [
     href: '/#/pools'
   },
   {
-    label: 'Sphynx bridge (coming soon)',
+    label: 'Lottery',
     icon: IFOIcon,
-    href: '#',
+    href: '/#/lottery',
   },
   {
-    label: 'Sphynx lottery',
-    icon: IFOIcon,
-    href: '#',
+    label: 'Bridge',
+    icon: BridgeIcon,
+    href: '/#/bridge' // 'https://farm.sphynxswap.finance/bridge'
   },
   {
     label: 'CoinMarketCap',

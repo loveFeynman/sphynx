@@ -27,7 +27,7 @@ import {Button as materialButton,Menu,MenuItem} from '@material-ui/core';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ToggleList from './ToggleList'
 import { AppState } from '../../../state'
-import { typeInput, typeRouterVersion } from '../../../state/input/actions'
+import { typeInput, typeRouterVersion, setIsInput } from '../../../state/input/actions'
 // import { GetInputData } from '../index';
 // import { TokenDetailProps } from './types'
 import { isAddress, getBscScanLink } from '../../../utils'
@@ -219,6 +219,11 @@ export default function ContractPanel({value}: ContractPanelProps){
   };
   const submitFuntioncall=()=>{
     dispatch(typeInput({ input: addressSearch }))
+    dispatch(
+      setIsInput({
+        isInput: true
+      })
+    )
   }
   const handleKeyPress = (event) => {
     if(event.key === 'Enter'){
@@ -305,7 +310,7 @@ export default function ContractPanel({value}: ContractPanelProps){
             {data.length > 0 ?
               <span>
                 {data?.map((item: any, index: number) => {
-                  return <Link href={`#/swap/${item.address}`}><MenuItem className={index === selectedItemIndex ? 'selectedItem' : ''} onClick={() => {
+                  return <Link href={`#/swap/${item.address}`} onClick={() => { dispatch(setIsInput({ isInput: true })) }}><MenuItem className={index === selectedItemIndex ? 'selectedItem' : ''} onClick={() => {
                     dispatch(typeRouterVersion({ routerVersion: RouterTypeToggle[0].key }))
                   }}>{item.name}<br />{item.symbol}<br />{item.address}</MenuItem></Link>
                 })}

@@ -15,6 +15,7 @@ import { ReactComponent as SocialIcon2 } from 'assets/svg/icon/SocialIcon2.svg'
 import { ReactComponent as TelegramIcon } from 'assets/svg/icon/TelegramIcon.svg'
 import Web3 from 'web3'
 import axios from 'axios'
+import { setIsInput } from 'state/input/actions'
 import config, { links } from './config'
 import { replaceSwapState, Field } from '../../state/swap/actions'
 // import UserMenu from './UserMenu'
@@ -310,19 +311,24 @@ const Menu = (props) => {
     //  const link = `https://bscscan.com/token/${currency.address}`
 
     return (
-      <>
+      <a href={`#/swap/${currency.address}`}>
         <TokenItemWrapper
           toggled={menuToggled}
           onClick={() => {
             dispatch(
-              replaceSwapState({
-                outputCurrencyId: 'BNB' ,
-                inputCurrencyId: currency.address,
-                typedValue: '',
-                field: Field.OUTPUT,
-                recipient: null,
-              }),
+              setIsInput({
+                isInput: false
+              })
             )
+            // dispatch(
+            //   replaceSwapState({
+            //     outputCurrencyId: 'BNB' ,
+            //     inputCurrencyId: currency.address,
+            //     typedValue: '',
+            //     field: Field.OUTPUT,
+            //     recipient: null,
+            //   }),
+            // )
           }}
         >
           {menuToggled ? (
@@ -367,7 +373,7 @@ const Menu = (props) => {
 
                 } */}
         </TokenItemWrapper>
-      </>
+      </a>
     )
   })
 
