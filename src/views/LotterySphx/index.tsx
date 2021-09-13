@@ -6,6 +6,7 @@ import Nav from 'components/LotteryCardNav'
 import { Heading, Text, Button, Link } from '@pancakeswap/uikit'
 import {Button as materialButton,Menu,MenuItem} from '@material-ui/core';
 import PageHeader from 'components/PageHeader'
+import WebFont from 'webfontloader';
 import { useTranslation } from 'contexts/Localization'
 import SearchIcon  from 'assets/images/search.png'
 import {typeInput} from '../../state/input/actions'
@@ -95,7 +96,14 @@ export default function Lottery() {
   const [show, setShow] = useState(true)
   const [selectedItemIndex, setSelectedItemIndex] = useState(-1);
   const [data,setdata]=useState([])
-
+  React.useEffect(() => {
+    WebFont.load({
+      google: {
+        families: ['Raleway', 'Chilanka']
+      }
+    });
+   }, []);
+  
   const dispatch = useDispatch();
 
   const handleItemClick = () => {
@@ -157,14 +165,15 @@ export default function Lottery() {
       setShow(true);
     }
   }
+ 
 
   return (
-    <>
+    <div style={{fontFamily: 'Raleway'}}>
       <PageHeader>
-        <Heading as="h1" scale="xxl" color="white">
+        <Heading as="h4" scale="xl" color="white">
           {t('Lottery')}
         </Heading>
-        <Heading scale="lg" color="text">
+        <Heading as="h6" scale="md" color="text">
           {t('Win Lottery if  2, 3, 4 of your ticket numbers matched')}
         </Heading>
       </PageHeader>
@@ -241,6 +250,6 @@ export default function Lottery() {
             
         </>
       )}
-    </>
+    </div>
   )
 }
