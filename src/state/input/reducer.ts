@@ -1,14 +1,16 @@
 import { createReducer } from '@reduxjs/toolkit'
-import { resetMintState, typeInput, typeRouterVersion } from './actions'
+import { resetMintState, typeInput, setIsInput, typeRouterVersion } from './actions'
 
 
 interface InputState {
   input: string
+  isInput: boolean
   routerVersion: string
 }
 
 const initialState : InputState = {
   input: '0x3b39243e10f451a7acfcf9e02c6a37303b61da46',
+  isInput: true,
   routerVersion: 'v2'
 };
 
@@ -26,6 +28,12 @@ export default createReducer<any>(initialState, builder =>
         
         // they're typing into a new field, store the other value
         
+    })
+    .addCase(setIsInput, (state, { payload: { isInput } }) => {
+      return {
+        ...state,
+        isInput
+      }
     })
     .addCase(typeRouterVersion, (state, { payload: { routerVersion } }) => {
         // they're typing into the field they've last typed in

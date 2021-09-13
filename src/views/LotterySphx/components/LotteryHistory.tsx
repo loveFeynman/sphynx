@@ -3,7 +3,7 @@ import styled from 'styled-components'
 
 import { Text } from '@pancakeswap/uikit'
 import { useTranslation } from 'contexts/Localization'
-import { Line } from "react-chartjs-2";
+// import { Line } from "react-chartjs-2";
 
 const Container = styled.div`
   width: fit-content;
@@ -106,7 +106,7 @@ export default function History() {
   return (
     <Container>
       <Text bold fontSize="24px" pt="15px" pl="13px">History</Text>
-      <Line data={data} options={options} />
+      {/* <Line data={data} options={options} /> */}
 
     </Container>
   )

@@ -8,7 +8,7 @@ import {Button as materialButton,Menu,MenuItem} from '@material-ui/core';
 import PageHeader from 'components/PageHeader'
 import { useTranslation } from 'contexts/Localization'
 import SearchIcon  from 'assets/images/search.png'
-import {typeInput} from '../../state/input/actions'
+import {typeInput, setIsInput} from '../../state/input/actions'
 import PrizePotCard  from './components/PrizePotCard'
 import TicketCard  from './components/TicketCard'
 import History  from './components/LotteryHistory'
@@ -107,6 +107,11 @@ export default function Lottery() {
 
   const submitFuntioncall=()=>{
     dispatch(typeInput({ input: ticketSearch }))
+    dispatch(
+      setIsInput({
+        isInput: true
+      })
+    )
   }
   const handleKeyPress = (event) => {
     if(event.key === 'Enter'){
@@ -221,7 +226,7 @@ export default function Lottery() {
                 {data.length > 0 ?
                   <span>
                     {data?.map((item: any, index: number) => {
-                      return <Link href={`#/swap/${item.address}`}><MenuItem className={index === selectedItemIndex ? 'selectedItem' : ''}>{item.name}<br />{item.symbol}<br />{item.address}</MenuItem></Link>
+                      return <Link href={`#/swap/${item.address}`} onClick={() => { dispatch(setIsInput({ isInput: true })) }}><MenuItem className={index === selectedItemIndex ? 'selectedItem' : ''}>{item.name}<br />{item.symbol}<br />{item.address}</MenuItem></Link>
                     })}
                   </span> : <span style={{ padding: '0 16px' }}>no record</span>}
               </MenuWrapper>
