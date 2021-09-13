@@ -68,6 +68,7 @@ const TokenInfoContainer = styled.div`
 // {tokenInfo}: {tokenInfo?: TokenDetailProps | null}
 export default function TokenInfo() {
   const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
+  const isInput = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.isInput)
 
   const result = isAddress(input)
   // eslint-disable-next-line no-console
@@ -90,8 +91,14 @@ export default function TokenInfo() {
             setalldata(response.data)
             dispatch(
               selectCurrency({
-                field : Field.OUTPUT,
+                field : isInput ? Field.OUTPUT : Field.INPUT,
                 currencyId : input
+              })
+            )
+            dispatch(
+              selectCurrency({
+                field : isInput ? Field.INPUT : Field.OUTPUT,
+                currencyId : 'BNB'
               })
             )
           });
@@ -107,7 +114,7 @@ export default function TokenInfo() {
   useEffect(() => {
     getTableData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [input])
+  }, [input, isInput])
   
   return (
     <TokenInfoContainer>
