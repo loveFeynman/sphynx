@@ -320,6 +320,7 @@ const Menu = (props) => {
                 isInput: false
               })
             )
+            toggleMenu(true)
             // dispatch(
             //   replaceSwapState({
             //     outputCurrencyId: 'BNB' ,
