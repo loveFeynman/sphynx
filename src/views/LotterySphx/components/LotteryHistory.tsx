@@ -3,111 +3,107 @@ import styled from 'styled-components'
 
 import { Text } from '@pancakeswap/uikit'
 import { useTranslation } from 'contexts/Localization'
-import { Line } from "react-chartjs-2";
+import {
+  AreaChart,
+  XAxis,
+  YAxis,
+  Area,
+  Tooltip,
+  CartesianGrid,
+  Legend,
+  Line
+} from "recharts";
+import moment from 'moment';
 
 const Container = styled.div`
-  width: fit-content;
+  width: 340px;
   background-color: rgba(0,0,0,0.4);
   border-radius: 16px;
 `
-// const data = [
-//   {
-//     name: '0',
-//     uv: 4000,
-//     tokens: 24000,
-//     amt: 2400,
-//   },
-//   {
-//     name: '66',
-//     uv: 4000,
-//     tokens: 30000,
-//     amt: 2400,
-//   },
-//   {
-//     name: '132',
-//     uv: 3000,
-//     tokens: 45000,
-//     amt: 2210,
-//   },
-//   {
-//     name: '198',
-//     uv: 2000,
-//     tokens: 8000,
-//     amt: 2290,
-//   },
-//   {
-//     name: '264',
-//     uv: 2780,
-//     tokens: 48000,
-//     amt: 2000,
-//   },
-//   {
-//     name: '330',
-//     uv: 1890,
-//     tokens: 27000,
-//     amt: 2181,
-//   },
-//   {
-//     name: '398',
-//     uv: 2390,
-//     tokens: 25000,
-//     amt: 2500,
-//   },
-//   {
-//     name: '463',
-//     uv: 3490,
-//     tokens: 9000,
-//     amt: 2100,
-//   },
-// ];
+const greenData = [
+  {
+    label: "0",
+    value: 22000
+  },
+  {
+    label: "66",
+    value: 30000
+  },
+  {
+    label: "132",
+    value: 45000
+  },
+  {
+    label: "198",
+    value: 13000
+  },
+  {
+    label: "264",
+    value: 48000
+  },
+  {
+    label: "330",
+    value: 27000
+  },
+  {
+    label: "396",
+    value: 25000
+  },
+  {
+    label: "462",
+    value: 15000
+  },
+];
+
+const blueData = [{x: 'A', y: 12}, {x: 'B', y: 2}, {x: 'C', y: 11}];
 
 export default function History() {
   const [totalCount, setTotalCount] = React.useState(33432);
   const [showDetail, setShowDetail] = React.useState(false);
   const { t } = useTranslation();
-    
-  const data = {
-    labels: ["0", "66", "132", "198", "264", "330", "398", "464"],
-    datasets: [
-      {
-        label: "",
-        data: [22000, 30000, 45000, 13000, 48000, 27000, 25000, 15000],
-        borderColor: "#8B2A9B"
-      }
-    ]
-  };
 
-  const legend = {
-    display: false,
-    position: "bottom",
-    labels: {
-      fontColor: "#323130",
-      fontSize: 14
-    }
-  };
-
-  const options = {
-    title: {
-      display: true,
-      text: "Chart Title"
-    },
-    scales: {
-      yAxes: [
-        {
-          ticks: {
-            suggestedMin: 0,
-            suggestedMax: 100
-          }
-        }
-      ]
-    }
-  };
 
   return (
     <Container>
       <Text bold fontSize="24px" pt="15px" pl="13px">History</Text>
-      <Line data={data} options={options} />
-
+      <div style={{
+         background: "rgba(0, 0, 0, 0)",
+         borderRadius: 4,
+         marginLeft: "4px",
+         padding: "0px 0 8px",
+         height: 'fit-content',
+         width: "100%",
+         fontSize: '8.53988px',
+         fontWeight: 'bold',
+      }}>
+        <AreaChart
+          width={340}
+          height={300}
+          data={greenData}
+          margin={{ top: 32, right: 32, left: -16, bottom: 20 }}
+        >
+          <XAxis
+            dataKey="label"
+            style={{ fontSize: 10 }}
+          />
+          <YAxis
+            dataKey="value"
+            type="number"
+            style={{ fontSize: 10 }}
+            domain={[0,50000]}
+            tickCount={12}
+          />
+          <Area
+            stackId="1"
+            isAnimationActive={false}
+            type="monotone"
+            dataKey="value"
+            stroke="#8B2A9B"
+            strokeWidth={4}
+            fillOpacity={0}
+          />
+        </AreaChart>
+      </div>
     </Container>
   )
 }

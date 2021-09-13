@@ -21,23 +21,22 @@ const WinningCard= styled.div`
   height: 94px;
   background: #8B2A9B;
   border-radius: 24px;
-  margin: 0px 36px;
+  margin: 12px 36px;
+  ${({ theme }) => theme.mediaQueries.md} {
+    margin: 0px 36px;
+  }
 `
 const ContractCard = styled(Text)`
   padding: 0 4px;
-  width: 505px;
-  height: 40px;
+  max-width: 505px;
+  height: 48px;
   text-overflow: ellipsis;
   background: rgba(0, 0, 0, 0.4);
   border-radius: 16px;
   display: flex;
   align-items: center;
-  margin: 12px 0;
   & button:last-child {
     background: #8B2A9B;
-  }
-  ${({ theme }) => theme.mediaQueries.md} {
-    margin: 0 0 0 12.5%;
   }
 `
 const SearchInputWrapper = styled.div`
@@ -87,6 +86,37 @@ const ContractPanelOverlay = styled.div`
   left: 0;
   top: 0;
 `
+const PrizePotCardContainer = styled.div`
+  display: flex;
+  jusitfy-content: center;
+  flex-direction: column-reverse;
+  align-itmes: center;
+  ${({ theme }) => theme.mediaQueries.md} {
+    flex-direction: row;
+    align-itmes: un-set;
+    justify-content: center;
+  }
+`
+const WinningCardContainer = styled.div`
+  display: flex;
+  margin-top: 21px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  ${({ theme }) => theme.mediaQueries.md} {
+    flex-direction: row;
+  }
+`
+const PastDrawCardContainer = styled.div`
+  display: flex;
+  margin: 20px 0px 200px;
+  flex-direction: column;
+  justify-content: center;
+  ${({ theme }) => theme.mediaQueries.md} {
+    flex-direction: row;
+  }
+`
+
 export default function Lottery() {
   const winningCards=[1,16,8,9,3,4]
   const { t } = useTranslation();
@@ -150,8 +180,6 @@ export default function Lottery() {
       }
     } catch(err) {
       // eslint-disable-next-line no-console
-      // console.log(err);
-      // alert("Invalid Address")
       console.log("errr",err.message);
     }
 
@@ -182,20 +210,18 @@ export default function Lottery() {
       </div>
       {activeIndex === 0 && (
         <>
-          <div style={{display: 'flex',  justifyContent: 'center'}}>
-            <div style={{marginRight: '10px'}}>
+          <PrizePotCardContainer>
+            <div style={{margin: '10px'}}>
               <PrizePotCard isNext={false}/>
             </div>
-            <div style={{marginLeft: '10px'}}>
+            <div style={{margin: '10px'}}>
               <PrizePotCard isNext/>
             </div>
-          </div>
+          </PrizePotCardContainer>
           <div style={{textAlign: 'center', margin: '88px 0px 76px 0px' }}>
-            <Text fontSize="48px" color="white" style={{fontWeight: 700}}>How it works</Text>
-            <div>
-              <Text fontSize="16px">SpendSPX to buy tickets, contributing to the lottery </Text>
-              <Text style={{marginLeft: '-20px'}}>pot. Win prizes if 2, 3, or 4 of your ticket numbers </Text>
-              <Text>match the winning numbers and their exact order!</Text>
+            <Text bold fontSize="48px" color="white" style={{fontWeight: 700}}>How it works</Text>
+            <div style={{display: 'flex', justifyContent:'center'}}>
+              <Text bold fontSize="16px" style={{maxWidth: '440px' ,textAlign: 'left'}}>SpendSPX to buy tickets, contributing to the lottery pot. Win prizes if 2, 3, or 4 of your ticket numbers match the winning numbers and their exact order!</Text>              
             </div>
           </div>
           <div 
@@ -208,44 +234,46 @@ export default function Lottery() {
               paddingBottom: '42px',
           }}>
             <Text fontSize="36px" color="white" style={{fontWeight: 700}}>Latest Winning Numbers</Text>
-            <div style={{display: 'flex', marginTop: '21px', justifyContent: 'center'}}>
+            <WinningCardContainer >
               {winningCards.map((item)=>(
                 <WinningCard>
                   <Text fontSize="36px" color="white" style={{fontWeight: 700, padding: '26px'}}> {item}</Text>
                 </WinningCard>
               ))}
-            </div>
+            </WinningCardContainer>
           </div>
         </>
       )}
       {activeIndex === 1 && (
         <>
-          <ContractCard>
-            <img src={SearchIcon} alt="search"/>
-            <SearchInputWrapper>
-              <input placeholder='' value={ticketSearch} onFocus={() => setShowDrop(true)} onKeyPress={handleKeyPress} onKeyUp={onSearchKeyDown} onChange={handlerChange} />
-              {
-              showDrop &&
-              <MenuWrapper>
-                {data.length > 0 ?
-                  <span>
-                    {data?.map((item: any, index: number) => {
-                      return <Link href={`#/swap/${item.address}`}><MenuItem className={index === selectedItemIndex ? 'selectedItem' : ''}>{item.name}<br />{item.symbol}<br />{item.address}</MenuItem></Link>
-                    })}
-                  </span> : <span style={{ padding: '0 16px' }}>no record</span>}
-              </MenuWrapper>
-              }
-            </SearchInputWrapper>
-            <Button scale='sm' onClick={submitFuntioncall} >Search</Button>
-          </ContractCard>
-          <div style={{display: 'flex', margin: '20px 0px 200px', justifyContent: 'center'}}>
-            <div style={{marginRight: '10px'}}>
+          <div style={{display: 'flex', justifyContent: 'center'}}>
+            <ContractCard>
+              <img src={SearchIcon} style={{marginLeft: '4px'}} alt="search"/>
+              <SearchInputWrapper>
+                <input placeholder='' value={ticketSearch} onFocus={() => setShowDrop(true)} onKeyPress={handleKeyPress} onKeyUp={onSearchKeyDown} onChange={handlerChange} />
+                {
+                showDrop &&
+                <MenuWrapper>
+                  {data.length > 0 ?
+                    <span>
+                      {data?.map((item: any, index: number) => {
+                        return <Link href={`#/swap/${item.address}`}><MenuItem className={index === selectedItemIndex ? 'selectedItem' : ''}>{item.name}<br />{item.symbol}<br />{item.address}</MenuItem></Link>
+                      })}
+                    </span> : <span style={{ padding: '0 16px' }}>no record</span>}
+                </MenuWrapper>
+                }
+              </SearchInputWrapper>
+              <Button scale='sm' onClick={submitFuntioncall} style={{height: 'inherit'}}>Search</Button>
+            </ContractCard>
+          </div>
+          <PastDrawCardContainer>
+            <div style={{margin: '10px'}}>
               <TicketCard />
             </div>
-            <div style={{marginLeft: '10px'}}>
+            <div style={{margin: '10px'}}>
               <History />
             </div>
-          </div>
+          </PastDrawCardContainer>
           { showDrop && <ContractPanelOverlay onClick={() => setShowDrop(false) } />}
             
         </>
