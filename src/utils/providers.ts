@@ -5,4 +5,7 @@ const RPC_URL = getRpcUrl()
 
 export const simpleRpcProvider = new ethers.providers.JsonRpcProvider(RPC_URL)
 
+const WEBSOCKET_URL = process.env.REACT_APP_WSNODE_1
+export const simpleWebsocketProvider = new ethers.providers.WebSocketProvider(WEBSOCKET_URL)
+
 export default null
