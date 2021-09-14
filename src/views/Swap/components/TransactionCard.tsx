@@ -5,6 +5,8 @@ import { Flex } from '@pancakeswap/uikit'
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
+import { useDerivedSwapInfo } from 'state/swap/hooks'
+import { Field } from 'state/swap/actions'
 import styled from 'styled-components'
 import { w3cwebsocket as W3CWebSocket } from 'websocket'
 import { AppState } from '../../../state'
@@ -58,11 +60,14 @@ const TableWrapper = styled.div`
 `
 
 const TransactionCard = () => {
-  const [tokenData, setTokenData] = useState('')
   const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
+  const isInput = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.isInput)
   const result = isAddress(input)
   const [socketData, setSocketData]: any = useState({})
   const [dataArr, setDataArr] = useState([])
+  const { currencies } = useDerivedSwapInfo()
+  const token = currencies[isInput ? Field.OUTPUT : Field.INPUT]
+  const tokenData = token ? token.symbol.toLowerCase() : 'cake'
 
   const getDataQuery = `
   {
@@ -120,9 +125,7 @@ const TransactionCard = () => {
   }`
 
   useEffect(() => {
-    const websocketUrl = tokenData
-      ? `wss://stream.binance.com:9443/ws/${tokenData}usdt@trade`
-      : `wss://stream.binance.com:9443/ws/cakeusdt@trade`
+    const websocketUrl = `wss://stream.binance.com:9443/ws/${tokenData}usdt@trade`
     let socket = new W3CWebSocket(websocketUrl)
 
     const array = []
@@ -145,37 +148,20 @@ const TransactionCard = () => {
     }
   }, [tokenData]) // <-- empty dependency array
 
-  const getTokenData = async () => {
-    try {
-      if (result) {
-        const response: any = await axios.post('https://thesphynx.co/api/tokenStats', { address: input })
-        const id = response?.data.symbol.split(/[\s,]+/)[1].match(/(([^())]+))/)[1]
-        setTokenData(id.toLowerCase())
-      }
-    } catch (err) {
-      console.log(err)
-    }
-  }
-
-  useEffect(() => {
-    getTokenData()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [input])
-
-  useEffect(() => {
-    dataArr.map((dt) => {
-      setSocketData(dt)
-    })
-  }, [dataArr])
+  // useEffect(() => {
+  //   dataArr.map((dt) => {
+  //     setSocketData(dt)
+  //   })
+  // }, [dataArr])
   // eslint-disable-next-line no-console
 
-  const t = socketData.T
-  const localdate = new Date(t)
-  const d = new Date(localdate.getTime() + localdate.getTimezoneOffset() * 60 * 1000)
-  const offset = localdate.getTimezoneOffset() / 60
-  const hours = localdate.getHours()
-  const lcl = d.setHours(hours - offset)
-  const date = new Date(lcl)
+  // const t = socketData.T
+  // const localdate = new Date(t)
+  // const d = new Date(localdate.getTime() + localdate.getTimezoneOffset() * 60 * 1000)
+  // const offset = localdate.getTimezoneOffset() / 60
+  // const hours = localdate.getHours()
+  // const lcl = d.setHours(hours - offset)
+  // const date = new Date(lcl)
   // const d = new Date(Date.UTC(localdate.getFullYear(), localdate.getMonth(), localdate.getDate(),  localdate.getHours(), localdate.getMinutes(), localdate.getSeconds()));
   // const d :any=new Date(localdate.getTime()+ localdate.getTimezoneOffset()*60*1000);
   // const localtime=d;
@@ -197,6 +183,13 @@ const TransactionCard = () => {
           </thead>
           <tbody>
             {dataArr.map((data) => {
+              const t = data.T
+              const localdate = new Date(t)
+              const d = new Date(localdate.getTime() + localdate.getTimezoneOffset() * 60 * 1000)
+              const offset = localdate.getTimezoneOffset() / 60
+              const hours = localdate.getHours()
+              const lcl = d.setHours(hours - offset)
+              const date = new Date(lcl)
               return (
                 <tr>
                   <td style={{ width: '35%' }}>
