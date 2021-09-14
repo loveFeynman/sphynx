@@ -67,7 +67,6 @@ const TransactionCard = () => {
   const [dataArr, setDataArr] = useState([])
   const { currencies } = useDerivedSwapInfo()
   const token = currencies[isInput ? Field.OUTPUT : Field.INPUT]
-  const tokenData = token ? token.symbol.toLowerCase() : 'cake'
 
   const getDataQuery = `
   {
@@ -125,20 +124,25 @@ const TransactionCard = () => {
   }`
 
   useEffect(() => {
-    const websocketUrl = `wss://stream.binance.com:9443/ws/${tokenData}usdt@trade`
-    let socket = new W3CWebSocket(websocketUrl)
-
-    const array = []
-
-    socket.onmessage = (event: any) => {
-      if (array.length <= 30) {
-        array.unshift(JSON.parse(event.data))
-      } else {
-        array.pop()
-        array.unshift(JSON.parse(event.data))
-      }
-
-      return setDataArr(array)
+    let socket;
+    if (token) {
+      const tokenData = token.symbol.toLowerCase()
+      const websocketUrl = `wss://stream.binance.com:9443/ws/${tokenData}usdt@trade`
+      socket = new W3CWebSocket(websocketUrl)
+  
+      const array = []
+      setDataArr([])
+  
+      socket.onmessage = (event: any) => {
+        if (array.length <= 30) {
+          array.unshift(JSON.parse(event.data))
+        } else {
+          array.pop()
+          array.unshift(JSON.parse(event.data))
+        }
+  
+        return setDataArr(array)
+      }  
     }
 
     // effect cleanup function
@@ -146,7 +150,7 @@ const TransactionCard = () => {
       // any socket closure logic, cleanup etc..
       socket = null
     }
-  }, [tokenData]) // <-- empty dependency array
+  }, [token]) // <-- empty dependency array
 
   // useEffect(() => {
   //   dataArr.map((dt) => {
