@@ -9,7 +9,7 @@ import PageHeader from 'components/PageHeader'
 import WebFont from 'webfontloader';
 import { useTranslation } from 'contexts/Localization'
 import SearchIcon  from 'assets/images/search.png'
-import {typeInput} from '../../state/input/actions'
+import {typeInput, setIsInput} from '../../state/input/actions'
 import PrizePotCard  from './components/PrizePotCard'
 import TicketCard  from './components/TicketCard'
 import History  from './components/LotteryHistory'
@@ -147,6 +147,11 @@ export default function Lottery() {
 
   const submitFuntioncall=()=>{
     dispatch(typeInput({ input: ticketSearch }))
+    dispatch(
+      setIsInput({
+        isInput: true
+      })
+    )
   }
   const handleKeyPress = (event) => {
     if(event.key === 'Enter'){
