@@ -91,7 +91,3 @@ export const getTokenPrice = async (tokenAddress, provider) => {
     return tokenBusdLp.baseToken.reserve / tokenBusdLp.quoteToken.reserve;
   }
 }
-
-export const getWsProvider = () => {
-  return new ethers.providers.WebSocketProvider('wss://bsc-ws-node.nariox.org:443')
-}
