@@ -119,11 +119,15 @@ const WinningCardContainer = styled.div`
   }
 `
 const WinningCardContainerTop = styled.div`
-  display: flex;
-  margin-top: 12px;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
+  visibility: hidden;
+  ${({ theme }) => theme.mediaQueries.md} {
+    display: flex;
+    margin-top: 12px;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    visibility: visible;
+  }
 `
 const PastDrawCardContainer = styled.div`
   display: flex;
@@ -136,7 +140,16 @@ const PastDrawCardContainer = styled.div`
     align-items: baseline;
   }
 `
-
+const LightContainer = styled.div`
+  visibility: hidden;
+  height: 0;
+  ${({ theme }) => theme.mediaQueries.md} {
+    position: absolute;
+    right: 0px;
+    height: auto;
+    visibility: visible;
+  }
+`
 export default function Lottery() {
   const winningCards=[1,16,8,9,3,4]
   const { t } = useTranslation();
@@ -232,7 +245,7 @@ export default function Lottery() {
               {t('Win Lottery if 2, 3, 4, 5 or 6 of your ticket numbers matched')}
             </Heading>
           </div>
-          <div style={{position: 'absolute', right: '-60px'}}>
+          <LightContainer>
             <div 
               style={{
                 textAlign: 'center', 
@@ -249,7 +262,7 @@ export default function Lottery() {
                 ))}
               </WinningCardContainerTop>
             </div>
-            </div>
+            </LightContainer>
         </div>
       </PageHeader>
       <div>
