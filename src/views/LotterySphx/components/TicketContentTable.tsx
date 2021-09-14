@@ -66,8 +66,8 @@ export default function PotContentTable() {
               <GridItem isLeft>
                 <div style={{textAlign: 'right'}}>
                   {item.totalTokens} SPX
-                  <div  style={{fontSize: '12px'}}>
-                    {item.eachTokens}each
+                  <div style={{fontSize: '12px'}}>
+                    {item.eachTokens}{t(`each`)}
                   </div>
                 </div>
               </GridItem>
