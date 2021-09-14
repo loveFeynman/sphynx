@@ -16,6 +16,11 @@ const StyledNav = styled.div`
   }
   & > div { 
     background: #FFFFFF;  
+    & > button {
+      &:active {
+        outline: none;
+      }
+    }
   }
   & .active {
     background: #8B2A9B;
@@ -28,6 +33,7 @@ const StyledNav = styled.div`
     color: black;
     border: none;
   }
+
 `
 
 const Nav = ({ activeIndex = 0, setActiveIndex }: { activeIndex?: number; setActiveIndex?: any}) => {
