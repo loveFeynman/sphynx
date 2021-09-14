@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
-import styled from 'styled-components'
+import styled from 'styled-components';
+import Web3 from 'web3';
+import { useWeb3React } from '@web3-react/core';
 import Nav from 'components/LotteryCardNav'
-import { Heading, Text, Button, Link } from '@pancakeswap/uikit'
+import { Heading, Text, Button, Link, useModal} from '@pancakeswap/uikit'
 import {Button as materialButton,Menu,MenuItem} from '@material-ui/core';
 import PageHeader from 'components/PageHeader'
 import WebFont from 'webfontloader';
@@ -13,8 +15,9 @@ import {typeInput, setIsInput} from '../../state/input/actions'
 import PrizePotCard  from './components/PrizePotCard'
 import TicketCard  from './components/TicketCard'
 import History  from './components/LotteryHistory'
-
+import {useLotteryBalance} from '../../hooks/useLottery'
 import { isAddress, getBscScanLink } from '../../utils'
+import BuyTicketModal from './components/BuyTicketModal';
 
 const WinningCard= styled.div`
   width: 94px;
@@ -151,14 +154,18 @@ const LightContainer = styled.div`
   }
 `
 export default function Lottery() {
+  const { account } = useWeb3React()
+  const [onPresentSettingsModal] = useModal(<BuyTicketModal />)
   const winningCards=[1,16,8,9,3,4]
   const { t } = useTranslation();
   const [activeIndex, setActiveIndex] = React.useState(0);
   const [ticketSearch, setTicketSearch] = React.useState('');
   const [showDrop,setShowDrop]= useState(false);
-  const [show, setShow] = useState(true)
+  const [show, setShow] = useState(true);
+  const [showBuyModal, setShowBuyModal] = useState(false)
   const [selectedItemIndex, setSelectedItemIndex] = useState(-1);
-  const [data,setdata]=useState([])
+  const [data,setdata]=useState([]);
+  useLotteryBalance();
   React.useEffect(() => {
     WebFont.load({
       google: {
@@ -171,9 +178,9 @@ export default function Lottery() {
 
   const handleItemClick = () => {
     if (activeIndex === 0)
-      setActiveIndex(1)
+      setActiveIndex(1);
     else
-      setActiveIndex(0)
+      setActiveIndex(0);
   }
 
   const submitFuntioncall=()=>{
@@ -225,14 +232,12 @@ export default function Lottery() {
     if (result) {
       setTicketSearch(e.target.value)
       setShow(false);
-    }
-    else {
+    } else {
       setTicketSearch(e.target.value)
       setShow(true);
     }
   }
  
-
   return (
     <div style={{fontFamily: 'Raleway'}}>
       <PageHeader>
@@ -272,12 +277,11 @@ export default function Lottery() {
         <>
           <PrizePotCardContainer>
             <div style={{margin: '10px'}}>
-              <PrizePotCard isNext={false}/>
+              <PrizePotCard isNext={false} setModal={null}/>
             </div>
             <div style={{margin: '10px'}}>
-              <PrizePotCard isNext/>
+              <PrizePotCard isNext setModal={onPresentSettingsModal}/>
             </div>
-           
           </PrizePotCardContainer>
           <div style={{textAlign: 'center', margin: '88px 0px 76px 0px' }}>
             <Text bold fontSize="48px" color="white" style={{fontWeight: 700}}>How it works</Text>
@@ -303,6 +307,7 @@ export default function Lottery() {
                 ))}
               </WinningCardContainer>
             </div>  
+            {/* <BuyTicketModal onDismiss={()=>setShowBuyModal(false)}/> */}
         </>
       )}
       {activeIndex === 1 && (

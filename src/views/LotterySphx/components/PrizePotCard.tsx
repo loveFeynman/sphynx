@@ -62,7 +62,7 @@ const Footer = styled.div`
   padding: 17.5px 0px;
   justify-content: center;
 `
-export default function PrizePotCard({isNext}) {
+export default function PrizePotCard({isNext, setModal}) {
   const [totalCount, setTotalCount] = React.useState(33432);
   const [showDetail, setShowDetail] = React.useState(false);
   const { t } = useTranslation();
@@ -97,11 +97,10 @@ export default function PrizePotCard({isNext}) {
       )}
       {isNext && (
         <div style={{marginBottom: '30px'}}>
-          <ButtonWrapper style={{ marginTop: '30px' }} onClick={() => null}>
+          <ButtonWrapper style={{ marginTop: '30px' }} onClick={setModal}>
             {t(`Buy Now`)}
           </ButtonWrapper>
         </div>
-        
       )}
       {showDetail && (<PotContentTable isDetail/>)}
     </Container>
