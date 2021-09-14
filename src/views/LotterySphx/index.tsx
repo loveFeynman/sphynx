@@ -26,6 +26,17 @@ const WinningCard= styled.div`
     margin: 0px 36px;
   }
 `
+const WinningCardTop= styled.div`
+  width: 48px;
+  height: 48px;
+  background: #8B2A9B;
+  border-radius: 12px;
+  margin: 12px 12px;
+  ${({ theme }) => theme.mediaQueries.md} {
+    margin: 0px 12px;
+  }
+`
+
 const ContractCard = styled(Text)`
   padding: 0 4px;
   max-width: 505px;
@@ -107,6 +118,17 @@ const WinningCardContainer = styled.div`
     flex-direction: row;
   }
 `
+const WinningCardContainerTop = styled.div`
+  visibility: hidden;
+  ${({ theme }) => theme.mediaQueries.md} {
+    display: flex;
+    margin-top: 12px;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    visibility: visible;
+  }
+`
 const PastDrawCardContainer = styled.div`
   display: flex;
   margin: 20px 0px 200px;
@@ -118,7 +140,16 @@ const PastDrawCardContainer = styled.div`
     align-items: baseline;
   }
 `
-
+const LightContainer = styled.div`
+  visibility: hidden;
+  height: 0;
+  ${({ theme }) => theme.mediaQueries.md} {
+    position: absolute;
+    right: 0px;
+    height: auto;
+    visibility: visible;
+  }
+`
 export default function Lottery() {
   const winningCards=[1,16,8,9,3,4]
   const { t } = useTranslation();
@@ -205,12 +236,34 @@ export default function Lottery() {
   return (
     <div style={{fontFamily: 'Raleway'}}>
       <PageHeader>
-        <Heading as="h4" scale="xl" color="white">
-          {t('Lottery')}
-        </Heading>
-        <Heading as="h6" scale="md" color="text">
-          {t('Win Lottery if  2, 3, 4 of your ticket numbers matched')}
-        </Heading>
+        <div style={{display: 'flex', position: 'relative'}}>
+          <div>
+            <Heading as="h4" scale="xl" color="white">
+              {t('Lottery')}
+            </Heading>
+            <Heading as="h6" scale="md" color="text" mt='20px'>
+              {t('Win Lottery if 2, 3, 4, 5 or 6 of your ticket numbers matched')}
+            </Heading>
+          </div>
+          <LightContainer>
+            <div 
+              style={{
+                textAlign: 'center', 
+                marginLeft: '40px' , 
+                background:'rgba(0, 0, 0, 0.0)', 
+                borderRadius: '24px',
+            }}>
+              <Text fontSize="24px" color="white" style={{fontWeight: 700}}>{t(`Latest Winning Numbers`)}</Text>
+              <WinningCardContainerTop>
+                {winningCards.map((item)=>(
+                  <WinningCardTop>
+                    <Text fontSize="18px" color="white" style={{fontWeight: 700, padding: '12px'}}> {item}</Text>
+                  </WinningCardTop>
+                ))}
+              </WinningCardContainerTop>
+            </div>
+            </LightContainer>
+        </div>
       </PageHeader>
       <div>
         <Nav activeIndex={activeIndex} setActiveIndex={handleItemClick} />
@@ -224,31 +277,32 @@ export default function Lottery() {
             <div style={{margin: '10px'}}>
               <PrizePotCard isNext/>
             </div>
+           
           </PrizePotCardContainer>
           <div style={{textAlign: 'center', margin: '88px 0px 76px 0px' }}>
             <Text bold fontSize="48px" color="white" style={{fontWeight: 700}}>How it works</Text>
             <div style={{display: 'flex', justifyContent:'center'}}>
-              <Text bold fontSize="16px" style={{maxWidth: '440px' ,textAlign: 'left'}}>SpendSPX to buy tickets, contributing to the lottery pot. Win prizes if 2, 3, or 4 of your ticket numbers match the winning numbers and their exact order!</Text>              
+              <Text bold fontSize="16px" style={{maxWidth: '440px' ,textAlign: 'left'}}>{t(`SpendSPX to buy tickets, contributing to the lottery pot. Win prizes if 2, 3, or 4 of your ticket numbers match the winning numbers and their exact order!`)}</Text>              
             </div>
           </div>
           <div 
-            style={{
-              textAlign: 'center', 
-              margin: '88px 0px 76px 0px' , 
-              background:'rgba(0, 0, 0, 0.4)', 
-              borderRadius: '24px',
-              paddingTop: '32px',
-              paddingBottom: '42px',
-          }}>
-            <Text fontSize="36px" color="white" style={{fontWeight: 700}}>Latest Winning Numbers</Text>
-            <WinningCardContainer >
-              {winningCards.map((item)=>(
-                <WinningCard>
-                  <Text fontSize="36px" color="white" style={{fontWeight: 700, padding: '26px'}}> {item}</Text>
-                </WinningCard>
-              ))}
-            </WinningCardContainer>
-          </div>
+              style={{
+                textAlign: 'center', 
+                // margin: '88px 0px 76px 0px' , 
+                background:'rgba(0, 0, 0, 0.4)', 
+                borderRadius: '24px',
+                paddingTop: '32px',
+                paddingBottom: '42px',
+            }}>
+              <Text fontSize="36px" color="white" style={{fontWeight: 700}}>{t(`Latest Winning Numbers`)}</Text>
+              <WinningCardContainer >
+                {winningCards.map((item)=>(
+                  <WinningCard>
+                    <Text fontSize="36px" color="white" style={{fontWeight: 700, padding: '26px'}}> {item}</Text>
+                  </WinningCard>
+                ))}
+              </WinningCardContainer>
+            </div>  
         </>
       )}
       {activeIndex === 1 && (
@@ -270,7 +324,7 @@ export default function Lottery() {
                 </MenuWrapper>
                 }
               </SearchInputWrapper>
-              <Button scale='sm' onClick={submitFuntioncall} style={{height: 'inherit'}}>Search</Button>
+              <Button scale='sm' onClick={submitFuntioncall} style={{height: 'inherit'}}>{t(`Search`)}</Button>
             </ContractCard>
           </div>
           <PastDrawCardContainer>
@@ -282,7 +336,6 @@ export default function Lottery() {
             </div>
           </PastDrawCardContainer>
           { showDrop && <ContractPanelOverlay onClick={() => setShowDrop(false) } />}
-            
         </>
       )}
     </div>

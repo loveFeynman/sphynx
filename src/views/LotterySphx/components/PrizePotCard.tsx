@@ -72,7 +72,7 @@ export default function PrizePotCard({isNext}) {
         <img width= "60px" height= "57px" src={MainLogo} alt='Logo' />
         <div style={{paddingTop: '8px'}}>
           <HeaderLabel>
-            {isNext?'Next Draw in:': 'Prize Pot'}
+            {isNext? t('Next Draw in:') : t('Prize Pot')}
           </HeaderLabel>
           <HeaderLabel>
             {isNext?'0h 43m': `${totalCount} SPX`}
@@ -84,13 +84,13 @@ export default function PrizePotCard({isNext}) {
         <>
           <PotContentTable isDetail={false}/>
           <ButtonWrapper style={{ margin: '10px 0' }} onClick={() => null}>
-            Unlock Wallet
+            {t(`Unlock Wallet`)}
           </ButtonWrapper>
           <SeperateLine/>
           <Footer 
             onClick={(e)=>setShowDetail(!showDetail)}
           >
-            {showDetail? 'Hide' : 'Details'}
+            {showDetail? t('Hide') : t('Details')}
             <img style={{marginLeft: '10px'}} src={DownArrow} alt='Logo' />
           </Footer>
         </>
@@ -98,7 +98,7 @@ export default function PrizePotCard({isNext}) {
       {isNext && (
         <div style={{marginBottom: '30px'}}>
           <ButtonWrapper style={{ marginTop: '30px' }} onClick={() => null}>
-            Buy Now
+            {t(`Buy Now`)}
           </ButtonWrapper>
         </div>
         
