@@ -3,6 +3,7 @@ import styled from 'styled-components'
 
 import { Text } from '@pancakeswap/uikit'
 import { useTranslation } from 'contexts/Localization'
+
 import {
   AreaChart,
   XAxis,
@@ -16,9 +17,12 @@ import {
 import moment from 'moment';
 
 const Container = styled.div`
-  width: 340px;
+  max-width: 340px;
   background-color: rgba(0,0,0,0.4);
   border-radius: 16px;
+  ${({ theme }) => theme.mediaQueries.md} {
+    max-width: 340px;
+  }
 `
 const greenData = [
   {
@@ -76,6 +80,7 @@ export default function History() {
          fontSize: '8.53988px',
          fontWeight: 'bold',
       }}>
+        
         <AreaChart
           width={340}
           height={300}

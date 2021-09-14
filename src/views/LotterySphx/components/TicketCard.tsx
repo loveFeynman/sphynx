@@ -13,6 +13,9 @@ const Container = styled.div<{ isDetail: boolean }>`
   // height:${(props)=> !props.isDetail?'420px':'750px'} ;
   background-color: rgba(0,0,0,0.4);
   border-radius: 16px;
+  ${({ theme }) => theme.mediaQueries.md} {
+    min-width: 340px;
+  }
 `
 
 const ButtonWrapper = styled.div`

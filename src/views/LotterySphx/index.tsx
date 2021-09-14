@@ -90,10 +90,10 @@ const PrizePotCardContainer = styled.div`
   display: flex;
   jusitfy-content: center;
   flex-direction: column-reverse;
-  align-itmes: center;
+  align-items: center;
   ${({ theme }) => theme.mediaQueries.md} {
     flex-direction: row;
-    align-itmes: un-set;
+    align-items: baseline;
     justify-content: center;
   }
 `
@@ -110,10 +110,12 @@ const WinningCardContainer = styled.div`
 const PastDrawCardContainer = styled.div`
   display: flex;
   margin: 20px 0px 200px;
+  align-items: center;
   flex-direction: column;
   justify-content: center;
   ${({ theme }) => theme.mediaQueries.md} {
     flex-direction: row;
+    align-items: baseline;
   }
 `
 
