@@ -101,8 +101,7 @@ export default function HotTokenBar() {
   const dispatch = useDispatch();
 
   const date:any = new Date();
-  date.setDate(date.getDate() - 2);
-  console.log("data in hotbar==================================",data)
+  date.setDate(date.getDate() - 2)
   const d:any = new Date()
   d.setDate(d.getDate() - 2);
   const getDataQuery = `
