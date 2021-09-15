@@ -131,8 +131,7 @@ const TransactionCard = () => {
       socket = new W3CWebSocket(websocketUrl)
   
       const array = []
-      setDataArr([])
-  
+
       socket.onmessage = (event: any) => {
         if (array.length <= 30) {
           array.unshift(JSON.parse(event.data))
@@ -142,13 +141,18 @@ const TransactionCard = () => {
         }
   
         return setDataArr(array)
-      }  
+      }
+
+      socket.onclose = () => {
+        setDataArr([])
+      }
     }
 
     // effect cleanup function
     return () => {
       // any socket closure logic, cleanup etc..
-      socket = null
+      socket.close()
+      setDataArr([])
     }
   }, [token]) // <-- empty dependency array
 
