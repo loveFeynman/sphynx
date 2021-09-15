@@ -90,7 +90,7 @@ const TransactionCard = () => {
   {
   ethereum(network: bsc) {
       dexTrades(
-      options: {desc: ["block.height", "tradeIndex"], limit: 100, offset: 0}
+      options: {desc: ["block.height", "tradeIndex"], limit: 30, offset: 0}
       date: {since: "2021-08-05", till: null}
       baseCurrency: {is: "${input}"}
       quoteCurrency:{is : "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"}
