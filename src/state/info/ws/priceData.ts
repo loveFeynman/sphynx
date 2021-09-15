@@ -91,11 +91,18 @@ export const getBnbPrice = async (provider) => {
 }
 
 export const getTokenPrice = async (tokenAddress, provider) => {
+  const bnbPrice = await getBnbPrice(provider);
+  if (tokenAddress === WBNB.address) {
+    return bnbPrice;
+  }
+  if (tokenAddress === BUSD[ChainId.MAINNET].address) {
+    const tokenBnbLp = await getPancakeLiquidityInfo(tokenAddress, WBNB.address, provider);
+    return tokenBnbLp.baseToken.reserve / tokenBnbLp.quoteToken.reserve * bnbPrice;
+  }
   const tokenBnbLp = await getPancakeLiquidityInfo(tokenAddress, WBNB.address, provider);
   const tokenBusdLp = await getPancakeLiquidityInfo(tokenAddress, BUSD[ChainId.MAINNET].address, provider);
   if (tokenBnbLp.quoteToken.reserve >= tokenBusdLp.quoteToken.reserve) {
-    const bnbPrice = await getBnbPrice(provider);
     return tokenBnbLp.baseToken.reserve / tokenBnbLp.quoteToken.reserve * bnbPrice;
   }
-  return tokenBusdLp.baseToken.reserve / tokenBusdLp.quoteToken.reserve;
+  return tokenBusdLp.baseToken.reserve / tokenBusdLp.quoteToken.reserve;  
 }

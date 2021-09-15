@@ -9,7 +9,7 @@ interface InputState {
 }
 
 const initialState : InputState = {
-  input: '0x3b39243e10f451a7acfcf9e02c6a37303b61da46',
+  input: '0xafD60977A4d00f596dF68ff2756192545c9b96d2',
   isInput: true,
   routerVersion: 'v2'
 };
