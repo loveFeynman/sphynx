@@ -3,12 +3,13 @@
 /* eslint-disable no-console */
 import { Flex } from '@pancakeswap/uikit'
 import axios from 'axios'
+import { providers, utils } from 'ethers'
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useDerivedSwapInfo } from 'state/swap/hooks'
 import { Field } from 'state/swap/actions'
 import styled from 'styled-components'
-import { w3cwebsocket as W3CWebSocket } from 'websocket'
+import { getTokenPrice } from 'state/info/ws/priceData'
 import { AppState } from '../../../state'
 import { isAddress } from '../../../utils'
 
@@ -123,35 +124,46 @@ const TransactionCard = () => {
     }
   }`
 
+  const pcsRouterV2Addr = '0x10ED43C718714eb63d5aA57B78B54704E256024E';
+
   useEffect(() => {
-    let socket;
     if (token) {
       const tokenData = token.symbol.toLowerCase()
-      const websocketUrl = `wss://stream.binance.com:9443/ws/${tokenData}usdt@trade`
-      socket = new W3CWebSocket(websocketUrl)
+      const provider = new providers.WebSocketProvider('wss://bsc-ws-node.nariox.org:443');
   
       const array = []
 
-      socket.onmessage = (event: any) => {
-        if (array.length <= 30) {
-          array.unshift(JSON.parse(event.data))
-        } else {
-          array.pop()
-          array.unshift(JSON.parse(event.data))
+      provider.on('pending', async(tx) => {
+        const transaction = await provider.getTransaction(tx);
+        if (transaction) {
+          const txAmount = Number(utils.formatUnits(transaction.value));
+          if (txAmount > 0 && transaction.to.includes(pcsRouterV2Addr)) {
+            const detailsHash = await provider.waitForTransaction(transaction.hash);
+            if(detailsHash.logs && detailsHash.status === 1) {
+              const block = await provider.getBlock(detailsHash.blockNumber);
+              const priceToList = await getTokenPrice('0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82', provider);
+              const dataObj = {
+                timestamp: block.timestamp,
+                amount: txAmount,
+                price: priceToList,
+                hash: transaction.hash
+              }
+              if (array.length < 30) {
+                array.unshift(dataObj);
+              } else {
+                array.pop();
+                array.unshift(dataObj);
+              }
+              setDataArr(array);
+            }
+          }  
         }
-  
-        return setDataArr(array)
-      }
+      })
 
-      socket.onclose = () => {
-        setDataArr([])
-      }
     }
 
     // effect cleanup function
     return () => {
-      // any socket closure logic, cleanup etc..
-      socket.close()
       setDataArr([])
     }
   }, [token]) // <-- empty dependency array
@@ -191,34 +203,35 @@ const TransactionCard = () => {
           </thead>
           <tbody>
             {dataArr.map((data) => {
-              const t = data.T
+              const t = data.timestamp * 1000
               const localdate = new Date(t)
               const d = new Date(localdate.getTime() + localdate.getTimezoneOffset() * 60 * 1000)
               const offset = localdate.getTimezoneOffset() / 60
               const hours = localdate.getHours()
               const lcl = d.setHours(hours - offset)
               const date = new Date(lcl)
+              const isRecent = (new Date()).getTime() - t > 10000
               return (
                 <tr>
                   <td style={{ width: '35%' }}>
                     <Flex alignItems="center">
-                      <h2 className={data.m ? 'success' : 'error'}>{date.toString().split('GMT')[0]}</h2>
+                      <h2 className={isRecent ? 'success' : 'error'}>{date.toString().split('GMT')[0]}</h2>
                     </Flex>
                   </td>
                   <td style={{ width: '25%' }}>
-                    <h2 className={data.m ? 'success' : 'error'}> {Number(data.q).toFixed(6)}</h2>
+                    <h2 className={isRecent ? 'success' : 'error'}>{ token.name }</h2>
                   </td>
                   <td style={{ width: '25%' }}>
-                    <h2 className={data.m ? 'success' : 'error'}>
+                    <h2 className={isRecent ? 'success' : 'error'}>
                       $
-                      {Number(data.p)
+                      {Number(data.price)
                         .toFixed(4)
                         .replace(/(\d)(?=(\d{3})+\.)/g, '$1,')}
                     </h2>
                   </td>
                   <td style={{ width: '25%' }}>
                     <h2 className={data.m ? 'success' : 'error'}>
-                      ${(data.p * data.q).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,')}
+                      ${(data.price * data.amount).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,')}
                     </h2>
                   </td>
                 </tr>

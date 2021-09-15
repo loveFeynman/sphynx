@@ -1,4 +1,4 @@
-import ethers from 'ethers'
+import { Contract, utils } from 'ethers'
 import { PANCAKE_FACTORY_ADDRESS, ChainId } from '@pancakeswap/sdk'
 import pancakeFactoryAbi from 'config/abi/pancakeSwapFactory.json'
 import pancakeRouterAbi from 'config/abi/pancakeSwapRouter.json'
@@ -8,42 +8,44 @@ import { ZERO_ADDRESS } from 'config/constants'
 import { BUSD, WBNB } from 'config/constants/tokens'
 
 const getMinTokenInfo = async (address, provider) => {
-  const tokenContract = new ethers.Contract(
+  const tokenContract = new Contract(
     address,
     bscTokenAbi,
     provider,
   );
-  let tokenInfo;
   try {
     const decimals = await tokenContract.decimals()
-    tokenInfo = {
-      name: await tokenContract.name(),
-      symbol: await tokenContract.symbol(),
-      decimals: decimals,
-      totalSupply: parseInt(ethers.utils.formatUnits(await tokenContract.totalSupply(), decimals))
+    const name = await tokenContract.name()
+    const symbol = await tokenContract.symbol()
+    const totalSupply = await tokenContract.totalSupply()
+    const tokenInfo = {
+      name,
+      symbol,
+      decimals,
+      totalSupply: parseInt(utils.formatUnits(totalSupply, decimals))
     }
-  } catch (e) {
-  } finally {
     return tokenInfo;
+  } catch (e) {
+    return null;
   }
 }
 
 const getPancakePairAddress = async (quoteToken, baseToken, provider) => {
-  const pancakeFactoryContract = new ethers.Contract(
+  const pancakeFactoryContract = new Contract(
     PANCAKE_FACTORY_ADDRESS,
     pancakeFactoryAbi,
     provider,
   );
   const pairAddress = await pancakeFactoryContract.getPair(quoteToken, baseToken);
   if (pairAddress === ZERO_ADDRESS) {
-    throw 'Pair Doesn\'t Exists';
+    return null;
   }
   return pairAddress;
 }
 
 const getPancakeLiquidityInfo = async (quoteToken, baseToken, provider) => {
   const lpAddress = await getPancakePairAddress(quoteToken, baseToken, provider);
-  const lpContract = new ethers.Contract(
+  const lpContract = new Contract(
     lpAddress,
     pancakeLpAbi,
     provider,
@@ -55,11 +57,11 @@ const getPancakeLiquidityInfo = async (quoteToken, baseToken, provider) => {
   let baseTokenReserve;
   const token0 = await lpContract.token0();
   if (token0.toLowerCase() === quoteToken.toLowerCase()) {
-    quoteTokenReserve = ethers.utils.formatUnits(reserves[0], quoteTokenInfo.decimals);
-    baseTokenReserve = ethers.utils.formatUnits(reserves[1], baseTokenInfo.decimals);
+    quoteTokenReserve = utils.formatUnits(reserves[0], quoteTokenInfo.decimals);
+    baseTokenReserve = utils.formatUnits(reserves[1], baseTokenInfo.decimals);
   } else {
-    quoteTokenReserve = ethers.utils.formatUnits(reserves[1], quoteTokenInfo.decimals);
-    baseTokenReserve = ethers.utils.formatUnits(reserves[0], baseTokenInfo.decimals);
+    quoteTokenReserve = utils.formatUnits(reserves[1], quoteTokenInfo.decimals);
+    baseTokenReserve = utils.formatUnits(reserves[0], baseTokenInfo.decimals);
   }
 
   return {
@@ -87,7 +89,6 @@ export const getTokenPrice = async (tokenAddress, provider) => {
   if (tokenBnbLp.quoteToken.reserve >= tokenBusdLp.quoteToken.reserve) {
     const bnbPrice = await getBnbPrice(provider);
     return tokenBnbLp.baseToken.reserve / tokenBnbLp.quoteToken.reserve * bnbPrice;
-  } else {
-    return tokenBusdLp.baseToken.reserve / tokenBusdLp.quoteToken.reserve;
   }
+  return tokenBusdLp.baseToken.reserve / tokenBusdLp.quoteToken.reserve;
 }
