@@ -14,8 +14,10 @@ import { makeApiRequest, generateSymbol, makeApiRequest1 } from './helpers'
 import { useSelector } from 'react-redux'
 import { AppState } from 'state'
 import { isAddress } from 'utils'
+import * as ethers from 'ethers'
+import { getTokenPrice } from 'state/info/ws/priceData'
 
-const ChartContainer = styled.div<{ height: number }> `
+const ChartContainer = styled.div<{ height: number }>`
   position: relative;
   height: ${(props) => props.height}px;
 `
@@ -52,7 +54,7 @@ const ChartContainerProps = {
   fullscreen: false,
   autosize: true,
   studiesOverrides: {},
-  height: 600
+  height: 600,
 }
 
 function getLanguageFromURL(): LanguageCode | null {
@@ -60,6 +62,9 @@ function getLanguageFromURL(): LanguageCode | null {
   const results = regex.exec(location.search)
   return results === null ? null : (decodeURIComponent(results[1].replace(/\+/g, ' ')) as LanguageCode)
 }
+
+let myInterval: any
+let currentResolutions: any
 
 const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
   const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
@@ -73,7 +78,7 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
     version: 'Pancake ' + routerVersion,
   })
 
-  // const lastBarsCache = new Map()
+  let lastBarsCache: any
 
   const configurationData = {
     supported_resolutions: ['1', '5', '10', '15', '30', '1H', '1D', '1W', '1M'],
@@ -112,6 +117,7 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
     // }
     return allSymbols
   }
+
   const feed = {
     onReady: (callback: any) => {
       // console.log('[onReady]: Method call');
@@ -202,7 +208,7 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
         let bars: any = []
         // if(data.data.data){
         data.map((bar: any, i: any) => {
-          const obj = {
+          const obj: any = {
             time: new Date(bar.time).getTime(),
             low: bar.low * bar.baseLow,
             high: bar.high * bar.baseHigh,
@@ -214,6 +220,7 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
           if (i === data.length - 1) {
             obj.isLastBar = true
             obj.isBarClosed = false
+            lastBarsCache = obj
           }
           bars = [...bars, obj]
           return {}
@@ -234,6 +241,50 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
         // console.log('[getBars]: Get error', error.message);
         onErrorCallback(error)
       }
+    },
+    subscribeBars: (symbolInfo, resolution, onRealtimeCallback, subscribeUID, onResetCacheNeededCallback) => {
+      console.log('[subscribeBars]: Method call with subscribeUID:', subscribeUID)
+
+      currentResolutions = resolution
+      myInterval = setInterval(async function () {
+        const resolutionMapping: any = {
+          '1': 60000,
+          '5': 300000,
+          '10': 600000,
+          '15': 900000,
+          '30': 1800000,
+          '60': 3600000,
+          '1H': 3600000,
+          '1D': 24 * 3600000,
+          '1W': 7 * 24 * 3600000,
+          '1M': 30 * 24 * 3600000,
+        }
+  
+        const provider = new ethers.providers.WebSocketProvider('wss://bsc-ws-node.nariox.org:443')
+        if(lastBarsCache === undefined) return;
+        const isNew = new Date().getTime() - lastBarsCache.time >= resolutionMapping[currentResolutions]
+        if (isNew) {
+          onRealtimeCallback(lastBarsCache);
+          lastBarsCache.time = lastBarsCache.time + resolutionMapping[currentResolutions];
+          lastBarsCache.open = lastBarsCache.close;
+          lastBarsCache.high = lastBarsCache.close;
+          lastBarsCache.low = lastBarsCache.close;
+        }
+          lastBarsCache.close = await getTokenPrice(result, provider)
+          if (lastBarsCache.low > lastBarsCache.close) {
+            lastBarsCache.low = lastBarsCache.close
+          }
+          if (lastBarsCache.high < lastBarsCache.close) {
+            lastBarsCache.high = lastBarsCache.close
+          }
+          onRealtimeCallback(lastBarsCache);
+      }, 1000 * 5) // 5s update interval
+    },
+    unsubscribeBars: (subscriberUID) => {
+      console.log('[unsubscribeBars]: Method call with subscriberUID:', subscriberUID)
+
+      clearInterval(myInterval)
+      console.log('[unsubscribeBars]: cleared')
     },
   }
   // const tvWidget = null;
