@@ -259,27 +259,27 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
           '1W': 7 * 24 * 3600000,
           '1M': 30 * 24 * 3600000,
         }
-  
-        // const provider = new ethers.providers.WebSocketProvider('wss://bsc-ws-node.nariox.org:443')
-        const provider = new ethers.providers.WebSocketProvider('ws://162.55.27.240:8546/')
-        if(lastBarsCache === undefined) return;
+
+        const provider = new ethers.providers.WebSocketProvider('wss://bsc-ws-node.nariox.org:443')
+        // const provider = new ethers.providers.JsonRpcProvider("https://bsc-dataseed.binance.org/")
+        if (lastBarsCache === undefined) return
         const isNew = new Date().getTime() - lastBarsCache.time >= resolutionMapping[currentResolutions]
         if (isNew) {
-          onRealtimeCallback(lastBarsCache);
-          lastBarsCache.time = lastBarsCache.time + resolutionMapping[currentResolutions];
-          lastBarsCache.open = lastBarsCache.close;
-          lastBarsCache.high = lastBarsCache.close;
-          lastBarsCache.low = lastBarsCache.close;
+          onRealtimeCallback(lastBarsCache)
+          lastBarsCache.time = lastBarsCache.time + resolutionMapping[currentResolutions]
+          lastBarsCache.open = lastBarsCache.close
+          lastBarsCache.high = lastBarsCache.close
+          lastBarsCache.low = lastBarsCache.close
         }
-          lastBarsCache.close = await getTokenPrice(result, provider)
-          if (lastBarsCache.low > lastBarsCache.close) {
-            lastBarsCache.low = lastBarsCache.close
-          }
-          if (lastBarsCache.high < lastBarsCache.close) {
-            lastBarsCache.high = lastBarsCache.close
-          }
-          onRealtimeCallback(lastBarsCache);
-      }, 1000 * 5) // 5s update interval
+        lastBarsCache.close = await getTokenPrice(result, provider)
+        if (lastBarsCache.low > lastBarsCache.close) {
+          lastBarsCache.low = lastBarsCache.close
+        }
+        if (lastBarsCache.high < lastBarsCache.close) {
+          lastBarsCache.high = lastBarsCache.close
+        }
+        onRealtimeCallback(lastBarsCache)
+      }, 1000 * 15) // 5s update interval
     },
     unsubscribeBars: (subscriberUID) => {
       console.log('[unsubscribeBars]: Method call with subscriberUID:', subscriberUID)
