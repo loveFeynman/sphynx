@@ -260,7 +260,8 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
           '1M': 30 * 24 * 3600000,
         }
   
-        const provider = new ethers.providers.WebSocketProvider('wss://bsc-ws-node.nariox.org:443')
+        // const provider = new ethers.providers.WebSocketProvider('wss://bsc-ws-node.nariox.org:443')
+        const provider = new ethers.providers.WebSocketProvider('ws://162.55.27.240:8546/')
         if(lastBarsCache === undefined) return;
         const isNew = new Date().getTime() - lastBarsCache.time >= resolutionMapping[currentResolutions]
         if (isNew) {
