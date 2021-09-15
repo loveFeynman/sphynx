@@ -180,7 +180,6 @@ const TransactionCard = () => {
             array.pop();
             array.unshift(transObj);
           }
-          console.log('bbb', array);
           setDataArr(array);
         }
         txHashs = []
