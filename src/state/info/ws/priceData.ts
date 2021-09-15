@@ -7,7 +7,14 @@ import bscTokenAbi from 'config/abi/erc20.json'
 import { ZERO_ADDRESS } from 'config/constants'
 import { BUSD, WBNB } from 'config/constants/tokens'
 
-const getMinTokenInfo = async (address, provider) => {
+export interface TokenInfo {
+  name: string,
+  symbol: string,
+  decimals: number,
+  totalSupply: number
+}
+
+export const getMinTokenInfo = async (address, provider): Promise<TokenInfo> => {
   const tokenContract = new Contract(
     address,
     bscTokenAbi,
@@ -30,7 +37,7 @@ const getMinTokenInfo = async (address, provider) => {
   }
 }
 
-const getPancakePairAddress = async (quoteToken, baseToken, provider) => {
+export const getPancakePairAddress = async (quoteToken, baseToken, provider) => {
   const pancakeFactoryContract = new Contract(
     PANCAKE_FACTORY_ADDRESS,
     pancakeFactoryAbi,
