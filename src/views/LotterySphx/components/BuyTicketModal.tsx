@@ -47,46 +47,17 @@ const ButtonWrapper = styled.div`
   }
 `
 const BuyTicketModal: React.FC<InjectedModalProps> = ({ onDismiss }) => {
-  const [showConfirmExpertModal, setShowConfirmExpertModal] = useState(false)
-  const [rememberExpertModeAcknowledgement, setRememberExpertModeAcknowledgement] = usePersistState(false, {
-    localStorageKey: 'pancake_expert_mode_remember_acknowledgement',
-  });
+  
   const { account } = useWeb3React();
-  const [expertMode, toggleExpertMode] = useExpertModeManager()
   const [manualTicketGenerate, setManualTicketGenerate] = useUserSingleHopOnly()
-  const [audioPlay, toggleSetAudioMode] = useAudioModeManager()
-  const { onChangeRecipient } = useSwapActionHandlers()
   const [tokenNumber, setTokenNumber] = useState('')
   const [tokens, setTokens] = useState<string>('')
 
-  
   const { t } = useTranslation()
-
-  if (showConfirmExpertModal) {
-    // return (
-    //   // <ExpertModal
-    //   //   setShowConfirmExpertModal={setShowConfirmExpertModal}
-    //   //   onDismiss={onDismiss}
-    //   //   setRememberExpertModeAcknowledgement={setRememberExpertModeAcknowledgement}
-    //   // />
-    // )
-  }
-
-  const handleExpertModeToggle = () => {
-    if (expertMode) {
-      onChangeRecipient(null)
-      toggleExpertMode()
-    } else if (rememberExpertModeAcknowledgement) {
-      onChangeRecipient(null)
-      toggleExpertMode()
-    } else {
-      setShowConfirmExpertModal(true)
-    }
-  }
 
   const handleInput = useCallback((event) => {
     const input = event.target.value
-    setTokenNumber( input)
+    setTokenNumber(input)
   }, [])
 
   const handleInputTokens = useCallback((event) => {
@@ -115,19 +86,7 @@ const BuyTicketModal: React.FC<InjectedModalProps> = ({ onDismiss }) => {
       style={{ minWidth: '380px',  maxWidth: '380px' }}
     >
       <Flex flexDirection="column">
-        {/* <TransactionSettings /> 
         <Flex justifyContent="space-between" alignItems="center" mb="24px">
-          <Flex alignItems="center">
-            <Text>{t('Expert Mode')}</Text>
-            <QuestionHelper
-              text={t('Bypasses confirmation modals and allows high slippage trades. Use at your own risk.')}
-              ml="4px"
-            />
-          </Flex>
-          <Toggle id="toggle-expert-mode-button" scale="md" checked={expertMode} onChange={handleExpertModeToggle} /> 
-        </Flex> */}
-        <Flex justifyContent="space-between" alignItems="center" mb="24px">
-
           <Flex alignItems="center">
             <Text>{t('Manual Ticket Numbers')}</Text>
           </Flex>
@@ -137,7 +96,7 @@ const BuyTicketModal: React.FC<InjectedModalProps> = ({ onDismiss }) => {
             scale="md"
             onChange={() => {
               setManualTicketGenerate(!manualTicketGenerate);
-              setTokenNumber('0');
+              setTokenNumber('');
             }}
           />
         </Flex>

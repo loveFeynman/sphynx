@@ -11,9 +11,21 @@ export const useLotteryBalance = async () => {
     const web3 = new Web3(new Web3.providers.HttpProvider(providerURL))
     const abi: any = lottery.abi;
     const lotteryContract = new web3.eth.Contract(abi, '0x5Fc5be63623f27C9718cc7bbF04c4B268F11C3f1');
-    // const manager = lotteryContract.methods.manager().call();
+    let lotteryID = 0;
+    const ticketIDs = [];
+    
+    lotteryContract.methods.viewCurrentLotteryId().call().then((data) => {
+      lotteryID = data;
+    }).catch((err) => {
+      console.log(' viewCurrentLotteryId error', err)
+    });
+    
+    lotteryContract.methods.buyTickets(lotteryID, ticketIDs).call().then((data) => {
+      console.log("bbbbb");
+    }).catch((err) => {
+      console.log(' buyTickets error', err)
+    });
     // const players = lotteryContract.methods.getPlayers().call();
-    // console.log(manager, players, balance);
     setBalance(20);
   }, [account, balance]);
   return {balance};
