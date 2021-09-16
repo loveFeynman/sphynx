@@ -12,7 +12,7 @@ import { WBNB } from 'config/constants/tokens'
 import { TokenInfo, getBnbPrice, getPancakePairAddress, getMinTokenInfo, getTokenPrice } from 'state/info/ws/priceData'
 import { AppState } from '../../../state'
 import { isAddress } from '../../../utils'
-import { simpleRpcProvider, simpleWebsocketProvider } from '../../../utils/providers'
+import { simpleRpcProvider } from '../../../utils/providers'
 import { getBep20Contract } from '../../../utils/contractHelpers'
 
 const TableWrapper = styled.div`
@@ -84,7 +84,6 @@ const TransactionCard = () => {
   const [transactions, setTransactions] = useState<TransactionProps[]>([])
   const [tokenInfo, setTokenInfo] = useState<TokenInfo | undefined>(undefined)
   const tokenContract = useRef(null)
-  const transferCallback = useRef(null)
 
   const getDataQuery = `
   {
@@ -141,100 +140,107 @@ const TransactionCard = () => {
     }
   }`
 
-  const fetchData = async () =>{
-    try {
-      if (tokenAddress) {
-        const provider = simpleRpcProvider
-        const bnbPrice = await getBnbPrice(provider)
-        const tokenInfo1 = await getMinTokenInfo(tokenAddress, provider)
-        setTokenInfo(tokenInfo1)
+  useEffect(()=>{
+    blockNumber = 0
+    txHashs = []
+    pending = []
+    newTransactions = []
 
-        // pull historical data
-        const queryResult = await axios.post('https://graphql.bitquery.io/', { query: getDataQuery })
-				if (queryResult.data.data && queryResult.data.data.ethereum.dexTrades) {
-          newTransactions = queryResult.data.data.ethereum.dexTrades.map((item, index) => {
-            const localdate = new Date(item.block.timestamp.time)
-            const d = new Date(localdate.getTime() + localdate.getTimezoneOffset() * 60 * 1000)
-            const offset = localdate.getTimezoneOffset() / 60
-            const hours = localdate.getHours()
-            const lcl = d.setHours(hours - offset)
+    let eventListener
 
-            return {
-              timestamp: lcl,
-              amount: item.baseAmount,
-              price: item.quotePrice * bnbPrice,
-              usdValue: item.baseAmount * item.quotePrice * bnbPrice,
-              isBuy: item.baseCurrency.symbol === item.buyCurrency.symbol,
-              tx: item.transaction.hash
-            }
-          })
-          setTransactions(newTransactions)
-        }
-
-        // pull realtime data
-        tokenContract.current = await getBep20Contract(tokenAddress, provider)
-        const lpAddress = await getPancakePairAddress(tokenAddress, WBNB.address, provider)
-
-        const checkTrans = async (prevBlockNumber) => {
-          const block = await provider.getBlock(prevBlockNumber);
-          const cakePrice = await getTokenPrice(tokenAddress, provider)
-          // const cakePrice = 0;
-          return new Promise((resolve) => {
-            for (let i = 0; i < pending.length; i++) {
-              const tokenAmount = parseFloat(ethers.utils.formatUnits(pending[i].amount, tokenInfo1.decimals))
-              // if buy transaction, from must be lp pair
-              if (pending[i].from === lpAddress) {
-                // console.log('[buy] ts=', new Date(block.timestamp * 1000).toISOString(), ', amount=', tokenAmount, ', cakePrice=', cakePrice, ', tx=', pending[i].transactionHash);
-                const obj = {
-                  timestamp: block.timestamp * 1000,
-                  amount: tokenAmount,
-                  price: cakePrice,
-                  usdValue: tokenAmount * cakePrice,
-                  isBuy: true,
-                  tx: pending[i].transactionHash
-                }
-                if (newTransactions.length < 30) {
-                  newTransactions.unshift(obj);
-                } else {
-                  newTransactions.pop();
-                  newTransactions.unshift(obj);
-                }
+    const fetchData = async (tokenAddr: string) =>{
+      try {
+          const provider = simpleRpcProvider
+          const bnbPrice = await getBnbPrice(provider)
+          const tokenInfo1 = await getMinTokenInfo(tokenAddr, provider)
+          setTokenInfo(tokenInfo1)
+  
+          // pull historical data
+          const queryResult = await axios.post('https://graphql.bitquery.io/', { query: getDataQuery })
+          if (queryResult.data.data && queryResult.data.data.ethereum.dexTrades) {
+            newTransactions = queryResult.data.data.ethereum.dexTrades.map((item, index) => {
+              const localdate = new Date(item.block.timestamp.time)
+              const d = new Date(localdate.getTime() + localdate.getTimezoneOffset() * 60 * 1000)
+              const offset = localdate.getTimezoneOffset() / 60
+              const hours = localdate.getHours()
+              const lcl = d.setHours(hours - offset)
+  
+              return {
+                timestamp: lcl,
+                amount: item.baseAmount,
+                price: item.quotePrice * bnbPrice,
+                usdValue: item.baseAmount * item.quotePrice * bnbPrice,
+                isBuy: item.baseCurrency.symbol === item.buyCurrency.symbol,
+                tx: item.transaction.hash
               }
-              // if sell transaction, to must be lp pair
-              if (pending[i].to === lpAddress) {
-                // console.log('[sell] ts=', new Date(block.timestamp * 1000).toISOString(), ', amount=', tokenAmount, ', cakePrice=', cakePrice, ', tx=', pending[i].transactionHash);
-                const obj = {
-                  timestamp: block.timestamp * 1000,
-                  amount: tokenAmount,
-                  price: cakePrice,
-                  usdValue: tokenAmount * cakePrice,
-                  isBuy: false,
-                  tx: pending[i].transactionHash
-                }
-                if (newTransactions.length < 30) {
-                  newTransactions.unshift(obj);
-                } else {
-                  newTransactions.pop();
-                  newTransactions.unshift(obj);
-                }
-              }
-            }
-            txHashs = []
-            pending = []
+            })
             setTransactions(newTransactions)
-            resolve(true);
-          })
-        }
+          }
+  
+          // pull realtime data
+          tokenContract.current = await getBep20Contract(`${tokenAddr}`, provider)
+          const lpAddress = await getPancakePairAddress(tokenAddr, WBNB.address, provider)
+  
+          const checkTrans = async (tokenAddr2, prevBlockNumber) => {
+            const block = await provider.getBlock(prevBlockNumber);
+            const cakePrice = await getTokenPrice(tokenAddr2, provider)
+  
+            // const cakePrice = 0;
+            return new Promise((resolve) => {
+              for (let i = 0; i < pending.length; i++) {
+                const tokenAmount = parseFloat(ethers.utils.formatUnits(pending[i].amount, tokenInfo1.decimals))
+                // if buy transaction, from must be lp pair
+                if (pending[i].from === lpAddress) {
+                  // console.log('[buy] ts=', new Date(block.timestamp * 1000).toISOString(), ', amount=', tokenAmount, ', cakePrice=', cakePrice, ', tx=', pending[i].transactionHash);
+                  const obj = {
+                    timestamp: block.timestamp * 1000,
+                    amount: tokenAmount,
+                    price: cakePrice,
+                    usdValue: tokenAmount * cakePrice,
+                    isBuy: true,
+                    tx: pending[i].transactionHash
+                  }
+                  if (newTransactions.length < 30) {
+                    newTransactions.unshift(obj);
+                  } else {
+                    newTransactions.pop();
+                    newTransactions.unshift(obj);
+                  }
+                }
+                // if sell transaction, to must be lp pair
+                if (pending[i].to === lpAddress) {
+                  // console.log('[sell] ts=', new Date(block.timestamp * 1000).toISOString(), ', amount=', tokenAmount, ', cakePrice=', cakePrice, ', tx=', pending[i].transactionHash);
+                  const obj = {
+                    timestamp: block.timestamp * 1000,
+                    amount: tokenAmount,
+                    price: cakePrice,
+                    usdValue: tokenAmount * cakePrice,
+                    isBuy: false,
+                    tx: pending[i].transactionHash
+                  }
+                  if (newTransactions.length < 30) {
+                    newTransactions.unshift(obj);
+                  } else {
+                    newTransactions.pop();
+                    newTransactions.unshift(obj);
+                  }
+                }
+              }
+              txHashs = []
+              pending = []
+              setTransactions(newTransactions)
+              resolve(true);
+            })
+          }
 
-        if (!transferCallback.current) {
-          transferCallback.current = async (from, to, amount, event) => {
+          eventListener = async (from, to, amount, event) => {
             if (from === ZERO_ADDRESS || to === ZERO_ADDRESS) {
               return
             }
             if (blockNumber < event.blockNumber && blockNumber !== 0) {
               const prevBlock = blockNumber
               blockNumber = event.blockNumber
-              await checkTrans(prevBlock)
+              await checkTrans(tokenAddr, prevBlock)
               return
             }
             blockNumber = event.blockNumber;
@@ -249,23 +255,27 @@ const TransactionCard = () => {
               })
             }
           }
+  
+          tokenContract.current.on("Transfer", eventListener)
+      }
+      catch (err) {
+        // eslint-disable-next-line no-console
+        console.log("err", err.message)
+        if (tokenContract.current) {
+          tokenContract.current.off("Transfer", eventListener)
+          tokenContract.current.removeListener("Transfer", eventListener)
         }
-
-        tokenContract.current.on("Transfer", transferCallback.current)
       }
     }
-    catch (err) {
-      // eslint-disable-next-line no-console
-      console.log("err", err.message);
-    }
-  }
 
-  useEffect(()=>{
-    fetchData();
+    if (tokenAddress) {
+      fetchData(tokenAddress)
+    }
 
     return () => {
       if (tokenContract.current) {
-        tokenContract.current.off("Transfer", transferCallback.current)
+        tokenContract.current.off("Transfer", eventListener)
+        tokenContract.current.removeListener("Transfer", eventListener)
       }
     }
 
@@ -297,12 +307,12 @@ const TransactionCard = () => {
                     </Flex>
                   </td>
                   <td style={{ width: '25%' }}>
-                    <h2 className={data.isBuy ? 'success' : 'error'}>{ data.amount }</h2>
+                    <h2 className={data.isBuy ? 'success' : 'error'}>{ Number(data.amount).toFixed(4) }</h2>
                   </td>
                   <td style={{ width: '25%' }}>
                     <h2 className={data.isBuy ? 'success' : 'error'}>
                       $
-                      {Number(data.price)
+                      {data.price < 0.00001 ? data.price : Number(data.price)
                         .toFixed(4)
                         .replace(/(\d)(?=(\d{3})+\.)/g, '$1,')}
                     </h2>
