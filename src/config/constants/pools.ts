@@ -7,8 +7,8 @@ const pools: PoolConfig[] = [
     stakingToken: tokens.sphynx,
     earningToken: tokens.sphynx,
     contractAddress: {
-      97: '0xd3af5fe61dbaf8f73149bfcfa9fb653ff096029a',
-      56: '0x73feaa1eE314F8c655E354234017bE2193C9E24E',
+      97: '0x96868531D2a20868cF92bF8287F0dE949Baf0966',
+      56: '0x96868531D2a20868cF92bF8287F0dE949Baf0966',
     },
     poolCategory: PoolCategory.CORE,
     harvest: true,
