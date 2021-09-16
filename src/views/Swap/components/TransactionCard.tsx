@@ -12,7 +12,7 @@ import { WBNB } from 'config/constants/tokens'
 import { TokenInfo, getBnbPrice, getPancakePairAddress, getMinTokenInfo, getTokenPrice } from 'state/info/ws/priceData'
 import { AppState } from '../../../state'
 import { isAddress } from '../../../utils'
-import { simpleRpcProvider } from '../../../utils/providers'
+import { simpleRpcProvider, simpleWebsocketProvider } from '../../../utils/providers'
 import { getBep20Contract } from '../../../utils/contractHelpers'
 
 const TableWrapper = styled.div`
@@ -150,7 +150,7 @@ const TransactionCard = () => {
 
     const fetchData = async (tokenAddr: string) =>{
       try {
-          const provider = simpleRpcProvider
+          const provider = simpleWebsocketProvider // simpleRpcProvider
           const bnbPrice = await getBnbPrice(provider)
           const tokenInfo1 = await getMinTokenInfo(tokenAddr, provider)
           setTokenInfo(tokenInfo1)
