@@ -6,6 +6,7 @@ import axios from 'axios'
 import Web3 from 'web3'
 import MainLogo from 'assets/svg/icon/logo_new.svg'
 import MoreIcon from 'assets/svg/icon/MoreIcon2.svg'
+import { WEBSOCKET_URL } from 'utils/providers'
 import tokenABI from '../../../assets/abis/erc20.json'
 
 const Wrapper = styled.div`
@@ -41,7 +42,7 @@ const DividendPanel: React.FC = () => {
     .then(({data}) => {
       setPrice(data.price)
     })
-    const providerURL = 'wss://bsc-ws-node.nariox.org:443'
+    const providerURL = WEBSOCKET_URL
     const web3 = new Web3(new Web3.providers.HttpProvider(providerURL))
     const abi: any = tokenABI
     const tokenContract = new web3.eth.Contract(abi, '0x3B39243e10f451A7aCfcf9E02C6A37303b61da46')
