@@ -238,7 +238,6 @@ const TransactionCard = () => {
             if (blockNumber < event.blockNumber && blockNumber !== 0) {
               const prevBlock = blockNumber
               blockNumber = event.blockNumber
-              console.log('blockNumber=', blockNumber, ', tokenAddr=', tokenAddr, ', input=', input, ', tokenAddress=', tokenAddress)
               await checkTrans(tokenAddr, prevBlock)
               return
             }
