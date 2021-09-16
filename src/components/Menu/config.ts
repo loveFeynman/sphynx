@@ -56,7 +56,7 @@ export const links = [
   {
     label: 'Learning Hub',
     icon: LearningHubIcon,
-    href: 'https://cryptolearnhub.com/',
+    href: 'https://www.sphynxlearning.co/',
   },
   {
     label: 'NFT Marketplace (coming soon)',
