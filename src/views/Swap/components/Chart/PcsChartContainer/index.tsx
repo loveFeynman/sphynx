@@ -15,6 +15,7 @@ import { useSelector } from 'react-redux'
 import { AppState } from 'state'
 import { isAddress } from 'utils'
 import * as ethers from 'ethers'
+import { simpleRpcProvider, simpleWebsocketProvider } from '../../../../../utils/providers'
 import { getTokenPrice } from 'state/info/ws/priceData'
 
 const ChartContainer = styled.div<{ height: number }>`
@@ -242,7 +243,13 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
         onErrorCallback(error)
       }
     },
-    subscribeBars: (symbolInfo, resolution, onRealtimeCallback, subscribeUID, onResetCacheNeededCallback) => {
+    subscribeBars: (
+      symbolInfo: any,
+      resolution: any,
+      onRealtimeCallback: any,
+      subscribeUID: any,
+      onResetCacheNeededCallback: any,
+    ) => {
       console.log('[subscribeBars]: Method call with subscribeUID:', subscribeUID)
 
       currentResolutions = resolution
@@ -260,31 +267,33 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
           '1M': 30 * 24 * 3600000,
         }
 
-        const provider = new ethers.providers.WebSocketProvider('wss://bsc-ws-node.nariox.org:443')
-        // const provider = new ethers.providers.JsonRpcProvider("https://bsc-dataseed.binance.org/")
+        const provider = new ethers.providers.WebSocketProvider(
+          'wss://speedy-nodes-nyc.moralis.io/b11b00ad906204d865e2d263/bsc/mainnet/archive/ws',
+        )
         if (lastBarsCache === undefined) return
         const isNew = new Date().getTime() - lastBarsCache.time >= resolutionMapping[currentResolutions]
+
+        lastBarsCache.close = await getTokenPrice(result, provider)
         if (isNew) {
-          onRealtimeCallback(lastBarsCache)
-          lastBarsCache.time = lastBarsCache.time + resolutionMapping[currentResolutions]
+          lastBarsCache.time = new Date().getTime()
           lastBarsCache.open = lastBarsCache.close
           lastBarsCache.high = lastBarsCache.close
           lastBarsCache.low = lastBarsCache.close
-        }
-        lastBarsCache.close = await getTokenPrice(result, provider)
-        if (lastBarsCache.low > lastBarsCache.close) {
-          lastBarsCache.low = lastBarsCache.close
-        }
-        if (lastBarsCache.high < lastBarsCache.close) {
-          lastBarsCache.high = lastBarsCache.close
+        } else {
+          if (lastBarsCache.low > lastBarsCache.close) {
+            lastBarsCache.low = lastBarsCache.close
+          }
+          if (lastBarsCache.high < lastBarsCache.close) {
+            lastBarsCache.high = lastBarsCache.close
+          }
         }
         onRealtimeCallback(lastBarsCache)
-      }, 1000 * 15) // 5s update interval
+      }, 1000 * 15) // 15s update interval
     },
     unsubscribeBars: (subscriberUID) => {
       console.log('[unsubscribeBars]: Method call with subscriberUID:', subscriberUID)
 
-      clearInterval(myInterval)
+      // clearInterval(myInterval)
       console.log('[unsubscribeBars]: cleared')
     },
   }
