@@ -146,8 +146,6 @@ const TransactionCard = () => {
     pending = []
     newTransactions = []
 
-    let eventListener
-
     const fetchData = async (tokenAddr: string) =>{
       try {
           const provider = simpleWebsocketProvider // simpleRpcProvider
@@ -232,14 +230,15 @@ const TransactionCard = () => {
               resolve(true);
             })
           }
-
-          eventListener = async (from, to, amount, event) => {
+  
+          tokenContract.current.on("Transfer", async (from, to, amount, event) => {
             if (from === ZERO_ADDRESS || to === ZERO_ADDRESS) {
               return
             }
             if (blockNumber < event.blockNumber && blockNumber !== 0) {
               const prevBlock = blockNumber
               blockNumber = event.blockNumber
+              console.log('blockNumber=', blockNumber, ', tokenAddr=', tokenAddr, ', input=', input, ', tokenAddress=', tokenAddress)
               await checkTrans(tokenAddr, prevBlock)
               return
             }
@@ -254,16 +253,13 @@ const TransactionCard = () => {
                 transactionHash: event.transactionHash
               })
             }
-          }
-  
-          tokenContract.current.on("Transfer", eventListener)
+          })
       }
       catch (err) {
         // eslint-disable-next-line no-console
         console.log("err", err.message)
         if (tokenContract.current) {
-          tokenContract.current.off("Transfer", eventListener)
-          tokenContract.current.removeListener("Transfer", eventListener)
+          tokenContract.current.removeAllListeners("Transfer")
         }
       }
     }
@@ -274,13 +270,12 @@ const TransactionCard = () => {
 
     return () => {
       if (tokenContract.current) {
-        tokenContract.current.off("Transfer", eventListener)
-        tokenContract.current.removeListener("Transfer", eventListener)
+        tokenContract.current.removeAllListeners("Transfer")
       }
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps 
-  }, [input])
+  }, [])
 
   // eslint-disable-next-line no-console
   return (
