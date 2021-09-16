@@ -311,7 +311,6 @@ export default function Lottery() {
                 ))}
               </WinningCardContainer>
             </div>  
-            {/* <BuyTicketModal onDismiss={()=>setShowBuyModal(false)}/> */}
         </>
       )}
       {activeIndex === 1 && (

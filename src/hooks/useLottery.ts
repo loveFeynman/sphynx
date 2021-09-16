@@ -6,6 +6,7 @@ import lottery from 'assets/abis/lottery.json'
 export const useLotteryBalance = async () => {
   const { account } = useWeb3React();
   const [balance, setBalance] = useState(0);
+
   useEffect(() => {
     const providerURL = 'https://data-seed-prebsc-1-s1.binance.org:8545/'
     const web3 = new Web3(new Web3.providers.HttpProvider(providerURL))
@@ -19,14 +20,16 @@ export const useLotteryBalance = async () => {
     }).catch((err) => {
       console.log(' viewCurrentLotteryId error', err)
     });
-    
-    lotteryContract.methods.buyTickets(lotteryID, ticketIDs).call().then((data) => {
-      console.log("bbbbb");
-    }).catch((err) => {
-      console.log(' buyTickets error', err)
-    });
+   
+    // lotteryContract.methods.buyTickets(lotteryID, ticketIDs).send(/**{from: }}*/).then((data) => {
+    //   console.log("bbbbb");
+    // }).catch((err) => {
+    //   console.log(' buyTickets error', err)
+    // });
     // const players = lotteryContract.methods.getPlayers().call();
     setBalance(20);
   }, [account, balance]);
+  // function approve(address spender, uint256 amount) external returns (bool);
+
   return {balance};
 }
