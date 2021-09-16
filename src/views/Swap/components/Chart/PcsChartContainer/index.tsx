@@ -15,6 +15,7 @@ import { useSelector } from 'react-redux'
 import { AppState } from 'state'
 import { isAddress } from 'utils'
 import * as ethers from 'ethers'
+import { simpleRpcProvider, simpleWebsocketProvider } from '../../../../../utils/providers'
 import { getTokenPrice } from 'state/info/ws/priceData'
 
 const ChartContainer = styled.div<{ height: number }>`
@@ -271,6 +272,7 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
           lastBarsCache.high = lastBarsCache.close
           lastBarsCache.low = lastBarsCache.close
         }
+        console.log("address", result);
         lastBarsCache.close = await getTokenPrice(result, provider)
         if (lastBarsCache.low > lastBarsCache.close) {
           lastBarsCache.low = lastBarsCache.close
