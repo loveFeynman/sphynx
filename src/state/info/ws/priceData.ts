@@ -92,10 +92,10 @@ export const getBnbPrice = async (provider) => {
 
 export const getTokenPrice = async (tokenAddress, provider) => {
   const bnbPrice = await getBnbPrice(provider);
-  if (tokenAddress === WBNB.address) {
+  if (tokenAddress.toLowerCase() === WBNB.address.toLowerCase()) {
     return bnbPrice;
   }
-  if (tokenAddress === BUSD[ChainId.MAINNET].address) {
+  if (tokenAddress.toLowerCase() === BUSD[ChainId.MAINNET].address.toLowerCase()) {
     const tokenBnbLp = await getPancakeLiquidityInfo(tokenAddress, WBNB.address, provider);
     return tokenBnbLp.baseToken.reserve / tokenBnbLp.quoteToken.reserve * bnbPrice;
   }
