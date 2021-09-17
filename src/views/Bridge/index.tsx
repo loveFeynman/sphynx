@@ -10,10 +10,16 @@ import BridgeCard from './components/BridgeCard'
 const Grid = styled.div`
   justify-content: center;
   padding-top: 55px;
-  display: grid;
-  grid-template-columns: repeat(3, auto);
-  grid-template-rows: repeat(4, auto);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 20px;
   margin-bottom: 12px;
+  ${({ theme }) => theme.mediaQueries.md} {
+    display: grid;
+    grid-template-columns: repeat(3, auto);
+    grid-template-rows: repeat(4, auto);
+  }
 `
 
 export default function Bridge() {

@@ -21,7 +21,7 @@ const Container = styled.div`
 	background: rgba(0,0,0,0.4);
 	width: 340px;
 	height: 624px;
-	margin: 0px 60px;
+	margin: 0px 60px 20px;
 	border-radius: 16px;
 `
 const CardHeader = styled.div`
