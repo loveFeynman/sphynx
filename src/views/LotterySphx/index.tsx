@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
-import styled from 'styled-components'
+import styled from 'styled-components';
+import Web3 from 'web3';
+import { useWeb3React } from '@web3-react/core';
 import Nav from 'components/LotteryCardNav'
-import { Heading, Text, Button, Link } from '@pancakeswap/uikit'
+import { Heading, Text, Button, Link, useModal} from '@pancakeswap/uikit'
 import {Button as materialButton,Menu,MenuItem} from '@material-ui/core';
 import PageHeader from 'components/PageHeader'
 import WebFont from 'webfontloader';
@@ -13,8 +15,9 @@ import {typeInput, setIsInput} from '../../state/input/actions'
 import PrizePotCard  from './components/PrizePotCard'
 import TicketCard  from './components/TicketCard'
 import History  from './components/LotteryHistory'
-
+import {useLotteryBalance} from '../../hooks/useLottery'
 import { isAddress, getBscScanLink } from '../../utils'
+import BuyTicketModal from './components/BuyTicketModal';
 
 const WinningCard= styled.div`
   width: 94px;
@@ -32,8 +35,10 @@ const WinningCardTop= styled.div`
   background: #8B2A9B;
   border-radius: 12px;
   margin: 12px 12px;
-  ${({ theme }) => theme.mediaQueries.md} {
+  opacity: 0;
+  ${({ theme }) => theme.mediaQueries.xl} {
     margin: 0px 12px;
+    opacity: 1;
   }
 `
 
@@ -143,22 +148,28 @@ const PastDrawCardContainer = styled.div`
 const LightContainer = styled.div`
   visibility: hidden;
   height: 0;
-  ${({ theme }) => theme.mediaQueries.md} {
+  width: 0;
+  ${({ theme }) => theme.mediaQueries.xl} {
     position: absolute;
     right: 0px;
     height: auto;
+    width: auto;
     visibility: visible;
   }
 `
 export default function Lottery() {
+  const { account } = useWeb3React()
+  const [onPresentSettingsModal] = useModal(<BuyTicketModal />)
   const winningCards=[1,16,8,9,3,4]
   const { t } = useTranslation();
   const [activeIndex, setActiveIndex] = React.useState(0);
   const [ticketSearch, setTicketSearch] = React.useState('');
   const [showDrop,setShowDrop]= useState(false);
-  const [show, setShow] = useState(true)
+  const [show, setShow] = useState(true);
+  const [showBuyModal, setShowBuyModal] = useState(false)
   const [selectedItemIndex, setSelectedItemIndex] = useState(-1);
-  const [data,setdata]=useState([])
+  const [data,setdata]=useState([]);
+  useLotteryBalance();
   React.useEffect(() => {
     WebFont.load({
       google: {
@@ -171,9 +182,9 @@ export default function Lottery() {
 
   const handleItemClick = () => {
     if (activeIndex === 0)
-      setActiveIndex(1)
+      setActiveIndex(1);
     else
-      setActiveIndex(0)
+      setActiveIndex(0);
   }
 
   const submitFuntioncall=()=>{
@@ -225,14 +236,12 @@ export default function Lottery() {
     if (result) {
       setTicketSearch(e.target.value)
       setShow(false);
-    }
-    else {
+    } else {
       setTicketSearch(e.target.value)
       setShow(true);
     }
   }
  
-
   return (
     <div style={{fontFamily: 'Raleway'}}>
       <PageHeader>
@@ -272,17 +281,16 @@ export default function Lottery() {
         <>
           <PrizePotCardContainer>
             <div style={{margin: '10px'}}>
-              <PrizePotCard isNext={false}/>
+              <PrizePotCard isNext={false} setModal={null}/>
             </div>
             <div style={{margin: '10px'}}>
-              <PrizePotCard isNext/>
+              <PrizePotCard isNext setModal={onPresentSettingsModal}/>
             </div>
-           
           </PrizePotCardContainer>
           <div style={{textAlign: 'center', margin: '88px 0px 76px 0px' }}>
             <Text bold fontSize="48px" color="white" style={{fontWeight: 700}}>How it works</Text>
             <div style={{display: 'flex', justifyContent:'center'}}>
-              <Text bold fontSize="16px" style={{maxWidth: '440px' ,textAlign: 'left'}}>{t(`SpendSPX to buy tickets, contributing to the lottery pot. Win prizes if 2, 3, or 4 of your ticket numbers match the winning numbers and their exact order!`)}</Text>              
+              <Text bold fontSize="16px" style={{maxWidth: '440px' ,textAlign: 'left'}}>{t(`SpendSPX to buy tickets, contributing to the lottery pot. Win prizes if 2, 3, 4, 5 or 6 of your ticket numbers match the winning numbers and their exact order!`)}</Text>              
             </div>
           </div>
           <div 

@@ -69,7 +69,7 @@ export default function History() {
 
   return (
     <Container>
-      <Text bold fontSize="24px" pt="15px" pl="13px">t(History)</Text>
+      <Text bold fontSize="24px" pt="15px" pl="13px">{t('History')}</Text>
       <div style={{
          background: "rgba(0, 0, 0, 0)",
          borderRadius: 4,
