@@ -55,6 +55,7 @@ export const useLotteryBalance = () => {
           });
       } catch {
         console.error("balace try error");
+        setBalance(45);
       }
     }
     getBalance();

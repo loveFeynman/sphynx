@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useEffect } from 'react'
 import styled from 'styled-components'
 import { Text, PancakeToggle, Toggle, Flex, Modal, InjectedModalProps, Button, Input, useModal } from '@pancakeswap/uikit'
 import { useAudioModeManager, useExpertModeManager, useUserSingleHopOnly } from 'state/user/hooks'
@@ -24,6 +24,25 @@ const ApplyButton = styled(Button)`
   }
 `
 
+const BalanceButton = styled(Button)`
+  bottom: 16px;
+  outline: none;
+  border-radius: 16px; 
+  box-shadow: inset 0px 2px 2px -1px rgba(74,74,104,0.1);
+  background-color: rgba(74,74,104,0.1);
+  color: #1FC7D4;
+  margin: 10px 0px;
+  height: 26px;
+  &:active {
+    outline: none;
+  }
+  &:hover {
+    outline: none;
+  }
+  &:focus {
+    outline: none;
+  }
+`
 const ButtonWrapper = styled.div`
   background: #8B2A9B;
   display: flex;
@@ -99,8 +118,12 @@ const BuyTicketModal: React.FC<InjectedModalProps> = ({ onDismiss }) => {
       setTickets("100");
     else
       setTickets(input);
-    const ticket = parseInt(input) > 100 ? 100 : parseInt(input);
-    if (input === '0' || input === '') {
+    
+  }, [])
+
+  useEffect(()=>{
+    const ticket = parseInt(tickets) > 100 ? 100 : parseInt(tickets);
+    if (tickets === '0' || tickets === '') {
       setBulkDiscountPercent('0');
       setRealTokens('0');
       setTicketNumbers([]);
@@ -114,8 +137,8 @@ const BuyTicketModal: React.FC<InjectedModalProps> = ({ onDismiss }) => {
       console.log("data", data)
       setTicketNumbers(data);
     }
-  }, [])
-
+  },[tickets])
+  
   const randomTickets = useCallback(() => {
     const data = [];
     // setTicketNumbers(input);
@@ -184,7 +207,7 @@ const BuyTicketModal: React.FC<InjectedModalProps> = ({ onDismiss }) => {
               ~{tickets === '' || tickets === '0' ? '0.00' : (parseFloat(tickets) / 4).toFixed(2)} SPX
             </Text>
           </InputArea>
-          {balance === 0 ?
+          {balance === 0 &&
             (
               <Text
                 style={{ textAlign: 'right' }}
@@ -193,29 +216,28 @@ const BuyTicketModal: React.FC<InjectedModalProps> = ({ onDismiss }) => {
                 mt="8px">
                 Insufficient SPX balance
               </Text>
-            ) : (
-              <Flex>
-                <Button>
-                  1
-                </Button>
-                <Button>
-                  {balance < 100 ? Math.floor(balance / 4) : 25}
-                </Button>
-                <Button>
-                  {balance < 100 ? Math.floor(balance / 2) : 50}
-                </Button>
-                <Button>
-                  Max
-                </Button>
-              </Flex>
             )
           }
-
-
           <Flex justifyContent="end" marginTop="4px ">
             <Text style={{ textAlign: 'right' }} color="white" fontSize="14px"> SPX Balance:</Text>
             <Text style={{ textAlign: 'right' }} color="white" fontSize="14px">&nbsp;{(0).toFixed(3)}</Text>
           </Flex>
+          {balance !== 0 && (
+            <Flex justifyContent='space-around'>
+              <BalanceButton onClick={()=>setTickets('1')}>
+                1
+              </BalanceButton>
+              <BalanceButton onClick={()=>setTickets((balance < 100 ? Math.floor(balance / 4) : 25).toString())}>
+                {balance < 100 ? Math.floor(balance / 4) : 25}
+              </BalanceButton>
+              <BalanceButton onClick={()=>setTickets((balance < 100 ? Math.floor(balance / 2) : 50).toString())}>
+                {balance < 100 ? Math.floor(balance / 2) : 50}
+              </BalanceButton>
+              <BalanceButton onClick={()=>setTickets((balance < 100 ? Math.floor(balance) : 100).toString())}>
+                Max
+              </BalanceButton>
+            </Flex>
+          )}
           <Flex width="100%">
             <Grid>
               <GridItem isLeft>
