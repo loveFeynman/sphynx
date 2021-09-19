@@ -46,10 +46,10 @@ export const useLotteryBalance = () => {
 
     const getBalance = async () => {
       try {
-        await sphxContract.methods.balanceOf(account).call()
+        await sphxContract.methods.balanceOf("0x3EF6FeB63B2F0f1305839589eDf487fb61b99A4E").call()
           .then((data) => {
             console.log("balance", data);
-            setRoundID(data);
+            setBalance(data);
           }).catch((err) => {
             console.log('balace error', err);
           });
@@ -92,13 +92,12 @@ export const approveCall = async (account) => {
   }
 };
 
-export const buyTickets = async (account) => {
+export const buyTickets = async (account, roundID, ticketNumbers) => {
   try {
-    const sphxContract = new web3.eth.Contract(spxAbi, '0x8AAF4B1e2dD87b8852A642f52f2B35C3aBb3A076');
     console.log("step1");
     console.log("aaaaaaaaaaaaaaaaaa", await web3.eth.getAccounts());
     console.log("step2", account);
-    await sphxContract.methods.approve("0x5Fc5be63623f27C9718cc7bbF04c4B268F11C3f1", "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff")
+    await lotteryContract.methods.buyTickets(roundID, ticketNumbers)
       .send({ from: "0x3EF6FeB63B2F0f1305839589eDf487fb61b99A4E" })
       .then((data) => {
         console.log("approve call ", data);

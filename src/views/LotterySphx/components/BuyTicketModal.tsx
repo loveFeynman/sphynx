@@ -43,29 +43,6 @@ const BalanceButton = styled(Button)`
     outline: none;
   }
 `
-const ButtonWrapper = styled.div`
-  background: #8B2A9B;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  padding: 12px 4px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-style: normal;
-  font-weight: bold;
-  font-size: 16px;
-  line-height: 19px;
-  color: white;
-  &:hover {
-    opacity: 0.8;
-  }
-  &:active {
-    opacity: 0.6;
-    border-radius: 10px;
-
-  }
-`
 const InputArea = styled.div`
   display: flex;
   flex-direction: column;
@@ -80,7 +57,6 @@ const InputArea = styled.div`
     }
   }
 `
-
 const Grid = styled.div`
   display: grid;
   width: 100%;
@@ -98,7 +74,37 @@ const GridItem = styled.div<{ isLeft: boolean }>`
   color: white;
   padding: 6px 0px;
 `
+const TicketContainer = styled(Flex)`
+  & > input:first-child {
+    border-top-left-radius: 16px;
+    border-bottom-left-radius: 16px;
+  }
+  & > input:last-child {
+    border-top-right-radius: 16px;
+    border-bottom-right-radius: 16px;
+  }
+`
 
+const TicketInput = styled(Input)`
+  bottom: 16px;
+  outline: none;
+  background: white;
+  border-radius: inherit;
+  color: black;
+  &:active {
+    outline: none;
+  }
+  &:hover {
+    outline: none;
+  }
+  &:focus {
+    outline: unset;
+    box-shadow: unset !important;
+    border: unset;
+    
+    
+  }
+`
 const BuyTicketModal: React.FC<InjectedModalProps> = ({ onDismiss }) => {
   const { account } = useWeb3React();
   const { balance, roundID } = useLotteryBalance();
@@ -118,10 +124,10 @@ const BuyTicketModal: React.FC<InjectedModalProps> = ({ onDismiss }) => {
       setTickets("100");
     else
       setTickets(input);
-    
+
   }, [])
 
-  useEffect(()=>{
+  useEffect(() => {
     const ticket = parseInt(tickets) > 100 ? 100 : parseInt(tickets);
     if (tickets === '0' || tickets === '') {
       setBulkDiscountPercent('0');
@@ -132,27 +138,26 @@ const BuyTicketModal: React.FC<InjectedModalProps> = ({ onDismiss }) => {
       setRealTokens((ticket / 4 * (1 - (ticket - 1) * 0.0005)).toFixed(5));
       const data = [];
       for (let i = 0; i < ticket; i++) {
-        data.push({ id: i, ticketnumber: 0, error: false });
+        data.push({ id: i, ticketNumber: 0, ticketNumbers: [], error: false });
       }
       console.log("data", data)
       setTicketNumbers(data);
     }
-  },[tickets])
-  
+  }, [tickets])
+
   const randomTickets = useCallback(() => {
     const data = [];
     // setTicketNumbers(input);
     console.log("randomtickets", ticketNumbers);
     if (ticketNumbers.length > 0) {
       ticketNumbers.map((ticket, index) => {
-        const input = Math.floor(Math.random() * 10).toString() +
-          Math.floor(Math.random() * 10).toString() +
-          Math.floor(Math.random() * 10).toString() +
-          Math.floor(Math.random() * 10).toString() +
-          Math.floor(Math.random() * 10).toString() +
-          Math.floor(Math.random() * 10).toString();
-        console.log("input = ", input);
-        data.push({ id: index, ticketnumber: input, error: false });
+        const ticketnumbers = [];
+        for (let i = 0; i < 6; i++) {
+          ticketnumbers.push(Math.floor(Math.random() * 10).toString());
+        }
+        let ticketNumber = '';
+        ticketnumbers.forEach((item) => { ticketNumber = ticketNumber.concat(item) });
+        data.push({ id: index, ticketnumber: ticketNumber, ticketNumbers: ticketnumbers, error: false });
         return null;
       });
       console.log("ticketNumbers", data);
@@ -170,6 +175,24 @@ const BuyTicketModal: React.FC<InjectedModalProps> = ({ onDismiss }) => {
   const handleApply = useCallback(() => {
     setManualTicketGenerate(false);
   }, [])
+
+
+  const [forceValue, setForceValue] = useState(0); // integer state
+
+  const handleTicketInput = (event, index, subIndex) => {
+    event.preventDefault();
+    console.log(event.target.value);
+    const data = ticketNumbers;
+
+    data[index].ticketNumbers[subIndex] = event.target.value.toString();
+
+    let ticketnumber = '';
+    data[index].ticketNumbers.forEach((item) => { ticketnumber = ticketnumber.concat(item) });
+    data[index].ticketNumber = ticketnumber;
+    setTicketNumbers(data);
+    console.log(data);
+    setForceValue(forceValue + 1);
+  }
   return (
     <Modal
       title={!manualTicketGenerate ? t('Buy Tickets') : ("Round ").concat(roundID.toString())}
@@ -179,160 +202,190 @@ const BuyTicketModal: React.FC<InjectedModalProps> = ({ onDismiss }) => {
       onBack={manualTicketGenerate ? handleBack : null}
     >
       {!manualTicketGenerate ?
-        (<Flex flexDirection="column">
-          <Flex margin="0px 10px 0px" alignItems="center" >
+        (
+          <Flex flexDirection="column">
+            <Flex margin="0px 10px 0px" alignItems="center" >
+              <Grid style={{ marginTop: '12px' }}>
+                <GridItem isLeft>
+                  <Text bold style={{ textAlign: 'left' }} color="white" fontSize="16px">Buy Tickets</Text>
+                </GridItem>
+                <GridItem isLeft>
+                  <Text bold style={{ textAlign: 'right' }} color="white" fontSize="16px">~{realTokens} SPX</Text>
+                </GridItem>
+              </Grid>
+            </Flex>
+            <InputArea>
+              <Input
+                id="token-input"
+                placeholder={t('0')}
+                scale="lg"
+                autoComplete="off"
+                value={tickets}
+                onChange={handleInputTokens}
+                maxLength={3}
+                pattern="\d*"
+                required
+                style={{ textAlign: 'right', border: 'none' }}
+              />
+              <Text fontSize="14px" mr="10px" style={{ textAlign: 'right' }}>
+                ~{tickets === '' || tickets === '0' ? '0.00' : (parseFloat(tickets) / 4).toFixed(2)} SPX
+              </Text>
+            </InputArea>
+            {balance === 0 &&
+              (
+                <Text
+                  style={{ textAlign: 'right' }}
+                  color="red"
+                  fontSize="14px"
+                  mt="8px">
+                  Insufficient SPX balance
+                </Text>
+              )
+            }
+            <Flex justifyContent="end" marginTop="4px ">
+              <Text style={{ textAlign: 'right' }} color="white" fontSize="14px"> SPX Balance:</Text>
+              <Text style={{ textAlign: 'right' }} color="white" fontSize="14px">&nbsp;{(0).toFixed(3)}</Text>
+            </Flex>
+            {balance !== 0 && (
+              <Flex justifyContent='space-around'>
+                <BalanceButton onClick={() => setTickets('1')}>
+                  1
+                </BalanceButton>
+                <BalanceButton onClick={() => setTickets((balance < 100 ? Math.floor(balance / 4) : 25).toString())}>
+                  {balance < 100 ? Math.floor(balance / 4) : 25}
+                </BalanceButton>
+                <BalanceButton onClick={() => setTickets((balance < 100 ? Math.floor(balance / 2) : 50).toString())}>
+                  {balance < 100 ? Math.floor(balance / 2) : 50}
+                </BalanceButton>
+                <BalanceButton onClick={() => setTickets((balance < 100 ? Math.floor(balance) : 100).toString())}>
+                  Max
+                </BalanceButton>
+              </Flex>
+            )}
+            <Flex width="100%">
+              <Grid>
+                <GridItem isLeft>
+                  <Text style={{ textAlign: 'left' }} color="white" fontSize="14px">Cost (SPX)</Text>
+                </GridItem>
+                <GridItem isLeft={false}>
+                  <Text style={{ textAlign: 'right' }} color="white" fontSize="14px">
+                    {tickets === '' || tickets === '0' ? '0.00' : (parseFloat(tickets) / 4).toFixed(2)} SPX
+                  </Text>
+                </GridItem>
+                <GridItem isLeft>
+                  <Flex>
+                    <Text bold style={{ textAlign: 'left' }} color="white" fontSize="14px">{bulkDiscountPercent}%</Text>
+                    <Text style={{ textAlign: 'left' }} color="white" fontSize="14px">&nbsp; Bulk discount</Text>
+                  </Flex>
+                </GridItem>
+                <GridItem isLeft={false}>
+                  <Text style={{ textAlign: 'right' }}
+                    color="white" fontSize="14px"
+                  >
+                    ~{(parseInt(tickets) / 4 * parseFloat(bulkDiscountPercent) / 100).toFixed(5)} SPX
+                  </Text>
+                </GridItem>
+              </Grid>
+            </Flex>
+            <div style={{ borderTop: '1px solid', color: 'white', marginTop: '8px' }}><></></div>
             <Grid style={{ marginTop: '12px' }}>
               <GridItem isLeft>
-                <Text bold style={{ textAlign: 'left' }} color="white" fontSize="16px">Buy Tickets</Text>
+                <Text bold style={{ textAlign: 'left' }} color="white" fontSize="16px">You Pay</Text>
               </GridItem>
               <GridItem isLeft>
                 <Text bold style={{ textAlign: 'right' }} color="white" fontSize="16px">~{realTokens} SPX</Text>
               </GridItem>
             </Grid>
-          </Flex>
-          <InputArea>
-            <Input
-              id="token-input"
-              placeholder={t('0')}
-              scale="lg"
-              autoComplete="off"
-              value={tickets}
-              onChange={handleInputTokens}
-              maxLength={3}
-              pattern="\d*"
-              required
-              style={{ textAlign: 'right', border: 'none' }}
-            />
-            <Text fontSize="14px" mr="10px" style={{ textAlign: 'right' }}>
-              ~{tickets === '' || tickets === '0' ? '0.00' : (parseFloat(tickets) / 4).toFixed(2)} SPX
-            </Text>
-          </InputArea>
-          {balance === 0 &&
-            (
-              <Text
-                style={{ textAlign: 'right' }}
-                color="red"
-                fontSize="14px"
-                mt="8px">
-                Insufficient SPX balance
-              </Text>
-            )
-          }
-          <Flex justifyContent="end" marginTop="4px ">
-            <Text style={{ textAlign: 'right' }} color="white" fontSize="14px"> SPX Balance:</Text>
-            <Text style={{ textAlign: 'right' }} color="white" fontSize="14px">&nbsp;{(0).toFixed(3)}</Text>
-          </Flex>
-          {balance !== 0 && (
-            <Flex justifyContent='space-around'>
-              <BalanceButton onClick={()=>setTickets('1')}>
-                1
-              </BalanceButton>
-              <BalanceButton onClick={()=>setTickets((balance < 100 ? Math.floor(balance / 4) : 25).toString())}>
-                {balance < 100 ? Math.floor(balance / 4) : 25}
-              </BalanceButton>
-              <BalanceButton onClick={()=>setTickets((balance < 100 ? Math.floor(balance / 2) : 50).toString())}>
-                {balance < 100 ? Math.floor(balance / 2) : 50}
-              </BalanceButton>
-              <BalanceButton onClick={()=>setTickets((balance < 100 ? Math.floor(balance) : 100).toString())}>
-                Max
-              </BalanceButton>
-            </Flex>
-          )}
-          <Flex width="100%">
-            <Grid>
-              <GridItem isLeft>
-                <Text style={{ textAlign: 'left' }} color="white" fontSize="14px">Cost (SPX)</Text>
-              </GridItem>
-              <GridItem isLeft={false}>
-                <Text style={{ textAlign: 'right' }} color="white" fontSize="14px">{tickets === '' || tickets === '0' ? '0.00' : (parseFloat(tickets) / 4).toFixed(2)} SPX</Text>
-              </GridItem>
-              <GridItem isLeft>
-                <Flex>
-                  <Text bold style={{ textAlign: 'left' }} color="white" fontSize="14px">{bulkDiscountPercent}%</Text>
-                  <Text style={{ textAlign: 'left' }} color="white" fontSize="14px">&nbsp; Bulk discount</Text>
-                </Flex>
-              </GridItem>
-              <GridItem isLeft={false}>
-                <Text style={{ textAlign: 'right' }} color="white" fontSize="14px">~{(parseInt(tickets) / 4 * parseFloat(bulkDiscountPercent) / 100).toFixed(5)} SPX</Text>
-              </GridItem>
-            </Grid>
-          </Flex>
-          <div style={{ borderTop: '1px solid', color: 'white', marginTop: '8px' }}><></></div>
-          <Grid style={{ marginTop: '12px' }}>
-            <GridItem isLeft>
-              <Text bold style={{ textAlign: 'left' }} color="white" fontSize="16px">You Pay</Text>
-            </GridItem>
-            <GridItem isLeft>
-              <Text bold style={{ textAlign: 'right' }} color="white" fontSize="16px">~{realTokens} SPX</Text>
-            </GridItem>
-          </Grid>
-          <Flex justifyContent="center" alignItems="center" marginTop="20px">
-            {
-              account ?
+            <Flex justifyContent="center" alignItems="center" marginTop="20px">
+              {
+                // account ?
                 !enabled ?
-                  <ApplyButton className='selected' onClick={() => setEnabled(true)} style={{ width: '100%' }}>Enable</ApplyButton>
-                  :
-                  (<Flex flexDirection="column">
+                  (
                     <ApplyButton className='selected'
-                      onClick={randomTickets}
-                      style={{
-                        width: '100%',
-                        marginBottom: '20px'
-                      }}
+                      onClick={() => setEnabled(true)}
+                      style={{ width: '100%' }}
                     >
-                      Buy Instantly
+                      Enable
                     </ApplyButton>
-                    <ApplyButton className='selected' onClick={() => setManualTicketGenerate(true)}
-                      style={{
-                        backgroundColor: 'transparent',
-                        width: '100%',
-                        color: 'white',
-                        border: '1px solid',
-                      }}
-                    >
-                      View/Edit manual
-                    </ApplyButton>
-                  </Flex>)
-                :
-                <ConnectWalletButton />
-            }
+                  )
+                  :
+                  (
+                    <Flex flexDirection="column">
+                      <ApplyButton className='selected'
+                        onClick={randomTickets}
+                        style={{
+                          width: '100%',
+                          marginBottom: '20px'
+                        }}
+                      >
+                        Buy Instantly
+                      </ApplyButton>
+                      <ApplyButton className='selected'
+                        onClick={() => {
+                          if (ticketNumbers.length !== 0 )
+                            if (ticketNumbers[0].ticketNumbers.length === 0)
+                              randomTickets();
+                          setManualTicketGenerate(true);
+                        }}
+                        style={{
+                          backgroundColor: 'transparent',
+                          width: '100%',
+                          color: 'white',
+                          border: '1px solid',
+                        }}
+                      >
+                        View/Edit manual
+                      </ApplyButton>
+                    </Flex>
+                  )
+                // :
+                // <ConnectWalletButton />
+              }
+            </Flex>
+            <Flex >
+              <Text fontSize='13px' color='white' mt='10px'>
+                &quot;Buy Instantly&quot; chooses random numbers, with no duplicates among your tickets.
+                Prices are set before each round starts, equal to $5 at that time. Purchases are final.
+              </Text>
+            </Flex>
           </Flex>
-          <Flex >
-            <Text fontSize='13px' color='white' mt='10px'>
-              &quot;Buy Instantly&quot; chooses random numbers, with no duplicates among your tickets. Prices are set before each round starts, equal to $5 at that time. Purchases are final.
-            </Text>
-          </Flex>
-        </Flex>
         ) : (
           <Flex flexDirection="column" color="white">
+            <ApplyButton className='selected'
+              onClick={randomTickets}
+              style={{
+                width: '100%',
+                marginBottom: '20px',
+              }}
+            >
+              Randomize
+            </ApplyButton>
             {ticketNumbers?.map((ticket, index) =>
               <Flex flexDirection="column" marginBottom="12px">
                 <Text fontSize='13px' mb="8px">
-                  Ticket&nbsp;{ticket.id}
+                  #{((ticket.id + 1).toString().length >= 3) ? (ticket.id + 1).toString() : (new Array(3).join('0') + (ticket.id + 1).toString()).slice(-3)}
                 </Text>
-                <Input
-                  id={index.toString().concat("-ticket")}
-                  placeholder={t('0')}
-                  scale="lg"
-                  autoComplete="off"
-                  value={ticket.ticketnumber}
-                  onChange={(event) => {
-                    const data = ticketNumbers;
-                    data[index].ticketnumber = parseInt(event.target.value);
-                    if (event.target.value.toString().length === 6) {
-                      data[index].error = false;
-                    } else {
-                      data[index].error = true;
-                    }
-                    setTicketNumbers(data);
-                  }}
-                  maxLength={6}
-                  pattern="\d*"
-                  required
-                  style={{ textAlign: 'right', border: !ticket.error ? 'none' : '1px red' }}
-                />
+                <TicketContainer>
+                  {
+                    ticket.ticketNumbers.map((ticketChar, subIndex) =>
+                      <TicketInput
+                        id={index.toString().concat(subIndex).concat("index-ticket")}
+                        placeholder={t('0')}
+                        scale="lg"
+                        value={ticketChar}
+                        onChange={(e) => handleTicketInput(e, index, subIndex)}
+                        style={{
+                          textAlign: 'center',
+                          border: !ticket.error ? 'none' : '1px red',
+                          borderRadius: 'none !important'
+                        }}
+                        maxLength={1}
+                        pattern="\d*"
+                      />
+                    )
+                  }
+                </TicketContainer>
               </Flex>
-
             )}
             <ApplyButton className='selected'
               onClick={handleApply}
