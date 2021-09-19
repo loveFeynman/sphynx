@@ -159,7 +159,6 @@ const LightContainer = styled.div`
 `
 export default function Lottery() {
   const { account } = useWeb3React()
-  const [onPresentSettingsModal] = useModal(<BuyTicketModal />)
   const winningCards=[1,16,8,9,3,4]
   const { t } = useTranslation();
   const [activeIndex, setActiveIndex] = React.useState(0);
@@ -169,7 +168,9 @@ export default function Lottery() {
   const [showBuyModal, setShowBuyModal] = useState(false)
   const [selectedItemIndex, setSelectedItemIndex] = useState(-1);
   const [data,setdata]=useState([]);
-  useLotteryBalance();
+  const {balance, roundID} = useLotteryBalance();
+  const [onPresentSettingsModal] = useModal(<BuyTicketModal />)
+
   React.useEffect(() => {
     WebFont.load({
       google: {
