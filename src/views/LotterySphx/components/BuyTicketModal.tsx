@@ -2,14 +2,15 @@
 
 import React, { useState, useCallback, useEffect, useMemo } from 'react'
 import styled from 'styled-components'
-import { Text, PancakeToggle, Toggle, Flex, Modal, InjectedModalProps, Button, Input, useModal } from '@pancakeswap/uikit'
+import { Text, Flex, Modal, InjectedModalProps, Button, Input } from '@pancakeswap/uikit'
+
 import { useAudioModeManager, useExpertModeManager, useUserSingleHopOnly } from 'state/user/hooks'
 import { useTranslation } from 'contexts/Localization'
 import { useSwapActionHandlers } from 'state/swap/hooks'
 import usePersistState from 'hooks/usePersistState'
 import { useWeb3React } from '@web3-react/core'
-import ConnectWalletButton from 'components/ConnectWalletButton'
 import { useLotteryBalance, approveCall, buyTickets} from '../../../hooks/useLottery'
+import useToast from 'hooks/useToast'
 
 // eslint-disable 
 
@@ -105,21 +106,70 @@ const TicketInput = styled(Input)`
     outline: unset;
     box-shadow: unset !important;
     border: unset;
-    
-    
   }
 `
+const StyledSpinner = styled.svg`
+  animation: rotate 2s linear infinite;
+  width: 50px;
+  height: 50px;
+  
+  & .path {
+    stroke: #1FC7D4;
+    stroke-linecap: round;
+    animation: dash 1.5s ease-in-out infinite;
+  }
+  
+  @keyframes rotate {
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+  @keyframes dash {
+    0% {
+      stroke-dasharray: 1, 150;
+      stroke-dashoffset: 0;
+    }
+    50% {
+      stroke-dasharray: 90, 150;
+      stroke-dashoffset: -35;
+    }
+    100% {
+      stroke-dasharray: 90, 150;
+      stroke-dashoffset: -124;
+    }
+  }
+`;
+
+const Spinner = () => (
+  <StyledSpinner viewBox="0 0 50 50">
+    <circle
+      className="path"
+      cx="25"
+      cy="25"
+      r="20"
+      fill="none"
+      strokeWidth="4"
+    />
+  </StyledSpinner>
+);
+
 const BuyTicketModal: React.FC<InjectedModalProps> = ({ onDismiss }) => {
   const { account } = useWeb3React();
   const { balance, roundID, lotteryInfo } = useLotteryBalance();
-  const [manualTicketGenerate, setManualTicketGenerate] = useState(false)
+  const [manualTicketGenerate, setManualTicketGenerate] = useState(false);
+  const [isLoading, setLoading] = useState(false)
   const [ticketNumbers, setTicketNumbers] = useState([]);
   const [tickets, setTickets] = useState<string>('0');
   const [bulkDiscountPercent, setBulkDiscountPercent] = useState<string>('0');
   const [totalSpx, setTotalSpx] = useState<string>('0');
   const [realTokens, setRealTokens] = useState<string>('0');
   const [enabled, setEnabled] = useState(false);
-  const { t } = useTranslation()
+  const [errorMessage, setErrorMessage]= useState({
+    title:'',
+    message: ''
+  });
+  const { toastError } = useToast();
+  const { t } = useTranslation();
 
   const handleInputTokens = useCallback((event) => {
     const input = event.target.value
@@ -129,6 +179,16 @@ const BuyTicketModal: React.FC<InjectedModalProps> = ({ onDismiss }) => {
       setTickets(input);
 
   }, [])
+
+  useEffect(() => {
+    if (errorMessage.title !== '') {
+      toastError(t(errorMessage.title), t(errorMessage.message))
+      setErrorMessage({
+        title:'',
+        message: ''
+      });
+    }
+  },[errorMessage])
 
   useEffect(() => {
     const ticket = parseInt(tickets) > 100 ? 100 : parseInt(tickets);
@@ -176,16 +236,30 @@ const BuyTicketModal: React.FC<InjectedModalProps> = ({ onDismiss }) => {
     setManualTicketGenerate(false);
   }, [])
 
-  const handleApply = () => {
+  const handleApply = async() => {
     const ticketArrays = [];
-    ticketNumbers.forEach((item)=>ticketArrays.push(item.ticketnumber));
-    buyTickets(account, roundID, ticketArrays);
+    if (tickets === '0') {
+      setErrorMessage({
+        title:'Error',
+        message: 'No tickets'
+      });
+    }
+    ticketNumbers.forEach((item)=>ticketArrays.push((parseInt(item.ticketnumber) + 1000000).toString()));
+    setLoading(true);
+    await buyTickets(account, roundID, ticketArrays, setLoading, setErrorMessage);
+    setLoading(false)
     setManualTicketGenerate(false);
   };
 
-  const handleInstantly = () => {
+  const handleInstantly = async () => {
     const data = [];
     // setTicketNumbers(input);
+    if (tickets === '0') {
+      setErrorMessage({
+        title:'Error',
+        message: 'No tickets'
+      });
+    }
     console.log("randomtickets", ticketNumbers);
     if (ticketNumbers.length > 0) {
       ticketNumbers.map((ticket, index) => {
@@ -195,14 +269,16 @@ const BuyTicketModal: React.FC<InjectedModalProps> = ({ onDismiss }) => {
         }
         let ticketNumber = '';
         ticketnumbers.forEach((item) => { ticketNumber = ticketNumber.concat(item) });
-        data.push(ticketNumber);
+        data.push((parseInt(ticketNumber) + 1000000).toString());
         return null;
       });
       console.log("ticketNumbers", data);
-      buyTickets(account, roundID, data);
+      setLoading(true);
+      await buyTickets(account, roundID, data, setLoading, setErrorMessage);
+      setLoading(false)
     }
-    
   };
+
 
   const [forceValue, setForceValue] = useState(0); // integer state
 
@@ -220,6 +296,7 @@ const BuyTicketModal: React.FC<InjectedModalProps> = ({ onDismiss }) => {
     console.log(data);
     setForceValue(forceValue + 1);
   }
+
   return (
     <Modal
       title={!manualTicketGenerate ? t('Buy Tickets') : ("Round ").concat(roundID.toString())}
@@ -332,13 +409,19 @@ const BuyTicketModal: React.FC<InjectedModalProps> = ({ onDismiss }) => {
                 !enabled ?
                   (
                     <ApplyButton className='selected'
-                      onClick={() => {
-                        if (approveCall(account))
-                          setEnabled(true);
-                      }}
+                      onClick={(async() => {
+                        setLoading(true);
+                        await approveCall(account, setEnabled, setErrorMessage);
+                        if (errorMessage.title !== ''){
+                          toastError(t(errorMessage.title), t(errorMessage.message));
+                        }
+                        setLoading(false);  
+                      })}
                       style={{ width: '100%' }}
                     >
-                      Enable
+                      {isLoading ? (
+                        <Spinner/>
+                      ): 'Enable'}
                     </ApplyButton>
                   )
                   :
@@ -351,7 +434,10 @@ const BuyTicketModal: React.FC<InjectedModalProps> = ({ onDismiss }) => {
                           marginBottom: '20px'
                         }}
                       >
-                        Buy Instantly
+                        {isLoading ? (
+                          <Spinner />
+                        ) : 'Buy Instantly'}
+                        
                       </ApplyButton>
                       <ApplyButton className='selected'
                         onClick={() => {
@@ -359,6 +445,13 @@ const BuyTicketModal: React.FC<InjectedModalProps> = ({ onDismiss }) => {
                             setManualTicketGenerate(true);
                             if (ticketNumbers[0].ticketNumbers.length === 0)
                               randomTickets();
+                          } else {
+                            if (tickets === '0') {
+                              setErrorMessage({
+                                title:'Error',
+                                message: 'No tickets'
+                              });
+                            }
                           }
                         }}
                         style={{

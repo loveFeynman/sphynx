@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React from 'react'
 import styled from 'styled-components'
 
@@ -38,15 +39,26 @@ const GridItem = styled.div<{ isLeft: boolean }>`
   padding: 6px 0px;
 `
 
-export default function PotContentTable({isDetail}) {
-  
-  const PrizeArray =[
-    {number: 6, tokens: 2 ,totalTokens: 4000 ,eachTokens: 2000},
-    {number: 5, tokens: 72 ,totalTokens: 3120 ,eachTokens: 4.57},
-    {number: 4, tokens: 421 ,totalTokens: 2104 ,eachTokens: 1.47},
-    {number: 3, tokens: 1204 ,totalTokens: 320 ,eachTokens: 0.63},
-    {number: 2, tokens: 1423 ,totalTokens: 202 ,eachTokens: .041},
-  ]
+export default function PotContentTable({isDetail, lotteryInfo}) {
+
+  const [latestInfoArray, setLastInfoArray] = React.useState([]);
+  React.useEffect(()=>{
+    const newArray=[];
+    if (lotteryInfo !== null) {
+      for (let i = 6; i >0;i--){
+        newArray.push(
+          {
+            number: i, 
+            tokens: parseInt(lotteryInfo?.cakePerBracket[i-1])/10000000000000000000 ,
+            matchNumber: lotteryInfo?.countWinnersPerBracket[i-1] ,
+            eachTokens: lotteryInfo?.countWinnersPerBracket[i-1] === '0'?'0': 
+                      parseInt(lotteryInfo?.cakePerBracket[i-1])/10000000000000000000/lotteryInfo?.countWinnersPerBracket[i-1]
+          }
+        )
+      }
+    }  
+    setLastInfoArray(newArray);
+  }, [lotteryInfo])
   const { t } = useTranslation();
   return (
     <Container>
@@ -57,7 +69,7 @@ export default function PotContentTable({isDetail}) {
         <GridHeaderItem isLeft={false}>
           {t('Player Matched')}
         </GridHeaderItem>
-        {PrizeArray.map((item)=>(
+        {latestInfoArray.map((item)=>(
           <>
             <GridItem isLeft>
               {item.number}
@@ -66,7 +78,7 @@ export default function PotContentTable({isDetail}) {
             <>
               <GridItem isLeft>
                 <div style={{textAlign: 'right'}}>
-                  {item.totalTokens} SPX
+                  {item.tokens} SPX
                   <div  style={{fontSize: '12px'}}>
                     {item.eachTokens} {t('each')}
                   </div>
@@ -75,7 +87,7 @@ export default function PotContentTable({isDetail}) {
             </>
             ):(
               <GridItem isLeft={false}>
-                {item.tokens}
+                {item.matchNumber.toString()}
               </GridItem>
             )}
           </>
