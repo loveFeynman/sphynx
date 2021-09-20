@@ -1,6 +1,6 @@
 import Web3 from 'web3';
 import { useWeb3React, getWeb3ReactContext } from '@web3-react/core';
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect,useMemo, useState, useCallback } from 'react';
 import lottery from 'assets/abis/lottery.json'
 import sphynx from 'assets/abis/sphynx.json'
 import HDWalletProvider from '@truffle/hdwallet-provider';
@@ -17,18 +17,18 @@ else
   web3 = new Web3(new Web3.providers.HttpProvider(providerURL));
 
 const abi: any = lottery.abi;
-const lotteryContract = new web3.eth.Contract(abi, '0x5Fc5be63623f27C9718cc7bbF04c4B268F11C3f1');
+const lotteryContract = new web3.eth.Contract(abi, '0x45B60E2Af170272152f0f9Cb69aC1E5C6B5C2EB0');
 const spxAbi: any = sphynx.abi;
+const sphxContract = new web3.eth.Contract(spxAbi, '0x8AAF4B1e2dD87b8852A642f52f2B35C3aBb3A076');
 
 export const useLotteryBalance = () => {
   const [balance, setBalance] = useState(0);
   const [roundID, setRoundID] = useState(0);
+  const [lotteryInfo, setLotteryInfo] = useState(null);
+
   const { account } = useWeb3React();
-  const sphxContract = new web3.eth.Contract(spxAbi, '0x8AAF4B1e2dD87b8852A642f52f2B35C3aBb3A076');
 
-  useEffect(() => {
-    const ticketIDs = [];
-
+  useMemo(() => {
     const fetchLotteryID = async () => {
       try {
         await lotteryContract.methods.viewCurrentLotteryId().call()
@@ -46,10 +46,11 @@ export const useLotteryBalance = () => {
 
     const getBalance = async () => {
       try {
-        await sphxContract.methods.balanceOf("0x3EF6FeB63B2F0f1305839589eDf487fb61b99A4E").call()
+        await sphxContract.methods.balanceOf(process.env.NODE_ENV !== 'production'?
+          "0x3EF6FeB63B2F0f1305839589eDf487fb61b99A4E":account).call()
           .then((data) => {
             console.log("balance", data);
-            setBalance(data);
+            setBalance(data/1000000000000000000);
           }).catch((err) => {
             console.log('balace error', err);
           });
@@ -59,53 +60,64 @@ export const useLotteryBalance = () => {
       }
     }
     getBalance();
-    // approveCall();
-    // lotteryContract.methods.buyTickets(lotteryID, ticketIDs).send(/**{from: }}*/).then((data) => {
-    //   console.log("bbbbb");
-    // }).catch((err) => {
-    //   console.log(' buyTickets error', err)
-    // });
-    // const players = lotteryContract.methods.getPlayers().call();
-    // function balanceOf(address account) external view returns (uint256);
-  }, [account, balance, sphxContract.methods]);
-  // function approve(address spender, uint256 amount) external returns (bool);
 
-  return { balance, roundID };
+
+    const viewLotterys = async (rID) => {
+      try {
+        await lotteryContract.methods.viewLottery(rID)
+          .call()
+          .then((data) => {
+            console.log("view lotterys", data);
+            setLotteryInfo(data);
+            return data;
+          }).catch((err) => {
+            console.log('view lotterys', err)
+          });
+        return null;
+      } catch {
+        return null;
+      }
+    };
+    viewLotterys( roundID);
+  }, [roundID, account]);
+  return { balance, roundID, lotteryInfo };
 }
 
 export const approveCall = async (account) => {
   try {
-    const sphxContract = new web3.eth.Contract(spxAbi, '0x8AAF4B1e2dD87b8852A642f52f2B35C3aBb3A076');
-    console.log("step1");
-    console.log("aaaaaaaaaaaaaaaaaa", await web3.eth.getAccounts());
-    console.log("step2", account);
     await sphxContract.methods.approve("0x5Fc5be63623f27C9718cc7bbF04c4B268F11C3f1", "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff")
-      .send({ from: "0x3EF6FeB63B2F0f1305839589eDf487fb61b99A4E" })
+      .send({ from: process.env.NODE_ENV !== 'production'?"0x3EF6FeB63B2F0f1305839589eDf487fb61b99A4E":account})
       .then((data) => {
         console.log("approve call ", data);
+        return true;
       }).catch((err) => {
         console.log('approve call error', err)
+        return false;
       });
     console.log("step2")
+    return false;
   } catch {
     console.error("fetch Round error")
+    return false;
   }
 };
 
-export const buyTickets = async (account, roundID, ticketNumbers) => {
+export const buyTickets = async ( account, roundID, ticketNumbers) => {
   try {
     console.log("step1");
     console.log("aaaaaaaaaaaaaaaaaa", await web3.eth.getAccounts());
-    console.log("step2", account);
+    console.log(" buyTickets step2", ticketNumbers);
     await lotteryContract.methods.buyTickets(roundID, ticketNumbers)
-      .send({ from: "0x3EF6FeB63B2F0f1305839589eDf487fb61b99A4E" })
+      .send({ from: process.env.NODE_ENV !== 'production'?"0x3EF6FeB63B2F0f1305839589eDf487fb61b99A4E":account})
       .then((data) => {
-        console.log("approve call ", data);
+        console.log("buyTickets call ", data);
       }).catch((err) => {
-        console.log('approve call error', err)
+        console.log('buyTickets call error', err)
       });
-    console.log("step2")
+    console.log(" buyTickets step2")
   } catch {
-    console.error("fetch Round error")
+    console.error("buyTickets Round error")
   }
 };
+
+

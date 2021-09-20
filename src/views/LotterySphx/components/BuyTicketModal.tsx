@@ -1,4 +1,6 @@
-import React, { useState, useCallback, useEffect } from 'react'
+/* eslint-disable */
+
+import React, { useState, useCallback, useEffect, useMemo } from 'react'
 import styled from 'styled-components'
 import { Text, PancakeToggle, Toggle, Flex, Modal, InjectedModalProps, Button, Input, useModal } from '@pancakeswap/uikit'
 import { useAudioModeManager, useExpertModeManager, useUserSingleHopOnly } from 'state/user/hooks'
@@ -7,7 +9,9 @@ import { useSwapActionHandlers } from 'state/swap/hooks'
 import usePersistState from 'hooks/usePersistState'
 import { useWeb3React } from '@web3-react/core'
 import ConnectWalletButton from 'components/ConnectWalletButton'
-import { useLotteryBalance } from '../../../hooks/useLottery'
+import { useLotteryBalance, approveCall, buyTickets} from '../../../hooks/useLottery'
+
+// eslint-disable 
 
 const ApplyButton = styled(Button)`
   bottom: 16px;
@@ -107,16 +111,15 @@ const TicketInput = styled(Input)`
 `
 const BuyTicketModal: React.FC<InjectedModalProps> = ({ onDismiss }) => {
   const { account } = useWeb3React();
-  const { balance, roundID } = useLotteryBalance();
+  const { balance, roundID, lotteryInfo } = useLotteryBalance();
   const [manualTicketGenerate, setManualTicketGenerate] = useState(false)
   const [ticketNumbers, setTicketNumbers] = useState([]);
   const [tickets, setTickets] = useState<string>('0');
   const [bulkDiscountPercent, setBulkDiscountPercent] = useState<string>('0');
+  const [totalSpx, setTotalSpx] = useState<string>('0');
   const [realTokens, setRealTokens] = useState<string>('0');
   const [enabled, setEnabled] = useState(false);
-  const [viewEditable, setViewEditable] = useState(false);
   const { t } = useTranslation()
-  // const [onPresentManualTicketModal] = useModal(<ManualTicketInputModal onDismiss={onDismiss} ticketNums={ticketNumbers} />)
 
   const handleInputTokens = useCallback((event) => {
     const input = event.target.value
@@ -134,16 +137,19 @@ const BuyTicketModal: React.FC<InjectedModalProps> = ({ onDismiss }) => {
       setRealTokens('0');
       setTicketNumbers([]);
     } else {
-      setBulkDiscountPercent(((ticket - 1) * 0.05).toFixed(2));
-      setRealTokens((ticket / 4 * (1 - (ticket - 1) * 0.0005)).toFixed(5));
+      setBulkDiscountPercent((100 - (parseInt(lotteryInfo?.discountDivisor)+1 - parseInt(tickets))/(parseInt(lotteryInfo?.discountDivisor)) * 100).toFixed(2));
+      setRealTokens((parseInt(lotteryInfo?.priceTicketInCake) *
+        parseInt(tickets) * (parseInt(lotteryInfo?.discountDivisor) + 1 - parseInt(tickets))/(parseInt(lotteryInfo?.discountDivisor))/1000000000000000000).toFixed(5));
+      console.log((parseInt(lotteryInfo?.priceTicketInCake) *parseInt(tickets))/1000000000000000000);
+      setTotalSpx((parseInt(lotteryInfo?.priceTicketInCake) *parseInt(tickets)/1000000000000000000).toFixed(2));
       const data = [];
       for (let i = 0; i < ticket; i++) {
         data.push({ id: i, ticketNumber: 0, ticketNumbers: [], error: false });
       }
-      console.log("data", data)
       setTicketNumbers(data);
     }
-  }, [tickets])
+  
+  }, [tickets, lotteryInfo])
 
   const randomTickets = useCallback(() => {
     const data = [];
@@ -162,8 +168,6 @@ const BuyTicketModal: React.FC<InjectedModalProps> = ({ onDismiss }) => {
       });
       console.log("ticketNumbers", data);
       setTicketNumbers(data);
-
-      setViewEditable(true);
     }
 
   }, [ticketNumbers])
@@ -172,10 +176,33 @@ const BuyTicketModal: React.FC<InjectedModalProps> = ({ onDismiss }) => {
     setManualTicketGenerate(false);
   }, [])
 
-  const handleApply = useCallback(() => {
+  const handleApply = () => {
+    const ticketArrays = [];
+    ticketNumbers.forEach((item)=>ticketArrays.push(item.ticketnumber));
+    buyTickets(account, roundID, ticketArrays);
     setManualTicketGenerate(false);
-  }, [])
+  };
 
+  const handleInstantly = () => {
+    const data = [];
+    // setTicketNumbers(input);
+    console.log("randomtickets", ticketNumbers);
+    if (ticketNumbers.length > 0) {
+      ticketNumbers.map((ticket, index) => {
+        const ticketnumbers = [];
+        for (let i = 0; i < 6; i++) {
+          ticketnumbers.push(Math.floor(Math.random() * 10).toString());
+        }
+        let ticketNumber = '';
+        ticketnumbers.forEach((item) => { ticketNumber = ticketNumber.concat(item) });
+        data.push(ticketNumber);
+        return null;
+      });
+      console.log("ticketNumbers", data);
+      buyTickets(account, roundID, data);
+    }
+    
+  };
 
   const [forceValue, setForceValue] = useState(0); // integer state
 
@@ -244,7 +271,10 @@ const BuyTicketModal: React.FC<InjectedModalProps> = ({ onDismiss }) => {
             }
             <Flex justifyContent="end" marginTop="4px ">
               <Text style={{ textAlign: 'right' }} color="white" fontSize="14px"> SPX Balance:</Text>
-              <Text style={{ textAlign: 'right' }} color="white" fontSize="14px">&nbsp;{(0).toFixed(3)}</Text>
+              <Text style={{ textAlign: 'right' }} 
+                color="white" fontSize="14px">
+                &nbsp;{(parseFloat(balance.toString()).toFixed(3).toString())}
+              </Text>
             </Flex>
             {balance !== 0 && (
               <Flex justifyContent='space-around'>
@@ -269,7 +299,7 @@ const BuyTicketModal: React.FC<InjectedModalProps> = ({ onDismiss }) => {
                 </GridItem>
                 <GridItem isLeft={false}>
                   <Text style={{ textAlign: 'right' }} color="white" fontSize="14px">
-                    {tickets === '' || tickets === '0' ? '0.00' : (parseFloat(tickets) / 4).toFixed(2)} SPX
+                    {tickets === '' || tickets === '0' ? '0.00' : totalSpx} SPX
                   </Text>
                 </GridItem>
                 <GridItem isLeft>
@@ -282,7 +312,7 @@ const BuyTicketModal: React.FC<InjectedModalProps> = ({ onDismiss }) => {
                   <Text style={{ textAlign: 'right' }}
                     color="white" fontSize="14px"
                   >
-                    ~{(parseInt(tickets) / 4 * parseFloat(bulkDiscountPercent) / 100).toFixed(5)} SPX
+                    ~{(parseInt(totalSpx) * parseFloat(bulkDiscountPercent) / 100).toFixed(5)} SPX
                   </Text>
                 </GridItem>
               </Grid>
@@ -302,7 +332,10 @@ const BuyTicketModal: React.FC<InjectedModalProps> = ({ onDismiss }) => {
                 !enabled ?
                   (
                     <ApplyButton className='selected'
-                      onClick={() => setEnabled(true)}
+                      onClick={() => {
+                        if (approveCall(account))
+                          setEnabled(true);
+                      }}
                       style={{ width: '100%' }}
                     >
                       Enable
@@ -312,7 +345,7 @@ const BuyTicketModal: React.FC<InjectedModalProps> = ({ onDismiss }) => {
                   (
                     <Flex flexDirection="column">
                       <ApplyButton className='selected'
-                        onClick={randomTickets}
+                        onClick={handleInstantly}
                         style={{
                           width: '100%',
                           marginBottom: '20px'
@@ -322,10 +355,11 @@ const BuyTicketModal: React.FC<InjectedModalProps> = ({ onDismiss }) => {
                       </ApplyButton>
                       <ApplyButton className='selected'
                         onClick={() => {
-                          if (ticketNumbers.length !== 0 )
+                          if (ticketNumbers.length !== 0 ) {
+                            setManualTicketGenerate(true);
                             if (ticketNumbers[0].ticketNumbers.length === 0)
                               randomTickets();
-                          setManualTicketGenerate(true);
+                          }
                         }}
                         style={{
                           backgroundColor: 'transparent',
@@ -391,7 +425,7 @@ const BuyTicketModal: React.FC<InjectedModalProps> = ({ onDismiss }) => {
               onClick={handleApply}
               style={{ width: '100%', marginTop: '20px' }}
             >
-              Buy Ticket
+              Confirm and Buy
             </ApplyButton>
           </Flex>
         )}

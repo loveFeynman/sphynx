@@ -5,6 +5,7 @@ import {Text, Link } from '@pancakeswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 import MainLogo from 'assets/svg/icon/logo_new.svg'
 import  LinkIcon from 'assets/svg/icon/LinkYellow.svg'
+import { useWeb3React } from '@web3-react/core'
 
 import TicketContentTable from './TicketContentTable'
 
@@ -49,6 +50,8 @@ const SeperateLine = styled.div`
 export default function TicketCard() {
   const [totalCount, setTotalCount] = React.useState(33432);
   const [showDetail, setShowDetail] = React.useState(false);
+  const { account } = useWeb3React();
+  
   const { t } = useTranslation();
   return (
     <Container isDetail={showDetail}>
@@ -91,7 +94,11 @@ export default function TicketCard() {
         <Text bold fontSize="16px" mr="12px">
           {t('View your BscScan')}
         </Text>
-        <Link external href="https://pancakeswap.com">
+        <Link external
+         href={"https://bscscan.com/address/".toString().concat(
+          process.env.NODE_ENV !== 'production'?"0x3EF6FeB63B2F0f1305839589eDf487fb61b99A4E":account
+        )}
+        >
           <img width= "12px" height= "12px" src={LinkIcon} alt='Logo' />
         </Link>
       </div>
