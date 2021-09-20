@@ -44,7 +44,7 @@ export interface ChartContainerProps {
 
 const ChartContainerProps = {
   symbol: 'AAPL',
-  interval: 'D' as ResolutionString,
+  interval: '15' as ResolutionString,
   containerId: 'tv_chart_container',
   datafeedUrl: 'https://demo_feed.tradingview.com',
   libraryPath: '/charting_library/',
@@ -135,15 +135,6 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
       onResultReadyCallback(newSymbols)
     },
     resolveSymbol: async (symbolName: any, onSymbolResolvedCallback: any, onResolveErrorCallback: any) => {
-      // console.log('[resolveSymbol]: Method call', symbolName);
-      // const symbols = await getAllSymbols();
-      // const symbolItem = symbols.find(({full_name,
-      // }) => full_name === symbolName);
-      // if (!symbolItem) {
-      //     // console.log('[resolveSymbol]: Cannot resolve symbol', symbolName);
-      //     onResolveErrorCallback('cannot resolve symbol');
-      //     return;
-      // }
       const response = await axios.get(`https://thesphynx.co/api/tokenDetails/${input}`)
       setTokenDetails(response.data)
 
@@ -161,7 +152,7 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
         timezone: 'Etc/UTC',
         exchange: version,
         minmov: 1,
-        pricescale: 100,
+        pricescale: 1000000,
         has_intraday: true,
         has_no_volume: false,
         has_weekly_and_monthly: false,
@@ -169,8 +160,6 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
         volume_precision: 2,
         data_status: 'streaming',
       }
-      // eslint-disable-next-line no-console
-      // console.log('[resolveSymbol]: Symbol resolved', symbolName);
       onSymbolResolvedCallback(symbolInfo)
     },
     getBars: async (
@@ -180,18 +169,7 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
       onHistoryCallback: any,
       onErrorCallback: any,
     ) => {
-      // eslint-disable-next-line no-console
-      // console.log('here In get bars')
       const { from, to, firstDataRequest } = periodParams
-      // console.log('[getBars]: Method call', symbolInfo, resolution, from, to);
-      // const parsedSymbol = parseFullSymbol(symbolInfo.full_name);
-      // const urlParameters = {
-      //  e: parsedSymbol.exchange,
-      //  fsym: parsedSymbol.fromSymbol,
-      //  tsym: parsedSymbol.toSymbol,
-      //  toTs: to,
-      //  limit: 2000,
-      // };
 
       try {
         const data = await makeApiRequest1(input, routerVersion, resolution)
@@ -207,7 +185,7 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
         }
 
         let bars: any = []
-        // if(data.data.data){
+
         data.map((bar: any, i: any) => {
           const obj: any = {
             time: new Date(bar.time).getTime(),
@@ -215,6 +193,7 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
             high: bar.high * bar.baseHigh,
             open: bar.open * bar.baseOpen,
             close: bar.close * bar.baseClose,
+            volume: bar.volume,
             isBarClosed: true,
             isLastBar: false,
           }
