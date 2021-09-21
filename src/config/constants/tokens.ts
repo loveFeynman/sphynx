@@ -76,8 +76,8 @@ const tokens = {
   sphynx: {
     symbol: 'SPHYNX',
     address: {
-      56: '0xafD60977A4d00f596dF68ff2756192545c9b96d2',
-      97: '0xafD60977A4d00f596dF68ff2756192545c9b96d2',
+      56: '0x2e121ed64eeeb58788ddb204627ccb7c7c59884c',
+      97: '0x2e121ed64eeeb58788ddb204627ccb7c7c59884c',
     },
     decimals: 18,
     projectLink: 'https://thesphynx.co/',
