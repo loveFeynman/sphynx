@@ -67,6 +67,7 @@ const MenuIconWrapper = styled.div`
   & button {
     background: transparent !important;
     padding: 10px;
+    outline: none;
     & svg path {
       fill: white;
     }
@@ -107,7 +108,7 @@ const TokenItemWrapper = styled.div<{ toggled: boolean }>`
   margin-top: 2px;
   display: flex;
   justify-content: space-between;
-  padding: ${(props) => (props.toggled ? '4px' : '8px 12px')};
+  padding: ${(props) => (props.toggled ? '4px' : '8px 24px 8px 12px')};
   position: relative;
   cursor: pointer;
   & > div:first-child {
@@ -220,8 +221,13 @@ const IllustrationWrapper = styled.div`
 const RemoveIconWrapper = styled.div`
   position: absolute;
   top: 4px;
-  right: 2px;
+  right: 4px;
   z-index: 20;
+  border: 1px solid white;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
   & svg path {
     fill: white;
@@ -402,9 +408,12 @@ const Menu = (props) => {
                   } */}
           </TokenItemWrapper>
         </a>
-        <RemoveIconWrapper onClick={() => { removeAsset(elem) }}>
-          <CloseIcon />
-        </RemoveIconWrapper>
+        {
+          !menuToggled &&
+            <RemoveIconWrapper onClick={() => { removeAsset(elem) }}>
+              <CloseIcon />
+            </RemoveIconWrapper>
+        }
       </TokenIconContainer>
     )
   })
