@@ -184,28 +184,9 @@ export const processRawTicketsResponse = (ticketsResponse) => {
   return []
 }
 
-// export const fetchUserTicketsForOneRound = async (account: string, lotteryId: string) => {
-//   let cursor = 0
-//   let numReturned = TICKET_LIMIT_PER_REQUEST
-//   const ticketData = []
-
-//   while (numReturned === TICKET_LIMIT_PER_REQUEST) {
-//     // eslint-disable-next-line no-await-in-loop
-//     const response = await viewUserInfoForLotteryId(account, lotteryId, cursor, TICKET_LIMIT_PER_REQUEST);
-//     if (response !== null) {
-//       cursor += TICKET_LIMIT_PER_REQUEST
-//       numReturned = response?.length
-//       ticketData.push(...response)
-//     }
-    
-//   }
-
-//   return ticketData
-// }
-
-export const claimTickets = async ( account, roundID, cursor) => {
+export const claimTickets = async (account, roundID, ticketIds, brackets) => {
   try {
-    await lotteryContract.methods.claimTickets(process.env.NODE_ENV !== 'production'?"0x3EF6FeB63B2F0f1305839589eDf487fb61b99A4E":account, roundID, cursor,100)
+    await lotteryContract.methods.claimTickets(roundID, ticketIds, brackets)
       .send({ from: process.env.NODE_ENV !== 'production'?"0x3EF6FeB63B2F0f1305839589eDf487fb61b99A4E":account})
       .then((data) => {
         console.log("buyTickets call ", data);

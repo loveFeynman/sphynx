@@ -176,12 +176,6 @@ export default function Lottery() {
   const { roundID, lotteryInfo, setRefetch} = useLotteryBalance();
   const [onPresentSettingsModal] = useModal(<BuyTicketModal />)
 
-  clearInterval();
-  setInterval(()=> {
-    setRefetch(false);
-    setRefetch(true);
-  }, 60 * 1000);
-
   React.useEffect(() => {
     WebFont.load({
       google: {
@@ -211,6 +205,11 @@ export default function Lottery() {
         viewLotterys(roundID-1, setLastLotteryInfo);
       }
       setCursor(lotteryInfo.firstTicketId);
+      clearInterval();
+      setInterval(()=> {
+        setRefetch(false);
+        setRefetch(true);
+      }, 60 * 1000);
     }
    }, [lotteryInfo, roundID]);
   
@@ -312,7 +311,7 @@ export default function Lottery() {
               <WinningCardContainerTop>
                 {winningCards.map((item)=>(
                   <WinningCardTop>
-                    <Text fontSize="18px" color="white" style={{fontWeight: 700, padding: '12px'}}> {item}</Text>
+                    <Text fontSize="18px" color="white" style={{fontWeight: 700, padding: '12px'}}> {item === ''?'?': item}</Text>
                   </WinningCardTop>
                 ))}
               </WinningCardContainerTop>
@@ -328,12 +327,12 @@ export default function Lottery() {
           <PrizePotCardContainer>
             <div style={{margin: '10px'}}>
               {forceValue > 0 &&
-                <PrizePotCard isNext={false} setModal={null} roundID={roundID} lotteryInfo={lotteryInfo} lastLoteryInfo={lastLoteryInfo} userTicketInfos={userTicketInfos}/>
+                <PrizePotCard isNext={false} setModal={null} roundID={roundID} lotteryInfo={lotteryInfo} lastLoteryInfo={lastLoteryInfo} userTicketInfos={userTicketInfos} winningCards={winningCards}/>
               }
             </div>
             <div style={{margin: '10px'}}>
             {forceValue > 0 &&
-              <PrizePotCard isNext setModal={onPresentSettingsModal} roundID={roundID} lotteryInfo={lotteryInfo} lastLoteryInfo={lastLoteryInfo} userTicketInfos={userTicketInfos}/>
+              <PrizePotCard isNext setModal={onPresentSettingsModal} roundID={roundID} lotteryInfo={lotteryInfo} lastLoteryInfo={lastLoteryInfo} userTicketInfos={userTicketInfos} winningCards={winningCards}/>
             }
             </div>
           </PrizePotCardContainer>
@@ -346,7 +345,6 @@ export default function Lottery() {
           <div 
               style={{
                 textAlign: 'center', 
-                // margin: '88px 0px 76px 0px' , 
                 background:'rgba(0, 0, 0, 0.4)', 
                 borderRadius: '24px',
                 paddingTop: '32px',
@@ -369,17 +367,26 @@ export default function Lottery() {
             <ContractCard>
               <img src={SearchIcon} style={{marginLeft: '4px'}} alt="search"/>
               <SearchInputWrapper>
-                <input placeholder='' value={ticketSearch} onFocus={() => setShowDrop(true)} onKeyPress={handleKeyPress} onKeyUp={onSearchKeyDown} onChange={handlerChange} />
-                {
-                showDrop &&
-                <MenuWrapper>
-                  {data.length > 0 ?
-                    <span>
-                      {data?.map((item: any, index: number) => {
-                        return <Link href={`#/swap/${item.address}`}><MenuItem className={index === selectedItemIndex ? 'selectedItem' : ''}>{item.name}<br />{item.symbol}<br />{item.address}</MenuItem></Link>
-                      })}
-                    </span> : <span style={{ padding: '0 16px' }}>no record</span>}
-                </MenuWrapper>
+                <input 
+                  placeholder='' 
+                  value={ticketSearch} 
+                  onFocus={() => setShowDrop(true)} 
+                  onKeyPress={handleKeyPress} 
+                  onKeyUp={onSearchKeyDown} 
+                  onChange={handlerChange} />
+                { showDrop &&
+                  <MenuWrapper>
+                    {data.length > 0 ?
+                      <span>
+                        {data?.map((item: any, index: number) => {
+                          return (<Link href={`#/swap/${item.address}`}>
+                                    <MenuItem className={index === selectedItemIndex ? 'selectedItem' : ''}>
+                                      {item.name}<br />{item.symbol}<br />{item.address}
+                                    </MenuItem>
+                                  </Link>)
+                        })}
+                      </span> : <span style={{ padding: '0 16px' }}>no record</span>}
+                  </MenuWrapper>
                 }
               </SearchInputWrapper>
               <Button scale='sm' onClick={submitFuntioncall} style={{height: 'inherit'}}>{t(`Search`)}</Button>

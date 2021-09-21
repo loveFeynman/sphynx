@@ -1,7 +1,6 @@
 /* eslint-disable */
 import React from 'react'
 import styled from 'styled-components'
-
 import Nav from 'components/LotteryCardNav'
 import { Image, Heading, RowType, Toggle, Text, Button, ArrowForwardIcon, Flex } from '@pancakeswap/uikit'
 import PageHeader from 'components/PageHeader'
@@ -10,6 +9,7 @@ import { useTranslation } from 'contexts/Localization'
 import MainLogo from 'assets/svg/icon/logo_new.svg'
 import DownArrow from 'assets/svg/icon/LotteryDownIcon.svg'
 import PotContentTable from './PotContentTable'
+import { useLotteryBalance, approveCall, buyTickets, claimTickets} from '../../../hooks/useLottery'
 
 const Container = styled.div<{ isDetail: boolean }>`
   width: 340px;
@@ -92,22 +92,55 @@ const GridItem = styled.div<{ isLeft: boolean }>`
   color: white;
   padding: 6px 0px;
 `
-export default function PrizePotCard({ isNext, setModal, roundID, lotteryInfo, lastLoteryInfo, userTicketInfos }) {
+export default function PrizePotCard({ isNext, setModal, roundID, lotteryInfo, lastLoteryInfo, userTicketInfos, winningCards}) {
   const [totalCount, setTotalCount] = React.useState(0);
   const [showDetail, setShowDetail] = React.useState(false);
   const { t } = useTranslation();
   const [remainningTime, setRemainingTime] = React.useState('');
   const [enabled, setEnabled] = React.useState(false);
+  const [isClaimable, setClaimable] = React.useState(false);
+
   const { account } = useWeb3React();
 
   React.useEffect(() => {
-  }, [lastLoteryInfo])
+    if (userTicketInfos?.length > 0) {
+      userTicketInfos.map((item)=>{
+        if (item.status === true) {
+          setClaimable(false);
+        }
+      })      
+    }
+  }, [userTicketInfos])
 
+  
+  const handleClaimTickets = async () => {
+    const ticketIDS = [];
+    const brackets = [];
+    console.log(userTicketInfos,winningCards );
+    userTicketInfos.map((ticket)=>{
+      let bracket = -1;
+      for (let i = 0; i <= 5; i++) {
+        if (ticket.ticketnumber.charAt(6-i) !== winningCards[5-i]) {
+          break;
+        }
+        bracket = i;
+      }
+      if (bracket >= 0) {
+        ticketIDS.push(ticket.id);
+        brackets.push(bracket);
+      }
+    });
+    //account, roundID, ticketIds, brackets
+    console.log("roundID", roundID);
+    await claimTickets(account, roundID, ticketIDS, brackets);
+    console.log("aaaaaaaaaaaaaaaaaaaaaaa", ticketIDS, brackets);
+  }
   React.useEffect(() => {
     if (lotteryInfo !== null) {
       const now = new Date();
       if ((new Date().getTime() / 1000) > lotteryInfo.endTime) {
         setEnabled(false);
+        
       } else {
         const date = new Date(lotteryInfo.endTime * 1000 - now.getTime());
         const hours = ('0'.toString().concat((date.getUTCHours()).toString())).slice(-2);
@@ -154,7 +187,7 @@ export default function PrizePotCard({ isNext, setModal, roundID, lotteryInfo, l
           <Flex style={{flexDirection: 'column'}}>
             <Grid>
               <GridHeaderItem isLeft>
-                {t('Ticket No')}
+                {t('Ticket ID')}
               </GridHeaderItem>
               <GridHeaderItem isLeft={false}>
                 {t('Ticket Number')}
@@ -165,7 +198,6 @@ export default function PrizePotCard({ isNext, setModal, roundID, lotteryInfo, l
               maxHeight: '300px',
             }}>
               <Grid>
-
                 {
                   userTicketInfos?.map((it) =>
                     <>
@@ -173,7 +205,7 @@ export default function PrizePotCard({ isNext, setModal, roundID, lotteryInfo, l
                         {it.id}
                       </GridItem>
                       <GridItem isLeft={false}>
-                        {it.ticketnumber}
+                        {it.ticketnumber.slice(1,6)}
                       </GridItem>
                     </>
                   )}
@@ -186,7 +218,16 @@ export default function PrizePotCard({ isNext, setModal, roundID, lotteryInfo, l
           }}>
             {t(`Buy Now`)}
           </ButtonWrapper>
+          {isClaimable && (
+            <ButtonWrapper isEnable style={{ marginTop: '10px' }} 
+              onClick={handleClaimTickets}
+            >
+              {t(`Check Tickets`)}
+            </ButtonWrapper>
+          )}
+          
         </div>
+        
       )}
       {showDetail && (<PotContentTable isDetail lotteryInfo={lastLoteryInfo} />)}
     </Container>

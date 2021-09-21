@@ -76,7 +76,7 @@ export default function TicketCard({lastLoteryInfo, roundID}) {
     <Container isDetail={showDetail}>
       <div style={{display: 'flex', padding: '20px', justifyContent: 'space-between', alignItems: 'center'}}>
         <Text bold color='white' fontSize="24px">
-          {t('Round')} {roundID-1}
+          {t('Round')} {roundID}
         </Text>
         <Text bold color='white' fontSize="12px">
           {endTime}

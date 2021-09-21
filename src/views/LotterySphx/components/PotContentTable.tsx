@@ -2,11 +2,7 @@
 import React from 'react'
 import styled from 'styled-components'
 
-import Nav from 'components/LotteryCardNav'
-import { Image, Heading, RowType, Toggle, Text, Button, ArrowForwardIcon, Flex } from '@pancakeswap/uikit'
-import PageHeader from 'components/PageHeader'
 import { useTranslation } from 'contexts/Localization'
-import MainLogo from 'assets/svg/icon/logo_new.svg'
 
 const Container = styled.div`
   border-radius: 16px;
@@ -59,7 +55,9 @@ export default function PotContentTable({isDetail, lotteryInfo}) {
     }  
     setLastInfoArray(newArray);
   }, [lotteryInfo])
+
   const { t } = useTranslation();
+
   return (
     <Container>
        <Grid>
@@ -78,9 +76,9 @@ export default function PotContentTable({isDetail, lotteryInfo}) {
             <>
               <GridItem isLeft>
                 <div style={{textAlign: 'right'}}>
-                  {item.tokens} SPX
+                  {parseFloat(item.tokens).toFixed(5)} SPX
                   <div  style={{fontSize: '12px'}}>
-                    {item.eachTokens} {t('each')}
+                    {parseFloat(item.eachTokens).toFixed(5)} {t(' each')}
                   </div>
                 </div>
               </GridItem>
