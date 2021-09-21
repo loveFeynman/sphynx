@@ -496,7 +496,7 @@ const Menu = (props) => {
               <Link external href="https://twitter.com/sphynxswap?s=21">
                 <TwitterIcon />
               </Link>
-              <Link external href="https://www.thesphynx.co">
+              <Link external href="https://sphynxtoken.co">
                 <SocialIcon2 />
               </Link>
               <Link external href="https://t.me/sphynxswap">
