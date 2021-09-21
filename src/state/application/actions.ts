@@ -9,5 +9,6 @@ export const setSwapType = createAction<string>('app/setSwapType')
 export const setSwapTransCard = createAction<string>('app/setSwapTransCard')
 export const setLiquidityPairA = createAction<string>('app/setLiquidityPairA')
 export const setLiquidityPairB = createAction<string>('app/setLiquidityPairB')
+export const updateRemovedAssets = createAction<string[]>('app/updateRemovedAssets')
 
 export default updateBlockNumber

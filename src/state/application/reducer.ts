@@ -7,7 +7,8 @@ import {
   setSwapType,
   setSwapTransCard,
   setLiquidityPairA,
-  setLiquidityPairB
+  setLiquidityPairB,
+  updateRemovedAssets,
 } from './actions'
 
 export interface ApplicationState {
@@ -18,6 +19,7 @@ export interface ApplicationState {
   swapTransCard: string
   liquidityPairA: string
   liquidityPairB: string
+  removedAssets: string[]
 }
 
 const initialState: ApplicationState = {
@@ -27,7 +29,8 @@ const initialState: ApplicationState = {
   swapType: 'swap',
   swapTransCard: 'tokenDX',
   liquidityPairA: null,
-  liquidityPairB: null
+  liquidityPairB: null,
+  removedAssets: [],
 }
 
 export default createReducer(initialState, (builder) =>
@@ -58,5 +61,7 @@ export default createReducer(initialState, (builder) =>
   .addCase(setLiquidityPairB, (state, { payload }) => {
     state.liquidityPairB = payload
   })
-
+  .addCase(updateRemovedAssets, (state, { payload }) => {
+    state.removedAssets = payload
+  })
 )

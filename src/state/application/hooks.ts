@@ -7,7 +7,8 @@ import {
   setSwapType as _setSwapType,
   setSwapTransCard as _setSwapTransCard,
   setLiquidityPairA as _setLiquidityPairA,
-  setLiquidityPairB as _setLiquidityPairB
+  setLiquidityPairB as _setLiquidityPairB,
+  updateRemovedAssets
 } from './actions'
 import { AppState, AppDispatch } from '../index'
 
@@ -28,6 +29,19 @@ export function useMenuToggle() {
     dispatch(_toggleMenu(open));
 
   return { menuToggled, toggleMenu };
+}
+
+export function useRemovedAssets() {
+  const dispatch = useDispatch<AppDispatch>();
+  const removedAssets = useSelector<
+    AppState,
+    AppState['application']['removedAssets']
+  >((state) => state.application.removedAssets);
+
+  const setRemovedAssets = (assets: string[]) =>
+    dispatch(updateRemovedAssets(assets));
+
+  return { removedAssets, setRemovedAssets };
 }
 
 export function useSetRouterType() {

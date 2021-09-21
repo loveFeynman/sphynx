@@ -4,10 +4,11 @@ import styled from 'styled-components'
 // import { Link } from 'react-router-dom'
 import { useLocation } from 'react-router'
 import { Button, Link } from '@pancakeswap/uikit'
-import { useMenuToggle } from 'state/application/hooks'
+import { useMenuToggle, useRemovedAssets } from 'state/application/hooks'
 import { useWeb3React } from '@web3-react/core'
 import MainLogo from 'assets/svg/icon/logo_new.svg'
 import Illustration from 'assets/images/Illustration.svg'
+import CloseIcon from '@material-ui/icons/Close'
 import { ReactComponent as MenuOpenIcon } from 'assets/svg/icon/MenuOpenIcon.svg'
 import { ReactComponent as WalletIcon } from 'assets/svg/icon/WalletIcon.svg'
 import { ReactComponent as TwitterIcon } from 'assets/svg/icon/TwitterIcon.svg'
@@ -216,9 +217,25 @@ const IllustrationWrapper = styled.div`
   }
 `
 
+const RemoveIconWrapper = styled.div`
+  position: absolute;
+  top: 4px;
+  right: 2px;
+  z-index: 20;
+  cursor: pointer;
+  & svg path {
+    fill: white;
+  }
+`
+
+const TokenIconContainer = styled.div`
+  position: relative;
+`
+
 const Menu = (props) => {
   const { account } = useWeb3React()
   const { menuToggled, toggleMenu } = useMenuToggle()
+  const { removedAssets, setRemovedAssets } = useRemovedAssets()
   const [showAllToken, setShowAllToken] = useState(true)
 
   const [walletbalance, setWalletBalance] = useState(0)
@@ -306,75 +323,89 @@ const Menu = (props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [account])
 
-  const tokenData = getAllToken.map((elem: any) => {
+  const removeAsset = (asset: any) => {
+    const assets = removedAssets.map(val => val);
+    assets.push(asset.currency.symbol);
+    setRemovedAssets(assets);
+  }
+
+  const tokenData = getAllToken
+    .filter(val => removedAssets.findIndex(item => item === val.currency.symbol) === -1)
+    .sort((a, b) => Number(a.value) < Number(b.value) ? 1 : -1)
+    .map((elem: any) => {
     const { currency, value, dollarPrice } = elem
     //  const link = `https://bscscan.com/token/${currency.address}`
 
     return (
-      <a href={`#/swap/${currency.address}`}>
-        <TokenItemWrapper
-          toggled={menuToggled}
-          onClick={() => {
-            dispatch(
-              setIsInput({
-                isInput: false
-              })
-            )
-            toggleMenu(true)
-            // dispatch(
-            //   replaceSwapState({
-            //     outputCurrencyId: 'BNB' ,
-            //     inputCurrencyId: currency.address,
-            //     typedValue: '',
-            //     field: Field.OUTPUT,
-            //     recipient: null,
-            //   }),
-            // )
-          }}
-        >
-          {menuToggled ? (
-            <>
-              <div>
-                <p>
-                  <b>{currency.symbol}</b>
-                </p>
-                <p>
-                  <b>${Number(dollarPrice).toFixed(2).toLocaleString()}</b>
-                </p>
-                <p>
-                  <b>{Number(value).toFixed(2).toLocaleString()}</b>
-                </p>
-              </div>
-            </>
-          ) : (
-            <>
-              <div>
-                <p>
-                  <b>{currency.symbol}</b>
-                </p>
-                <p>
-                  <b>${Number(dollarPrice).toFixed(2).toLocaleString()}</b>
-                </p>
-              </div>
-              <div>
-                <p>
-                  <b>{Number(value).toFixed(2).toLocaleString()}</b>
-                </p>
-                <p />
-              </div>
-            </>
-          )}
+      <TokenIconContainer>
+        <a href={`#/swap/${currency.address}`}>
+          <TokenItemWrapper
+            toggled={menuToggled}
+            onClick={() => {
+              dispatch(
+                setIsInput({
+                  isInput: false
+                })
+              )
+              toggleMenu(true)
+              // dispatch(
+              //   replaceSwapState({
+              //     outputCurrencyId: 'BNB' ,
+              //     inputCurrencyId: currency.address,
+              //     typedValue: '',
+              //     field: Field.OUTPUT,
+              //     recipient: null,
+              //   }),
+              // )
+            }}
+          >
+            {menuToggled ? (
+              <>
+                <div>
+                  <p>
+                    <b>{currency.symbol}</b>
+                  </p>
+                  <p>
+                    <b>${Number(dollarPrice).toFixed(2).toLocaleString()}</b>
+                  </p>
+                  <p>
+                    <b>{Number(value).toFixed(2).toLocaleString()}</b>
+                  </p>
+                </div>
+              </>
+            ) : (
+              <>
+                <div>
+                  <p>
+                    <b>{currency.symbol}</b>
+                  </p>
+                  <p>
+                    <b>${Number(dollarPrice).toFixed(2).toLocaleString()}</b>
+                  </p>
+                </div>
+                <div>
+                  <p>
+                    <b>{Number(value).toFixed(2).toLocaleString()}</b>
+                  </p>
+                  <p />
+                </div>
+              </>
+            )}
 
-          {/* {
-                  !menuToggled &&
-                  <div>
-                    <p><b>{currency.symbol }</b></p>
-                    <p><b>${ value}</b></p>
-                  </div>
+            {/* {
+                    !menuToggled &&
+                    <div>
+                      <p><b>{currency.symbol }</b></p>
+                      <p><b>${ value}</b></p>
+                    </div>
 
-                } */}
-        </TokenItemWrapper>
-      </a>
+                  } */}
+          </TokenItemWrapper>
+        </a>
+        <RemoveIconWrapper onClick={() => { removeAsset(elem) }}>
+          <CloseIcon />
+        </RemoveIconWrapper>
+      </TokenIconContainer>
     )
   })
 
