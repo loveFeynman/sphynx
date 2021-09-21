@@ -101,33 +101,26 @@ export default function HotTokenBar() {
   const dispatch = useDispatch();
 
   const date:any = new Date();
-  date.setDate(date.getDate() - 2)
-  const d:any = new Date()
-  d.setDate(d.getDate() - 2);
+  const prevDate = `${date.getFullYear()}-${date.getMonth() < 9 ? `0${date.getMonth()+1}` : date.getMonth()+1}-${date.getDate() < 11 ? `0${date.getDate() - 1}` : date.getDate() -1}`;
+  const currentDate = `${date.getFullYear()}-${date.getMonth() < 9 ? `0${date.getMonth()+1}` : date.getMonth()+1}-${date.getDate() < 10 ? `0${date.getDate()}` : date.getDate()}`;
   const getDataQuery = `
   {
     ethereum(network: bsc) {
-      transfers(
-        options: {desc: "amount", limit: 10, offset: 0}
-        amount: {gt: 0}
-        date: {since: "${date.toISOString()}", till: "${d.toISOString()}"}
-        currency: {notIn: ["BNB", "WBNB", "BTCB", "ETH", "BUSD", "USDT", "USDC", "DAI"]}
+      dexTrades(
+        options: {desc: "currencyAmount", limit: 10 }
+        date: {since: "${prevDate}", till: "${currentDate}"}
+        baseCurrency: {notIn: ["BNB", "", "WBNB", "BTCB", "ETH", "BUSD", "USDT", "USDC", "DAI"]}
       ) {
-        currency {
+        currency: baseCurrency {
           symbol
           address
-          name
         }
         count
-        senders: count(uniq: senders)
-        receivers: count(uniq: receivers)
-        days: count(uniq: dates)
-        from_date: minimum(of: date)
-        till_date: maximum(of: date)
-        amount
+        currencyAmount: baseAmount(in: USD)
+        dates: count(uniq: dates)
+        started: minimum(of: date)
       }
     }
-    
   }`
 
   const handleClick = useCallback(async() => {
@@ -136,7 +129,7 @@ export default function HotTokenBar() {
       const queryResult = await axios.post('https://graphql.bitquery.io/', { query: getDataQuery });
       // setData(queryResult);
       if (queryResult.data.data){
-      setData(queryResult.data.data.ethereum.transfers)
+      setData(queryResult.data.data.ethereum.dexTrades)
       setLoader(false);
       }
   // eslint-disable-next-line react-hooks/exhaustive-deps
