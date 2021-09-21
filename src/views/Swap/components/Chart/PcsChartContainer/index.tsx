@@ -246,13 +246,12 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
           '1M': 30 * 24 * 3600000,
         }
 
-        const provider = new ethers.providers.WebSocketProvider(
-          'wss://speedy-nodes-nyc.moralis.io/b11b00ad906204d865e2d263/bsc/mainnet/archive/ws',
-        )
         if (lastBarsCache === undefined) return
+        let price = window.localStorage.getItem('currentPrice')
+        if (!price) return
         const isNew = new Date().getTime() - lastBarsCache.time >= resolutionMapping[currentResolutions]
 
-        lastBarsCache.close = await getTokenPrice(result, provider)
+        lastBarsCache.close = price
         if (isNew) {
           lastBarsCache.time = new Date().getTime()
           lastBarsCache.open = lastBarsCache.close
@@ -267,7 +266,7 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
           }
         }
         onRealtimeCallback(lastBarsCache)
-      }, 1000 * 15) // 15s update interval
+      }, 1000 * 4) // 4s update interval
     },
     unsubscribeBars: (subscriberUID) => {
       console.log('[unsubscribeBars]: Method call with subscriberUID:', subscriberUID)
