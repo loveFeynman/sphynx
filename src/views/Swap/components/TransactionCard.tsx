@@ -173,7 +173,6 @@ const TransactionCard = () => {
       let newTransactions = transactions
       for (let i = 0; i <= myTransactions.length; i++) {
         if (i == myTransactions.length - 1) {
-          console.log('transactions', newTransactions)
           setTransactions(newTransactions)
           resolve(true)
         }
@@ -214,6 +213,7 @@ const TransactionCard = () => {
   }
 
   useEffect(() => {
+    window.localStorage.removeItem("currentPrice"); // initiate
     const fetchLPAddr = async () => {
       lpAddr = await getPancakePairAddress(input, WBNB.address, simpleWebsocketProvider)
     }

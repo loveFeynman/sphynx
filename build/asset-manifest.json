@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/static/css/main.5c42e531.chunk.css",
-    "main.js": "/static/js/main.2fb8a9ac.chunk.js",
-    "main.js.map": "/static/js/main.2fb8a9ac.chunk.js.map",
+    "main.js": "/static/js/main.a15ba850.chunk.js",
+    "main.js.map": "/static/js/main.a15ba850.chunk.js.map",
     "runtime-main.js": "/static/js/runtime-main.223a2402.js",
     "runtime-main.js.map": "/static/js/runtime-main.223a2402.js.map",
     "static/css/2.ecdd39c8.chunk.css": "/static/css/2.ecdd39c8.chunk.css",
-    "static/js/2.763992cf.chunk.js": "/static/js/2.763992cf.chunk.js",
-    "static/js/2.763992cf.chunk.js.map": "/static/js/2.763992cf.chunk.js.map",
+    "static/js/2.69c2e20b.chunk.js": "/static/js/2.69c2e20b.chunk.js",
+    "static/js/2.69c2e20b.chunk.js.map": "/static/js/2.69c2e20b.chunk.js.map",
     "static/js/3.5e031a32.chunk.js": "/static/js/3.5e031a32.chunk.js",
     "static/js/3.5e031a32.chunk.js.map": "/static/js/3.5e031a32.chunk.js.map",
     "static/js/4.012e1925.chunk.js": "/static/js/4.012e1925.chunk.js",
@@ -23,7 +23,7 @@
     "index.html": "/index.html",
     "static/css/2.ecdd39c8.chunk.css.map": "/static/css/2.ecdd39c8.chunk.css.map",
     "static/css/main.5c42e531.chunk.css.map": "/static/css/main.5c42e531.chunk.css.map",
-    "static/js/2.763992cf.chunk.js.LICENSE.txt": "/static/js/2.763992cf.chunk.js.LICENSE.txt",
+    "static/js/2.69c2e20b.chunk.js.LICENSE.txt": "/static/js/2.69c2e20b.chunk.js.LICENSE.txt",
     "static/js/3.5e031a32.chunk.js.LICENSE.txt": "/static/js/3.5e031a32.chunk.js.LICENSE.txt",
     "static/media/ArrowRight.7dbfb1b3.svg": "/static/media/ArrowRight.7dbfb1b3.svg",
     "static/media/BSCTokenIcon.93320995.svg": "/static/media/BSCTokenIcon.93320995.svg",
@@ -56,8 +56,8 @@
   "entrypoints": [
     "static/js/runtime-main.223a2402.js",
     "static/css/2.ecdd39c8.chunk.css",
-    "static/js/2.763992cf.chunk.js",
+    "static/js/2.69c2e20b.chunk.js",
     "static/css/main.5c42e531.chunk.css",
-    "static/js/main.2fb8a9ac.chunk.js"
+    "static/js/main.a15ba850.chunk.js"
   ]
 }
