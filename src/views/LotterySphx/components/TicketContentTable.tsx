@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React from 'react'
 import styled from 'styled-components'
 import { useTranslation } from 'contexts/Localization'
@@ -32,15 +33,27 @@ const GridItem = styled.div<{ isLeft: boolean }>`
   padding: 6px 0px;
 `
 
-export default function PotContentTable() {
+export default function TicketContentTable(lastLoteryInfo) {
   
-  const PrizeArray =[
-    {number: 6, tokens: 2 ,totalTokens: 4000 ,eachTokens: 2000},
-    {number: 5, tokens: 72 ,totalTokens: 3120 ,eachTokens: 4.57},
-    {number: 4, tokens: 421 ,totalTokens: 2104 ,eachTokens: 1.47},
-    {number: 3, tokens: 1204 ,totalTokens: 320 ,eachTokens: 0.63},
-    {number: 2, tokens: 1423 ,totalTokens: 202 ,eachTokens: .041},
-  ]
+  const [latestInfoArray, setLastInfoArray] = React.useState([]);
+  React.useEffect(()=>{
+    const newArray=[];
+    if (lastLoteryInfo !== null && lastLoteryInfo !== undefined) {
+      for (let i = 6; i >0;i--){
+        newArray.push(
+          {
+            number: i, 
+            tokens: (parseInt(lastLoteryInfo.lastLoteryInfo?.cakePerBracket[i-1])/10000000000000000000).toFixed(5) ,
+            matchNumber: lastLoteryInfo.lastLoteryInfo?.countWinnersPerBracket[i-1] ,
+            eachTokens: lastLoteryInfo.lastLoteryInfo?.countWinnersPerBracket[i-1] === '0'?'0': 
+                      (parseInt(lastLoteryInfo.lastLoteryInfo?.cakePerBracket[i-1])/10000000000000000000/lastLoteryInfo.lastLoteryInfo?.countWinnersPerBracket[i-1]).toFixed(5)
+          }
+        )
+      }
+    }
+    setLastInfoArray(newArray);
+  }, [lastLoteryInfo])
+
   const { t } = useTranslation();
   return (
     <Container>
@@ -54,18 +67,18 @@ export default function PotContentTable() {
         <GridHeaderItem isLeft={false}>
           {t('Amount')}
         </GridHeaderItem>
-        {PrizeArray.map((item)=>(
+        {latestInfoArray.map((item)=>(
           <>
             <GridItem isLeft>
               {item.number}
             </GridItem>
             <GridItem isLeft={false}>
-              {item.tokens}
+              {item.matchNumber}
             </GridItem>
             <>
               <GridItem isLeft>
                 <div style={{textAlign: 'right'}}>
-                  {item.totalTokens} SPX
+                  {item.tokens} SPX
                   <div style={{fontSize: '12px'}}>
                     {item.eachTokens}{t(`each`)}
                   </div>

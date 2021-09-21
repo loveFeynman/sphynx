@@ -92,7 +92,7 @@ const GridItem = styled.div<{ isLeft: boolean }>`
   color: white;
   padding: 6px 0px;
 `
-export default function PrizePotCard({ isNext, setModal, roundID, lotteryInfo, lastLoteryInfo }) {
+export default function PrizePotCard({ isNext, setModal, roundID, lotteryInfo, lastLoteryInfo, userTicketInfos }) {
   const [totalCount, setTotalCount] = React.useState(0);
   const [showDetail, setShowDetail] = React.useState(false);
   const { t } = useTranslation();
@@ -101,7 +101,6 @@ export default function PrizePotCard({ isNext, setModal, roundID, lotteryInfo, l
   const { account } = useWeb3React();
 
   React.useEffect(() => {
-    setTotalCount(lastLoteryInfo?.amountCollectedInCake / 1000000000000000000);
   }, [lastLoteryInfo])
 
   React.useEffect(() => {
@@ -116,6 +115,7 @@ export default function PrizePotCard({ isNext, setModal, roundID, lotteryInfo, l
         setRemainingTime((hours.toString()).concat("h ").concat(minutes.toString()).concat("m"));
         setEnabled(true);
       }
+      setTotalCount(lastLoteryInfo?.amountCollectedInCake / 1000000000000000000);
     }
 
   }, [lotteryInfo, account, roundID]);
@@ -151,7 +151,7 @@ export default function PrizePotCard({ isNext, setModal, roundID, lotteryInfo, l
       )}
       {isNext && (
         <div style={{ marginBottom: '30px' }}>
-          <Flex>
+          <Flex style={{flexDirection: 'column'}}>
             <Grid>
               <GridHeaderItem isLeft>
                 {t('Ticket No')}
@@ -159,15 +159,26 @@ export default function PrizePotCard({ isNext, setModal, roundID, lotteryInfo, l
               <GridHeaderItem isLeft={false}>
                 {t('Ticket Number')}
               </GridHeaderItem>
-              <>
-                <GridItem isLeft>
-                  tickets
-                </GridItem>
-                <GridItem isLeft={false}>
-                  ticket Numbers
-                </GridItem>
-              </>
             </Grid>
+            <Flex style={{
+              overflowY: 'scroll',
+              maxHeight: '300px',
+            }}>
+              <Grid>
+
+                {
+                  userTicketInfos?.map((it) =>
+                    <>
+                      <GridItem isLeft>
+                        {it.id}
+                      </GridItem>
+                      <GridItem isLeft={false}>
+                        {it.ticketnumber}
+                      </GridItem>
+                    </>
+                  )}
+              </Grid>
+            </Flex>
           </Flex>
           <ButtonWrapper isEnable={enabled} style={{ marginTop: '30px' }} onClick={() => {
             if (enabled)

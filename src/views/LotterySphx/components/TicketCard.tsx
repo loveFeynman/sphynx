@@ -1,13 +1,15 @@
+/* eslint-disable */
 import React from 'react'
 import styled from 'styled-components'
 
-import {Text, Link } from '@pancakeswap/uikit'
+import {Text, Link, Flex } from '@pancakeswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 import MainLogo from 'assets/svg/icon/logo_new.svg'
 import  LinkIcon from 'assets/svg/icon/LinkYellow.svg'
 import { useWeb3React } from '@web3-react/core'
 
 import TicketContentTable from './TicketContentTable'
+import moment from 'moment'
 
 const Container = styled.div<{ isDetail: boolean }>`
   min-width: 340px;
@@ -47,20 +49,37 @@ const SeperateLine = styled.div`
   border-bottom: 1px solid #ffffff;
   margin: 0px 20px;
 `
-export default function TicketCard() {
+export default function TicketCard({lastLoteryInfo, roundID}) {
+
+  const [winningCards, setWinningCard]= React.useState([]);
   const [totalCount, setTotalCount] = React.useState(33432);
+  const [endTime, setEndTime] = React.useState('');
+
   const [showDetail, setShowDetail] = React.useState(false);
   const { account } = useWeb3React();
+  React.useEffect(()=>{
+    if (lastLoteryInfo !== null) {
+      const arrayData=[];
+      for (let i = 1; i <= 6 ; i++ ) {
+        arrayData.push(lastLoteryInfo.finalNumber.toString().charAt(i));
+      }
+      setWinningCard(arrayData);
+      setTotalCount(lastLoteryInfo?.amountCollectedInCake / 1000000000000000000);
+      setEndTime(moment(new Date(parseInt(lastLoteryInfo?.endTime) * 1000).toString()).format("MMM d hh a").toString().concat(" UTC"));
+      // moment('2017-06-10T16:08:00').format('MM/DD/YYYY');
+
+    }
+  }, [lastLoteryInfo])
   
   const { t } = useTranslation();
   return (
     <Container isDetail={showDetail}>
       <div style={{display: 'flex', padding: '20px', justifyContent: 'space-between', alignItems: 'center'}}>
         <Text bold color='white' fontSize="24px">
-          {t('Ticket')} #12
+          {t('Round')} {roundID-1}
         </Text>
         <Text bold color='white' fontSize="12px">
-          Sep 28, 3pm UTC
+          {endTime}
         </Text>
       </div>
       <div style={{display: 'flex', padding: '4px 20px'}}>
@@ -69,9 +88,11 @@ export default function TicketCard() {
           <Text bold color='white' fontSize="16px">
             {t('Winning Numbers:')}
           </Text>
-          <Text bold color='white' fontSize="24px">
-            1, 16, 8, 9, 3, 4
-          </Text>
+          <Flex>
+            {winningCards.map((item)=>
+              (<Text bold color='white' fontSize="24px">{item},&nbsp;</Text>)
+            )}
+          </Flex>
         </div>
       </div>
       <div style={{display: 'flex', padding: '4px 20px 32px'}}>
@@ -81,12 +102,12 @@ export default function TicketCard() {
             {t('Prize Pot:')}
           </Text> 
           <Text bold color='white' fontSize="24px">
-            {totalCount} SPX
+            {totalCount.toFixed(5)} SPX
           </Text>
         </div>
       </div>
       <SeperateLine/>
-      <TicketContentTable />
+      <TicketContentTable lastLoteryInfo={lastLoteryInfo}/>
       <ButtonWrapper style={{ margin: '65px 20px 20px' }} onClick={() => null}>
         View your ticket
       </ButtonWrapper>

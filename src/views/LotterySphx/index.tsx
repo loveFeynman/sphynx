@@ -19,7 +19,7 @@ import TicketCard  from './components/TicketCard'
 import History  from './components/LotteryHistory'
 import { isAddress, getBscScanLink } from '../../utils'
 import BuyTicketModal from './components/BuyTicketModal';
-import { useLotteryBalance, approveCall, buyTickets, viewLotterys, viewUserInfo} from '../../hooks/useLottery'
+import { useLotteryBalance, approveCall, buyTickets, viewLotterys, viewUserInfoForLotteryId} from '../../hooks/useLottery'
 
 const WinningCard= styled.div`
   width: 94px;
@@ -215,16 +215,15 @@ export default function Lottery() {
    }, [lotteryInfo, roundID]);
   
    //getting user tickets
+   const [forceValue, setForceValue] = useState(0); // integer state
 
    React.useEffect(()=> {
-    viewUserInfo(account, roundID, cursor, setUserInfoTickets);
+    const fetchData = async () => {
+      await viewUserInfoForLotteryId(account, roundID.toString(), 0, 2500, setUserInfoTickets);
+    }
+    fetchData();
+    setForceValue(forceValue+1);
    } , [account, roundID, cursor]);
-
-   
-   React.useEffect(()=> {
-     setCursor(cursor + parseInt(userTicketInfos[3]));
-    console.log(userTicketInfos[3]);
-   },[userTicketInfos]);
 
   const handleItemClick = () => {
     if (activeIndex === 0)
@@ -328,10 +327,14 @@ export default function Lottery() {
         <>
           <PrizePotCardContainer>
             <div style={{margin: '10px'}}>
-              <PrizePotCard isNext={false} setModal={null} roundID={roundID} lotteryInfo={lotteryInfo} lastLoteryInfo={lastLoteryInfo}/>
+              {forceValue > 0 &&
+                <PrizePotCard isNext={false} setModal={null} roundID={roundID} lotteryInfo={lotteryInfo} lastLoteryInfo={lastLoteryInfo} userTicketInfos={userTicketInfos}/>
+              }
             </div>
             <div style={{margin: '10px'}}>
-              <PrizePotCard isNext setModal={onPresentSettingsModal} roundID={roundID} lotteryInfo={lotteryInfo} lastLoteryInfo={lastLoteryInfo}/>
+            {forceValue > 0 &&
+              <PrizePotCard isNext setModal={onPresentSettingsModal} roundID={roundID} lotteryInfo={lotteryInfo} lastLoteryInfo={lastLoteryInfo} userTicketInfos={userTicketInfos}/>
+            }
             </div>
           </PrizePotCardContainer>
           <div style={{textAlign: 'center', margin: '88px 0px 76px 0px' }}>
@@ -384,7 +387,7 @@ export default function Lottery() {
           </div>
           <PastDrawCardContainer>
             <div style={{margin: '10px'}}>
-              <TicketCard />
+              <TicketCard lastLoteryInfo={lastLoteryInfo} roundID={roundID}/>
             </div>
             <div style={{margin: '10px'}}>
               <History />

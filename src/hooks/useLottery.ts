@@ -5,6 +5,7 @@ import { useEffect,useMemo, useState, useCallback } from 'react';
 import lottery from 'assets/abis/lottery.json'
 import sphynx from 'assets/abis/sphynx.json'
 import HDWalletProvider from '@truffle/hdwallet-provider';
+import { TICKET_LIMIT_PER_REQUEST } from 'config/constants/lottery'
 
 let web3;
 const providerURL = 'https://data-seed-prebsc-1-s1.binance.org:8545/';
@@ -68,14 +69,10 @@ export const useLotteryBalance = () => {
           .then((data) => {
             // console.log("view lotterys success", data);
             setLotteryInfo(data);
-            console.log(data);
-            return data;
           }).catch((err) => {
             console.log('view lotterys', err)
           });
-        return null;
       } catch {
-        return null;
       }
     };
     if (fetchFlag) {
@@ -144,22 +141,67 @@ export const viewLotterys = async (rID, setLastLottery) => {
   }
 };
 
-export const viewUserInfo = async ( account, roundID, cursor, setUserInfoTickets) => {
+
+export const viewUserInfoForLotteryId = async (
+  account: string,
+  lotteryId: string,
+  cursor: number,
+  perRequestLimit: number,
+  setUserInfoTickets: any,
+) => {
   try {
-    
-    await lotteryContract.methods.viewUserInfoForLotteryId(process.env.NODE_ENV !== 'production'?"0x3EF6FeB63B2F0f1305839589eDf487fb61b99A4E":account, roundID, cursor,100)
-      .call()
-      .then((data) => {
-        console.log(data);
-        console.log("temp 123");
-        setUserInfoTickets(data);
-      }).catch((err) => {
-        console.log(err);
-      });
-  } catch {
-    console.error("buyTickets Round error")
+    await lotteryContract.methods.viewUserInfoForLotteryId(process.env.NODE_ENV !== 'production'?"0x3EF6FeB63B2F0f1305839589eDf487fb61b99A4E":account, lotteryId, cursor.toString(), perRequestLimit.toString())
+    .call()
+    .then((response)=>{
+      const dataArray = response[0].map((item, index)=> {return {
+        id: response[0][index],
+        ticketnumber: response[1][index],
+        status: response[2][index],
+      }})
+      setUserInfoTickets(dataArray);
+    })
+    .catch((err)=>{
+      console.error('viewUserInfoForLotteryId', err)
+    });
+  } catch (error) {
+    console.error('viewUserInfoForLotteryId', error)
+    return null
   }
-};
+}
+
+export const processRawTicketsResponse = (ticketsResponse) => {
+  const [ticketIds, ticketNumbers, ticketStatuses] = ticketsResponse
+
+  if (ticketIds?.length > 0) {
+    return ticketIds.map((ticketId, index) => {
+      return {
+        id: ticketId.toString(),
+        number: ticketNumbers[index].toString(),
+        status: ticketStatuses[index],
+      }
+    })
+  }
+  return []
+}
+
+// export const fetchUserTicketsForOneRound = async (account: string, lotteryId: string) => {
+//   let cursor = 0
+//   let numReturned = TICKET_LIMIT_PER_REQUEST
+//   const ticketData = []
+
+//   while (numReturned === TICKET_LIMIT_PER_REQUEST) {
+//     // eslint-disable-next-line no-await-in-loop
+//     const response = await viewUserInfoForLotteryId(account, lotteryId, cursor, TICKET_LIMIT_PER_REQUEST);
+//     if (response !== null) {
+//       cursor += TICKET_LIMIT_PER_REQUEST
+//       numReturned = response?.length
+//       ticketData.push(...response)
+//     }
+    
+//   }
+
+//   return ticketData
+// }
 
 export const claimTickets = async ( account, roundID, cursor) => {
   try {
