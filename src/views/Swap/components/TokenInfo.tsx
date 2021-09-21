@@ -106,8 +106,7 @@ export default function TokenInfo() {
     }
     catch(err){
        // eslint-disable-next-line no-console
-      // console.log(err);
-      window.alert("Invalid Address: get token stats")
+      console.log(err);
     }
   }
 

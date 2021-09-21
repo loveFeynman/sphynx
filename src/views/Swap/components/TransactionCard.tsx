@@ -13,12 +13,12 @@ import { isAddress } from '../../../utils'
 import Web3 from 'web3'
 import ERC20ABI from '../../../assets/abis/erc20.json'
 import routerABI from '../../../assets/abis/pancakeRouter.json'
-import { simpleRpcProvider, simpleWebsocketProvider } from '../../../utils/providers'
-import { getBep20Contract } from '../../../utils/contractHelpers'
+import { simpleWebsocketProvider } from '../../../utils/providers'
 
 const pancakeV2: any = '0x10ED43C718714eb63d5aA57B78B54704E256024E'
-
+const busdAddr = '0xe9e7cea3dedca5984780bafc599bd69add087d56'
 const transferEventTopic = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef'
+let tokenDecimal = 18;
 
 const abi: any = ERC20ABI
 const routerAbi: any = routerABI
@@ -79,25 +79,15 @@ interface TransactionProps {
   tx: string
 }
 
-// let blockNumber = 0
-// let txHashs = []
-// let pending = []
 let blocks = 0
 let transactions = []
 let myTransactions = []
-let lpAddr
-// eslint-disable-next-line prefer-const
-let newTransactions: TransactionProps[]
 
 const TransactionCard = () => {
   const providerURL = 'wss://old-thrumming-voice.bsc.quiknode.pro/7674ba364cc71989fb1398e1e53db54e4fe0e9e0/'
   const web3 = new Web3(new Web3.providers.WebsocketProvider(providerURL))
   const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
   const tokenAddress = isAddress(input)
-  const [socketData, setSocketData]: any = useState({})
-  const [currentTransactions, setTransactions] = useState<TransactionProps[]>([])
-  const [tokenInfo, setTokenInfo] = useState<TokenInfo | undefined>(undefined)
-  const tokenContract = useRef(null)
 
   const getDataQuery = `
   {
@@ -157,7 +147,6 @@ const TransactionCard = () => {
   const getPrice: any = async () => {
     return new Promise((resolve) => {
       const pancakeRouterContract = new web3.eth.Contract(routerAbi, pancakeV2)
-      const busdAddr = '0xe9e7cea3dedca5984780bafc599bd69add087d56'
       const path = [input, busdAddr]
       pancakeRouterContract.methods
         .getAmountsOut(web3.utils.toWei('1', 'ether'), path)
@@ -167,21 +156,20 @@ const TransactionCard = () => {
   }
 
   const parseData: any = async () => {
-    console.log('blockNumber', blocks)
-    console.log('myTransactions', myTransactions)
     return new Promise((resolve) => {
       let newTransactions = transactions
       for (let i = 0; i <= myTransactions.length; i++) {
-        if (i == myTransactions.length - 1) {
-          setTransactions(newTransactions)
+        if (i === myTransactions.length) {
           resolve(true)
         }
 
         web3.eth.getTransaction(myTransactions[i]).then(async (data) => {
-          if (data.to === pancakeV2) {
+          try {
             let receipt = await web3.eth.getTransactionReceipt(data.hash)
-            let logs: any = receipt.logs.filter((data) => data.topics[0] === transferEventTopic)
-            logs = logs.map((log) => {
+            let logs: any = receipt.logs.filter(
+              (data) => data.topics[0] === transferEventTopic && data.hasOwnProperty('data'),
+            )
+            logs = logs.map((log: any) => {
               log.from = web3.eth.abi.decodeParameter('address', log.topics[1])
               log.to = web3.eth.abi.decodeParameter('address', log.topics[2])
               log.amount = web3.eth.abi.decodeParameter('uint256', log.data)
@@ -191,20 +179,23 @@ const TransactionCard = () => {
             logs = logs.filter(
               (log) =>
                 log.address.toLowerCase() === input &&
-                (log.to.toLowerCase() === lpAddr.toLowerCase() || log.from.toLowerCase() === lpAddr.toLowerCase()),
+                (log.to.toLowerCase() === receipt.from.toLowerCase() ||
+                  log.from.toLowerCase() === receipt.from.toLowerCase()),
             )
             if (logs.length === 0) return
             const price = await getPrice()
             let oneData: any = {}
-            oneData.amount = parseFloat(ethers.utils.formatUnits(logs[0].amount, 18))
-            oneData.price = parseFloat(ethers.utils.formatUnits(price[1], 18))
-            window.localStorage.setItem('currentPrice', oneData.price)
+            oneData.amount = parseFloat(ethers.utils.formatUnits(logs[0].amount, tokenDecimal))
+            oneData.price = parseFloat(ethers.utils.formatUnits(price[1], tokenDecimal))
             oneData.timestamp = new Date().getTime()
             oneData.tx = data.hash
-            oneData.isBuy = logs[0].to.toLowerCase() !== lpAddr.toLowerCase()
+            window.localStorage.setItem('currentToken', input)
+            window.localStorage.setItem('currentPrice', oneData.price)
+            logs = logs.filter((log) => log.to.toLowerCase() == receipt.from.toLowerCase())
+            oneData.isBuy = logs.length != 0
             oneData.usdValue = oneData.amount * oneData.price
             newTransactions.unshift(oneData)
-          }
+          } catch (err) {}
         })
       }
       blocks = 0
@@ -213,34 +204,44 @@ const TransactionCard = () => {
   }
 
   useEffect(() => {
-    window.localStorage.removeItem("currentPrice"); // initiate
-    const fetchLPAddr = async () => {
-      lpAddr = await getPancakePairAddress(input, WBNB.address, simpleWebsocketProvider)
-    }
-    fetchLPAddr()
+    window.localStorage.removeItem('currentPrice') // initiate
+    transactions = [];
     const contract: any = new web3.eth.Contract(abi, input)
-    contract.events.Transfer({}, async function (error, event) {
-      if (blocks < event.blockNumber && blocks !== 0) {
-        await parseData()
+    const fetchDecimals = async () => {
+      tokenDecimal = await contract.methods.decimals().call();
+      console.log("decimals", tokenDecimal);
+    }
+    fetchDecimals();
+    let emitter = contract.events
+      .Transfer({}, async function (error, event) {
+        if (error) {
+          console.error
+        }
+      })
+      .on('data', async (event) => {
+        if (blocks < event.blockNumber && blocks !== 0) {
+          await parseData()
+          blocks = event.blockNumber
+          return
+        }
         blocks = event.blockNumber
-        return
-      }
-      blocks = event.blockNumber
-      if (myTransactions.indexOf(event.transactionHash) == -1) {
-        myTransactions.push(event.transactionHash)
-      }
-    })
-  }, [])
+        if (myTransactions.indexOf(event.transactionHash) == -1) {
+          myTransactions.push(event.transactionHash)
+        }
+      })
+    return () => {
+      window.localStorage.removeItem('currentPrice') // initiate
+    }
+  }, [input])
 
   useEffect(() => {
-    newTransactions = []
+    let newTransactions = []
 
     const fetchData = async (tokenAddr: string) => {
       try {
         const provider = simpleWebsocketProvider // simpleRpcProvider
         const bnbPrice = await getBnbPrice(provider)
         const tokenInfo1 = await getMinTokenInfo(tokenAddr, provider)
-        setTokenInfo(tokenInfo1)
 
         // pull historical data
         const queryResult = await axios.post('https://graphql.bitquery.io/', { query: getDataQuery })
@@ -261,14 +262,10 @@ const TransactionCard = () => {
               tx: item.transaction.hash,
             }
           })
-          setTransactions(newTransactions)
         }
       } catch (err) {
         // eslint-disable-next-line no-console
         console.log('err', err.message)
-        if (tokenContract.current) {
-          tokenContract.current.removeAllListeners('Transfer')
-        }
       }
     }
 
@@ -352,14 +349,3 @@ const TransactionCard = () => {
 }
 
 export default TransactionCard
-
-// const offset = new Date().getTimezoneOffset();
-// console.log(offset);
-// const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-// let t:any=timezone
-// console.log("t=========================",t)
-// t=val.block.timestamp.time
-// // // eslint-disable-next-line no-console
-// const currentTime = moment().tz(t).format();
-// // // eslint-disable-next-line no-console
-// const today:any = new Date(currentTime);

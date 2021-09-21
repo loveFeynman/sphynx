@@ -97,11 +97,11 @@ export default function CoinStatsBoard() {
   
   const [alldata, setalldata] = useState({
     address : '',
-    price : '',
-    change : '',
-    volume : '',
-    liquidityV2 : '',
-    liquidityV2BNB:''
+    price : '0',
+    change : '0',
+    volume : '0',
+    liquidityV2 : '0',
+    liquidityV2BNB:'0'
   });
 
   const [tokenData, setTokenData] = useState<any>(null)
@@ -132,12 +132,13 @@ export default function CoinStatsBoard() {
     catch(err){
       // eslint-disable-next-line no-console
       console.log(err)
+      setTimeout(() => getTableData(), 5000)
     }
   }
   useEffect(() => {
     getTableData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[input])
+  }, [input])
 
   return (
     <Container>
@@ -161,7 +162,7 @@ export default function CoinStatsBoard() {
         <Column>
           <Text>Price</Text>
           {/* <Text>$ {Number(alldata.price).toLocaleString()}</Text> */}
-          <Text>${Number(alldata.price).toFixed(3).toLocaleString()}</Text>
+          <Text>${Number(alldata.price).toFixed(6).toLocaleString()}</Text>
         </Column>
         <Column>
           <Text>24h Change</Text>
