@@ -2,14 +2,14 @@
 import React from 'react'
 import styled from 'styled-components'
 
-import {Text, Link, Flex } from '@pancakeswap/uikit'
+import {Text, Link, Flex, useModal, } from '@pancakeswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 import MainLogo from 'assets/svg/icon/logo_new.svg'
 import  LinkIcon from 'assets/svg/icon/LinkYellow.svg'
 import { useWeb3React } from '@web3-react/core'
-
 import TicketContentTable from './TicketContentTable'
 import moment from 'moment'
+import ViewTickets from './ViewTickets'
 
 const Container = styled.div<{ isDetail: boolean }>`
   min-width: 340px;
@@ -54,6 +54,7 @@ export default function TicketCard({lastLoteryInfo, roundID}) {
   const [winningCards, setWinningCard]= React.useState([]);
   const [totalCount, setTotalCount] = React.useState(33432);
   const [endTime, setEndTime] = React.useState('');
+  const [onPresentSettingsModal] = useModal(<ViewTickets roundID={roundID} winningCards={winningCards} />)
 
   const [showDetail, setShowDetail] = React.useState(false);
   const { account } = useWeb3React();
@@ -108,7 +109,7 @@ export default function TicketCard({lastLoteryInfo, roundID}) {
       </div>
       <SeperateLine/>
       <TicketContentTable lastLoteryInfo={lastLoteryInfo}/>
-      <ButtonWrapper style={{ margin: '65px 20px 20px' }} onClick={() => null}>
+      <ButtonWrapper style={{ margin: '65px 20px 20px' }} onClick={() => onPresentSettingsModal()}>
         View your ticket
       </ButtonWrapper>
       <div style={{display: 'flex', justifyContent: 'center', paddingBottom: '36px'}}>

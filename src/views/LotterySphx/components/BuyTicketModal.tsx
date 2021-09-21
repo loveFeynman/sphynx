@@ -10,6 +10,7 @@ import { useSwapActionHandlers } from 'state/swap/hooks'
 import usePersistState from 'hooks/usePersistState'
 import { useWeb3React } from '@web3-react/core'
 import { useLotteryBalance, approveCall, buyTickets} from '../../../hooks/useLottery'
+import { Spinner } from './Spinner'
 import useToast from 'hooks/useToast'
 
 // eslint-disable 
@@ -108,50 +109,6 @@ const TicketInput = styled(Input)`
     border: unset;
   }
 `
-const StyledSpinner = styled.svg`
-  animation: rotate 2s linear infinite;
-  width: 50px;
-  height: 50px;
-  
-  & .path {
-    stroke: #1FC7D4;
-    stroke-linecap: round;
-    animation: dash 1.5s ease-in-out infinite;
-  }
-  
-  @keyframes rotate {
-    100% {
-      transform: rotate(360deg);
-    }
-  }
-  @keyframes dash {
-    0% {
-      stroke-dasharray: 1, 150;
-      stroke-dashoffset: 0;
-    }
-    50% {
-      stroke-dasharray: 90, 150;
-      stroke-dashoffset: -35;
-    }
-    100% {
-      stroke-dasharray: 90, 150;
-      stroke-dashoffset: -124;
-    }
-  }
-`;
-
-const Spinner = () => (
-  <StyledSpinner viewBox="0 0 50 50">
-    <circle
-      className="path"
-      cx="25"
-      cy="25"
-      r="20"
-      fill="none"
-      strokeWidth="4"
-    />
-  </StyledSpinner>
-);
 
 const BuyTicketModal: React.FC<InjectedModalProps> = ({ onDismiss }) => {
   const { account } = useWeb3React();

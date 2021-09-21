@@ -172,6 +172,7 @@ export default function Lottery() {
   const [selectedItemIndex, setSelectedItemIndex] = useState(-1);
   const [data,setdata]=useState([]);
   const [lastLoteryInfo, setLastLotteryInfo] = React.useState(null);
+  const [forceValue, setForceValue] = useState(0); // integer state
   const [userTicketInfos, setUserInfoTickets] = React.useState([]);
   const { roundID, lotteryInfo, setRefetch} = useLotteryBalance();
   const [onPresentSettingsModal] = useModal(<BuyTicketModal />)
@@ -214,7 +215,6 @@ export default function Lottery() {
    }, [lotteryInfo, roundID]);
   
    //getting user tickets
-   const [forceValue, setForceValue] = useState(0); // integer state
 
    React.useEffect(()=> {
     const fetchData = async () => {

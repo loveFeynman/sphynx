@@ -10,6 +10,7 @@ import MainLogo from 'assets/svg/icon/logo_new.svg'
 import DownArrow from 'assets/svg/icon/LotteryDownIcon.svg'
 import PotContentTable from './PotContentTable'
 import { useLotteryBalance, approveCall, buyTickets, claimTickets} from '../../../hooks/useLottery'
+import { Spinner } from './Spinner'
 
 const Container = styled.div<{ isDetail: boolean }>`
   width: 340px;
@@ -80,7 +81,6 @@ const GridHeaderItem = styled.div<{ isLeft: boolean }>`
   line-height: 19px;
   text-align: ${(props) => props.isLeft ? 'left' : 'right'};
   color: white;
-  padding-bottom: 20px;
 `
 const GridItem = styled.div<{ isLeft: boolean }>`
   max-width: 180px;
@@ -92,14 +92,16 @@ const GridItem = styled.div<{ isLeft: boolean }>`
   color: white;
   padding: 6px 0px;
 `
+
+
 export default function PrizePotCard({ isNext, setModal, roundID, lotteryInfo, lastLoteryInfo, userTicketInfos, winningCards}) {
-  const [totalCount, setTotalCount] = React.useState(0);
+  const [totalCount, setTotalCount] = React.useState('');
   const [showDetail, setShowDetail] = React.useState(false);
   const { t } = useTranslation();
   const [remainningTime, setRemainingTime] = React.useState('');
   const [enabled, setEnabled] = React.useState(false);
   const [isClaimable, setClaimable] = React.useState(false);
-
+  const [isLoading, setLoading] = React.useState(false);
   const { account } = useWeb3React();
 
   React.useEffect(() => {
@@ -131,9 +133,10 @@ export default function PrizePotCard({ isNext, setModal, roundID, lotteryInfo, l
       }
     });
     //account, roundID, ticketIds, brackets
-    console.log("roundID", roundID);
+
+    setLoading(true);
     await claimTickets(account, roundID, ticketIDS, brackets);
-    console.log("aaaaaaaaaaaaaaaaaaaaaaa", ticketIDS, brackets);
+    setLoading(false);
   }
   React.useEffect(() => {
     if (lotteryInfo !== null) {
@@ -148,7 +151,7 @@ export default function PrizePotCard({ isNext, setModal, roundID, lotteryInfo, l
         setRemainingTime((hours.toString()).concat("h ").concat(minutes.toString()).concat("m"));
         setEnabled(true);
       }
-      setTotalCount(lastLoteryInfo?.amountCollectedInCake / 1000000000000000000);
+      setTotalCount((lastLoteryInfo?.amountCollectedInCake / 1000000000000000000).toFixed(5));
     }
 
   }, [lotteryInfo, account, roundID]);
@@ -195,7 +198,7 @@ export default function PrizePotCard({ isNext, setModal, roundID, lotteryInfo, l
             </Grid>
             <Flex style={{
               overflowY: 'scroll',
-              maxHeight: '300px',
+              maxHeight: '255px',
             }}>
               <Grid>
                 {
@@ -222,7 +225,9 @@ export default function PrizePotCard({ isNext, setModal, roundID, lotteryInfo, l
             <ButtonWrapper isEnable style={{ marginTop: '10px' }} 
               onClick={handleClaimTickets}
             >
-              {t(`Check Tickets`)}
+              {isLoading ? (
+                <Spinner />
+              ) : t(`Check Tickets`)}
             </ButtonWrapper>
           )}
           
