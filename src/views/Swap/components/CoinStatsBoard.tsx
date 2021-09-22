@@ -122,7 +122,7 @@ export default function CoinStatsBoard() {
           
             setTokenData(response.data)
           });
-        axios.post("http://localhost:9000/chartStats",{address:input})
+        axios.post("http://https://thesphynx.co/api/chartStats",{address:input})
           .then((response) => {
             setalldata(response.data)
             setLinkIcon(`https://r.poocoin.app/smartchain/assets/${input ? utils.getAddress(input) : '0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82'}/logo.png`);
