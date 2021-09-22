@@ -17,6 +17,36 @@ const spxAbi: any = sphynx.abi
 const sphxContractWeb3 = new web3.eth.Contract(spxAbi, '0x2e121Ed64EEEB58788dDb204627cCB7C7c59884c')
 const sphxContract = new ethers.Contract('0x2e121Ed64EEEB58788dDb204627cCB7C7c59884c', spxAbi, simpleRpcProvider)
 
+
+const deepEqual = (object1, object2) => {
+  if (object1 === null ||  object2 === null)
+    return false;
+  const keys1 = Object.keys(object1);
+  const keys2 = Object.keys(object2);
+
+  if (keys1.length !== keys2.length) {
+    return false;
+  }
+
+  for (const key of keys1) {
+    const val1 = object1[key];
+    const val2 = object2[key];
+    const areObjects = isObject(val1) && isObject(val2);
+    if (
+      areObjects && !deepEqual(val1, val2) ||
+      !areObjects && val1 !== val2
+    ) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+const isObject = (object) => {
+  return object != null && typeof object === 'object';
+}
+
 export const useLotteryBalance = () => {
   const [balance, setBalance] = useState(0)
   const [roundID, setRoundID] = useState(0)
@@ -61,7 +91,10 @@ export const useLotteryBalance = () => {
           .call()
           .then((data) => {
             // console.log("view lotterys success", data);
-            setLotteryInfo(data);
+            if (!deepEqual(data, lotteryInfo)) {
+              setLotteryInfo(data);
+            }
+            
           }).catch((err) => {
             console.log('view lotterys', err)
           });
@@ -124,12 +157,13 @@ export const buyTickets = async (signer, roundID, ticketNumbers, setConfig, setE
   }
 }
 
-export const viewLotterys = async (rID, setLastLottery) => {
+export const viewLotterys = async (rID, lastLoteryInfo, setLastLottery) => {
   try {
     await lotteryContractWeb3.methods.viewLottery(rID)
       .call()
       .then((data) => {
-        setLastLottery(data);
+        if (!deepEqual(lastLoteryInfo, data))
+          setLastLottery(data);
         // console.log("view lotterys alone success", data);
       }).catch((err) => {
         // console.log('view lotterys alone fail', err);
