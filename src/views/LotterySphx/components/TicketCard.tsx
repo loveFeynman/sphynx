@@ -1,7 +1,7 @@
 /* eslint-disable */
 import React from 'react'
 import styled from 'styled-components'
-
+import axios from 'axios'
 import {Text, Link, Flex, useModal, } from '@pancakeswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 import MainLogo from 'assets/svg/icon/logo_new.svg'
@@ -52,7 +52,7 @@ const SeperateLine = styled.div`
 export default function TicketCard({lastLoteryInfo, roundID}) {
 
   const [winningCards, setWinningCard]= React.useState([]);
-  const [totalCount, setTotalCount] = React.useState(33432);
+  const [totalCount, setTotalCount] = React.useState('');
   const [endTime, setEndTime] = React.useState('');
   const [onPresentSettingsModal] = useModal(<ViewTickets roundID={roundID} winningCards={winningCards} />)
 
@@ -65,10 +65,16 @@ export default function TicketCard({lastLoteryInfo, roundID}) {
         arrayData.push(lastLoteryInfo.finalNumber.toString().charAt(i));
       }
       setWinningCard(arrayData);
-      setTotalCount(lastLoteryInfo?.amountCollectedInCake / 1000000000000000000);
+      let price='';
+      const tokenprice = async() =>{
+        axios.get(`https://thesphynx.co/api/price/0x2e121ed64eeeb58788ddb204627ccb7c7c59884c`)
+        .then((response) => {
+          price = response.data;
+        })
+      }
+      tokenprice();
+      setTotalCount((lastLoteryInfo?.amountCollectedInCake  * parseFloat(price) / 1000000000000000000 /1000000000000000000).toFixed(5));
       setEndTime(moment(new Date(parseInt(lastLoteryInfo?.endTime) * 1000).toString()).format("MMM d hh a").toString().concat(" UTC"));
-      // moment('2017-06-10T16:08:00').format('MM/DD/YYYY');
-
     }
   }, [lastLoteryInfo])
   
@@ -103,7 +109,10 @@ export default function TicketCard({lastLoteryInfo, roundID}) {
             {t('Prize Pot:')}
           </Text> 
           <Text bold color='white' fontSize="24px">
-            {totalCount.toFixed(5)} SPX
+             {totalCount==='NaN' || parseInt(totalCount) < 20 ? 
+                  "Calculating"
+                :
+                  `${totalCount} $`}
           </Text>
         </div>
       </div>
