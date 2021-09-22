@@ -334,6 +334,7 @@ const App: React.FC = () => {
                   <Route exact strict path="/farms" component={Farms} />
                   <Route exact strict path="/farms/history" component={Farms} />
                   <Route exact strict path="/pools" component={Pools} />
+                  <Route exact strict path="/pools/history" component={Pools} />
                   <Route exact strict path="/lottery" component={Lottery} />
                   <Route exact strict path="/bridge" component={Bridge} />
                   <Route exact strict path="/swap/:outputCurrency" component={RedirectToSwap} />
