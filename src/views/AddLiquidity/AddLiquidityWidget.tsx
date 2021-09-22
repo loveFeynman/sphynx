@@ -396,14 +396,14 @@ export default function AddLiquidityWidget({
                       {noLiquidity ? t('Initial prices and pool share') : t('Prices and pool share')}
                     </Text>
                   </RowBetween>{' '}
-                  <LightCard padding="1rem" borderRadius="20px">
+                  <Flex padding='16px'>
                     <PoolPriceBar
                       currencies={currencies}
                       poolTokenPercentage={poolTokenPercentage}
                       noLiquidity={noLiquidity}
                       price={price}
                     />
-                  </LightCard>
+                  </Flex>
                 </LightCard>
               </>
             )}
