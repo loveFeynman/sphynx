@@ -6,7 +6,7 @@ import { Image, Heading, RowType, Toggle, Text, Button, ArrowForwardIcon, Flex }
 import axios from 'axios';
 import { useSelector } from 'react-redux'
 import { AppState } from '../../../state'
-import { useWeb3React } from '@web3-react/core';
+import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import { useTranslation } from 'contexts/Localization'
 import MainLogo from 'assets/svg/icon/logo_new.svg'
 import DownArrow from 'assets/svg/icon/LotteryDownIcon.svg'
@@ -106,9 +106,9 @@ export default function PrizePotCard({ isNext, setModal, roundID, lotteryInfo, l
   const [enabled, setEnabled] = React.useState(false);
   const [isClaimable, setClaimable] = React.useState(false);
   const [isLoading, setLoading] = React.useState(false);
-  const { account } = useWeb3React();
+  const { account, library } = useActiveWeb3React();
+  const signer = library.getSigner();
   const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
-
   React.useEffect(() => {
     if (userTicketInfos?.length > 0) {
       userTicketInfos.map((item)=>{
@@ -140,7 +140,7 @@ export default function PrizePotCard({ isNext, setModal, roundID, lotteryInfo, l
     //account, roundID, ticketIds, brackets
 
     setLoading(true);
-    await claimTickets(account, roundID, ticketIDS, brackets);
+    await claimTickets(signer, roundID, ticketIDS, brackets);
     setLoading(false);
   }
 
@@ -230,7 +230,7 @@ export default function PrizePotCard({ isNext, setModal, roundID, lotteryInfo, l
                         {it.id}
                       </GridItem>
                       <GridItem isLeft={false}>
-                        {it.ticketnumber.slice(1,6)}
+                        {it.ticketnumber.toString().slice(1,7)}
                       </GridItem>
                     </>
                   )}

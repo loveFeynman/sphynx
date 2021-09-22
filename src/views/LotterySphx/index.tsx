@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import styled from 'styled-components';
 import Web3 from 'web3';
-import { useWeb3React } from '@web3-react/core';
+import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import Nav from 'components/LotteryCardNav'
 import { Heading, Text, Button, Link, useModal} from '@pancakeswap/uikit'
 import {Button as materialButton, Menu, MenuItem} from '@material-ui/core';
@@ -160,7 +160,8 @@ const LightContainer = styled.div`
   }
 `
 export default function Lottery() {
-  const { account } = useWeb3React();
+  const { account, library } = useActiveWeb3React();
+  const signer = library.getSigner();
   const dispatch = useDispatch();
   const [winningCards, setWinningCard]= React.useState([]);
   const [cursor, setCursor]= React.useState(0);
