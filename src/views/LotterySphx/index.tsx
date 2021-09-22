@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
@@ -6,7 +8,7 @@ import Web3 from 'web3';
 import { useWeb3React } from '@web3-react/core';
 import Nav from 'components/LotteryCardNav'
 import { Heading, Text, Button, Link, useModal} from '@pancakeswap/uikit'
-import {Button as materialButton,Menu,MenuItem} from '@material-ui/core';
+import {Button as materialButton, Menu, MenuItem} from '@material-ui/core';
 import PageHeader from 'components/PageHeader'
 import WebFont from 'webfontloader';
 import { useTranslation } from 'contexts/Localization'
@@ -15,9 +17,9 @@ import {typeInput, setIsInput} from '../../state/input/actions'
 import PrizePotCard  from './components/PrizePotCard'
 import TicketCard  from './components/TicketCard'
 import History  from './components/LotteryHistory'
-import {useLotteryBalance} from '../../hooks/useLottery'
 import { isAddress, getBscScanLink } from '../../utils'
 import BuyTicketModal from './components/BuyTicketModal';
+import { useLotteryBalance, approveCall, buyTickets, viewLotterys, viewUserInfoForLotteryId} from '../../hooks/useLottery'
 
 const WinningCard= styled.div`
   width: 94px;
@@ -158,18 +160,23 @@ const LightContainer = styled.div`
   }
 `
 export default function Lottery() {
-  const { account } = useWeb3React()
-  const [onPresentSettingsModal] = useModal(<BuyTicketModal />)
-  const winningCards=[1,16,8,9,3,4]
+  const { account } = useWeb3React();
+  const dispatch = useDispatch();
+  const [winningCards, setWinningCard]= React.useState([]);
+  const [cursor, setCursor]= React.useState(0);
   const { t } = useTranslation();
   const [activeIndex, setActiveIndex] = React.useState(0);
   const [ticketSearch, setTicketSearch] = React.useState('');
   const [showDrop,setShowDrop]= useState(false);
   const [show, setShow] = useState(true);
-  const [showBuyModal, setShowBuyModal] = useState(false)
   const [selectedItemIndex, setSelectedItemIndex] = useState(-1);
   const [data,setdata]=useState([]);
-  useLotteryBalance();
+  const [lastLoteryInfo, setLastLotteryInfo] = React.useState(null);
+  const [forceValue, setForceValue] = useState(0); // integer state
+  const [userTicketInfos, setUserInfoTickets] = React.useState([]);
+  const { roundID, lotteryInfo, setRefetch} = useLotteryBalance();
+  const [onPresentSettingsModal] = useModal(<BuyTicketModal />)
+
   React.useEffect(() => {
     WebFont.load({
       google: {
@@ -177,8 +184,45 @@ export default function Lottery() {
       }
     });
    }, []);
+
+  //
+   React.useEffect(() => {
+    if (lastLoteryInfo !== null) {
+      const arrayData=[];
+      for (let i = 1; i <= 6 ; i++ ) {
+          arrayData.push(lastLoteryInfo.finalNumber.toString().charAt(i));
+      }
+      setWinningCard(arrayData);
+    }
+   }, [lastLoteryInfo]);
+   
+   //getting lottery status
+   React.useEffect(() => {
+    if (lotteryInfo !== null) {
+      if (new Date().getTime() / 1000 > lotteryInfo.endTime) {
+        viewLotterys(roundID, setLastLotteryInfo);
+      } else {
+        // viewLotterys 
+        viewLotterys(roundID-1, setLastLotteryInfo);
+      }
+      setCursor(lotteryInfo.firstTicketId);
+      clearInterval();
+      setInterval(()=> {
+        setRefetch(false);
+        setRefetch(true);
+      }, 60 * 1000);
+    }
+   }, [lotteryInfo, roundID]);
   
-  const dispatch = useDispatch();
+   //getting user tickets
+
+   React.useEffect(()=> {
+    const fetchData = async () => {
+      await viewUserInfoForLotteryId(account, roundID.toString(), 0, 2500, setUserInfoTickets);
+    }
+    fetchData();
+    setForceValue(forceValue+1);
+   } , [account, roundID, cursor]);
 
   const handleItemClick = () => {
     if (activeIndex === 0)
@@ -195,6 +239,7 @@ export default function Lottery() {
       })
     )
   }
+
   const handleKeyPress = (event) => {
     if(event.key === 'Enter'){
       submitFuntioncall();
@@ -233,13 +278,13 @@ export default function Lottery() {
     }
 
     const result = isAddress(e.target.value)
-    if (result) {
-      setTicketSearch(e.target.value)
-      setShow(false);
-    } else {
-      setTicketSearch(e.target.value)
-      setShow(true);
-    }
+      if (result) {
+        setTicketSearch(e.target.value)
+        setShow(false);
+      } else {
+        setTicketSearch(e.target.value)
+        setShow(true);
+      }
   }
  
   return (
@@ -266,7 +311,7 @@ export default function Lottery() {
               <WinningCardContainerTop>
                 {winningCards.map((item)=>(
                   <WinningCardTop>
-                    <Text fontSize="18px" color="white" style={{fontWeight: 700, padding: '12px'}}> {item}</Text>
+                    <Text fontSize="18px" color="white" style={{fontWeight: 700, padding: '12px'}}> {item === ''?'?': item}</Text>
                   </WinningCardTop>
                 ))}
               </WinningCardContainerTop>
@@ -281,10 +326,14 @@ export default function Lottery() {
         <>
           <PrizePotCardContainer>
             <div style={{margin: '10px'}}>
-              <PrizePotCard isNext={false} setModal={null}/>
+              {forceValue > 0 &&
+                <PrizePotCard isNext={false} setModal={null} roundID={roundID} lotteryInfo={lotteryInfo} lastLoteryInfo={lastLoteryInfo} userTicketInfos={userTicketInfos} winningCards={winningCards}/>
+              }
             </div>
             <div style={{margin: '10px'}}>
-              <PrizePotCard isNext setModal={onPresentSettingsModal}/>
+            {forceValue > 0 &&
+              <PrizePotCard isNext setModal={onPresentSettingsModal} roundID={roundID} lotteryInfo={lotteryInfo} lastLoteryInfo={lastLoteryInfo} userTicketInfos={userTicketInfos} winningCards={winningCards}/>
+            }
             </div>
           </PrizePotCardContainer>
           <div style={{textAlign: 'center', margin: '88px 0px 76px 0px' }}>
@@ -296,7 +345,6 @@ export default function Lottery() {
           <div 
               style={{
                 textAlign: 'center', 
-                // margin: '88px 0px 76px 0px' , 
                 background:'rgba(0, 0, 0, 0.4)', 
                 borderRadius: '24px',
                 paddingTop: '32px',
@@ -319,17 +367,26 @@ export default function Lottery() {
             <ContractCard>
               <img src={SearchIcon} style={{marginLeft: '4px'}} alt="search"/>
               <SearchInputWrapper>
-                <input placeholder='' value={ticketSearch} onFocus={() => setShowDrop(true)} onKeyPress={handleKeyPress} onKeyUp={onSearchKeyDown} onChange={handlerChange} />
-                {
-                showDrop &&
-                <MenuWrapper>
-                  {data.length > 0 ?
-                    <span>
-                      {data?.map((item: any, index: number) => {
-                        return <Link href={`#/swap/${item.address}`}><MenuItem className={index === selectedItemIndex ? 'selectedItem' : ''}>{item.name}<br />{item.symbol}<br />{item.address}</MenuItem></Link>
-                      })}
-                    </span> : <span style={{ padding: '0 16px' }}>no record</span>}
-                </MenuWrapper>
+                <input 
+                  placeholder='' 
+                  value={ticketSearch} 
+                  onFocus={() => setShowDrop(true)} 
+                  onKeyPress={handleKeyPress} 
+                  onKeyUp={onSearchKeyDown} 
+                  onChange={handlerChange} />
+                { showDrop &&
+                  <MenuWrapper>
+                    {data.length > 0 ?
+                      <span>
+                        {data?.map((item: any, index: number) => {
+                          return (<Link href={`#/swap/${item.address}`}>
+                                    <MenuItem className={index === selectedItemIndex ? 'selectedItem' : ''}>
+                                      {item.name}<br />{item.symbol}<br />{item.address}
+                                    </MenuItem>
+                                  </Link>)
+                        })}
+                      </span> : <span style={{ padding: '0 16px' }}>no record</span>}
+                  </MenuWrapper>
                 }
               </SearchInputWrapper>
               <Button scale='sm' onClick={submitFuntioncall} style={{height: 'inherit'}}>{t(`Search`)}</Button>
@@ -337,7 +394,7 @@ export default function Lottery() {
           </div>
           <PastDrawCardContainer>
             <div style={{margin: '10px'}}>
-              <TicketCard />
+              <TicketCard lastLoteryInfo={lastLoteryInfo} roundID={roundID}/>
             </div>
             <div style={{margin: '10px'}}>
               <History />
