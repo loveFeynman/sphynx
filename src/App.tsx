@@ -332,6 +332,7 @@ const App: React.FC = () => {
                   {/* Using this format because these components use routes injected props. We need to rework them with hooks */}
                   <Route path="/swap" component={Swap} />
                   <Route exact strict path="/farms" component={Farms} />
+                  <Route exact strict path="/farms/history" component={Farms} />
                   <Route exact strict path="/pools" component={Pools} />
                   <Route exact strict path="/lottery" component={Lottery} />
                   <Route exact strict path="/bridge" component={Bridge} />
