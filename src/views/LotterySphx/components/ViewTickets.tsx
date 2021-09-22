@@ -127,11 +127,7 @@ const ViewTicketModal: React.FC<ViewTicketModalProps> = ({ roundID, winningCards
         {userTicketInfos?.map((ticket, index) =>
           <Flex flexDirection="column" marginBottom="12px">
             <Text fontSize='13px' mb="8px">
-
-              #{parseInt(ticket.id) < 100 ?
-                ((ticket.id + 1).toString().length >= 3) ? (ticket.id + 1).toString() : (new Array(3).join('0') + (ticket.id + 1).toString()).slice(-3)
-                : ticket.id
-              }
+              #{ticket.id.length ===1?'00'.concat(ticket.id): ticket.id.length ===2?'0'.concat(ticket.id):ticket.id}
             </Text>
             <TicketContainer>
               {

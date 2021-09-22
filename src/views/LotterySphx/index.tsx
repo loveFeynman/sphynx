@@ -7,21 +7,21 @@ import styled from 'styled-components';
 import Web3 from 'web3';
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import Nav from 'components/LotteryCardNav'
-import { Heading, Text, Button, Link, useModal} from '@pancakeswap/uikit'
-import {Button as materialButton, Menu, MenuItem} from '@material-ui/core';
+import { Heading, Text, Button, Link, useModal } from '@pancakeswap/uikit'
+import { Button as materialButton, Menu, MenuItem } from '@material-ui/core';
 import PageHeader from 'components/PageHeader'
 import WebFont from 'webfontloader';
 import { useTranslation } from 'contexts/Localization'
-import SearchIcon  from 'assets/images/search.png'
-import {typeInput, setIsInput} from '../../state/input/actions'
-import PrizePotCard  from './components/PrizePotCard'
-import TicketCard  from './components/TicketCard'
-import History  from './components/LotteryHistory'
+import SearchIcon from 'assets/images/search.png'
+import { typeInput, setIsInput } from '../../state/input/actions'
+import PrizePotCard from './components/PrizePotCard'
+import TicketCard from './components/TicketCard'
+import History from './components/LotteryHistory'
 import { isAddress, getBscScanLink } from '../../utils'
 import BuyTicketModal from './components/BuyTicketModal';
-import { useLotteryBalance, approveCall, buyTickets, viewLotterys, viewUserInfoForLotteryId} from '../../hooks/useLottery'
+import { useLotteryBalance, approveCall, buyTickets, viewLotterys, viewUserInfoForLotteryId } from '../../hooks/useLottery'
 
-const WinningCard= styled.div`
+const WinningCard = styled.div`
   width: 94px;
   height: 94px;
   background: #8B2A9B;
@@ -31,7 +31,7 @@ const WinningCard= styled.div`
     margin: 0px 36px;
   }
 `
-const WinningCardTop= styled.div`
+const WinningCardTop = styled.div`
   width: 48px;
   height: 48px;
   background: #8B2A9B;
@@ -163,20 +163,24 @@ export default function Lottery() {
   const { account, library } = useActiveWeb3React();
   const signer = library.getSigner();
   const dispatch = useDispatch();
-  const [winningCards, setWinningCard]= React.useState([]);
-  const [cursor, setCursor]= React.useState(0);
+  const [winningCards, setWinningCard] = React.useState([]);
+  const [cursor, setCursor] = React.useState(0);
   const { t } = useTranslation();
   const [activeIndex, setActiveIndex] = React.useState(0);
   const [ticketSearch, setTicketSearch] = React.useState('');
-  const [showDrop,setShowDrop]= useState(false);
+  const [showDrop, setShowDrop] = useState(false);
   const [show, setShow] = useState(true);
   const [selectedItemIndex, setSelectedItemIndex] = useState(-1);
-  const [data,setdata]=useState([]);
+  const [data, setdata] = useState([]);
   const [lastLoteryInfo, setLastLotteryInfo] = React.useState(null);
   const [forceValue, setForceValue] = useState(0); // integer state
   const [userTicketInfos, setUserInfoTickets] = React.useState([]);
-  const { roundID, lotteryInfo, setRefetch} = useLotteryBalance();
-  const [onPresentSettingsModal] = useModal(<BuyTicketModal />)
+  const { roundID, lotteryInfo, setRefetch } = useLotteryBalance();
+  const [userUpdateTicket, setUserUpdateTicket] = React.useState(0);
+  const setUpdateUserTicket = () => {
+    setUserUpdateTicket(userUpdateTicket + 1);
+  }
+  const [onPresentSettingsModal] = useModal(<BuyTicketModal setUpdateUserTicket={setUpdateUserTicket} />)
 
   React.useEffect(() => {
     WebFont.load({
@@ -184,27 +188,27 @@ export default function Lottery() {
         families: ['Raleway', 'Chilanka']
       }
     });
-   }, []);
+  }, []);
 
   //
-   React.useEffect(() => {
+  React.useEffect(() => {
     if (lastLoteryInfo !== null) {
-      const arrayData=[];
-      for (let i = 1; i <= 6 ; i++ ) {
-          arrayData.push(lastLoteryInfo.finalNumber.toString().charAt(i));
+      const arrayData = [];
+      for (let i = 1; i <= 6; i++) {
+        arrayData.push(lastLoteryInfo.finalNumber.toString().charAt(i));
       }
       setWinningCard(arrayData);
     }
-   }, [lastLoteryInfo]);
-   
-   //getting lottery status
-   React.useEffect(() => {
+  }, [lastLoteryInfo]);
+
+  //getting lottery status
+  React.useEffect(() => {
     if (lotteryInfo !== null) {
       if (new Date().getTime() / 1000 > lotteryInfo?.endTime) {
         viewLotterys(roundID, lastLoteryInfo, setLastLotteryInfo);
       } else {
         // viewLotterys 
-        viewLotterys(roundID-1, lastLoteryInfo, setLastLotteryInfo);
+        viewLotterys(roundID - 1, lastLoteryInfo, setLastLotteryInfo);
       }
       setCursor(lotteryInfo?.firstTicketId);
       // clearInterval();
@@ -213,17 +217,17 @@ export default function Lottery() {
       //   setRefetch(true);
       // }, 60 * 1000);
     }
-   }, [lotteryInfo, roundID]);
-  
-   //getting user tickets
+  }, [lotteryInfo, roundID]);
 
-   React.useEffect(()=> {
+  //getting user tickets
+
+  React.useEffect(() => {
     const fetchData = async () => {
       await viewUserInfoForLotteryId(account, roundID.toString(), 0, 2500, setUserInfoTickets);
     }
     fetchData();
-    setForceValue(forceValue+1);
-   } , [account, roundID, cursor]);
+    setForceValue(forceValue + 1);
+  }, [account, roundID, cursor, userUpdateTicket]);
 
   const handleItemClick = () => {
     if (activeIndex === 0)
@@ -232,7 +236,7 @@ export default function Lottery() {
       setActiveIndex(0);
   }
 
-  const submitFuntioncall=()=>{
+  const submitFuntioncall = () => {
     dispatch(typeInput({ input: ticketSearch }))
     dispatch(
       setIsInput({
@@ -242,7 +246,7 @@ export default function Lottery() {
   }
 
   const handleKeyPress = (event) => {
-    if(event.key === 'Enter'){
+    if (event.key === 'Enter') {
       submitFuntioncall();
     }
   }
@@ -267,31 +271,31 @@ export default function Lottery() {
     try {
       if (e.target.value && e.target.value.length > 0) {
         axios.get(`https://thesphynx.co/api/search/${e.target.value}`)
-        .then((response) => {
-          setdata(response.data);
-        })
+          .then((response) => {
+            setdata(response.data);
+          })
       } else {
         setdata([]);
       }
-    } catch(err) {
+    } catch (err) {
       // eslint-disable-next-line no-console
-      console.log("errr",err.message);
+      console.log("errr", err.message);
     }
 
     const result = isAddress(e.target.value)
-      if (result) {
-        setTicketSearch(e.target.value)
-        setShow(false);
-      } else {
-        setTicketSearch(e.target.value)
-        setShow(true);
-      }
+    if (result) {
+      setTicketSearch(e.target.value)
+      setShow(false);
+    } else {
+      setTicketSearch(e.target.value)
+      setShow(true);
+    }
   }
- 
+
   return (
-    <div style={{fontFamily: 'Raleway'}}>
+    <div style={{ fontFamily: 'Raleway' }}>
       <PageHeader>
-        <div style={{display: 'flex', position: 'relative'}}>
+        <div style={{ display: 'flex', position: 'relative' }}>
           <div>
             <Heading as="h4" scale="xl" color="white">
               {t('Lottery')}
@@ -301,23 +305,23 @@ export default function Lottery() {
             </Heading>
           </div>
           <LightContainer>
-            <div 
+            <div
               style={{
-                textAlign: 'center', 
-                marginLeft: '40px' , 
-                background:'rgba(0, 0, 0, 0.0)', 
+                textAlign: 'center',
+                marginLeft: '40px',
+                background: 'rgba(0, 0, 0, 0.0)',
                 borderRadius: '24px',
-            }}>
-              <Text fontSize="24px" color="white" style={{fontWeight: 700}}>{t(`Latest Winning Numbers`)}</Text>
+              }}>
+              <Text fontSize="24px" color="white" style={{ fontWeight: 700 }}>{t(`Latest Winning Numbers`)}</Text>
               <WinningCardContainerTop>
-                {winningCards.map((item)=>(
+                {winningCards.map((item) => (
                   <WinningCardTop>
-                    <Text fontSize="18px" color="white" style={{fontWeight: 700, padding: '12px'}}> {item === ''?'?': item}</Text>
+                    <Text fontSize="18px" color="white" style={{ fontWeight: 700, padding: '12px' }}> {item === '' ? '?' : item}</Text>
                   </WinningCardTop>
                 ))}
               </WinningCardContainerTop>
             </div>
-            </LightContainer>
+          </LightContainer>
         </div>
       </PageHeader>
       <div>
@@ -326,82 +330,82 @@ export default function Lottery() {
       {activeIndex === 0 && (
         <>
           <PrizePotCardContainer>
-            <div style={{margin: '10px'}}>
+            <div style={{ margin: '10px' }}>
               {forceValue > 0 &&
-                <PrizePotCard isNext={false} setModal={null} roundID={roundID} lotteryInfo={lotteryInfo} lastLoteryInfo={lastLoteryInfo} userTicketInfos={userTicketInfos} winningCards={winningCards}/>
+                <PrizePotCard isNext={false} setModal={null} roundID={roundID} lotteryInfo={lotteryInfo} lastLoteryInfo={lastLoteryInfo} userTicketInfos={userTicketInfos} winningCards={winningCards} />
               }
             </div>
-            <div style={{margin: '10px'}}>
-            {forceValue > 0 &&
-              <PrizePotCard isNext setModal={onPresentSettingsModal} roundID={roundID} lotteryInfo={lotteryInfo} lastLoteryInfo={lastLoteryInfo} userTicketInfos={userTicketInfos} winningCards={winningCards}/>
-            }
+            <div style={{ margin: '10px' }}>
+              {forceValue > 0 &&
+                <PrizePotCard isNext setModal={onPresentSettingsModal} roundID={roundID} lotteryInfo={lotteryInfo} lastLoteryInfo={lastLoteryInfo} userTicketInfos={userTicketInfos} winningCards={winningCards} />
+              }
             </div>
           </PrizePotCardContainer>
-          <div style={{textAlign: 'center', margin: '88px 0px 76px 0px' }}>
-            <Text bold fontSize="48px" color="white" style={{fontWeight: 700}}>How it works</Text>
-            <div style={{display: 'flex', justifyContent:'center'}}>
-              <Text bold fontSize="16px" style={{maxWidth: '440px' ,textAlign: 'left'}}>{t(`SpendSPX to buy tickets, contributing to the lottery pot. Win prizes if 2, 3, 4, 5 or 6 of your ticket numbers match the winning numbers and their exact order!`)}</Text>              
+          <div style={{ textAlign: 'center', margin: '88px 0px 76px 0px' }}>
+            <Text bold fontSize="48px" color="white" style={{ fontWeight: 700 }}>How it works</Text>
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
+              <Text bold fontSize="16px" style={{ maxWidth: '440px', textAlign: 'left' }}>{t(`SpendSPX to buy tickets, contributing to the lottery pot. Win prizes if 2, 3, 4, 5 or 6 of your ticket numbers match the winning numbers and their exact order!`)}</Text>
             </div>
           </div>
-          <div 
-              style={{
-                textAlign: 'center', 
-                background:'rgba(0, 0, 0, 0.4)', 
-                borderRadius: '24px',
-                paddingTop: '32px',
-                paddingBottom: '42px',
+          <div
+            style={{
+              textAlign: 'center',
+              background: 'rgba(0, 0, 0, 0.4)',
+              borderRadius: '24px',
+              paddingTop: '32px',
+              paddingBottom: '42px',
             }}>
-              <Text fontSize="36px" color="white" style={{fontWeight: 700}}>{t(`Latest Winning Numbers`)}</Text>
-              <WinningCardContainer >
-                {winningCards.map((item)=>(
-                  <WinningCard>
-                    <Text fontSize="36px" color="white" style={{fontWeight: 700, padding: '26px'}}> {item === ''?'?': item}</Text>
-                  </WinningCard>
-                ))}
-              </WinningCardContainer>
-            </div>  
+            <Text fontSize="36px" color="white" style={{ fontWeight: 700 }}>{t(`Latest Winning Numbers`)}</Text>
+            <WinningCardContainer >
+              {winningCards.map((item) => (
+                <WinningCard>
+                  <Text fontSize="36px" color="white" style={{ fontWeight: 700, padding: '26px' }}> {item === '' ? '?' : item}</Text>
+                </WinningCard>
+              ))}
+            </WinningCardContainer>
+          </div>
         </>
       )}
       {activeIndex === 1 && (
         <>
-          <div style={{display: 'flex', justifyContent: 'center'}}>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
             <ContractCard>
-              <img src={SearchIcon} style={{marginLeft: '4px'}} alt="search"/>
+              <img src={SearchIcon} style={{ marginLeft: '4px' }} alt="search" />
               <SearchInputWrapper>
-                <input 
-                  placeholder='' 
-                  value={ticketSearch} 
-                  onFocus={() => setShowDrop(true)} 
-                  onKeyPress={handleKeyPress} 
-                  onKeyUp={onSearchKeyDown} 
+                <input
+                  placeholder=''
+                  value={ticketSearch}
+                  onFocus={() => setShowDrop(true)}
+                  onKeyPress={handleKeyPress}
+                  onKeyUp={onSearchKeyDown}
                   onChange={handlerChange} />
-                { showDrop &&
+                {showDrop &&
                   <MenuWrapper>
                     {data.length > 0 ?
                       <span>
                         {data?.map((item: any, index: number) => {
                           return (<Link href={`#/swap/${item.address}`}>
-                                    <MenuItem className={index === selectedItemIndex ? 'selectedItem' : ''}>
-                                      {item.name}<br />{item.symbol}<br />{item.address}
-                                    </MenuItem>
-                                  </Link>)
+                            <MenuItem className={index === selectedItemIndex ? 'selectedItem' : ''}>
+                              {item.name}<br />{item.symbol}<br />{item.address}
+                            </MenuItem>
+                          </Link>)
                         })}
                       </span> : <span style={{ padding: '0 16px' }}>no record</span>}
                   </MenuWrapper>
                 }
               </SearchInputWrapper>
-              <Button scale='sm' onClick={submitFuntioncall} style={{height: 'inherit'}}>{t(`Search`)}</Button>
+              <Button scale='sm' onClick={submitFuntioncall} style={{ height: 'inherit' }}>{t(`Search`)}</Button>
             </ContractCard>
           </div>
           <PastDrawCardContainer>
-            <div style={{margin: '10px'}}>
-              <TicketCard lastLoteryInfo={lastLoteryInfo} roundID={roundID}/>
+            <div style={{ margin: '10px' }}>
+              <TicketCard lastLoteryInfo={lastLoteryInfo} roundID={roundID} />
             </div>
-            <div style={{margin: '10px'}}>
+            <div style={{ margin: '10px' }}>
               <History />
             </div>
           </PastDrawCardContainer>
-          { showDrop && <ContractPanelOverlay onClick={() => setShowDrop(false) } />}
+          {showDrop && <ContractPanelOverlay onClick={() => setShowDrop(false)} />}
         </>
       )}
     </div>
