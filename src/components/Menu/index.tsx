@@ -17,6 +17,7 @@ import { ReactComponent as TelegramIcon } from 'assets/svg/icon/TelegramIcon.svg
 import Web3 from 'web3'
 import axios from 'axios'
 import { setIsInput } from 'state/input/actions'
+import { BITQUERY_API } from 'config/constants/endpoints'
 import config, { links } from './config'
 import { replaceSwapState, Field } from '../../state/swap/actions'
 // import UserMenu from './UserMenu'
@@ -289,7 +290,7 @@ const Menu = (props) => {
       // // eslint-disable-next-line no-console
       // console.log("price============>",g);
 
-      const queryResult = await axios.post('https://graphql.bitquery.io/', { query: getDataQuery })
+      const queryResult = await axios.post(BITQUERY_API, { query: getDataQuery })
       // const addres=setAddress(queryResult.data.data.ethereum.address[0].balances.currency.address)
       // console.log("address============>",addres);
       if (queryResult.data.data) {

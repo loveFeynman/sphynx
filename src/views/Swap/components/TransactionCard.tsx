@@ -5,8 +5,6 @@ import React, { useEffect, useState, useRef } from 'react'
 import { useSelector } from 'react-redux'
 import styled from 'styled-components'
 import { Flex } from '@pancakeswap/uikit'
-import { ZERO_ADDRESS } from 'config/constants'
-import { WBNB } from 'config/constants/tokens'
 import { TokenInfo, getBnbPrice, getPancakePairAddress, getMinTokenInfo, getTokenPrice } from 'state/info/ws/priceData'
 import { AppState } from '../../../state'
 import { isAddress } from '../../../utils'
@@ -17,8 +15,9 @@ import { simpleWebsocketProvider } from '../../../utils/providers'
 
 const pancakeV2: any = '0x10ED43C718714eb63d5aA57B78B54704E256024E'
 const busdAddr = '0xe9e7cea3dedca5984780bafc599bd69add087d56'
+const wBNBAddr = '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c';
 const transferEventTopic = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef'
-let tokenDecimal = 18;
+let tokenDecimal = 18
 
 const abi: any = ERC20ABI
 const routerAbi: any = routerABI
@@ -69,15 +68,6 @@ const TableWrapper = styled.div`
     }
   }
 `
-
-interface TransactionProps {
-  timestamp: number
-  amount: number
-  price: number
-  usdValue: number
-  isBuy: boolean
-  tx: string
-}
 
 let blocks = 0
 let transactions = []
@@ -145,11 +135,15 @@ const TransactionCard = () => {
   }`
 
   const getPrice: any = async () => {
-    return new Promise((resolve) => {
+    return new Promise(async (resolve) => {
       const pancakeRouterContract = new web3.eth.Contract(routerAbi, pancakeV2)
-      const path = [input, busdAddr]
+      let path = [input, busdAddr]
+      const pairAddress = await getPancakePairAddress(input, busdAddr, simpleWebsocketProvider)
+      if (pairAddress === null) {
+        path = [input, wBNBAddr, busdAddr]
+      }
       pancakeRouterContract.methods
-        .getAmountsOut(web3.utils.toWei('1', 'ether'), path)
+        .getAmountsOut(web3.utils.toBN(1 * Math.pow(10, tokenDecimal)), path)
         .call()
         .then((data) => resolve(data))
     })
@@ -157,7 +151,6 @@ const TransactionCard = () => {
 
   const parseData: any = async () => {
     return new Promise((resolve) => {
-      let newTransactions = transactions
       for (let i = 0; i <= myTransactions.length; i++) {
         if (i === myTransactions.length) {
           resolve(true)
@@ -176,17 +169,19 @@ const TransactionCard = () => {
               return log
             })
             if (logs.length === 0) return
+            console.log('logs', logs)
             logs = logs.filter(
               (log) =>
-                log.address.toLowerCase() === input &&
+                log.address.toLowerCase() === input.toLowerCase() &&
                 (log.to.toLowerCase() === receipt.from.toLowerCase() ||
                   log.from.toLowerCase() === receipt.from.toLowerCase()),
             )
-            if (logs.length === 0) return
+            console.log('filtered-logs', logs)
             const price = await getPrice()
+            console.log('Price', price)
             let oneData: any = {}
             oneData.amount = parseFloat(ethers.utils.formatUnits(logs[0].amount, tokenDecimal))
-            oneData.price = parseFloat(ethers.utils.formatUnits(price[1], tokenDecimal))
+            oneData.price = parseFloat(ethers.utils.formatUnits(price[price.length - 1], 18))
             oneData.timestamp = new Date().getTime()
             oneData.tx = data.hash
             window.localStorage.setItem('currentToken', input)
@@ -194,7 +189,8 @@ const TransactionCard = () => {
             logs = logs.filter((log) => log.to.toLowerCase() == receipt.from.toLowerCase())
             oneData.isBuy = logs.length != 0
             oneData.usdValue = oneData.amount * oneData.price
-            newTransactions.unshift(oneData)
+            console.log('oneData', oneData)
+            transactions.unshift(oneData)
           } catch (err) {}
         })
       }
@@ -205,13 +201,12 @@ const TransactionCard = () => {
 
   useEffect(() => {
     window.localStorage.removeItem('currentPrice') // initiate
-    transactions = [];
+    transactions = []
     const contract: any = new web3.eth.Contract(abi, input)
     const fetchDecimals = async () => {
-      tokenDecimal = await contract.methods.decimals().call();
-      console.log("decimals", tokenDecimal);
+      tokenDecimal = await contract.methods.decimals().call()
     }
-    fetchDecimals();
+    fetchDecimals()
     let emitter = contract.events
       .Transfer({}, async function (error, event) {
         if (error) {
@@ -241,7 +236,6 @@ const TransactionCard = () => {
       try {
         const provider = simpleWebsocketProvider // simpleRpcProvider
         const bnbPrice = await getBnbPrice(provider)
-        const tokenInfo1 = await getMinTokenInfo(tokenAddr, provider)
 
         // pull historical data
         const queryResult = await axios.post('https://graphql.bitquery.io/', { query: getDataQuery })

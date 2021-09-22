@@ -30,7 +30,7 @@ import BannerWrapper from 'components/BannerWrapper'
 import moment from 'moment';
 import axios from 'axios';
 import {typeInput} from 'state/input/actions'
-
+import { BITQUERY_API } from 'config/constants/endpoints';
 import AddressInputPanel from './components/AddressInputPanel'
 import Card, { GreyCard } from '../../components/Card'
 import ConfirmSwapModal from './components/ConfirmSwapModal'
@@ -523,7 +523,7 @@ export default function Swap({ history }: RouteComponentProps) {
           }
         }
       `
-      axios.post('https://graphql.bitquery.io/', { query }).then(data => {
+      axios.post(BITQUERY_API, { query }).then(data => {
         let slippage = 80;
         const values = JSON.stringify(data.data.data.ethereum.address[0].smartContract.attributes)
         if (values.includes('fee ') || values.includes('tax') || values.includes('Fee ') || values.includes('Tax') || values.includes('uniswapV2Router') || values.includes('totalFee')) {
