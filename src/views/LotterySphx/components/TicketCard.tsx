@@ -109,7 +109,7 @@ export default function TicketCard({lastLoteryInfo, roundID}) {
             {t('Prize Pot:')}
           </Text> 
           <Text bold color='white' fontSize="24px">
-             {totalCount==='NaN' || parseInt(totalCount) < 20 ? 
+             {totalCount==='NaN' || parseInt(totalCount) < 20 || totalCount==='' ? 
                   "Calculating"
                 :
                   `${totalCount} $`}

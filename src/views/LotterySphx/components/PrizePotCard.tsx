@@ -182,7 +182,7 @@ export default function PrizePotCard({ isNext, setModal, roundID, lotteryInfo, l
                   remainningTime 
                 : 'On sale soon' 
               : 
-                totalCount==='NaN' || parseInt(totalCount) < 20 ? 
+                totalCount==='NaN' || parseInt(totalCount) < 20 || totalCount===''? 
                   "Calculating"
                 :
                   `${totalCount} $`}

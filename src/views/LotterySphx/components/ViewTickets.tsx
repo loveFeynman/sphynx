@@ -69,7 +69,7 @@ const ViewTicketModal: React.FC<ViewTicketModalProps> = ({ roundID, winningCards
   const signer = library.getSigner();
   const [manualTicketGenerate, setManualTicketGenerate] = useState(false);
   const [isLoading, setLoading] = useState(false)
-  const [ticketNumbers, setTicketNumbers] = useState([]);
+  const [isFetch, setIsFetch] = useState(false);
   const { t } = useTranslation();
   const [userTicketInfos, setInfoTickets] = React.useState([]);
   const [forceValue, setForceValue] = useState(0); // integer state
@@ -77,9 +77,12 @@ const ViewTicketModal: React.FC<ViewTicketModalProps> = ({ roundID, winningCards
 
   React.useEffect(() => {
     const fetchData = async () => {
+      console.log("aaaaaaaaaaaaa");
       await viewUserInfoForLotteryId(account, roundID.toString(), 0, 2500, setInfoTickets);
+      setTimeout(()=>setIsFetch(true), 2000);
     }
     fetchData();
+    
   }, [account, roundID]);
 
   const handleClaimTickets = async () => {
@@ -119,6 +122,7 @@ const ViewTicketModal: React.FC<ViewTicketModalProps> = ({ roundID, winningCards
       onDismiss={onDismiss}
       style={{ minWidth: '380px', maxWidth: '380px' }}
     >
+      {userTicketInfos.length > 0 &&  
       <Flex flexDirection="column" color="white">
         {userTicketInfos?.map((ticket, index) =>
           <Flex flexDirection="column" marginBottom="12px">
@@ -153,6 +157,7 @@ const ViewTicketModal: React.FC<ViewTicketModalProps> = ({ roundID, winningCards
             </TicketContainer>
           </Flex>
         )}
+       
         {isClaimable && 
           <ApplyButton className='selected'
             onClick={handleClaimTickets}
@@ -163,7 +168,19 @@ const ViewTicketModal: React.FC<ViewTicketModalProps> = ({ roundID, winningCards
             ) : t(`Check Tickets`)}
           </ApplyButton>
         }
-      </Flex>
+      </Flex>}
+      {userTicketInfos.length === 0 && isFetch === false &&
+        <Flex justifyContent="center">
+          <Spinner/>
+        </Flex>
+      }
+      {userTicketInfos.length === 0 && isFetch === true &&
+        <Flex justifyContent="center">
+          <Flex style={{color:"red", margin: '20px 0px', fontSize: '24px', textAlign: 'center'}}>
+            You have no tickets on this round.
+          </Flex>
+        </Flex>
+      }
     </Modal>
   )
 }
