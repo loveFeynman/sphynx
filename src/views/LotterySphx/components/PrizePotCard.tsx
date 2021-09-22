@@ -3,14 +3,18 @@ import React from 'react'
 import styled from 'styled-components'
 import Nav from 'components/LotteryCardNav'
 import { Image, Heading, RowType, Toggle, Text, Button, ArrowForwardIcon, Flex } from '@pancakeswap/uikit'
-import PageHeader from 'components/PageHeader'
-import { useWeb3React } from '@web3-react/core';
+import axios from 'axios';
+import { useSelector } from 'react-redux'
+import { AppState } from '../../../state'
+import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import { useTranslation } from 'contexts/Localization'
 import MainLogo from 'assets/svg/icon/logo_new.svg'
 import DownArrow from 'assets/svg/icon/LotteryDownIcon.svg'
 import PotContentTable from './PotContentTable'
-import { useLotteryBalance, approveCall, buyTickets, claimTickets} from '../../../hooks/useLottery'
+import { claimTickets } from '../../../hooks/useLottery'
 import { Spinner } from './Spinner'
+import { getTokenPrice } from 'state/info/ws/priceData'
+import { simpleRpcProvider } from 'utils/providers'
 
 const Container = styled.div<{ isDetail: boolean }>`
   width: 340px;
@@ -102,8 +106,9 @@ export default function PrizePotCard({ isNext, setModal, roundID, lotteryInfo, l
   const [enabled, setEnabled] = React.useState(false);
   const [isClaimable, setClaimable] = React.useState(false);
   const [isLoading, setLoading] = React.useState(false);
-  const { account } = useWeb3React();
-
+  const { account, library } = useActiveWeb3React();
+  const signer = library.getSigner();
+  const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
   React.useEffect(() => {
     if (userTicketInfos?.length > 0) {
       userTicketInfos.map((item)=>{
@@ -135,9 +140,10 @@ export default function PrizePotCard({ isNext, setModal, roundID, lotteryInfo, l
     //account, roundID, ticketIds, brackets
 
     setLoading(true);
-    await claimTickets(account, roundID, ticketIDS, brackets);
+    await claimTickets(signer, roundID, ticketIDS, brackets);
     setLoading(false);
   }
+
   React.useEffect(() => {
     if (lotteryInfo !== null) {
       const now = new Date();
@@ -151,10 +157,18 @@ export default function PrizePotCard({ isNext, setModal, roundID, lotteryInfo, l
         setRemainingTime((hours.toString()).concat("h ").concat(minutes.toString()).concat("m"));
         setEnabled(true);
       }
-      setTotalCount((lastLoteryInfo?.amountCollectedInCake / 1000000000000000000).toFixed(5));
+      let price='';
+      const tokenprice = async() =>{
+        axios.get(`https://thesphynx.co/api/price/0x2e121ed64eeeb58788ddb204627ccb7c7c59884c`)
+        .then((response) => {
+          price = response.data;
+        })
+      }
+      tokenprice();
+      setTotalCount((lastLoteryInfo?.amountCollectedInCake * parseFloat(price) / 1000000000000000000/1000000000000000000).toFixed(5));
     }
-
-  }, [lotteryInfo, account, roundID]);
+    
+  }, [lotteryInfo]);
 
   return (
     <Container isDetail={showDetail}>
@@ -165,7 +179,15 @@ export default function PrizePotCard({ isNext, setModal, roundID, lotteryInfo, l
             {isNext ? t('Next Draw in:') : t('Prize Pot')}
           </HeaderLabel>
           <HeaderLabel style={{ color: isNext && !enabled ? 'rgb(233, 234, 235)' : 'white' }}>
-            {isNext ? enabled ? remainningTime : 'On sale soon' : `${totalCount} SPX`}
+            {isNext ? 
+                enabled ? 
+                  remainningTime 
+                : 'On sale soon' 
+              : 
+                totalCount==='NaN' || parseInt(totalCount) < 20 ? 
+                  "Calculating"
+                :
+                  `${totalCount} $`}
 
           </HeaderLabel>
         </div>
@@ -208,7 +230,7 @@ export default function PrizePotCard({ isNext, setModal, roundID, lotteryInfo, l
                         {it.id}
                       </GridItem>
                       <GridItem isLeft={false}>
-                        {it.ticketnumber.slice(1,6)}
+                        {it.ticketnumber.toString().slice(1,7)}
                       </GridItem>
                     </>
                   )}
@@ -230,9 +252,7 @@ export default function PrizePotCard({ isNext, setModal, roundID, lotteryInfo, l
               ) : t(`Check Tickets`)}
             </ButtonWrapper>
           )}
-          
         </div>
-        
       )}
       {showDetail && (<PotContentTable isDetail lotteryInfo={lastLoteryInfo} />)}
     </Container>

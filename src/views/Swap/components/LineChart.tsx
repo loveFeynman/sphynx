@@ -6,7 +6,7 @@ import axios from 'axios'
 import { useSelector } from 'react-redux';
 import styled from 'styled-components'
 import { AppState } from '../../../state'
-import { BITQUERY_API } from 'config/constants/endpoints';
+import { BITQUERY_API, BITQUERY_API_KEY } from 'config/constants/endpoints';
 
 
 
@@ -119,7 +119,12 @@ const LineChart: React.FC<LineChartProps> = ({
       if (input) {
         // console.log('in here:::::::')
         setLoader(true);
-        const queryResult = await axios.post(BITQUERY_API, { query: getDataQuery });
+        let config = {
+          headers: {
+            "X-API-KEY": BITQUERY_API_KEY,
+          },
+        };
+        const queryResult = await axios.post(BITQUERY_API, { query: getDataQuery }, config);
 
         const values: any = [
           {

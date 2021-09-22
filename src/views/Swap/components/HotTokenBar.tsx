@@ -11,7 +11,7 @@ import ReactLoading from 'react-loading';
 // import { ReactComponent as HelpIcon } from 'assets/svg/icon/HelpIcon.svg'
 // import { ReactComponent as DownRedArrowIcon} from 'assets/svg/icon/DownRedArrowIcon.svg'
 // import { ReactComponent as UpGreenArrowIcon} from 'assets/svg/icon/UpGreenArrowIcon.svg'
-import { BITQUERY_API } from 'config/constants/endpoints';
+import { BITQUERY_API, BITQUERY_API_KEY } from 'config/constants/endpoints';
 import { HotTokenType } from './types'
 import { AppState } from '../../../state'
 import { setIsInput } from '../../../state/input/actions'
@@ -127,7 +127,12 @@ export default function HotTokenBar() {
   const handleClick = useCallback(async() => {
   
       setLoader(true);
-      const queryResult = await axios.post(BITQUERY_API, { query: getDataQuery });
+      const bitConfig = {
+        headers: {
+          "X-API-KEY": BITQUERY_API_KEY,
+        },
+      };
+      const queryResult = await axios.post(BITQUERY_API, { query: getDataQuery }, bitConfig);
       // setData(queryResult);
       if (queryResult.data.data){
       setData(queryResult.data.data.ethereum.dexTrades)

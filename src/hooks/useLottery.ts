@@ -1,40 +1,64 @@
 /* eslint-disable */
 import Web3 from 'web3';
-import { useWeb3React, getWeb3ReactContext } from '@web3-react/core';
-import { useEffect,useMemo, useState, useCallback } from 'react';
+import { ethers } from 'ethers'
+import useActiveWeb3React from 'hooks/useActiveWeb3React'
+import { useEffect, useMemo, useState, useCallback } from 'react'
 import lottery from 'assets/abis/lottery.json'
 import sphynx from 'assets/abis/sphynx.json'
-import HDWalletProvider from '@truffle/hdwallet-provider';
-import { TICKET_LIMIT_PER_REQUEST } from 'config/constants/lottery'
+import { simpleRpcProvider } from '../utils/providers'
 
-let web3;
-const providerURL = 'https://data-seed-prebsc-1-s1.binance.org:8545/';
-const provider = new HDWalletProvider(
-  "1903d8f7a9deb960d275a9da849c878111af8401b06a9a0530083a3036aceb99",
-  providerURL
-);
-if (process.env.NODE_ENV !== 'production')
-  web3 = new Web3(provider);
-else
-  web3 = new Web3(new Web3.providers.HttpProvider(providerURL));
+const providerURL = "https://old-thrumming-voice.bsc.quiknode.pro/7674ba364cc71989fb1398e1e53db54e4fe0e9e0/";
+let web3 = new Web3(new Web3.providers.HttpProvider(providerURL));
 
-const abi: any = lottery.abi;
-const lotteryContract = new web3.eth.Contract(abi, '0x860D8b604423bbAB6CACc8554294f336Ac670a56');
-const spxAbi: any = sphynx.abi;
-const sphxContract = new web3.eth.Contract(spxAbi, '0x8AAF4B1e2dD87b8852A642f52f2B35C3aBb3A076');
+const abi: any = lottery.abi
+const lotteryContract = new ethers.Contract('0xEA2E7a7E3c6132f6B041A705C9a6F4593e69Ecc2', abi, simpleRpcProvider)
+const lotteryContractWeb3 = new web3.eth.Contract(abi, '0xEA2E7a7E3c6132f6B041A705C9a6F4593e69Ecc2')
+const spxAbi: any = sphynx.abi
+const sphxContractWeb3 = new web3.eth.Contract(spxAbi, '0x2e121Ed64EEEB58788dDb204627cCB7C7c59884c')
+const sphxContract = new ethers.Contract('0x2e121Ed64EEEB58788dDb204627cCB7C7c59884c', spxAbi, simpleRpcProvider)
+
+
+const deepEqual = (object1, object2) => {
+  if (object1 === null ||  object2 === null)
+    return false;
+  const keys1 = Object.keys(object1);
+  const keys2 = Object.keys(object2);
+
+  if (keys1.length !== keys2.length) {
+    return false;
+  }
+
+  for (const key of keys1) {
+    const val1 = object1[key];
+    const val2 = object2[key];
+    const areObjects = isObject(val1) && isObject(val2);
+    if (
+      areObjects && !deepEqual(val1, val2) ||
+      !areObjects && val1 !== val2
+    ) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+const isObject = (object) => {
+  return object != null && typeof object === 'object';
+}
 
 export const useLotteryBalance = () => {
-  const [balance, setBalance] = useState(0);
-  const [roundID, setRoundID] = useState(0);
-  const [lotteryInfo, setLotteryInfo] = useState(null);
-  const [fetchFlag, setRefetch] = useState(true);
+  const [balance, setBalance] = useState(0)
+  const [roundID, setRoundID] = useState(0)
+  const [lotteryInfo, setLotteryInfo] = useState(null)
+  const [fetchFlag, setRefetch] = useState(true)
 
-  const { account } = useWeb3React();
+  const { account } = useActiveWeb3React()
 
   useMemo(() => {
     const fetchLotteryID = async () => {
       try {
-        await lotteryContract.methods.viewCurrentLotteryId().call()
+        await lotteryContractWeb3.methods.viewCurrentLotteryId().call()
           .then((data) => {
             // console.log("fetch Round ", data);
             setRoundID(data);
@@ -48,8 +72,7 @@ export const useLotteryBalance = () => {
 
     const getBalance = async () => {
       try {
-        await sphxContract.methods.balanceOf(process.env.NODE_ENV !== 'production'?
-          "0x3EF6FeB63B2F0f1305839589eDf487fb61b99A4E":account).call()
+        await sphxContractWeb3.methods.balanceOf(account).call()
           .then((data) => {
             // console.log("balance", data);
             setBalance(data/1000000000000000000);
@@ -61,14 +84,17 @@ export const useLotteryBalance = () => {
         setBalance(0);
       }
     }
-    
+
     const viewLotterys = async (rID) => {
       try {
-        await lotteryContract.methods.viewLottery(rID)
+        await lotteryContractWeb3.methods.viewLottery(rID)
           .call()
           .then((data) => {
             // console.log("view lotterys success", data);
-            setLotteryInfo(data);
+            if (!deepEqual(data, lotteryInfo)) {
+              setLotteryInfo(data);
+            }
+            
           }).catch((err) => {
             console.log('view lotterys', err)
           });
@@ -85,52 +111,59 @@ export const useLotteryBalance = () => {
   return { balance, roundID, lotteryInfo, setRefetch};
 }
 
-export const approveCall = async (account, setConfig, setErrorMessage) => {
+export const approveCall = async (signer, setConfig, setErrorMessage) => {
   try {
-    await sphxContract.methods.approve("0x860D8b604423bbAB6CACc8554294f336Ac670a56", "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff")
-      .send({ from: process.env.NODE_ENV !== 'production'?"0x3EF6FeB63B2F0f1305839589eDf487fb61b99A4E":account})
+    await sphxContract
+      .connect(signer)
+      .approve(
+        '0xEA2E7a7E3c6132f6B041A705C9a6F4593e69Ecc2',
+        '0xfffffffffffffffffffffffffffffffffffffffffffffffffffffff',
+      )
       .then((data) => {
         // console.log("approve call ", data);
         setConfig(true)
-        return true;
-      }).catch((err) => {
+        return true
+      })
+      .catch((err) => {
         // console.log('approve call error', err)
-        setErrorMessage({title: "Enabled error", message: err.message});
-        return  false;
-      });
+        setErrorMessage({ title: 'Enabled error', message: err.message })
+        return false
+      })
     // console.log("step2")
-    return false;
+    return false
   } catch {
     // console.error("fetch Round error")
-    return false;
+    return false
   }
-};
+}
 
-export const buyTickets = async ( account, roundID, ticketNumbers,setConfig, setErrorMessage) => {
+export const buyTickets = async (signer, roundID, ticketNumbers, setConfig, setErrorMessage) => {
   try {
-    
-    await lotteryContract.methods.buyTickets(roundID, ticketNumbers)
-      .send({ from: process.env.NODE_ENV !== 'production'?"0x3EF6FeB63B2F0f1305839589eDf487fb61b99A4E":account})
+    await lotteryContract
+      .connect(signer)
+      .buyTickets(roundID, ticketNumbers)
       .then((data) => {
         // console.log(" buyTickets success", data);
-        setConfig(true);
-      }).catch((err) => {
+        setConfig(true)
+      })
+      .catch((err) => {
         // console.log('buyTickets call error', err);
-        setErrorMessage({title:"Confirm Error", message: err.message});
-      });
+        setErrorMessage({ title: 'Confirm Error', message: err.message })
+      })
     // console.log(" buyTickets step2")
   } catch {
-    console.error("buyTickets Round error");
-    setErrorMessage({title:"Confirm Error", message: "error"});
+    console.error('buyTickets Round error')
+    setErrorMessage({ title: 'Confirm Error', message: 'error' })
   }
-};
+}
 
-export const viewLotterys = async (rID, setLastLottery) => {
+export const viewLotterys = async (rID, lastLoteryInfo, setLastLottery) => {
   try {
-    await lotteryContract.methods.viewLottery(rID)
+    await lotteryContractWeb3.methods.viewLottery(rID)
       .call()
       .then((data) => {
-        setLastLottery(data);
+        if (!deepEqual(lastLoteryInfo, data))
+          setLastLottery(data);
         // console.log("view lotterys alone success", data);
       }).catch((err) => {
         // console.log('view lotterys alone fail', err);
@@ -139,8 +172,7 @@ export const viewLotterys = async (rID, setLastLottery) => {
   } catch {
     setLastLottery(null);
   }
-};
-
+}
 
 export const viewUserInfoForLotteryId = async (
   account: string,
@@ -150,19 +182,20 @@ export const viewUserInfoForLotteryId = async (
   setUserInfoTickets: any,
 ) => {
   try {
-    await lotteryContract.methods.viewUserInfoForLotteryId(process.env.NODE_ENV !== 'production'?"0x3EF6FeB63B2F0f1305839589eDf487fb61b99A4E":account, lotteryId, cursor.toString(), perRequestLimit.toString())
-    .call()
-    .then((response)=>{
-      const dataArray = response[0].map((item, index)=> {return {
-        id: response[0][index],
-        ticketnumber: response[1][index],
+    const response = await lotteryContract.viewUserInfoForLotteryId(
+      account,
+      lotteryId,
+      cursor.toString(),
+      perRequestLimit.toString(),
+    )
+    const dataArray = response[0].map((item, index) => {
+      return {
+        id: response[0][index].toString(),
+        ticketnumber: response[1][index].toString(),
         status: response[2][index],
-      }})
-      setUserInfoTickets(dataArray);
+      }
     })
-    .catch((err)=>{
-      console.error('viewUserInfoForLotteryId', err)
-    });
+    setUserInfoTickets(dataArray)
   } catch (error) {
     console.error('viewUserInfoForLotteryId', error)
     return null
@@ -184,18 +217,19 @@ export const processRawTicketsResponse = (ticketsResponse) => {
   return []
 }
 
-export const claimTickets = async (account, roundID, ticketIds, brackets) => {
+export const claimTickets = async (signer, roundID, ticketIds, brackets) => {
   try {
-    await lotteryContract.methods.claimTickets(roundID, ticketIds, brackets)
-      .send({ from: process.env.NODE_ENV !== 'production'?"0x3EF6FeB63B2F0f1305839589eDf487fb61b99A4E":account})
+    await lotteryContract
+      .connect(signer)
+      .claimTickets(roundID, ticketIds, brackets)
       .then((data) => {
-        console.log("buyTickets call ", data);
-      }).catch((err) => {
+        console.log('buyTickets call ', data)
+      })
+      .catch((err) => {
         console.log('buyTickets call error', err)
-      });
-    console.log(" buyTickets step2")
+      })
+    console.log(' buyTickets step2')
   } catch {
-    console.error("buyTickets Round error")
+    console.error('buyTickets Round error')
   }
-};
-
+}

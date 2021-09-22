@@ -8,7 +8,7 @@ import { useAudioModeManager, useExpertModeManager, useUserSingleHopOnly } from 
 import { useTranslation } from 'contexts/Localization'
 import { useSwapActionHandlers } from 'state/swap/hooks'
 import usePersistState from 'hooks/usePersistState'
-import { useWeb3React } from '@web3-react/core'
+import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import { useLotteryBalance, approveCall, buyTickets} from '../../../hooks/useLottery'
 import { Spinner } from './Spinner'
 import useToast from 'hooks/useToast'
@@ -111,7 +111,8 @@ const TicketInput = styled(Input)`
 `
 
 const BuyTicketModal: React.FC<InjectedModalProps> = ({ onDismiss }) => {
-  const { account } = useWeb3React();
+  const { account, library } = useActiveWeb3React();
+  const signer = library.getSigner();
   const { balance, roundID, lotteryInfo } = useLotteryBalance();
   const [manualTicketGenerate, setManualTicketGenerate] = useState(false);
   const [isLoading, setLoading] = useState(false)
@@ -171,7 +172,6 @@ const BuyTicketModal: React.FC<InjectedModalProps> = ({ onDismiss }) => {
   const randomTickets = useCallback(() => {
     const data = [];
     // setTicketNumbers(input);
-    console.log("randomtickets", ticketNumbers);
     if (ticketNumbers.length > 0) {
       ticketNumbers.map((ticket, index) => {
         const ticketnumbers = [];
@@ -183,7 +183,6 @@ const BuyTicketModal: React.FC<InjectedModalProps> = ({ onDismiss }) => {
         data.push({ id: index, ticketnumber: ticketNumber, ticketNumbers: ticketnumbers, error: false });
         return null;
       });
-      console.log("ticketNumbers", data);
       setTicketNumbers(data);
     }
 
@@ -203,7 +202,7 @@ const BuyTicketModal: React.FC<InjectedModalProps> = ({ onDismiss }) => {
     }
     ticketNumbers.forEach((item)=>ticketArrays.push((parseInt(item.ticketnumber) + 1000000).toString()));
     setLoading(true);
-    await buyTickets(account, roundID, ticketArrays, setLoading, setErrorMessage);
+    await buyTickets(signer, roundID, ticketArrays, setLoading, setErrorMessage);
     setLoading(false)
     setManualTicketGenerate(false);
   };
@@ -368,7 +367,7 @@ const BuyTicketModal: React.FC<InjectedModalProps> = ({ onDismiss }) => {
                     <ApplyButton className='selected'
                       onClick={(async() => {
                         setLoading(true);
-                        await approveCall(account, setEnabled, setErrorMessage);
+                        await approveCall(signer, setEnabled, setErrorMessage);
                         if (errorMessage.title !== ''){
                           toastError(t(errorMessage.title), t(errorMessage.message));
                         }

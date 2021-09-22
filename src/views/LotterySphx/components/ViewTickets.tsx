@@ -8,7 +8,7 @@ import { useAudioModeManager, useExpertModeManager, useUserSingleHopOnly } from 
 import { useTranslation } from 'contexts/Localization'
 import { useSwapActionHandlers } from 'state/swap/hooks'
 import usePersistState from 'hooks/usePersistState'
-import { useWeb3React } from '@web3-react/core'
+import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import { Spinner } from './Spinner'
 import { useLotteryBalance, viewUserInfoForLotteryId, claimTickets } from '../../../hooks/useLottery'
 import useToast from 'hooks/useToast'
@@ -65,7 +65,8 @@ interface ViewTicketModalProps extends InjectedModalProps {
 }
 
 const ViewTicketModal: React.FC<ViewTicketModalProps> = ({ roundID, winningCards, onDismiss }) => {
-  const { account } = useWeb3React();
+  const { account, library } = useActiveWeb3React();
+  const signer = library.getSigner();
   const [manualTicketGenerate, setManualTicketGenerate] = useState(false);
   const [isLoading, setLoading] = useState(false)
   const [ticketNumbers, setTicketNumbers] = useState([]);
@@ -98,7 +99,7 @@ const ViewTicketModal: React.FC<ViewTicketModalProps> = ({ roundID, winningCards
       }
     });
     setLoading(true);
-    await claimTickets(account, roundID, ticketIDS, brackets);
+    await claimTickets(signer, roundID, ticketIDS, brackets);
     setLoading(false);
   }
 
