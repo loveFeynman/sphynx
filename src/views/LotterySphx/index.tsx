@@ -355,7 +355,7 @@ export default function Lottery() {
               <WinningCardContainer >
                 {winningCards.map((item)=>(
                   <WinningCard>
-                    <Text fontSize="36px" color="white" style={{fontWeight: 700, padding: '26px'}}> {item}</Text>
+                    <Text fontSize="36px" color="white" style={{fontWeight: 700, padding: '26px'}}> {item === ''?'?': item}</Text>
                   </WinningCard>
                 ))}
               </WinningCardContainer>
