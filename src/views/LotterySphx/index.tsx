@@ -200,13 +200,13 @@ export default function Lottery() {
    //getting lottery status
    React.useEffect(() => {
     if (lotteryInfo !== null) {
-      if (new Date().getTime() / 1000 > lotteryInfo.endTime) {
-        viewLotterys(roundID, setLastLotteryInfo);
+      if (new Date().getTime() / 1000 > lotteryInfo?.endTime) {
+        viewLotterys(roundID, lastLoteryInfo, setLastLotteryInfo);
       } else {
         // viewLotterys 
-        viewLotterys(roundID-1, setLastLotteryInfo);
+        viewLotterys(roundID-1, lastLoteryInfo, setLastLotteryInfo);
       }
-      setCursor(lotteryInfo.firstTicketId);
+      setCursor(lotteryInfo?.firstTicketId);
       clearInterval();
       setInterval(()=> {
         setRefetch(false);
