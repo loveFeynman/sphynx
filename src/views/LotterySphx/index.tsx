@@ -207,11 +207,11 @@ export default function Lottery() {
         viewLotterys(roundID-1, lastLoteryInfo, setLastLotteryInfo);
       }
       setCursor(lotteryInfo?.firstTicketId);
-      clearInterval();
-      setInterval(()=> {
-        setRefetch(false);
-        setRefetch(true);
-      }, 60 * 1000);
+      // clearInterval();
+      // setInterval(()=> {
+      //   setRefetch(false);
+      //   setRefetch(true);
+      // }, 60 * 1000);
     }
    }, [lotteryInfo, roundID]);
   

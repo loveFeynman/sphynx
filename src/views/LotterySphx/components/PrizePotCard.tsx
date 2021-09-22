@@ -118,12 +118,10 @@ export default function PrizePotCard({ isNext, setModal, roundID, lotteryInfo, l
       })      
     }
   }, [userTicketInfos])
-
   
   const handleClaimTickets = async () => {
     const ticketIDS = [];
     const brackets = [];
-    console.log(userTicketInfos,winningCards );
     userTicketInfos.map((ticket)=>{
       let bracket = -1;
       for (let i = 0; i <= 5; i++) {

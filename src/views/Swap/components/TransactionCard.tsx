@@ -76,6 +76,7 @@ let myTransactions = []
 const TransactionCard = () => {
   const providerURL = 'wss://old-thrumming-voice.bsc.quiknode.pro/7674ba364cc71989fb1398e1e53db54e4fe0e9e0/'
   const web3 = new Web3(new Web3.providers.WebsocketProvider(providerURL))
+  const [transactionData, setTransactions] = useState([]);
   const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
   const tokenAddress = isAddress(input)
 
@@ -150,9 +151,11 @@ const TransactionCard = () => {
   }
 
   const parseData: any = async () => {
+    let newTransactions = transactionData;
     return new Promise((resolve) => {
       for (let i = 0; i <= myTransactions.length; i++) {
         if (i === myTransactions.length) {
+          setTransactions(newTransactions)
           resolve(true)
         }
 
@@ -169,16 +172,13 @@ const TransactionCard = () => {
               return log
             })
             if (logs.length === 0) return
-            console.log('logs', logs)
             logs = logs.filter(
               (log) =>
                 log.address.toLowerCase() === input.toLowerCase() &&
                 (log.to.toLowerCase() === receipt.from.toLowerCase() ||
                   log.from.toLowerCase() === receipt.from.toLowerCase()),
             )
-            console.log('filtered-logs', logs)
             const price = await getPrice()
-            console.log('Price', price)
             let oneData: any = {}
             oneData.amount = parseFloat(ethers.utils.formatUnits(logs[0].amount, tokenDecimal))
             oneData.price = parseFloat(ethers.utils.formatUnits(price[price.length - 1], 18))
@@ -189,8 +189,7 @@ const TransactionCard = () => {
             logs = logs.filter((log) => log.to.toLowerCase() == receipt.from.toLowerCase())
             oneData.isBuy = logs.length != 0
             oneData.usdValue = oneData.amount * oneData.price
-            console.log('oneData', oneData)
-            transactions.unshift(oneData)
+            newTransactions.unshift(oneData)
           } catch (err) {}
         })
       }
@@ -256,6 +255,8 @@ const TransactionCard = () => {
               tx: item.transaction.hash,
             }
           })
+
+          setTransactions(newTransactions)
         }
       } catch (err) {
         // eslint-disable-next-line no-console
@@ -284,11 +285,11 @@ const TransactionCard = () => {
             </tr>
           </thead>
           <tbody>
-            {transactions.map((data) => {
+            {transactionData.map((data, key) => {
               const date = new Date(data.timestamp)
               const isRecent = new Date().getTime() - data.timestamp > 10000
               return (
-                <tr>
+                <tr key={key}>
                   <td style={{ width: '35%' }}>
                     <a href={'https://bscscan.com/tx/' + data.tx}>
                       <Flex alignItems="center">
