@@ -230,6 +230,10 @@ const RemoveIconWrapper = styled.div`
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  & svg {
+    width: 14px;
+    height: 14px;
+  }
   & svg path {
     fill: white;
   }
@@ -343,7 +347,7 @@ const Menu = (props) => {
 
   const tokenData = getAllToken
     .filter(val => removedAssets.findIndex(item => item === val.currency.symbol) === -1)
-    .sort((a, b) => Number(a.value) < Number(b.value) ? 1 : -1)
+    .sort((a, b) => Number(a.dollarPrice) < Number(b.dollarPrice) ? 1 : -1)
     .map((elem: any) => {
     const { currency, value, dollarPrice } = elem
     //  const link = `https://bscscan.com/token/${currency.address}`
