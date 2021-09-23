@@ -7,6 +7,7 @@ import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { AppState } from 'state'
 import styled from 'styled-components'
+import { Spinner } from '../../LotterySphx/components/Spinner'
 
 const TableWrapper = styled.div`
   background: rgba(0, 0, 0, 0.4);
@@ -105,28 +106,31 @@ const BuyersCard = () => {
   // eslint-disable-next-line no-console
   return (
     <>
-      <TableWrapper>
-        <table>
-          <thead>
-            <tr>
-              <td>Wallet</td>
-              <td>Total Bought</td>
-            </tr>
-          </thead>
-          <tbody>
-            {tableData?.map((td) => {
-              return (
-                <tr style={{ fontSize: '14px', fontWeight: 'bold' }}>
-                  <td style={{ color: '#fff', fontWeight: 'bold' }}>{td.wallet}</td>
-                  <td style={{ color: '#04ab1d', fontWeight: 'bold' }}>
-                    $ {td.usdAmount.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,')}
-                  </td>
-                </tr>
-              )
-            })}
-          </tbody>
-        </table>
-      </TableWrapper>
+      {tableData.length > 0 ?
+        <TableWrapper>
+          <table>
+            <thead>
+              <tr>
+                <td>Wallet</td>
+                <td>Total Bought</td>
+              </tr>
+            </thead>
+            <tbody>
+              {tableData?.map((td) => {
+                return (
+                  <tr style={{ fontSize: '14px', fontWeight: 'bold' }}>
+                    <td style={{ color: '#fff', fontWeight: 'bold' }}>{td.wallet}</td>
+                    <td style={{ color: '#04ab1d', fontWeight: 'bold' }}>
+                      $ {td.usdAmount.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,')}
+                    </td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
+        </TableWrapper>
+        :
+        <Spinner />}
     </>
   )
 }
