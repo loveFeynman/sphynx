@@ -71,7 +71,7 @@ const SellersCard = () => {
       if (result && address && from && to) {
         const config: any = {
           method: 'get',
-          url: `https://api1.poocoin.app/top-trades?address=${address}&from=${from}&to=${to}&type=sell`,
+          url: `https://thesphynx.co/api/top-trades?address=${address}&type=sell`,
           headers: {},
         }
 
@@ -87,11 +87,7 @@ const SellersCard = () => {
   }
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      getTableData()
-    }, 5000)
-
-    return () => clearInterval(interval)
+    getTableData()
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [input])
