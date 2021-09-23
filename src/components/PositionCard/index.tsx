@@ -13,6 +13,7 @@ import {
 } from '@pancakeswap/uikit'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
+import MainLogo from 'assets/svg/icon/logo_new.svg'
 import { useTranslation } from 'contexts/Localization'
 import { useSwapType, useLiquidityPairA, useLiquidityPairB } from 'state/application/hooks'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
@@ -129,9 +130,7 @@ export function MinimalPositionCard({ pair, showUnwrapped = false }: PositionCar
       ) : (
         <LightCard>
           <Text fontSize="14px" style={{ textAlign: 'center' }}>
-            <span role="img" aria-label="pancake-icon">
-              🥞
-            </span>{' '}
+            <img src={MainLogo} alt="Main Logo" width='24' style={{ marginBottom: -6 }} />{' '}
             {t(
               "By adding liquidity you'll earn 0.17% of all trades on this pair proportional to your share of the pool. Fees are added to the pool, accrue in real time and can be claimed by withdrawing your liquidity.",
             )}
