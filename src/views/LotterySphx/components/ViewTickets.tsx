@@ -74,10 +74,27 @@ const ViewTicketModal: React.FC<ViewTicketModalProps> = ({ roundID, winningCards
   const [userTicketInfos, setInfoTickets] = React.useState([]);
   const [forceValue, setForceValue] = useState(0); // integer state
   const [isClaimable, setClaimable] = React.useState(true);
+  const [toastMessage, setToastMessage] = React.useState({
+    title: '',
+    message: '',
+  });
+  const { toastSuccess, toastError } = useToast();
+
+  React.useEffect(() => {
+    if (toastMessage.title !== '' && toastMessage.title.includes("Error")) {
+      toastError(t(toastMessage.title), t(toastMessage.message));
+    }
+    if (toastMessage.title !== '' && toastMessage.title.includes("Success")) {
+      toastSuccess(t(toastMessage.title), t(toastMessage.message));
+    }
+    setToastMessage({
+      title: '',
+      message: '',
+    })
+  }, [toastMessage])
 
   React.useEffect(() => {
     const fetchData = async () => {
-      console.log("aaaaaaaaaaaaa");
       await viewUserInfoForLotteryId(account, roundID.toString(), 0, 2500, setInfoTickets);
       setTimeout(()=>setIsFetch(true), 2000);
     }
@@ -102,7 +119,7 @@ const ViewTicketModal: React.FC<ViewTicketModalProps> = ({ roundID, winningCards
       }
     });
     setLoading(true);
-    await claimTickets(signer, roundID, ticketIDS, brackets);
+    await claimTickets(signer, roundID, ticketIDS, brackets, setToastMessage);
     setLoading(false);
   }
 

@@ -15,6 +15,7 @@ import { claimTickets } from '../../../hooks/useLottery'
 import { Spinner } from './Spinner'
 import { getTokenPrice } from 'state/info/ws/priceData'
 import { simpleRpcProvider } from 'utils/providers'
+import useToast from 'hooks/useToast'
 
 const Container = styled.div<{ isDetail: boolean }>`
   width: 340px;
@@ -109,6 +110,25 @@ export default function PrizePotCard({ isNext, setModal, roundID, lotteryInfo, l
   const { account, library } = useActiveWeb3React();
   const signer = library.getSigner();
   const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
+  const [toastMessage, setToastMessage] = React.useState({
+    title: '',
+    message: '',
+  });
+  const { toastSuccess, toastError } = useToast();
+ 
+  React.useEffect(() => {
+    if (toastMessage.title !== '' && toastMessage.title.includes("Error")) {
+      toastError(t(toastMessage.title), t(toastMessage.message));
+    }
+    if (toastMessage.title !== '' && toastMessage.title.includes("Success")) {
+      toastSuccess(t(toastMessage.title), t(toastMessage.message));
+    }
+    setToastMessage({
+      title: '',
+      message: '',
+    })
+  }, [toastMessage])
+
   React.useEffect(() => {
     if (userTicketInfos?.length > 0) {
       userTicketInfos.map((item)=>{
@@ -138,7 +158,7 @@ export default function PrizePotCard({ isNext, setModal, roundID, lotteryInfo, l
     //account, roundID, ticketIds, brackets
 
     setLoading(true);
-    await claimTickets(signer, roundID, ticketIDS, brackets);
+    await claimTickets(signer, roundID, ticketIDS, brackets, setToastMessage);
     setLoading(false);
   }
 

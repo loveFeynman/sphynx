@@ -98,7 +98,7 @@ export const useLotteryBalance = () => {
   return { balance, roundID, lotteryInfo, setRefetch }
 }
 
-export const approveCall = async (signer, setConfig, setErrorMessage) => {
+export const approveCall = async (signer, setConfig, setToastMessage) => {
   try {
     await sphxContract
       .connect(signer)
@@ -109,11 +109,12 @@ export const approveCall = async (signer, setConfig, setErrorMessage) => {
       .then((data) => {
         // console.log("approve call ", data);
         setConfig(true)
+        setToastMessage({ title: 'Success', message: "Approved your request"})
         return true
       })
       .catch((err) => {
         // console.log('approve call error', err)
-        setErrorMessage({ title: 'Enabled error', message: err.message })
+        setToastMessage({ title: 'Enabled Error', message: err.message })
         return false
       })
     // console.log("step2")
@@ -124,23 +125,24 @@ export const approveCall = async (signer, setConfig, setErrorMessage) => {
   }
 }
 
-export const buyTickets = async (signer, roundID, ticketNumbers, setConfig, setErrorMessage) => {
+export const buyTickets = async (signer, roundID, ticketNumbers, setConfig, setToastMessage) => {
   try {
     await lotteryContract
       .connect(signer)
       .buyTickets(roundID, ticketNumbers)
       .then((data) => {
         // console.log(" buyTickets success", data);
+        setToastMessage({ title: 'Success ', message: "Successed buying ".concat(ticketNumbers.length.toString())})
         setConfig(true)
       })
       .catch((err) => {
         // console.log('buyTickets call error', err);
-        setErrorMessage({ title: 'Confirm Error', message: err.message })
+        setToastMessage({ title: 'Confirm Error', message: err.message })
       })
     // console.log(" buyTickets step2")
   } catch {
     console.error('buyTickets Round error')
-    setErrorMessage({ title: 'Confirm Error', message: 'error' })
+    setToastMessage({ title: 'Confirm Error', message: 'error' })
   }
 }
 
@@ -203,15 +205,14 @@ export const processRawTicketsResponse = (ticketsResponse) => {
   return []
 }
 
-export const claimTickets = async (signer, roundID, ticketIds, brackets) => {
-  console.log("ticketIds", ticketIds);
-  console.log("brackets", brackets);
+
+export const claimTickets = async (signer, roundID, ticketIds, brackets, setToastMessage) => {
   try {
     await lotteryContract
       .connect(signer)
       .claimTickets(roundID, ticketIds, brackets)
       .then((data) => {
-        console.log('claimTickets call ', data)
+        setToastMessage({ title: 'Success ', message: "Successed Claiming "})
       })
       .catch((err) => {
         console.log('claimTickets call error', err)

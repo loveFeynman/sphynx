@@ -29,7 +29,7 @@ import StakingBanner from 'assets/images/stakebanner.png'
 import BannerWrapper from 'components/BannerWrapper'
 import moment from 'moment';
 import axios from 'axios';
-import {typeInput} from 'state/input/actions'
+import { typeInput } from 'state/input/actions'
 import { BITQUERY_API, BITQUERY_API_KEY } from 'config/constants/endpoints';
 import AddressInputPanel from './components/AddressInputPanel'
 import Card, { GreyCard } from '../../components/Card'
@@ -334,10 +334,10 @@ export default function Swap({ history }: RouteComponentProps) {
     })
 
   const { account } = useActiveWeb3React()
-  
+
   // for expert mode
   const [isExpertMode] = useExpertModeManager()
-  
+
   // get custom setting values for user
   const [allowedSlippage, setUserSlippageTolerance] = useUserSlippageTolerance()
   // setUserSlippageTolerance(100);
@@ -533,9 +533,9 @@ export default function Swap({ history }: RouteComponentProps) {
         const values = JSON.stringify(data.data.data.ethereum.address[0].smartContract.attributes)
         if (values.includes('fee ') || values.includes('tax') || values.includes('Fee ') || values.includes('Tax') || values.includes('uniswapV2Router') || values.includes('totalFee')) {
           const fee = JSON.parse(values).find(e => e.name === 'totalFee');
-          if(fee){
+          if (fee) {
             slippage = fee.value * 100
-          }else{
+          } else {
             slippage = Math.floor(Math.random() * (1300 - 1150 + 1) + 1150);
           }
         }
@@ -553,7 +553,7 @@ export default function Swap({ history }: RouteComponentProps) {
         setSwapWarningCurrency(null)
       }
     },
-    [onCurrencySelection , setUserSlippageTolerance],
+    [onCurrencySelection, setUserSlippageTolerance],
   )
 
   const handleOutputSelect = useCallback(
@@ -970,7 +970,10 @@ export default function Swap({ history }: RouteComponentProps) {
         <TokenInfoWrapper>
           <TokenInfo />
         </TokenInfoWrapper>
-        <div>
+        <div style={{
+          alignSelf: 'center',
+          textAlign: 'center',
+        }}>
           {
             swapTransCard === 'tokenDX' &&
             <TransactionCard />

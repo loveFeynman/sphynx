@@ -126,11 +126,11 @@ const BuyTicketModal: React.FC<BuyTicketModalProps> = ({ setUpdateUserTicket, on
   const [realTokens, setRealTokens] = useState<string>('0')
   const [enabled, setEnabled] = useState(false)
   const [checked, setChecked] = useState(false)
-  const [errorMessage, setErrorMessage] = useState({
+  const [toastMessage, setToastMessage] = useState({
     title: '',
     message: '',
   })
-  const { toastError } = useToast()
+  const { toastSuccess, toastError } = useToast();
   const { t } = useTranslation()
 
   const handleInputTokens = useCallback((event) => {
@@ -139,15 +139,18 @@ const BuyTicketModal: React.FC<BuyTicketModalProps> = ({ setUpdateUserTicket, on
     else setTickets(input)
   }, [])
 
-  useEffect(() => {
-    if (errorMessage.title !== '') {
-      toastError(t(errorMessage.title), t(errorMessage.message))
-      setErrorMessage({
-        title: '',
-        message: '',
-      })
+  React.useEffect(() => {
+    if (toastMessage.title !== '' && toastMessage.title.includes("Error")) {
+      toastError(t(toastMessage.title), t(toastMessage.message));
     }
-  }, [errorMessage])
+    if (toastMessage.title !== '' && toastMessage.title.includes("Success")) {
+      toastSuccess(t(toastMessage.title), t(toastMessage.message));
+    }
+    setToastMessage({
+      title: '',
+      message: '',
+    })
+  }, [toastMessage])
 
   useEffect(() => {
     const ticket = parseInt(tickets) > 100 ? 100 : parseInt(tickets)
@@ -219,14 +222,14 @@ const BuyTicketModal: React.FC<BuyTicketModalProps> = ({ setUpdateUserTicket, on
   const handleApply = async () => {
     const ticketArrays = []
     if (tickets === '0') {
-      setErrorMessage({
+      setToastMessage({
         title: 'Error',
         message: 'No tickets',
       })
     }
     ticketNumbers.forEach((item) => ticketArrays.push((parseInt(item.ticketnumber) + 1000000).toString()))
     setLoading(true)
-    await buyTickets(signer, roundID, ticketArrays, setLoading, setErrorMessage)
+    await buyTickets(signer, roundID, ticketArrays, setLoading, setToastMessage)
     setUpdateUserTicket();
     onDismiss();
     setLoading(false)
@@ -238,7 +241,7 @@ const BuyTicketModal: React.FC<BuyTicketModalProps> = ({ setUpdateUserTicket, on
     const data = []
     // setTicketNumbers(input);
     if (tickets === '0') {
-      setErrorMessage({
+      setToastMessage({
         title: 'Error',
         message: 'No tickets',
       })
@@ -259,7 +262,7 @@ const BuyTicketModal: React.FC<BuyTicketModalProps> = ({ setUpdateUserTicket, on
       })
       console.log('ticketNumbers', data)
       setLoading(true)
-      await buyTickets(account, roundID, data, setLoading, setErrorMessage);
+      await buyTickets(account, roundID, data, setLoading, setToastMessage);
       setUpdateUserTicket();
       onDismiss();
       setLoading(false)
@@ -407,10 +410,7 @@ const BuyTicketModal: React.FC<BuyTicketModalProps> = ({ setUpdateUserTicket, on
                   disabled={!checked}
                   onClick={async () => {
                     setLoading(true)
-                    await approveCall(signer, setEnabled, setErrorMessage)
-                    if (errorMessage.title !== '') {
-                      toastError(t(errorMessage.title), t(errorMessage.message))
-                    }
+                    await approveCall(signer, setEnabled, setToastMessage)
                     setLoading(false)
                   }}
                   style={{ width: '100%' }}
@@ -437,7 +437,7 @@ const BuyTicketModal: React.FC<BuyTicketModalProps> = ({ setUpdateUserTicket, on
                         if (ticketNumbers[0].ticketNumbers.length === 0) randomTickets()
                       } else {
                         if (tickets === '0') {
-                          setErrorMessage({
+                          setToastMessage({
                             title: 'Error',
                             message: 'No tickets',
                           })
