@@ -205,6 +205,7 @@ export const processRawTicketsResponse = (ticketsResponse) => {
   return []
 }
 
+
 export const claimTickets = async (signer, roundID, ticketIds, brackets, setToastMessage) => {
   try {
     await lotteryContract
@@ -214,10 +215,9 @@ export const claimTickets = async (signer, roundID, ticketIds, brackets, setToas
         setToastMessage({ title: 'Success ', message: "Successed Claiming "})
       })
       .catch((err) => {
-        console.log('buyTickets call error', err)
+        console.log('claimTickets call error', err)
       })
-    console.log(' buyTickets step2')
   } catch {
-    console.error('buyTickets Round error')
+    console.error('claimTickets Round error')
   }
 }

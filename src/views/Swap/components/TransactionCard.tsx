@@ -16,7 +16,8 @@ import { Spinner } from '../../LotterySphx/components/Spinner'
 
 const pancakeV2: any = '0x10ED43C718714eb63d5aA57B78B54704E256024E'
 const busdAddr = '0xe9e7cea3dedca5984780bafc599bd69add087d56'
-const wBNBAddr = '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c';
+const wBNBAddr = '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c'
+const sphynxAddr = '0x2e121Ed64EEEB58788dDb204627cCB7C7c59884c'
 const transferEventTopic = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef'
 let tokenDecimal = 18
 
@@ -78,7 +79,8 @@ const TransactionCard = () => {
   const providerURL = 'wss://old-thrumming-voice.bsc.quiknode.pro/7674ba364cc71989fb1398e1e53db54e4fe0e9e0/'
   const web3 = new Web3(new Web3.providers.WebsocketProvider(providerURL))
   const [transactionData, setTransactions] = useState([]);
-  const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
+  let input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
+  if(input === '-') input = sphynxAddr;
   const tokenAddress = isAddress(input)
 
   const getDataQuery = `
@@ -88,7 +90,7 @@ const TransactionCard = () => {
       options: {desc: ["block.height", "tradeIndex"], limit: 30, offset: 0}
       date: {since: "2021-08-05", till: null}
       baseCurrency: {is: "${input}"}
-      quoteCurrency:{is : "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"}
+      quoteCurrency:{is : "${wBNBAddr}"}
       ) {
       block {
         timestamp {

@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react'
 import { ChainId, Currency, Token } from '@pancakeswap/sdk'
 import styled from 'styled-components'
+import MainLogo from 'assets/svg/icon/logo_new.svg'
 import {
   Button,
   Text,
@@ -10,7 +11,6 @@ import {
   Flex,
   Box,
   Link,
-  Spinner,
   Modal,
   InjectedModalProps,
 } from '@pancakeswap/uikit'
@@ -38,7 +38,7 @@ function ConfirmationPendingContent({ pendingText }: { pendingText: string }) {
   return (
     <Wrapper>
       <ConfirmedIcon>
-        <Spinner />
+        <img src={MainLogo} alt='Logo' />
       </ConfirmedIcon>
       <AutoColumn gap="12px" justify="center">
         <Text fontSize="20px">{t('Waiting For Confirmation')}</Text>
