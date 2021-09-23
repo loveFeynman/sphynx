@@ -147,17 +147,21 @@ const PastDrawCardContainer = styled.div`
     align-items: baseline;
   }
 `
-const LightContainer = styled.div`
+const RightContainer = styled.div`
   visibility: hidden;
   height: 0;
   width: 0;
   ${({ theme }) => theme.mediaQueries.xl} {
-    position: absolute;
     right: 0px;
     height: auto;
     width: auto;
     visibility: visible;
   }
+`
+const Grid = styled.div`
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(2, auto);
 `
 export default function Lottery() {
   const { account, library } = useActiveWeb3React();
@@ -201,6 +205,13 @@ export default function Lottery() {
     }
   }, [lastLoteryInfo]);
 
+  React.useEffect(() => {
+    clearInterval();
+    setInterval(()=> {
+      setRefetch(false);
+      setRefetch(true);
+    }, 60 * 1000)
+  }, []);
   //getting lottery status
   React.useEffect(() => {
     if (lotteryInfo !== null) {
@@ -211,11 +222,7 @@ export default function Lottery() {
         viewLotterys(roundID - 1, lastLoteryInfo, setLastLotteryInfo);
       }
       setCursor(lotteryInfo?.firstTicketId);
-      // clearInterval();
-      // setInterval(()=> {
-      //   setRefetch(false);
-      //   setRefetch(true);
-      // }, 60 * 1000);
+    
     }
   }, [lotteryInfo, roundID]);
 
@@ -295,7 +302,7 @@ export default function Lottery() {
   return (
     <div style={{ fontFamily: 'Raleway' }}>
       <PageHeader>
-        <div style={{ display: 'flex', position: 'relative' }}>
+        <Grid>
           <div>
             <Heading as="h4" scale="xl" color="white">
               {t('Lottery')}
@@ -304,7 +311,7 @@ export default function Lottery() {
               {t('Win Lottery if 2, 3, 4, 5 or 6 of your ticket numbers matched')}
             </Heading>
           </div>
-          <LightContainer>
+          <RightContainer>
             <div
               style={{
                 textAlign: 'center',
@@ -321,8 +328,8 @@ export default function Lottery() {
                 ))}
               </WinningCardContainerTop>
             </div>
-          </LightContainer>
-        </div>
+          </RightContainer>
+        </Grid>
       </PageHeader>
       <div>
         <Nav activeIndex={activeIndex} setActiveIndex={handleItemClick} />
