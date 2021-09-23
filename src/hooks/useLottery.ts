@@ -204,18 +204,19 @@ export const processRawTicketsResponse = (ticketsResponse) => {
 }
 
 export const claimTickets = async (signer, roundID, ticketIds, brackets) => {
+  console.log("ticketIds", ticketIds);
+  console.log("brackets", brackets);
   try {
     await lotteryContract
       .connect(signer)
       .claimTickets(roundID, ticketIds, brackets)
       .then((data) => {
-        console.log('buyTickets call ', data)
+        console.log('claimTickets call ', data)
       })
       .catch((err) => {
-        console.log('buyTickets call error', err)
+        console.log('claimTickets call error', err)
       })
-    console.log(' buyTickets step2')
   } catch {
-    console.error('buyTickets Round error')
+    console.error('claimTickets Round error')
   }
 }

@@ -38,14 +38,14 @@ const DividendPanel: React.FC = () => {
   const [onPresentDividendModal] = useModal(<DividendModal balance={balance * price}/>)
 
   useEffect(() => {
-    axios.get("https://thesphynx.co/api/price/0x3B39243e10f451A7aCfcf9E02C6A37303b61da46")
+    axios.get("https://thesphynx.co/api/price/0x2e121Ed64EEEB58788dDb204627cCB7C7c59884c")
     .then(({data}) => {
       setPrice(data.price)
     })
     const providerURL = WEBSOCKET_URL
     const web3 = new Web3(new Web3.providers.HttpProvider(providerURL))
     const abi: any = tokenABI
-    const tokenContract = new web3.eth.Contract(abi, '0x3B39243e10f451A7aCfcf9E02C6A37303b61da46')
+    const tokenContract = new web3.eth.Contract(abi, '0x2e121Ed64EEEB58788dDb204627cCB7C7c59884c')
     tokenContract.methods
       .balanceOf('0x795BAb595218150833bc4bBc96541D37Ed7658cf')
       .call()
