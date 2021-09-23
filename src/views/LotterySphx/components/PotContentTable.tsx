@@ -62,7 +62,7 @@ export default function PotContentTable({isDetail, lotteryInfo}) {
     <Container>
        <Grid>
         <GridHeaderItem isLeft>
-          {t('No. Mached')}
+          {t('No. Matched')}
         </GridHeaderItem>
         <GridHeaderItem isLeft={false}>
           {t('Player Matched')}
