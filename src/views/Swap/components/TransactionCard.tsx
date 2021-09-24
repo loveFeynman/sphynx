@@ -296,19 +296,19 @@ const TransactionCard = () => {
                 return (
                   <tr key={key}>
                     <td style={{ width: '35%' }}>
-                      <a href={'https://bscscan.com/tx/' + data.tx}>
+                      <a href={'https://bscscan.com/tx/' + data.tx} target='_blank' rel='noreferrer'>
                         <Flex alignItems="center">
                           <h2 className={data.isBuy ? 'success' : 'error'}>{date.toString().split('GMT')[0]}</h2>
                         </Flex>
                       </a>
                     </td>
                     <td style={{ width: '25%' }}>
-                      <a href={'https://bscscan.com/tx/' + data.tx}>
+                      <a href={'https://bscscan.com/tx/' + data.tx} target='_blank' rel='noreferrer'>
                         <h2 className={data.isBuy ? 'success' : 'error'}>{Number(data.amount).toFixed(4)}</h2>
                       </a>
                     </td>
                     <td style={{ width: '25%' }}>
-                      <a href={'https://bscscan.com/tx/' + data.tx}>
+                      <a href={'https://bscscan.com/tx/' + data.tx} target='_blank' rel='noreferrer'>
                         <h2 className={data.isBuy ? 'success' : 'error'}>
                           $
                           {data.price < 0.00001
@@ -320,7 +320,7 @@ const TransactionCard = () => {
                       </a>
                     </td>
                     <td style={{ width: '25%' }}>
-                      <a href={'https://bscscan.com/tx/' + data.tx}>
+                      <a href={'https://bscscan.com/tx/' + data.tx} target='_blank' rel='noreferrer'>
                         <h2 className={data.isBuy ? 'success' : 'error'}>
                           ${(data.price * data.amount).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,')}
                         </h2>
