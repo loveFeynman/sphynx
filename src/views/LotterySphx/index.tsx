@@ -351,7 +351,7 @@ export default function Lottery() {
           <div style={{ textAlign: 'center', margin: '88px 0px 76px 0px' }}>
             <Text bold fontSize="48px" color="white" style={{ fontWeight: 700 }}>How it works</Text>
             <div style={{ display: 'flex', justifyContent: 'center' }}>
-              <Text bold fontSize="16px" style={{ maxWidth: '440px', textAlign: 'left' }}>{t(`SpendSPX to buy tickets, contributing to the lottery pot. Win prizes if 2, 3, 4, 5 or 6 of your ticket numbers match the winning numbers and their exact order!`)}</Text>
+              <Text bold fontSize="16px" style={{ maxWidth: '440px', textAlign: 'left' }}>{t(`Spend Sphynx to buy tickets, contributing to the lottery pot. Win prizes if 2, 3, 4, 5 or 6 of your ticket numbers match the winning numbers and their exact order!`)}</Text>
             </div>
           </div>
           <div
