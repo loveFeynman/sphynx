@@ -72,7 +72,7 @@ const BuyersCard = () => {
       if (result && address && from && to) {
         const config: any = {
           method: 'get',
-          url: `http://thesphynx.co/api/top-trades?address=${address}&type=buy`,
+          url: `https://thesphynx.co/api/top-trades?address=${address}&type=buy`,
           headers: {},
         }
 
