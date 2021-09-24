@@ -7,7 +7,7 @@ import {
   UserMenu as UIKitUserMenu,
   // UserMenuDivider,
   UserMenuItem,
-} from '@pancakeswap/uikit'
+} from '@sphynxswap/uikit'
 import useAuth from 'hooks/useAuth'
 import { useProfile } from 'state/profile/hooks'
 import ConnectWalletButton from 'components/ConnectWalletButton'
@@ -35,7 +35,7 @@ const UserMenu = () => {
 
   return (
     <div style={{ position: 'relative' }}>
-      <UIKitUserMenu account={account} avatarSrc='/images/EmptyAvatar.svg'>
+      <UIKitUserMenu account={account} avatarSrc="/images/EmptyAvatar.svg">
         {/* <WalletUserMenuItem hasLowBnbBalance={hasLowBnbBalance} onPresentWalletModal={onPresentWalletModal} />
         <UserMenuItem as="button" onClick={onPresentTransactionModal}>
           {t('Transactions')}
@@ -43,8 +43,13 @@ const UserMenu = () => {
         <UserMenuDivider />
         <ProfileUserMenuItem isLoading={isLoading} hasProfile={hasProfile} />
         <UserMenuDivider /> */}
-        <UserMenuItem as="button" onClick={() => { logout() }}>
-          <Flex alignItems="center" justifyContent="space-between" width="100%" height='100%'>
+        <UserMenuItem
+          as="button"
+          onClick={() => {
+            logout()
+          }}
+        >
+          <Flex alignItems="center" justifyContent="space-between" width="100%" height="100%">
             {t('Sign out')}
             <LogoutIcon />
           </Flex>

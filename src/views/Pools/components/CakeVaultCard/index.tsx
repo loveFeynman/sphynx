@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Box, CardBody, Flex, Text } from '@pancakeswap/uikit'
+import { Box, CardBody, Flex, Text } from '@sphynxswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 import { useWeb3React } from '@web3-react/core'
 import ConnectWalletButton from 'components/ConnectWalletButton'
@@ -17,7 +17,7 @@ import RecentCakeProfitRow from './RecentCakeProfitRow'
 
 const StyledCardBody = styled(CardBody)<{ isLoading: boolean }>`
   min-height: ${({ isLoading }) => (isLoading ? '0' : '254px')};
-  background-color: ${({theme}) => theme.colors.input}
+  background-color: ${({ theme }) => theme.colors.input};
 `
 
 interface CakeVaultProps {

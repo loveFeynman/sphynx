@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { useLocation, Link, useRouteMatch } from 'react-router-dom'
-import { ButtonMenu, ButtonMenuItem, NotificationDot } from '@pancakeswap/uikit'
+import { ButtonMenu, ButtonMenuItem, NotificationDot } from '@sphynxswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 
 interface FarmTabButtonsProps {
@@ -32,11 +32,11 @@ const FarmTabButtons: React.FC<FarmTabButtonsProps> = ({ hasStakeInFinishedFarms
   return (
     <Wrapper>
       <ButtonMenu activeIndex={activeIndex} scale="sm" variant="subtle">
-        <ButtonMenuItem as={Link} to='/farms'>
+        <ButtonMenuItem as={Link} to="/farms">
           {t('Live')}
         </ButtonMenuItem>
         <NotificationDot show={hasStakeInFinishedFarms}>
-          <ButtonMenuItem as={Link} to='/farms/history'>
+          <ButtonMenuItem as={Link} to="/farms/history">
             {t('Finished')}
           </ButtonMenuItem>
         </NotificationDot>

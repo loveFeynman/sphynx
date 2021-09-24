@@ -2,7 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 
 import CardNav from 'components/CardNav'
-import { Image, Heading, RowType, Toggle, Text, Button, ArrowForwardIcon, Flex } from '@pancakeswap/uikit'
+import { Image, Heading, RowType, Toggle, Text, Button, ArrowForwardIcon, Flex } from '@sphynxswap/uikit'
 import PageHeader from 'components/PageHeader'
 import { useTranslation } from 'contexts/Localization'
 import BridgeCard from './components/BridgeCard'
@@ -23,7 +23,7 @@ const Grid = styled.div`
 `
 
 export default function Bridge() {
-  const { t } = useTranslation();
+  const { t } = useTranslation()
   return (
     <>
       <PageHeader>
@@ -35,8 +35,8 @@ export default function Bridge() {
         </Heading>
       </PageHeader>
       <Grid>
-        <BridgeCard label="Sphynx To Bridge" isSpynx/>
-        <BridgeCard label="Other Tokens To Bridge" isSpynx = {false}/>
+        <BridgeCard label="Sphynx To Bridge" isSpynx />
+        <BridgeCard label="Other Tokens To Bridge" isSpynx={false} />
       </Grid>
     </>
   )

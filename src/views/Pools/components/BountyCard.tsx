@@ -13,7 +13,7 @@ import {
   useModal,
   Box,
   useTooltip,
-} from '@pancakeswap/uikit'
+} from '@sphynxswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 import { getBalanceNumber } from 'utils/formatBalance'
 import { usePriceCakeBusd } from 'state/farms/hooks'
@@ -29,7 +29,7 @@ const StyledCard = styled(Card)`
   & > div > div {
     padding: 24px 0;
   }
-  
+
   ${({ theme }) => theme.mediaQueries.sm} {
     min-width: 240px;
   }
@@ -76,7 +76,7 @@ const BountyCard = () => {
   return (
     <>
       {tooltipVisible && tooltip}
-      <StyledCard background='transparent'>
+      <StyledCard background="transparent">
         <CardBody>
           <Flex flexDirection="column">
             <Flex alignItems="center" mb="12px">
@@ -111,7 +111,7 @@ const BountyCard = () => {
               )}
             </Flex>
             <Button
-              variant='primary'
+              variant="primary"
               disabled={!dollarBountyToDisplay || !cakeBountyToDisplay || !callFee}
               onClick={onPresentBountyModal}
               scale="sm"

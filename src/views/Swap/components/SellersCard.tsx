@@ -102,7 +102,7 @@ const SellersCard = () => {
   // eslint-disable-next-line no-console
   return (
     <>
-      {tableData.length > 0 ?
+      {tableData.length > 0 ? (
         <TableWrapper>
           <table>
             <thead>
@@ -125,8 +125,9 @@ const SellersCard = () => {
             </tbody>
           </table>
         </TableWrapper>
-        : <Spinner />}
-
+      ) : (
+        <Spinner />
+      )}
     </>
   )
 }

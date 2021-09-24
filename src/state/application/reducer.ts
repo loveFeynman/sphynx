@@ -1,6 +1,6 @@
 import { createReducer } from '@reduxjs/toolkit'
-import { RouterType } from '@pancakeswap/sdk'
-import { 
+import { RouterType } from '@sphynxswap/sdk'
+import {
   updateBlockNumber,
   toggleMenu,
   setRouterType,
@@ -35,33 +35,33 @@ const initialState: ApplicationState = {
 
 export default createReducer(initialState, (builder) =>
   builder
-  .addCase(updateBlockNumber, (state, action) => {
-    const { chainId, blockNumber } = action.payload
-    if (typeof state.blockNumber[chainId] !== 'number') {
-      state.blockNumber[chainId] = blockNumber
-    } else {
-      state.blockNumber[chainId] = Math.max(blockNumber, state.blockNumber[chainId])
-    }
-  })
-  .addCase(toggleMenu, state => {
-    state.menuToggled = !state.menuToggled
-  })
-  .addCase(setRouterType, (state, { payload }) => {
-    state.routerType = payload
-  })
-  .addCase(setSwapType, (state, { payload }) => {
-    state.swapType = payload
-  })
-  .addCase(setSwapTransCard, (state, { payload }) => {
-    state.swapTransCard = payload
-  })
-  .addCase(setLiquidityPairA, (state, { payload }) => {
-    state.liquidityPairA = payload
-  })
-  .addCase(setLiquidityPairB, (state, { payload }) => {
-    state.liquidityPairB = payload
-  })
-  .addCase(updateRemovedAssets, (state, { payload }) => {
-    state.removedAssets = payload
-  })
+    .addCase(updateBlockNumber, (state, action) => {
+      const { chainId, blockNumber } = action.payload
+      if (typeof state.blockNumber[chainId] !== 'number') {
+        state.blockNumber[chainId] = blockNumber
+      } else {
+        state.blockNumber[chainId] = Math.max(blockNumber, state.blockNumber[chainId])
+      }
+    })
+    .addCase(toggleMenu, (state) => {
+      state.menuToggled = !state.menuToggled
+    })
+    .addCase(setRouterType, (state, { payload }) => {
+      state.routerType = payload
+    })
+    .addCase(setSwapType, (state, { payload }) => {
+      state.swapType = payload
+    })
+    .addCase(setSwapTransCard, (state, { payload }) => {
+      state.swapTransCard = payload
+    })
+    .addCase(setLiquidityPairA, (state, { payload }) => {
+      state.liquidityPairA = payload
+    })
+    .addCase(setLiquidityPairB, (state, { payload }) => {
+      state.liquidityPairB = payload
+    })
+    .addCase(updateRemovedAssets, (state, { payload }) => {
+      state.removedAssets = payload
+    }),
 )

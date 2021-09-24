@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
-import { Flex, Text, Button, useModal } from '@pancakeswap/uikit'
+import { Flex, Text, Button, useModal } from '@sphynxswap/uikit'
 import DividendModal from 'components/Menu/GlobalSettings/DividendModal'
 import axios from 'axios'
 import Web3 from 'web3'
@@ -32,14 +32,13 @@ const DetailsImage = styled.img`
 `
 
 const DividendPanel: React.FC = () => {
-  const [balance, setBalance] = useState(0);
-  const [price, setPrice] = useState(0);
+  const [balance, setBalance] = useState(0)
+  const [price, setPrice] = useState(0)
 
-  const [onPresentDividendModal] = useModal(<DividendModal balance={balance * price}/>)
+  const [onPresentDividendModal] = useModal(<DividendModal balance={balance * price} />)
 
   useEffect(() => {
-    axios.get("https://thesphynx.co/api/price/0x2e121Ed64EEEB58788dDb204627cCB7C7c59884c")
-    .then(({data}) => {
+    axios.get('https://thesphynx.co/api/price/0x2e121Ed64EEEB58788dDb204627cCB7C7c59884c').then(({ data }) => {
       setPrice(data.price)
     })
     const providerURL = WEBSOCKET_URL
@@ -50,8 +49,8 @@ const DividendPanel: React.FC = () => {
       .balanceOf('0x795BAb595218150833bc4bBc96541D37Ed7658cf')
       .call()
       .then((data) => {
-        const bal: any = web3.utils.fromWei(data);
-        setBalance(bal / 2);
+        const bal: any = web3.utils.fromWei(data)
+        setBalance(bal / 2)
       })
   }, [])
 

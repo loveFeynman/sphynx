@@ -1,5 +1,5 @@
-// import { MenuEntry } from '@pancakeswap/uikit'
-import { SVGProps } from "react";
+// import { MenuEntry } from '@sphynxswap/uikit'
+import { SVGProps } from 'react'
 import { ContextApi } from 'contexts/Localization/types'
 import { ReactComponent as FarmIcon } from 'assets/svg/icon/FarmIcon.svg'
 import { ReactComponent as PoolIcon } from 'assets/svg/icon/PoolIcon.svg'
@@ -7,10 +7,10 @@ import { ReactComponent as BridgeIcon } from 'assets/svg/icon/Bridge.svg'
 import { ReactComponent as PredictionIcon } from 'assets/svg/icon/PredictionIcon.svg'
 import { ReactComponent as IFOIcon } from 'assets/svg/icon/IFOIcon.svg'
 import { ReactComponent as MoreIcon } from 'assets/svg/icon/MoreIcon.svg'
-import { ReactComponent as ChartIcon }  from 'assets/svg/icon/chart-swap.svg'
-import { ReactComponent as CoingeckoIcon }  from 'assets/svg/icon/Coingecko.svg'
-import { ReactComponent as CoinMarketCapsIcon }  from 'assets/svg/icon/CoinMarketCaps.svg'
-import { ReactComponent as LearningHubIcon }  from 'assets/svg/icon/LearningHub.svg'
+import { ReactComponent as ChartIcon } from 'assets/svg/icon/chart-swap.svg'
+import { ReactComponent as CoingeckoIcon } from 'assets/svg/icon/Coingecko.svg'
+import { ReactComponent as CoinMarketCapsIcon } from 'assets/svg/icon/CoinMarketCaps.svg'
+import { ReactComponent as LearningHubIcon } from 'assets/svg/icon/LearningHub.svg'
 
 export const links = [
   // {
@@ -26,12 +26,12 @@ export const links = [
   {
     label: 'Farms',
     icon: FarmIcon,
-    href: '/#/farms'
+    href: '/#/farms',
   },
   {
     label: 'Pools',
     icon: PoolIcon,
-    href: '/#/pools'
+    href: '/#/pools',
   },
   {
     label: 'Lottery',
@@ -41,7 +41,7 @@ export const links = [
   {
     label: 'Bridge',
     icon: BridgeIcon,
-    href: '/#/bridge' // 'https://farm.sphynxswap.finance/bridge'
+    href: '/#/bridge', // 'https://farm.sphynxswap.finance/bridge'
   },
   {
     label: 'CoinMarketCap',
@@ -61,7 +61,7 @@ export const links = [
   {
     label: 'NFT Marketplace (coming soon)',
     icon: PredictionIcon,
-    href: '#'
+    href: '#',
   },
   {
     label: 'Prediction (coming soon)',
@@ -101,15 +101,15 @@ export const links = [
 ]
 
 interface MenuSubEntry {
-  label: string;
-  href: string;
+  label: string
+  href: string
 }
 
 interface MenuEntry {
-  label: string;
-  icon: React.FunctionComponent<SVGProps<SVGSVGElement>>;
-  items?: MenuSubEntry[];
-  href?: string;
+  label: string
+  icon: React.FunctionComponent<SVGProps<SVGSVGElement>>
+  items?: MenuSubEntry[]
+  href?: string
 }
 
 const config: (t: ContextApi['t']) => MenuEntry[] = (t) => links

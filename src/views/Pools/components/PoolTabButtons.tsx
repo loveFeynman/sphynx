@@ -1,7 +1,7 @@
 import React from 'react'
 import { useRouteMatch, Link } from 'react-router-dom'
 import styled from 'styled-components'
-import { ButtonMenu, ButtonMenuItem, Toggle, Text, NotificationDot } from '@pancakeswap/uikit'
+import { ButtonMenu, ButtonMenuItem, Toggle, Text, NotificationDot } from '@sphynxswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 import ToggleView, { ViewMode } from './ToggleView/ToggleView'
 
@@ -59,12 +59,12 @@ const PoolTabButtons = ({ stakedOnly, setStakedOnly, hasStakeInFinishedPools, vi
 
   const liveOrFinishedSwitch = (
     <Wrapper>
-      <ButtonMenu activeIndex={url==='/pools' ? 0 : 1} scale="sm" variant="subtle">
-        <ButtonMenuItem as={Link} to='/pools'>
+      <ButtonMenu activeIndex={url === '/pools' ? 0 : 1} scale="sm" variant="subtle">
+        <ButtonMenuItem as={Link} to="/pools">
           {t('Live')}
         </ButtonMenuItem>
         <NotificationDot show={hasStakeInFinishedPools}>
-          <ButtonMenuItem as={Link} to='/pools/history'>
+          <ButtonMenuItem as={Link} to="/pools/history">
             {t('Finished')}
           </ButtonMenuItem>
         </NotificationDot>

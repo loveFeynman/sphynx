@@ -1,12 +1,12 @@
 import { createAction } from '@reduxjs/toolkit'
 
 export interface Field {
-  input : ''
+  input: ''
   typeRouterVersion: 'v1'
-  type:"INPUT_ADDRESS"
+  type: 'INPUT_ADDRESS'
 }
 
-export const typeInput = createAction<{ input: string; }>('input/typeInput')
-export const setIsInput = createAction<{ isInput: boolean; }>('input/setIsInput')
-export const typeRouterVersion = createAction<{ routerVersion: string; }>('input/typeRouterVersion')
+export const typeInput = createAction<{ input: string }>('input/typeInput')
+export const setIsInput = createAction<{ isInput: boolean }>('input/setIsInput')
+export const typeRouterVersion = createAction<{ routerVersion: string }>('input/typeRouterVersion')
 export const resetMintState = createAction<void>('input/resetState')

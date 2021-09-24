@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react'
-import { ChainId, Currency, Token } from '@pancakeswap/sdk'
+import { ChainId, Currency, Token } from '@sphynxswap/sdk'
 import styled from 'styled-components'
 import MainLogo from 'assets/svg/icon/logo_new.svg'
 import {
@@ -13,7 +13,7 @@ import {
   Link,
   Modal,
   InjectedModalProps,
-} from '@pancakeswap/uikit'
+} from '@sphynxswap/uikit'
 import { registerToken } from 'utils/wallet'
 import { useTranslation } from 'contexts/Localization'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
@@ -38,7 +38,7 @@ function ConfirmationPendingContent({ pendingText }: { pendingText: string }) {
   return (
     <Wrapper>
       <ConfirmedIcon>
-        <img src={MainLogo} alt='Logo' />
+        <img src={MainLogo} alt="Logo" />
       </ConfirmedIcon>
       <AutoColumn gap="12px" justify="center">
         <Text fontSize="20px">{t('Waiting For Confirmation')}</Text>

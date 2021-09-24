@@ -19,7 +19,7 @@ const Wrapper = styled.div`
 const BannerWrapper: React.FC = () => {
   return (
     <Wrapper>
-      <img src={PyramidImage} alt='Pyramid' />
+      <img src={PyramidImage} alt="Pyramid" />
     </Wrapper>
   )
 }

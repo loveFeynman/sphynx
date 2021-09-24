@@ -4,7 +4,7 @@ import * as ethers from 'ethers'
 import React, { useEffect, useState, useRef } from 'react'
 import { useSelector } from 'react-redux'
 import styled from 'styled-components'
-import { Flex } from '@pancakeswap/uikit'
+import { Flex } from '@sphynxswap/uikit'
 import { TokenInfo, getBnbPrice, getPancakePairAddress, getMinTokenInfo, getTokenPrice } from 'state/info/ws/priceData'
 import { AppState } from '../../../state'
 import { isAddress } from '../../../utils'
@@ -78,9 +78,9 @@ let myTransactions = []
 const TransactionCard = () => {
   const providerURL = 'wss://old-thrumming-voice.bsc.quiknode.pro/7674ba364cc71989fb1398e1e53db54e4fe0e9e0/'
   const web3 = new Web3(new Web3.providers.WebsocketProvider(providerURL))
-  const [transactionData, setTransactions] = useState([]);
+  const [transactionData, setTransactions] = useState([])
   let input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
-  if(input === '-') input = sphynxAddr;
+  if (input === '-') input = sphynxAddr
   const tokenAddress = isAddress(input)
 
   const getDataQuery = `
@@ -154,7 +154,7 @@ const TransactionCard = () => {
   }
 
   const parseData: any = async () => {
-    let newTransactions = transactionData;
+    let newTransactions = transactionData
     return new Promise((resolve) => {
       for (let i = 0; i <= myTransactions.length; i++) {
         if (i === myTransactions.length) {
@@ -193,7 +193,7 @@ const TransactionCard = () => {
             oneData.isBuy = logs.length != 0
             oneData.usdValue = oneData.amount * oneData.price
             newTransactions.unshift(oneData)
-          } catch (err) { }
+          } catch (err) {}
         })
       }
       blocks = 0
@@ -277,8 +277,7 @@ const TransactionCard = () => {
   // eslint-disable-next-line no-console
   return (
     <>
-      {transactionData.length > 0 ?
-
+      {transactionData.length > 0 ? (
         <TableWrapper>
           <table>
             <thead>
@@ -296,31 +295,31 @@ const TransactionCard = () => {
                 return (
                   <tr key={key}>
                     <td style={{ width: '35%' }}>
-                      <a href={'https://bscscan.com/tx/' + data.tx} target='_blank' rel='noreferrer'>
+                      <a href={'https://bscscan.com/tx/' + data.tx} target="_blank" rel="noreferrer">
                         <Flex alignItems="center">
                           <h2 className={data.isBuy ? 'success' : 'error'}>{date.toString().split('GMT')[0]}</h2>
                         </Flex>
                       </a>
                     </td>
                     <td style={{ width: '25%' }}>
-                      <a href={'https://bscscan.com/tx/' + data.tx} target='_blank' rel='noreferrer'>
+                      <a href={'https://bscscan.com/tx/' + data.tx} target="_blank" rel="noreferrer">
                         <h2 className={data.isBuy ? 'success' : 'error'}>{Number(data.amount).toFixed(4)}</h2>
                       </a>
                     </td>
                     <td style={{ width: '25%' }}>
-                      <a href={'https://bscscan.com/tx/' + data.tx} target='_blank' rel='noreferrer'>
+                      <a href={'https://bscscan.com/tx/' + data.tx} target="_blank" rel="noreferrer">
                         <h2 className={data.isBuy ? 'success' : 'error'}>
                           $
                           {data.price < 0.00001
                             ? data.price
                             : Number(data.price)
-                              .toFixed(4)
-                              .replace(/(\d)(?=(\d{3})+\.)/g, '$1,')}
+                                .toFixed(4)
+                                .replace(/(\d)(?=(\d{3})+\.)/g, '$1,')}
                         </h2>
                       </a>
                     </td>
                     <td style={{ width: '25%' }}>
-                      <a href={'https://bscscan.com/tx/' + data.tx} target='_blank' rel='noreferrer'>
+                      <a href={'https://bscscan.com/tx/' + data.tx} target="_blank" rel="noreferrer">
                         <h2 className={data.isBuy ? 'success' : 'error'}>
                           ${(data.price * data.amount).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,')}
                         </h2>
@@ -332,7 +331,9 @@ const TransactionCard = () => {
             </tbody>
           </table>
         </TableWrapper>
-        : <Spinner />}
+      ) : (
+        <Spinner />
+      )}
 
       {/* {loader ?
 				<div style={{ display: 'flex', justifyContent: 'center' }}>

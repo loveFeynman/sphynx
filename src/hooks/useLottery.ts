@@ -79,7 +79,7 @@ export const useLotteryBalance = () => {
     }
 
     const viewLotterys = async (rID) => {
-      console.log("lottery", rID);
+      console.log('lottery', rID)
       try {
         const data = await lotteryContractWeb3.methods.viewLottery(rID).call()
         // console.log("view lotterys success", data);
@@ -109,7 +109,7 @@ export const approveCall = async (signer, setConfig, setToastMessage) => {
       .then((data) => {
         // console.log("approve call ", data);
         setConfig(true)
-        setToastMessage({ title: 'Success', message: "Approved your request"})
+        setToastMessage({ title: 'Success', message: 'Approved your request' })
         return true
       })
       .catch((err) => {
@@ -132,7 +132,7 @@ export const buyTickets = async (signer, roundID, ticketNumbers, setConfig, setT
       .buyTickets(roundID, ticketNumbers)
       .then((data) => {
         // console.log(" buyTickets success", data);
-        setToastMessage({ title: 'Success ', message: "Successed buying ".concat(ticketNumbers.length.toString())})
+        setToastMessage({ title: 'Success ', message: 'Successed buying '.concat(ticketNumbers.length.toString()) })
         setConfig(true)
       })
       .catch((err) => {
@@ -205,14 +205,13 @@ export const processRawTicketsResponse = (ticketsResponse) => {
   return []
 }
 
-
 export const claimTickets = async (signer, roundID, ticketIds, brackets, setToastMessage) => {
   try {
     await lotteryContract
       .connect(signer)
       .claimTickets(roundID, ticketIds, brackets)
       .then((data) => {
-        setToastMessage({ title: 'Success ', message: "Successed Claiming "})
+        setToastMessage({ title: 'Success ', message: 'Successed Claiming ' })
       })
       .catch((err) => {
         console.log('claimTickets call error', err)

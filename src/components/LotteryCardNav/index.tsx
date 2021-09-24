@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { ButtonMenu, ButtonMenuItem } from '@pancakeswap/uikit'
+import { ButtonMenu, ButtonMenuItem } from '@sphynxswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 
 const StyledNav = styled.div`
@@ -14,8 +14,8 @@ const StyledNav = styled.div`
   & a {
     color: black;
   }
-  & > div { 
-    background: #FFFFFF;  
+  & > div {
+    background: #ffffff;
     & > button {
       &:active {
         outline: none;
@@ -23,26 +23,25 @@ const StyledNav = styled.div`
     }
   }
   & .active {
-    background: #8B2A9B;
+    background: #8b2a9b;
     color: white;
     border-radius: 14px;
     margin-left: 0px;
   }
   & .inactive {
-    background: #FFFFFF;
+    background: #ffffff;
     color: black;
     border: none;
   }
-
 `
 
-const Nav = ({ activeIndex = 0, setActiveIndex }: { activeIndex?: number; setActiveIndex?: any}) => {
+const Nav = ({ activeIndex = 0, setActiveIndex }: { activeIndex?: number; setActiveIndex?: any }) => {
   const { t } = useTranslation()
 
   return (
     <StyledNav>
-      <ButtonMenu activeIndex={activeIndex} scale="sm" variant="primary"  onItemClick={setActiveIndex}>
-        <ButtonMenuItem className={activeIndex === 0 ? 'active' : 'inactive'} id="next-lottery-nav-link" >
+      <ButtonMenu activeIndex={activeIndex} scale="sm" variant="primary" onItemClick={setActiveIndex}>
+        <ButtonMenuItem className={activeIndex === 0 ? 'active' : 'inactive'} id="next-lottery-nav-link">
           {t('Next Draw')}
         </ButtonMenuItem>
         <ButtonMenuItem className={activeIndex === 1 ? 'active' : 'inactive'} id="past-lottery-nav-link">

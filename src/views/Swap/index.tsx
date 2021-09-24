@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux'
 import styled from 'styled-components'
 import { useLocation } from 'react-router'
-import { CurrencyAmount, JSBI, Token, Trade } from '@pancakeswap/sdk'
-import { Button, Text, ArrowDownIcon, Box, useModal, Flex, Link, useMatchBreakpoints } from '@pancakeswap/uikit'
+import { CurrencyAmount, JSBI, Token, Trade } from '@sphynxswap/sdk'
+import { Button, Text, ArrowDownIcon, Box, useModal, Flex, Link, useMatchBreakpoints } from '@sphynxswap/uikit'
 import { useIsTransactionUnsupported } from 'hooks/Trades'
 import UnsupportedCurrencyFooter from 'components/UnsupportedCurrencyFooter'
 import { RouteComponentProps } from 'react-router-dom'
@@ -27,10 +27,10 @@ import BinanceLogo from 'assets/images/binance-logo.png'
 import FarmBanner from 'assets/images/farmbanner.png'
 import StakingBanner from 'assets/images/stakebanner.png'
 import BannerWrapper from 'components/BannerWrapper'
-import moment from 'moment';
-import axios from 'axios';
+import moment from 'moment'
+import axios from 'axios'
 import { typeInput } from 'state/input/actions'
-import { BITQUERY_API, BITQUERY_API_KEY } from 'config/constants/endpoints';
+import { BITQUERY_API, BITQUERY_API_KEY } from 'config/constants/endpoints'
 import AddressInputPanel from './components/AddressInputPanel'
 import Card, { GreyCard } from '../../components/Card'
 import ConfirmSwapModal from './components/ConfirmSwapModal'
@@ -150,7 +150,7 @@ const SlippageText = styled.p`
 //     & p {
 //       font-size: 18px;
 //       line-height: 21px;
-//     }  
+//     }
 //   }
 // `
 
@@ -249,10 +249,11 @@ const BottomCard = styled.div`
     bottom: 0;
     background-color: transparent; // rgba(0, 0, 0, 0.4);
     z-index: 1;
-    border: 1px solid rgba(0,0,0,0.4);
+    border: 1px solid rgba(0, 0, 0, 0.4);
     border-radius: 12px;
   }
-  & h1, & button {
+  & h1,
+  & button {
     position: absolute;
     z-index: 2;
   }
@@ -264,13 +265,13 @@ const BottomCard = styled.div`
     font-weight: 600;
     line-height: 68px;
     text-align: center;
-    border-bottom: 1px solid #C4C4C4;
+    border-bottom: 1px solid #c4c4c4;
   }
   & button {
     bottom: 40px;
     left: 5%;
     width: 90%;
-    background: #8B2A9B;
+    background: #8b2a9b;
     outline: none;
     box-shadow: none;
     border: none;
@@ -298,9 +299,9 @@ const SwapPage = styled(Page)`
 `
 
 export default function Swap({ history }: RouteComponentProps) {
-  const [address, setaddress] = useState('');
+  const [address, setaddress] = useState('')
   function handleChange(value) {
-    setaddress(value);
+    setaddress(value)
   }
 
   const dispatch = useDispatch()
@@ -359,13 +360,13 @@ export default function Swap({ history }: RouteComponentProps) {
 
   const parsedAmounts = showWrap
     ? {
-      [Field.INPUT]: parsedAmount,
-      [Field.OUTPUT]: parsedAmount,
-    }
+        [Field.INPUT]: parsedAmount,
+        [Field.OUTPUT]: parsedAmount,
+      }
     : {
-      [Field.INPUT]: independentField === Field.INPUT ? parsedAmount : trade?.inputAmount,
-      [Field.OUTPUT]: independentField === Field.OUTPUT ? parsedAmount : trade?.outputAmount,
-    }
+        [Field.INPUT]: independentField === Field.INPUT ? parsedAmount : trade?.inputAmount,
+        [Field.OUTPUT]: independentField === Field.OUTPUT ? parsedAmount : trade?.outputAmount,
+      }
 
   const { onSwitchTokens, onCurrencySelection, onUserInput, onChangeRecipient } = useSwapActionHandlers()
   const isValid = !swapInputError
@@ -525,25 +526,35 @@ export default function Swap({ history }: RouteComponentProps) {
       `
       const bitConfig = {
         headers: {
-          "X-API-KEY": BITQUERY_API_KEY,
+          'X-API-KEY': BITQUERY_API_KEY,
         },
-      };
-      axios.post(BITQUERY_API, { query }, bitConfig).then(data => {
-        let slippage = 80;
-        const values = JSON.stringify(data.data.data.ethereum.address[0].smartContract.attributes)
-        if (values.includes('fee ') || values.includes('tax') || values.includes('Fee ') || values.includes('Tax') || values.includes('uniswapV2Router') || values.includes('totalFee')) {
-          const fee = JSON.parse(values).find(e => e.name === 'totalFee');
-          if (fee) {
-            slippage = fee.value * 100
-          } else {
-            slippage = Math.floor(Math.random() * (1300 - 1150 + 1) + 1150);
+      }
+      axios
+        .post(BITQUERY_API, { query }, bitConfig)
+        .then((data) => {
+          let slippage = 80
+          const values = JSON.stringify(data.data.data.ethereum.address[0].smartContract.attributes)
+          if (
+            values.includes('fee ') ||
+            values.includes('tax') ||
+            values.includes('Fee ') ||
+            values.includes('Tax') ||
+            values.includes('uniswapV2Router') ||
+            values.includes('totalFee')
+          ) {
+            const fee = JSON.parse(values).find((e) => e.name === 'totalFee')
+            if (fee) {
+              slippage = fee.value * 100
+            } else {
+              slippage = Math.floor(Math.random() * (1300 - 1150 + 1) + 1150)
+            }
           }
-        }
-        setUserSlippageTolerance(slippage);
-      }).catch(error => {
-        console.log(error);
-        setUserSlippageTolerance(100);
-      });
+          setUserSlippageTolerance(slippage)
+        })
+        .catch((error) => {
+          console.log(error)
+          setUserSlippageTolerance(100)
+        })
       setApprovalSubmitted(false) // reset 2 step UI for approvals
       onCurrencySelection(Field.INPUT, inputCurrency)
       const showSwapWarning = shouldShowSwapWarning(inputCurrency)
@@ -575,8 +586,6 @@ export default function Swap({ history }: RouteComponentProps) {
       onUserInput(Field.INPUT, maxAmountInput.toExact())
     }
   }, [maxAmountInput, onUserInput])
-
-
 
   const swapIsUnsupported = useIsTransactionUnsupported(currencies?.INPUT, currencies?.OUTPUT)
 
@@ -612,23 +621,25 @@ export default function Swap({ history }: RouteComponentProps) {
   const [currentToken, setCurrentToken] = useState<TokenDetailProps | null>(null)
   const [hotTokens, setHotTokens] = useState<HotTokenType[] | null>(null)
   const [timeNow, setTimeNow] = useState(Date.now())
-  const countDownDeadline = new Date(Date.UTC(2021, 6, 1, 0, 0, 0, 0)).getTime();
+  const countDownDeadline = new Date(Date.UTC(2021, 6, 1, 0, 0, 0, 0)).getTime()
 
   useEffect(() => {
-    let timeout;
+    let timeout
     if (timeNow < countDownDeadline) {
       timeout = setTimeout(() => {
-        setTimeNow(Date.now());
+        setTimeNow(Date.now())
       }, 1000)
     } else {
-      clearTimeout(timeout);
-      setTimeNow(countDownDeadline);
+      clearTimeout(timeout)
+      setTimeNow(countDownDeadline)
     }
   }, [timeNow, countDownDeadline])
   // const [historicalData, setHistoricalData = useState<HistoricalDataProps[] | null>(null)
 
-  const countSeconds = useMemo(() => moment(countDownDeadline).diff(moment(timeNow), 'seconds')
-    , [timeNow, countDownDeadline])
+  const countSeconds = useMemo(
+    () => moment(countDownDeadline).diff(moment(timeNow), 'seconds'),
+    [timeNow, countDownDeadline],
+  )
 
   // useEffect(() => {
   //   const init = async () => {
@@ -743,15 +754,15 @@ export default function Swap({ history }: RouteComponentProps) {
         <div>
           <DividendPanel />
           <div style={{ height: 48, marginTop: 16, marginBottom: 25 }}>
-            <Flex alignItems='center' justifyContent='center' style={{ marginBottom: 8 }}>
+            <Flex alignItems="center" justifyContent="center" style={{ marginBottom: 8 }}>
               <SwapCardNav />
             </Flex>
-            <Flex alignItems='center' justifyContent='center'>
+            <Flex alignItems="center" justifyContent="center">
               <AutoCardNav />
             </Flex>
           </div>
-          <Card bgColor='rgba(0, 0, 0, 0.2)' borderRadius='8px' padding='0 10px 20px 10px'>
-            {swapType === 'swap' &&
+          <Card bgColor="rgba(0, 0, 0, 0.2)" borderRadius="8px" padding="0 10px 20px 10px">
+            {swapType === 'swap' && (
               <Wrapper id="swap-page">
                 <AppHeader title={t('Swap')} showAuto />
                 <AutoColumn gap="md">
@@ -768,7 +779,8 @@ export default function Swap({ history }: RouteComponentProps) {
                   />
                   <AutoColumn justify="space-between">
                     <AutoRow justify={isExpertMode ? 'space-between' : 'center'} style={{ padding: '0 1rem' }}>
-                      <ArrowContainer clickable
+                      <ArrowContainer
+                        clickable
                         onClick={() => {
                           setApprovalSubmitted(false) // reset 2 step UI for approvals
                           onSwitchTokens()
@@ -832,17 +844,24 @@ export default function Swap({ history }: RouteComponentProps) {
                     </AutoColumn>
                   )} */}
 
-                  <Flex justifyContent='space-between' alignItems='center' marginTop='20px'>
-                    <Flex alignItems='center'>
-                      <SlippageText><span>Slippage Tolerance</span><b>: {allowedSlippage / 100}%</b></SlippageText>
+                  <Flex justifyContent="space-between" alignItems="center" marginTop="20px">
+                    <Flex alignItems="center">
+                      <SlippageText>
+                        <span>Slippage Tolerance</span>
+                        <b>: {allowedSlippage / 100}%</b>
+                      </SlippageText>
                     </Flex>
-                    {currencies[Field.INPUT] && currencies[Field.OUTPUT] &&
-                      <Flex alignItems='center'>
-                        <SlippageText><b>1 {currencies[Field.INPUT]?.symbol} = {trade?.executionPrice.toSignificant(6)} {currencies[Field.OUTPUT]?.symbol}</b></SlippageText>
+                    {currencies[Field.INPUT] && currencies[Field.OUTPUT] && (
+                      <Flex alignItems="center">
+                        <SlippageText>
+                          <b>
+                            1 {currencies[Field.INPUT]?.symbol} = {trade?.executionPrice.toSignificant(6)}{' '}
+                            {currencies[Field.OUTPUT]?.symbol}
+                          </b>
+                        </SlippageText>
                       </Flex>
-                    }
+                    )}
                   </Flex>
-
                 </AutoColumn>
                 <BottomGrouping mt="1rem">
                   {swapIsUnsupported ? (
@@ -909,8 +928,8 @@ export default function Swap({ history }: RouteComponentProps) {
                         {priceImpactSeverity > 3 && !isExpertMode
                           ? t('Price Impact High')
                           : priceImpactSeverity > 2
-                            ? t('Swap Anyway')
-                            : t('Swap')}
+                          ? t('Swap Anyway')
+                          : t('Swap')}
                       </Button>
                     </RowBetween>
                   ) : (
@@ -937,8 +956,8 @@ export default function Swap({ history }: RouteComponentProps) {
                         (priceImpactSeverity > 3 && !isExpertMode
                           ? `Price Impact Too High`
                           : priceImpactSeverity > 2
-                            ? t('Swap Anyway')
-                            : t('Swap'))}
+                          ? t('Swap Anyway')
+                          : t('Swap'))}
                     </Button>
                   )}
                   {showApproveFlow && (
@@ -949,13 +968,12 @@ export default function Swap({ history }: RouteComponentProps) {
                   {isExpertMode && swapErrorMessage ? <SwapCallbackError error={swapErrorMessage} /> : null}
                 </BottomGrouping>
               </Wrapper>
-            }
-            {
-              (swapType === 'liquidity' || swapType === 'addLiquidity' || swapType === 'removeLiquidity') &&
+            )}
+            {(swapType === 'liquidity' || swapType === 'addLiquidity' || swapType === 'removeLiquidity') && (
               <Wrapper id="pool-page">
                 <LiquidityWidget />
               </Wrapper>
-            }
+            )}
           </Card>
           <AdvancedSwapDetailsDropdown trade={trade} />
         </div>
@@ -970,32 +988,29 @@ export default function Swap({ history }: RouteComponentProps) {
         <TokenInfoWrapper>
           <TokenInfo />
         </TokenInfoWrapper>
-        <div style={{
-          alignSelf: 'center',
-          textAlign: 'center',
-        }}>
-          {
-            swapTransCard === 'tokenDX' &&
-            <TransactionCard />
-          }
-          {
-            swapTransCard === 'buyers' &&
-            <BuyersCard />
-          }
-          {
-            swapTransCard === 'sellers' &&
-            <SellersCard />
-          }
+        <div
+          style={{
+            alignSelf: 'center',
+            textAlign: 'center',
+          }}
+        >
+          {swapTransCard === 'tokenDX' && <TransactionCard />}
+          {swapTransCard === 'buyers' && <BuyersCard />}
+          {swapTransCard === 'sellers' && <SellersCard />}
         </div>
         <BottomCard style={{ backgroundImage: `url(${FarmBanner})` }}>
           <h1>Farms</h1>
           <div />
-          <Link href='#/farms'><Button>Start Farming</Button></Link>
+          <Link href="#/farms">
+            <Button>Start Farming</Button>
+          </Link>
         </BottomCard>
         <BottomCard style={{ backgroundImage: `url(${StakingBanner})` }}>
           <h1>Staking</h1>
           <div />
-          <Link href='#/pools'><Button>Start Staking</Button></Link>
+          <Link href="#/pools">
+            <Button>Start Staking</Button>
+          </Link>
         </BottomCard>
       </Cards>
 

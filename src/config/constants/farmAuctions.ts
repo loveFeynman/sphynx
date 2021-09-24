@@ -1,4 +1,4 @@
-import { Token as SDKToken, Pair, ChainId, RouterType } from '@pancakeswap/sdk'
+import { Token as SDKToken, Pair, ChainId, RouterType } from '@sphynxswap/sdk'
 import tokens from './tokens'
 import { FarmAuctionBidderConfig, Token } from './types'
 

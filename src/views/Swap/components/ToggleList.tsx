@@ -8,11 +8,11 @@ import { getUnixTime, startOfHour, Duration, sub } from 'date-fns'
 
 // eslint-disable-next-line import/no-unresolved
 import './dropdown.css'
-import Button from '@material-ui/core/Button';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import Fade from '@material-ui/core/Fade';
-import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
+import Button from '@material-ui/core/Button'
+import Menu from '@material-ui/core/Menu'
+import MenuItem from '@material-ui/core/MenuItem'
+import Fade from '@material-ui/core/Fade'
+import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown'
 import { AppState } from '../../../state'
 import { typeRouterVersion } from '../../../state/input/actions'
 import { isAddress } from '../../../utils'
@@ -73,11 +73,8 @@ const PanelOverlay = styled.div`
   top: 0;
 `
 
-const ToggleList = ({ poolDatas }: {
-  poolDatas: PoolData[]
-}) => {
-
-  const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input);
+const ToggleList = ({ poolDatas }: { poolDatas: PoolData[] }) => {
+  const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
   const checksumAddress = isAddress(input)
 
   const routerVersion = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.routerVersion)
@@ -86,9 +83,9 @@ const ToggleList = ({ poolDatas }: {
 
   const [menuItems, setMenuItems] = useState([])
 
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorEl, setAnchorEl] = React.useState(null)
   const [selectedItem, setSelectedItem] = React.useState('')
-  
+
   const [showDrop, setShowDrop] = useState(false)
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -107,7 +104,7 @@ const ToggleList = ({ poolDatas }: {
     if (poolDatas.length > 0 && checksumAddress) {
       newMenuItems.push({
         key: checksumAddress,
-        value: 'SPHYNX DEX'
+        value: 'SPHYNX DEX',
       })
     }
     newMenuItems = [...newMenuItems, ...RouterTypeToggle]
@@ -123,7 +120,7 @@ const ToggleList = ({ poolDatas }: {
     setMenuItems(newMenuItems)
 
     let found = false
-    newMenuItems.forEach(item => {
+    newMenuItems.forEach((item) => {
       if (item.key === routerVersion) {
         found = true
         setSelectedItem(item.value)
@@ -135,7 +132,7 @@ const ToggleList = ({ poolDatas }: {
     // }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [poolDatas, routerVersion])
-    
+
   return (
     <>
       <ToggleWrapper>
@@ -143,24 +140,33 @@ const ToggleList = ({ poolDatas }: {
           <MenuTitle>
             <span>{selectedItem}</span>
           </MenuTitle>
-          <ArrowDropDownIcon style={{color: '#fff'}}/>
+          <ArrowDropDownIcon style={{ color: '#fff' }} />
         </Button>
-        {
-          showDrop &&
+        {showDrop && (
           <MenuWrapper>
             {menuItems.map((item: any, index: number) => {
-              return <MenuItem onClick={() => {
-                setSelectedItem(item.value)
-                dispatch(typeRouterVersion({ routerVersion: item.key }))
-                handleClose()
-              }}>{item.value}</MenuItem>
+              return (
+                <MenuItem
+                  onClick={() => {
+                    setSelectedItem(item.value)
+                    dispatch(typeRouterVersion({ routerVersion: item.key }))
+                    handleClose()
+                  }}
+                >
+                  {item.value}
+                </MenuItem>
+              )
             })}
           </MenuWrapper>
-        }
+        )}
       </ToggleWrapper>
-      { showDrop && <PanelOverlay onClick={() => {
-          setShowDrop(false) 
-        }} />}
+      {showDrop && (
+        <PanelOverlay
+          onClick={() => {
+            setShowDrop(false)
+          }}
+        />
+      )}
     </>
   )
 }

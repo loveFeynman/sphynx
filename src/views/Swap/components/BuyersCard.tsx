@@ -93,7 +93,7 @@ const BuyersCard = () => {
 
   return (
     <>
-      {tableData.length > 0 ?
+      {tableData.length > 0 ? (
         <TableWrapper>
           <table>
             <thead>
@@ -116,8 +116,9 @@ const BuyersCard = () => {
             </tbody>
           </table>
         </TableWrapper>
-        :
-        <Spinner />}
+      ) : (
+        <Spinner />
+      )}
     </>
   )
 }

@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react'
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux'
 import styled from 'styled-components'
-import { Flex, Text, Link } from '@pancakeswap/uikit'
-// import { ReactComponent as MoreIcon2 } from 'assets/svg/icon/MoreIcon2.svg' 
+import { Flex, Text, Link } from '@sphynxswap/uikit'
+// import { ReactComponent as MoreIcon2 } from 'assets/svg/icon/MoreIcon2.svg'
 import { ReactComponent as BscscanIcon } from 'assets/svg/icon/Bscscan.svg'
-import axios from 'axios';
+import axios from 'axios'
 import CopyHelper from 'components/AccountDetails/Copy'
 
 import { AppState, AppDispatch } from '../../../state'
-import { selectCurrency, Field } from '../../../state/swap/actions';
+import { selectCurrency, Field } from '../../../state/swap/actions'
 import { isAddress, getBscScanLink } from '../../../utils'
 
 const TextWrapper = styled.div`
@@ -27,7 +27,7 @@ const TextWrapper = styled.div`
   & > div:last-child {
     font-size: 14px;
     line-height: 16px;
-    color: #ADB5BD;
+    color: #adb5bd;
     margin-top: 2px;
   }
   & .textWithCopy {
@@ -76,51 +76,49 @@ export default function TokenInfo() {
   const dispatch = useDispatch<AppDispatch>()
 
   const [alldata, setalldata] = useState({
-    holders : '',
-    txs : '',
-    marketCap : '',
-    symbol : '',
-    totalSupply : ''
-  });
+    holders: '',
+    txs: '',
+    marketCap: '',
+    symbol: '',
+    totalSupply: '',
+  })
 
   const getTableData = async () => {
-    try{
+    try {
       if (result) {
-        await axios.post("https://thesphynx.co/api/tokenStats", { address: input })
-          .then((response) => {
-            setalldata(response.data)
-            dispatch(
-              selectCurrency({
-                field : isInput ? Field.OUTPUT : Field.INPUT,
-                currencyId : input
-              })
-            )
-            dispatch(
-              selectCurrency({
-                field : isInput ? Field.INPUT : Field.OUTPUT,
-                currencyId : 'BNB'
-              })
-            )
-          });
+        await axios.post('https://thesphynx.co/api/tokenStats', { address: input }).then((response) => {
+          setalldata(response.data)
+          dispatch(
+            selectCurrency({
+              field: isInput ? Field.OUTPUT : Field.INPUT,
+              currencyId: input,
+            }),
+          )
+          dispatch(
+            selectCurrency({
+              field: isInput ? Field.INPUT : Field.OUTPUT,
+              currencyId: 'BNB',
+            }),
+          )
+        })
       }
-    }
-    catch(err){
-       // eslint-disable-next-line no-console
-      console.log(err);
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.log(err)
     }
   }
 
   useEffect(() => {
-    getTableData();
+    getTableData()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [input, isInput])
-  
+
   return (
     <TokenInfoContainer>
-      <Flex alignItems="center" justifyContent='space-between'>
-        <Flex alignItems='center'>
+      <Flex alignItems="center" justifyContent="space-between">
+        <Flex alignItems="center">
           <IconWrapper size={32}>
-            <Text color='white'>{alldata.symbol}</Text> 
+            <Text color="white">{alldata.symbol}</Text>
           </IconWrapper>
         </Flex>
         <Flex style={{ width: 40 }}>
@@ -143,17 +141,23 @@ export default function TokenInfo() {
           <Text>{alldata.txs}</Text>
         </TextWrapper>
         <TextWrapper>
-          <Text className='textWithCopy'>
+          <Text className="textWithCopy">
             Contract Address
-            <CopyHelper toCopy={input}>
-              &nbsp;
-            </CopyHelper>
+            <CopyHelper toCopy={input}>&nbsp;</CopyHelper>
           </Text>
-          <Text><a href={`https://bscscan.com/token/${input}`} target='_blank' rel='noreferrer'>{input}</a></Text>
+          <Text>
+            <a href={`https://bscscan.com/token/${input}`} target="_blank" rel="noreferrer">
+              {input}
+            </a>
+          </Text>
         </TextWrapper>
         <TextWrapper>
           <Text>Holders</Text>
-          <Text><a href={`https://bscscan.com/token/${input}#balances`} target='_blank' rel='noreferrer'>{Number(alldata.holders).toLocaleString()}</a></Text>
+          <Text>
+            <a href={`https://bscscan.com/token/${input}#balances`} target="_blank" rel="noreferrer">
+              {Number(alldata.holders).toLocaleString()}
+            </a>
+          </Text>
         </TextWrapper>
       </Flex>
     </TokenInfoContainer>

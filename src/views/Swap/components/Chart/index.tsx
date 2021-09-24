@@ -13,7 +13,7 @@ import { isAddress } from 'utils'
 
 const Wrapper = styled.div`
   display: flex;
-	flex-direction: column;
+  flex-direction: column;
 `
 
 const UpDownArrowBox = styled.div`
@@ -49,15 +49,15 @@ const TransactionNavWrapper = styled.div`
 `
 
 const ChartContainer = () => {
-  const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input);
+  const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
   const checksumAddress = isAddress(input)
 
   const routerVersion = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.routerVersion)
 
   const draggableArrow = React.useRef<any>(null)
-  const [ chartHeight, setChartHeight ] = React.useState(600)
-  const [ dragPos, setDragPos ] = React.useState(0)
-  const [ isPancakeRouter, setIsPancakeRouter] = useState(false)
+  const [chartHeight, setChartHeight] = React.useState(600)
+  const [dragPos, setDragPos] = React.useState(0)
+  const [isPancakeRouter, setIsPancakeRouter] = useState(false)
 
   const handleDragStart = (e) => {
     setDragPos(e.pageY)
@@ -73,7 +73,7 @@ const ChartContainer = () => {
 
   useEffect(() => {
     let isPancakeRouterNew = false
-    RouterTypeToggle.forEach(item => {
+    RouterTypeToggle.forEach((item) => {
       if (item.key === routerVersion) {
         isPancakeRouterNew = true
       }
@@ -81,18 +81,19 @@ const ChartContainer = () => {
 
     setIsPancakeRouter(isPancakeRouterNew)
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [input, routerVersion])
 
   return (
     <Wrapper>
-      {
-        isPancakeRouter ? 
-          <PcsChartContainer height={chartHeight} />
-        : <SphynxChartContainer height={chartHeight} />
-      }
+      {isPancakeRouter ? <PcsChartContainer height={chartHeight} /> : <SphynxChartContainer height={chartHeight} />}
       <UpDownArrowBox>
-        <ArrowWrapper ref={draggableArrow} draggable='true' onDragStart={e => handleDragStart(e)} onDragOver={e => handleDrag(e)}>
+        <ArrowWrapper
+          ref={draggableArrow}
+          draggable="true"
+          onDragStart={(e) => handleDragStart(e)}
+          onDragOver={(e) => handleDrag(e)}
+        >
           <UpDownArrow />
         </ArrowWrapper>
         <TransactionNavWrapper>

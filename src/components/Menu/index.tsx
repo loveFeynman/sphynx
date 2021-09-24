@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux'
 import styled from 'styled-components'
 // import { Link } from 'react-router-dom'
 import { useLocation } from 'react-router'
-import { Button, Link } from '@pancakeswap/uikit'
+import { Button, Link } from '@sphynxswap/uikit'
 import { useMenuToggle, useRemovedAssets } from 'state/application/hooks'
 import { useWeb3React } from '@web3-react/core'
 import MainLogo from 'assets/svg/icon/logo_new.svg'
@@ -296,9 +296,9 @@ const Menu = (props) => {
 
       const bitConfig = {
         headers: {
-          "X-API-KEY": BITQUERY_API_KEY,
+          'X-API-KEY': BITQUERY_API_KEY,
         },
-      };
+      }
       const queryResult = await axios.post(BITQUERY_API, { query: getDataQuery }, bitConfig)
       // const addres=setAddress(queryResult.data.data.ethereum.address[0].balances.currency.address)
       // console.log("address============>",addres);
@@ -340,75 +340,75 @@ const Menu = (props) => {
   }, [account])
 
   const removeAsset = (asset: any) => {
-    const assets = removedAssets.map(val => val);
-    assets.push(asset.currency.symbol);
-    setRemovedAssets(assets);
+    const assets = removedAssets.map((val) => val)
+    assets.push(asset.currency.symbol)
+    setRemovedAssets(assets)
   }
 
   const tokenData = getAllToken
-    .filter(val => removedAssets.findIndex(item => item === val.currency.symbol) === -1)
-    .sort((a, b) => Number(a.dollarPrice) < Number(b.dollarPrice) ? 1 : -1)
+    .filter((val) => removedAssets.findIndex((item) => item === val.currency.symbol) === -1)
+    .sort((a, b) => (Number(a.dollarPrice) < Number(b.dollarPrice) ? 1 : -1))
     .map((elem: any) => {
-    const { currency, value, dollarPrice } = elem
-    //  const link = `https://bscscan.com/token/${currency.address}`
+      const { currency, value, dollarPrice } = elem
+      //  const link = `https://bscscan.com/token/${currency.address}`
 
-    return (
-      <TokenIconContainer>
-        <a href={`#/swap/${currency.address}`}>
-          <TokenItemWrapper
-            toggled={menuToggled}
-            onClick={() => {
-              dispatch(
-                setIsInput({
-                  isInput: false
-                })
-              )
-              toggleMenu(true)
-              // dispatch(
-              //   replaceSwapState({
-              //     outputCurrencyId: 'BNB' ,
-              //     inputCurrencyId: currency.address,
-              //     typedValue: '',
-              //     field: Field.OUTPUT,
-              //     recipient: null,
-              //   }),
-              // )
-            }}
-          >
-            {menuToggled ? (
-              <>
-                <div>
-                  <p>
-                    <b>{currency.symbol}</b>
-                  </p>
-                  <p>
-                    <b>${Number(dollarPrice).toFixed(2).toLocaleString()}</b>
-                  </p>
-                  <p>
-                    <b>{Number(value).toFixed(2).toLocaleString()}</b>
-                  </p>
-                </div>
-              </>
-            ) : (
-              <>
-                <div>
-                  <p>
-                    <b>{currency.symbol}</b>
-                  </p>
-                  <p>
-                    <b>${Number(dollarPrice).toFixed(2).toLocaleString()}</b>
-                  </p>
-                </div>
-                <div>
-                  <p>
-                    <b>{Number(value).toFixed(2).toLocaleString()}</b>
-                  </p>
-                  <p />
-                </div>
-              </>
-            )}
+      return (
+        <TokenIconContainer>
+          <a href={`#/swap/${currency.address}`}>
+            <TokenItemWrapper
+              toggled={menuToggled}
+              onClick={() => {
+                dispatch(
+                  setIsInput({
+                    isInput: false,
+                  }),
+                )
+                toggleMenu(true)
+                // dispatch(
+                //   replaceSwapState({
+                //     outputCurrencyId: 'BNB' ,
+                //     inputCurrencyId: currency.address,
+                //     typedValue: '',
+                //     field: Field.OUTPUT,
+                //     recipient: null,
+                //   }),
+                // )
+              }}
+            >
+              {menuToggled ? (
+                <>
+                  <div>
+                    <p>
+                      <b>{currency.symbol}</b>
+                    </p>
+                    <p>
+                      <b>${Number(dollarPrice).toFixed(2).toLocaleString()}</b>
+                    </p>
+                    <p>
+                      <b>{Number(value).toFixed(2).toLocaleString()}</b>
+                    </p>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div>
+                    <p>
+                      <b>{currency.symbol}</b>
+                    </p>
+                    <p>
+                      <b>${Number(dollarPrice).toFixed(2).toLocaleString()}</b>
+                    </p>
+                  </div>
+                  <div>
+                    <p>
+                      <b>{Number(value).toFixed(2).toLocaleString()}</b>
+                    </p>
+                    <p />
+                  </div>
+                </>
+              )}
 
-            {/* {
+              {/* {
                     !menuToggled &&
                     <div>
                       <p><b>{currency.symbol }</b></p>
@@ -416,17 +416,20 @@ const Menu = (props) => {
                     </div>
 
                   } */}
-          </TokenItemWrapper>
-        </a>
-        {
-          !menuToggled &&
-            <RemoveIconWrapper onClick={() => { removeAsset(elem) }}>
+            </TokenItemWrapper>
+          </a>
+          {!menuToggled && (
+            <RemoveIconWrapper
+              onClick={() => {
+                removeAsset(elem)
+              }}
+            >
               <CloseIcon />
             </RemoveIconWrapper>
-        }
-      </TokenIconContainer>
-    )
-  })
+          )}
+        </TokenIconContainer>
+      )
+    })
 
   return (
     <MenuWrapper toggled={menuToggled}>

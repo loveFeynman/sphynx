@@ -247,8 +247,8 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
         }
 
         if (lastBarsCache === undefined) return
-        let currentToken = window.localStorage.getItem("currentToken");
-        if(currentToken !== input) return;
+        let currentToken = window.localStorage.getItem('currentToken')
+        if (currentToken !== input) return
         let price = window.localStorage.getItem('currentPrice')
         if (!price) return
         const isNew = new Date().getTime() - lastBarsCache.time >= resolutionMapping[currentResolutions]

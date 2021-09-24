@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { Link } from 'react-router-dom'
-import { ButtonMenu, ButtonMenuItem } from '@pancakeswap/uikit'
+import { ButtonMenu, ButtonMenuItem } from '@sphynxswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 
 const StyledNav = styled.div`
@@ -10,7 +10,7 @@ const StyledNav = styled.div`
     color: black;
   }
   & .active {
-    background: #8B2A9B;
+    background: #8b2a9b;
     color: white;
   }
 `

@@ -1,12 +1,12 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Box } from '@pancakeswap/uikit'
+import { Box } from '@sphynxswap/uikit'
 import Container from '../Layout/Container'
 
 const Outer = styled(Box)<{ background?: string }>`
   background: rgba(0, 0, 0, 0.2);
   border-radius: 8px;
-  
+
   ${({ theme }) => theme.mediaQueries.sm} {
     padding-top: 16px;
     padding-bottom: 16px;
