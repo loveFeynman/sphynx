@@ -280,7 +280,7 @@ export default function Lottery() {
   const handlerChange = (e: any) => {
     try {
       if (e.target.value && e.target.value.length > 0) {
-        axios.get(`https://thesphynx.co/api/search/${e.target.value}`).then((response) => {
+        axios.get(`https://api.thesphynx.co/search/${e.target.value}`).then((response) => {
           setdata(response.data)
         })
       } else {

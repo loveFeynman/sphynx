@@ -120,10 +120,10 @@ export default function CoinStatsBoard() {
   const getTableData = () => {
     try {
       if (result) {
-        axios.post('https://thesphynx.co/api/tokenStats', { address: input }).then((response) => {
+        axios.post('https://api.thesphynx.co/tokenStats', { address: input }).then((response) => {
           setTokenData(response.data)
         })
-        axios.post('https://thesphynx.co/api/chartStats', { address: input }).then((response) => {
+        axios.post('https://api.thesphynx.co/chartStats', { address: input }).then((response) => {
           setalldata(response.data)
           setLinkIcon(
             `https://r.poocoin.app/smartchain/assets/${

@@ -86,7 +86,7 @@ export default function TokenInfo() {
   const getTableData = async () => {
     try {
       if (result) {
-        await axios.post('https://thesphynx.co/api/tokenStats', { address: input }).then((response) => {
+        await axios.post('https://api.thesphynx.co/tokenStats', { address: input }).then((response) => {
           setalldata(response.data)
           dispatch(
             selectCurrency({
