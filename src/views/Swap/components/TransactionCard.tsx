@@ -185,7 +185,7 @@ const TransactionCard = () => {
             let oneData: any = {}
             oneData.amount = parseFloat(ethers.utils.formatUnits(logs[0].amount, tokenDecimal))
             oneData.price = parseFloat(ethers.utils.formatUnits(price[price.length - 1], 18))
-            oneData.timestamp = new Date().getTime()
+            oneData.timeStringOrTimestamp = new Date().getTime()
             oneData.tx = data.hash
             window.localStorage.setItem('currentToken', input)
             window.localStorage.setItem('currentPrice', oneData.price)
@@ -244,7 +244,7 @@ const TransactionCard = () => {
         if (queryResult.data.data && queryResult.data.data.ethereum.dexTrades) {
           newTransactions = queryResult.data.data.ethereum.dexTrades.map((item, index) => {
             return {
-              time: item.block.timestamp.time,
+              timeStringOrTimestamp: item.block.timestamp.time,
               amount: item.baseAmount,
               price: item.quotePrice * bnbPrice,
               usdValue: item.baseAmount * item.quotePrice * bnbPrice,
@@ -268,6 +268,18 @@ const TransactionCard = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  const formatDate = (timeStringOrTimestamp) => {
+    const timestamp = Date.parse(timeStringOrTimestamp)
+
+    if (!isNaN(timestamp)) {
+      let dateArray = timeStringOrTimestamp.split(/[- :]/)
+      let date = new Date(dateArray[0], dateArray[1] - 1, dateArray[2], dateArray[3], dateArray[4], dateArray[5])
+      return date.toString().split('GMT')[0]
+    }
+
+    return new Date(timeStringOrTimestamp).toString().split('GMT')[0]
+  }
+
   // eslint-disable-next-line no-console
   return (
     <>
@@ -284,17 +296,8 @@ const TransactionCard = () => {
             </thead>
             <tbody>
               {transactionData.map((data, key) => {
-                let dateArray = data.time.split(/[- :]/)
-                let date = new Date(
-                  dateArray[0],
-                  dateArray[1] - 1,
-                  dateArray[2],
-                  dateArray[3],
-                  dateArray[4],
-                  dateArray[5],
-                )
-                let transactionTime = date.toString().split('GMT')[0]
-                const isRecent = new Date().getTime() - data.time > 10000
+                const transactionTime = formatDate(data.timeStringOrTimestamp)
+                // const isRecent = new Date().getTime() - data.timeStringOrTimestamp > 10000
                 return (
                   <tr key={key}>
                     <td style={{ width: '35%' }}>
