@@ -243,14 +243,8 @@ const TransactionCard = () => {
         const queryResult = await axios.post('https://graphql.bitquery.io/', { query: getDataQuery })
         if (queryResult.data.data && queryResult.data.data.ethereum.dexTrades) {
           newTransactions = queryResult.data.data.ethereum.dexTrades.map((item, index) => {
-            const localdate = new Date(item.block.timestamp.time)
-            const d = new Date(localdate.getTime() + localdate.getTimezoneOffset() * 60 * 1000)
-            const offset = localdate.getTimezoneOffset() / 60
-            const hours = localdate.getHours()
-            const lcl = d.setHours(hours - offset)
-
             return {
-              timestamp: lcl,
+              time: item.block.timestamp.time,
               amount: item.baseAmount,
               price: item.quotePrice * bnbPrice,
               usdValue: item.baseAmount * item.quotePrice * bnbPrice,
@@ -290,14 +284,23 @@ const TransactionCard = () => {
             </thead>
             <tbody>
               {transactionData.map((data, key) => {
-                const date = new Date(data.timestamp)
-                const isRecent = new Date().getTime() - data.timestamp > 10000
+                let dateArray = data.time.split(/[- :]/)
+                let date = new Date(
+                  dateArray[0],
+                  dateArray[1] - 1,
+                  dateArray[2],
+                  dateArray[3],
+                  dateArray[4],
+                  dateArray[5],
+                )
+                let transactionTime = date.toString().split('GMT')[0]
+                const isRecent = new Date().getTime() - data.time > 10000
                 return (
                   <tr key={key}>
                     <td style={{ width: '35%' }}>
                       <a href={'https://bscscan.com/tx/' + data.tx} target="_blank" rel="noreferrer">
                         <Flex alignItems="center">
-                          <h2 className={data.isBuy ? 'success' : 'error'}>{date.toString().split('GMT')[0]}</h2>
+                          <h2 className={data.isBuy ? 'success' : 'error'}>{transactionTime}</h2>
                         </Flex>
                       </a>
                     </td>
