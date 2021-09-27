@@ -144,7 +144,7 @@ const SphynxChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => 
     //   onResultReadyCallback(newSymbols)
     // },
     resolveSymbol: async (symbolName: any, onSymbolResolvedCallback: any, onResolveErrorCallback: any) => {
-      const response = await axios.get(`https://api.thesphynx.co/tokenDetails/${checksumAddress}`)
+      const response = await axios.get(`https://thesphynx.co/api/tokenDetails/${checksumAddress}`)
       setTokenDetails(response.data)
 
       const symbolInfo = {

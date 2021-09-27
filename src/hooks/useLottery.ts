@@ -11,8 +11,8 @@ const providerURL = 'https://old-thrumming-voice.bsc.quiknode.pro/7674ba364cc719
 let web3 = new Web3(new Web3.providers.HttpProvider(providerURL))
 
 const abi: any = lottery.abi
-const lotteryContract = new ethers.Contract('0xEA2E7a7E3c6132f6B041A705C9a6F4593e69Ecc2', abi, simpleRpcProvider)
-const lotteryContractWeb3 = new web3.eth.Contract(abi, '0xEA2E7a7E3c6132f6B041A705C9a6F4593e69Ecc2')
+const lotteryContract = new ethers.Contract('0xf20495AbecdDe4D1652BFfF58ba7c24730534e91', abi, simpleRpcProvider)
+const lotteryContractWeb3 = new web3.eth.Contract(abi, '0xf20495AbecdDe4D1652BFfF58ba7c24730534e91')
 const spxAbi: any = sphynx.abi
 const sphxContractWeb3 = new web3.eth.Contract(spxAbi, '0x2e121Ed64EEEB58788dDb204627cCB7C7c59884c')
 const sphxContract = new ethers.Contract('0x2e121Ed64EEEB58788dDb204627cCB7C7c59884c', spxAbi, simpleRpcProvider)
@@ -103,7 +103,7 @@ export const approveCall = async (signer, setConfig, setToastMessage) => {
     await sphxContract
       .connect(signer)
       .approve(
-        '0xEA2E7a7E3c6132f6B041A705C9a6F4593e69Ecc2',
+        '0xf20495AbecdDe4D1652BFfF58ba7c24730534e91',
         '0xfffffffffffffffffffffffffffffffffffffffffffffffffffffff',
       )
       .then((data) => {
@@ -157,7 +157,7 @@ export const viewLotterys = async (rID, lastLoteryInfo, setLastLottery) => {
 
 export const getApproveAmount = async (account: string) => {
   const response = await sphxContractWeb3.methods
-    .allowance(account, '0xEA2E7a7E3c6132f6B041A705C9a6F4593e69Ecc2')
+    .allowance(account, '0xf20495AbecdDe4D1652BFfF58ba7c24730534e91')
     .call()
   return response
 }

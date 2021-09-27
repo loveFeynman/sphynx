@@ -290,7 +290,7 @@ const Menu = (props) => {
 
   const fetchData = async () => {
     if (account) {
-      // const g= await axios.get('https://api.thesphynx.co/price/0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82');
+      // const g= await axios.get('https://thesphynx.co/api/price/0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82');
       // // eslint-disable-next-line no-console
       // console.log("price============>",g);
 
@@ -311,7 +311,7 @@ const Menu = (props) => {
         // for await (const elem of queryResult.data.data.ethereum.address[0].balances) {
         const promises = balances.map((elem) => {
           return axios.get(
-            `https://api.thesphynx.co/price/${
+            `https://thesphynx.co/api/price/${
               elem.currency.address === '-' ? '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c' : elem.currency.address
             }`,
           )

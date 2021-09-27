@@ -38,7 +38,7 @@ const DividendPanel: React.FC = () => {
   const [onPresentDividendModal] = useModal(<DividendModal balance={balance * price} />)
 
   useEffect(() => {
-    axios.get('https://api.thesphynx.co/price/0x2e121Ed64EEEB58788dDb204627cCB7C7c59884c').then(({ data }) => {
+    axios.get('https://thesphynx.co/api/price/0x2e121Ed64EEEB58788dDb204627cCB7C7c59884c').then(({ data }) => {
       setPrice(data.price)
     })
     const providerURL = WEBSOCKET_URL

@@ -181,7 +181,7 @@ export default function PrizePotCard({
       }
       let price = ''
       const tokenprice = async () => {
-        axios.get(`https://api.thesphynx.co/price/0x2e121ed64eeeb58788ddb204627ccb7c7c59884c`).then((response) => {
+        axios.get(`https://thesphynx.co/api/price/0x2e121ed64eeeb58788ddb204627ccb7c7c59884c`).then((response) => {
           price = response.data
         })
       }

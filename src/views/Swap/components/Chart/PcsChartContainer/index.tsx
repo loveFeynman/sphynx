@@ -135,7 +135,7 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
       onResultReadyCallback(newSymbols)
     },
     resolveSymbol: async (symbolName: any, onSymbolResolvedCallback: any, onResolveErrorCallback: any) => {
-      const response = await axios.get(`https://api.thesphynx.co/tokenDetails/${input}`)
+      const response = await axios.get(`https://thesphynx.co/api/tokenDetails/${input}`)
       setTokenDetails(response.data)
 
       const version =
