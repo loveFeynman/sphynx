@@ -186,7 +186,7 @@ const TransactionCard = () => {
             let oneData: any = {}
             oneData.amount = parseFloat(ethers.utils.formatUnits(logs[0].amount, tokenDecimal))
             oneData.price = parseFloat(ethers.utils.formatUnits(price[price.length - 1], 18))
-            oneData.timeStringOrTimestamp = new Date().getTime()
+            oneData.transactionTime = formatTimestamp(new Date().getTime())
             oneData.tx = data.hash
             window.localStorage.setItem('currentToken', input)
             window.localStorage.setItem('currentPrice', oneData.price)
@@ -245,7 +245,7 @@ const TransactionCard = () => {
         if (queryResult.data.data && queryResult.data.data.ethereum.dexTrades) {
           newTransactions = queryResult.data.data.ethereum.dexTrades.map((item, index) => {
             return {
-              timeStringOrTimestamp: item.block.timestamp.time,
+              transactionTime: formatTimeString(item.block.timestamp.time),
               amount: item.baseAmount,
               price: item.quotePrice * bnbPrice,
               usdValue: item.baseAmount * item.quotePrice * bnbPrice,
@@ -269,16 +269,14 @@ const TransactionCard = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const formatDate = (timeStringOrTimestamp) => {
-    const timestamp = Date.parse(timeStringOrTimestamp)
+  const formatTimeString = (timeString) => {
+    let dateArray = timeString.split(/[- :\/]/)
+    let date = new Date(dateArray[0], dateArray[1] - 1, dateArray[2], dateArray[3], dateArray[4], dateArray[5])
+    return date.toString().split('GMT')[0]
+  }
 
-    if (!isNaN(timestamp)) {
-      let dateArray = timeStringOrTimestamp.split(/[- :]/)
-      let date = new Date(dateArray[0], dateArray[1] - 1, dateArray[2], dateArray[3], dateArray[4], dateArray[5])
-      return date.toString().split('GMT')[0]
-    }
-
-    return new Date(timeStringOrTimestamp).toString().split('GMT')[0]
+  const formatTimestamp = (timestamp) => {
+    return new Date(timestamp).toString().split('GMT')[0]
   }
 
   // eslint-disable-next-line no-console
@@ -297,14 +295,12 @@ const TransactionCard = () => {
             </thead>
             <tbody>
               {transactionData.map((data, key) => {
-                const transactionTime = formatDate(data.timeStringOrTimestamp)
-                // const isRecent = new Date().getTime() - data.timeStringOrTimestamp > 10000
                 return (
                   <tr key={key}>
                     <td style={{ width: '35%' }}>
                       <a href={'https://bscscan.com/tx/' + data.tx} target="_blank" rel="noreferrer">
                         <Flex alignItems="center">
-                          <h2 className={data.isBuy ? 'success' : 'error'}>{transactionTime}</h2>
+                          <h2 className={data.isBuy ? 'success' : 'error'}>{data.transactionTime}</h2>
                         </Flex>
                       </a>
                     </td>
