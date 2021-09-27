@@ -227,7 +227,7 @@ const App: React.FC = () => {
   useFetchProfile()
   usePollCoreFarmData()
   const { account } = useWeb3React()
-  const { isMd } = useMatchBreakpoints()
+  const { isSm, isXs, isMd } = useMatchBreakpoints()
   const { menuToggled, toggleMenu } = useMenuToggle()
   const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
   const routerVersion = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.routerVersion)
@@ -243,7 +243,7 @@ const App: React.FC = () => {
   }, [input, routerVersion])
 
   React.useEffect(() => {
-    if (isMd) {
+    if (isMd || isSm || isXs) {
       toggleMenu(true)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

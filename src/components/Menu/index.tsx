@@ -149,7 +149,7 @@ const MenuItem = styled.a`
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 8px 24px;
+    padding: 8px 16px;
     margin: 8px 0;
     border-radius: 10px;
     text-decoration: none !important;
@@ -168,7 +168,8 @@ const MenuItemMobile = styled.a`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 24px;
+  padding: 8px 16px;
+  margin: 8px 0;
   border-radius: 10px;
   text-decoration: none !important;
   & p {
