@@ -79,7 +79,6 @@ export const useLotteryBalance = () => {
     }
 
     const viewLotterys = async (rID) => {
-      console.log("lottery", rID);
       try {
         const data = await lotteryContractWeb3.methods.viewLottery(rID).call()
         // console.log("view lotterys success", data);
@@ -215,6 +214,7 @@ export const claimTickets = async (signer, roundID, ticketIds, brackets, setToas
       })
       .catch((err) => {
         console.log('buyTickets call error', err)
+        setToastMessage({ title: 'Error', message: "Failed Claiming "})
       })
     console.log(' buyTickets step2')
   } catch {

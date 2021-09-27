@@ -146,10 +146,12 @@ const BuyTicketModal: React.FC<BuyTicketModalProps> = ({ setUpdateUserTicket, on
     if (toastMessage.title !== '' && toastMessage.title.includes("Success")) {
       toastSuccess(t(toastMessage.title), t(toastMessage.message));
     }
-    setToastMessage({
-      title: '',
-      message: '',
-    })
+    if (toastMessage.title !== '') {
+      setToastMessage({
+        title: '',
+        message: '',
+      });
+    }
   }, [toastMessage])
 
   useEffect(() => {

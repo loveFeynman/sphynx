@@ -21,14 +21,25 @@ import { isAddress, getBscScanLink } from '../../utils'
 import BuyTicketModal from './components/BuyTicketModal';
 import { useLotteryBalance, approveCall, buyTickets, viewLotterys, viewUserInfoForLotteryId } from '../../hooks/useLottery'
 
+const size = {
+  xs: '320px',
+  sm: '768px',
+  lg: '1200px',
+ }
+ const device = {
+  xs: `(max-width: ${size.xs})`,
+  sm: `(max-width: ${size.sm})`,
+  lg: `(max-width: ${size.lg})`
+ }
+
 const WinningCard = styled.div`
   width: 94px;
   height: 94px;
   background: #8B2A9B;
   border-radius: 24px;
   margin: 12px 36px;
-  ${({ theme }) => theme.mediaQueries.md} {
-    margin: 0px 36px;
+  @media only screen and ${device.lg}{
+    margin: 0px 24px;
   }
 `
 const WinningCardTop = styled.div`
