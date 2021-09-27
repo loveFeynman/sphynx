@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import styled from 'styled-components'
-// import { Link } from 'react-router-dom'
 import { useLocation } from 'react-router'
 import { Button, Link } from '@sphynxswap/uikit'
 import { useMenuToggle, useRemovedAssets } from 'state/application/hooks'
@@ -18,10 +17,8 @@ import Web3 from 'web3'
 import axios from 'axios'
 import { setIsInput } from 'state/input/actions'
 import { BITQUERY_API, BITQUERY_API_KEY } from 'config/constants/endpoints'
-import config, { links } from './config'
-import { replaceSwapState, Field } from '../../state/swap/actions'
-// import UserMenu from './UserMenu'
-// import GlobalSettings from './GlobalSettings'
+import { BalanceNumber } from 'components/BalanceNumber'
+import { links } from './config'
 
 const MenuWrapper = styled.div<{ toggled: boolean }>`
   width: 320px;
@@ -135,7 +132,6 @@ const ButtonWrapper = styled.div`
   justify-content: center;
   align-items: center;
   text-align: center;
-  // height: 56px;
   padding-top: 12px;
   padding-bottom: 12px;
   border-radius: 8px;
@@ -243,7 +239,6 @@ const RemoveIconWrapper = styled.div`
 const TokenIconContainer = styled.div`
   position: relative;
 `
-
 const Menu = (props) => {
   const { account } = useWeb3React()
   const { menuToggled, toggleMenu } = useMenuToggle()
@@ -257,11 +252,6 @@ const Menu = (props) => {
 
   const [sum, setSum] = useState(0)
   const [getAllToken, setAllTokens] = useState([])
-
-  // const { isDark, toggleTheme } = useTheme()
-  // const cakePriceUsd = usePriceCakeBusd()
-  // const { profile } = useProfile()
-  // const { currentLanguage, setLanguage, t } = useTranslation()
 
   const getBalance = () => {
     const testnet = 'https://bsc-dataseed1.defibit.io'
@@ -291,25 +281,15 @@ const Menu = (props) => {
 
   const fetchData = async () => {
     if (account) {
-      // const g= await axios.get('https://thesphynx.co/api/price/0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82');
-      // // eslint-disable-next-line no-console
-      // console.log("price============>",g);
-
       const bitConfig = {
         headers: {
           'X-API-KEY': BITQUERY_API_KEY,
         },
       }
       const queryResult = await axios.post(BITQUERY_API, { query: getDataQuery }, bitConfig)
-      // const addres=setAddress(queryResult.data.data.ethereum.address[0].balances.currency.address)
-      // console.log("address============>",addres);
       if (queryResult.data.data) {
-        // queryResult.data.data.ethereum.address[0].balances.forEach(async (elem, index)=>{
         let allsum: any = 0
-
         const balances = queryResult.data.data.ethereum.address[0].balances
-
-        // for await (const elem of queryResult.data.data.ethereum.address[0].balances) {
         const promises = balances.map((elem) => {
           return axios.get(
             `https://thesphynx.co/api/price/${
@@ -335,8 +315,6 @@ const Menu = (props) => {
 
   useEffect(() => {
     fetchData()
-    // getBalance()
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [account])
 
@@ -351,7 +329,6 @@ const Menu = (props) => {
     .sort((a, b) => (Number(a.dollarPrice) < Number(b.dollarPrice) ? 1 : -1))
     .map((elem: any) => {
       const { currency, value, dollarPrice } = elem
-      //  const link = `https://bscscan.com/token/${currency.address}`
 
       return (
         <TokenIconContainer>
@@ -365,15 +342,6 @@ const Menu = (props) => {
                   }),
                 )
                 toggleMenu(true)
-                // dispatch(
-                //   replaceSwapState({
-                //     outputCurrencyId: 'BNB' ,
-                //     inputCurrencyId: currency.address,
-                //     typedValue: '',
-                //     field: Field.OUTPUT,
-                //     recipient: null,
-                //   }),
-                // )
               }}
             >
               {menuToggled ? (
@@ -383,10 +351,10 @@ const Menu = (props) => {
                       <b>{currency.symbol}</b>
                     </p>
                     <p>
-                      <b>${Number(dollarPrice).toFixed(2).toLocaleString()}</b>
+                      <BalanceNumber prefix='$' value={Number(dollarPrice).toFixed(2)} />
                     </p>
                     <p>
-                      <b>{Number(value).toFixed(2).toLocaleString()}</b>
+                      <BalanceNumber prefix='' value={Number(value).toFixed(2)} />
                     </p>
                   </div>
                 </>
@@ -397,26 +365,17 @@ const Menu = (props) => {
                       <b>{currency.symbol}</b>
                     </p>
                     <p>
-                      <b>${Number(dollarPrice).toFixed(2).toLocaleString()}</b>
+                      <BalanceNumber prefix='$' value={Number(dollarPrice).toFixed(2)} />
                     </p>
                   </div>
                   <div>
                     <p>
-                      <b>{Number(value).toFixed(2).toLocaleString()}</b>
+                      <BalanceNumber prefix='' value={Number(value).toFixed(2)} />
                     </p>
                     <p />
                   </div>
                 </>
               )}
-
-              {/* {
-                    !menuToggled &&
-                    <div>
-                      <p><b>{currency.symbol }</b></p>
-                      <p><b>${ value}</b></p>
-                    </div>
-
-                  } */}
             </TokenItemWrapper>
           </a>
           {!menuToggled && (
@@ -460,7 +419,8 @@ const Menu = (props) => {
         </div>
         {!menuToggled && (
           <p>
-            <b>{account ? `$ ${Number(sum).toFixed(2).toLocaleString()}` : ''}</b>
+            {account ? <BalanceNumber prefix='$ ' value={Number(sum).toFixed(2)} /> : ''}
+            
           </p>
         )}
       </WalletHeading>
@@ -537,26 +497,6 @@ const Menu = (props) => {
         )}
       </MenuContentWrapper>
     </MenuWrapper>
-
-    // <UikitMenu
-    //   userMenu={<UserMenu />}
-    //   globalMenu={<GlobalSettings />}
-    //   isDark={isDark}
-    //   toggleTheme={toggleTheme}
-    //   currentLang={currentLanguage.code}
-    //   langs={languageList}
-    //   setLang={setLanguage}
-    //   cakePriceUsd={cakePriceUsd.toNumber()}
-    //   links={config(t)}
-    //   profile={{
-    //     username: profile?.username,
-    //     image: profile?.nft ? `/images/nfts/${profile.nft?.images.sm}` : undefined,
-    //     profileLink: '/profile',
-    //     noProfileLink: '/profile',
-    //     showPip: !profile?.username,
-    //   }}
-    //   {...props}
-    // />
   )
 }
 
