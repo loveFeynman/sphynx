@@ -76,7 +76,8 @@ let transactions = []
 let myTransactions = []
 
 const TransactionCard = () => {
-  const providerURL = 'wss://old-thrumming-voice.bsc.quiknode.pro/7674ba364cc71989fb1398e1e53db54e4fe0e9e0/'
+  // const providerURL = 'wss://old-thrumming-voice.bsc.quiknode.pro/7674ba364cc71989fb1398e1e53db54e4fe0e9e0/'
+  const providerURL = 'wss://speedy-nodes-nyc.moralis.io/b11b00ad906204d865e2d263/bsc/mainnet/archive/ws'
   const web3 = new Web3(new Web3.providers.WebsocketProvider(providerURL))
   const [transactionData, setTransactions] = useState([])
   let input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
