@@ -1,7 +1,7 @@
 import React from 'react'
 import styled, { keyframes, css } from 'styled-components'
 import { useTranslation } from 'contexts/Localization'
-import { LinkExternal, Text } from '@pancakeswap/uikit'
+import { LinkExternal, Text } from '@sphynxswap/uikit'
 import { BASE_SWAP_URL } from 'config'
 import { FarmWithStakedValue } from 'views/Farms/components/FarmCard/FarmCard'
 import getLiquidityUrlPathParts from 'utils/getLiquidityUrlPathParts'
@@ -159,9 +159,7 @@ const ActionPanel: React.FunctionComponent<ActionPanelProps> = ({
       <InfoContainer>
         {isActive && (
           <StakeContainer>
-            <StyledLinkExternal href={addLiquidityUrl}>
-              {t('Get %symbol%', { symbol: lpLabel })}
-            </StyledLinkExternal>
+            <StyledLinkExternal href={addLiquidityUrl}>{t('Get %symbol%', { symbol: lpLabel })}</StyledLinkExternal>
           </StakeContainer>
         )}
         <StyledLinkExternal href={bsc}>{t('View Contract')}</StyledLinkExternal>

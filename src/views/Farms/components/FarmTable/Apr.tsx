@@ -6,7 +6,7 @@ import BigNumber from 'bignumber.js'
 import { BASE_SWAP_URL } from 'config'
 import getLiquidityUrlPathParts from 'utils/getLiquidityUrlPathParts'
 import { getAddress } from 'utils/addressHelpers'
-import { Skeleton } from '@pancakeswap/uikit'
+import { Skeleton } from '@sphynxswap/uikit'
 
 export interface AprProps {
   value: string

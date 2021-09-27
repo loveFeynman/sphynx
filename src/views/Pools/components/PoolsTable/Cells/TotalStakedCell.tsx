@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react'
-import { Flex, Skeleton, Text } from '@pancakeswap/uikit'
+import { Flex, Skeleton, Text } from '@sphynxswap/uikit'
 import styled from 'styled-components'
 import { useTranslation } from 'contexts/Localization'
 import BigNumber from 'bignumber.js'
@@ -42,7 +42,7 @@ const TotalStakedCell: React.FC<TotalStakedCellProps> = ({ pool }) => {
           {t('Total staked')}
         </Text>
         {totalStaked && totalStaked.gte(0) ? (
-          <Flex height="20px" alignItems="center">
+          <Flex mt="4px" alignItems="center">
             <Balance fontSize="16px" value={totalStakedBalance} decimals={0} unit={` ${stakingToken.symbol}`} />
           </Flex>
         ) : (

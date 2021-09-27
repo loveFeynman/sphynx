@@ -15,19 +15,19 @@ export interface Token {
 }
 
 export interface ToggleMenuItem {
-  key: string,
+  key: string
   value: string
 }
 
 export const RouterTypeToggle: ToggleMenuItem[] = [
   {
     key: 'v2',
-    value: 'V2 PANCAKE'
+    value: 'V2 PANCAKE',
   },
   {
     key: 'v1',
-    value: 'V1 PANCAKE'
-  }
+    value: 'V1 PANCAKE',
+  },
 ]
 
 export enum PoolIds {

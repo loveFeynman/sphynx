@@ -1,4 +1,4 @@
-import { ChainId, JSBI, Pair, Route, Token, TokenAmount, Trade, TradeType } from '@pancakeswap/sdk'
+import { ChainId, JSBI, Pair, Route, Token, TokenAmount, Trade, TradeType } from '@sphynxswap/sdk'
 import { computeTradePriceBreakdown } from 'utils/prices'
 
 describe('prices', () => {
@@ -6,8 +6,16 @@ describe('prices', () => {
   const token2 = new Token(ChainId.MAINNET, '0x0000000000000000000000000000000000000002', 18)
   const token3 = new Token(ChainId.MAINNET, '0x0000000000000000000000000000000000000003', 18)
 
-  const pair12 = new Pair(new TokenAmount(token1, JSBI.BigInt(10000)), new TokenAmount(token2, JSBI.BigInt(20000)))
-  const pair23 = new Pair(new TokenAmount(token2, JSBI.BigInt(20000)), new TokenAmount(token3, JSBI.BigInt(30000)))
+  const pair12 = new Pair(
+    'sphynx',
+    new TokenAmount(token1, JSBI.BigInt(10000)),
+    new TokenAmount(token2, JSBI.BigInt(20000)),
+  )
+  const pair23 = new Pair(
+    'sphynx',
+    new TokenAmount(token2, JSBI.BigInt(20000)),
+    new TokenAmount(token3, JSBI.BigInt(30000)),
+  )
 
   describe('computeTradePriceBreakdown', () => {
     it('returns undefined for undefined', () => {

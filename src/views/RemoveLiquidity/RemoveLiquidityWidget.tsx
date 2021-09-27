@@ -3,8 +3,8 @@ import styled from 'styled-components'
 import { splitSignature } from '@ethersproject/bytes'
 import { Contract } from '@ethersproject/contracts'
 import { TransactionResponse } from '@ethersproject/providers'
-import { Currency, currencyEquals, ETHER, Percent, WETH } from '@pancakeswap/sdk'
-import { Button, Text, AddIcon, ArrowDownIcon, CardBody, Slider, Box, Flex, useModal } from '@pancakeswap/uikit'
+import { Currency, currencyEquals, ETHER, Percent, WETH } from '@sphynxswap/sdk'
+import { Button, Text, AddIcon, ArrowDownIcon, CardBody, Slider, Box, Flex, useModal } from '@sphynxswap/uikit'
 import { RouteComponentProps } from 'react-router'
 import { BigNumber } from '@ethersproject/bignumber'
 import { useTranslation } from 'contexts/Localization'
@@ -58,22 +58,21 @@ const BorderCard = styled.div`
 
 export default function RemoveLiquidityWidget({
   currencyIdA,
-  currencyIdB
+  currencyIdB,
 }: {
-  currencyIdA?: string;
+  currencyIdA?: string
   currencyIdB?: string
 }) {
-  
   const { liquidityPairA, setLiquidityPairA } = useLiquidityPairA()
   const { liquidityPairB, setLiquidityPairB } = useLiquidityPairB()
 
-  const [ currencyA1, setCurrencyA1 ] = useState(liquidityPairA || 'ETH')
-  const [ currencyB1, setCurrencyB1 ] = useState(liquidityPairB || 'ETH')
+  const [currencyA1, setCurrencyA1] = useState(liquidityPairA || 'ETH')
+  const [currencyB1, setCurrencyB1] = useState(liquidityPairB || 'ETH')
 
   console.log('currencyA1=', currencyA1, ', currencyB1=', currencyB1)
 
   const [currencyA, currencyB] = [useCurrency(currencyA1) ?? undefined, useCurrency(currencyB1) ?? undefined]
-  
+
   const { account, chainId, library } = useActiveWeb3React()
   const { routerType } = useSetRouterType()
 
@@ -607,7 +606,7 @@ export default function RemoveLiquidityWidget({
                 <AutoColumn justify="space-between">
                   <AutoRow justify="center" style={{ padding: '0 1rem' }}>
                     <ArrowContainer>
-                    <ArrowDownIcon width="24px" my="16px" />
+                      <ArrowDownIcon width="24px" my="16px" />
                     </ArrowContainer>
                   </AutoRow>
                 </AutoColumn>

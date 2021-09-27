@@ -1,4 +1,4 @@
-import { Token } from '@pancakeswap/sdk'
+import { Token } from '@sphynxswap/sdk'
 import { SerializedToken } from '../actions'
 
 export function serializeToken(token: Token): SerializedToken {

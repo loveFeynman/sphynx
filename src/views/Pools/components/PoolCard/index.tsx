@@ -1,7 +1,7 @@
 import BigNumber from 'bignumber.js'
 import styled from 'styled-components'
 import React from 'react'
-import { CardBody, Flex, Text, CardRibbon } from '@pancakeswap/uikit'
+import { CardBody, Flex, Text, CardRibbon } from '@sphynxswap/uikit'
 import ConnectWalletButton from 'components/ConnectWalletButton'
 import { useTranslation } from 'contexts/Localization'
 import { BIG_ZERO } from 'utils/bigNumber'
@@ -13,7 +13,7 @@ import StyledCardHeader from './StyledCardHeader'
 import CardActions from './CardActions'
 
 const StyledCardBody = styled(CardBody)`
-  background-color: ${({theme}) => theme.colors.input}
+  background-color: ${({ theme }) => theme.colors.input};
 `
 
 const PoolCard: React.FC<{ pool: Pool; account: string }> = ({ pool, account }) => {

@@ -2,8 +2,8 @@ import React, { useCallback, useState } from 'react'
 import styled from 'styled-components'
 import { BigNumber } from '@ethersproject/bignumber'
 import { TransactionResponse } from '@ethersproject/providers'
-import { Currency, currencyEquals, ETHER, TokenAmount, WETH } from '@pancakeswap/sdk'
-import { Button, Text, Flex, AddIcon, CardBody, Message, useModal } from '@pancakeswap/uikit'
+import { Currency, currencyEquals, ETHER, TokenAmount, WETH } from '@sphynxswap/sdk'
+import { Button, Text, Flex, AddIcon, CardBody, Message, useModal } from '@sphynxswap/uikit'
 // import { RouteComponentProps } from 'react-router-dom'
 import { useIsTransactionUnsupported } from 'hooks/Trades'
 import { useTranslation } from 'contexts/Localization'
@@ -53,9 +53,9 @@ const ArrowContainer = styled(ColumnCenter)`
 
 export default function AddLiquidityWidget({
   currencyIdA,
-  currencyIdB
+  currencyIdB,
 }: {
-  currencyIdA?: string;
+  currencyIdA?: string
   currencyIdB?: string
 }) {
   const { account, chainId, library } = useActiveWeb3React()
@@ -64,8 +64,8 @@ export default function AddLiquidityWidget({
   const { liquidityPairA, setLiquidityPairA } = useLiquidityPairA()
   const { liquidityPairB, setLiquidityPairB } = useLiquidityPairB()
 
-  const [ currencyA1, setCurrencyA1 ] = useState(liquidityPairA || 'ETH')
-  const [ currencyB1, setCurrencyB1 ] = useState(liquidityPairB || 'ETH')
+  const [currencyA1, setCurrencyA1] = useState(liquidityPairA || 'ETH')
+  const [currencyB1, setCurrencyB1] = useState(liquidityPairB || 'ETH')
   const { t } = useTranslation()
 
   const currencyA = useCurrency(currencyA1)
@@ -135,7 +135,7 @@ export default function AddLiquidityWidget({
   )
 
   const routerAddress = useRouterAddress()
-  
+
   // check whether the user has approved the router on the tokens
   const [approvalA, approveACallback] = useApproveCallback(parsedAmounts[Field.CURRENCY_A], routerAddress)
   const [approvalB, approveBCallback] = useApproveCallback(parsedAmounts[Field.CURRENCY_B], routerAddress)
@@ -396,7 +396,7 @@ export default function AddLiquidityWidget({
                       {noLiquidity ? t('Initial prices and pool share') : t('Prices and pool share')}
                     </Text>
                   </RowBetween>{' '}
-                  <Flex padding='16px'>
+                  <Flex padding="16px">
                     <PoolPriceBar
                       currencies={currencies}
                       poolTokenPercentage={poolTokenPercentage}

@@ -51,7 +51,7 @@ const fetchTokenPriceData = async (
         error: false,
       }
     }
-    
+
     const prices: any | undefined = await multiQuery(
       priceQueryConstructor,
       getPriceSubqueries(address, blocks),

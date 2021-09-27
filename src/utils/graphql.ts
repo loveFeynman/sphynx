@@ -21,7 +21,7 @@ const blocksQueryConstructor = (subqueries: string[]) => {
  * @notice Fetches block objects for an array of timestamps.
  * @param {Array} timestamps
  */
- export const getBlocksFromTimestamps = async (
+export const getBlocksFromTimestamps = async (
   timestamps: number[],
   sortDirection: 'asc' | 'desc' = 'desc',
   skipCount = 500,
@@ -65,7 +65,7 @@ const blocksQueryConstructor = (subqueries: string[]) => {
  * @param skipCount how many subqueries to fire at a time
  * @returns
  */
- export const multiQuery = async (
+export const multiQuery = async (
   queryConstructor: (subqueries: string[]) => string,
   subqueries: string[],
   endpoint: string,

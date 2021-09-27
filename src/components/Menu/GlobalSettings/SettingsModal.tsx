@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
-import { Text, PancakeToggle, Toggle, Flex, Modal, InjectedModalProps, Button } from '@pancakeswap/uikit'
+import { Text, PancakeToggle, Toggle, Flex, Modal, InjectedModalProps, Button } from '@sphynxswap/uikit'
 import { useAudioModeManager, useExpertModeManager, useUserSingleHopOnly } from 'state/user/hooks'
 import { useTranslation } from 'contexts/Localization'
 import { useSwapActionHandlers } from 'state/swap/hooks'
@@ -111,7 +111,9 @@ const SettingsModal: React.FC<InjectedModalProps> = ({ onDismiss }) => {
         </Flex>
         <Flex justifyContent="space-between" alignItems="center">
           <Text>{t(' ')}</Text>
-          <ApplyButton className='selected' onClick={onDismiss}>Apply</ApplyButton>
+          <ApplyButton className="selected" onClick={onDismiss}>
+            Apply
+          </ApplyButton>
         </Flex>
       </Flex>
     </Modal>

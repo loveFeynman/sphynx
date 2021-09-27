@@ -2,7 +2,7 @@
 
 import React, { useState, useCallback, useEffect, useMemo } from 'react'
 import styled from 'styled-components'
-import { Text, Flex, Modal, InjectedModalProps, Button, Input } from '@pancakeswap/uikit'
+import { Text, Flex, Modal, InjectedModalProps, Button, Input } from '@sphynxswap/uikit'
 
 import { useAudioModeManager, useExpertModeManager, useUserSingleHopOnly } from 'state/user/hooks'
 import { useTranslation } from 'contexts/Localization'
@@ -111,7 +111,7 @@ const TicketInput = styled(Input)`
 `
 
 interface BuyTicketModalProps extends InjectedModalProps {
-  setUpdateUserTicket: any,
+  setUpdateUserTicket: any
 }
 const BuyTicketModal: React.FC<BuyTicketModalProps> = ({ setUpdateUserTicket, onDismiss }) => {
   const { account, library } = useActiveWeb3React()
@@ -130,7 +130,7 @@ const BuyTicketModal: React.FC<BuyTicketModalProps> = ({ setUpdateUserTicket, on
     title: '',
     message: '',
   })
-  const { toastSuccess, toastError } = useToast();
+  const { toastSuccess, toastError } = useToast()
   const { t } = useTranslation()
 
   const handleInputTokens = useCallback((event) => {
@@ -140,11 +140,11 @@ const BuyTicketModal: React.FC<BuyTicketModalProps> = ({ setUpdateUserTicket, on
   }, [])
 
   React.useEffect(() => {
-    if (toastMessage.title !== '' && toastMessage.title.includes("Error")) {
-      toastError(t(toastMessage.title), t(toastMessage.message));
+    if (toastMessage.title !== '' && toastMessage.title.includes('Error')) {
+      toastError(t(toastMessage.title), t(toastMessage.message))
     }
-    if (toastMessage.title !== '' && toastMessage.title.includes("Success")) {
-      toastSuccess(t(toastMessage.title), t(toastMessage.message));
+    if (toastMessage.title !== '' && toastMessage.title.includes('Success')) {
+      toastSuccess(t(toastMessage.title), t(toastMessage.message))
     }
     if (toastMessage.title !== '') {
       setToastMessage({
@@ -165,7 +165,7 @@ const BuyTicketModal: React.FC<BuyTicketModalProps> = ({ setUpdateUserTicket, on
         (
           100 -
           ((parseInt(lotteryInfo?.discountDivisor) + 1 - parseInt(tickets)) / parseInt(lotteryInfo?.discountDivisor)) *
-          100
+            100
         ).toFixed(2),
       )
       setRealTokens(
@@ -189,9 +189,9 @@ const BuyTicketModal: React.FC<BuyTicketModalProps> = ({ setUpdateUserTicket, on
       const maxBuyPrice = 5000 * 1000000000000000000
       const approved = await getApproveAmount(account)
       if (approved > maxBuyPrice) {
-        setEnabled(true);
+        setEnabled(true)
       }
-      setChecked(true);
+      setChecked(true)
     }
     isApproved()
     console.log('lotteryInfo111', lotteryInfo)
@@ -232,14 +232,13 @@ const BuyTicketModal: React.FC<BuyTicketModalProps> = ({ setUpdateUserTicket, on
     ticketNumbers.forEach((item) => ticketArrays.push((parseInt(item.ticketnumber) + 1000000).toString()))
     setLoading(true)
     await buyTickets(signer, roundID, ticketArrays, setLoading, setToastMessage)
-    setUpdateUserTicket();
-    onDismiss();
+    setUpdateUserTicket()
+    onDismiss()
     setLoading(false)
     setManualTicketGenerate(false)
   }
 
   const handleInstantly = async () => {
-
     const data = []
     // setTicketNumbers(input);
     if (tickets === '0') {
@@ -264,9 +263,9 @@ const BuyTicketModal: React.FC<BuyTicketModalProps> = ({ setUpdateUserTicket, on
       })
       console.log('ticketNumbers', data)
       setLoading(true)
-      await buyTickets(account, roundID, data, setLoading, setToastMessage);
-      setUpdateUserTicket();
-      onDismiss();
+      await buyTickets(account, roundID, data, setLoading, setToastMessage)
+      setUpdateUserTicket()
+      onDismiss()
       setLoading(false)
     }
   }
@@ -483,7 +482,12 @@ const BuyTicketModal: React.FC<BuyTicketModalProps> = ({ setUpdateUserTicket, on
           {ticketNumbers?.map((ticket, index) => (
             <Flex flexDirection="column" marginBottom="12px">
               <Text fontSize="13px" mb="8px">
-                #{ticket.id.length === 1 ? '00'.concat(ticket.id) : ticket.id.length === 2 ? '0'.concat(ticket.id) : ticket.id}
+                #
+                {ticket.id.length === 1
+                  ? '00'.concat(ticket.id)
+                  : ticket.id.length === 2
+                  ? '0'.concat(ticket.id)
+                  : ticket.id}
               </Text>
               <TicketContainer>
                 {ticket.ticketNumbers.map((ticketChar, subIndex) => (

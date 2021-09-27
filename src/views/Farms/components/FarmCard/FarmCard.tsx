@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import BigNumber from 'bignumber.js'
 import styled from 'styled-components'
-import { Card, Flex, Text, Skeleton } from '@pancakeswap/uikit'
+import { Card, Flex, Text, Skeleton } from '@sphynxswap/uikit'
 import { Farm } from 'state/types'
 import { getBscScanLink } from 'utils'
 import { useTranslation } from 'contexts/Localization'
@@ -22,20 +22,20 @@ export interface FarmWithStakedValue extends Farm {
 
 const StyledCard = styled(Card)`
   align-self: baseline;
-  `
-  
+`
+
 const FarmCardInnerContainer = styled(Flex)`
   flex-direction: column;
   justify-content: space-around;
   padding: 24px;
-  background-color: ${({theme}) => theme.colors.input};
+  background-color: ${({ theme }) => theme.colors.input};
 `
 
 const ExpandingWrapper = styled.div`
   padding: 24px;
   border-top: 2px solid ${({ theme }) => theme.colors.cardBorder};
   overflow: hidden;
-  background-color: ${({theme}) => theme.colors.input};
+  background-color: ${({ theme }) => theme.colors.input};
 `
 
 interface FarmCardProps {
@@ -102,10 +102,7 @@ const FarmCard: React.FC<FarmCardProps> = ({ farm, displayApr, removed, cakePric
           <Text>{t('Earn')}:</Text>
           <Text bold>{earnLabel}</Text>
         </Flex>
-        <CardActionsContainer
-          farm={farm}
-          account={account}
-          addLiquidityUrl={addLiquidityUrl} />
+        <CardActionsContainer farm={farm} account={account} addLiquidityUrl={addLiquidityUrl} />
       </FarmCardInnerContainer>
 
       <ExpandingWrapper>

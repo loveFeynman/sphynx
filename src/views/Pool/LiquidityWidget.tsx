@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react'
 import styled from 'styled-components'
-import { Pair } from '@pancakeswap/sdk'
-import { Text, Flex, CardBody, CardFooter, Button, AddIcon } from '@pancakeswap/uikit'
+import { Pair } from '@sphynxswap/sdk'
+import { Text, Flex, CardBody, CardFooter, Button, AddIcon } from '@sphynxswap/uikit'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'contexts/Localization'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
@@ -86,23 +86,21 @@ export default function LiquidityWidget() {
       </Text>
     )
   }
-  
+
   const { swapType, setSwapType } = useSwapType()
 
   return (
-      <div>
-      {
-        swapType === 'addLiquidity' ? 
-          <AddLiquidityWidget currencyIdA='ETH' />
-          : (
-            swapType === 'removeLiquidity' ?
-              <RemoveLiquidityWidget />
-            :
-            <>
-              <AppHeader title={t('Your Liquidity')} subtitle={t('Remove liquidity to receive tokens back')} />
-              <CardBody style={{ padding: '24px 0px' }}>
-                {renderBody()}
-                {/* {account && !v2IsLoading && (
+    <div>
+      {swapType === 'addLiquidity' ? (
+        <AddLiquidityWidget currencyIdA="ETH" />
+      ) : swapType === 'removeLiquidity' ? (
+        <RemoveLiquidityWidget />
+      ) : (
+        <>
+          <AppHeader title={t('Your Liquidity')} subtitle={t('Remove liquidity to receive tokens back')} />
+          <CardBody style={{ padding: '24px 0px' }}>
+            {renderBody()}
+            {/* {account && !v2IsLoading && (
                   <Flex flexDirection="column" alignItems="center" mt="24px">
                     <Text color="textSubtle" mb="8px">
                       {t("Don't see a pool you joined?")}
@@ -112,15 +110,21 @@ export default function LiquidityWidget() {
                     </Button>
                   </Flex>
                 )} */}
-              </CardBody>
-              <CardFooter style={{ textAlign: 'center', padding: '24px 0px 0px' }}>
-                <Button id="join-pool-button" onClick={() => { setSwapType('addLiquidity') }} width="100%" startIcon={<AddIcon color="white" />}>
-                  {t('Add Liquidity')}
-                </Button>
-              </CardFooter>
-            </>
-          )
-      }
-      </div>
+          </CardBody>
+          <CardFooter style={{ textAlign: 'center', padding: '24px 0px 0px' }}>
+            <Button
+              id="join-pool-button"
+              onClick={() => {
+                setSwapType('addLiquidity')
+              }}
+              width="100%"
+              startIcon={<AddIcon color="white" />}
+            >
+              {t('Add Liquidity')}
+            </Button>
+          </CardFooter>
+        </>
+      )}
+    </div>
   )
 }

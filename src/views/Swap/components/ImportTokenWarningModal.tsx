@@ -1,6 +1,6 @@
 import React from 'react'
-import { Token } from '@pancakeswap/sdk'
-import { Modal, InjectedModalProps } from '@pancakeswap/uikit'
+import { Token } from '@sphynxswap/sdk'
+import { Modal, InjectedModalProps } from '@sphynxswap/uikit'
 import ImportToken from 'components/SearchModal/ImportToken'
 
 interface Props extends InjectedModalProps {

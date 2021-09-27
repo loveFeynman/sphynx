@@ -1,6 +1,6 @@
 import React, { CSSProperties } from 'react'
-import { Token } from '@pancakeswap/sdk'
-import { Button, Text, CheckmarkCircleIcon } from '@pancakeswap/uikit'
+import { Token } from '@sphynxswap/sdk'
+import { Button, Text, CheckmarkCircleIcon } from '@sphynxswap/uikit'
 import { AutoRow, RowFixed } from 'components/Layout/Row'
 import { AutoColumn } from 'components/Layout/Column'
 import CurrencyLogo from 'components/Logo/CurrencyLogo'
@@ -68,7 +68,7 @@ export default function ImportRow({
     <TokenSection style={style}>
       <CurrencyLogo currency={token} size="24px" style={{ opacity: dim ? '0.6' : '1' }} />
       <AutoColumn gap="4px" style={{ opacity: dim ? '0.6' : '1' }}>
-        <AutoRow>
+        <AutoRow style={{ flexWrap: 'nowrap' }}>
           <Text>{token.symbol}</Text>
           <Text color="textDisabled" ml="8px">
             <NameOverflow title={token.name}>{token.name}</NameOverflow>
@@ -76,7 +76,7 @@ export default function ImportRow({
         </AutoRow>
         {list && list.logoURI && (
           <RowFixed>
-            <Text small mr="4px" color="textSubtle">
+            <Text style={{ whiteSpace: 'nowrap' }} small mr="4px" color="textSubtle">
               {t('via')} {list.name}
             </Text>
             <ListLogo logoURI={list.logoURI} size="12px" />

@@ -4,7 +4,7 @@ import * as ethers from 'ethers'
 import React, { useEffect, useState, useRef } from 'react'
 import { useSelector } from 'react-redux'
 import styled from 'styled-components'
-import { Flex } from '@pancakeswap/uikit'
+import { Flex } from '@sphynxswap/uikit'
 import { TokenInfo, getBnbPrice, getPancakePairAddress, getMinTokenInfo, getTokenPrice } from 'state/info/ws/priceData'
 import { AppState } from '../../../state'
 import { isAddress } from '../../../utils'
@@ -13,10 +13,12 @@ import ERC20ABI from '../../../assets/abis/erc20.json'
 import routerABI from '../../../assets/abis/pancakeRouter.json'
 import { simpleWebsocketProvider } from '../../../utils/providers'
 import { Spinner } from '../../LotterySphx/components/Spinner'
+import { BITQUERY_API, BITQUERY_API_KEY } from 'config/constants/endpoints'
 
 const pancakeV2: any = '0x10ED43C718714eb63d5aA57B78B54704E256024E'
 const busdAddr = '0xe9e7cea3dedca5984780bafc599bd69add087d56'
-const wBNBAddr = '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c';
+const wBNBAddr = '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c'
+const sphynxAddr = '0x2e121Ed64EEEB58788dDb204627cCB7C7c59884c'
 const transferEventTopic = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef'
 let tokenDecimal = 18
 
@@ -74,11 +76,18 @@ let blocks = 0
 let transactions = []
 let myTransactions = []
 
+let config = {
+  headers: {
+    'X-API-KEY': BITQUERY_API_KEY,
+  },
+}
+
 const TransactionCard = () => {
   const providerURL = 'wss://old-thrumming-voice.bsc.quiknode.pro/7674ba364cc71989fb1398e1e53db54e4fe0e9e0/'
   const web3 = new Web3(new Web3.providers.WebsocketProvider(providerURL))
-  const [transactionData, setTransactions] = useState([]);
-  const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
+  const [transactionData, setTransactions] = useState([])
+  let input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
+  if (input === '-') input = sphynxAddr
   const tokenAddress = isAddress(input)
 
   const getDataQuery = `
@@ -88,7 +97,7 @@ const TransactionCard = () => {
       options: {desc: ["block.height", "tradeIndex"], limit: 30, offset: 0}
       date: {since: "2021-08-05", till: null}
       baseCurrency: {is: "${input}"}
-      quoteCurrency:{is : "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"}
+      quoteCurrency:{is : "${wBNBAddr}"}
       ) {
       block {
         timestamp {
@@ -152,7 +161,7 @@ const TransactionCard = () => {
   }
 
   const parseData: any = async () => {
-    let newTransactions = transactionData;
+    let newTransactions = transactionData
     return new Promise((resolve) => {
       for (let i = 0; i <= myTransactions.length; i++) {
         if (i === myTransactions.length) {
@@ -183,7 +192,7 @@ const TransactionCard = () => {
             let oneData: any = {}
             oneData.amount = parseFloat(ethers.utils.formatUnits(logs[0].amount, tokenDecimal))
             oneData.price = parseFloat(ethers.utils.formatUnits(price[price.length - 1], 18))
-            oneData.timestamp = new Date().getTime()
+            oneData.transactionTime = formatTimestamp(new Date().getTime())
             oneData.tx = data.hash
             window.localStorage.setItem('currentToken', input)
             window.localStorage.setItem('currentPrice', oneData.price)
@@ -191,7 +200,7 @@ const TransactionCard = () => {
             oneData.isBuy = logs.length != 0
             oneData.usdValue = oneData.amount * oneData.price
             newTransactions.unshift(oneData)
-          } catch (err) { }
+          } catch (err) {}
         })
       }
       blocks = 0
@@ -238,17 +247,11 @@ const TransactionCard = () => {
         const bnbPrice = await getBnbPrice(provider)
 
         // pull historical data
-        const queryResult = await axios.post('https://graphql.bitquery.io/', { query: getDataQuery })
+        const queryResult = await axios.post(BITQUERY_API, { query: getDataQuery }, config)
         if (queryResult.data.data && queryResult.data.data.ethereum.dexTrades) {
           newTransactions = queryResult.data.data.ethereum.dexTrades.map((item, index) => {
-            const localdate = new Date(item.block.timestamp.time)
-            const d = new Date(localdate.getTime() + localdate.getTimezoneOffset() * 60 * 1000)
-            const offset = localdate.getTimezoneOffset() / 60
-            const hours = localdate.getHours()
-            const lcl = d.setHours(hours - offset)
-
             return {
-              timestamp: lcl,
+              transactionTime: formatTimeString(item.block.timestamp.time),
               amount: item.baseAmount,
               price: item.quotePrice * bnbPrice,
               usdValue: item.baseAmount * item.quotePrice * bnbPrice,
@@ -272,11 +275,20 @@ const TransactionCard = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  const formatTimeString = (timeString) => {
+    let dateArray = timeString.split(/[- :\/]/)
+    let date = new Date(dateArray[0], dateArray[1] - 1, dateArray[2], dateArray[3], dateArray[4], dateArray[5])
+    return date.toString().split('GMT')[0]
+  }
+
+  const formatTimestamp = (timestamp) => {
+    return new Date(timestamp).toString().split('GMT')[0]
+  }
+
   // eslint-disable-next-line no-console
   return (
     <>
-      {transactionData.length > 0 ?
-
+      {transactionData.length > 0 ? (
         <TableWrapper>
           <table>
             <thead>
@@ -289,37 +301,35 @@ const TransactionCard = () => {
             </thead>
             <tbody>
               {transactionData.map((data, key) => {
-                const date = new Date(data.timestamp)
-                const isRecent = new Date().getTime() - data.timestamp > 10000
                 return (
                   <tr key={key}>
                     <td style={{ width: '35%' }}>
-                      <a href={'https://bscscan.com/tx/' + data.tx}>
+                      <a href={'https://bscscan.com/tx/' + data.tx} target="_blank" rel="noreferrer">
                         <Flex alignItems="center">
-                          <h2 className={data.isBuy ? 'success' : 'error'}>{date.toString().split('GMT')[0]}</h2>
+                          <h2 className={!data.isBuy ? 'success' : 'error'}>{data.transactionTime}</h2>
                         </Flex>
                       </a>
                     </td>
                     <td style={{ width: '25%' }}>
-                      <a href={'https://bscscan.com/tx/' + data.tx}>
-                        <h2 className={data.isBuy ? 'success' : 'error'}>{Number(data.amount).toFixed(4)}</h2>
+                      <a href={'https://bscscan.com/tx/' + data.tx} target="_blank" rel="noreferrer">
+                        <h2 className={!data.isBuy ? 'success' : 'error'}>{Number(data.amount).toFixed(4)}</h2>
                       </a>
                     </td>
                     <td style={{ width: '25%' }}>
-                      <a href={'https://bscscan.com/tx/' + data.tx}>
-                        <h2 className={data.isBuy ? 'success' : 'error'}>
+                      <a href={'https://bscscan.com/tx/' + data.tx} target="_blank" rel="noreferrer">
+                        <h2 className={!data.isBuy ? 'success' : 'error'}>
                           $
                           {data.price < 0.00001
                             ? data.price
                             : Number(data.price)
-                              .toFixed(4)
-                              .replace(/(\d)(?=(\d{3})+\.)/g, '$1,')}
+                                .toFixed(4)
+                                .replace(/(\d)(?=(\d{3})+\.)/g, '$1,')}
                         </h2>
                       </a>
                     </td>
                     <td style={{ width: '25%' }}>
-                      <a href={'https://bscscan.com/tx/' + data.tx}>
-                        <h2 className={data.isBuy ? 'success' : 'error'}>
+                      <a href={'https://bscscan.com/tx/' + data.tx} target="_blank" rel="noreferrer">
+                        <h2 className={!data.isBuy ? 'success' : 'error'}>
                           ${(data.price * data.amount).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,')}
                         </h2>
                       </a>
@@ -330,7 +340,9 @@ const TransactionCard = () => {
             </tbody>
           </table>
         </TableWrapper>
-        : <Spinner />}
+      ) : (
+        <Spinner />
+      )}
 
       {/* {loader ?
 				<div style={{ display: 'flex', justifyContent: 'center' }}>

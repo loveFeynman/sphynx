@@ -20,7 +20,7 @@ import mint from './mint/reducer'
 import lists from './lists/reducer'
 import burn from './burn/reducer'
 import multicall from './multicall/reducer'
-import inputReducer  from "./input/reducer"
+import inputReducer from './input/reducer'
 
 const PERSISTED_KEYS: string[] = ['user', 'transactions', 'lists']
 

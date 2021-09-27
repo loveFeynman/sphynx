@@ -17,7 +17,7 @@ import fetchTokenPriceData from 'state/info/queries/tokens/priceData'
 import { fetchPoolData } from 'state/info/queries/pools/poolData'
 import { isAddress } from 'utils'
 
-const ChartContainer = styled.div<{ height: number }> `
+const ChartContainer = styled.div<{ height: number }>`
   position: relative;
   height: ${(props) => props.height}px;
 `
@@ -54,7 +54,7 @@ const ChartContainerProps = {
   fullscreen: false,
   autosize: true,
   studiesOverrides: {},
-  height: 600
+  height: 600,
 }
 
 function getLanguageFromURL(): LanguageCode | null {
@@ -64,7 +64,6 @@ function getLanguageFromURL(): LanguageCode | null {
 }
 
 const SphynxChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
-
   const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
   // const routerVersion = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.routerVersion)
   const checksumAddress = isAddress(input)
@@ -73,7 +72,7 @@ const SphynxChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => 
     pair: ' ',
   })
 
-  const fetchPriceData = async(resolution) => {
+  const fetchPriceData = async (resolution) => {
     if (checksumAddress) {
       let interval = 3600 // one hour per seconds
       let duration: Duration = { weeks: 1 }
@@ -110,10 +109,10 @@ const SphynxChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => 
       const utcCurrentTime = getUnixTime(new Date()) * 1000
       const startTimestamp = getUnixTime(startOfHour(sub(utcCurrentTime, duration)))
 
-      const { error: fetchError3, data:priceData } = await fetchTokenPriceData(
+      const { error: fetchError3, data: priceData } = await fetchTokenPriceData(
         checksumAddress.toLocaleLowerCase(),
         interval,
-        startTimestamp
+        startTimestamp,
       )
       return priceData
     }
@@ -123,7 +122,7 @@ const SphynxChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => 
   // const lastBarsCache = new Map()
 
   const configurationData = {
-    supported_resolutions: ['1', '5', '10', '15', '30', '1H', '1D', '1W', '1M']
+    supported_resolutions: ['1', '5', '10', '15', '30', '1H', '1D', '1W', '1M'],
   }
   async function getAllSymbols() {
     let allSymbols: any = []
@@ -251,7 +250,7 @@ const SphynxChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => 
 
     tvWidget = await new widget(widgetOptions)
   }
-  
+
   React.useEffect(() => {
     getWidget()
   }, [])

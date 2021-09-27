@@ -1,5 +1,5 @@
 import { ReactText } from 'react'
-import { Language } from '@pancakeswap/uikit'
+import { Language } from '@sphynxswap/uikit'
 
 export type ContextData = {
   [key: string]: ReactText
@@ -12,5 +12,5 @@ export interface ProviderState {
 
 export interface ContextApi extends ProviderState {
   setLanguage: (language: Language) => void
-  t: (key: string, data?: ContextData, map? : any) => string
+  t: (key: string, data?: ContextData, map?: any) => string
 }

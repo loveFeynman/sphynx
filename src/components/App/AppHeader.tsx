@@ -1,7 +1,17 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
-import { RouterType } from '@pancakeswap/sdk'
-import { Text, Flex, Heading, IconButton, ArrowBackIcon, NotificationDot, Button, CogIcon, useModal } from '@pancakeswap/uikit'
+import { RouterType } from '@sphynxswap/sdk'
+import {
+  Text,
+  Flex,
+  Heading,
+  IconButton,
+  ArrowBackIcon,
+  NotificationDot,
+  Button,
+  CogIcon,
+  useModal,
+} from '@sphynxswap/uikit'
 import SettingsModal from 'components/Menu/GlobalSettings/SettingsModal'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'contexts/Localization'
@@ -16,8 +26,8 @@ interface Props {
   subtitle?: string
   helper?: string
   backTo?: string
-  showAuto?: boolean,
-  noConfig?: boolean,
+  showAuto?: boolean
+  noConfig?: boolean
   showHistory?: boolean
 }
 
@@ -49,9 +59,9 @@ const AutoButton = styled(Button)`
 
 const AppHeader: React.FC<Props> = ({ title, subtitle, helper, backTo, showAuto, noConfig = false, showHistory }) => {
   const [expertMode] = useExpertModeManager()
-  
+
   const { swapType, setSwapType } = useSwapType()
-  const [ autoFocused, setAutoFocused ] = useState(true)
+  const [autoFocused, setAutoFocused] = useState(true)
 
   const { t } = useTranslation()
   const { setRouterType } = useSetRouterType()
@@ -62,7 +72,11 @@ const AppHeader: React.FC<Props> = ({ title, subtitle, helper, backTo, showAuto,
     <AppHeaderContainer>
       <Flex alignItems="center" mr={noConfig ? 0 : '16px'} style={{ flex: 1 }}>
         {backTo && (
-          <TransparentIconButton onClick={() => { setSwapType(backTo) }}>
+          <TransparentIconButton
+            onClick={() => {
+              setSwapType(backTo)
+            }}
+          >
             <ArrowBackIcon width="32px" />
           </TransparentIconButton>
         )}
@@ -70,39 +84,45 @@ const AppHeader: React.FC<Props> = ({ title, subtitle, helper, backTo, showAuto,
           <Heading as="h2" mb="8px" color="white">
             {title}
           </Heading>
-          {subtitle && <Flex alignItems="center">
-            {helper && <QuestionHelper text={helper} mr="4px" />}
-            <Text color="textSubtle" fontSize="14px">
-              {subtitle}
-            </Text>
-          </Flex>}
+          {subtitle && (
+            <Flex alignItems="center">
+              {helper && <QuestionHelper text={helper} mr="4px" />}
+              <Text color="textSubtle" fontSize="14px">
+                {subtitle}
+              </Text>
+            </Flex>
+          )}
         </Flex>
       </Flex>
-      {
-        showAuto &&
-        <AutoButton className={ autoFocused ? 'focused' : '' } onClick={() => {
-          setAutoFocused(true)
-          setRouterType(RouterType.sphynx)
-        }}>
+      {showAuto && (
+        <AutoButton
+          className={autoFocused ? 'focused' : ''}
+          onClick={() => {
+            setAutoFocused(true)
+            setRouterType(RouterType.sphynx)
+          }}
+        >
           {t('Auto')}
         </AutoButton>
-      }
+      )}
       {!noConfig && (
         <Flex alignItems="center">
           <NotificationDot show={expertMode}>
             <Flex>
-              <IconButton onClick={() => {
-                onPresentSettingsModal()
-                setAutoFocused(false)
-              }} variant="text" scale="sm" mr="8px">
+              <IconButton
+                onClick={() => {
+                  onPresentSettingsModal()
+                  setAutoFocused(false)
+                }}
+                variant="text"
+                scale="sm"
+                mr="8px"
+              >
                 <CogIcon height={22} width={22} color="white" />
               </IconButton>
             </Flex>
           </NotificationDot>
-          {showHistory ? (
-            <Transactions />
-          ) : (<></>)
-          }
+          {showHistory ? <Transactions /> : <></>}
         </Flex>
       )}
     </AppHeaderContainer>

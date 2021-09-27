@@ -2,7 +2,7 @@ import React, { useCallback } from 'react'
 import { useWeb3React } from '@web3-react/core'
 import styled from 'styled-components'
 import BigNumber from 'bignumber.js'
-import { Button, Flex, Heading, IconButton, AddIcon, MinusIcon, useModal } from '@pancakeswap/uikit'
+import { Button, Flex, Heading, IconButton, AddIcon, MinusIcon, useModal } from '@sphynxswap/uikit'
 import { useLocation } from 'react-router-dom'
 import Balance from 'components/Balance'
 import { useTranslation } from 'contexts/Localization'
@@ -67,10 +67,7 @@ const StakeAction: React.FC<FarmCardActionsProps> = ({
   }, [stakedBalance])
 
   const [onPresentDeposit] = useModal(
-    <DepositModal max={tokenBalance}
-      onConfirm={handleStake}
-      tokenName={tokenName}
-      addLiquidityUrl={addLiquidityUrl} />,
+    <DepositModal max={tokenBalance} onConfirm={handleStake} tokenName={tokenName} addLiquidityUrl={addLiquidityUrl} />,
   )
   const [onPresentWithdraw] = useModal(
     <WithdrawModal max={stakedBalance} onConfirm={handleUnstake} tokenName={tokenName} />,

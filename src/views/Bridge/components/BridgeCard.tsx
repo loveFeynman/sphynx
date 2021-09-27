@@ -1,15 +1,15 @@
 import React, { useCallback, useState } from 'react'
 import styled from 'styled-components'
-import { Image, Heading, RowType, Toggle, Text, Button, ArrowForwardIcon, Flex } from '@pancakeswap/uikit'
+import { Image, Heading, RowType, Toggle, Text, Button, ArrowForwardIcon, Flex } from '@sphynxswap/uikit'
 import { useTranslation } from 'contexts/Localization'
-import { Currency, currencyEquals, ETHER, TokenAmount, WETH } from '@pancakeswap/sdk'
+import { Currency, currencyEquals, ETHER, TokenAmount, WETH } from '@sphynxswap/sdk'
 import { ReactComponent as ArrowRightIcon } from 'assets/svg/icon/ArrowRight.svg'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import { Field } from '../../../state/mint/actions'
 
 import CurrencyInputPanel from '../../../components/CurrencyInputPanel'
 import { useCurrency } from '../../../hooks/Tokens'
-import { useDerivedMintInfo, useMintActionHandlers, useMintState, } from '../../../state/mint/hooks'
+import { useDerivedMintInfo, useMintActionHandlers, useMintState } from '../../../state/mint/hooks'
 import { useLiquidityPairA, useLiquidityPairB } from '../../../state/application/hooks'
 import { maxAmountSpend } from '../../../utils/maxAmountSpend'
 import { currencyId } from '../../../utils/currencyId'
@@ -17,12 +17,12 @@ import { currencyId } from '../../../utils/currencyId'
 import Tokencard from './TokenCard'
 
 const Container = styled.div`
-	color: white;
-	background: rgba(0,0,0,0.4);
-	width: 340px;
-	height: 624px;
-	margin: 0px 60px 20px;
-	border-radius: 16px;
+  color: white;
+  background: rgba(0, 0, 0, 0.4);
+  width: 340px;
+  height: 624px;
+  margin: 0px 60px 20px;
+  border-radius: 16px;
 `
 const CardHeader = styled.div`
   text-align: center;
@@ -68,10 +68,10 @@ const CurrencyContainer = styled.div`
   width: 90%;
 `
 
-const MinMaxContainger= styled.div <{ isMin: boolean }>`
+const MinMaxContainger = styled.div<{ isMin: boolean }>`
   display: flex;
   justify-content: space-between;
-  margin: ${(props) => props.isMin ? '8px 16px 16px 24px':'24px 16px 8px 24px'};
+  margin: ${(props) => (props.isMin ? '8px 16px 16px 24px' : '24px 16px 8px 24px')};
   font-style: normal;
   font-weight: 600;
   font-size: 16px;
@@ -85,7 +85,7 @@ const ErrorArea = styled.div`
   font-weight: 500;
   font-size: 14px;
   line-height: 16px;
-  color: #EA3943;
+  color: #ea3943;
   text-align: -webkit-center;
 `
 
@@ -93,7 +93,6 @@ const ConnectWalletButton = styled.div`
   text-align: -webkit-center;
 `
 export default function BridgeCard({ label, isSpynx = false }) {
-
   const { account, chainId, library } = useActiveWeb3React()
 
   const { liquidityPairA, setLiquidityPairA } = useLiquidityPairA()
@@ -107,11 +106,10 @@ export default function BridgeCard({ label, isSpynx = false }) {
   const currencyB = useCurrency(currencyB1)
   // get formatted amounts
 
-
   const oneCurrencyIsWETH = Boolean(
     chainId &&
-    ((currencyA && currencyEquals(currencyA, WETH[chainId])) ||
-      (currencyB && currencyEquals(currencyB, WETH[chainId]))),
+      ((currencyA && currencyEquals(currencyA, WETH[chainId])) ||
+        (currencyB && currencyEquals(currencyB, WETH[chainId]))),
   )
   const { independentField, typedValue, otherTypedValue } = useMintState()
 
@@ -171,27 +169,23 @@ export default function BridgeCard({ label, isSpynx = false }) {
     [currencyB1, currencyA1],
   )
   const handleMaxClick = () => {
-    console.log("max clicked")
+    console.log('max clicked')
   }
 
   const handleSwitchClick = () => {
-    console.log("max clicked")
+    console.log('max clicked')
   }
 
   return (
     <Container>
-      <CardHeader>
-        {label}
-      </CardHeader>
+      <CardHeader>{label}</CardHeader>
       <Grid>
         <Tokencard isFrom />
-        <ArrowRightIcon style={{ alignSelf: "center" }} />
+        <ArrowRightIcon style={{ alignSelf: 'center' }} />
         <Tokencard isFrom={false} />
       </Grid>
       <AmountContainer>
-        <Label >
-          Sphynx to Bridge
-        </Label>
+        <Label>Sphynx to Bridge</Label>
         <Button
           variant="tertiary"
           style={{
@@ -206,10 +200,10 @@ export default function BridgeCard({ label, isSpynx = false }) {
             width: '40px',
             height: '30px',
             color: 'white',
-            borderRadius: '4px'
+            borderRadius: '4px',
           }}
-          onClick={() => handleMaxClick()
-          }>
+          onClick={() => handleMaxClick()}
+        >
           Max
         </Button>
         <CurrencyContainer>
@@ -224,13 +218,11 @@ export default function BridgeCard({ label, isSpynx = false }) {
             currency={currencies[Field.CURRENCY_A]}
             id="add-liquidity-input-tokena"
             showCommonBases
-            disableCurrencySelect = {isSpynx}
+            disableCurrencySelect={isSpynx}
             isBridge
           />
         </CurrencyContainer>
-        <BottomLabel>
-          Balance on Sphynx
-        </BottomLabel>
+        <BottomLabel>Balance on Sphynx</BottomLabel>
       </AmountContainer>
       <MinMaxContainger isMin={false}>
         <div>Max Bridge Amount</div>
@@ -241,9 +233,7 @@ export default function BridgeCard({ label, isSpynx = false }) {
         <div>65SPX</div>
       </MinMaxContainger>
       <ErrorArea>
-        <div style={{textAlign: 'left'}}>
-          Please connect your wallet to the chain you wish to bridge from! 
-        </div>
+        <div style={{ textAlign: 'left' }}>Please connect your wallet to the chain you wish to bridge from!</div>
         <Button
           variant="tertiary"
           style={{
@@ -258,35 +248,35 @@ export default function BridgeCard({ label, isSpynx = false }) {
             borderRadius: '8px',
             padding: '8px',
           }}
-          onClick={() => handleSwitchClick()
-          }>
+          onClick={() => handleSwitchClick()}
+        >
           Click Here to Switch
         </Button>
       </ErrorArea>
-     <ConnectWalletButton>
-      <Button
-        variant="tertiary"
-        style={{
-          marginTop: '20px',
-          fontStyle: 'normal',
-          fontSize: '14px',
-          lineHeight: '14px',
-          backgroundColor: '#8B2A9B',
-          width: '300px',
-          height: '40px',
-          color: 'white',
-          borderRadius: '8px',
-          display: 'flex',
-          flexDirection: 'row',
-          justifyContent: 'center',
-          alignItems: 'center',
-          padding: '8px',
-        }}
-        onClick={() => handleSwitchClick()
-        }>
-        Connect Wallet
-      </Button>
-     </ConnectWalletButton>
+      <ConnectWalletButton>
+        <Button
+          variant="tertiary"
+          style={{
+            marginTop: '20px',
+            fontStyle: 'normal',
+            fontSize: '14px',
+            lineHeight: '14px',
+            backgroundColor: '#8B2A9B',
+            width: '300px',
+            height: '40px',
+            color: 'white',
+            borderRadius: '8px',
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+            padding: '8px',
+          }}
+          onClick={() => handleSwitchClick()}
+        >
+          Connect Wallet
+        </Button>
+      </ConnectWalletButton>
     </Container>
   )
 }

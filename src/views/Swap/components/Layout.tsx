@@ -20,4 +20,4 @@ const Cards = styled.div`
   }
 `
 
-export default Cards;
+export default Cards

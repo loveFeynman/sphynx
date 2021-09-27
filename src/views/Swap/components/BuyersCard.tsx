@@ -72,14 +72,12 @@ const BuyersCard = () => {
       if (result && address && from && to) {
         const config: any = {
           method: 'get',
-          url: `https://api1.poocoin.app/top-trades?address=${address}&from=${from}&to=${to}&type=buy`,
+          url: `https://thesphynx.co/api/top-trades?address=${address}&type=buy`,
           headers: {},
         }
 
         axios(config).then((response) => {
-          if (response.data.wallet !== null && response.data.usdAmount !== null) {
-            setTableData(response.data)
-          }
+          if (response.data.length) setTableData(response.data)
         })
       }
     } catch (error) {
@@ -88,25 +86,14 @@ const BuyersCard = () => {
   }
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      getTableData()
-    }, 5000)
-
-    return () => clearInterval(interval)
+    getTableData()
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [input])
 
-  // const d = new Date(Date.UTC(localdate.getFullYear(), localdate.getMonth(), localdate.getDate(),  localdate.getHours(), localdate.getMinutes(), localdate.getSeconds()));
-  // const d :any=new Date(localdate.getTime()+ localdate.getTimezoneOffset()*60*1000);
-  // const localtime=d;
-
-  // console.log("localtime============",localtime);
-
-  // eslint-disable-next-line no-console
   return (
     <>
-      {tableData.length > 0 ?
+      {tableData.length > 0 ? (
         <TableWrapper>
           <table>
             <thead>
@@ -129,8 +116,9 @@ const BuyersCard = () => {
             </tbody>
           </table>
         </TableWrapper>
-        :
-        <Spinner />}
+      ) : (
+        <Spinner />
+      )}
     </>
   )
 }

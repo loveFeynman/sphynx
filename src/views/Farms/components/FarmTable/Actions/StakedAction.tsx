@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react'
 import styled from 'styled-components'
-import { Button, useModal, IconButton, AddIcon, MinusIcon, Skeleton, Text, Heading } from '@pancakeswap/uikit'
+import { Button, useModal, IconButton, AddIcon, MinusIcon, Skeleton, Text, Heading } from '@sphynxswap/uikit'
 import { useLocation } from 'react-router-dom'
 import { BigNumber } from 'bignumber.js'
 import ConnectWalletButton from 'components/ConnectWalletButton'
@@ -79,11 +79,7 @@ const Staked: React.FunctionComponent<StackedActionProps> = ({
   }, [stakedBalance])
 
   const [onPresentDeposit] = useModal(
-    <DepositModal
-      max={tokenBalance}
-      onConfirm={handleStake}
-      tokenName={lpSymbol}
-      addLiquidityUrl={addLiquidityUrl} />,
+    <DepositModal max={tokenBalance} onConfirm={handleStake} tokenName={lpSymbol} addLiquidityUrl={addLiquidityUrl} />,
   )
   const [onPresentWithdraw] = useModal(
     <WithdrawModal max={stakedBalance} onConfirm={handleUnstake} tokenName={lpSymbol} />,

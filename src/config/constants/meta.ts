@@ -3,8 +3,7 @@ import { PageMeta } from './types'
 
 export const DEFAULT_META: PageMeta = {
   title: 'Sphynx',
-  description:
-    '',
+  description: '',
   image: '',
 }
 

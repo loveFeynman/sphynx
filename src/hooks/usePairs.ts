@@ -1,6 +1,6 @@
-import { TokenAmount, Pair, Currency } from '@pancakeswap/sdk'
+import { TokenAmount, Pair, Currency } from '@sphynxswap/sdk'
 import { useMemo } from 'react'
-import { abi as IUniswapV2PairABI } from '@uniswap/v2-core/build/IUniswapV2Pair.json'
+import { abi as ISphynxPair } from '@sphynxswap/swap-core/build/ISphynxPair.json'
 import { Interface } from '@ethersproject/abi'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
 
@@ -8,7 +8,7 @@ import { useSetRouterType } from '../state/application/hooks'
 import { useMultipleContractSingleData } from '../state/multicall/hooks'
 import { wrappedCurrency } from '../utils/wrappedCurrency'
 
-const PAIR_INTERFACE = new Interface(IUniswapV2PairABI)
+const PAIR_INTERFACE = new Interface(ISphynxPair)
 
 export enum PairState {
   LOADING,
@@ -53,7 +53,11 @@ export function usePairs(currencies: [Currency | undefined, Currency | undefined
       const [token0, token1] = tokenA.sortsBefore(tokenB) ? [tokenA, tokenB] : [tokenB, tokenA]
       return [
         PairState.EXISTS,
-        new Pair(routerType, new TokenAmount(token0, reserve0.toString()), new TokenAmount(token1, reserve1.toString())),
+        new Pair(
+          routerType,
+          new TokenAmount(token0, reserve0.toString()),
+          new TokenAmount(token1, reserve1.toString()),
+        ),
       ]
     })
   }, [results, tokens, routerType])

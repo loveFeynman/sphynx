@@ -11,8 +11,8 @@ const providerURL = 'https://old-thrumming-voice.bsc.quiknode.pro/7674ba364cc719
 let web3 = new Web3(new Web3.providers.HttpProvider(providerURL))
 
 const abi: any = lottery.abi
-const lotteryContract = new ethers.Contract('0xEA2E7a7E3c6132f6B041A705C9a6F4593e69Ecc2', abi, simpleRpcProvider)
-const lotteryContractWeb3 = new web3.eth.Contract(abi, '0xEA2E7a7E3c6132f6B041A705C9a6F4593e69Ecc2')
+const lotteryContract = new ethers.Contract('0xf20495AbecdDe4D1652BFfF58ba7c24730534e91', abi, simpleRpcProvider)
+const lotteryContractWeb3 = new web3.eth.Contract(abi, '0xf20495AbecdDe4D1652BFfF58ba7c24730534e91')
 const spxAbi: any = sphynx.abi
 const sphxContractWeb3 = new web3.eth.Contract(spxAbi, '0x2e121Ed64EEEB58788dDb204627cCB7C7c59884c')
 const sphxContract = new ethers.Contract('0x2e121Ed64EEEB58788dDb204627cCB7C7c59884c', spxAbi, simpleRpcProvider)
@@ -102,13 +102,13 @@ export const approveCall = async (signer, setConfig, setToastMessage) => {
     await sphxContract
       .connect(signer)
       .approve(
-        '0xEA2E7a7E3c6132f6B041A705C9a6F4593e69Ecc2',
+        '0xf20495AbecdDe4D1652BFfF58ba7c24730534e91',
         '0xfffffffffffffffffffffffffffffffffffffffffffffffffffffff',
       )
       .then((data) => {
         // console.log("approve call ", data);
         setConfig(true)
-        setToastMessage({ title: 'Success', message: "Approved your request"})
+        setToastMessage({ title: 'Success', message: 'Approved your request' })
         return true
       })
       .catch((err) => {
@@ -131,7 +131,7 @@ export const buyTickets = async (signer, roundID, ticketNumbers, setConfig, setT
       .buyTickets(roundID, ticketNumbers)
       .then((data) => {
         // console.log(" buyTickets success", data);
-        setToastMessage({ title: 'Success ', message: "Successed buying ".concat(ticketNumbers.length.toString())})
+        setToastMessage({ title: 'Success ', message: 'Successed buying '.concat(ticketNumbers.length.toString()) })
         setConfig(true)
       })
       .catch((err) => {
@@ -156,7 +156,7 @@ export const viewLotterys = async (rID, lastLoteryInfo, setLastLottery) => {
 
 export const getApproveAmount = async (account: string) => {
   const response = await sphxContractWeb3.methods
-    .allowance(account, '0xEA2E7a7E3c6132f6B041A705C9a6F4593e69Ecc2')
+    .allowance(account, '0xf20495AbecdDe4D1652BFfF58ba7c24730534e91')
     .call()
   return response
 }
@@ -210,14 +210,13 @@ export const claimTickets = async (signer, roundID, ticketIds, brackets, setToas
       .connect(signer)
       .claimTickets(roundID, ticketIds, brackets)
       .then((data) => {
-        setToastMessage({ title: 'Success ', message: "Successed Claiming "})
+        setToastMessage({ title: 'Success ', message: 'Successed Claiming ' })
       })
       .catch((err) => {
         console.log('buyTickets call error', err)
         setToastMessage({ title: 'Error', message: "Failed Claiming "})
       })
-    console.log(' buyTickets step2')
   } catch {
-    console.error('buyTickets Round error')
+    console.error('claimTickets Round error')
   }
 }

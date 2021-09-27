@@ -79,7 +79,7 @@ const POOL_AT_BLOCK = (block: number | null, pools: string[]) => {
 export const fetchPoolData = async (
   poolAddresses: string[],
 ): Promise<{
-  error: boolean,
+  error: boolean
   poolDatas?: PoolData[]
 }> => {
   try {
@@ -94,7 +94,7 @@ export const fetchPoolData = async (
 
       // eslint-disable-next-line prefer-const
       let formatted: PoolData[] = []
-      poolAddresses.forEach(address => {
+      poolAddresses.forEach((address) => {
         const current: FormattedPoolFields | undefined = formattedPoolData[address]
         formatted.push({
           address,
@@ -113,7 +113,7 @@ export const fetchPoolData = async (
           volumeUSD: current.volumeUSD,
           liquidityUSD: current.reserveUSD,
           liquidityToken0: current.reserve0,
-          liquidityToken1: current.reserve1
+          liquidityToken1: current.reserve1,
         })
       })
 

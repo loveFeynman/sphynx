@@ -1,6 +1,6 @@
 import React from 'react'
-import { Currency, Pair } from '@pancakeswap/sdk'
-import { Button, ChevronDownIcon, Text, useModal, Flex } from '@pancakeswap/uikit'
+import { Currency, Pair } from '@sphynxswap/sdk'
+import { Button, ChevronDownIcon, Text, useModal, Flex } from '@sphynxswap/uikit'
 import styled from 'styled-components'
 import { darken } from 'polished'
 import { useTranslation } from 'contexts/Localization'
@@ -74,25 +74,24 @@ const CurrencySelectButton = styled(Button).attrs({ variant: 'text', scale: 'xs'
 
 const MaxButtonWrapper = styled.div`
   & button {
-    background-color: #8B2A9B;
+    background-color: #8b2a9b;
     color: white;
     margin-left: 4px;
     padding: 8px 6px;
     font-size: 14px;
     &:hover {
-      background-color: #8B2A9B !important;
+      background-color: #8b2a9b !important;
       opacity: 0.6;
     }
   }
 `
 
-
-const InputPanel = styled.div<{ hideInput?: boolean;  isBridge?: boolean }>`
+const InputPanel = styled.div<{ hideInput?: boolean; isBridge?: boolean }>`
   display: flex;
   flex-flow: column nowrap;
   position: relative;
   border-radius: ${({ hideInput }) => (hideInput ? '8px' : '20px')};
-  background-color: ${({ isBridge }) =>(isBridge ? "none" : "rgb(0,0,0,0.4)")}
+  background-color: ${({ isBridge }) => (isBridge ? 'none' : 'rgb(0,0,0,0.4)')};
   // z-index: 1;
 `
 
@@ -193,7 +192,7 @@ export default function CurrencyInputPanel({
                         currency.symbol.length - 5,
                         currency.symbol.length,
                       )}`
-                    : currency?.symbol) || (isBridge && disableCurrencySelect?t('SPX'):t('Select a currency'))}
+                    : currency?.symbol) || (isBridge && disableCurrencySelect ? t('SPX') : t('Select a currency'))}
                 </Text>
               )}
               {!disableCurrencySelect && <ChevronDownIcon />}

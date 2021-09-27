@@ -1,8 +1,8 @@
 {
-  "short_name": "PancakeSwap",
-  "name": "PancakeSwap",
-  "description": "Farm CAKE with Pancake LP Tokens",
-  "homepage_url": "https://pancakeswap.finance",
+  "short_name": "SphynxSwap",
+  "name": "SphynxSwap",
+  "description": "Farm Sphynx with Sphynx LP Tokens",
+  "homepage_url": "https://thesphynx.co",
   "start_url": ".",
   "display": "standalone",
   "theme_color": "#1FC7D4",
