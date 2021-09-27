@@ -149,7 +149,8 @@ const MenuItem = styled.a`
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 12px 24px;
+    padding: 8px 24px;
+    margin: 8px 0;
     border-radius: 10px;
     text-decoration: none !important;
     & p {
@@ -488,6 +489,7 @@ const Menu = (props) => {
               <MenuItem
                 className={realPath.indexOf(link.href) > -1 && link.href !== '#' ? 'active' : ''}
                 href={link.href}
+                target={link.newTab ? '_blank' : ''}
               >
                 <Icon />
                 {!menuToggled && (
@@ -499,6 +501,7 @@ const Menu = (props) => {
               <MenuItemMobile
                 className={realPath.indexOf(link.href) > -1 && link.href !== '#' ? 'active' : ''}
                 href={link.href}
+                target={link.newTab ? '_blank' : ''}
                 onClick={() => toggleMenu(false)}
               >
                 <Icon />

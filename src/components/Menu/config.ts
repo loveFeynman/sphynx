@@ -47,16 +47,19 @@ export const links = [
     label: 'CoinMarketCap',
     icon: CoinMarketCapsIcon,
     href: 'https://coinmarketcap.com/',
+    newTab: true
   },
   {
     label: 'CoinGecko',
     icon: CoingeckoIcon,
-    href: 'https://www.coingecko.com/',
+    href: 'https://www.coingecko.com/en/coins/sphynx-token',
+    newTab: true
   },
   {
     label: 'Learning Hub',
     icon: LearningHubIcon,
     href: 'https://www.sphynxlearning.co/',
+    newTab: true
   },
   {
     label: 'NFT Marketplace (coming soon)',
