@@ -128,10 +128,12 @@ export default function PrizePotCard({
     if (toastMessage.title !== '' && toastMessage.title.includes('Success')) {
       toastSuccess(t(toastMessage.title), t(toastMessage.message))
     }
-    setToastMessage({
-      title: '',
-      message: '',
-    })
+    if (toastMessage.title !== '') {
+      setToastMessage({
+        title: '',
+        message: '',
+      });
+    }
   }, [toastMessage])
 
   React.useEffect(() => {
@@ -216,7 +218,7 @@ export default function PrizePotCard({
       {!isNext && (
         <>
           <PotContentTable isDetail={false} lotteryInfo={lastLoteryInfo} />
-          <ButtonWrapper isEnable style={{ margin: '10px 0' }} onClick={() => null}>
+          <ButtonWrapper isEnable style={{ margin: '10px 0' }} onClick={handleClaimTickets}>
             {t(`Unlock Wallet`)}
           </ButtonWrapper>
           <SeperateLine />
