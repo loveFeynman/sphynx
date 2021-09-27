@@ -337,8 +337,8 @@ export default function Lottery() {
                 {t(`Latest Winning Numbers`)}
               </Text>
               <WinningCardContainerTop>
-                {winningCards.map((item) => (
-                  <WinningCardTop>
+                {winningCards.map((item, key) => (
+                  <WinningCardTop key={key}>
                     <Text fontSize="18px" color="white" style={{ fontWeight: 700, padding: '12px' }}>
                       {' '}
                       {item === '' ? '?' : item}
@@ -404,8 +404,8 @@ export default function Lottery() {
               {t(`Latest Winning Numbers`)}
             </Text>
             <WinningCardContainer>
-              {winningCards.map((item) => (
-                <WinningCard>
+              {winningCards.map((item, key) => (
+                <WinningCard key={key}>
                   <Text fontSize="36px" color="white" style={{ fontWeight: 700, padding: '26px' }}>
                     {' '}
                     {item === '' ? '?' : item}

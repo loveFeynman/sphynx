@@ -64,8 +64,9 @@ export default function PotContentTable({ isDetail, lotteryInfo }) {
       <Grid>
         <GridHeaderItem isLeft>{t('No. Matched')}</GridHeaderItem>
         <GridHeaderItem isLeft={false}>{t('Player Matched')}</GridHeaderItem>
-        {latestInfoArray.map((item) => (
-          <>
+      </Grid>
+        {latestInfoArray.map((item, key) => (
+          <Grid style={{width: "100%"}} key={key}>
             <GridItem isLeft>{item.number}</GridItem>
             {isDetail ? (
               <>
@@ -81,9 +82,8 @@ export default function PotContentTable({ isDetail, lotteryInfo }) {
             ) : (
               <GridItem isLeft={false}>{item.matchNumber.toString()}</GridItem>
             )}
-          </>
+          </Grid>
         ))}
-      </Grid>
     </Container>
   )
 }
