@@ -17,6 +17,7 @@ import Web3 from 'web3'
 import axios from 'axios'
 import { setIsInput } from 'state/input/actions'
 import { BITQUERY_API, BITQUERY_API_KEY } from 'config/constants/endpoints'
+import storages from 'config/constants/storages'
 import { BalanceNumber } from 'components/BalanceNumber'
 import { links } from './config'
 
@@ -315,6 +316,8 @@ const Menu = (props) => {
 
   useEffect(() => {
     fetchData()
+    const removedTokens = JSON.parse(sessionStorage.getItem(storages.SESSION_REMOVED_TOKENS))
+    setRemovedAssets(removedTokens === null ? [] : removedTokens)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [account])
 
@@ -322,6 +325,7 @@ const Menu = (props) => {
     const assets = removedAssets.map((val) => val)
     assets.push(asset.currency.symbol)
     setRemovedAssets(assets)
+    sessionStorage.setItem(storages.SESSION_REMOVED_TOKENS, JSON.stringify(assets));
   }
 
   const tokenData = getAllToken
