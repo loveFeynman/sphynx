@@ -122,7 +122,7 @@ const BuyTicketModal: React.FC<BuyTicketModalProps> = ({ setUpdateUserTicket, on
   const [ticketNumbers, setTicketNumbers] = useState([])
   const [tickets, setTickets] = useState<string>('0')
   const [bulkDiscountPercent, setBulkDiscountPercent] = useState<string>('0')
-  const [totalSpx, setTotalSpx] = useState<string>('0')
+  const [totalSphynx, setTotalSphynx] = useState<string>('0')
   const [realTokens, setRealTokens] = useState<string>('0')
   const [enabled, setEnabled] = useState(false)
   const [checked, setChecked] = useState(false)
@@ -178,7 +178,7 @@ const BuyTicketModal: React.FC<BuyTicketModalProps> = ({ setUpdateUserTicket, on
         ).toFixed(5),
       )
       console.log((parseInt(lotteryInfo?.priceTicketInCake) * parseInt(tickets)) / 1000000000000000000)
-      setTotalSpx(((parseInt(lotteryInfo?.priceTicketInCake) * parseInt(tickets)) / 1000000000000000000).toFixed(2))
+      setTotalSphynx(((parseInt(lotteryInfo?.priceTicketInCake) * parseInt(tickets)) / 1000000000000000000).toFixed(2))
       const data = []
       for (let i = 0; i < ticket; i++) {
         data.push({ id: i, ticketNumber: 0, ticketNumbers: [], error: false })
@@ -308,7 +308,7 @@ const BuyTicketModal: React.FC<BuyTicketModalProps> = ({ setUpdateUserTicket, on
               </GridItem>
               <GridItem isLeft>
                 <Text bold style={{ textAlign: 'right' }} color="white" fontSize="16px">
-                  ~{realTokens} SPX
+                  ~{realTokens} SPHYNX
                 </Text>
               </GridItem>
             </Grid>
@@ -327,18 +327,18 @@ const BuyTicketModal: React.FC<BuyTicketModalProps> = ({ setUpdateUserTicket, on
               style={{ textAlign: 'right', border: 'none' }}
             />
             <Text fontSize="14px" mr="10px" style={{ textAlign: 'right' }}>
-              ~{tickets === '' || tickets === '0' ? '0.00' : (parseFloat(tickets) / 4).toFixed(2)} SPX
+              ~{tickets === '' || tickets === '0' ? '0.00' : (parseFloat(tickets) / 4).toFixed(2)} SPHYNX
             </Text>
           </InputArea>
           {balance === 0 && (
             <Text style={{ textAlign: 'right' }} color="red" fontSize="14px" mt="8px">
-              Insufficient SPX balance
+              Insufficient SPHYNX balance
             </Text>
           )}
           <Flex justifyContent="end" marginTop="4px ">
             <Text style={{ textAlign: 'right' }} color="white" fontSize="14px">
               {' '}
-              SPX Balance:
+              SPHYNX Balance:
             </Text>
             <Text style={{ textAlign: 'right' }} color="white" fontSize="14px">
               &nbsp;{parseFloat(balance.toString()).toFixed(3).toString()}
@@ -362,12 +362,12 @@ const BuyTicketModal: React.FC<BuyTicketModalProps> = ({ setUpdateUserTicket, on
             <Grid>
               <GridItem isLeft>
                 <Text style={{ textAlign: 'left' }} color="white" fontSize="14px">
-                  Cost (SPX)
+                  Cost (SPHYNX)
                 </Text>
               </GridItem>
               <GridItem isLeft={false}>
                 <Text style={{ textAlign: 'right' }} color="white" fontSize="14px">
-                  {tickets === '' || tickets === '0' ? '0.00' : totalSpx} SPX
+                  {tickets === '' || tickets === '0' ? '0.00' : totalSphynx} SPHYNX
                 </Text>
               </GridItem>
               <GridItem isLeft>
@@ -382,7 +382,7 @@ const BuyTicketModal: React.FC<BuyTicketModalProps> = ({ setUpdateUserTicket, on
               </GridItem>
               <GridItem isLeft={false}>
                 <Text style={{ textAlign: 'right' }} color="white" fontSize="14px">
-                  ~{((parseInt(totalSpx) * parseFloat(bulkDiscountPercent)) / 100).toFixed(5)} SPX
+                  ~{((parseInt(totalSphynx) * parseFloat(bulkDiscountPercent)) / 100).toFixed(5)} SPHYNX
                 </Text>
               </GridItem>
             </Grid>
@@ -398,7 +398,7 @@ const BuyTicketModal: React.FC<BuyTicketModalProps> = ({ setUpdateUserTicket, on
             </GridItem>
             <GridItem isLeft>
               <Text bold style={{ textAlign: 'right' }} color="white" fontSize="16px">
-                ~{realTokens} SPX
+                ~{realTokens} SPHYNX
               </Text>
             </GridItem>
           </Grid>
