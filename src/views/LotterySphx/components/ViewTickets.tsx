@@ -140,7 +140,7 @@ const ViewTicketModal: React.FC<ViewTicketModalProps> = ({ roundID, winningCards
       {userTicketInfos.length > 0 && (
         <Flex flexDirection="column" color="white">
           {userTicketInfos?.map((ticket, index) => (
-            <Flex flexDirection="column" marginBottom="12px">
+            <Flex key={index} flexDirection="column" marginBottom="12px">
               <Text fontSize="13px" mb="8px">
                 #
                 {ticket.id.length === 1
