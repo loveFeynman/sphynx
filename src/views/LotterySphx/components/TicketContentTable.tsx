@@ -71,7 +71,7 @@ export default function TicketContentTable(lastLoteryInfo) {
             <>
               <GridItem isLeft>
                 <div style={{ textAlign: 'right' }}>
-                  {item.tokens} SPX
+                  {item.tokens} SPHYNX
                   <div style={{ fontSize: '12px' }}>
                     {item.eachTokens}
                     {t(`each`)}
