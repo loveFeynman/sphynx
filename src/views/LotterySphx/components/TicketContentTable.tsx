@@ -64,8 +64,8 @@ export default function TicketContentTable(lastLoteryInfo) {
         <GridHeaderItem isLeft>{t('Mached')}</GridHeaderItem>
         <GridHeaderItem isLeft={false}>{t('Winners')}</GridHeaderItem>
         <GridHeaderItem isLeft={false}>{t('Amount')}</GridHeaderItem>
-        {latestInfoArray.map((item) => (
-          <>
+        {latestInfoArray.map((item, index) => (
+          <React.Fragment key={index}>
             <GridItem isLeft>{item.number}</GridItem>
             <GridItem isLeft={false}>{item.matchNumber}</GridItem>
             <>
@@ -79,7 +79,7 @@ export default function TicketContentTable(lastLoteryInfo) {
                 </div>
               </GridItem>
             </>
-          </>
+          </React.Fragment>
         ))}
       </Grid>
     </Container>
