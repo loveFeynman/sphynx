@@ -316,7 +316,7 @@ const Menu = (props) => {
 
   useEffect(() => {
     fetchData()
-    const removedTokens = JSON.parse(sessionStorage.getItem(storages.SESSION_REMOVED_TOKENS))
+    const removedTokens = JSON.parse(localStorage.getItem(storages.LOCAL_REMOVED_TOKENS))
     setRemovedAssets(removedTokens === null ? [] : removedTokens)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [account])
@@ -325,7 +325,7 @@ const Menu = (props) => {
     const assets = removedAssets.map((val) => val)
     assets.push(asset.currency.symbol)
     setRemovedAssets(assets)
-    sessionStorage.setItem(storages.SESSION_REMOVED_TOKENS, JSON.stringify(assets));
+    localStorage.setItem(storages.LOCAL_REMOVED_TOKENS, JSON.stringify(assets));
   }
 
   const tokenData = getAllToken
