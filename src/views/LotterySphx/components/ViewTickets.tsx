@@ -73,28 +73,36 @@ const ViewTicketModal: React.FC<ViewTicketModalProps> = ({ roundID, winningCards
   const [userTicketInfos, setInfoTickets] = React.useState([])
   const [forceValue, setForceValue] = useState(0) // integer state
   const [isClaimable, setClaimable] = React.useState(true)
-  const [toastMessage, setToastMessage] = React.useState({
-    title: '',
-    message: '',
-  })
   const { toastSuccess, toastError } = useToast()
 
-  React.useEffect(() => {
+  interface ToastMessage {
+    title: string
+    message: string
+  }
+
+  const setToastMessage = (toastMessage: ToastMessage) => {
     if (toastMessage.title !== '' && toastMessage.title.includes('Error')) {
       toastError(t(toastMessage.title), t(toastMessage.message))
     }
     if (toastMessage.title !== '' && toastMessage.title.includes('Success')) {
       toastSuccess(t(toastMessage.title), t(toastMessage.message))
     }
-    setToastMessage({
-      title: '',
-      message: '',
-    })
-  }, [toastMessage])
+  }
+
+  const setTickets = (tickets) => {
+    setInfoTickets(tickets)
+    if (userTicketInfos?.length > 0) {
+      userTicketInfos.map((item) => {
+        if (item.status === true) {
+          setClaimable(false)
+        }
+      })
+    }
+  }
 
   React.useEffect(() => {
     const fetchData = async () => {
-      await viewUserInfoForLotteryId(account, roundID.toString(), 0, 2500, setInfoTickets)
+      await viewUserInfoForLotteryId(account, roundID.toString(), 0, 2500, setTickets)
       setTimeout(() => setIsFetch(true), 2000)
     }
     fetchData()
@@ -121,15 +129,6 @@ const ViewTicketModal: React.FC<ViewTicketModalProps> = ({ roundID, winningCards
     setLoading(false)
   }
 
-  React.useEffect(() => {
-    if (userTicketInfos?.length > 0) {
-      userTicketInfos.map((item) => {
-        if (item.status === true) {
-          setClaimable(false)
-        }
-      })
-    }
-  }, [userTicketInfos])
   return (
     <Modal
       title={'Round '.concat(roundID.toString()).concat(' Tickets')}
@@ -140,7 +139,7 @@ const ViewTicketModal: React.FC<ViewTicketModalProps> = ({ roundID, winningCards
       {userTicketInfos.length > 0 && (
         <Flex flexDirection="column" color="white">
           {userTicketInfos?.map((ticket, index) => (
-            <Flex flexDirection="column" marginBottom="12px">
+            <Flex key={index} flexDirection="column" marginBottom="12px">
               <Text fontSize="13px" mb="8px">
                 #
                 {ticket.id.length === 1
@@ -153,11 +152,13 @@ const ViewTicketModal: React.FC<ViewTicketModalProps> = ({ roundID, winningCards
                 {ticket.ticketnumber.split('').map((ticketChar, subIndex) =>
                   subIndex !== 0 ? (
                     <TicketInput
+                      key={subIndex}
                       id={index.toString().concat(subIndex).concat('videw-ticket')}
                       placeholder="0"
                       scale="lg"
                       value={ticketChar}
                       onChange={null}
+                      readOnly={true}
                       style={{
                         textAlign: 'center',
                         border: !ticket.error ? 'none' : '1px red',

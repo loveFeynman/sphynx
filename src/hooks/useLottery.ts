@@ -6,16 +6,21 @@ import { useEffect, useMemo, useState, useCallback } from 'react'
 import lottery from 'assets/abis/lottery.json'
 import sphynx from 'assets/abis/sphynx.json'
 import { simpleRpcProvider } from '../utils/providers'
+import { getLotteryV2Address, getSphynxAddress } from 'utils/addressHelpers'
+import getNodeUrl from 'utils/getRpcUrl'
 
-const providerURL = 'https://old-thrumming-voice.bsc.quiknode.pro/7674ba364cc71989fb1398e1e53db54e4fe0e9e0/'
+const lotteryAddress = getLotteryV2Address()
+const sphynxAddress = getSphynxAddress()
+
+const providerURL = getNodeUrl()
 let web3 = new Web3(new Web3.providers.HttpProvider(providerURL))
 
 const abi: any = lottery.abi
-const lotteryContract = new ethers.Contract('0xf20495AbecdDe4D1652BFfF58ba7c24730534e91', abi, simpleRpcProvider)
-const lotteryContractWeb3 = new web3.eth.Contract(abi, '0xf20495AbecdDe4D1652BFfF58ba7c24730534e91')
+const lotteryContract = new ethers.Contract(lotteryAddress, abi, simpleRpcProvider)
+const lotteryContractWeb3 = new web3.eth.Contract(abi, lotteryAddress)
 const spxAbi: any = sphynx.abi
-const sphxContractWeb3 = new web3.eth.Contract(spxAbi, '0x2e121Ed64EEEB58788dDb204627cCB7C7c59884c')
-const sphxContract = new ethers.Contract('0x2e121Ed64EEEB58788dDb204627cCB7C7c59884c', spxAbi, simpleRpcProvider)
+const sphxContractWeb3 = new web3.eth.Contract(spxAbi, sphynxAddress)
+const sphxContract = new ethers.Contract(sphynxAddress, spxAbi, simpleRpcProvider)
 
 const deepEqual = (object1, object2) => {
   if (object1 === null || object2 === null) return false
@@ -101,10 +106,7 @@ export const approveCall = async (signer, setConfig, setToastMessage) => {
   try {
     await sphxContract
       .connect(signer)
-      .approve(
-        '0xf20495AbecdDe4D1652BFfF58ba7c24730534e91',
-        '0xfffffffffffffffffffffffffffffffffffffffffffffffffffffff',
-      )
+      .approve(lotteryAddress, '0xfffffffffffffffffffffffffffffffffffffffffffffffffffffff')
       .then((data) => {
         // console.log("approve call ", data);
         setConfig(true)
@@ -130,15 +132,14 @@ export const buyTickets = async (signer, roundID, ticketNumbers, setConfig, setT
       .connect(signer)
       .buyTickets(roundID, ticketNumbers)
       .then((data) => {
-        // console.log(" buyTickets success", data);
+        // console.log(' buyTickets success', data)
         setToastMessage({ title: 'Success ', message: 'Successed buying '.concat(ticketNumbers.length.toString()) })
         setConfig(true)
       })
       .catch((err) => {
-        // console.log('buyTickets call error', err);
+        // console.log('buyTickets call error', err)
         setToastMessage({ title: 'Confirm Error', message: err.message })
       })
-    // console.log(" buyTickets step2")
   } catch {
     console.error('buyTickets Round error')
     setToastMessage({ title: 'Confirm Error', message: 'error' })
@@ -155,9 +156,7 @@ export const viewLotterys = async (rID, lastLoteryInfo, setLastLottery) => {
 }
 
 export const getApproveAmount = async (account: string) => {
-  const response = await sphxContractWeb3.methods
-    .allowance(account, '0xf20495AbecdDe4D1652BFfF58ba7c24730534e91')
-    .call()
+  const response = await sphxContractWeb3.methods.allowance(account, lotteryAddress).call()
   return response
 }
 
@@ -214,7 +213,7 @@ export const claimTickets = async (signer, roundID, ticketIds, brackets, setToas
       })
       .catch((err) => {
         console.log('buyTickets call error', err)
-        setToastMessage({ title: 'Error', message: "Failed Claiming "})
+        setToastMessage({ title: 'Error', message: 'Failed Claiming ' })
       })
   } catch {
     console.error('claimTickets Round error')

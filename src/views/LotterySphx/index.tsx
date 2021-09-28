@@ -31,12 +31,12 @@ const size = {
   xs: '320px',
   sm: '768px',
   lg: '1200px',
- }
- const device = {
+}
+const device = {
   xs: `(max-width: ${size.xs})`,
   sm: `(max-width: ${size.sm})`,
-  lg: `(max-width: ${size.lg})`
- }
+  lg: `(max-width: ${size.lg})`,
+}
 
 const WinningCard = styled.div`
   width: 94px;
@@ -44,7 +44,7 @@ const WinningCard = styled.div`
   background: #8b2a9b;
   border-radius: 24px;
   margin: 12px 36px;
-  @media only screen and ${device.lg}{
+  @media only screen and ${device.lg} {
     margin: 0px 24px;
   }
 `
@@ -388,7 +388,11 @@ export default function Lottery() {
               How it works
             </Text>
             <div style={{ display: 'flex', justifyContent: 'center' }}>
-              <Text bold fontSize="16px" style={{ maxWidth: '440px', textAlign: 'left' }}>{t(`Spend Sphynx to buy tickets, contributing to the lottery pot. Win prizes if 2, 3, 4, 5 or 6 of your ticket numbers match the winning numbers and their exact order!`)}</Text>
+              <Text bold fontSize="16px" color="#ddd" style={{ maxWidth: '440px', textAlign: 'left' }}>
+                {t(
+                  `Spend Sphynx to buy tickets, contributing to the lottery pot. Win prizes if 2, 3, 4, 5 or 6 of your ticket numbers match the winning numbers and their exact order!`,
+                )}
+              </Text>
             </div>
           </div>
           <div

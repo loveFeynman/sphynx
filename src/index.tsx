@@ -13,11 +13,6 @@ import Providers from './Providers'
 
 require('dotenv').config()
 
-console.log('REACT_APP_CHAIN_ID=', process.env.REACT_APP_CHAIN_ID)
-console.log('REACT_APP_NODE_1=', process.env.REACT_APP_NODE_1)
-console.log('REACT_APP_NODE_2=', process.env.REACT_APP_NODE_2)
-console.log('REACT_APP_NODE_3=', process.env.REACT_APP_NODE_3)
-
 function Updaters() {
   return (
     <>

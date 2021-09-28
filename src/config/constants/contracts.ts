@@ -8,7 +8,7 @@ export default {
     56: '0x6ab8463a4185b80905e05a9ff80a2d6b714b9e95',
   },
   lotteryV2: {
-    97: '0x5790c3534F30437641541a0FA04C992799602998',
+    97: '0x4Bbaf18b9D00DD679c2F158f0ea2148681F61dE2',
     56: '0x5aF6D33DE2ccEC94efb1bDF8f92Bd58085432d2c',
   },
   multiCall: {
