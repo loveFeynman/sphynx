@@ -72,7 +72,7 @@ export default function TicketCard({ lastLoteryInfo, roundID }) {
       tokenprice()
       setTotalCount(
         (
-          (lastLoteryInfo?.amountCollectedInCake * parseFloat(price)) /
+          (lastLoteryInfo?.amountCollectedInSphynx * parseFloat(price)) /
           1000000000000000000 /
           1000000000000000000
         ).toFixed(5),
