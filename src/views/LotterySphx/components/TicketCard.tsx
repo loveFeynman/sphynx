@@ -63,26 +63,18 @@ export default function TicketCard({ lastLoteryInfo, roundID }) {
         arrayData.push(lastLoteryInfo.finalNumber.toString().charAt(i))
       }
       setWinningCard(arrayData)
-      let price = ''
-      const tokenprice = async () => {
-        axios.get(`https://thesphynx.co/api/price/0x2e121ed64eeeb58788ddb204627ccb7c7c59884c`).then((response) => {
-          price = response.data
-        })
-      }
-      tokenprice()
-      setTotalCount(
-        (
-          (lastLoteryInfo?.amountCollectedInSphynx * parseFloat(price)) /
-          1000000000000000000 /
-          1000000000000000000
-        ).toFixed(5),
-      )
-      setEndTime(
-        moment(new Date(parseInt(lastLoteryInfo?.endTime) * 1000).toString())
-          .format('MMM d hh a')
-          .toString()
-          .concat(' UTC'),
-      )
+      axios.get(`https://thesphynx.co/api/price/0x2e121ed64eeeb58788ddb204627ccb7c7c59884c`).then((response) => {
+        let price = response.data.price
+        let _amountCollectedInSphynx = (lastLoteryInfo?.amountCollectedInSphynx / 10 ** 18).toString()
+        let prizePot = (parseFloat(_amountCollectedInSphynx) * parseFloat(price)).toFixed(5)
+        setTotalCount(prizePot)
+        setEndTime(
+          moment(new Date(parseInt(lastLoteryInfo?.endTime) * 1000).toString())
+            .format('MMM d hh a')
+            .toString()
+            .concat(' UTC'),
+        )
+      })
     }
   }, [lastLoteryInfo])
 
@@ -119,7 +111,7 @@ export default function TicketCard({ lastLoteryInfo, roundID }) {
             {t('Prize Pot:')}
           </Text>
           <Text bold color="white" fontSize="24px">
-            {totalCount === 'NaN' || parseInt(totalCount) < 20 || totalCount === '' ? 'Calculating' : `${totalCount} $`}
+            {totalCount === 'NaN' || totalCount === '' ? 'Calculating' : `$${totalCount}`}
           </Text>
         </div>
       </div>
