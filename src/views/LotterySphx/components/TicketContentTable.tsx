@@ -41,13 +41,13 @@ export default function TicketContentTable(lastLoteryInfo) {
       for (let i = 6; i > 0; i--) {
         newArray.push({
           number: i,
-          tokens: (parseInt(lastLoteryInfo.lastLoteryInfo?.cakePerBracket[i - 1]) / 10000000000000000000).toFixed(5),
+          tokens: (parseInt(lastLoteryInfo.lastLoteryInfo?.sphynxPerBracket[i - 1]) / 10000000000000000000).toFixed(5),
           matchNumber: lastLoteryInfo.lastLoteryInfo?.countWinnersPerBracket[i - 1],
           eachTokens:
             lastLoteryInfo.lastLoteryInfo?.countWinnersPerBracket[i - 1] === '0'
               ? '0'
               : (
-                  parseInt(lastLoteryInfo.lastLoteryInfo?.cakePerBracket[i - 1]) /
+                  parseInt(lastLoteryInfo.lastLoteryInfo?.sphynxPerBracket[i - 1]) /
                   10000000000000000000 /
                   lastLoteryInfo.lastLoteryInfo?.countWinnersPerBracket[i - 1]
                 ).toFixed(5),
