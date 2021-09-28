@@ -61,7 +61,7 @@ export default function TicketContentTable(lastLoteryInfo) {
   return (
     <Container>
       <Grid>
-        <GridHeaderItem isLeft>{t('Mached')}</GridHeaderItem>
+        <GridHeaderItem isLeft>{t('Matched')}</GridHeaderItem>
         <GridHeaderItem isLeft={false}>{t('Winners')}</GridHeaderItem>
         <GridHeaderItem isLeft={false}>{t('Amount')}</GridHeaderItem>
         {latestInfoArray.map((item, index) => (
