@@ -158,6 +158,7 @@ const ViewTicketModal: React.FC<ViewTicketModalProps> = ({ roundID, winningCards
                       scale="lg"
                       value={ticketChar}
                       onChange={null}
+                      readOnly={true}
                       style={{
                         textAlign: 'center',
                         border: !ticket.error ? 'none' : '1px red',
