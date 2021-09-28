@@ -150,7 +150,7 @@ const BuyTicketModal: React.FC<BuyTicketModalProps> = ({ setUpdateUserTicket, on
       setToastMessage({
         title: '',
         message: '',
-      });
+      })
     }
   }, [toastMessage])
 
@@ -263,7 +263,7 @@ const BuyTicketModal: React.FC<BuyTicketModalProps> = ({ setUpdateUserTicket, on
       })
       console.log('ticketNumbers', data)
       setLoading(true)
-      await buyTickets(account, roundID, data, setLoading, setToastMessage)
+      await buyTickets(signer, roundID, data, setLoading, setToastMessage)
       setUpdateUserTicket()
       onDismiss()
       setLoading(false)
