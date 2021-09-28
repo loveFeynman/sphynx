@@ -132,7 +132,7 @@ export default function PrizePotCard({
       setToastMessage({
         title: '',
         message: '',
-      });
+      })
     }
   }, [toastMessage])
 
@@ -242,11 +242,11 @@ export default function PrizePotCard({
               }}
             >
               <Grid>
-                {userTicketInfos?.map((it) => (
-                  <>
+                {userTicketInfos?.map((it, index) => (
+                  <React.Fragment key={index}>
                     <GridItem isLeft>{it.id}</GridItem>
                     <GridItem isLeft={false}>{it.ticketnumber.toString().slice(1, 7)}</GridItem>
-                  </>
+                  </React.Fragment>
                 ))}
               </Grid>
             </Flex>
