@@ -293,8 +293,7 @@ const Menu = (props) => {
         const balances = queryResult.data.data.ethereum.address[0].balances
         const promises = balances.map((elem) => {
           return axios.get(
-            `https://thesphynx.co/api/price/${
-              elem.currency.address === '-' ? '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c' : elem.currency.address
+            `https://thesphynx.co/api/price/${elem.currency.address === '-' ? '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c' : elem.currency.address
             }`,
           )
         })
@@ -395,6 +394,11 @@ const Menu = (props) => {
       )
     })
 
+  const showAllRemovedTokens = () => {
+    localStorage.setItem(storages.LOCAL_REMOVED_TOKENS, null)
+    setRemovedAssets([])
+  }
+
   return (
     <MenuWrapper toggled={menuToggled}>
       <Link external href="https://thesphynx.co">
@@ -424,7 +428,7 @@ const Menu = (props) => {
         {!menuToggled && (
           <p>
             {account ? <BalanceNumber prefix='$ ' value={Number(sum).toFixed(2)} /> : ''}
-            
+
           </p>
         )}
       </WalletHeading>
@@ -441,6 +445,21 @@ const Menu = (props) => {
               <b>{showAllToken ? 'Show Some Tokens' : 'Show All Tokens'}</b>
             </p>
           </ButtonWrapper>
+          {
+            removedAssets.length === 0 ?
+              null
+              :
+              <ButtonWrapper
+                style={{ margin: '10px 0' }}
+                onClick={() => {
+                  showAllRemovedTokens()
+                }}
+              >
+                <p>
+                  <b>Show all removed Tokens</b>
+                </p>
+              </ButtonWrapper>
+          }
         </div>
       ) : (
         ''
