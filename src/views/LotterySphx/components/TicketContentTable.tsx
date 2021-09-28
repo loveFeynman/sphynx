@@ -41,14 +41,14 @@ export default function TicketContentTable(lastLoteryInfo) {
       for (let i = 6; i > 0; i--) {
         newArray.push({
           number: i,
-          tokens: (parseInt(lastLoteryInfo.lastLoteryInfo?.cakePerBracket[i - 1]) / 10000000000000000000).toFixed(5),
+          tokens: (parseInt(lastLoteryInfo.lastLoteryInfo?.sphynxPerBracket[i - 1]) / 10 ** 18).toFixed(5),
           matchNumber: lastLoteryInfo.lastLoteryInfo?.countWinnersPerBracket[i - 1],
           eachTokens:
             lastLoteryInfo.lastLoteryInfo?.countWinnersPerBracket[i - 1] === '0'
               ? '0'
               : (
-                  parseInt(lastLoteryInfo.lastLoteryInfo?.cakePerBracket[i - 1]) /
-                  10000000000000000000 /
+                  parseInt(lastLoteryInfo.lastLoteryInfo?.sphynxPerBracket[i - 1]) /
+                  10 ** 18 /
                   lastLoteryInfo.lastLoteryInfo?.countWinnersPerBracket[i - 1]
                 ).toFixed(5),
         })
@@ -61,11 +61,11 @@ export default function TicketContentTable(lastLoteryInfo) {
   return (
     <Container>
       <Grid>
-        <GridHeaderItem isLeft>{t('Mached')}</GridHeaderItem>
+        <GridHeaderItem isLeft>{t('Matched')}</GridHeaderItem>
         <GridHeaderItem isLeft={false}>{t('Winners')}</GridHeaderItem>
         <GridHeaderItem isLeft={false}>{t('Amount')}</GridHeaderItem>
-        {latestInfoArray.map((item) => (
-          <>
+        {latestInfoArray.map((item, index) => (
+          <React.Fragment key={index}>
             <GridItem isLeft>{item.number}</GridItem>
             <GridItem isLeft={false}>{item.matchNumber}</GridItem>
             <>
@@ -74,12 +74,12 @@ export default function TicketContentTable(lastLoteryInfo) {
                   {item.tokens} SPHYNX
                   <div style={{ fontSize: '12px' }}>
                     {item.eachTokens}
-                    {t(`each`)}
+                    {t(` each`)}
                   </div>
                 </div>
               </GridItem>
             </>
-          </>
+          </React.Fragment>
         ))}
       </Grid>
     </Container>

@@ -43,12 +43,12 @@ export default function PotContentTable({ isDetail, lotteryInfo }) {
       for (let i = 6; i > 0; i--) {
         newArray.push({
           number: i,
-          tokens: parseInt(lotteryInfo?.cakePerBracket[i - 1]) / 10000000000000000000,
+          tokens: parseInt(lotteryInfo?.sphynxPerBracket[i - 1]) / 10000000000000000000,
           matchNumber: lotteryInfo?.countWinnersPerBracket[i - 1],
           eachTokens:
             lotteryInfo?.countWinnersPerBracket[i - 1] === '0'
               ? '0'
-              : parseInt(lotteryInfo?.cakePerBracket[i - 1]) /
+              : parseInt(lotteryInfo?.sphynxPerBracket[i - 1]) /
                 10000000000000000000 /
                 lotteryInfo?.countWinnersPerBracket[i - 1],
         })
@@ -65,25 +65,25 @@ export default function PotContentTable({ isDetail, lotteryInfo }) {
         <GridHeaderItem isLeft>{t('No. Matched')}</GridHeaderItem>
         <GridHeaderItem isLeft={false}>{t('Player Matched')}</GridHeaderItem>
       </Grid>
-        {latestInfoArray.map((item, key) => (
-          <Grid style={{width: "100%"}} key={key}>
-            <GridItem isLeft>{item.number}</GridItem>
-            {isDetail ? (
-              <>
-                <GridItem isLeft>
-                  <div style={{ textAlign: 'right' }}>
-                    {parseFloat(item.tokens).toFixed(5)} SPX
-                    <div style={{ fontSize: '12px' }}>
-                      {parseFloat(item.eachTokens).toFixed(5)} {t(' each')}
-                    </div>
+      {latestInfoArray.map((item, key) => (
+        <Grid style={{ width: '100%' }} key={key}>
+          <GridItem isLeft>{item.number}</GridItem>
+          {isDetail ? (
+            <>
+              <GridItem isLeft>
+                <div style={{ textAlign: 'right' }}>
+                  {parseFloat(item.tokens).toFixed(5)} SPX
+                  <div style={{ fontSize: '12px' }}>
+                    {parseFloat(item.eachTokens).toFixed(5)} {t(' each')}
                   </div>
-                </GridItem>
-              </>
-            ) : (
-              <GridItem isLeft={false}>{item.matchNumber.toString()}</GridItem>
-            )}
-          </Grid>
-        ))}
+                </div>
+              </GridItem>
+            </>
+          ) : (
+            <GridItem isLeft={false}>{item.matchNumber.toString()}</GridItem>
+          )}
+        </Grid>
+      ))}
     </Container>
   )
 }
