@@ -132,12 +132,7 @@ export default function TicketCard({ lastLoteryInfo, roundID }) {
         <Text bold fontSize="16px" mr="12px">
           {t('View your BscScan')}
         </Text>
-        <Link
-          external
-          href={'https://bscscan.com/address/'
-            .toString()
-            .concat(process.env.NODE_ENV !== 'production' ? '0x3EF6FeB63B2F0f1305839589eDf487fb61b99A4E' : account)}
-        >
+        <Link external href={'https://bscscan.com/address/'.toString().concat(account)}>
           <img width="12px" height="12px" src={LinkIcon} alt="Logo" />
         </Link>
       </div>
