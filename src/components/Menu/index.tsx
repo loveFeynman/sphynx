@@ -283,6 +283,12 @@ const Menu = (props) => {
 
   const fetchData = async () => {
     if (account) {
+      let removedTokens = JSON.parse(localStorage.getItem(storages.LOCAL_REMOVED_TOKENS))
+      if(removedTokens === null){
+        removedTokens = []
+      }
+      setRemovedAssets(removedTokens)
+
       const bitConfig = {
         headers: {
           'X-API-KEY': BITQUERY_API_KEY,
@@ -298,14 +304,17 @@ const Menu = (props) => {
             }`,
           )
         })
+
         const prices: any = await Promise.all(promises)
         let i = 0
         // eslint-disable-next-line no-restricted-syntax
         for (const elem of balances) {
           const dollerprice: any = prices[i].data.price * elem.value
           elem.dollarPrice = dollerprice
-          allsum += dollerprice
           i++
+          if(removedTokens.indexOf(elem.currency.symbol) === -1){
+            allsum += dollerprice
+          }
         }
 
         setSum(allsum)
@@ -314,12 +323,26 @@ const Menu = (props) => {
     }
   }
 
+  const updateWallet = () => {
+    let allsum = 0
+    getAllToken.forEach((elem) => {
+      if (removedAssets.indexOf(elem.currency.symbol) === -1) {
+        allsum += elem.dollarPrice
+      }
+    })
+
+    setSum(allsum)
+  }
+
   useEffect(() => {
     fetchData()
-    const removedTokens = JSON.parse(localStorage.getItem(storages.LOCAL_REMOVED_TOKENS))
-    setRemovedAssets(removedTokens === null ? [] : removedTokens)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [account])
+
+  useEffect(() => {
+    updateWallet()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [removedAssets])
 
   const removeAsset = (asset: any) => {
     const assets = removedAssets.map((val) => val)
