@@ -43,16 +43,15 @@ const StyledStepCard = styled(Box)`
   display: flex;
   align-self: baseline;
   position: relative;
-  background: ${({ theme }) => theme.colors.cardBorder};
   padding: 1px 1px 3px 1px;
-  border-radius: ${({ theme }) => theme.radii.card};
+  border-radius: 24px;
 `
 
 const StepCardInner = styled(Box)`
   width: 100%;
   padding: 24px;
-  background: ${({ theme }) => theme.card.background};
-  border-radius: ${({ theme }) => theme.radii.card};
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 24px;
 `
 
 type Step = { title: string; subtitle: string; label: string }
@@ -61,13 +60,13 @@ const StepCard: React.FC<{ step: Step }> = ({ step }) => {
   return (
     <StyledStepCard width="100%">
       <StepCardInner height={['200px', '180px', null, '200px']}>
-        <Text mb="16px" fontSize="12px" bold textAlign="right" textTransform="uppercase">
+        <Text mb="16px" fontSize="12px" color='white' bold textAlign="right" textTransform="uppercase">
           {step.label}
         </Text>
-        <Heading mb="16px" scale="lg" color="secondary">
+        <Heading mb="16px" scale="lg" color="white">
           {step.title}
         </Heading>
-        <Text color="textSubtle">{step.subtitle}</Text>
+        <Text color="white">{step.subtitle}</Text>
       </StepCardInner>
     </StyledStepCard>
   )
@@ -151,7 +150,7 @@ const AllocationMatch: React.FC<{ color: string; text: string }> = ({ color, tex
   return (
     <Flex alignItems="center">
       <AllocationColorCircle color={color} />
-      <Text color="textSubtle">{text}</Text>
+      <Text color="white">{text}</Text>
     </Flex>
   )
 }
@@ -165,40 +164,40 @@ const PoolAllocations = () => {
           <PoolAllocationChart width="100px" height="100px" />
         </Flex>
         <Flex justifyContent="space-between">
-          <Text fontSize="12px" color="secondary" bold textTransform="uppercase">
+          <Text fontSize="12px" color="white" bold textTransform="uppercase">
             {t('Digits matched')}
           </Text>
-          <Text fontSize="12px" color="secondary" bold textAlign="right" textTransform="uppercase">
+          <Text fontSize="12px" color="white" bold textAlign="right" textTransform="uppercase">
             {t('Prize pool allocation')}
           </Text>
         </Flex>
         <AllocationGrid>
           <AllocationMatch color="#FFE362" text={t('Matches first %digits%', { digits: 1 })} />
-          <Text textAlign="right" bold>
+          <Text textAlign="right" color='white' bold>
             2%
           </Text>
           <AllocationMatch color="#85C54E" text={t('Matches first %digits%', { digits: 2 })} />
-          <Text textAlign="right" bold>
+          <Text textAlign="right" color='white' bold>
             3%
           </Text>
           <AllocationMatch color="#028E75" text={t('Matches first %digits%', { digits: 3 })} />
-          <Text textAlign="right" bold>
+          <Text textAlign="right" color='white' bold>
             5%
           </Text>
           <AllocationMatch color="#36E8F5" text={t('Matches first %digits%', { digits: 4 })} />
-          <Text textAlign="right" bold>
+          <Text textAlign="right" color='white' bold>
             10%
           </Text>
           <AllocationMatch color="#A881FC" text={t('Matches first %digits%', { digits: 5 })} />
-          <Text textAlign="right" bold>
+          <Text textAlign="right" color='white' bold>
             20%
           </Text>
           <AllocationMatch color="#D750B2" text={t('Matches all 6')} />
-          <Text textAlign="right" bold>
+          <Text textAlign="right" color='white' bold>
             40%
           </Text>
           <AllocationMatch color="#BDC2C4" text={t('Burn Pool')} />
-          <Text textAlign="right" bold>
+          <Text textAlign="right" color='white' bold>
             20%
           </Text>
         </AllocationGrid>
@@ -323,7 +322,7 @@ const HowToPlay: React.FC = () => {
             <li>
               <Text display="inline" color="textSubtle">
                 {t(
-                  'An average total of 35,000 Sphynx from the treasury is added to lottery rounds over the course of a week. This Sphynx is of course also included in rollovers! Read more in our guide to ',
+                  'Sphynx tokens from the contract is added to the lottery each and every day. This Sphynx is of course also included in rollovers! Read more in our guide to ',
                 )}
                 <InlineLink href="https://www.sphynxtoken.co/static/media/whitepaper.88cdeecb.pdf" target="_blank">
                   {t('Sphynx Tokenomics')}
@@ -337,8 +336,8 @@ const HowToPlay: React.FC = () => {
         </Flex>
       </GappedFlex>
       <Divider />
-      <Flex justifyContent="center" alignItems="center" flexDirection={['column', 'column', 'row']}>
-        <Image width={240} height={172} src="/images/lottery/tombola.png" alt="tombola bunny" mr="8px" mb="16px" />
+      <Flex justifyContent="center" alignItems="center" flexDirection={['column', 'column', 'row']} mb='32px'>
+        <img width={240} src="/logo.png" alt="Sphynx" />
         <Flex maxWidth="300px" flexDirection="column">
           <Heading mb="16px" scale="md">
             {t('Still got questions?')}
