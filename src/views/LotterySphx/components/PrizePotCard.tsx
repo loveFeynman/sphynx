@@ -182,14 +182,23 @@ export default function PrizePotCard({
         setEnabled(true)
       }
 
-      axios.get(`https://thesphynx.co/api/price/0x2e121ed64eeeb58788ddb204627ccb7c7c59884c`).then((response) => {
-        let price = response.data.price
-        let _amountCollectedInSphynx = (lastLoteryInfo?.amountCollectedInSphynx / 10 ** 18).toString()
-        let prizePot = (parseFloat(_amountCollectedInSphynx) * parseFloat(price)).toFixed(5)
-        setTotalCount(prizePot)
-      })
+      if (isNext) {
+        axios.get(`https://thesphynx.co/api/price/0x2e121ed64eeeb58788ddb204627ccb7c7c59884c`).then((response) => {
+          let price = response.data.price
+          let _amountCollectedInSphynx = (lotteryInfo?.amountCollectedInSphynx / 10 ** 18).toString()
+          let prizePot = (parseFloat(_amountCollectedInSphynx) * parseFloat(price)).toFixed(5)
+          setTotalCount(prizePot)
+        })
+      } else {
+        axios.get(`https://thesphynx.co/api/price/0x2e121ed64eeeb58788ddb204627ccb7c7c59884c`).then((response) => {
+          let price = response.data.price
+          let _amountCollectedInSphynx = (lastLoteryInfo?.amountCollectedInSphynx / 10 ** 18).toString()
+          let prizePot = (parseFloat(_amountCollectedInSphynx) * parseFloat(price)).toFixed(5)
+          setTotalCount(prizePot)
+        })
+      }
     }
-  }, [lotteryInfo])
+  }, [isNext, lotteryInfo])
 
   return (
     <Container isDetail={showDetail}>
@@ -212,7 +221,7 @@ export default function PrizePotCard({
         <>
           <PotContentTable isDetail={false} lotteryInfo={lastLoteryInfo} />
           <ButtonWrapper isEnable style={{ margin: '10px 0' }} onClick={handleClaimTickets}>
-            {t(`Unlock Wallet`)}
+            {t(`Claim Tickets`)}
           </ButtonWrapper>
           <SeperateLine />
           <Footer onClick={(e) => setShowDetail(!showDetail)}>
