@@ -345,7 +345,7 @@ const HowToPlay: React.FC = () => {
           </Heading>
           <Text>
             {t('Check our in-depth guide on')}{' '}
-            <InlineLink href="#">
+            <InlineLink href="/Lottery.pdf" target='_blank'>
               {t('how to play the Sphynx lottery!')}
             </InlineLink>
           </Text>
