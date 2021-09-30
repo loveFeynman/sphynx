@@ -7,7 +7,7 @@ import styled from 'styled-components'
 import Web3 from 'web3'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import Nav from 'components/LotteryCardNav'
-import { Heading, Text, Button, Link, useModal } from '@sphynxswap/uikit'
+import { Heading, Text, Button, Link, useModal, Flex } from '@sphynxswap/uikit'
 import { Button as materialButton, Menu, MenuItem } from '@material-ui/core'
 import PageHeader from 'components/PageHeader'
 import WebFont from 'webfontloader'
@@ -17,6 +17,7 @@ import { typeInput, setIsInput } from '../../state/input/actions'
 import PrizePotCard from './components/PrizePotCard'
 import TicketCard from './components/TicketCard'
 import History from './components/LotteryHistory'
+import HowToPlay from './components/HowToPlay'
 import { isAddress, getBscScanLink } from '../../utils'
 import BuyTicketModal from './components/BuyTicketModal'
 import {
@@ -383,7 +384,7 @@ export default function Lottery() {
               )}
             </div>
           </PrizePotCardContainer>
-          <div style={{ textAlign: 'center', margin: '88px 0px 76px 0px' }}>
+          {/* <div style={{ textAlign: 'center', margin: '88px 0px 76px 0px' }}>
             <Text bold fontSize="48px" color="white" style={{ fontWeight: 700 }}>
               How it works
             </Text>
@@ -394,7 +395,7 @@ export default function Lottery() {
                 )}
               </Text>
             </div>
-          </div>
+          </div> */}
           <div
             style={{
               textAlign: 'center',
@@ -474,6 +475,9 @@ export default function Lottery() {
           {showDrop && <ContractPanelOverlay onClick={() => setShowDrop(false)} />}
         </>
       )}
+      <Flex mt='24px'>
+        <HowToPlay />
+      </Flex>
     </div>
   )
 }
