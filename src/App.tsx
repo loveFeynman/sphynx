@@ -12,11 +12,6 @@ import { useMenuToggle } from 'state/application/hooks'
 import { useWeb3React } from '@web3-react/core'
 import { DatePickerPortal } from 'components/DatePicker'
 import ConnectWalletButton from 'components/ConnectWalletButton'
-import { ReactComponent as MenuOpenIcon } from 'assets/svg/icon/MenuOpenIcon.svg'
-
-import { ReactComponent as SearchIcon } from 'assets/svg/icon/SearchIcon.svg'
-import { ReactComponent as EmptyAvatar } from 'assets/svg/icon/EmptyAvatar.svg'
-import { ReactComponent as ChevronDown } from 'assets/svg/icon/ChevronDown.svg'
 import Loader from 'components/myLoader/Loader'
 import { useSelector } from 'react-redux'
 import HotTokenBar from './views/Swap/components/HotTokenBar'
@@ -27,14 +22,12 @@ import { ToastListener } from './contexts/ToastsContext'
 import PageLoader from './components/Loader/PageLoader'
 import EasterEgg from './components/EasterEgg'
 import GlobalStyle from './style/Global'
-import history from './routerHistory'
-// Views included in the main bundle
-// import Pools from './views/Pools'
 import Swap from './views/Swap'
 import Farms from './views/Farms'
 import Pools from './views/Pools'
 import Lottery from './views/LotterySphx'
 import Bridge from './views/Bridge'
+import FAQ from './views/FAQ'
 import {
   RedirectDuplicateTokenIds,
   RedirectOldAddLiquidityPathStructure,
@@ -43,25 +36,7 @@ import {
 import RedirectOldRemoveLiquidityPathStructure from './views/RemoveLiquidity/redirects'
 import { RedirectPathToSwapOnly, RedirectToSwap } from './views/Swap/redirects'
 
-// Route-based code splitting
-// Only pool is included in the main bundle because of it's the most visited page
-// const Home = lazy(() => import('./views/Home'))
-// const Farms = lazy(() => import('./views/Farms'))
-// const Pools = lazy(() => import('./views/Pools'))
-
-// const FarmAuction = lazy(() => import('./views/FarmAuction'))
-// const Lottery = lazy(() => import('./views/Lottery'))
-// const Ifos = lazy(() => import('./views/Ifos'))
 const NotFound = lazy(() => import('./views/NotFound'))
-// const Collectibles = lazy(() => import('./views/Collectibles'))
-// const Teams = lazy(() => import('./views/Teams'))
-// const Team = lazy(() => import('./views/Teams/Team'))
-// const Profile = lazy(() => import('./views/Profile'))
-// const TradingCompetition = lazy(() => import('./views/TradingCompetition'))
-// const Predictions = lazy(() => import('./views/Predictions'))
-// const Voting = lazy(() => import('./views/Voting'))
-// const Proposal = lazy(() => import('./views/Voting/Proposal'))
-// const CreateProposal = lazy(() => import('./views/Voting/CreateProposal'))
 const AddLiquidity = lazy(() => import('./views/AddLiquidity'))
 const Liquidity = lazy(() => import('./views/Pool'))
 const PoolFinder = lazy(() => import('./views/PoolFinder'))
@@ -110,22 +85,6 @@ const TopBar = styled.div`
   margin-top: 32px;
   margin-bottom: 20px;
   flex-wrap: wrap;
-  // & button:first-child {
-  //   background: transparent;
-  //   padding: 0;
-  //   outline: none;
-  //   border: none;
-  //   box-shadow: none;
-  //   margin-right: 12px;
-  //   margin-bottom: 8px;
-  //   height: 32px;
-  //   & svg path {
-  //     fill: white;
-  //   }
-  //   ${({ theme }) => theme.mediaQueries.xl} {
-  //     display: none;
-  //   }
-  // }
 `
 const SearchWrapper = styled.div`
   display: flex;
@@ -232,8 +191,6 @@ const App: React.FC = () => {
   const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
   const routerVersion = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.routerVersion)
   const [showLoader, setShowLoader] = useState<any>(false)
-  // const history = useHistory();
-  // history.push('/swap')
 
   React.useEffect(() => {
     setTimeout(() => {
@@ -260,7 +217,6 @@ const App: React.FC = () => {
         ) : (
           <>
             <Menu />
-
             <BodyWrapper toggled={menuToggled}>
               <BodyOverlay toggled={menuToggled} onClick={() => toggleMenu(false)} />
               <TopBar>
@@ -292,50 +248,6 @@ const App: React.FC = () => {
                     <Route path="/" exact>
                       <Redirect to="/swap" />
                     </Route>
-                    {/* <Route path="/farms">
-                    <Farms />
-                  </Route>
-                  <Route path="/pools">
-                    <Pools />
-                  </Route> */}
-
-                    {/* <Route exact path="/farms/auction">
-                    <FarmAuction />
-                  </Route>
-                  <Route path="/lottery">
-                    <Lottery />
-                  </Route>
-                  <Route path="/ifo">
-                    <Ifos />
-                  </Route>
-                  <Route path="/collectibles">
-                    <Collectibles />
-                  </Route>
-                  <Route exact path="/teams">
-                    <Teams />
-                  </Route>
-                  <Route path="/teams/:id">
-                    <Team />
-                  </Route>
-                  <Route path="/profile">
-                    <Profile />
-                  </Route>
-                  <Route path="/competition">
-                    <TradingCompetition />
-                  </Route>
-                  <Route path="/prediction">
-                    <Predictions />
-                  </Route>
-                  <Route exact path="/voting">
-                    <Voting />
-                  </Route>
-                  <Route exact path="/voting/proposal/create">
-                    <CreateProposal />
-                  </Route>
-                  <Route path="/voting/proposal/:id">
-                    <Proposal />
-                  </Route> */}
-
                     {/* Using this format because these components use routes injected props. We need to rework them with hooks */}
                     <Route path="/swap" component={Swap} />
                     <Route exact strict path="/farms" component={Farms} />
@@ -357,22 +269,7 @@ const App: React.FC = () => {
                     <Route exact path="/create/:currencyIdA/:currencyIdB" component={RedirectDuplicateTokenIds} />
                     <Route exact strict path="/remove/:tokens" component={RedirectOldRemoveLiquidityPathStructure} />
                     <Route exact strict path="/remove/:currencyIdA/:currencyIdB" component={RemoveLiquidity} />
-
-                    {/* Redirect */}
-                    {/* <Route path="/pool">
-                    <Redirect to="/liquidity" />
-                  </Route>
-                  <Route path="/staking">
-                    <Redirect to="/pools" />
-                  </Route>
-                  <Route path="/syrup">
-                    <Redirect to="/pools" />
-                  </Route>
-                  <Route path="/nft">
-                    <Redirect to="/collectibles" />
-                  </Route> */}
-
-                    {/* 404 */}
+                    <Route exact strict path="/faq" component={FAQ} />
                     <Route component={NotFound} />
                   </Switch>
                 </SuspenseWithChunkError>
