@@ -43,14 +43,6 @@ export default function TicketContentTable(lastLoteryInfo) {
           number: i,
           tokens: (parseInt(lastLoteryInfo.lastLoteryInfo?.sphynxPerBracket[i - 1]) / 10 ** 18).toFixed(5),
           matchNumber: lastLoteryInfo.lastLoteryInfo?.countWinnersPerBracket[i - 1],
-          eachTokens:
-            lastLoteryInfo.lastLoteryInfo?.countWinnersPerBracket[i - 1] === '0'
-              ? '0'
-              : (
-                  parseInt(lastLoteryInfo.lastLoteryInfo?.sphynxPerBracket[i - 1]) /
-                  10 ** 18 /
-                  lastLoteryInfo.lastLoteryInfo?.countWinnersPerBracket[i - 1]
-                ).toFixed(5),
         })
       }
     }
@@ -70,13 +62,7 @@ export default function TicketContentTable(lastLoteryInfo) {
             <GridItem isLeft={false}>{item.matchNumber}</GridItem>
             <>
               <GridItem isLeft>
-                <div style={{ textAlign: 'right' }}>
-                  {item.tokens} SPHYNX
-                  <div style={{ fontSize: '12px' }}>
-                    {item.eachTokens}
-                    {t(` each`)}
-                  </div>
-                </div>
+                <div style={{ textAlign: 'right' }}>{item.tokens} SPHYNX</div>
               </GridItem>
             </>
           </React.Fragment>
