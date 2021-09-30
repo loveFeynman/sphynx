@@ -72,7 +72,7 @@ export default function PotContentTable({ isDetail, lotteryInfo }) {
             <>
               <GridItem isLeft>
                 <div style={{ textAlign: 'right' }}>
-                  {parseFloat(item.tokens).toFixed(5)} SPX
+                  {parseFloat(item.tokens).toFixed(5)} SPHYNX
                   <div style={{ fontSize: '12px' }}>
                     {parseFloat(item.eachTokens).toFixed(5)} {t(' each')}
                   </div>
