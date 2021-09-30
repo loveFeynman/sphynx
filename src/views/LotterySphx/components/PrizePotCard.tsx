@@ -181,20 +181,13 @@ export default function PrizePotCard({
         setRemainingTime(hours.toString().concat('h ').concat(minutes.toString()).concat('m'))
         setEnabled(true)
       }
-      let price = ''
-      const tokenprice = async () => {
-        axios.get(`https://thesphynx.co/api/price/0x2e121ed64eeeb58788ddb204627ccb7c7c59884c`).then((response) => {
-          price = response.data
-        })
-      }
-      tokenprice()
-      setTotalCount(
-        (
-          (lastLoteryInfo?.amountCollectedInSphynx * parseFloat(price)) /
-          1000000000000000000 /
-          1000000000000000000
-        ).toFixed(5),
-      )
+
+      axios.get(`https://thesphynx.co/api/price/0x2e121ed64eeeb58788ddb204627ccb7c7c59884c`).then((response) => {
+        let price = response.data.price
+        let _amountCollectedInSphynx = (lastLoteryInfo?.amountCollectedInSphynx / 10 ** 18).toString()
+        let prizePot = (parseFloat(_amountCollectedInSphynx) * parseFloat(price)).toFixed(5)
+        setTotalCount(prizePot)
+      })
     }
   }, [lotteryInfo])
 
@@ -209,9 +202,9 @@ export default function PrizePotCard({
               ? enabled
                 ? remainningTime
                 : 'On sale soon'
-              : totalCount === 'NaN' || parseInt(totalCount) < 20 || totalCount === ''
+              : totalCount === 'NaN' || totalCount === ''
               ? 'Calculating'
-              : `${totalCount} $`}
+              : `$${totalCount}`}
           </HeaderLabel>
         </div>
       </div>
