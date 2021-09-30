@@ -1,4 +1,3 @@
-// import { MenuEntry } from '@sphynxswap/uikit'
 import { SVGProps } from 'react'
 import { ContextApi } from 'contexts/Localization/types'
 import { ReactComponent as FarmIcon } from 'assets/svg/icon/FarmIcon.svg'
@@ -6,18 +5,13 @@ import { ReactComponent as PoolIcon } from 'assets/svg/icon/PoolIcon.svg'
 import { ReactComponent as BridgeIcon } from 'assets/svg/icon/Bridge.svg'
 import { ReactComponent as PredictionIcon } from 'assets/svg/icon/PredictionIcon.svg'
 import { ReactComponent as IFOIcon } from 'assets/svg/icon/IFOIcon.svg'
-import { ReactComponent as MoreIcon } from 'assets/svg/icon/MoreIcon.svg'
 import { ReactComponent as ChartIcon } from 'assets/svg/icon/chart-swap.svg'
 import { ReactComponent as CoingeckoIcon } from 'assets/svg/icon/Coingecko.svg'
 import { ReactComponent as CoinMarketCapsIcon } from 'assets/svg/icon/CoinMarketCaps.svg'
 import { ReactComponent as LearningHubIcon } from 'assets/svg/icon/LearningHub.svg'
+import { ReactComponent as FAQIcon } from 'assets/svg/icon/HelpIcon.svg'
 
 export const links = [
-  // {
-  //   label: 'Home',
-  //   icon: 'HomeIcon',
-  //   href: '/',
-  // },
   {
     label: 'Swap & charts',
     icon: ChartIcon,
@@ -71,36 +65,11 @@ export const links = [
     icon: PredictionIcon,
     href: '#',
   },
-  // {
-  //   label: '... More',
-  //   icon: MoreIcon,
-  //   items: [
-  //     {
-  //       label: 'Contact',
-  //       href: 'https://docs.pancakeswap.finance/contact-us',
-  //     },
-  //     {
-  //       label: 'Voting',
-  //       href: '/voting',
-  //     },
-  //     {
-  //       label: 'Github',
-  //       href: 'https://github.com/pancakeswap',
-  //     },
-  //     {
-  //       label: 'Docs',
-  //       href: 'https://docs.pancakeswap.finance',
-  //     },
-  //     {
-  //       label: 'Blog',
-  //       href: 'https://pancakeswap.medium.com',
-  //     },
-  //     {
-  //       label: 'Merch',
-  //       href: 'https://pancakeswap.creator-spring.com/',
-  //     },
-  //   ],
-  // }
+  {
+    label: 'FAQ',
+    icon: FAQIcon,
+    href: '#',
+  },
 ]
 
 interface MenuSubEntry {
