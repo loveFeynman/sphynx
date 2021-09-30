@@ -68,7 +68,7 @@ export const links = [
   {
     label: 'FAQ',
     icon: FAQIcon,
-    href: '#',
+    href: '/#/faq',
   },
 ]
 
