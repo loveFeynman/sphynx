@@ -76,7 +76,7 @@ export const useLotteryBalance = () => {
     const getBalance = async () => {
       try {
         const data = await sphxContractWeb3.methods.balanceOf(account).call()
-        setBalance(data / 1000000000000000000)
+        setBalance(data / 10 ** 18)
       } catch {
         console.error('balace try error')
         setBalance(0)
