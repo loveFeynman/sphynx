@@ -43,12 +43,13 @@ export default function PotContentTable({ isDetail, lotteryInfo }) {
       for (let i = 6; i > 0; i--) {
         newArray.push({
           number: i,
-          tokens: parseInt(lotteryInfo?.sphynxPerBracket[i - 1]) / 10 ** 18,
+          tokens:
+            (parseInt(lotteryInfo?.sphynxPerBracket[i - 1]) / 10 ** 18) * lotteryInfo?.countWinnersPerBracket[i - 1],
           matchNumber: lotteryInfo?.countWinnersPerBracket[i - 1],
           eachTokens:
             lotteryInfo?.countWinnersPerBracket[i - 1] === '0'
               ? '0'
-              : parseInt(lotteryInfo?.sphynxPerBracket[i - 1]) / 10 ** 18 / lotteryInfo?.countWinnersPerBracket[i - 1],
+              : parseInt(lotteryInfo?.sphynxPerBracket[i - 1]) / 10 ** 18,
         })
       }
     }
