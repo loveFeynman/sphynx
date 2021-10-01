@@ -2,7 +2,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import Nav from 'components/LotteryCardNav'
-import { Image, Heading, RowType, Toggle, Text, Button, ArrowForwardIcon, Flex } from '@sphynxswap/uikit'
+import { Image, Heading, RowType, Toggle, Text, Button, useModal, Flex } from '@sphynxswap/uikit'
 import axios from 'axios'
 import { useSelector } from 'react-redux'
 import { AppState } from '../../../state'
@@ -15,6 +15,7 @@ import { claimTickets } from '../../../hooks/useLottery'
 import { Spinner } from './Spinner'
 import { getTokenPrice } from 'state/info/ws/priceData'
 import { simpleRpcProvider } from 'utils/providers'
+import ViewTickets from './ViewTickets'
 import useToast from 'hooks/useToast'
 
 const Container = styled.div<{ isDetail: boolean }>`
@@ -120,6 +121,8 @@ export default function PrizePotCard({
     message: '',
   })
   const { toastSuccess, toastError } = useToast()
+  const [onPresentViewTicketModal] = useModal(<ViewTickets roundID={roundID} winningCards={winningCards} />)
+
 
   React.useEffect(() => {
     if (toastMessage.title !== '' && toastMessage.title.includes('Error')) {
@@ -252,6 +255,9 @@ export default function PrizePotCard({
             }}
           >
             {t(`Buy Now`)}
+          </ButtonWrapper>
+          <ButtonWrapper isEnable={userTicketInfos.length > 0}style={{ marginTop: '20px' }} onClick={() => onPresentViewTicketModal()}>
+            View your ticket
           </ButtonWrapper>
           {isClaimable && (
             <ButtonWrapper isEnable style={{ marginTop: '10px' }} onClick={handleClaimTickets}>

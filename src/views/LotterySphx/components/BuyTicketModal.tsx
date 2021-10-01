@@ -68,6 +68,7 @@ const Grid = styled.div`
   width: 100%;
   grid-template-columns: repeat(2, auto);
   grid-template-rows: repeat(4, auto);
+  justify-content: space-between;
   margin-top: 20px;
 `
 const GridItem = styled.div<{ isLeft: boolean }>`
@@ -194,7 +195,6 @@ const BuyTicketModal: React.FC<BuyTicketModalProps> = ({ setUpdateUserTicket, on
       setChecked(true)
     }
     isApproved()
-    console.log('lotteryInfo111', lotteryInfo)
   }, [tickets, lotteryInfo])
 
   const randomTickets = useCallback(() => {
@@ -390,18 +390,20 @@ const BuyTicketModal: React.FC<BuyTicketModalProps> = ({ setUpdateUserTicket, on
           <div style={{ borderTop: '1px solid', color: 'white', marginTop: '8px' }}>
             <></>
           </div>
-          <Grid style={{ marginTop: '12px' }}>
-            <GridItem isLeft>
-              <Text bold style={{ textAlign: 'left' }} color="white" fontSize="16px">
-                You Pay
-              </Text>
-            </GridItem>
-            <GridItem isLeft>
-              <Text bold style={{ textAlign: 'right' }} color="white" fontSize="16px">
-                ~{realTokens} SPHYNX
-              </Text>
-            </GridItem>
-          </Grid>
+          <Flex width="100%">
+            <Grid style={{ marginTop: '12px' }}>
+              <GridItem isLeft>
+                <Text bold style={{ textAlign: 'left' }} color="white" fontSize="16px">
+                  You Pay
+                </Text>
+              </GridItem>
+              <GridItem isLeft={false}>
+                <Text bold style={{ textAlign: 'right' }} color="white" fontSize="16px">
+                  ~{realTokens} SPHYNX
+                </Text>
+              </GridItem>
+            </Grid>
+          </Flex>
           <Flex justifyContent="center" alignItems="center" marginTop="20px">
             {
               // account ?

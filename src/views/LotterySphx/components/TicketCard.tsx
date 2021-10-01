@@ -52,7 +52,7 @@ export default function TicketCard({ lastLoteryInfo, roundID }) {
   const [winningCards, setWinningCard] = React.useState([])
   const [totalCount, setTotalCount] = React.useState('')
   const [endTime, setEndTime] = React.useState('')
-  const [onPresentSettingsModal] = useModal(<ViewTickets roundID={roundID} winningCards={winningCards} />)
+  const [onPresentViewTicketModal] = useModal(<ViewTickets roundID={roundID} winningCards={winningCards} />)
 
   const [showDetail, setShowDetail] = React.useState(false)
   const { account } = useWeb3React()
@@ -117,7 +117,7 @@ export default function TicketCard({ lastLoteryInfo, roundID }) {
       </div>
       <SeperateLine />
       <TicketContentTable lastLoteryInfo={lastLoteryInfo} />
-      <ButtonWrapper style={{ margin: '65px 20px 20px' }} onClick={() => onPresentSettingsModal()}>
+      <ButtonWrapper style={{ margin: '65px 20px 20px' }} onClick={() => onPresentViewTicketModal()}>
         View your ticket
       </ButtonWrapper>
       <div style={{ display: 'flex', justifyContent: 'center', paddingBottom: '36px' }}>
