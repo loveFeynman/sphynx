@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { ButtonMenu, ButtonMenuItem } from '@sphynxswap/uikit'
+import { Button} from '@sphynxswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 
 const StyledNav = styled.div`
@@ -11,43 +11,54 @@ const StyledNav = styled.div`
   font-size: 16px;
   line-height: 19px;
   padding: 20px 0px;
-  & a {
+  & button {
     color: black;
-  }
-  & > div {
-    background: #ffffff;
-    & > button {
-      &:active {
-        outline: none;
-      }
+    height: 24px;
+    padding: 0 16px;
+    background: transparent;
+    border: none;
+    box-shadow: none !important;
+    outline: none;
+    &:hover,
+    &.active {
+      background: #8b2a9b !important;
+      color: white;
     }
   }
-  & .active {
-    background: #8b2a9b;
-    color: white;
-    border-radius: 14px;
-    margin-left: 0px;
-  }
-  & .inactive {
-    background: #ffffff;
-    color: black;
-    border: none;
-  }
 `
+const ButtonMenu = styled.div`
+  background-color: #FFFFFF;
+  color: #0A0A10;
+  border-radius: 16px;
+  display: inline-flex;
+  border: 1px solid #524B63;
+  width: auto;
+}`
 
-const Nav = ({ activeIndex = 0, setActiveIndex }: { activeIndex?: number; setActiveIndex?: any }) => {
+const Nav = ({ activeIndex = 0, handleClick }: { activeIndex?: number; handleClick?: any }) => {
   const { t } = useTranslation()
-
   return (
     <StyledNav>
-      <ButtonMenu activeIndex={activeIndex} scale="sm" variant="primary" onItemClick={setActiveIndex}>
-        <ButtonMenuItem className={activeIndex === 0 ? 'active' : 'inactive'} id="next-lottery-nav-link">
-          {t('Next Draw')}
-        </ButtonMenuItem>
-        <ButtonMenuItem className={activeIndex === 1 ? 'active' : 'inactive'} id="past-lottery-nav-link">
-          {t('Past Draw')}
-        </ButtonMenuItem>
-      </ButtonMenu>
+      <ButtonMenu>
+      <Button
+        className={activeIndex === 0 ? 'active' : ''}
+        id="auto-nav-link"
+        onClick={() => {
+          handleClick(0);
+        }}
+      >
+        {t('Next Draw')}
+      </Button>
+      <Button
+        className={activeIndex === 1 ? 'active' : ''}
+        id="dgsn-nav-link"
+        onClick={() => {
+          handleClick(1);
+        }}
+      >
+        {t('Past Draw')}
+      </Button>      
+      </ButtonMenu> 
     </StyledNav>
   )
 }

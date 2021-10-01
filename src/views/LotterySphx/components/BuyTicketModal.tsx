@@ -68,6 +68,7 @@ const Grid = styled.div`
   width: 100%;
   grid-template-columns: repeat(2, auto);
   grid-template-rows: repeat(4, auto);
+  justify-content: space-between;
   margin-top: 20px;
 `
 const GridItem = styled.div<{ isLeft: boolean }>`
@@ -177,7 +178,6 @@ const BuyTicketModal: React.FC<BuyTicketModalProps> = ({ setUpdateUserTicket, on
           10 ** 18
         ).toFixed(5),
       )
-      console.log((parseInt(lotteryInfo?.priceTicketInSphynx) * parseInt(tickets)) / 10 ** 18)
       setTotalSphynx(((parseInt(lotteryInfo?.priceTicketInSphynx) * parseInt(tickets)) / 10 ** 18).toFixed(2))
       const data = []
       for (let i = 0; i < ticket; i++) {
@@ -194,7 +194,6 @@ const BuyTicketModal: React.FC<BuyTicketModalProps> = ({ setUpdateUserTicket, on
       setChecked(true)
     }
     isApproved()
-    console.log('lotteryInfo111', lotteryInfo)
   }, [tickets, lotteryInfo])
 
   const randomTickets = useCallback(() => {
@@ -233,21 +232,19 @@ const BuyTicketModal: React.FC<BuyTicketModalProps> = ({ setUpdateUserTicket, on
     setLoading(true)
     await buyTickets(signer, roundID, ticketArrays, setLoading, setToastMessage)
     setUpdateUserTicket()
+    setManualTicketGenerate(false)
     onDismiss()
     setLoading(false)
-    setManualTicketGenerate(false)
   }
 
   const handleInstantly = async () => {
     const data = []
-    // setTicketNumbers(input);
     if (tickets === '0') {
       setToastMessage({
         title: 'Error',
         message: 'No tickets',
       })
     }
-    console.log('randomtickets', ticketNumbers)
     if (ticketNumbers.length > 0) {
       ticketNumbers.map((ticket, index) => {
         const ticketnumbers = []
@@ -261,7 +258,6 @@ const BuyTicketModal: React.FC<BuyTicketModalProps> = ({ setUpdateUserTicket, on
         data.push((parseInt(ticketNumber) + 1000000).toString())
         return null
       })
-      console.log('ticketNumbers', data)
       setLoading(true)
       await buyTickets(signer, roundID, data, setLoading, setToastMessage)
       setUpdateUserTicket()
@@ -274,16 +270,14 @@ const BuyTicketModal: React.FC<BuyTicketModalProps> = ({ setUpdateUserTicket, on
 
   const handleTicketInput = (event, index, subIndex) => {
     event.preventDefault()
-    console.log(event.target.value)
-    const data = ticketNumbers
-
+    const data = ticketNumbers;
     data[index].ticketNumbers[subIndex] = event.target.value.toString()
 
     let ticketnumber = ''
     data[index].ticketNumbers.forEach((item) => {
       ticketnumber = ticketnumber.concat(item)
     })
-    data[index].ticketNumber = ticketnumber
+    data[index].ticketnumber = ticketnumber
     setTicketNumbers(data)
     console.log(data)
     setForceValue(forceValue + 1)
@@ -390,18 +384,20 @@ const BuyTicketModal: React.FC<BuyTicketModalProps> = ({ setUpdateUserTicket, on
           <div style={{ borderTop: '1px solid', color: 'white', marginTop: '8px' }}>
             <></>
           </div>
-          <Grid style={{ marginTop: '12px' }}>
-            <GridItem isLeft>
-              <Text bold style={{ textAlign: 'left' }} color="white" fontSize="16px">
-                You Pay
-              </Text>
-            </GridItem>
-            <GridItem isLeft>
-              <Text bold style={{ textAlign: 'right' }} color="white" fontSize="16px">
-                ~{realTokens} SPHYNX
-              </Text>
-            </GridItem>
-          </Grid>
+          <Flex width="100%">
+            <Grid style={{ marginTop: '12px' }}>
+              <GridItem isLeft>
+                <Text bold style={{ textAlign: 'left' }} color="white" fontSize="16px">
+                  You Pay
+                </Text>
+              </GridItem>
+              <GridItem isLeft={false}>
+                <Text bold style={{ textAlign: 'right' }} color="white" fontSize="16px">
+                  ~{realTokens} SPHYNX
+                </Text>
+              </GridItem>
+            </Grid>
+          </Flex>
           <Flex justifyContent="center" alignItems="center" marginTop="20px">
             {
               // account ?
@@ -510,7 +506,7 @@ const BuyTicketModal: React.FC<BuyTicketModalProps> = ({ setUpdateUserTicket, on
             </Flex>
           ))}
           <ApplyButton className="selected" onClick={handleApply} style={{ width: '100%', marginTop: '20px' }}>
-            Confirm and Buy
+            {isLoading ? <Spinner /> : 'Confirm and Buy'}
           </ApplyButton>
         </Flex>
       )}
