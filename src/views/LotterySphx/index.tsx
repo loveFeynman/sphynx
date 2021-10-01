@@ -215,8 +215,9 @@ export default function Lottery() {
   React.useEffect(() => {
     if (lastLoteryInfo !== null) {
       const arrayData = []
+      const winningCardNumber = reverseString(lastLoteryInfo.finalNumber.toString());
       for (let i = 0; i <= 5; i++) {
-        arrayData.push(reverseString(lastLoteryInfo.finalNumber.toString()).charAt(i))
+        arrayData.push(winningCardNumber.charAt(i))
       }
       setWinningCard(arrayData)
     }

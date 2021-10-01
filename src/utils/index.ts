@@ -117,6 +117,5 @@ export function reverseString(str) {
   const splitString = str.split(""); 
   const reverseArray = splitString.reverse(); 
   const joinArray = reverseArray.join("");
-  console.log(joinArray)
   return joinArray;
 }
