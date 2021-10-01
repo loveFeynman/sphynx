@@ -129,7 +129,6 @@ const ContractPanelOverlay = styled.div`
 export default function ContractPanel({ value }: ContractPanelProps) {
   const [addressSearch, setAddressSearch] = useState('')
   const [show, setShow] = useState(true)
-  const [anchorEl, setAnchorEl] = useState(null)
   const [showDrop, setShowDrop] = useState(false)
   const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
 
@@ -187,14 +186,6 @@ export default function ContractPanel({ value }: ContractPanelProps) {
     }
   }
 
-  const handleClick = (event: any) => {
-    setAnchorEl(event.currentTarget)
-    setShowDrop(true)
-  }
-
-  const handleClose = () => {
-    setAnchorEl(null)
-  }
   const submitFuntioncall = () => {
     dispatch(typeInput({ input: addressSearch }))
     dispatch(

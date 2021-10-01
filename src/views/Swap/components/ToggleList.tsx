@@ -83,7 +83,7 @@ const ToggleList = ({ poolDatas }: { poolDatas: PoolData[] }) => {
 
   const [showDrop, setShowDrop] = useState(false)
 
-  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+  const handleClick = () => {
     setShowDrop(true)
   }
 
@@ -103,10 +103,8 @@ const ToggleList = ({ poolDatas }: { poolDatas: PoolData[] }) => {
     newMenuItems = [...newMenuItems, ...RouterTypeToggle]
     setMenuItems(newMenuItems)
 
-    let found = false
     newMenuItems.forEach((item) => {
       if (item.key === routerVersion) {
-        found = true
         setSelectedItem(item.value)
       }
     })
@@ -124,7 +122,7 @@ const ToggleList = ({ poolDatas }: { poolDatas: PoolData[] }) => {
         </Button>
         {showDrop && (
           <MenuWrapper>
-            {menuItems.map((item: any, index: number) => {
+            {menuItems.map((item: any) => {
               return (
                 <MenuItem
                   onClick={() => {

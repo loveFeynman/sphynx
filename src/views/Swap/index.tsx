@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import styled from 'styled-components'
 import { useLocation } from 'react-router'
 import { CurrencyAmount, JSBI, Token, Trade } from '@sphynxswap/sdk'
-import { Button, Text, ArrowDownIcon, Box, useModal, Flex, Link, useMatchBreakpoints } from '@sphynxswap/uikit'
+import { Button, Text, ArrowDownIcon, Box, useModal, Flex, Link } from '@sphynxswap/uikit'
 import { useIsTransactionUnsupported } from 'hooks/Trades'
 import { RouteComponentProps } from 'react-router-dom'
 import { useTranslation } from 'contexts/Localization'
@@ -22,7 +22,6 @@ import { ReactComponent as DownArrow } from 'assets/svg/icon/DownArrow.svg'
 import FarmBanner from 'assets/images/farmbanner.png'
 import StakingBanner from 'assets/images/stakebanner.png'
 import BannerWrapper from 'components/BannerWrapper'
-import moment from 'moment'
 import axios from 'axios'
 import { typeInput } from 'state/input/actions'
 import { BITQUERY_API, BITQUERY_API_KEY } from 'config/constants/endpoints'
@@ -66,7 +65,6 @@ import BuyersCard from './components/BuyersCard'
 import SellersCard from './components/SellersCard'
 import SwapWarningModal from './components/SwapWarningModal'
 import DividendPanel from './components/DividendPanel'
-import { HotTokenType, TokenDetailProps } from './components/types'
 
 const ArrowContainer = styled(ArrowWrapper)`
   width: 32px;
@@ -169,7 +167,6 @@ const SwapPage = styled(Page)`
 `
 
 export default function Swap({ history }: RouteComponentProps) {
-  const [address, setaddress] = useState('')
   const dispatch = useDispatch()
   const { pathname } = useLocation()
   const tokenAddress = pathname.substr(6)
@@ -207,8 +204,6 @@ export default function Swap({ history }: RouteComponentProps) {
 
   // get custom setting values for user
   const [allowedSlippage, setUserSlippageTolerance] = useUserSlippageTolerance()
-  // setUserSlippageTolerance(100);
-  const { isMd } = useMatchBreakpoints()
 
   // swap state
   const { independentField, typedValue, recipient } = useSwapState()
@@ -496,11 +491,6 @@ export default function Swap({ history }: RouteComponentProps) {
     }
   }, [timeNow, countDownDeadline])
 
-  const countSeconds = useMemo(
-    () => moment(countDownDeadline).diff(moment(timeNow), 'seconds'),
-    [timeNow, countDownDeadline],
-  )
-
   return (
     <SwapPage>
       <BannerWrapper />
@@ -709,7 +699,7 @@ export default function Swap({ history }: RouteComponentProps) {
         </div>
         <div>
           <FullHeightColumn>
-            <ContractPanel value={address} />
+            <ContractPanel value='' />
             <CoinStatsBoard />
             <ChartContainer />
           </FullHeightColumn>

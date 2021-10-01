@@ -98,21 +98,6 @@ export default function HotTokenBar() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  //  const fetchData = async () => {
-  //    try {
-  //        setLoader(true);
-  //        const queryResult = await axios.post('https://graphql.bitquery.io/', { query: getDataQuery });
-
-  //        if (queryResult.data.data){
-  //        setData(queryResult.data.data.ethereum.transfers)
-  //        setLoader(false);
-  //    }
-  //  }
-  //    catch (err) {
-
-  //    }
-  //  }
-  // console.log("data in hotbar==================================",data)
   React.useEffect(() => {
     handleClick()
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -148,14 +133,6 @@ export default function HotTokenBar() {
                           dispatch(setIsInput({ isInput: true }))
                         }}
                       >{`${index + 1}. ${elem.currency.symbol}`}</a>
-                      {/* < a href="##">{elem.currency.name}</a> */}
-                      {/* <HotToken
-                   index={key + 1}
-                   // dexId={token.}
-                   symbol={data.symbol}
-                   name={data.name}
-                   direction={data.direction}
-                 /> */}
                     </li>
                   )
                 })}
