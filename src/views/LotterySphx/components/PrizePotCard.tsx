@@ -13,8 +13,6 @@ import DownArrow from 'assets/svg/icon/LotteryDownIcon.svg'
 import PotContentTable from './PotContentTable'
 import { claimTickets } from '../../../hooks/useLottery'
 import { Spinner } from './Spinner'
-import { getTokenPrice } from 'state/info/ws/priceData'
-import { simpleRpcProvider } from 'utils/providers'
 import ViewTickets from './ViewTickets'
 import useToast from 'hooks/useToast'
 
@@ -165,7 +163,6 @@ export default function PrizePotCard({
         brackets.push(bracket)
       }
     })
-    //account, roundID, ticketIds, brackets
 
     setLoading(true)
     await claimTickets(signer, roundID, ticketIDS, brackets, setToastMessage)
@@ -179,9 +176,13 @@ export default function PrizePotCard({
         setEnabled(false)
       } else {
         const date = new Date(lotteryInfo.endTime * 1000 - now.getTime())
+        let day = Math.floor((lotteryInfo.endTime * 1000 - now.getTime())/24/3600000);
         const hours = '0'.toString().concat(date.getUTCHours().toString()).slice(-2)
         const minutes = '0'.toString().concat(date.getUTCMinutes().toString()).slice(-2)
-        setRemainingTime(hours.toString().concat('h ').concat(minutes.toString()).concat('m'))
+        if (day > 0)
+          setRemainingTime(day.toString().concat('d ').concat(hours.toString().concat('h ')).concat(minutes.toString()).concat('m'))
+        else
+          setRemainingTime(hours.toString().concat('h ').concat(minutes.toString()).concat('m'))
         setEnabled(true)
       }
 
