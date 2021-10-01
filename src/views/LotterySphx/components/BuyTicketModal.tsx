@@ -170,15 +170,15 @@ const BuyTicketModal: React.FC<BuyTicketModalProps> = ({ setUpdateUserTicket, on
       )
       setRealTokens(
         (
-          (parseInt(lotteryInfo?.priceTicketInCake) *
+          (parseInt(lotteryInfo?.priceTicketInSphynx) *
             parseInt(tickets) *
             (parseInt(lotteryInfo?.discountDivisor) + 1 - parseInt(tickets))) /
           parseInt(lotteryInfo?.discountDivisor) /
-          1000000000000000000
+          10 ** 18
         ).toFixed(5),
       )
-      console.log((parseInt(lotteryInfo?.priceTicketInCake) * parseInt(tickets)) / 1000000000000000000)
-      setTotalSphynx(((parseInt(lotteryInfo?.priceTicketInCake) * parseInt(tickets)) / 1000000000000000000).toFixed(2))
+      console.log((parseInt(lotteryInfo?.priceTicketInSphynx) * parseInt(tickets)) / 10 ** 18)
+      setTotalSphynx(((parseInt(lotteryInfo?.priceTicketInSphynx) * parseInt(tickets)) / 10 ** 18).toFixed(2))
       const data = []
       for (let i = 0; i < ticket; i++) {
         data.push({ id: i, ticketNumber: 0, ticketNumbers: [], error: false })
@@ -186,7 +186,7 @@ const BuyTicketModal: React.FC<BuyTicketModalProps> = ({ setUpdateUserTicket, on
       setTicketNumbers(data)
     }
     const isApproved = async () => {
-      const maxBuyPrice = 5000 * 1000000000000000000
+      const maxBuyPrice = 5000 * 10 ** 18
       const approved = await getApproveAmount(account)
       if (approved > maxBuyPrice) {
         setEnabled(true)
