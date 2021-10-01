@@ -35,12 +35,12 @@ const StyledNav = styled.div`
   }
 `
 
-const Nav = ({ activeIndex = 0, setActiveIndex }: { activeIndex?: number; setActiveIndex?: any }) => {
+const Nav = ({ activeIndex = 0, handleClick }: { activeIndex?: number; handleClick?: any }) => {
   const { t } = useTranslation()
 
   return (
     <StyledNav>
-      <ButtonMenu activeIndex={activeIndex} scale="sm" variant="primary" onItemClick={setActiveIndex}>
+      <ButtonMenu activeIndex={activeIndex} scale="sm" variant="primary" onItemClick={()=>handleClick(activeIndex)}>
         <ButtonMenuItem className={activeIndex === 0 ? 'active' : 'inactive'} id="next-lottery-nav-link">
           {t('Next Draw')}
         </ButtonMenuItem>

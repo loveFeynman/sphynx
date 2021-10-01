@@ -188,7 +188,8 @@ export default function Lottery() {
   const [winningCards, setWinningCard] = React.useState([])
   const [cursor, setCursor] = React.useState(0)
   const { t } = useTranslation()
-  const [activeIndex, setActiveIndex] = React.useState(0)
+  const [activeIndex, setActiveIndex] = React.useState(0);
+  const [activeLastIndex, setActiveLastIndex] = React.useState(1);
   const [ticketSearch, setTicketSearch] = React.useState('')
   const [showDrop, setShowDrop] = useState(false)
   const [show, setShow] = useState(true)
@@ -211,6 +212,10 @@ export default function Lottery() {
       },
     })
   }, [])
+
+  React.useEffect(() => {
+    console.log("userTicketInfos",userTicketInfos );
+  }, [userTicketInfos])
 
   //
   React.useEffect(() => {
@@ -247,15 +252,24 @@ export default function Lottery() {
 
   React.useEffect(() => {
     const fetchData = async () => {
-      await viewUserInfoForLotteryId(account, roundID.toString(), 0, 2500, setUserInfoTickets)
+      await viewUserInfoForLotteryId(account, roundID.toString(), 0, 2500, setUserInfoTickets);
     }
-    fetchData()
-    setForceValue(forceValue + 1)
+    fetchData();
+    setForceValue(forceValue + 1);
   }, [account, roundID, cursor, userUpdateTicket])
 
-  const handleItemClick = () => {
-    if (activeIndex === 0) setActiveIndex(1)
-    else setActiveIndex(0)
+  const handleItemClick = (index) => {
+    console.log(activeLastIndex, activeIndex, index);
+    // if (activeLastIndex === index)
+    //   return;
+    if (activeIndex === 0) {
+      setActiveLastIndex(1);
+      setActiveIndex(1)
+    } else {
+      setActiveLastIndex(0);
+      setActiveIndex(0)
+    } 
+      
   }
 
   const submitFuntioncall = () => {
@@ -352,7 +366,7 @@ export default function Lottery() {
         </Grid>
       </PageHeader>
       <div>
-        <Nav activeIndex={activeIndex} setActiveIndex={handleItemClick} />
+        <Nav activeIndex={activeIndex} handleClick={handleItemClick} />
       </div>
       {activeIndex === 0 && (
         <>
