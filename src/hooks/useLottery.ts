@@ -8,6 +8,7 @@ import sphynx from 'assets/abis/sphynx.json'
 import { simpleRpcProvider } from '../utils/providers'
 import { getLotteryV2Address, getSphynxAddress } from 'utils/addressHelpers'
 import getNodeUrl from 'utils/getRpcUrl'
+import { reverseString } from 'utils'
 
 const lotteryAddress = getLotteryV2Address()
 const sphynxAddress = getSphynxAddress()
@@ -174,7 +175,7 @@ export const viewUserInfoForLotteryId = async (
     const dataArray = response[0].map((item, index) => {
       return {
         id: response[0][index].toString(),
-        ticketnumber: response[1][index].toString(),
+        ticketnumber: reverseString(response[1][index].toString()),
         status: response[2][index],
       }
     })

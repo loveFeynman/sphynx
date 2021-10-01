@@ -108,7 +108,7 @@ const ViewTicketModal: React.FC<ViewTicketModalProps> = ({ roundID, winningCards
     userTicketInfos.map((ticket) => {
       let bracket = -1
       for (let i = 0; i <= 5; i++) {
-        if (ticket.ticketnumber.charAt(6 - i) !== winningCards[5 - i]) {
+        if (ticket.ticketnumber.charAt(i) !== winningCards[0]) {
           break
         }
         bracket = i
