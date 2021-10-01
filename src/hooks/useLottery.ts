@@ -171,9 +171,7 @@ export const viewUserInfoForLotteryId = async (
       cursor.toString(),
       perRequestLimit.toString(),
     )
-    console.log("response = ", response);
     const dataArray = response[0].map((item, index) => {
-      
       return {
         id: response[0][index].toString(),
         ticketnumber: response[1][index].toString(),

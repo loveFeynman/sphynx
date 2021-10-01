@@ -212,11 +212,6 @@ export default function Lottery() {
       },
     })
   }, [])
-
-  React.useEffect(() => {
-    console.log("userTicketInfos",userTicketInfos );
-  }, [userTicketInfos])
-
   //
   React.useEffect(() => {
     if (lastLoteryInfo !== null) {
@@ -259,14 +254,9 @@ export default function Lottery() {
   }, [account, roundID, cursor, userUpdateTicket])
 
   const handleItemClick = (index) => {
-    console.log(activeLastIndex, activeIndex, index);
-    // if (activeLastIndex === index)
-    //   return;
     if (activeIndex === 0) {
-      setActiveLastIndex(1);
       setActiveIndex(1)
     } else {
-      setActiveLastIndex(0);
       setActiveIndex(0)
     } 
       

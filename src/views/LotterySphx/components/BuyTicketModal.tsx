@@ -178,7 +178,6 @@ const BuyTicketModal: React.FC<BuyTicketModalProps> = ({ setUpdateUserTicket, on
           10 ** 18
         ).toFixed(5),
       )
-      console.log((parseInt(lotteryInfo?.priceTicketInSphynx) * parseInt(tickets)) / 10 ** 18)
       setTotalSphynx(((parseInt(lotteryInfo?.priceTicketInSphynx) * parseInt(tickets)) / 10 ** 18).toFixed(2))
       const data = []
       for (let i = 0; i < ticket; i++) {
@@ -247,7 +246,6 @@ const BuyTicketModal: React.FC<BuyTicketModalProps> = ({ setUpdateUserTicket, on
         message: 'No tickets',
       })
     }
-    console.log('randomtickets', ticketNumbers)
     if (ticketNumbers.length > 0) {
       ticketNumbers.map((ticket, index) => {
         const ticketnumbers = []
@@ -261,7 +259,6 @@ const BuyTicketModal: React.FC<BuyTicketModalProps> = ({ setUpdateUserTicket, on
         data.push((parseInt(ticketNumber) + 1000000).toString())
         return null
       })
-      console.log('ticketNumbers', data)
       setLoading(true)
       await buyTickets(signer, roundID, data, setLoading, setToastMessage)
       setUpdateUserTicket()
@@ -274,16 +271,14 @@ const BuyTicketModal: React.FC<BuyTicketModalProps> = ({ setUpdateUserTicket, on
 
   const handleTicketInput = (event, index, subIndex) => {
     event.preventDefault()
-    console.log(event.target.value)
-    const data = ticketNumbers
-
+    const data = ticketNumbers;
     data[index].ticketNumbers[subIndex] = event.target.value.toString()
 
     let ticketnumber = ''
     data[index].ticketNumbers.forEach((item) => {
       ticketnumber = ticketnumber.concat(item)
     })
-    data[index].ticketNumber = ticketnumber
+    data[index].ticketnumber = ticketnumber
     setTicketNumbers(data)
     console.log(data)
     setForceValue(forceValue + 1)
