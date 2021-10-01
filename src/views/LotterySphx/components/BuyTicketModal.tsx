@@ -232,14 +232,13 @@ const BuyTicketModal: React.FC<BuyTicketModalProps> = ({ setUpdateUserTicket, on
     setLoading(true)
     await buyTickets(signer, roundID, ticketArrays, setLoading, setToastMessage)
     setUpdateUserTicket()
+    setManualTicketGenerate(false)
     onDismiss()
     setLoading(false)
-    setManualTicketGenerate(false)
   }
 
   const handleInstantly = async () => {
     const data = []
-    // setTicketNumbers(input);
     if (tickets === '0') {
       setToastMessage({
         title: 'Error',
@@ -507,7 +506,7 @@ const BuyTicketModal: React.FC<BuyTicketModalProps> = ({ setUpdateUserTicket, on
             </Flex>
           ))}
           <ApplyButton className="selected" onClick={handleApply} style={{ width: '100%', marginTop: '20px' }}>
-            Confirm and Buy
+            {isLoading ? <Spinner /> : 'Confirm and Buy'}
           </ApplyButton>
         </Flex>
       )}

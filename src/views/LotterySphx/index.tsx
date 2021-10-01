@@ -189,7 +189,6 @@ export default function Lottery() {
   const [cursor, setCursor] = React.useState(0)
   const { t } = useTranslation()
   const [activeIndex, setActiveIndex] = React.useState(0);
-  const [activeLastIndex, setActiveLastIndex] = React.useState(1);
   const [ticketSearch, setTicketSearch] = React.useState('')
   const [showDrop, setShowDrop] = useState(false)
   const [show, setShow] = useState(true)
@@ -254,6 +253,8 @@ export default function Lottery() {
   }, [account, roundID, cursor, userUpdateTicket])
 
   const handleItemClick = (index) => {
+    if (activeIndex === index)
+      return;
     if (activeIndex === 0) {
       setActiveIndex(1)
     } else {
