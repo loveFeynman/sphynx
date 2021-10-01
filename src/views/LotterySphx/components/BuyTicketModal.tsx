@@ -326,9 +326,9 @@ const BuyTicketModal: React.FC<BuyTicketModalProps> = ({ setUpdateUserTicket, on
               required
               style={{ textAlign: 'right', border: 'none' }}
             />
-            <Text fontSize="14px" mr="10px" style={{ textAlign: 'right' }}>
+            {/* <Text fontSize="14px" mr="10px" style={{ textAlign: 'right' }}>
               ~{tickets === '' || tickets === '0' ? '0.00' : (parseFloat(tickets) / 4).toFixed(2)} SPHYNX
-            </Text>
+            </Text> */}
           </InputArea>
           {balance === 0 && (
             <Text style={{ textAlign: 'right' }} color="red" fontSize="14px" mt="8px">
