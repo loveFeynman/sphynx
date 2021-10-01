@@ -172,31 +172,31 @@ const PoolAllocations = () => {
           </Text>
         </Flex>
         <AllocationGrid>
-          <AllocationMatch color="#FFE362" text={t('Matches first %digits%', { digits: 1 })} />
+          <AllocationMatch color="#DD00B2" text={t('Matches first %digits%', { digits: 1 })} />
           <Text textAlign="right" color='white' bold>
             2%
           </Text>
-          <AllocationMatch color="#85C54E" text={t('Matches first %digits%', { digits: 2 })} />
+          <AllocationMatch color="#FF7782" text={t('Matches first %digits%', { digits: 2 })} />
           <Text textAlign="right" color='white' bold>
             3%
           </Text>
-          <AllocationMatch color="#028E75" text={t('Matches first %digits%', { digits: 3 })} />
+          <AllocationMatch color="#998800" text={t('Matches first %digits%', { digits: 3 })} />
           <Text textAlign="right" color='white' bold>
             5%
           </Text>
-          <AllocationMatch color="#36E8F5" text={t('Matches first %digits%', { digits: 4 })} />
+          <AllocationMatch color="#77B2FF" text={t('Matches first %digits%', { digits: 4 })} />
           <Text textAlign="right" color='white' bold>
             10%
           </Text>
-          <AllocationMatch color="#A881FC" text={t('Matches first %digits%', { digits: 5 })} />
+          <AllocationMatch color="#E2879F" text={t('Matches first %digits%', { digits: 5 })} />
           <Text textAlign="right" color='white' bold>
             20%
           </Text>
-          <AllocationMatch color="#D750B2" text={t('Matches all 6')} />
+          <AllocationMatch color="#003EFF" text={t('Matches all 6')} />
           <Text textAlign="right" color='white' bold>
             40%
           </Text>
-          <AllocationMatch color="#BDC2C4" text={t('Burn Pool')} />
+          <AllocationMatch color="#CCCCCC" text={t('Burn Pool')} />
           <Text textAlign="right" color='white' bold>
             20%
           </Text>

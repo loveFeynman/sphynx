@@ -5,7 +5,7 @@ import { Svg, SvgProps, Text, Flex } from '@sphynxswap/uikit'
 export const PinkBall: React.FC<SvgProps> = (props) => {
   return (
     <Svg viewBox="0 0 32 32" {...props}>
-      <circle cx="16" cy="16" r="16" fill="#D750B2" />
+      <circle cx="16" cy="16" r="16" fill="#003EFF" />
       <g style={{ mixBlendMode: 'multiply' }} opacity="0.1">
         <path
           fillRule="evenodd"
@@ -45,7 +45,7 @@ export const PinkBall: React.FC<SvgProps> = (props) => {
 export const LilacBall: React.FC<SvgProps> = (props) => {
   return (
     <Svg viewBox="0 0 32 32" {...props}>
-      <circle cx="16" cy="16" r="16" fill="#A881FC" />
+      <circle cx="16" cy="16" r="16" fill="#E2879F" />
       <g style={{ mixBlendMode: 'multiply' }} opacity="0.1">
         <path
           fillRule="evenodd"
@@ -85,7 +85,7 @@ export const LilacBall: React.FC<SvgProps> = (props) => {
 export const TealBall: React.FC<SvgProps> = (props) => {
   return (
     <Svg viewBox="0 0 32 32" {...props}>
-      <circle cx="16" cy="16" r="16" fill="#1FC7D4" />
+      <circle cx="16" cy="16" r="16" fill="#77B2FF" />
       <g style={{ mixBlendMode: 'multiply' }} opacity="0.1">
         <path
           fillRule="evenodd"
@@ -125,7 +125,7 @@ export const TealBall: React.FC<SvgProps> = (props) => {
 export const AquaBall: React.FC<SvgProps> = (props) => {
   return (
     <Svg viewBox="0 0 32 32" {...props}>
-      <circle cx="16" cy="16" r="16" fill="#31D0AA" />
+      <circle cx="16" cy="16" r="16" fill="#998800" />
       <g style={{ mixBlendMode: 'multiply' }} opacity="0.1">
         <path
           fillRule="evenodd"
@@ -165,7 +165,7 @@ export const AquaBall: React.FC<SvgProps> = (props) => {
 export const GreenBall: React.FC<SvgProps> = (props) => {
   return (
     <Svg viewBox="0 0 32 32" {...props}>
-      <circle cx="16" cy="16" r="16" fill="#93D45A" />
+      <circle cx="16" cy="16" r="16" fill="#FF7782" />
       <g style={{ mixBlendMode: 'multiply' }} opacity="0.1">
         <path
           fillRule="evenodd"
@@ -205,7 +205,7 @@ export const GreenBall: React.FC<SvgProps> = (props) => {
 export const YellowBall: React.FC<SvgProps> = (props) => {
   return (
     <Svg viewBox="0 0 32 32" {...props}>
-      <circle cx="16" cy="16" r="16" fill="#FFC43C" />
+      <circle cx="16" cy="16" r="16" fill="#DD00B2" />
       <g style={{ mixBlendMode: 'multiply' }} opacity="0.1">
         <path
           fillRule="evenodd"
