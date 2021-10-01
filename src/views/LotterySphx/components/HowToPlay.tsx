@@ -49,6 +49,8 @@ const StyledStepCard = styled(Box)`
 
 const StepCardInner = styled(Box)`
   width: 100%;
+  height: auto;
+  min-height: 200px;
   padding: 24px;
   background: rgba(0, 0, 0, 0.4);
   border-radius: 24px;
@@ -60,13 +62,21 @@ const StepCard: React.FC<{ step: Step }> = ({ step }) => {
   return (
     <StyledStepCard width="100%">
       <StepCardInner height={['200px', '180px', null, '200px']}>
-        <Text mb="16px" fontSize="12px" color='white' bold textAlign="right" textTransform="uppercase">
+        <Text mb="16px" fontSize="12px" color="white" bold textAlign="right" textTransform="uppercase">
           {step.label}
         </Text>
         <Heading mb="16px" scale="lg" color="white">
           {step.title}
         </Heading>
         <Text color="white">{step.subtitle}</Text>
+        {step.label.includes('Step 2') ? (
+          <Text bold fontSize="14px" color="white">
+            {' '}
+            First draw will be drawn on Monday, 4th of October 3AM UTC.
+          </Text>
+        ) : (
+          ''
+        )}
       </StepCardInner>
     </StyledStepCard>
   )
@@ -222,7 +232,7 @@ const HowToPlay: React.FC = () => {
     {
       label: t('Step %number%', { number: 2 }),
       title: t('Wait for the Draw'),
-      subtitle: t('There are two draws every day: one every 12 hours.'),
+      subtitle: t('There is one draw every day: one every 24 hours.'),
     },
     {
       label: t('Step %number%', { number: 3 }),
@@ -336,7 +346,7 @@ const HowToPlay: React.FC = () => {
         </Flex>
       </GappedFlex>
       <Divider />
-      <Flex justifyContent="center" alignItems="center" flexDirection={['column', 'column', 'row']} mb='32px'>
+      <Flex justifyContent="center" alignItems="center" flexDirection={['column', 'column', 'row']} mb="32px">
         <img width={240} src="/logo.png" alt="Sphynx" />
         <Flex maxWidth="300px" flexDirection="column">
           <Heading mb="16px" scale="md">
@@ -344,7 +354,7 @@ const HowToPlay: React.FC = () => {
           </Heading>
           <Text>
             {t('Check our in-depth guide on')}{' '}
-            <InlineLink href="/Lottery.pdf" target='_blank'>
+            <InlineLink href="/Lottery.pdf" target="_blank">
               {t('how to play the Sphynx lottery!')}
             </InlineLink>
           </Text>
