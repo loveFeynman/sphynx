@@ -153,7 +153,7 @@ export default function PrizePotCard({
     userTicketInfos.map((ticket) => {
       let bracket = -1
       for (let i = 0; i <= 5; i++) {
-        if (ticket.ticketnumber.charAt(6 - i) !== winningCards[5 - i]) {
+        if (ticket.ticketnumber.charAt(i) !== winningCards[i]) {
           break
         }
         bracket = i
@@ -242,7 +242,7 @@ export default function PrizePotCard({
                 {userTicketInfos?.map((it, index) => (
                   <React.Fragment key={index}>
                     <GridItem isLeft>{it.id}</GridItem>
-                    <GridItem isLeft={false}>{it.ticketnumber.toString().slice(1, 7)}</GridItem>
+                    <GridItem isLeft={false}>{it.ticketnumber.toString().slice(0, 6)}</GridItem>
                   </React.Fragment>
                 ))}
               </Grid>
