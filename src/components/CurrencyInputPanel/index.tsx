@@ -2,14 +2,10 @@ import React from 'react'
 import { Currency, Pair } from '@sphynxswap/sdk'
 import { Button, ChevronDownIcon, Text, useModal, Flex } from '@sphynxswap/uikit'
 import styled from 'styled-components'
-import { darken } from 'polished'
 import { useTranslation } from 'contexts/Localization'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
-import { useCurrencyBalance } from '../../state/wallet/hooks'
 import CurrencySearchModal from '../SearchModal/CurrencySearchModal'
 import { CurrencyLogo, DoubleCurrencyLogo } from '../Logo'
-
-// import { RowBetween } from '../Layout/Row'
 import { Input as NumericalInput } from './NumericalInput'
 
 const InputRow = styled.div<{ selected: boolean }>`
@@ -45,7 +41,6 @@ const CurrencySelectButton = styled(Button).attrs({ variant: 'text', scale: 'xs'
 
   :focus,
   :hover {
-    // background-color: ${({ theme }) => darken(0.05, theme.colors.input)};
     opacity: 0.6;
   }
 
@@ -61,16 +56,6 @@ const CurrencySelectButton = styled(Button).attrs({ variant: 'text', scale: 'xs'
     }
   }
 `
-
-// const LabelRow = styled.div`
-//   display: flex;
-//   flex-flow: row nowrap;
-//   align-items: center;
-//   color: ${({ theme }) => theme.colors.text};
-//   font-size: 0.75rem;
-//   line-height: 1rem;
-//   padding: 0.75rem 1rem 0 1rem;
-// `
 
 const MaxButtonWrapper = styled.div`
   & button {
@@ -92,12 +77,10 @@ const InputPanel = styled.div<{ hideInput?: boolean; isBridge?: boolean }>`
   position: relative;
   border-radius: ${({ hideInput }) => (hideInput ? '8px' : '20px')};
   background-color: ${({ isBridge }) => (isBridge ? 'none' : 'rgb(0,0,0,0.4)')};
-  // z-index: 1;
 `
 
 const Container = styled.div<{ hideInput: boolean }>`
   border-radius: 16px;
-  // background-color: rgba(0, 0, 0, 0.4);
 `
 
 interface CurrencyInputPanelProps {
@@ -136,7 +119,7 @@ export default function CurrencyInputPanel({
   showCommonBases,
 }: CurrencyInputPanelProps) {
   const { account } = useActiveWeb3React()
-  // const selectedCurrencyBalance = useCurrencyBalance(account ?? undefined, currency ?? undefined)
+
   const { t } = useTranslation()
   const translatedLabel = label || t('Input')
 
@@ -151,20 +134,6 @@ export default function CurrencyInputPanel({
   return (
     <InputPanel id={id} isBridge={isBridge}>
       <Container hideInput={hideInput}>
-        {/* {!hideInput && (
-          <LabelRow>
-            <RowBetween>
-              <Text fontSize="14px">{translatedLabel}</Text>
-              {account && (
-                <Text onClick={onMax} fontSize="14px" style={{ display: 'inline', cursor: 'pointer' }}>
-                  {!hideBalance && !!currency && selectedCurrencyBalance
-                    ? t('Balance: %amount%', { amount: selectedCurrencyBalance?.toSignificant(6) ?? '' })
-                    : ' -'}
-                </Text>
-              )}
-            </RowBetween>
-          </LabelRow>
-        )} */}
         <InputRow style={hideInput ? { padding: '0', borderRadius: '8px' } : {}} selected={disableCurrencySelect}>
           <CurrencySelectButton
             selected={!!currency}

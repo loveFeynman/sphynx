@@ -52,7 +52,7 @@ const Wrapper = styled.div`
 `
 
 const PoolTabButtons = ({ stakedOnly, setStakedOnly, hasStakeInFinishedPools, viewMode, setViewMode }) => {
-  const { url, isExact } = useRouteMatch()
+  const { url } = useRouteMatch()
   const { t } = useTranslation()
 
   const viewModeToggle = <ToggleView viewMode={viewMode} onToggle={(mode: ViewMode) => setViewMode(mode)} />

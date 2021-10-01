@@ -1,7 +1,6 @@
 /* eslint-disable no-console */
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import ReactLoading from 'react-loading'
 import { utils } from 'ethers'
 import axios from 'axios'
 import styled from 'styled-components'
@@ -91,8 +90,6 @@ const StyledWrapper = styled.div`
 `
 
 export default function CoinStatsBoard() {
-  // const theme = useContext(ThemeContext)
-
   const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
   const result = isAddress(input)
 
@@ -110,9 +107,7 @@ export default function CoinStatsBoard() {
   const [linkIcon, setLinkIcon] = useState(
     'https://r.poocoin.app/smartchain/assets/0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82/logo.png',
   )
-  // const pricedecimal=parseFloat(alldata.price).toFixed(5);
   const changedecimal: any = parseFloat(alldata.change).toFixed(3)
-  // const set=Math.sign(changedecimal);
   const volumedecimal = parseFloat(alldata.volume).toFixed(3)
   const liquidityV2decimal = parseFloat(alldata.liquidityV2).toFixed(3)
   const liquidityV2BNBdecimal = parseFloat(alldata.liquidityV2BNB).toFixed(3)
@@ -148,8 +143,6 @@ export default function CoinStatsBoard() {
       <StyledWrapper>
         <Column>
           <Flex>
-            {/* { */}
-            {/* tokenInfo ? */}
             <IconWrapper size={32}>
               <img src={linkIcon} alt="Coin icon" />
             </IconWrapper>
@@ -163,7 +156,6 @@ export default function CoinStatsBoard() {
         </Column>
         <Column>
           <Text>Price</Text>
-          {/* <Text>$ {Number(alldata.price).toLocaleString()}</Text> */}
           <Text>${Number(alldata.price).toFixed(6).toLocaleString()}</Text>
         </Column>
         <Column>
@@ -171,7 +163,6 @@ export default function CoinStatsBoard() {
           <Text>
             <h2 className={Math.sign(changedecimal) === -1 ? 'error' : 'success'}> {changedecimal}%</h2>
           </Text>
-          {/* <Text>{changedecimal}%</Text> */}
         </Column>
         <Column>
           <Text>24h Volume</Text>
@@ -179,7 +170,6 @@ export default function CoinStatsBoard() {
         </Column>
         <Column style={{ margin: '0 0 8px 0' }}>
           <Text>Liquidity</Text>
-          {/* <Text>{Number(liquidityV2BNBdecimal).toLocaleString()} BNB<span className='success'> (${Number(liquidityV2decimal).toLocaleString()})</span></Text> */}
           <Text>
             {Number(liquidityV2BNBdecimal).toLocaleString()} BNB
             <span className="success"> (${Number(liquidityV2decimal).toLocaleString()})</span>

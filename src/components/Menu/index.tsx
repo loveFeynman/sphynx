@@ -89,7 +89,6 @@ const WalletHeading = styled.div<{ toggled: boolean }>`
   align-items: center;
   background: #8b2a9b;
   width: 100%;
-  // height: 56px;
   padding: ${(props) => (props.toggled ? '0' : '0 48px')};
   padding-top: 12px;
   padding-bottom: 12px;
@@ -241,29 +240,18 @@ const RemoveIconWrapper = styled.div`
 const TokenIconContainer = styled.div`
   position: relative;
 `
-const Menu = (props) => {
+const Menu = () => {
   const { account } = useWeb3React()
   const { menuToggled, toggleMenu } = useMenuToggle()
   const { removedAssets, setRemovedAssets } = useRemovedAssets()
   const [showAllToken, setShowAllToken] = useState(true)
 
-  const [walletbalance, setWalletBalance] = useState(0)
   const dispatch = useDispatch()
   const { pathname } = useLocation()
   const realPath = `/#${pathname}`
 
   const [sum, setSum] = useState(0)
   const [getAllToken, setAllTokens] = useState([])
-
-  const getBalance = () => {
-    const testnet = 'https://bsc-dataseed1.defibit.io'
-    const web3 = new Web3(new Web3.providers.HttpProvider(testnet))
-    const balance =
-      account &&
-      web3.eth.getBalance(account).then((res: any) => {
-        setWalletBalance(res / 1000000000000000000)
-      })
-  }
 
   const getDataQuery = `
   {

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
-import { Flex, Text, Button, useModal } from '@sphynxswap/uikit'
+import { Flex, Text, useModal } from '@sphynxswap/uikit'
 import DividendModal from 'components/Menu/GlobalSettings/DividendModal'
 import axios from 'axios'
 import Web3 from 'web3'

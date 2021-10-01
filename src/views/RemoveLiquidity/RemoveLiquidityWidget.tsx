@@ -4,21 +4,19 @@ import { splitSignature } from '@ethersproject/bytes'
 import { Contract } from '@ethersproject/contracts'
 import { TransactionResponse } from '@ethersproject/providers'
 import { Currency, currencyEquals, ETHER, Percent, WETH } from '@sphynxswap/sdk'
-import { Button, Text, AddIcon, ArrowDownIcon, CardBody, Slider, Box, Flex, useModal } from '@sphynxswap/uikit'
-import { RouteComponentProps } from 'react-router'
+import { Button, Text, AddIcon, ArrowDownIcon, Slider, Box, Flex, useModal } from '@sphynxswap/uikit'
 import { BigNumber } from '@ethersproject/bignumber'
 import { useTranslation } from 'contexts/Localization'
 import { AutoColumn, ColumnCenter } from '../../components/Layout/Column'
 import TransactionConfirmationModal, { ConfirmationModalContent } from '../../components/TransactionConfirmationModal'
 import CurrencyInputPanel from '../../components/CurrencyInputPanel'
 import { MinimalPositionCard } from '../../components/PositionCard'
-import { AppHeader, AppBody } from '../../components/App'
+import { AppHeader } from '../../components/App'
 import { AutoRow, RowBetween, RowFixed } from '../../components/Layout/Row'
 import ConnectWalletButton from '../../components/ConnectWalletButton'
 import { LightGreyCard } from '../../components/Card'
 
 import { CurrencyLogo, DoubleCurrencyLogo } from '../../components/Logo'
-// import { ROUTER_ADDRESS, PANCAKE_ROUTER_ADDRESS } from '../../config/constants'
 import useActiveWeb3React from '../../hooks/useActiveWeb3React'
 import { useCurrency } from '../../hooks/Tokens'
 import { usePairContract, useRouterAddress } from '../../hooks/useContract'
@@ -37,7 +35,6 @@ import { useBurnActionHandlers, useDerivedBurnInfo, useBurnState } from '../../s
 
 import { Field } from '../../state/burn/actions'
 import { useUserSlippageTolerance } from '../../state/user/hooks'
-import Page from '../Page'
 
 const ArrowContainer = styled(ColumnCenter)`
   width: 32px;

@@ -5,7 +5,6 @@ import Balance from 'components/Balance'
 import { Pool } from 'state/types'
 import { useTranslation } from 'contexts/Localization'
 import { getAprData } from 'views/Pools/helpers'
-import { getAddress } from 'utils/addressHelpers'
 
 interface AprProps extends FlexProps {
   pool: Pool

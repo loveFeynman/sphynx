@@ -1,8 +1,6 @@
 import React, { useMemo } from 'react'
-import styled from 'styled-components'
 import { Pair } from '@sphynxswap/sdk'
-import { Text, Flex, CardBody, CardFooter, Button, AddIcon } from '@sphynxswap/uikit'
-import { Link } from 'react-router-dom'
+import { Text, CardBody, CardFooter, Button, AddIcon } from '@sphynxswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import AddLiquidityWidget from 'views/AddLiquidity/AddLiquidityWidget'
@@ -13,12 +11,7 @@ import { usePairs } from '../../hooks/usePairs'
 import { useSwapType, useSetRouterType } from '../../state/application/hooks'
 import { toV2LiquidityToken, useTrackedTokenPairs } from '../../state/user/hooks'
 import Dots from '../../components/Loader/Dots'
-import { AppHeader, AppBody } from '../../components/App'
-// import Page from '../Page'
-
-const Body = styled(CardBody)`
-  background-color: ${({ theme }) => theme.colors.dropdownDeep};
-`
+import { AppHeader } from '../../components/App'
 
 export default function LiquidityWidget() {
   const { account } = useActiveWeb3React()
@@ -100,16 +93,6 @@ export default function LiquidityWidget() {
           <AppHeader title={t('Your Liquidity')} subtitle={t('Remove liquidity to receive tokens back')} />
           <CardBody style={{ padding: '24px 0px' }}>
             {renderBody()}
-            {/* {account && !v2IsLoading && (
-                  <Flex flexDirection="column" alignItems="center" mt="24px">
-                    <Text color="textSubtle" mb="8px">
-                      {t("Don't see a pool you joined?")}
-                    </Text>
-                    <Button id="import-pool-link" variant="secondary" scale="sm" as={Link} to="/find">
-                      {t('Find other LP tokens')}
-                    </Button>
-                  </Flex>
-                )} */}
           </CardBody>
           <CardFooter style={{ textAlign: 'center', padding: '24px 0px 0px' }}>
             <Button

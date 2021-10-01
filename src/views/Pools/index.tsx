@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 import BigNumber from 'bignumber.js'
 import { useWeb3React } from '@web3-react/core'
-import { Heading, Flex, Image, Text } from '@sphynxswap/uikit'
+import { Heading, Flex, Text } from '@sphynxswap/uikit'
 import orderBy from 'lodash/orderBy'
 import partition from 'lodash/partition'
 import { useTranslation } from 'contexts/Localization'
@@ -22,7 +22,6 @@ import PoolCard from './components/PoolCard'
 import CakeVaultCard from './components/CakeVaultCard'
 import PoolTabButtons from './components/PoolTabButtons'
 import BountyCard from './components/BountyCard'
-import HelpButton from './components/HelpButton'
 import PoolsTable from './components/PoolsTable/PoolsTable'
 import { ViewMode } from './components/ToggleView/ToggleView'
 import { getAprData, getCakeVaultEarnings } from './helpers'
@@ -101,9 +100,6 @@ const Pools: React.FC = () => {
   const performanceFeeAsDecimal = performanceFee && performanceFee / 100
 
   const pools = useMemo(() => {
-    const cakePool = poolsWithoutAutoVault.find((pool) => pool.sousId === 0)
-    // const cakeAutoVault = { ...cakePool, isAutoVault: true }
-    // return [cakeAutoVault, ...poolsWithoutAutoVault]
     return poolsWithoutAutoVault
   }, [poolsWithoutAutoVault])
 

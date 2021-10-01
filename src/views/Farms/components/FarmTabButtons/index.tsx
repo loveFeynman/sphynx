@@ -9,7 +9,6 @@ interface FarmTabButtonsProps {
 }
 
 const FarmTabButtons: React.FC<FarmTabButtonsProps> = ({ hasStakeInFinishedFarms }) => {
-  const { url } = useRouteMatch()
   const location = useLocation()
   const { t } = useTranslation()
 

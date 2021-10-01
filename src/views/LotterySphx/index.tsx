@@ -18,7 +18,7 @@ import PrizePotCard from './components/PrizePotCard'
 import TicketCard from './components/TicketCard'
 import History from './components/LotteryHistory'
 import HowToPlay from './components/HowToPlay'
-import { isAddress, getBscScanLink } from '../../utils'
+import { isAddress, getBscScanLink, reverseString } from '../../utils'
 import BuyTicketModal from './components/BuyTicketModal'
 import {
   useLotteryBalance,
@@ -215,8 +215,9 @@ export default function Lottery() {
   React.useEffect(() => {
     if (lastLoteryInfo !== null) {
       const arrayData = []
-      for (let i = 1; i <= 6; i++) {
-        arrayData.push(lastLoteryInfo.finalNumber.toString().charAt(i))
+      const winningCardNumber = reverseString(lastLoteryInfo.finalNumber.toString());
+      for (let i = 0; i <= 5; i++) {
+        arrayData.push(winningCardNumber.charAt(i))
       }
       setWinningCard(arrayData)
     }

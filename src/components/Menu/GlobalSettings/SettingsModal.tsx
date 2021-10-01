@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
-import { Text, PancakeToggle, Toggle, Flex, Modal, InjectedModalProps, Button } from '@sphynxswap/uikit'
+import { Text, Toggle, Flex, Modal, InjectedModalProps, Button } from '@sphynxswap/uikit'
 import { useAudioModeManager, useExpertModeManager, useUserSingleHopOnly } from 'state/user/hooks'
 import { useTranslation } from 'contexts/Localization'
 import { useSwapActionHandlers } from 'state/swap/hooks'
@@ -8,13 +8,6 @@ import usePersistState from 'hooks/usePersistState'
 import QuestionHelper from '../../QuestionHelper'
 import TransactionSettings from './TransactionSettings'
 import ExpertModal from './ExpertModal'
-
-// TODO: Temporary. Once uikit is merged with this style change, this can be removed.
-const PancakeToggleWrapper = styled.div`
-  .pancakes {
-    position: absolute;
-  }
-`
 
 const ApplyButton = styled(Button)`
   bottom: 16px;

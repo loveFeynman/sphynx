@@ -12,6 +12,7 @@ import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import { useLotteryBalance, approveCall, buyTickets, getApproveAmount } from '../../../hooks/useLottery'
 import { Spinner } from './Spinner'
 import useToast from 'hooks/useToast'
+import { reverseString } from 'utils'
 
 // eslint-disable
 
@@ -228,7 +229,7 @@ const BuyTicketModal: React.FC<BuyTicketModalProps> = ({ setUpdateUserTicket, on
         message: 'No tickets',
       })
     }
-    ticketNumbers.forEach((item) => ticketArrays.push((parseInt(item.ticketnumber) + 1000000).toString()))
+    ticketNumbers.forEach((item) => ticketArrays.push('1'.concat(reverseString((parseInt(item.ticketnumber).toString())))));
     setLoading(true)
     await buyTickets(signer, roundID, ticketArrays, setLoading, setToastMessage)
     setUpdateUserTicket()

@@ -1,8 +1,8 @@
 import React, { useCallback, useState } from 'react'
 import styled from 'styled-components'
-import { Image, Heading, RowType, Toggle, Text, Button, ArrowForwardIcon, Flex } from '@sphynxswap/uikit'
+import { Button } from '@sphynxswap/uikit'
 import { useTranslation } from 'contexts/Localization'
-import { Currency, currencyEquals, ETHER, TokenAmount, WETH } from '@sphynxswap/sdk'
+import { Currency, currencyEquals, TokenAmount, WETH } from '@sphynxswap/sdk'
 import { ReactComponent as ArrowRightIcon } from 'assets/svg/icon/ArrowRight.svg'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import { Field } from '../../../state/mint/actions'
@@ -93,7 +93,7 @@ const ConnectWalletButton = styled.div`
   text-align: -webkit-center;
 `
 export default function BridgeCard({ label, isSpynx = false }) {
-  const { account, chainId, library } = useActiveWeb3React()
+  const { chainId } = useActiveWeb3React()
 
   const { liquidityPairA, setLiquidityPairA } = useLiquidityPairA()
   const { liquidityPairB, setLiquidityPairB } = useLiquidityPairB()
@@ -170,10 +170,12 @@ export default function BridgeCard({ label, isSpynx = false }) {
   )
   const handleMaxClick = () => {
     console.log('max clicked')
+
   }
 
   const handleSwitchClick = () => {
-    console.log('max clicked')
+    console.log('switch clicked')
+
   }
 
   return (

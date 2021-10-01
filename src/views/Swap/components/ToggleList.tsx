@@ -4,14 +4,11 @@ import styled from 'styled-components'
 
 import { PoolData } from 'state/info/types'
 import { ToggleMenuItem, RouterTypeToggle } from 'config/constants/types'
-import { getUnixTime, startOfHour, Duration, sub } from 'date-fns'
 
 // eslint-disable-next-line import/no-unresolved
 import './dropdown.css'
 import Button from '@material-ui/core/Button'
-import Menu from '@material-ui/core/Menu'
 import MenuItem from '@material-ui/core/MenuItem'
-import Fade from '@material-ui/core/Fade'
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown'
 import { AppState } from '../../../state'
 import { typeRouterVersion } from '../../../state/input/actions'
@@ -24,7 +21,6 @@ const ToggleWrapper = styled.div`
   min-width: 200px;
   flex: 1;
   border-radius: 16px;
-  // margin: 12px 0;
   padding: 0 4px;
   background: rgba(0, 0, 0, 0.4);
   display: flex;
@@ -83,18 +79,15 @@ const ToggleList = ({ poolDatas }: { poolDatas: PoolData[] }) => {
 
   const [menuItems, setMenuItems] = useState([])
 
-  const [anchorEl, setAnchorEl] = React.useState(null)
   const [selectedItem, setSelectedItem] = React.useState('')
 
   const [showDrop, setShowDrop] = useState(false)
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget)
     setShowDrop(true)
   }
 
   const handleClose = () => {
-    setAnchorEl(null)
     setShowDrop(false)
   }
 
@@ -108,15 +101,6 @@ const ToggleList = ({ poolDatas }: { poolDatas: PoolData[] }) => {
       })
     }
     newMenuItems = [...newMenuItems, ...RouterTypeToggle]
-    // console.log('poolDatas.length=', poolDatas.length, ', checksumAddress=', checksumAddress)
-    // console.log('toggleMenuItem=', newMenuItems)
-
-    // poolDatas.forEach((poolData: PoolData) => {
-    //   newMenuItems.push({
-    //     key: poolData.address,
-    //     value: `${poolData.token0.symbol}/${poolData.token1.symbol}`
-    //   })
-    // })
     setMenuItems(newMenuItems)
 
     let found = false
@@ -126,10 +110,6 @@ const ToggleList = ({ poolDatas }: { poolDatas: PoolData[] }) => {
         setSelectedItem(item.value)
       }
     })
-    // if (!found) {
-    //   dispatch(typeRouterVersion({ routerVersion: RouterTypeToggle[1].key }))
-    //   setSelectedItem(RouterTypeToggle[1].value)
-    // }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [poolDatas, routerVersion])
 

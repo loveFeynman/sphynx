@@ -3,11 +3,7 @@
 import React, { useState, useCallback, useEffect, useMemo } from 'react'
 import styled from 'styled-components'
 import { Text, Flex, Modal, InjectedModalProps, Button, Input } from '@sphynxswap/uikit'
-
-import { useAudioModeManager, useExpertModeManager, useUserSingleHopOnly } from 'state/user/hooks'
 import { useTranslation } from 'contexts/Localization'
-import { useSwapActionHandlers } from 'state/swap/hooks'
-import usePersistState from 'hooks/usePersistState'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import { Spinner } from './Spinner'
 import { useLotteryBalance, viewUserInfoForLotteryId, claimTickets } from '../../../hooks/useLottery'
@@ -66,12 +62,10 @@ interface ViewTicketModalProps extends InjectedModalProps {
 const ViewTicketModal: React.FC<ViewTicketModalProps> = ({ roundID, winningCards, onDismiss }) => {
   const { account, library } = useActiveWeb3React()
   const signer = library.getSigner()
-  const [manualTicketGenerate, setManualTicketGenerate] = useState(false)
   const [isLoading, setLoading] = useState(false)
   const [isFetch, setIsFetch] = useState(false)
   const { t } = useTranslation()
   const [userTicketInfos, setInfoTickets] = React.useState([])
-  const [forceValue, setForceValue] = useState(0) // integer state
   const [isClaimable, setClaimable] = React.useState(true)
   const { toastSuccess, toastError } = useToast()
 
@@ -114,7 +108,7 @@ const ViewTicketModal: React.FC<ViewTicketModalProps> = ({ roundID, winningCards
     userTicketInfos.map((ticket) => {
       let bracket = -1
       for (let i = 0; i <= 5; i++) {
-        if (ticket.ticketnumber.charAt(6 - i) !== winningCards[5 - i]) {
+        if (ticket.ticketnumber.charAt(i) !== winningCards[i]) {
           break
         }
         bracket = i

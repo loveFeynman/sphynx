@@ -3,15 +3,11 @@
 /* eslint-disable no-console */
 import React, { useState, useCallback } from 'react'
 import styled from 'styled-components'
-import { Link } from '@sphynxswap/uikit'
 import Marquee from 'react-fast-marquee'
 import { useDispatch, useSelector } from 'react-redux'
 import axios from 'axios'
 import moment from 'moment'
 import ReactLoading from 'react-loading'
-// import { ReactComponent as HelpIcon } from 'assets/svg/icon/HelpIcon.svg'
-// import { ReactComponent as DownRedArrowIcon} from 'assets/svg/icon/DownRedArrowIcon.svg'
-// import { ReactComponent as UpGreenArrowIcon} from 'assets/svg/icon/UpGreenArrowIcon.svg'
 import { BITQUERY_API, BITQUERY_API_KEY } from 'config/constants/endpoints'
 import { HotTokenType } from './types'
 import { AppState } from '../../../state'
@@ -50,46 +46,6 @@ const BarIntro = styled.div`
     line-height: 14px;
   }
 `
-
-// const StyledLink = styled(Link)`
-//   display: flex;
-//   align-items: center;
-//   width: fit-content;
-//   margin-left: 16px;
-//   &:hover {
-//     text-decoration: none;
-//   }
-//   & svg {
-//     margin-right: 8px;
-//   }
-//   & span:last-child {
-//     font-weight: bold;
-//     color: white;
-//     text-transform: uppercase;
-//   }
-// `;
-
-// const RankingColor = [
-//   '#F7931A',
-//   '#ACACAC',
-//   '#6E441E',
-//   '#C5C5C5',
-//   '#C5C5C5',
-//   '#C5C5C5',
-//   '#C5C5C5',
-//   '#C5C5C5',
-//   '#C5C5C5',
-//   '#C5C5C5',
-//   '#C5C5C5',
-//   '#C5C5C5'
-// ]
-
-// const Ranking = styled.span<{
-//   index1: number
-// }>`
-//   padding-right: 8px;
-//   color: ${({index1}) => RankingColor[index1 - 1]};
-// `
 
 export default function HotTokenBar() {
   const [data, setData] = React.useState([

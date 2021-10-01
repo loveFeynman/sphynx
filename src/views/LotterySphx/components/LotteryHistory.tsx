@@ -1,11 +1,8 @@
 import React from 'react'
 import styled from 'styled-components'
-
 import { Text } from '@sphynxswap/uikit'
 import { useTranslation } from 'contexts/Localization'
-
-import { AreaChart, XAxis, YAxis, Area, Tooltip, CartesianGrid, Legend, Line } from 'recharts'
-import moment from 'moment'
+import { AreaChart, XAxis, YAxis, Area } from 'recharts'
 
 const Container = styled.div`
   max-width: 340px;
@@ -50,15 +47,7 @@ const greenData = [
   },
 ]
 
-const blueData = [
-  { x: 'A', y: 12 },
-  { x: 'B', y: 2 },
-  { x: 'C', y: 11 },
-]
-
 export default function History() {
-  const [totalCount, setTotalCount] = React.useState(33432)
-  const [showDetail, setShowDetail] = React.useState(false)
   const { t } = useTranslation()
 
   return (

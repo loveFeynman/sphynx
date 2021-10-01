@@ -5,7 +5,6 @@ import { useLocation } from 'react-router'
 import { CurrencyAmount, JSBI, Token, Trade } from '@sphynxswap/sdk'
 import { Button, Text, ArrowDownIcon, Box, useModal, Flex, Link, useMatchBreakpoints } from '@sphynxswap/uikit'
 import { useIsTransactionUnsupported } from 'hooks/Trades'
-import UnsupportedCurrencyFooter from 'components/UnsupportedCurrencyFooter'
 import { RouteComponentProps } from 'react-router-dom'
 import { useTranslation } from 'contexts/Localization'
 import SwapWarningTokens from 'config/constants/swapWarningTokens'
@@ -20,10 +19,6 @@ import { AppHeader } from 'components/App'
 
 import { useSwapType, useSwapTransCard } from 'state/application/hooks'
 import { ReactComponent as DownArrow } from 'assets/svg/icon/DownArrow.svg'
-import { ReactComponent as HelpIcon } from 'assets/svg/icon/HelpIcon.svg'
-import { ReactComponent as HelpIcon1 } from 'assets/svg/icon/HelpIcon1.svg'
-import BinanceLogo from 'assets/images/binance-logo.png'
-// import SwapBanner from 'assets/images/DogeBanner1.png'
 import FarmBanner from 'assets/images/farmbanner.png'
 import StakingBanner from 'assets/images/stakebanner.png'
 import BannerWrapper from 'components/BannerWrapper'
@@ -38,7 +33,6 @@ import CurrencyInputPanel from '../../components/CurrencyInputPanel'
 import AdvancedSwapDetailsDropdown from './components/AdvancedSwapDetailsDropdown'
 import confirmPriceImpactWithoutFee from './components/confirmPriceImpactWithoutFee'
 import { ArrowWrapper, SwapCallbackError, Wrapper } from './components/styleds'
-// import TradePrice from './components/TradePrice'
 import ImportTokenWarningModal from './components/ImportTokenWarningModal'
 import ProgressSteps from './components/ProgressSteps'
 import TokenInfo from './components/TokenInfo'
@@ -50,12 +44,10 @@ import ContractPanel from './components/ContractPanel'
 import LiquidityWidget from '../Pool/LiquidityWidget'
 import ChartContainer from './components/Chart'
 
-// import { INITIAL_ALLOWED_SLIPPAGE } from '../../config/constants'
 import useActiveWeb3React from '../../hooks/useActiveWeb3React'
 import { useCurrency, useAllTokens } from '../../hooks/Tokens'
 import { ApprovalState, useApproveCallbackFromTrade } from '../../hooks/useApproveCallback'
 import { useSwapCallback } from '../../hooks/useSwapCallback'
-// import useRouterType, { RouterType } from '../../hooks/useRouterType'
 import useWrapCallback, { WrapType } from '../../hooks/useWrapCallback'
 import { Field } from '../../state/swap/actions'
 import {
@@ -74,9 +66,7 @@ import BuyersCard from './components/BuyersCard'
 import SellersCard from './components/SellersCard'
 import SwapWarningModal from './components/SwapWarningModal'
 import DividendPanel from './components/DividendPanel'
-
 import { HotTokenType, TokenDetailProps } from './components/types'
-import { AppState, AppDispatch } from '../../state'
 
 const ArrowContainer = styled(ArrowWrapper)`
   width: 32px;
@@ -97,15 +87,6 @@ const ArrowContainer = styled(ArrowWrapper)`
   }
 `
 
-// const ArrowContent = styled.div`
-//   display: flex;
-//   align-items: center;
-//   justify-content: center;
-//   margin: -4px 0;
-//   z-index: 3;
-//   position: relative;
-// `
-
 const SlippageText = styled.p`
   font-size: 10px;
   font-weight: 500;
@@ -114,117 +95,6 @@ const SlippageText = styled.p`
   margin: 0 8px;
   & span {
     text-decoration: underline;
-  }
-`
-
-// const InfoCard = styled.div`
-//   padding: 32px;
-//   border-radius: 24px;
-//   color: white;
-//   background: rgba(0, 0, 0, 0.4);
-//   margin-bottom: 24px;
-//   & h1 {
-//     font-size: 32px;
-//     line-height: 38px;
-//     font-weight: bold;
-//   }
-//   & h2 {
-//     font-size: 28px;
-//     line-height: 32px;
-//     font-weight: bold;
-//   }
-//   & p {
-//     font-size: 16px;
-//     line-height: 19px;
-//     font-weight: 300;
-//   }
-//   ${({ theme }) => theme.mediaQueries.md} {
-//     & h1 {
-//       font-size: 36px;
-//       line-height: 42px;
-//     }
-//     & h2 {
-//       font-size: 32px;
-//       line-height: 37px;
-//     }
-//     & p {
-//       font-size: 18px;
-//       line-height: 21px;
-//     }
-//   }
-// `
-
-// const InfoCardWrapper = styled.div`
-//   ${({ theme }) => theme.mediaQueries.md} {
-//     display: flex;
-//     margin-top: 20px;
-//     & > div {
-//       flex: 1;
-//       &:first-child {
-//         margin-right: 10px;
-//       }
-//       &:last-child {
-//         margin-left: 10px;
-//       }
-//     }
-//   }
-// `
-
-// const CountDownContainer = styled.div`
-//   display: flex;
-//   justify-content: space-between;
-//   flex-wrap: wrap;
-//   max-width: 600px;
-//   width: 100%;
-//   margin: 16px auto;
-// `
-
-// const CountDownItem = styled.div`
-//   color: white;
-//   text-align: center;
-//   margin: 12px;
-//   & > div {
-//     width: 94px;
-//     height: 94px;
-//     background:#8b2a9b ;
-//     display: flex;
-//     align-items: center;
-//     justify-content: center;
-//     font-size: 36px;
-//     font-weight: bold;
-//     border-radius: 24px;
-//   }
-//   & > p {
-//     font-size: 16px;
-//     font-weight: bold;
-//     margin-top: 4px;
-//   }
-// `
-
-const PoolWrapper = styled.div`
-  position: relative;
-  padding: 1rem;
-
-  & > div {
-    background: transparent;
-    & div {
-      background: transparent;
-    }
-    & div {
-      color: white;
-    }
-  }
-`
-
-const SwapRightBanner = styled.div`
-  position: absolute;
-  max-width: 350px;
-  right: 0;
-  top: 10px;
-  opacity: 0.6;
-  z-index: -1;
-  & img {
-    width: 100%;
   }
 `
 
@@ -300,10 +170,6 @@ const SwapPage = styled(Page)`
 
 export default function Swap({ history }: RouteComponentProps) {
   const [address, setaddress] = useState('')
-  function handleChange(value) {
-    setaddress(value)
-  }
-
   const dispatch = useDispatch()
   const { pathname } = useLocation()
   const tokenAddress = pathname.substr(6)
@@ -455,9 +321,6 @@ export default function Swap({ history }: RouteComponentProps) {
         })
       })
   }, [priceImpactWithoutFee, swapCallback, tradeToConfirm])
-
-  // errors
-  // const [showInverted, setShowInverted] = useState<boolean>(false)
 
   // warnings on slippage
   const priceImpactSeverity = warningSeverity(priceImpactWithoutFee)
@@ -618,8 +481,6 @@ export default function Swap({ history }: RouteComponentProps) {
     'confirmSwapModal',
   )
 
-  const [currentToken, setCurrentToken] = useState<TokenDetailProps | null>(null)
-  const [hotTokens, setHotTokens] = useState<HotTokenType[] | null>(null)
   const [timeNow, setTimeNow] = useState(Date.now())
   const countDownDeadline = new Date(Date.UTC(2021, 6, 1, 0, 0, 0, 0)).getTime()
 
@@ -634,121 +495,14 @@ export default function Swap({ history }: RouteComponentProps) {
       setTimeNow(countDownDeadline)
     }
   }, [timeNow, countDownDeadline])
-  // const [historicalData, setHistoricalData = useState<HistoricalDataProps[] | null>(null)
 
   const countSeconds = useMemo(
     () => moment(countDownDeadline).diff(moment(timeNow), 'seconds'),
     [timeNow, countDownDeadline],
   )
 
-  // useEffect(() => {
-  //   const init = async () => {
-  //     // const tokens = await getHotTokens()
-  //     // setHotTokens(tokens.data.tokens)
-  //     const hotTokendata = [
-  //       {
-  //         name: 'Cumino',
-  //         symbol: 'Cumino',
-  //         dexId: '117bccac249c0c5fcde923a80ac0af53',
-  //         contractAddress: '0xfec01d8cefc67ed90d8fcad445ef04603ad546d2',
-  //       },
-  //       {
-  //         name: 'UFO',
-  //         symbol: 'UFO',
-  //         dexId: '117bccac249c0c5fcde923a80ac0af53',
-  //         contractAddress: '0xfec01d8cefc67ed90d8fcad445ef04603ad546d2',
-  //         direction: 'up'
-  //       },
-  //       {
-  //         name: 'Astra',
-  //         symbol: 'Astra',
-  //         dexId: '117bccac249c0c5fcde923a80ac0af53',
-  //         contractAddress: '0xfec01d8cefc67ed90d8fcad445ef04603ad546d2',
-  //         direction: 'up'
-  //       },
-  //       {
-  //         name: 'Starl',
-  //         symbol: 'Starl',
-  //         dexId: '117bccac249c0c5fcde923a80ac0af53',
-  //         contractAddress: '0xfec01d8cefc67ed90d8fcad445ef04603ad546d2',
-  //       },
-  //       {
-  //         name: 'Floki',
-  //         symbol: 'Floki',
-  //         dexId: '117bccac249c0c5fcde923a80ac0af53',
-  //         contractAddress: '0xfec01d8cefc67ed90d8fcad445ef04603ad546d2',
-  //         direction: 'down'
-  //       },
-  //       {
-  //         name: 'Dext',
-  //         symbol: 'Dext',
-  //         dexId: '117bccac249c0c5fcde923a80ac0af53',
-  //         contractAddress: '0xfec01d8cefc67ed90d8fcad445ef04603ad546d2',
-  //       },
-  //       {
-  //         name: 'Dext',
-  //         symbol: 'Dext',
-  //         dexId: '117bccac249c0c5fcde923a80ac0af53',
-  //         contractAddress: '0xfec01d8cefc67ed90d8fcad445ef04603ad546d2',
-  //         direction: 'up'
-  //       },
-  //       {
-  //         name: 'F9',
-  //         symbol: 'F9',
-  //         dexId: '117bccac249c0c5fcde923a80ac0af53',
-  //         contractAddress: '0xfec01d8cefc67ed90d8fcad445ef04603ad546d2',
-  //         direction: 'down'
-  //       },
-  //       {
-  //         name: 'BTC',
-  //         symbol: 'BTC',
-  //         dexId: '117bccac249c0c5fcde923a80ac0af53',
-  //         contractAddress: '0xfec01d8cefc67ed90d8fcad445ef04603ad546d2',
-  //       },
-  //       {
-  //         name: 'THUN',
-  //         symbol: 'THUN',
-  //         dexId: '117bccac249c0c5fcde923a80ac0af53',
-  //         contractAddress: '0xfec01d8cefc67ed90d8fcad445ef04603ad546d2',
-  //       }
-  //     ]
-  //     setHotTokens(hotTokendata)
-
-  //     const currentTokenInfo = {
-  //       iconSmall: BinanceLogo,
-  //       iconLarge: BinanceLogo,
-  //       iconThumb: BinanceLogo,
-  //       name: 'BNB',
-  //       symbol: 'BNB',
-  //       contractAddress: '0xfec01d8cefc67ed90d8fcad445ef04603ad546d2',
-  //       website: '',
-  //       price: 0.984754,
-  //       priceChange24H: 2.5,
-  //       volumne24H: 177938,
-  //       liquidity: 5359493,
-  //       marketCap: 13377791,
-  //       totalSupply: 0,
-  //       bnbLPHoldings: 0,
-  //       bnbLPHoldingsUSD: 0,
-  //       transactions: 0,
-  //       holders: 0
-  //     }
-  //     setCurrentToken(currentTokenInfo);
-  //     // TODO, Get first token info
-  //     // const tokenInfo = await getTokenInfo(tokens.data.tokens[3].dexId)
-  //     // setCurrentToken(tokenInfo.data.token ?? null)
-
-  //     // const historical = await getHistoricalData(tokenInfo.geckoId, 200)
-  //     // setHistoricalData(historical.data.bars ?? null)
-  //   }
-  //   init()
-  // }, [])
-
   return (
     <SwapPage>
-      {/* <SwapRightBanner>
-        <img src={SwapBanner} alt='Swap Banner' />
-      </SwapRightBanner> */}
       <BannerWrapper />
       <Cards>
         <div>
@@ -820,30 +574,6 @@ export default function Swap({ history }: RouteComponentProps) {
                       <AddressInputPanel id="recipient" value={recipient} onChange={onChangeRecipient} />
                     </>
                   ) : null}
-
-                  {/* {showWrap ? null : (
-                    <AutoColumn gap="8px" style={{ padding: '0 16px' }}>
-                      {Boolean(trade) && (
-                        <RowBetween align="center">
-                          <Label>{t('Price')}</Label>
-                          <TradePrice
-                            price={trade?.executionPrice}
-                            showInverted={showInverted}
-                            setShowInverted={setShowInverted}
-                          />
-                        </RowBetween>
-                      )}
-                      {allowedSlippage !== INITIAL_ALLOWED_SLIPPAGE && (
-                        <RowBetween align="center">
-                          <Label>{t('Slippage Tolerance')}</Label>
-                          <Text bold color="primary">
-                            {allowedSlippage / 100}%
-                          </Text>
-                        </RowBetween>
-                      )}
-                    </AutoColumn>
-                  )} */}
-
                   <Flex justifyContent="space-between" alignItems="center" marginTop="20px">
                     <Flex alignItems="center">
                       <SlippageText>
@@ -979,7 +709,6 @@ export default function Swap({ history }: RouteComponentProps) {
         </div>
         <div>
           <FullHeightColumn>
-            {/* tokenInfo={currentToken} */}
             <ContractPanel value={address} />
             <CoinStatsBoard />
             <ChartContainer />
@@ -1013,12 +742,6 @@ export default function Swap({ history }: RouteComponentProps) {
           </Link>
         </BottomCard>
       </Cards>
-
-      {/* {!swapIsUnsupported ? (
-        <AdvancedSwapDetailsDropdown trade={trade} />
-      ) : (
-        <UnsupportedCurrencyFooter currencies={[currencies.INPUT, currencies.OUTPUT]} />
-      )} */}
     </SwapPage>
   )
 }

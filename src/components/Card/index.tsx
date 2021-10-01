@@ -17,7 +17,6 @@ const Card = styled(Box)<{
   box-shadow: 0px 2px 12px rgba(37, 51, 66, 0.15);
   background-color: ${({ bgColor }) => bgColor};
 `
-// background-color: ${({ theme }) => theme.colors.background};
 
 export default Card
 
@@ -35,5 +34,5 @@ export const GreyCard = styled(Card)`
   background-color: ${({ theme }) => theme.colors.dropdown};
 `
 export const BlackCard = styled(Card)`
-  background-color: ${({ theme }) => '#fff'};
+  background-color: '#fff';
 `

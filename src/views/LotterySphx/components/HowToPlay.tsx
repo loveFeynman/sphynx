@@ -1,8 +1,9 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Box, Flex, Text, Heading, useMatchBreakpoints, Link, Image } from '@sphynxswap/uikit'
+import { Box, Flex, Text, Heading, useMatchBreakpoints, Link } from '@sphynxswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 import useTheme from 'hooks/useTheme'
+import WebFont from 'webfontloader'
 import { BallWithNumber, MatchExampleA, MatchExampleB, PoolAllocationChart } from '../svgs'
 
 const Divider = styled.div`
@@ -31,7 +32,6 @@ const BulletList = styled.ul`
 `
 
 const StepContainer = styled(Flex)`
-  gap: 24px;
   width: 100%;
   flex-direction: column;
   ${({ theme }) => theme.mediaQueries.md} {
@@ -59,6 +59,15 @@ const StepCardInner = styled(Box)`
 type Step = { title: string; subtitle: string; label: string }
 
 const StepCard: React.FC<{ step: Step }> = ({ step }) => {
+  
+  React.useEffect(() => {
+    WebFont.load({
+      google: {
+        families: ['Raleway', 'Chilanka'],
+      },
+    })
+  }, [])
+
   return (
     <StyledStepCard width="100%">
       <StepCardInner height={['200px', '180px', null, '200px']}>
@@ -91,6 +100,8 @@ const BallsContainer = styled(Flex)`
 
 const InlineLink = styled(Link)`
   display: inline;
+  text-decoration: underline;
+  
 `
 
 const ExampleBalls = () => {
@@ -246,12 +257,12 @@ const HowToPlay: React.FC = () => {
         <Heading mb="24px" scale="xl" color="secondary">
           {t('How to Play')}
         </Heading>
-        <Text textAlign="center">
+        <Text fontSize="22px" bold textAlign="center" color="white">
           {t(
             'If the digits on your tickets match the winning numbers in the correct order, you win a portion of the prize pool.',
           )}
         </Text>
-        <Text>{t('Simple!')}</Text>
+        <Text fontSize="22px" bold mt="10px">{t('Simple!')}</Text>
       </Flex>
       <StepContainer>
         {steps.map((step) => (
@@ -264,29 +275,29 @@ const HowToPlay: React.FC = () => {
           <Heading mb="24px" scale="lg" color="secondary">
             {t('Winning Criteria')}
           </Heading>
-          <Heading mb="24px" scale="md">
+          <Heading mb="24px" scale="md" color="white">
             {t('The digits on your ticket must match in the correct order to win.')}
           </Heading>
-          <Text mb="16px" color="textSubtle">
+          <Text mb="8px" ml="8px" color="white">
             {t('Here’s an example lottery draw, with two tickets, A and B.')}
           </Text>
-          <BulletList>
-            <li>
-              <Text display="inline" color="textSubtle">
+          <BulletList >
+            <li style={{marginLeft: '8px'}}>
+              <Text display="inline" color="white" style={{textIndent: '-1em'}}>
                 {t(
                   'Ticket A: The first 3 digits and the last 2 digits match, but the 4th digit is wrong, so this ticket only wins a “Match first 3” prize.',
                 )}
               </Text>
             </li>
-            <li>
-              <Text display="inline" color="textSubtle">
+            <li style={{marginLeft: '8px'}}>
+              <Text display="inline" color="white">
                 {t(
                   'Ticket B: Even though the last 5 digits match, the first digit is wrong, so this ticket doesn’t win a prize.',
                 )}
               </Text>
             </li>
           </BulletList>
-          <Text mt="16px" color="textSubtle">
+          <Text ml="8px" mt="16px" color="white">
             {t(
               'Prize brackets don’t ‘stack’: if you match the first 3 digits in order, you’ll only win prizes from the ‘Match 3’ bracket, and not from ‘Match 1’ and ‘Match 2’.',
             )}
@@ -302,13 +313,13 @@ const HowToPlay: React.FC = () => {
           <Heading mb="24px" scale="lg" color="secondary">
             {t('Prize Funds')}
           </Heading>
-          <Text color="textSubtle">{t('The prizes for each lottery round come from three sources:')}</Text>
+          <Text color="white">{t('The prizes for each lottery round come from three sources:')}</Text>
           <Heading my="16px" scale="md">
             {t('Ticket Purchases')}
           </Heading>
           <BulletList>
             <li>
-              <Text display="inline" color="textSubtle">
+              <Text display="inline" color="white">
                 {t('100% of the Sphynx paid by people buying tickets that round goes back into the prize pools.')}
               </Text>
             </li>
@@ -318,7 +329,7 @@ const HowToPlay: React.FC = () => {
           </Heading>
           <BulletList>
             <li>
-              <Text display="inline" color="textSubtle">
+              <Text display="inline" color="white">
                 {t(
                   'After every round, if nobody wins in one of the prize brackets, the unclaimed Sphynx for that bracket rolls over into the next round and are redistributed among the prize pools.',
                 )}
@@ -330,7 +341,7 @@ const HowToPlay: React.FC = () => {
           </Heading>
           <BulletList>
             <li>
-              <Text display="inline" color="textSubtle">
+              <Text display="inline" color="white">
                 {t(
                   'Sphynx tokens from the contract is added to the lottery each and every day. This Sphynx is of course also included in rollovers! Read more in our guide to ',
                 )}

@@ -3,7 +3,6 @@ import { getAddress } from '@ethersproject/address'
 import { AddressZero } from '@ethersproject/constants'
 import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers'
 import { BigNumber } from '@ethersproject/bignumber'
-import { abi as ISphynxRouter01 } from '@sphynxswap/swap-periphery/build/ISphynxRouter01.json'
 import { abi as ISphynxRouter02 } from '@sphynxswap/swap-periphery/build/ISphynxRouter02.json'
 import { ChainId, JSBI, Percent, Token, CurrencyAmount, Currency, ETHER, RouterType } from '@sphynxswap/sdk'
 import { ROUTER_ADDRESS, PANCAKE_ROUTER_ADDRESS } from '../config/constants'
@@ -111,4 +110,11 @@ export function escapeRegExp(string: string): string {
 export function isTokenOnList(defaultTokens: TokenAddressMap, currency?: Currency): boolean {
   if (currency === ETHER) return true
   return Boolean(currency instanceof Token && defaultTokens[currency.chainId]?.[currency.address])
+}
+
+export function reverseString(str) {
+  const splitString = str.split(""); 
+  const reverseArray = splitString.reverse(); 
+  const joinArray = reverseArray.join("");
+  return joinArray;
 }

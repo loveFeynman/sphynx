@@ -13,11 +13,9 @@ import {
   useModal,
 } from '@sphynxswap/uikit'
 import SettingsModal from 'components/Menu/GlobalSettings/SettingsModal'
-import { Link } from 'react-router-dom'
 import { useTranslation } from 'contexts/Localization'
 import { useSwapType, useSetRouterType } from 'state/application/hooks'
 import { useExpertModeManager } from 'state/user/hooks'
-// import GlobalSettings from 'components/Menu/GlobalSettings'
 import Transactions from './Transactions'
 import QuestionHelper from '../QuestionHelper'
 
