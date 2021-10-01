@@ -7,6 +7,7 @@ import { Link } from '@sphynxswap/uikit'
 import Marquee from 'react-fast-marquee'
 import { useDispatch, useSelector } from 'react-redux'
 import axios from 'axios'
+import moment from 'moment'
 import ReactLoading from 'react-loading'
 // import { ReactComponent as HelpIcon } from 'assets/svg/icon/HelpIcon.svg'
 // import { ReactComponent as DownRedArrowIcon} from 'assets/svg/icon/DownRedArrowIcon.svg'
@@ -103,13 +104,8 @@ export default function HotTokenBar() {
   const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
   const dispatch = useDispatch()
 
-  const date: any = new Date()
-  const prevDate = `${date.getFullYear()}-${date.getMonth() < 9 ? `0${date.getMonth() + 1}` : date.getMonth() + 1}-${
-    date.getDate() < 11 ? `0${date.getDate() - 1}` : date.getDate() - 1
-  }`
-  const currentDate = `${date.getFullYear()}-${date.getMonth() < 9 ? `0${date.getMonth() + 1}` : date.getMonth() + 1}-${
-    date.getDate() < 10 ? `0${date.getDate()}` : date.getDate()
-  }`
+  const prevDate = moment().subtract(1, 'day').format('YYYY-MM-DD')
+  const currentDate =moment().format('YYYY-MM-DD')
   const getDataQuery = `
   {
     ethereum(network: bsc) {
