@@ -144,7 +144,7 @@ const ViewTicketModal: React.FC<ViewTicketModalProps> = ({ roundID, winningCards
               </Text>
               <TicketContainer>
                 {ticket.ticketnumber.split('').map((ticketChar, subIndex) =>
-                  subIndex !== 0 ? (
+                  subIndex !== 6 ? (
                     <TicketInput
                       key={subIndex}
                       id={index.toString().concat(subIndex).concat('videw-ticket')}
