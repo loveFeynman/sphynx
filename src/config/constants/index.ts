@@ -2,13 +2,8 @@ import { ChainId, JSBI, Percent, Token, WETH } from '@sphynxswap/sdk'
 import { BUSD, DAI, USDT, BTCB, CAKE, WBNB, UST, ETH, USDC } from './tokens'
 
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
-
 export const ROUTER_ADDRESS = '0xEF3A73b639719fDBe775411b41683E0aBee17025' // sphynx router v1 for mainnet
-// export const ROUTER_ADDRESS = '0x9cAAe40DCF950aFEA443119e51E821D6FE2437ca' // sphynx router v2 for mainnet
-// export const ROUTER_ADDRESS = '0xcB3450fa9c0CB7EE29C218e6734d5dcA8496B562' // sphynx router v2 for testnet
-
 export const PANCAKE_ROUTER_ADDRESS = '0x10ED43C718714eb63d5aA57B78B54704E256024E'
-// export const PANCAKE_ROUTER_ADDRESS = '0x9Ac64Cc6e4415144C455BD8E4837Fea55603e5c3' // pancakeswap router for pancake.kiemtienonline360.com
 
 // a list of tokens by chain
 type ChainTokenList = {

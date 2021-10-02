@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Box, Flex, Text, Heading, useMatchBreakpoints, Link, Image } from '@sphynxswap/uikit'
+import { Box, Flex, Text, Heading, useMatchBreakpoints, Link } from '@sphynxswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 import useTheme from 'hooks/useTheme'
 import WebFont from 'webfontloader'

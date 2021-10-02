@@ -84,6 +84,6 @@ interface MenuEntry {
   href?: string
 }
 
-const config: (t: ContextApi['t']) => MenuEntry[] = (t) => links
+const config: (t: ContextApi['t']) => MenuEntry[] = () => links
 
 export default config

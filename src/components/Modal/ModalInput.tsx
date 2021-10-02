@@ -9,19 +9,10 @@ interface ModalInputProps {
   symbol: string
   onSelectMax?: () => void
   onChange: (e: React.FormEvent<HTMLInputElement>) => void
-  placeholder?: string
   value: string
   addLiquidityUrl?: string
   inputTitle?: string
   decimals?: number
-}
-
-const getBoxShadow = ({ isWarning = false, theme }) => {
-  if (isWarning) {
-    return theme.shadows.warning
-  }
-
-  return theme.shadows.inset
 }
 
 const StyledTokenInput = styled.div<InputProps>`
@@ -29,7 +20,6 @@ const StyledTokenInput = styled.div<InputProps>`
   flex-direction: column;
   background-color: ${({ theme }) => theme.colors.input};
   border-radius: 16px;
-  // box-shadow: ${getBoxShadow};
   color: ${({ theme }) => theme.colors.text};
   padding: 8px 16px 8px 0;
   width: 100%;
@@ -63,7 +53,6 @@ const ModalInput: React.FC<ModalInputProps> = ({
   symbol,
   onChange,
   onSelectMax,
-  placeholder,
   value,
   addLiquidityUrl,
   inputTitle,

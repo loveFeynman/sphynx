@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Text, Flex, Modal, InjectedModalProps, Button } from '@sphynxswap/uikit'
+import { Text, Flex, Modal, Button } from '@sphynxswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 
 declare type Handler = () => void
@@ -21,7 +21,6 @@ const ApplyButton = styled(Button)`
 const DividendModal: React.FC<DividendModalProps> = ({ onDismiss, balance }) => {
   const { t } = useTranslation()
 
-  console.log(balance)
   return (
     <Modal
       title={t('Sphynx Dividend')}

@@ -1,6 +1,4 @@
 /* eslint-disable no-console */
-// import { useWeb3React } from '@web3-react/core'
-// import moment from 'moment'
 import { isAddress } from '@ethersproject/address'
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
@@ -92,12 +90,6 @@ const SellersCard = () => {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [input])
-
-  // const d = new Date(Date.UTC(localdate.getFullYear(), localdate.getMonth(), localdate.getDate(),  localdate.getHours(), localdate.getMinutes(), localdate.getSeconds()));
-  // const d :any=new Date(localdate.getTime()+ localdate.getTimezoneOffset()*60*1000);
-  // const localtime=d;
-
-  // console.log("localtime============",localtime);
 
   // eslint-disable-next-line no-console
   return (

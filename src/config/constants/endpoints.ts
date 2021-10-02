@@ -13,7 +13,3 @@ export const WS_BSC_NODE = 'wss://old-thrumming-voice.bsc.quiknode.pro/7674ba364
 // Pancake Endpoint
 export const INFO_CLIENT = 'https://bsc.streamingfast.io/subgraphs/name/pancakeswap/exchange-v2'
 export const BLOCKS_CLIENT = 'https://api.thegraph.com/subgraphs/name/pancakeswap/blocks'
-
-// Sphynx Endpoint
-// export const INFO_CLIENT = 'https://api.thegraph.com/subgraphs/name/deep-quality-dev/sphynx-exchange'
-// export const BLOCKS_CLIENT = 'https://api.thegraph.com/subgraphs/name/deep-quality-dev/sphynx-blocks'

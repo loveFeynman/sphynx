@@ -9,7 +9,6 @@ import { AppState } from 'state'
 import PcsChartContainer from './PcsChartContainer'
 import SphynxChartContainer from './SphynxChartContainer'
 import { ReactComponent as UpDownArrow } from 'assets/svg/icon/UpDownArrow.svg'
-import { isAddress } from 'utils'
 
 const Wrapper = styled.div`
   display: flex;
@@ -50,8 +49,6 @@ const TransactionNavWrapper = styled.div`
 
 const ChartContainer = () => {
   const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
-  const checksumAddress = isAddress(input)
-
   const routerVersion = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.routerVersion)
 
   const draggableArrow = React.useRef<any>(null)

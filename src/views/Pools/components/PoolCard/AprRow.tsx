@@ -5,7 +5,6 @@ import Balance from 'components/Balance'
 import ApyCalculatorModal from 'components/ApyCalculatorModal'
 import { Pool } from 'state/types'
 import { getAprData } from 'views/Pools/helpers'
-import { getAddress } from 'utils/addressHelpers'
 
 interface AprRowProps {
   pool: Pool

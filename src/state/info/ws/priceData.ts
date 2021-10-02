@@ -1,7 +1,6 @@
 import { Contract, utils } from 'ethers'
 import { PANCAKE_FACTORY_ADDRESS, ChainId } from '@sphynxswap/sdk'
 import pancakeFactoryAbi from 'config/abi/pancakeSwapFactory.json'
-import pancakeRouterAbi from 'config/abi/pancakeSwapRouter.json'
 import pancakeLpAbi from 'config/abi/lpToken.json'
 import bscTokenAbi from 'config/abi/erc20.json'
 import { ZERO_ADDRESS } from 'config/constants'

@@ -12,9 +12,7 @@ import axios from 'axios'
 import { useSelector } from 'react-redux'
 import { getUnixTime, startOfHour, Duration, sub } from 'date-fns'
 import { AppState } from 'state'
-import { PoolData } from 'state/info/types'
 import fetchTokenPriceData from 'state/info/queries/tokens/priceData'
-import { fetchPoolData } from 'state/info/queries/pools/poolData'
 import { isAddress } from 'utils'
 
 const ChartContainer = styled.div<{ height: number }>`
@@ -65,7 +63,6 @@ function getLanguageFromURL(): LanguageCode | null {
 
 const SphynxChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
   const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
-  // const routerVersion = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.routerVersion)
   const checksumAddress = isAddress(input)
 
   const [tokendetails, setTokenDetails] = React.useState({
@@ -130,19 +127,8 @@ const SphynxChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => 
   }
   const feed = {
     onReady: (callback: any) => {
-      // console.log('[onReady]: Method call');
       setTimeout(() => callback(configurationData), 0)
     },
-    // searchSymbols: async (userInput: any, exchange: any, symbolType: any, onResultReadyCallback: any) => {
-    //   // console.log('[searchSymbols]: Method call');
-    //   const symbols = await getAllSymbols()
-    //   const newSymbols = symbols.filter((symbol) => {
-    //     const isExchangeValid = exchange === '' || symbol.exchange === exchange
-    //     const isFullSymbolContainsInput = symbol.full_name.toLowerCase().indexOf(userInput.toLowerCase()) !== -1
-    //     return isExchangeValid && isFullSymbolContainsInput
-    //   })
-    //   onResultReadyCallback(newSymbols)
-    // },
     resolveSymbol: async (symbolName: any, onSymbolResolvedCallback: any, onResolveErrorCallback: any) => {
       const response = await axios.get(`https://thesphynx.co/api/tokenDetails/${checksumAddress}`)
       setTokenDetails(response.data)
@@ -165,7 +151,6 @@ const SphynxChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => 
         data_status: 'streaming',
       }
       // eslint-disable-next-line no-console
-      // console.log('[resolveSymbol]: Symbol resolved', symbolName);
       onSymbolResolvedCallback(symbolInfo)
     },
     getBars: async (
@@ -178,7 +163,6 @@ const SphynxChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => 
       try {
         const { from, to, firstDataRequest } = periodParams
         if (checksumAddress) {
-          // setLoader(true);
           if (!firstDataRequest) {
             // "noData" should be set if there is no data in the requested period.
             onHistoryCallback([], {
@@ -189,10 +173,7 @@ const SphynxChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => 
         }
 
         const data = await fetchPriceData(resolution)
-        // console.log(data)
-
         let bars: any = []
-        // if(data.data.data){
         data.map((bar: any, i: any) => {
           const obj = {
             time: bar.time * 1000,
@@ -215,21 +196,17 @@ const SphynxChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => 
           noData: false,
         })
       } catch (error) {
-        // console.log('[getBars]: Get error', error.message);
         onErrorCallback(error)
       }
     },
   }
-  // const tvWidget = null;
-  //   React.useEffect(()=>{
+
   const getWidget = async () => {
     let tvWidget: IChartingLibraryWidget | null = null
     const widgetOptions: ChartingLibraryWidgetOptions = {
-      // symbol: this.props.symbol as string,
+
       symbol: tokendetails.pair,
       // BEWARE: no trailing slash is expected in feed URL
-      // tslint:disable-next-line:no-any
-      //   datafeed: new (window as any).Datafeeds.UDFCompatibleDatafeed(props.datafeedUrl),
       datafeed: feed,
       interval: ChartContainerProps.interval as ChartingLibraryWidgetOptions['interval'],
       container_id: ChartContainerProps.containerId as ChartingLibraryWidgetOptions['container_id'],
@@ -240,7 +217,6 @@ const SphynxChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => 
       disabled_features: ['use_localstorage_for_settings'],
       enabled_features: ['study_templates'],
       charts_storage_url: ChartContainerProps.chartsStorageUrl,
-      //   charts_storage_api_version: ChartContainerProps.chartsStorageApiVersion,
       client_id: ChartContainerProps.clientId,
       user_id: ChartContainerProps.userId,
       fullscreen: ChartContainerProps.fullscreen,

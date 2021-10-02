@@ -1,10 +1,9 @@
 import React, { useCallback, useState } from 'react'
 import styled from 'styled-components'
-import { Image, Heading, RowType, Toggle, Text, Button, ArrowForwardIcon, Flex } from '@sphynxswap/uikit'
+import { Button } from '@sphynxswap/uikit'
 import { useTranslation } from 'contexts/Localization'
-import { Currency, currencyEquals, ETHER, TokenAmount, WETH } from '@sphynxswap/sdk'
+import { Currency, TokenAmount } from '@sphynxswap/sdk'
 import { ReactComponent as ArrowRightIcon } from 'assets/svg/icon/ArrowRight.svg'
-import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import { Field } from '../../../state/mint/actions'
 
 import CurrencyInputPanel from '../../../components/CurrencyInputPanel'
@@ -93,8 +92,6 @@ const ConnectWalletButton = styled.div`
   text-align: -webkit-center;
 `
 export default function BridgeCard({ label, isSpynx = false }) {
-  const { account, chainId, library } = useActiveWeb3React()
-
   const { liquidityPairA, setLiquidityPairA } = useLiquidityPairA()
   const { liquidityPairB, setLiquidityPairB } = useLiquidityPairB()
 
@@ -104,27 +101,15 @@ export default function BridgeCard({ label, isSpynx = false }) {
 
   const currencyA = useCurrency(currencyA1)
   const currencyB = useCurrency(currencyB1)
-  // get formatted amounts
 
-  const oneCurrencyIsWETH = Boolean(
-    chainId &&
-      ((currencyA && currencyEquals(currencyA, WETH[chainId])) ||
-        (currencyB && currencyEquals(currencyB, WETH[chainId]))),
-  )
   const { independentField, typedValue, otherTypedValue } = useMintState()
 
   const {
     dependentField,
     currencies,
-    pair,
-    pairState,
     currencyBalances,
     parsedAmounts,
-    price,
     noLiquidity,
-    liquidityMinted,
-    poolTokenPercentage,
-    error,
   } = useDerivedMintInfo(currencyA ?? undefined, currencyB ?? undefined)
 
   const formattedAmounts = {
@@ -170,10 +155,11 @@ export default function BridgeCard({ label, isSpynx = false }) {
   )
   const handleMaxClick = () => {
     console.log('max clicked')
+
   }
 
   const handleSwitchClick = () => {
-    console.log('max clicked')
+    console.log('switch clicked')
   }
 
   return (

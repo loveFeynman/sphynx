@@ -1,8 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-
-import CardNav from 'components/CardNav'
-import { Image, Heading, RowType, Toggle, Text, Button, ArrowForwardIcon, Flex } from '@sphynxswap/uikit'
+import { Heading } from '@sphynxswap/uikit'
 import PageHeader from 'components/PageHeader'
 import { useTranslation } from 'contexts/Localization'
 import BridgeCard from './components/BridgeCard'

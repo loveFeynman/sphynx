@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import BigNumber from 'bignumber.js'
 import styled from 'styled-components'
 import { useTranslation } from 'contexts/Localization'
 import { Flex, CardFooter, ExpandableLabel, HelpIcon, useTooltip } from '@sphynxswap/uikit'
@@ -10,7 +9,6 @@ import ExpandedFooter from './ExpandedFooter'
 interface FooterProps {
   pool: Pool
   account: string
-  totalCakeInVault?: BigNumber
 }
 
 const ExpandableButtonWrapper = styled(Flex)`
@@ -25,7 +23,7 @@ const CardFooterWrapper = styled(CardFooter)`
   background-color: ${({ theme }) => theme.colors.input};
 `
 
-const Footer: React.FC<FooterProps> = ({ pool, account, totalCakeInVault }) => {
+const Footer: React.FC<FooterProps> = ({ pool, account }) => {
   const { isAutoVault } = pool
   const { t } = useTranslation()
   const [isExpanded, setIsExpanded] = useState(false)

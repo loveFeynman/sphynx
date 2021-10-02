@@ -86,34 +86,6 @@ const TopBar = styled.div`
   margin-bottom: 20px;
   flex-wrap: wrap;
 `
-const SearchWrapper = styled.div`
-  display: flex;
-  align-item: center;
-  max-width: 350px;
-  width: calc(100% - 100px);
-  position: relative;
-  & svg {
-    width: 16px;
-    height: 19px;
-  }
-  & input {
-    width: calc(100% - 20px);
-    background: transparent;
-    box-shadow: none;
-    border: none;
-    margin-left: 8px;
-    font-size: 20px;
-    margin-top: -5px;
-    outline: none;
-    color: white;
-    &::placeholder {
-      color: white;
-    }
-  }
-  ${({ theme }) => theme.mediaQueries.lg} {
-    margin-left: 16px;
-  }
-`
 
 const AccountWrapper = styled.div`
   display: flex;

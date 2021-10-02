@@ -28,7 +28,6 @@ const StyledNav = styled.div`
 
 const SwapCardNav = () => {
   const { swapType, setSwapType } = useSwapType()
-
   const { t } = useTranslation()
 
   return (

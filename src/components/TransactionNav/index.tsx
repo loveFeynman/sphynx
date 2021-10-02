@@ -1,7 +1,6 @@
 /* eslint-disable */
 import React, { useState } from 'react'
 import styled from 'styled-components'
-import { RouterType } from '@sphynxswap/sdk'
 import { useTranslation } from 'contexts/Localization'
 import { useSwapTransCard } from 'state/application/hooks'
 import { Button } from '@sphynxswap/uikit'

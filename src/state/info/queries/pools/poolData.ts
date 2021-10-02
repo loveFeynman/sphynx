@@ -1,5 +1,4 @@
 /* eslint-disable no-param-reassign */
-import { useEffect, useState } from 'react'
 import { request, gql } from 'graphql-request'
 import { INFO_CLIENT } from 'config/constants/endpoints'
 import { PoolData } from 'state/info/types'
@@ -117,29 +116,6 @@ export const fetchPoolData = async (
         })
       })
 
-      // const formatted = poolAddresses.reduce((accum: { [address: string]: PoolData }, address) => {
-      //   const current: FormattedPoolFields | undefined = formattedPoolData[address]
-      //   accum[address] = {
-      //     address,
-      //     token0: {
-      //       address: current.token0.id,
-      //       name: current.token0.name,
-      //       symbol: current.token0.symbol,
-      //     },
-      //     token1: {
-      //       address: current.token1.id,
-      //       name: current.token1.name,
-      //       symbol: current.token1.symbol,
-      //     },
-      //     token0Price: current.token0Price,
-      //     token1Price: current.token1Price,
-      //     volumeUSD: current.volumeUSD,
-      //     liquidityUSD: current.reserveUSD,
-      //     liquidityToken0: current.reserve0,
-      //     liquidityToken1: current.reserve1
-      //   }
-      //   return accum
-      // }, {})
       return { poolDatas: formatted, error: false }
     }
 

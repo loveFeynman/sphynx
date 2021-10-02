@@ -7,11 +7,6 @@
     text-decoration: none !important;
     background-color: white !important
 }
-
-/* rgba(0, 0, 0, 0.04); */
-/* .span_span:hover{
-    background-color: rgba(0,0,0,0.4) !important;
-} */
 .MuiMenuItem-root:hover{
     background-color: rgba(0,0,0,0.4) !important;  
 }

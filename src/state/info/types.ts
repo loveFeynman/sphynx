@@ -77,18 +77,7 @@ export interface PoolData {
   }
 
   volumeUSD: number
-  // volumeUSDChange: number
-  // volumeUSDWeek: number
-  // volumeUSDChangeWeek: number
-
-  // totalFees24h: number
-  // totalFees7d: number
-  // lpFees24h: number
-  // lpFees7d: number
-  // lpApr7d: number
-
   liquidityUSD: number
-  // liquidityUSDChange: number
 
   token0Price: number
   token1Price: number

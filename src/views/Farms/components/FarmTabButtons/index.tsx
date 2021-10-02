@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { useLocation, Link, useRouteMatch } from 'react-router-dom'
+import { useLocation, Link } from 'react-router-dom'
 import { ButtonMenu, ButtonMenuItem, NotificationDot } from '@sphynxswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 
@@ -9,7 +9,6 @@ interface FarmTabButtonsProps {
 }
 
 const FarmTabButtons: React.FC<FarmTabButtonsProps> = ({ hasStakeInFinishedFarms }) => {
-  const { url } = useRouteMatch()
   const location = useLocation()
   const { t } = useTranslation()
 

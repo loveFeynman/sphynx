@@ -188,14 +188,6 @@ export default function PoolFinder() {
             prerequisiteMessage
           )}
         </AutoColumn>
-
-        {/* <CurrencySearchModal
-          isOpen={showSearch}
-          onCurrencySelect={handleCurrencySelect}
-          onDismiss={handleSearchDismiss}
-          showCommonBases
-          selectedCurrency={(activeField === Fields.TOKEN0 ? currency1 : currency0) ?? undefined}
-        /> */}
       </AppBody>
     </Page>
   )

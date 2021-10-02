@@ -1,13 +1,9 @@
 import React from 'react'
-import CardNav from 'components/CardNav'
 import styled from 'styled-components'
-import { Image, Heading, RowType, Toggle, Text, Button, ArrowForwardIcon, Flex } from '@sphynxswap/uikit'
-import PageHeader from 'components/PageHeader'
 import { useTranslation } from 'contexts/Localization'
 import { ReactComponent as BSCIcon } from 'assets/svg/icon/BSCTokenIcon.svg'
-import { ReactComponent as ADAIcon } from 'assets/svg/icon/ADATokenIcon.svg'
 
-import Select, { OptionProps } from './Select'
+import Select from './Select'
 
 const Container = styled.div`
   justify-content: center;
