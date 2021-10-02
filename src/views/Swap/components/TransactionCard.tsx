@@ -1,11 +1,11 @@
 /* eslint-disable */
 import axios from 'axios'
 import * as ethers from 'ethers'
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import styled from 'styled-components'
 import { Flex } from '@sphynxswap/uikit'
-import { TokenInfo, getBnbPrice, getPancakePairAddress, getMinTokenInfo, getTokenPrice } from 'state/info/ws/priceData'
+import { getBnbPrice, getPancakePairAddress } from 'state/info/ws/priceData'
 import { AppState } from '../../../state'
 import { isAddress } from '../../../utils'
 import Web3 from 'web3'
@@ -73,9 +73,7 @@ const TableWrapper = styled.div`
 `
 
 let blocks = 0
-let transactions = []
 let myTransactions = []
-
 let config = {
   headers: {
     'X-API-KEY': BITQUERY_API_KEY,
@@ -210,7 +208,6 @@ const TransactionCard = () => {
 
   useEffect(() => {
     window.localStorage.removeItem('currentPrice') // initiate
-    transactions = []
     const contract: any = new web3.eth.Contract(abi, input)
     const fetchDecimals = async () => {
       tokenDecimal = await contract.methods.decimals().call()
@@ -343,19 +340,6 @@ const TransactionCard = () => {
       ) : (
         <Spinner />
       )}
-
-      {/* {loader ?
-				<div style={{ display: 'flex', justifyContent: 'center' }}>
-					<BoxesLoader
-						boxColor="#8b2a9b"
-						shadowColor="#aa8929"
-						style={{ marginBottom: "20px", position: 'absolute', left: 567, top: 455 }}
-						desktopSize="30px"
-						mobileSize="15px"
-					/>
-				</div>
-				: ""
-			} */}
     </>
   )
 }

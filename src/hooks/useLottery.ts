@@ -87,7 +87,6 @@ export const useLotteryBalance = () => {
     const viewLotterys = async (rID) => {
       try {
         const data = await lotteryContractWeb3.methods.viewLottery(rID).call()
-        // console.log("view lotterys success", data);
         if (!deepEqual(data, lotteryInfo)) {
           setLotteryInfo(data)
         }
@@ -98,7 +97,6 @@ export const useLotteryBalance = () => {
       getBalance()
       viewLotterys(roundID)
     }
-    // setRefetch(false);
   }, [roundID, account, fetchFlag])
   return { balance, roundID, lotteryInfo, setRefetch }
 }
@@ -108,21 +106,17 @@ export const approveCall = async (signer, setConfig, setToastMessage) => {
     await sphxContract
       .connect(signer)
       .approve(lotteryAddress, '0xfffffffffffffffffffffffffffffffffffffffffffffffffffffff')
-      .then((data) => {
-        // console.log("approve call ", data);
+      .then(() => {
         setConfig(true)
         setToastMessage({ title: 'Success', message: 'Approved your request' })
         return true
       })
       .catch((err) => {
-        // console.log('approve call error', err)
         setToastMessage({ title: 'Enabled Error', message: err.message })
         return false
       })
-    // console.log("step2")
     return false
   } catch {
-    // console.error("fetch Round error")
     return false
   }
 }

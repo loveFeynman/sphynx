@@ -90,7 +90,6 @@ export default function HotTokenBar() {
       },
     }
     const queryResult = await axios.post(BITQUERY_API, { query: getDataQuery }, bitConfig)
-    // setData(queryResult);
     if (queryResult.data.data) {
       setData(queryResult.data.data.ethereum.dexTrades)
       setLoader(false)

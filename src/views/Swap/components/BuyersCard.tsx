@@ -1,6 +1,4 @@
 /* eslint-disable no-console */
-// import { useWeb3React } from '@web3-react/core'
-// import moment from 'moment'
 import { isAddress } from '@ethersproject/address'
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'

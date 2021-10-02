@@ -10,13 +10,10 @@ import {
   ResolutionString,
 } from 'charting_library/charting_library'
 import axios from 'axios'
-import { makeApiRequest, generateSymbol, makeApiRequest1 } from './helpers'
+import { makeApiRequest1 } from './helpers'
 import { useSelector } from 'react-redux'
 import { AppState } from 'state'
 import { isAddress } from 'utils'
-import * as ethers from 'ethers'
-import { simpleRpcProvider, simpleWebsocketProvider } from '../../../../../utils/providers'
-import { getTokenPrice } from 'state/info/ws/priceData'
 
 const ChartContainer = styled.div<{ height: number }>`
   position: relative;
@@ -93,39 +90,15 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
     ],
   }
   async function getAllSymbols() {
-    // const data = await makeApiRequest(input);
-    // debugger;
     let allSymbols: any = []
-
-    // // eslint-disable-next-line no-restricted-syntax
-    // for (const exchange of configurationData.exchanges) {
-    //     // eslint-disable-next-line prefer-destructuring
-    //     const pairs = data.Data[exchange.value].pairs;
-    //     // eslint-disable-next-line no-restricted-syntax
-    //     for (const leftPairPart of Object.keys(pairs)) {
-    //         const symbols = pairs[leftPairPart].map(rightPairPart => {
-    //             const symbol = generateSymbol(exchange.value, leftPairPart, rightPairPart);
-    //             return {
-    //                 symbol: symbol.short,
-    //                 full_name: symbol.full,
-    //                 description: symbol.short,
-    //                 exchange: exchange.value,
-    //                 type: 'crypto',
-    //             };
-    //         });
-    //         allSymbols = [...allSymbols, ...symbols];
-    //     }
-    // }
     return allSymbols
   }
 
   const feed = {
     onReady: (callback: any) => {
-      // console.log('[onReady]: Method call');
       setTimeout(() => callback(configurationData), 0)
     },
     searchSymbols: async (userInput: any, exchange: any, symbolType: any, onResultReadyCallback: any) => {
-      // console.log('[searchSymbols]: Method call');
       const symbols = await getAllSymbols()
       const newSymbols = symbols.filter((symbol) => {
         const isExchangeValid = exchange === '' || symbol.exchange === exchange
@@ -174,7 +147,6 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
       try {
         const data = await makeApiRequest1(input, routerVersion, resolution)
         if (result) {
-          // setLoader(true);
           if (!firstDataRequest) {
             // "noData" should be set if there is no data in the requested period.
             onHistoryCallback([], {
@@ -205,20 +177,11 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
           bars = [...bars, obj]
           return {}
         })
-        //   }
         // eslint-disable-next-line no-console
-
-        // if (firstDataRequest) {
-        // lastBarsCache.set(symbolInfo.full_name, {
-        //   ...bars[bars.length - 1],
-        // })
-        // setLoader(false);
-        // }
         onHistoryCallback(bars, {
           noData: false,
         })
       } catch (error) {
-        // console.log('[getBars]: Get error', error.message);
         onErrorCallback(error)
       }
     },
@@ -272,21 +235,16 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
     },
     unsubscribeBars: (subscriberUID) => {
       console.log('[unsubscribeBars]: Method call with subscriberUID:', subscriberUID)
-
-      // clearInterval(myInterval)
       console.log('[unsubscribeBars]: cleared')
     },
   }
-  // const tvWidget = null;
-  //   React.useEffect(()=>{
+
   const getWidget = async () => {
     let tvWidget: IChartingLibraryWidget | null = null
     const widgetOptions: ChartingLibraryWidgetOptions = {
-      // symbol: this.props.symbol as string,
+
       symbol: tokendetails.pair,
       // BEWARE: no trailing slash is expected in feed URL
-      // tslint:disable-next-line:no-any
-      //   datafeed: new (window as any).Datafeeds.UDFCompatibleDatafeed(props.datafeedUrl),
       datafeed: feed,
       interval: ChartContainerProps.interval as ChartingLibraryWidgetOptions['interval'],
       container_id: ChartContainerProps.containerId as ChartingLibraryWidgetOptions['container_id'],
@@ -297,7 +255,6 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
       disabled_features: ['use_localstorage_for_settings'],
       enabled_features: ['study_templates'],
       charts_storage_url: ChartContainerProps.chartsStorageUrl,
-      //   charts_storage_api_version: ChartContainerProps.chartsStorageApiVersion,
       client_id: ChartContainerProps.clientId,
       user_id: ChartContainerProps.userId,
       fullscreen: ChartContainerProps.fullscreen,
@@ -306,38 +263,7 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
     }
 
     tvWidget = await new widget(widgetOptions)
-    // this.tvWidget = widget
-
-    //  tvWidget.onChartReady(() => {
-    //   tvWidget.headerReady().then(() => {
-    //     const button = tvWidget.createButton();
-    //     button.setAttribute('title', 'Click to show a notification popup');
-    //     button.classList.add('apply-common-tooltip');
-    //     button.addEventListener('click', () => tvWidget.showNoticeDialog({
-    //         title: 'Notification',
-    //         body: 'TradingView Charting Library API works correctly',
-    //         callback: () => {
-    //           console.log('Noticed!');
-    //         },
-    //       }));
-    //     button.innerHTML = 'Check API';
-    //   });
-    // });
   }
-
-  //   const tvWidget: IChartingLibraryWidget | null = null;
-  // const getnewWidget=()=>{
-  //         if (tvWidget !== null) {
-  //       tvWidget.remove();
-  //       tvWidget = null;
-  //     }
-  // }
-  //   React.useEffect(()=>{
-  //     if (tvWidget !== null) {
-  //       tvWidget.remove();
-  //       tvWidget = null;
-  //     }
-  //   },[tvWidget])
 
   React.useEffect(() => {
     getWidget()

@@ -125,7 +125,6 @@ export const getVoteVerificationStatuses = async (
 }
 
 export const getAllVotes = async (proposalId: string, block?: number, votesPerChunk = 1000): Promise<Vote[]> => {
-  // const blockNumber = block || (await simpleRpcProvider.getBlockNumber())
   return new Promise((resolve, reject) => {
     let votes: Vote[] = []
 

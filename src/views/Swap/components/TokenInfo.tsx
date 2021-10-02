@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import styled from 'styled-components'
 import { Flex, Text, Link } from '@sphynxswap/uikit'
-// import { ReactComponent as MoreIcon2 } from 'assets/svg/icon/MoreIcon2.svg'
 import { ReactComponent as BscscanIcon } from 'assets/svg/icon/Bscscan.svg'
 import axios from 'axios'
 import CopyHelper from 'components/AccountDetails/Copy'
@@ -65,16 +64,13 @@ const TokenInfoContainer = styled.div`
     margin: 0;
   }
 `
-// {tokenInfo}: {tokenInfo?: TokenDetailProps | null}
+
 export default function TokenInfo() {
   const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
   const isInput = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.isInput)
-
   const result = isAddress(input)
   // eslint-disable-next-line no-console
-
   const dispatch = useDispatch<AppDispatch>()
-
   const [alldata, setalldata] = useState({
     holders: '',
     txs: '',

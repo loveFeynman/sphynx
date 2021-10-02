@@ -1,8 +1,7 @@
 /* eslint-disable */
 import React from 'react'
 import styled from 'styled-components'
-import Nav from 'components/LotteryCardNav'
-import { Image, Heading, RowType, Toggle, Text, Button, useModal, Flex } from '@sphynxswap/uikit'
+import { useModal, Flex } from '@sphynxswap/uikit'
 import axios from 'axios'
 import { useSelector } from 'react-redux'
 import { AppState } from '../../../state'

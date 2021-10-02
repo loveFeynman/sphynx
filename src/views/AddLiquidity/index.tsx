@@ -18,7 +18,6 @@ import { MinimalPositionCard } from '../../components/PositionCard'
 import Row, { RowBetween } from '../../components/Layout/Row'
 import ConnectWalletButton from '../../components/ConnectWalletButton'
 
-// import { ROUTER_ADDRESS, PANCAKE_ROUTER_ADDRESS } from '../../config/constants'
 import { PairState } from '../../hooks/usePairs'
 import { useCurrency } from '../../hooks/Tokens'
 import { ApprovalState, useApproveCallback } from '../../hooks/useApproveCallback'

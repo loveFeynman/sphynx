@@ -4,7 +4,6 @@ import { Button } from '@sphynxswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 import { Currency, TokenAmount } from '@sphynxswap/sdk'
 import { ReactComponent as ArrowRightIcon } from 'assets/svg/icon/ArrowRight.svg'
-import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import { Field } from '../../../state/mint/actions'
 
 import CurrencyInputPanel from '../../../components/CurrencyInputPanel'

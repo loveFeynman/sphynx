@@ -10,14 +10,12 @@ export async function makeApiRequest(path: any) {
 }
 export async function makeApiRequest1(path: any, routerVersion: any, resolution: any) {
   try {
-    // console.log("here in api reuest",path)
     const response = await fetch(
       `https://thesphynx.co/api/${routerVersion === 'v1' ? 'v1/' : ''}chart/${path}?resolution=${resolution}`,
       {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          // 'Content-Type': 'application/x-www-form-urlencoded',
         },
       },
     )

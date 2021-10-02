@@ -22,8 +22,6 @@ import { isAddress, getBscScanLink, reverseString } from '../../utils'
 import BuyTicketModal from './components/BuyTicketModal'
 import {
   useLotteryBalance,
-  approveCall,
-  buyTickets,
   viewLotterys,
   viewUserInfoForLotteryId,
 } from '../../hooks/useLottery'
@@ -191,7 +189,6 @@ export default function Lottery() {
   const [activeIndex, setActiveIndex] = React.useState(0);
   const [ticketSearch, setTicketSearch] = React.useState('')
   const [showDrop, setShowDrop] = useState(false)
-  const [show, setShow] = useState(true)
   const [selectedItemIndex, setSelectedItemIndex] = useState(-1)
   const [data, setdata] = useState([])
   const [lastLoteryInfo, setLastLotteryInfo] = React.useState(null)
@@ -312,10 +309,8 @@ export default function Lottery() {
     const result = isAddress(e.target.value)
     if (result) {
       setTicketSearch(e.target.value)
-      setShow(false)
     } else {
       setTicketSearch(e.target.value)
-      setShow(true)
     }
   }
 

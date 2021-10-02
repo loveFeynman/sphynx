@@ -18,7 +18,6 @@ const TokenSection = styled.div<{ dim?: boolean }>`
   grid-template-columns: auto minmax(auto, 1fr) auto;
   grid-gap: 16px;
   align-items: center;
-
   opacity: ${({ dim }) => (dim ? '0.4' : '1')};
 `
 
