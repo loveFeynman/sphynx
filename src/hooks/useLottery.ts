@@ -123,16 +123,15 @@ export const approveCall = async (signer, setConfig, setToastMessage) => {
 
 export const buyTickets = async (signer, roundID, ticketNumbers, setConfig, setToastMessage) => {
   try {
-    const tx = await lotteryContract
-      .connect(signer)
-      .buyTickets(roundID, ticketNumbers);
-    const receipt = await tx.wait();
+    const tx = await lotteryContract.connect(signer).buyTickets(roundID, ticketNumbers)
+    const receipt = await tx.wait()
     if (receipt.status === 1) {
-      setToastMessage({ title: 'Success ', message: 'Successfully purchase '.concat(ticketNumbers.length.toString()).concat(' tickets') })
-      setConfig(true);
-    } else 
-      setToastMessage({ title: 'Error ', message: 'Transaction failed'})  
-      
+      setToastMessage({
+        title: 'Success ',
+        message: 'Successfully purchase '.concat(ticketNumbers.length.toString()).concat(' tickets'),
+      })
+      setConfig(true)
+    } else setToastMessage({ title: 'Error ', message: 'Transaction failed' })
   } catch {
     setToastMessage({ title: 'Confirm Error', message: 'error' })
   }
@@ -201,7 +200,7 @@ export const claimTickets = async (signer, roundID, ticketIds, brackets, setToas
       .connect(signer)
       .claimTickets(roundID, ticketIds, brackets)
       .then((data) => {
-        setToastMessage({ title: 'Success ', message: 'Successed Claiming ' })
+        setToastMessage({ title: 'Success ', message: 'Successfully Claiming Tickets ' })
       })
       .catch((err) => {
         console.log('buyTickets call error', err)
