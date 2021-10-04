@@ -144,6 +144,10 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
     ) => {
       const { from, to, firstDataRequest } = periodParams
 
+      console.log('............from', from)
+      console.log('............to', to)
+      console.log('............firstDataRequest', firstDataRequest)
+
       try {
         const data = await makeApiRequest1(input, routerVersion, resolution)
         if (result) {
