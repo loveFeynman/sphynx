@@ -467,7 +467,7 @@ export default function Lottery() {
           </div>
           <PastDrawCardContainer>
             <div style={{ margin: '10px' }}>
-              <TicketCard lastLoteryInfo={lastLoteryInfo} roundID={roundID} />
+              <TicketCard lastLoteryInfo={lastLoteryInfo} roundID={roundID-1} />
             </div>
             <div style={{ margin: '10px' }}>
               <History />

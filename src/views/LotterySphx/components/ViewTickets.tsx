@@ -118,7 +118,13 @@ const ViewTicketModal: React.FC<ViewTicketModalProps> = ({ roundID, winningCards
         brackets.push(bracket)
       }
     })
-    setLoading(true)
+    setLoading(true);
+    if (ticketIDS.length === 0) {
+      toastError("Notification", "You have no tickets to claim");
+      onDismiss();
+      return;
+
+    }
     await claimTickets(signer, roundID, ticketIDS, brackets, setToastMessage)
     setLoading(false)
   }
