@@ -1,12 +1,12 @@
 /* eslint-disable no-console */
 import { isAddress } from '@ethersproject/address'
-import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { AppState } from 'state'
 import styled from 'styled-components'
 import { useTranslation } from 'contexts/Localization'
 import { Spinner } from '../../LotterySphx/components/Spinner'
+import { topTrades } from '../../../utils/apiServices'
 
 const TableWrapper = styled.div`
   background: rgba(0, 0, 0, 0.4);
@@ -70,17 +70,10 @@ const SellersCard = () => {
     const to = new Date().toISOString()
     try {
       if (result && address && from && to) {
-        const config: any = {
-          method: 'get',
-          url: `https://thesphynx.co/api/top-trades?address=${address}&type=sell`,
-          headers: {},
+        const topSellers = await topTrades(address, 'sell');
+        if (topSellers) {
+          setTableData(topSellers);
         }
-
-        axios(config).then((response) => {
-          if (response.data.wallet !== null && response.data.usdAmount !== null) {
-            setTableData(response.data)
-          }
-        })
       }
     } catch (error) {
       console.log(error)

@@ -1,13 +1,5 @@
 // Make requests to CryptoCompare API
 
-export async function makeApiRequest(path: any) {
-  try {
-    const response = await fetch(`https://thesphynx.co/api/tokenDetails/${path}`)
-    return response.json()
-  } catch (error) {
-    throw new Error(`CryptoCompare request error: ${error.status}`)
-  }
-}
 export async function makeApiRequest1(path: any, routerVersion: any, resolution: any) {
   try {
     const response = await fetch(

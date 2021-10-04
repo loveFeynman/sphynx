@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import styled from 'styled-components'
 import { getUnixTime, startOfHour, Duration, sub } from 'date-fns'
@@ -28,10 +28,12 @@ import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown'
 import ToggleList from './ToggleList'
 import { AppState } from '../../../state'
 import { typeInput, typeRouterVersion, setIsInput } from '../../../state/input/actions'
-// import { GetInputData } from '../index';
-// import { TokenDetailProps } from './types'
 import { isAddress, getBscScanLink } from '../../../utils'
 import { useTranslation } from '../../../contexts/Localization'
+import { MenuItem } from '@material-ui/core'
+import { setIsInput, typeInput, typeRouterVersion } from '../../../state/input/actions'
+import { getBscScanLink, isAddress } from '../../../utils'
+import { searchToken, socialToken } from '../../../utils/apiServices'
 
 export interface ContractPanelProps {
   value: any
@@ -164,10 +166,8 @@ export default function ContractPanel({ value }: ContractPanelProps) {
   // const find=social.links.find(elem=>elem)
   // console.log("socials",social.links)
   const getWebsite = async () => {
-    const web: any = await axios.get(`https://thesphynx.co/api/socials/${checksumAddress}`)
-    // console.log("web===============>",web)
-
-    const links = web.data.data.links || []
+    const web: any = await socialToken(checksumAddress.toString());
+    const links = web.links || []
     const twitter = links.find((e) => e.name === 'twitter')
     const telegram = links.find((e) => e.name === 'telegram')
 
@@ -179,14 +179,14 @@ export default function ContractPanel({ value }: ContractPanelProps) {
       setTelegram(telegram.url)
     }
 
-    setSocial(web.data.data)
+    setSocial(web)
   }
 
-  const handlerChange = (e: any) => {
+  const handlerChange = async (e: any) => {
     try {
       if (e.target.value && e.target.value.length > 0) {
-        axios.get(`https://thesphynx.co/api/search/${e.target.value}`).then((response) => {
-          setdata(response.data)
+        searchToken(e.target.value).then((response) => {
+          setdata(response)
         })
       } else {
         setdata([])

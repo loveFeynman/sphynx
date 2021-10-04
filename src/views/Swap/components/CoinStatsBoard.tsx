@@ -2,13 +2,14 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { utils } from 'ethers'
-import axios from 'axios'
 import styled from 'styled-components'
-import { Text, Flex } from '@sphynxswap/uikit'
+import { Flex, Text } from '@sphynxswap/uikit'
 import Column from 'components/Column'
 import { isAddress } from 'utils'
 import { useTranslation } from 'contexts/Localization'
+import axios from 'axios'
 import { AppState } from '../../../state'
+import { getChartStats } from '../../../utils/apiServices'
 
 const IconWrapper = styled.div<{ size?: number }>`
   display: flex;
@@ -114,20 +115,19 @@ export default function CoinStatsBoard() {
   const liquidityV2decimal = parseFloat(alldata.liquidityV2).toFixed(3)
   const liquidityV2BNBdecimal = parseFloat(alldata.liquidityV2BNB).toFixed(3)
 
-  const getTableData = () => {
+  const getTableData = async () => {
     try {
       if (result) {
         axios.post('https://thesphynx.co/api/tokenStats', { address: input }).then((response) => {
           setTokenData(response.data)
         })
-        axios.post('https://thesphynx.co/api/chartStats', { address: input }).then((response) => {
-          setalldata(response.data)
-          setLinkIcon(
-            `https://r.poocoin.app/smartchain/assets/${
-              input ? utils.getAddress(input) : '0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82'
-            }/logo.png`,
-          )
-        })
+        const chartStats: any = await getChartStats(input);
+        setalldata(chartStats)
+        setLinkIcon(
+          `https://r.poocoin.app/smartchain/assets/${
+            input ? utils.getAddress(input) : '0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82'
+          }/logo.png`,
+        )
       }
     } catch (err) {
       // eslint-disable-next-line no-console

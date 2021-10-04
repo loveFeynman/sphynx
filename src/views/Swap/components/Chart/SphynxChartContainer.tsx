@@ -2,18 +2,18 @@
 import * as React from 'react'
 import styled from 'styled-components'
 import {
-  widget,
   ChartingLibraryWidgetOptions,
-  LanguageCode,
   IChartingLibraryWidget,
+  LanguageCode,
   ResolutionString,
+  widget,
 } from 'charting_library/charting_library'
-import axios from 'axios'
 import { useSelector } from 'react-redux'
-import { getUnixTime, startOfHour, Duration, sub } from 'date-fns'
+import { Duration, getUnixTime, startOfHour, sub } from 'date-fns'
 import { AppState } from 'state'
 import fetchTokenPriceData from 'state/info/queries/tokens/priceData'
 import { isAddress } from 'utils'
+import { getTokenDetails } from '../../../../utils/apiServices'
 
 const ChartContainer = styled.div<{ height: number }>`
   position: relative;
@@ -130,13 +130,13 @@ const SphynxChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => 
       setTimeout(() => callback(configurationData), 0)
     },
     resolveSymbol: async (symbolName: any, onSymbolResolvedCallback: any, onResolveErrorCallback: any) => {
-      const response = await axios.get(`https://thesphynx.co/api/tokenDetails/${checksumAddress}`)
-      setTokenDetails(response.data)
+      const response = await getTokenDetails(checksumAddress.toString())
+      setTokenDetails(response)
 
       const symbolInfo = {
-        ticker: response.data.pair,
-        name: response.data.pair,
-        description: response.data.sybmol,
+        ticker: response.pair,
+        name: response.pair,
+        description: response.symbol,
         type: 'crypto',
         session: '24x7',
         timezone: 'Etc/UTC',

@@ -3,17 +3,17 @@ import * as React from 'react'
 import styled from 'styled-components'
 import './index.css'
 import {
-  widget,
   ChartingLibraryWidgetOptions,
-  LanguageCode,
   IChartingLibraryWidget,
+  LanguageCode,
   ResolutionString,
+  widget,
 } from 'charting_library/charting_library'
-import axios from 'axios'
 import { makeApiRequest1 } from './helpers'
 import { useSelector } from 'react-redux'
 import { AppState } from 'state'
 import { isAddress } from 'utils'
+import { getTokenDetails } from '../../../../../utils/apiServices'
 
 const ChartContainer = styled.div<{ height: number }>`
   position: relative;
@@ -72,7 +72,7 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
   const [tokendetails, setTokenDetails] = React.useState({
     name: 'PancakeSwap Token',
     pair: 'Cake/BNB',
-    sybmol: 'CAKE',
+    symbol: 'CAKE',
     version: 'Pancake ' + routerVersion,
   })
 
@@ -108,18 +108,18 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
       onResultReadyCallback(newSymbols)
     },
     resolveSymbol: async (symbolName: any, onSymbolResolvedCallback: any, onResolveErrorCallback: any) => {
-      const response = await axios.get(`https://thesphynx.co/api/tokenDetails/${input}`)
-      setTokenDetails(response.data)
+      const res = await getTokenDetails(input)
+      setTokenDetails(res)
 
       const version =
-        response.data.version.indexOf(' ') > 0
-          ? response.data.version.split(' ')[0] + ' ' + routerVersion
-          : response.data.version
+        res.version.indexOf(' ') > 0
+          ? res.version.split(' ')[0] + ' ' + routerVersion
+          : res.version
 
       const symbolInfo = {
-        ticker: response.data.pair,
-        name: response.data.pair,
-        description: response.data.sybmol,
+        ticker: res.pair,
+        name: res.pair,
+        description: res.symbol,
         type: 'crypto',
         session: '24x7',
         timezone: 'Etc/UTC',
@@ -143,6 +143,10 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
       onErrorCallback: any,
     ) => {
       const { from, to, firstDataRequest } = periodParams
+
+      console.log('............from', from)
+      console.log('............to', to)
+      console.log('............firstDataRequest', firstDataRequest)
 
       try {
         const data = await makeApiRequest1(input, routerVersion, resolution)
