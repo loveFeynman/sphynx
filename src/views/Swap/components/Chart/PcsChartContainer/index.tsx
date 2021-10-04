@@ -13,7 +13,7 @@ import { makeApiRequest1 } from './helpers'
 import { useSelector } from 'react-redux'
 import { AppState } from 'state'
 import { isAddress } from 'utils'
-import getTokenDetails from '../../../../../utils/getTokenDetails'
+import { getTokenDetails } from '../../../../../utils/apiServices'
 
 const ChartContainer = styled.div<{ height: number }>`
   position: relative;

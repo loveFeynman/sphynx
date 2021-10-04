@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
+import React, { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import styled from 'styled-components'
-import { Flex, Text, Link } from '@sphynxswap/uikit'
+import { Flex, Link, Text } from '@sphynxswap/uikit'
 import { ReactComponent as BscscanIcon } from 'assets/svg/icon/Bscscan.svg'
-import axios from 'axios'
 import CopyHelper from 'components/AccountDetails/Copy'
 
-import { AppState, AppDispatch } from '../../../state'
-import { selectCurrency, Field } from '../../../state/swap/actions'
-import { isAddress, getBscScanLink } from '../../../utils'
+import { AppDispatch, AppState } from '../../../state'
+import { Field, selectCurrency } from '../../../state/swap/actions'
+import { getBscScanLink, isAddress } from '../../../utils'
+import { getTokenStats } from '../../../utils/apiServices'
 
 const TextWrapper = styled.div`
   border-top: 1px solid rgba(255, 255, 255, 0.1);
@@ -82,21 +82,20 @@ export default function TokenInfo() {
   const getTableData = async () => {
     try {
       if (result) {
-        await axios.post('https://thesphynx.co/api/tokenStats', { address: input }).then((response) => {
-          setalldata(response.data)
-          dispatch(
-            selectCurrency({
-              field: isInput ? Field.OUTPUT : Field.INPUT,
-              currencyId: input,
-            }),
-          )
-          dispatch(
-            selectCurrency({
-              field: isInput ? Field.INPUT : Field.OUTPUT,
-              currencyId: 'BNB',
-            }),
-          )
-        })
+        const data = await getTokenStats(input);
+        setalldata(data);
+        dispatch(
+          selectCurrency({
+            field: isInput ? Field.OUTPUT : Field.INPUT,
+            currencyId: input,
+          }),
+        )
+        dispatch(
+          selectCurrency({
+            field: isInput ? Field.INPUT : Field.OUTPUT,
+            currencyId: 'BNB',
+          }),
+        )
       }
     } catch (err) {
       // eslint-disable-next-line no-console

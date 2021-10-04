@@ -13,7 +13,7 @@ import { Duration, getUnixTime, startOfHour, sub } from 'date-fns'
 import { AppState } from 'state'
 import fetchTokenPriceData from 'state/info/queries/tokens/priceData'
 import { isAddress } from 'utils'
-import getTokenDetails from '../../../../utils/getTokenDetails'
+import { getTokenDetails } from '../../../../utils/apiServices'
 
 const ChartContainer = styled.div<{ height: number }>`
   position: relative;
