@@ -120,7 +120,7 @@ export default function TokenInfo() {
       <Flex alignItems="center" justifyContent="space-between">
         <Flex alignItems="center">
           <IconWrapper size={32}>
-            <Text color="white">{alldata.symbol}</Text>
+            <Text color="white">{t(`${alldata.symbol}`)}</Text>
           </IconWrapper>
         </Flex>
         <Flex style={{ width: 40 }}>

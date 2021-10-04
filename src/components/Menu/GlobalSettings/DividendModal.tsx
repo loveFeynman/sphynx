@@ -29,22 +29,22 @@ const DividendModal: React.FC<DividendModalProps> = ({ onDismiss, balance }) => 
       style={{ maxWidth: '420px' }}
     >
       <Flex justifyContent="space-between" mt={2}>
-        <Text>Amount to be Distributed</Text>
+        <Text>{t('Amount to be Distributed')}</Text>
         <Text ml={3}>$ {balance}</Text>
       </Flex>
       <Text textAlign="center" mt={3}>
-        Distribution in:
+        {t('Distribution in:')}
       </Text>
       <Text textAlign="center" mt={1}>
-        6 days: 23 hrs: 43 min: 23 sec
+        6 {t('days')}: 23 {t('hrs')}: 43 {t('min')}: 23 {t('sec')}
       </Text>
       <Flex justifyContent="space-between" mt={3}>
-        <Text>Previously Distributed</Text>
+        <Text>{t('Previously Distributed')}</Text>
         <Text>$ {balance}</Text>
       </Flex>
       <Flex flexDirection="column" mt={3}>
         <ApplyButton className="selected" onClick={onDismiss}>
-          Hide Details
+          {t('Hide Details')}
         </ApplyButton>
       </Flex>
     </Modal>
