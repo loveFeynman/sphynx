@@ -206,9 +206,9 @@ export default function PrizePotCard({
             {isNext
               ? enabled
                 ? remainningTime
-                : 'On sale soon'
+                : t('On sale soon')
               : totalCount === 'NaN' || totalCount === ''
-              ? 'Calculating'
+              ? t('Calculating')
               : <FormattedNumber prefix="$" value={totalCount} suffix=''/>}
           </HeaderLabel>
         </div>
@@ -259,7 +259,7 @@ export default function PrizePotCard({
             {t(`Buy Now`)}
           </ButtonWrapper>
           <ButtonWrapper isEnable={userTicketInfos.length > 0}style={{ marginTop: '20px' }} onClick={() => onPresentViewTicketModal()}>
-            View your ticket
+            {t('View your ticket')}
           </ButtonWrapper>
           {isClaimable && (
             <ButtonWrapper isEnable style={{ marginTop: '10px' }} onClick={handleClaimTickets}>

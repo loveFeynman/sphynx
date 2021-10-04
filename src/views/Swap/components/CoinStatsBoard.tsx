@@ -2,12 +2,14 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { utils } from 'ethers'
-import axios from 'axios'
 import styled from 'styled-components'
-import { Text, Flex } from '@sphynxswap/uikit'
+import { Flex, Text } from '@sphynxswap/uikit'
 import Column from 'components/Column'
 import { isAddress } from 'utils'
+import { useTranslation } from 'contexts/Localization'
+import axios from 'axios'
 import { AppState } from '../../../state'
+import { getChartStats } from '../../../utils/apiServices'
 
 const IconWrapper = styled.div<{ size?: number }>`
   display: flex;
@@ -92,6 +94,7 @@ const StyledWrapper = styled.div`
 export default function CoinStatsBoard() {
   const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
   const result = isAddress(input)
+  const { t } = useTranslation()
 
   const [alldata, setalldata] = useState({
     address: '',
@@ -112,20 +115,19 @@ export default function CoinStatsBoard() {
   const liquidityV2decimal = parseFloat(alldata.liquidityV2).toFixed(3)
   const liquidityV2BNBdecimal = parseFloat(alldata.liquidityV2BNB).toFixed(3)
 
-  const getTableData = () => {
+  const getTableData = async () => {
     try {
       if (result) {
         axios.post('https://thesphynx.co/api/tokenStats', { address: input }).then((response) => {
           setTokenData(response.data)
         })
-        axios.post('https://thesphynx.co/api/chartStats', { address: input }).then((response) => {
-          setalldata(response.data)
-          setLinkIcon(
-            `https://r.poocoin.app/smartchain/assets/${
-              input ? utils.getAddress(input) : '0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82'
-            }/logo.png`,
-          )
-        })
+        const chartStats: any = await getChartStats(input);
+        setalldata(chartStats)
+        setLinkIcon(
+          `https://r.poocoin.app/smartchain/assets/${
+            input ? utils.getAddress(input) : '0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82'
+          }/logo.png`,
+        )
       }
     } catch (err) {
       // eslint-disable-next-line no-console
@@ -148,28 +150,28 @@ export default function CoinStatsBoard() {
             </IconWrapper>
             {tokenData && (
               <Flex flexDirection="column" justifyContent="center">
-                <Text>{tokenData.symbol}</Text>
+                <Text>{t(`${tokenData.symbol}`)}</Text>
                 <Text>$ {Number(tokenData.marketCap).toLocaleString()}</Text>
               </Flex>
             )}
           </Flex>
         </Column>
         <Column>
-          <Text>Price</Text>
+          <Text>{t('Price')}</Text>
           <Text>${Number(alldata.price).toFixed(6).toLocaleString()}</Text>
         </Column>
         <Column>
-          <Text>24h Change</Text>
+          <Text>{t('24h Change')}</Text>
           <Text>
             <h2 className={Math.sign(changedecimal) === -1 ? 'error' : 'success'}> {changedecimal}%</h2>
           </Text>
         </Column>
         <Column>
-          <Text>24h Volume</Text>
+          <Text>{t('24h Volume')}</Text>
           <Text>$ {Number(volumedecimal).toLocaleString()}</Text>
         </Column>
         <Column style={{ margin: '0 0 8px 0' }}>
-          <Text>Liquidity</Text>
+          <Text>{t('Liquidity')}</Text>
           <Text>
             {Number(liquidityV2BNBdecimal).toLocaleString()} BNB
             <span className="success"> (${Number(liquidityV2decimal).toLocaleString()})</span>

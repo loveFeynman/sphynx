@@ -7,6 +7,7 @@ import Web3 from 'web3'
 import MainLogo from 'assets/svg/icon/logo_new.svg'
 import MoreIcon from 'assets/svg/icon/MoreIcon2.svg'
 import { WEBSOCKET_URL } from 'utils/providers'
+import { useTranslation } from 'contexts/Localization'
 import tokenABI from '../../../assets/abis/erc20.json'
 
 const Wrapper = styled.div`
@@ -34,6 +35,7 @@ const DetailsImage = styled.img`
 const DividendPanel: React.FC = () => {
   const [balance, setBalance] = useState(0)
   const [price, setPrice] = useState(0)
+  const { t } = useTranslation()
 
   const [onPresentDividendModal] = useModal(<DividendModal balance={balance * price} />)
 
@@ -59,13 +61,13 @@ const DividendPanel: React.FC = () => {
       <Flex>
         <img src={MainLogo} alt="Main Logo" />
         <Text color="white" mt={2} ml={1}>
-          Sphynx Dividend
+          {t('Sphynx Dividend')}
         </Text>
         <DetailsImage src={MoreIcon} alt="More Icon" onClick={() => onPresentDividendModal()} />
       </Flex>
       <Flex justifyContent="space-between" mt={2}>
         <Text color="white" fontSize="14px">
-          Amount to be Distributed
+          {t('Amount to be Distributed')}
         </Text>
         <Text color="white" fontSize="14px">
           $ {balance * price}
