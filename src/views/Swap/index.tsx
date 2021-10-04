@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import styled from 'styled-components'
@@ -203,7 +204,7 @@ export default function Swap({ history }: RouteComponentProps) {
   const [isExpertMode] = useExpertModeManager()
 
   // get custom setting values for user
-  const [allowedSlippage, setUserSlippageTolerance] = useUserSlippageTolerance()
+  const [allowedSlippage] = useUserSlippageTolerance()
 
   // swap state
   const { independentField, typedValue, recipient } = useSwapState()
@@ -363,56 +364,6 @@ export default function Swap({ history }: RouteComponentProps) {
 
   const handleInputSelect = useCallback(
     (inputCurrency) => {
-      const query = `
-      {
-        ethereum(network: bsc){
-            address(address: {is: "${inputCurrency.address}" }){
-            smartContract {
-                attributes{
-                  name
-                  type
-                  address {
-                    address
-                    annotation
-                  }
-                  value
-                }
-              }
-            }
-          }
-        }
-      `
-      const bitConfig = {
-        headers: {
-          'X-API-KEY': BITQUERY_API_KEY,
-        },
-      }
-      axios
-        .post(BITQUERY_API, { query }, bitConfig)
-        .then((data) => {
-          let slippage = 80
-          const values = JSON.stringify(data.data.data.ethereum.address[0].smartContract.attributes)
-          if (
-            values.includes('fee ') ||
-            values.includes('tax') ||
-            values.includes('Fee ') ||
-            values.includes('Tax') ||
-            values.includes('uniswapV2Router') ||
-            values.includes('totalFee')
-          ) {
-            const fee = JSON.parse(values).find((e) => e.name === 'totalFee')
-            if (fee) {
-              slippage = fee.value * 100
-            } else {
-              slippage = Math.floor(Math.random() * (1300 - 1150 + 1) + 1150)
-            }
-          }
-          setUserSlippageTolerance(slippage)
-        })
-        .catch((error) => {
-          console.log(error)
-          setUserSlippageTolerance(100)
-        })
       setApprovalSubmitted(false) // reset 2 step UI for approvals
       onCurrencySelection(Field.INPUT, inputCurrency)
       const showSwapWarning = shouldShowSwapWarning(inputCurrency)
@@ -422,7 +373,7 @@ export default function Swap({ history }: RouteComponentProps) {
         setSwapWarningCurrency(null)
       }
     },
-    [onCurrencySelection, setUserSlippageTolerance],
+    [onCurrencySelection],
   )
 
   const handleOutputSelect = useCallback(
