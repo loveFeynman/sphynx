@@ -10,6 +10,7 @@ const Container = styled.div`
 
 const Grid = styled.div`
   display: grid;
+  justify-content: space-between;
   grid-template-columns: repeat(2, auto);
   grid-template-rows: repeat(4, auto);
   padding: 20px 20px 0px 20px;
@@ -69,7 +70,7 @@ export default function PotContentTable({ isDetail, lotteryInfo }) {
           <GridItem isLeft>{item.number}</GridItem>
           {isDetail ? (
             <>
-              <GridItem isLeft>
+              <GridItem isLeft={false}>
                 <div style={{ textAlign: 'right' }}>
                   {parseFloat(item.tokens).toFixed(5)} SPHYNX
                   <div style={{ fontSize: '12px' }}>
