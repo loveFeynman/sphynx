@@ -1334,5 +1334,11 @@
   "Bridge": "桥梁",
   "Swap & charts": "交换和图表",
   "Main Menu": "主菜单",
-  "Top Pairs": "币对"
+  "Top Pairs": "前币对",
+  "Amount to be Distributed": "分配金额",
+  "AUTO": "自动",
+  "24h Change": "24小时变化",
+  "24h Volume": "24小时交易量",
+  "Sphynx Token (SPHYNX)": "Sphynx 代币 (SPHYNX)",
+  "Start Staking": "开始质押"
 }

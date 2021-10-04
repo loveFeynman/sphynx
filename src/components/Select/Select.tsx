@@ -139,7 +139,7 @@ const Select: React.FunctionComponent<SelectProps> = ({ options, defaultValue, o
     }
   }, [])
 
-  return (console.log('Select options ==> ', options, 'selectedOptionIndex ==> ', selectedOptionIndex, 'defaultValue ==> ', defaultValue),
+  return (
     <DropDownContainer isOpen={isOpen} ref={containerRef} {...containerSize}>
       {containerSize.width !== 0 && (
         <DropDownHeader onClick={toggling}>
