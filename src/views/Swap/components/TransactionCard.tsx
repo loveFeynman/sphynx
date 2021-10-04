@@ -14,7 +14,8 @@ import routerABI from '../../../assets/abis/pancakeRouter.json'
 import { simpleWebsocketProvider } from '../../../utils/providers'
 import { Spinner } from '../../LotterySphx/components/Spinner'
 import { BITQUERY_API, BITQUERY_API_KEY } from 'config/constants/endpoints'
-import { priceInput } from 'state/input/actions'
+import { priceInput, amountInput } from 'state/input/actions'
+import { useGetBnbBalance } from 'hooks/useTokenBalance'
 
 const pancakeV2: any = '0x10ED43C718714eb63d5aA57B78B54704E256024E'
 const busdAddr = '0xe9e7cea3dedca5984780bafc599bd69add087d56'
@@ -86,6 +87,7 @@ const TransactionCard = () => {
   const providerURL = 'wss://old-thrumming-voice.bsc.quiknode.pro/7674ba364cc71989fb1398e1e53db54e4fe0e9e0/'
   const web3 = new Web3(new Web3.providers.WebsocketProvider(providerURL))
   const [transactionData, setTransactions] = useState([])
+  const { balance } = useGetBnbBalance()
   let input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
   if (input === '-') input = sphynxAddr
   const tokenAddress = isAddress(input)
@@ -198,9 +200,9 @@ const TransactionCard = () => {
             oneData.isBuy = logs.length != 0
             oneData.usdValue = oneData.amount * oneData.price
             newTransactions.unshift(oneData)
-
             dispatch(priceInput({ price: oneData.price }))
-          } catch (err) {}
+            dispatch(amountInput({ amount: oneData.usdValue / Number(balance) }))
+          } catch (err) { }
         })
       }
       blocks = 0
@@ -209,7 +211,7 @@ const TransactionCard = () => {
   }
 
   useEffect(() => {
-    window.localStorage.removeItem('currentPrice') // initiate
+    dispatch(priceInput({ price: -1 }))
     const contract: any = new web3.eth.Contract(abi, input)
     const fetchDecimals = async () => {
       tokenDecimal = await contract.methods.decimals().call()
@@ -233,7 +235,7 @@ const TransactionCard = () => {
         }
       })
     return () => {
-      window.localStorage.removeItem('currentPrice') // initiate
+      dispatch(priceInput({ price: -1 }))
     }
   }, [input])
 
@@ -321,8 +323,8 @@ const TransactionCard = () => {
                           {data.price < 0.00001
                             ? data.price
                             : Number(data.price)
-                                .toFixed(4)
-                                .replace(/(\d)(?=(\d{3})+\.)/g, '$1,')}
+                              .toFixed(4)
+                              .replace(/(\d)(?=(\d{3})+\.)/g, '$1,')}
                         </h2>
                       </a>
                     </td>
