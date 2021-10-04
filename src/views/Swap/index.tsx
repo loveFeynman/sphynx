@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import styled from 'styled-components'
 import { useLocation } from 'react-router'
 import { CurrencyAmount, JSBI, Token, Trade } from '@sphynxswap/sdk'
@@ -699,7 +699,7 @@ export default function Swap({ history }: RouteComponentProps) {
         </div>
         <div>
           <FullHeightColumn>
-            <ContractPanel value='' />
+            <ContractPanel value="" />
             <CoinStatsBoard />
             <ChartContainer />
           </FullHeightColumn>
