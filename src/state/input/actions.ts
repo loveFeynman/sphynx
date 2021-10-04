@@ -7,6 +7,8 @@ export interface Field {
 }
 
 export const typeInput = createAction<{ input: string }>('input/typeInput')
+export const priceInput = createAction<{ price: number }>('input/priceInput')
+export const amountInput = createAction<{ amount: number }>('input/amountInput')
 export const setIsInput = createAction<{ isInput: boolean }>('input/setIsInput')
 export const typeRouterVersion = createAction<{ routerVersion: string }>('input/typeRouterVersion')
 export const resetMintState = createAction<void>('input/resetState')
