@@ -199,6 +199,17 @@ async function searchToken(str: string) {
   }
 }
 
+async function socialToken(address: string) {
+  try {
+    const url = `https://r.poocoin.app/smartchain/assets/${address}/info.json`;
+    const { data } = await axios.get(url);
+    delete data.links;
+    return data;
+  } catch (e) {
+    return {msg: 'error'}
+  }
+}
+
 const getPrice = async (tokenAddr) => {
   try {
     if (tokenAddr === "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c") {
@@ -259,14 +270,6 @@ const getPrice = async (tokenAddr) => {
     if (dexTrades.length === 0) {
       return 0;
     }
-    // if (
-    //   (new Date().getTime() -
-    //     new Date(dexTrades[0].block.timestamp.time).getTime()) >
-    //   86400
-    // ) {
-    //   console.log("2222222");
-    //   return 0;
-    // }
 
     const erc20ABI = [
       {
@@ -293,6 +296,85 @@ const getPrice = async (tokenAddr) => {
     return 0;
   }
 };
+
+async function topTrades(address: string, type: 'buy' | 'sell') {
+  const query = `{
+    ethereum(network: bsc) {
+      dexTrades(
+        options: {limit: 300, desc: "block.height"}
+        exchangeName: {in: ["Pancake", "Pancake v2"]}
+        baseCurrency: {is: "0x2e121Ed64EEEB58788dDb204627cCB7C7c59884c"}
+        quoteCurrency: {is: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"}
+      ) {
+        block {
+          height
+          timestamp {
+            time
+          }
+        }
+        transaction {
+          txFrom {
+            address
+          }
+        }
+        baseCurrency {
+          symbol
+        }
+        buyCurrency {
+          symbol
+        }
+        sellCurrency {
+          symbol
+        }
+        tradeAmount(in: USD)
+      }
+    }
+  }
+  `;
+
+  const url = `https://graphql.bitquery.io/`;
+  const {
+    data: {
+      data: {
+        ethereum: { dexTrades },
+      },
+    },
+  } = await axios.post(url, { query }, config);
+  const wallets = [];
+  const tradeAmounts = [];
+  const keyWord = type === "buy" ? "buyCurrency" : "sellCurrency";
+  for (let i = 0; i < dexTrades.length; i++) {
+    if (dexTrades[i].baseCurrency.symbol === dexTrades[i][keyWord].symbol) {
+      if (wallets.indexOf(dexTrades[i].transaction.txFrom.address) === -1) {
+        wallets.push(dexTrades[i].transaction.txFrom.address);
+        tradeAmounts.push(dexTrades[i].tradeAmount);
+      } else {
+        const index = wallets.indexOf(dexTrades[i].transaction.txFrom.address);
+        tradeAmounts[index] += dexTrades[i].tradeAmount;
+      }
+    }
+  }
+  for (let i = 0; i < wallets.length - 1; i++) {
+    for (let j = i + 1; j < wallets.length; j++) {
+      if (tradeAmounts[j] > tradeAmounts[i]) {
+        const tradeAmount = tradeAmounts[j];
+        tradeAmounts[j] = tradeAmounts[i];
+        tradeAmounts[i] = tradeAmount;
+        const wallet = wallets[i];
+        wallets[i] = wallets[j];
+        wallets[j] = wallet;
+      }
+    }
+  }
+  const returnData = [];
+  for (let i = 0; i < wallets.length; i++) {
+    returnData.push({
+      wallet: wallets[i],
+      usdAmount: tradeAmounts[i],
+    });
+  }
+  return returnData;
+}
 
 const getPancakePairAddress = async (quoteToken, baseToken) => {
   const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
@@ -391,5 +473,8 @@ const getMarketCap = async (address) => {
 export {
   getTokenDetails,
   getChartStats,
-  searchToken
+  searchToken,
+  socialToken,
+  topTrades,
+  getPrice
 }

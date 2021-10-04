@@ -18,13 +18,12 @@ import { fetchPoolData } from 'state/info/queries/pools/poolData'
 import CopyHelper from 'components/AccountDetails/Copy'
 // eslint-disable-next-line import/no-unresolved
 import './dropdown.css'
-import axios from 'axios'
 import { MenuItem } from '@material-ui/core'
 import ToggleList from './ToggleList'
 import { AppState } from '../../../state'
 import { setIsInput, typeInput, typeRouterVersion } from '../../../state/input/actions'
 import { getBscScanLink, isAddress } from '../../../utils'
-import { searchToken } from '../../../utils/apiServices'
+import { searchToken, socialToken } from '../../../utils/apiServices'
 
 export interface ContractPanelProps {
   value: any
@@ -147,8 +146,8 @@ export default function ContractPanel({ value }: ContractPanelProps) {
 
   const [poolDatas, setPoolDatas] = useState<PoolData[]>([])
   const getWebsite = async () => {
-    const web: any = await axios.get(`https://thesphynx.co/api/socials/${checksumAddress}`)
-    const links = web.data.data.links || []
+    const web: any = await socialToken(checksumAddress.toString());
+    const links = web.links || []
     const twitter = links.find((e) => e.name === 'twitter')
     const telegram = links.find((e) => e.name === 'telegram')
 
@@ -160,7 +159,7 @@ export default function ContractPanel({ value }: ContractPanelProps) {
       setTelegram(telegram.url)
     }
 
-    setSocial(web.data.data)
+    setSocial(web)
   }
 
   const handlerChange = async (e: any) => {
