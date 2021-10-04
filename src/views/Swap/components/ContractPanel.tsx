@@ -30,9 +30,6 @@ import { AppState } from '../../../state'
 import { typeInput, typeRouterVersion, setIsInput } from '../../../state/input/actions'
 import { isAddress, getBscScanLink } from '../../../utils'
 import { useTranslation } from '../../../contexts/Localization'
-import { MenuItem } from '@material-ui/core'
-import { setIsInput, typeInput, typeRouterVersion } from '../../../state/input/actions'
-import { getBscScanLink, isAddress } from '../../../utils'
 import { searchToken, socialToken } from '../../../utils/apiServices'
 
 export interface ContractPanelProps {
