@@ -18,7 +18,6 @@ cypress/fixtures/example.json
 
 # production
 # build/
-/build
 
 # misc
 .DS_Store
