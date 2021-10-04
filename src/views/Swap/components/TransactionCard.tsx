@@ -15,7 +15,6 @@ import { simpleWebsocketProvider } from '../../../utils/providers'
 import { Spinner } from '../../LotterySphx/components/Spinner'
 import { BITQUERY_API, BITQUERY_API_KEY } from 'config/constants/endpoints'
 import { priceInput, amountInput } from 'state/input/actions'
-import { useGetBnbBalance } from 'hooks/useTokenBalance'
 
 const pancakeV2: any = '0x10ED43C718714eb63d5aA57B78B54704E256024E'
 const busdAddr = '0xe9e7cea3dedca5984780bafc599bd69add087d56'
@@ -87,7 +86,6 @@ const TransactionCard = () => {
   const providerURL = 'wss://old-thrumming-voice.bsc.quiknode.pro/7674ba364cc71989fb1398e1e53db54e4fe0e9e0/'
   const web3 = new Web3(new Web3.providers.WebsocketProvider(providerURL))
   const [transactionData, setTransactions] = useState([])
-  const { balance } = useGetBnbBalance()
   let input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
   if (input === '-') input = sphynxAddr
   const tokenAddress = isAddress(input)
@@ -164,6 +162,8 @@ const TransactionCard = () => {
 
   const parseData: any = async () => {
     let newTransactions = transactionData
+    const provider = simpleWebsocketProvider
+    const bnbPrice = await getBnbPrice(provider)
     return new Promise((resolve) => {
       for (let i = 0; i <= myTransactions.length; i++) {
         if (i === myTransactions.length) {
@@ -201,7 +201,7 @@ const TransactionCard = () => {
             oneData.usdValue = oneData.amount * oneData.price
             newTransactions.unshift(oneData)
             dispatch(priceInput({ price: oneData.price }))
-            dispatch(amountInput({ amount: oneData.usdValue / Number(balance) }))
+            dispatch(amountInput({ amount: oneData.usdValue / bnbPrice }))
           } catch (err) { }
         })
       }
