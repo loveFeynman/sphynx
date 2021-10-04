@@ -73,9 +73,9 @@ export default function PotContentTable({ isDetail, lotteryInfo }) {
             <>
               <GridItem isLeft={false}>
                 <div style={{ textAlign: 'right' }}>
-                  <FormattedNumber prefix="$" value={item.tokens} suffix='SPHYNX'/>
+                  <FormattedNumber prefix="" value={item.tokens} suffix=' SPHYNX'/>
                   <div style={{ fontSize: '12px' }}>
-                    {parseFloat(item.eachTokens).toFixed(5)} {t(' each')}
+                    <FormattedNumber prefix="" value={item.eachTokens} suffix=' each'/>
                   </div>
                 </div>
               </GridItem>

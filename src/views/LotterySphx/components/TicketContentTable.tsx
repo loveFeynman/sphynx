@@ -64,7 +64,7 @@ export default function TicketContentTable(lastLoteryInfo) {
             <>
               <GridItem isLeft>
                 <div style={{ textAlign: 'right' }}>
-                  <FormattedNumber prefix="$" value={item.tokens} suffix=' SPHYNX'/>
+                  <FormattedNumber prefix="" value={item.tokens} suffix=' SPHYNX'/>
                 </div>
               </GridItem>
             </>
