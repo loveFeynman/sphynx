@@ -98,7 +98,7 @@ export default function TicketCard({ lastLoteryInfo, roundID }) {
           <Flex>
             {winningCards.map((item, index) => (
               <Text key={index} bold color="white" fontSize="24px">
-                {item === '' ? '?' : item},&nbsp;
+                {item === '' ? '?' : item} {index !== winningCards.length-1?',':'' }
               </Text>
             ))}
           </Flex>
