@@ -93,6 +93,7 @@ const ListItem = styled.li`
 
 export interface SelectProps {
   options: OptionProps[]
+  defaultValue?: number
   onChange?: (option: OptionProps) => void
 }
 
@@ -101,11 +102,11 @@ export interface OptionProps {
   value: any
 }
 
-const Select: React.FunctionComponent<SelectProps> = ({ options, onChange }) => {
+const Select: React.FunctionComponent<SelectProps> = ({ options, defaultValue, onChange }) => {
   const containerRef = useRef(null)
   const dropdownRef = useRef(null)
   const [isOpen, setIsOpen] = useState(false)
-  const [selectedOptionIndex, setSelectedOptionIndex] = useState(0)
+  const [selectedOptionIndex, setSelectedOptionIndex] = useState(defaultValue !== undefined? defaultValue: 0)
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 })
 
   const toggling = (event: React.MouseEvent<HTMLDivElement>) => {
@@ -138,7 +139,7 @@ const Select: React.FunctionComponent<SelectProps> = ({ options, onChange }) => 
     }
   }, [])
 
-  return (
+  return (console.log('Select options ==> ', options, 'selectedOptionIndex ==> ', selectedOptionIndex, 'defaultValue ==> ', defaultValue),
     <DropDownContainer isOpen={isOpen} ref={containerRef} {...containerSize}>
       {containerSize.width !== 0 && (
         <DropDownHeader onClick={toggling}>

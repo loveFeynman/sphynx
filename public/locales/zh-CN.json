@@ -1216,7 +1216,7 @@
   "The moon is made of pancakes.": "Pancake 汇成明月。",
   "Trade, earn, and win crypto on the most popular decentralized platform in the galaxy.": "在全银河系中最受欢迎的去中心化平台上交易、赚取和赢取加密货币。",
   "Lunar bunny": "月兔",
-  "Total supply": "总供应量",
+  "Total Supply": "总供应量",
   "Burned to date": "迄今焚毁量",
   "Market cap": "市值",
   "Current emissions": "当前分发量",
@@ -1322,5 +1322,17 @@
   "Swaps & Liquidity": "Swaps & Liquidity",
   "Setting a high slippage tolerance can help transactions succeed, but you may not get such a good price. Use with caution.": "Setting a high slippage tolerance can help transactions succeed, but you may not get such a good price. Use with caution.",
   "Bypasses confirmation modals and allows high slippage trades. Use at your own risk.": "绕过确认模式并允许高滑点交易。使用风险自负。",
-  "Fun sounds to make a truly immersive pancake-flipping trading experience": "Fun sounds to make a truly immersive pancake-flipping trading experience"
+  "Fun sounds to make a truly immersive pancake-flipping trading experience": "Fun sounds to make a truly immersive pancake-flipping trading experience",
+  "Submit": "提交",
+  "Contract Address": "合约地址",
+  "Holders": "持有人",
+  "Market Cap": "市场容量",
+  "Socials": "社交网",
+  "NFT Marketplace (coming soon)": "NFT 市场 (即将推出)",
+  "Prediction (coming soon)": "预测 (即将推出)",
+  "Learning Hub": "学习中心",
+  "Bridge": "桥梁",
+  "Swap & charts": "交换和图表",
+  "Main Menu": "主菜单",
+  "Top Pairs": "币对"
 }
