@@ -35,14 +35,14 @@ export interface ChartContainerProps {
   fullscreen: ChartingLibraryWidgetOptions['fullscreen']
   autosize: ChartingLibraryWidgetOptions['autosize']
   studiesOverrides: ChartingLibraryWidgetOptions['studies_overrides']
-  containerId: ChartingLibraryWidgetOptions['container_id']
+  container: ChartingLibraryWidgetOptions['container']
   height: number
 }
 
 const ChartContainerProps = {
   symbol: 'AAPL',
   interval: 'H' as ResolutionString,
-  containerId: 'sphynx_chart_container',
+  container: 'sphynx_chart_container',
   datafeedUrl: 'https://demo_feed.tradingview.com',
   libraryPath: '/charting_library/',
   chartsStorageUrl: 'https://saveload.tradingview.com',
@@ -204,14 +204,12 @@ const SphynxChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => 
   const getWidget = async () => {
     let tvWidget: IChartingLibraryWidget | null = null
     const widgetOptions: ChartingLibraryWidgetOptions = {
-
       symbol: tokendetails.pair,
       // BEWARE: no trailing slash is expected in feed URL
       datafeed: feed,
       interval: ChartContainerProps.interval as ChartingLibraryWidgetOptions['interval'],
-      container_id: ChartContainerProps.containerId as ChartingLibraryWidgetOptions['container_id'],
       library_path: ChartContainerProps.libraryPath as string,
-      container: 'sphynx_chart_container',
+      container: ChartContainerProps.container as ChartingLibraryWidgetOptions['container'],
       locale: getLanguageFromURL() || 'en',
       theme: 'Dark',
       disabled_features: ['use_localstorage_for_settings'],
@@ -233,7 +231,7 @@ const SphynxChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => 
 
   return (
     <ChartContainer height={props.height}>
-      <div id={ChartContainerProps.containerId} style={{ height: '100%', paddingBottom: '10px' }} />
+      <div id={ChartContainerProps.container} style={{ height: '100%', paddingBottom: '10px' }} />
     </ChartContainer>
   )
 }
