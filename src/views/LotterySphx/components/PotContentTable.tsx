@@ -3,6 +3,7 @@ import React from 'react'
 import styled from 'styled-components'
 
 import { useTranslation } from 'contexts/Localization'
+import {FormattedNumber} from './FormattedNumber'
 
 const Container = styled.div`
   border-radius: 16px;
@@ -10,6 +11,7 @@ const Container = styled.div`
 
 const Grid = styled.div`
   display: grid;
+  justify-content: space-between;
   grid-template-columns: repeat(2, auto);
   grid-template-rows: repeat(4, auto);
   padding: 20px 20px 0px 20px;
@@ -69,9 +71,9 @@ export default function PotContentTable({ isDetail, lotteryInfo }) {
           <GridItem isLeft>{item.number}</GridItem>
           {isDetail ? (
             <>
-              <GridItem isLeft>
+              <GridItem isLeft={false}>
                 <div style={{ textAlign: 'right' }}>
-                  {parseFloat(item.tokens).toFixed(5)} SPHYNX
+                  <FormattedNumber prefix="$" value={item.tokens} suffix='SPHYNX'/>
                   <div style={{ fontSize: '12px' }}>
                     {parseFloat(item.eachTokens).toFixed(5)} {t(' each')}
                   </div>
