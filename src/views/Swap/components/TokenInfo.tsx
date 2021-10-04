@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import styled from 'styled-components'
-import { Flex, Link, Text } from '@sphynxswap/uikit'
+import { Flex, Text, Link } from '@sphynxswap/uikit'
 import { ReactComponent as BscscanIcon } from 'assets/svg/icon/Bscscan.svg'
 import CopyHelper from 'components/AccountDetails/Copy'
-
+import { AppState, AppDispatch } from '../../../state'
+import { selectCurrency, Field } from '../../../state/swap/actions'
+import { isAddress, getBscScanLink } from '../../../utils'
+import { useTranslation } from '../../../contexts/Localization'
 import axios from 'axios'
-import { AppDispatch, AppState } from '../../../state'
-import { Field, selectCurrency } from '../../../state/swap/actions'
-import { getBscScanLink, isAddress } from '../../../utils'
 
 const TextWrapper = styled.div`
   border-top: 1px solid rgba(255, 255, 255, 0.1);
@@ -64,13 +64,17 @@ const TokenInfoContainer = styled.div`
     margin: 0;
   }
 `
-
+// {tokenInfo}: {tokenInfo?: TokenDetailProps | null}
 export default function TokenInfo() {
   const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
   const isInput = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.isInput)
+
+  const { t } = useTranslation()
   const result = isAddress(input)
   // eslint-disable-next-line no-console
+
   const dispatch = useDispatch<AppDispatch>()
+
   const [alldata, setalldata] = useState({
     holders: '',
     txs: '',
@@ -114,7 +118,7 @@ export default function TokenInfo() {
       <Flex alignItems="center" justifyContent="space-between">
         <Flex alignItems="center">
           <IconWrapper size={32}>
-            <Text color="white">{alldata.symbol}</Text>
+            <Text color="white">{t(`${alldata.symbol}`)}</Text>
           </IconWrapper>
         </Flex>
         <Flex style={{ width: 40 }}>
@@ -125,20 +129,20 @@ export default function TokenInfo() {
       </Flex>
       <Flex flexDirection="column">
         <TextWrapper>
-          <Text>Total Supply</Text>
+          <Text>{t('Total Supply')}</Text>
           <Text>{Number(alldata.totalSupply).toLocaleString()}</Text>
         </TextWrapper>
         <TextWrapper>
-          <Text>Market Cap:</Text>
+          <Text>{t('Market Cap')}:</Text>
           <Text>$ {Number(alldata.marketCap).toLocaleString()}</Text>
         </TextWrapper>
         <TextWrapper>
-          <Text>Transactions</Text>
+          <Text>{t('Transactions')}</Text>
           <Text>{alldata.txs}</Text>
         </TextWrapper>
         <TextWrapper>
           <Text className="textWithCopy">
-            Contract Address
+            {t('Contract Address')}
             <CopyHelper toCopy={input}>&nbsp;</CopyHelper>
           </Text>
           <Text>
@@ -148,7 +152,7 @@ export default function TokenInfo() {
           </Text>
         </TextWrapper>
         <TextWrapper>
-          <Text>Holders</Text>
+          <Text>{t('Holders')}</Text>
           <Text>
             <a href={`https://bscscan.com/token/${input}#balances`} target="_blank" rel="noreferrer">
               {Number(alldata.holders).toLocaleString()}

@@ -9,6 +9,7 @@ import axios from 'axios'
 import moment from 'moment'
 import ReactLoading from 'react-loading'
 import { BITQUERY_API, BITQUERY_API_KEY } from 'config/constants/endpoints'
+import { useTranslation } from 'contexts/Localization'
 import { HotTokenType } from './types'
 import { AppState } from '../../../state'
 import { setIsInput } from '../../../state/input/actions'
@@ -59,6 +60,7 @@ export default function HotTokenBar() {
   const [loader, setLoader] = useState(false)
   const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
   const dispatch = useDispatch()
+  const { t } = useTranslation()
 
   const prevDate = moment().subtract(1, 'day').format('YYYY-MM-DD')
   const currentDate =moment().format('YYYY-MM-DD')
@@ -106,7 +108,7 @@ export default function HotTokenBar() {
     <>
       <StyledBar>
         <BarIntro>
-          <span>Top Pairs</span>
+          <span>{t('Top Pairs')}</span>
         </BarIntro>
 
         <FlowBar>

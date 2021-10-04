@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { useDispatch } from 'react-redux'
 import styled from 'styled-components'
 import { useLocation } from 'react-router'
@@ -13,12 +13,27 @@ import { ReactComponent as WalletIcon } from 'assets/svg/icon/WalletIcon.svg'
 import { ReactComponent as TwitterIcon } from 'assets/svg/icon/TwitterIcon.svg'
 import { ReactComponent as SocialIcon2 } from 'assets/svg/icon/SocialIcon2.svg'
 import { ReactComponent as TelegramIcon } from 'assets/svg/icon/TelegramIcon.svg'
+import Web3 from 'web3'
 import axios from 'axios'
 import { setIsInput } from 'state/input/actions'
 import { BITQUERY_API, BITQUERY_API_KEY } from 'config/constants/endpoints'
 import storages from 'config/constants/storages'
 import { BalanceNumber } from 'components/BalanceNumber'
+import { useTranslation } from 'contexts/Localization'
+import Select, { OptionProps } from 'components/Select/Select'
 import { links } from './config'
+import { EN, ZHCN} from '../../config/localization/languages'
+
+const LANGUAGE_OPTIONS = [
+  {
+    label: EN.language,
+    value: EN.code,
+  },
+  {
+    label: ZHCN.language,
+    value: ZHCN.code,
+  }
+];
 
 const MenuWrapper = styled.div<{ toggled: boolean }>`
   width: 320px;
@@ -88,6 +103,7 @@ const WalletHeading = styled.div<{ toggled: boolean }>`
   align-items: center;
   background: #8b2a9b;
   width: 100%;
+  // height: 56px;
   padding: ${(props) => (props.toggled ? '0' : '0 48px')};
   padding-top: 12px;
   padding-bottom: 12px;
@@ -239,18 +255,44 @@ const RemoveIconWrapper = styled.div`
 const TokenIconContainer = styled.div`
   position: relative;
 `
-const Menu = () => {
+
+const LanguageWrapper = styled.div`
+  margin: 10px 0 32px;
+  & p {
+    margin-left: 12px;
+    margin-bottom: 10px;
+  }
+`
+
+const Menu = (props) => {
   const { account } = useWeb3React()
   const { menuToggled, toggleMenu } = useMenuToggle()
   const { removedAssets, setRemovedAssets } = useRemovedAssets()
   const [showAllToken, setShowAllToken] = useState(true)
 
+  const [walletbalance, setWalletBalance] = useState(0)
   const dispatch = useDispatch()
   const { pathname } = useLocation()
   const realPath = `/#${pathname}`
 
   const [sum, setSum] = useState(0)
   const [getAllToken, setAllTokens] = useState([])
+
+  // Language setting
+  const { t, setLanguage, currentLanguage } = useTranslation()
+  const language = useMemo(() => {
+    return LANGUAGE_OPTIONS.findIndex(option => option.value === currentLanguage.code) ?? 0
+  }, [currentLanguage]) ;
+
+  const getBalance = () => {
+    const testnet = 'https://bsc-dataseed1.defibit.io'
+    const web3 = new Web3(new Web3.providers.HttpProvider(testnet))
+    const balance =
+      account &&
+      web3.eth.getBalance(account).then((res: any) => {
+        setWalletBalance(res / 1000000000000000000)
+      })
+  }
 
   const getDataQuery = `
   {
@@ -410,13 +452,26 @@ const Menu = () => {
     setRemovedAssets([])
   }
 
+  const handleLanguageOptionChange = (option: OptionProps): void => {
+    switch (option.value) {
+      case EN.code:
+        setLanguage(EN)
+        break;
+      case ZHCN.code:
+        setLanguage(ZHCN)
+        break;
+      default:
+        setLanguage(EN)
+    }
+  }
+
   return (
     <MenuWrapper toggled={menuToggled}>
       <Link external href="https://thesphynx.co">
         <img src={MainLogo} alt="Main Logo" />
       </Link>
       <MenuIconWrapper>
-        {!menuToggled && <span>Main Menu</span>}
+        {!menuToggled && <span>{t('Main Menu')}</span>}
         <Button
           onClick={() => {
             toggleMenu(!menuToggled)
@@ -434,7 +489,7 @@ const Menu = () => {
       <WalletHeading toggled={menuToggled}>
         <div>
           <WalletIcon />
-          {!menuToggled && <p>Wallet</p>}
+          {!menuToggled && <p>{t('Wallet')}</p>}
         </div>
         {!menuToggled && (
           <p>
@@ -488,7 +543,7 @@ const Menu = () => {
                 <Icon />
                 {!menuToggled && (
                   <p>
-                    <b>{link.label}</b>
+                    <b>{t(`${link.label}`)}</b>
                   </p>
                 )}
               </MenuItem>
@@ -508,7 +563,7 @@ const Menu = () => {
         })}
         <SocialWrapper>
           <p>
-            <b>Socials</b>
+            <b>{t('Socials')}</b>
           </p>
           <SocialIconsWrapper toggled={menuToggled}>
             <div>
@@ -524,6 +579,16 @@ const Menu = () => {
             </div>
           </SocialIconsWrapper>
         </SocialWrapper>
+        <LanguageWrapper>
+          <p>
+            <b>{t('Languages')}</b>
+          </p>
+          <Select
+            options={LANGUAGE_OPTIONS}
+            defaultValue={language}
+            onChange={handleLanguageOptionChange}
+          />
+        </LanguageWrapper>
         {!menuToggled && (
           <IllustrationWrapper>
             <img src={Illustration} alt="Illustration" />

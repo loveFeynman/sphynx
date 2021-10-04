@@ -10,6 +10,7 @@ import { useWeb3React } from '@web3-react/core'
 import TicketContentTable from './TicketContentTable'
 import moment from 'moment'
 import ViewTickets from './ViewTickets'
+import {FormattedNumber} from './FormattedNumber'
 
 const Container = styled.div<{ isDetail: boolean }>`
   min-width: 340px;
@@ -97,7 +98,7 @@ export default function TicketCard({ lastLoteryInfo, roundID }) {
           <Flex>
             {winningCards.map((item, index) => (
               <Text key={index} bold color="white" fontSize="24px">
-                {item === '' ? '?' : item},&nbsp;
+                {item === '' ? '?' : item} {index !== winningCards.length-1?',':'' }
               </Text>
             ))}
           </Flex>
@@ -110,7 +111,7 @@ export default function TicketCard({ lastLoteryInfo, roundID }) {
             {t('Prize Pot:')}
           </Text>
           <Text bold color="white" fontSize="24px">
-            {totalCount === 'NaN' || totalCount === '' ? 'Calculating' : `$${totalCount}`}
+            {totalCount === 'NaN' || totalCount === '' ? 'Calculating' : <FormattedNumber prefix="$" value={totalCount} suffix=''/>}
           </Text>
         </div>
       </div>

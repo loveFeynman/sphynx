@@ -518,7 +518,7 @@ export default function Swap({ history }: RouteComponentProps) {
                   <Flex justifyContent="space-between" alignItems="center" marginTop="20px">
                     <Flex alignItems="center">
                       <SlippageText>
-                        <span>Slippage Tolerance</span>
+                        <span>{t('Slippage Tolerance')}</span>
                         <b>: {allowedSlippage / 100}%</b>
                       </SlippageText>
                     </Flex>
@@ -669,17 +669,17 @@ export default function Swap({ history }: RouteComponentProps) {
           {swapTransCard === 'sellers' && <SellersCard />}
         </div>
         <BottomCard style={{ backgroundImage: `url(${FarmBanner})` }}>
-          <h1>Farms</h1>
+          <h1>{t('Farms')}</h1>
           <div />
           <Link href="#/farms">
-            <Button>Start Farming</Button>
+            <Button>{t('Start Farming')}</Button>
           </Link>
         </BottomCard>
         <BottomCard style={{ backgroundImage: `url(${StakingBanner})` }}>
-          <h1>Staking</h1>
+          <h1>{t('Staking')}</h1>
           <div />
           <Link href="#/pools">
-            <Button>Start Staking</Button>
+            <Button>{t('Start Staking')}</Button>
           </Link>
         </BottomCard>
       </Cards>

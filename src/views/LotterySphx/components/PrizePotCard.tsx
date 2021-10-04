@@ -14,6 +14,8 @@ import { claimTickets } from '../../../hooks/useLottery'
 import { Spinner } from './Spinner'
 import ViewTickets from './ViewTickets'
 import useToast from 'hooks/useToast'
+import {FormattedNumber} from './FormattedNumber'
+
 
 const Container = styled.div<{ isDetail: boolean }>`
   width: 340px;
@@ -204,10 +206,10 @@ export default function PrizePotCard({
             {isNext
               ? enabled
                 ? remainningTime
-                : 'On sale soon'
+                : t('On sale soon')
               : totalCount === 'NaN' || totalCount === ''
-              ? 'Calculating'
-              : `$${totalCount}`}
+              ? t('Calculating')
+              : <FormattedNumber prefix="$" value={totalCount} suffix=''/>}
           </HeaderLabel>
         </div>
       </div>
@@ -257,7 +259,7 @@ export default function PrizePotCard({
             {t(`Buy Now`)}
           </ButtonWrapper>
           <ButtonWrapper isEnable={userTicketInfos.length > 0}style={{ marginTop: '20px' }} onClick={() => onPresentViewTicketModal()}>
-            View your ticket
+            {t('View your ticket')}
           </ButtonWrapper>
           {isClaimable && (
             <ButtonWrapper isEnable style={{ marginTop: '10px' }} onClick={handleClaimTickets}>

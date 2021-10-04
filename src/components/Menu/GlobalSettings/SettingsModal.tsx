@@ -102,7 +102,7 @@ const SettingsModal: React.FC<InjectedModalProps> = ({ onDismiss }) => {
         <Flex justifyContent="space-between" alignItems="center">
           <Text>{t(' ')}</Text>
           <ApplyButton className="selected" onClick={onDismiss}>
-            Apply
+            {t('Apply')}
           </ApplyButton>
         </Flex>
       </Flex>

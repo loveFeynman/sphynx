@@ -2,25 +2,35 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import styled from 'styled-components'
-import { Button, Link, Text } from '@sphynxswap/uikit'
+import { getUnixTime, startOfHour, Duration, sub } from 'date-fns'
+
+import { Text, Button, Link } from '@sphynxswap/uikit'
 
 import { ReactComponent as TwitterIcon } from 'assets/svg/icon/TwitterIcon.svg'
 // eslint-disable-next-line import/no-cycle
 import { ReactComponent as SocialIcon2 } from 'assets/svg/icon/SocialIcon2.svg'
 import { ReactComponent as TelegramIcon } from 'assets/svg/icon/TelegramIcon.svg'
 import { ReactComponent as BscscanIcon } from 'assets/svg/icon/Bscscan.svg'
+// import { BoxesLoader } from "react-awesome-loaders";
 
 import { RouterTypeToggle } from 'config/constants/types'
 import { PoolData } from 'state/info/types'
 import fetchPoolsForToken from 'state/info/queries/tokens/poolsForToken'
+import fetchTokenPriceData from 'state/info/queries/tokens/priceData'
 import { fetchPoolData } from 'state/info/queries/pools/poolData'
 
 import CopyHelper from 'components/AccountDetails/Copy'
 // eslint-disable-next-line import/no-unresolved
 import './dropdown.css'
-import { MenuItem } from '@material-ui/core'
+import axios from 'axios'
+import { Button as materialButton, Menu, MenuItem } from '@material-ui/core'
+import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown'
 import ToggleList from './ToggleList'
 import { AppState } from '../../../state'
+import { typeInput, typeRouterVersion, setIsInput } from '../../../state/input/actions'
+import { isAddress, getBscScanLink } from '../../../utils'
+import { useTranslation } from '../../../contexts/Localization'
+import { MenuItem } from '@material-ui/core'
 import { setIsInput, typeInput, typeRouterVersion } from '../../../state/input/actions'
 import { getBscScanLink, isAddress } from '../../../utils'
 import { searchToken, socialToken } from '../../../utils/apiServices'
@@ -126,16 +136,22 @@ const ContractPanelOverlay = styled.div`
   top: 0;
 `
 
+// {token} : ContractPanelProps)
 export default function ContractPanel({ value }: ContractPanelProps) {
   const [addressSearch, setAddressSearch] = useState('')
   const [show, setShow] = useState(true)
+  // const [showDrop, setshowDrop] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null)
   const [showDrop, setShowDrop] = useState(false)
   const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
 
   const checksumAddress = isAddress(input)
   // eslint-disable-next-line no-console
+  // console.log("result===============================>",result)  // => true
   const [data, setdata] = useState([])
   const dispatch = useDispatch()
+  // const [website, setWebsite]=useState('');
+
   const [social, setSocial] = useState({
     website: '',
   })
@@ -145,6 +161,10 @@ export default function ContractPanel({ value }: ContractPanelProps) {
   const [selectedItemIndex, setSelectedItemIndex] = useState(-1)
 
   const [poolDatas, setPoolDatas] = useState<PoolData[]>([])
+  const { t } = useTranslation()
+
+  // const find=social.links.find(elem=>elem)
+  // console.log("socials",social.links)
   const getWebsite = async () => {
     const web: any = await socialToken(checksumAddress.toString());
     const links = web.links || []
@@ -173,6 +193,8 @@ export default function ContractPanel({ value }: ContractPanelProps) {
       }
     } catch (err) {
       // eslint-disable-next-line no-console
+      // console.log(err);
+      // alert("Invalid Address")
       console.log('errr', err.message)
     }
 
@@ -186,6 +208,14 @@ export default function ContractPanel({ value }: ContractPanelProps) {
     }
   }
 
+  const handleClick = (event: any) => {
+    setAnchorEl(event.currentTarget)
+    setShowDrop(true)
+  }
+
+  const handleClose = () => {
+    setAnchorEl(null)
+  }
   const submitFuntioncall = () => {
     dispatch(typeInput({ input: addressSearch }))
     dispatch(
@@ -218,10 +248,28 @@ export default function ContractPanel({ value }: ContractPanelProps) {
 
   useEffect(() => {
     const fetchPools = async () => {
+      // console.log('started fetchPools, checksumAddress=', checksumAddress)
       if (checksumAddress) {
         const { error: fetchError, addresses } = await fetchPoolsForToken(checksumAddress.toLocaleLowerCase())
         const { error: fetchError2, poolDatas: poolDatas1 } = await fetchPoolData(addresses)
         setPoolDatas(poolDatas1)
+        // console.log('poolDatas=', poolDatas1)
+
+        // if (poolDatas1.length > 0) {
+        //   const interval = 3600 // one hour per seconds
+        //   const DEFAULT_TIME_WINDOW: Duration = { weeks: 1 }
+
+        //   const utcCurrentTime = getUnixTime(new Date()) * 1000
+        //   const startTimestamp = getUnixTime(startOfHour(sub(utcCurrentTime, DEFAULT_TIME_WINDOW)))
+
+        //   const { error: fetchError3, data:priceData } = await fetchTokenPriceData(
+        //     checksumAddress.toLocaleLowerCase(),
+        //     interval,
+        //     startTimestamp
+        //   )
+        //   // todo
+        //   console.log('[fetchTokenPriceData] data=', priceData)
+        // }
       }
     }
 
@@ -232,7 +280,8 @@ export default function ContractPanel({ value }: ContractPanelProps) {
 
     const listener = (event) => {
       if (event.code === 'Enter' || event.code === 'NumpadEnter') {
-        console.log("Enter key was pressed. Run your function.");
+        // console.log("Enter key was pressed. Run your function.");
+        // callMyFunction();
       }
     }
 
@@ -258,6 +307,9 @@ export default function ContractPanel({ value }: ContractPanelProps) {
           />
           {showDrop && (
             <MenuWrapper>
+              {/* <Button aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick}>
+              <ArrowDropDownIcon />
+            </Button> */}
               {data.length > 0 ? (
                 <span>
                   {data?.map((item: any, index: number) => {
@@ -291,7 +343,7 @@ export default function ContractPanel({ value }: ContractPanelProps) {
           )}
         </SearchInputWrapper>
         <Button scale="sm" onClick={submitFuntioncall} disabled={show}>
-          Submit
+          {t('Submit')}
         </Button>
       </ContractCard>
       <ToggleList poolDatas={poolDatas} />

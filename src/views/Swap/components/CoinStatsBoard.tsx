@@ -6,6 +6,7 @@ import styled from 'styled-components'
 import { Flex, Text } from '@sphynxswap/uikit'
 import Column from 'components/Column'
 import { isAddress } from 'utils'
+import { useTranslation } from 'contexts/Localization'
 import axios from 'axios'
 import { AppState } from '../../../state'
 import { getChartStats } from '../../../utils/apiServices'
@@ -93,6 +94,7 @@ const StyledWrapper = styled.div`
 export default function CoinStatsBoard() {
   const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
   const result = isAddress(input)
+  const { t } = useTranslation()
 
   const [alldata, setalldata] = useState({
     address: '',
@@ -148,28 +150,28 @@ export default function CoinStatsBoard() {
             </IconWrapper>
             {tokenData && (
               <Flex flexDirection="column" justifyContent="center">
-                <Text>{tokenData.symbol}</Text>
+                <Text>{t(`${tokenData.symbol}`)}</Text>
                 <Text>$ {Number(tokenData.marketCap).toLocaleString()}</Text>
               </Flex>
             )}
           </Flex>
         </Column>
         <Column>
-          <Text>Price</Text>
+          <Text>{t('Price')}</Text>
           <Text>${Number(alldata.price).toFixed(6).toLocaleString()}</Text>
         </Column>
         <Column>
-          <Text>24h Change</Text>
+          <Text>{t('24h Change')}</Text>
           <Text>
             <h2 className={Math.sign(changedecimal) === -1 ? 'error' : 'success'}> {changedecimal}%</h2>
           </Text>
         </Column>
         <Column>
-          <Text>24h Volume</Text>
+          <Text>{t('24h Volume')}</Text>
           <Text>$ {Number(volumedecimal).toLocaleString()}</Text>
         </Column>
         <Column style={{ margin: '0 0 8px 0' }}>
-          <Text>Liquidity</Text>
+          <Text>{t('Liquidity')}</Text>
           <Text>
             {Number(liquidityV2BNBdecimal).toLocaleString()} BNB
             <span className="success"> (${Number(liquidityV2decimal).toLocaleString()})</span>

@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { AppState } from 'state'
 import styled from 'styled-components'
+import { useTranslation } from 'contexts/Localization'
 import { Spinner } from '../../LotterySphx/components/Spinner'
 import { topTrades } from '../../../utils/apiServices'
 
@@ -58,6 +59,7 @@ const TableWrapper = styled.div`
 const SellersCard = () => {
   const [tableData, setTableData] = useState([])
   const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
+  const { t } = useTranslation()
 
   const result = isAddress(input)
   // eslint-disable-next-line no-console
@@ -92,8 +94,8 @@ const SellersCard = () => {
           <table>
             <thead>
               <tr>
-                <td>Wallet</td>
-                <td>Total Bought</td>
+                <td>{t('Wallet')}</td>
+                <td>{t('Total Bought')}</td>
               </tr>
             </thead>
             <tbody>
