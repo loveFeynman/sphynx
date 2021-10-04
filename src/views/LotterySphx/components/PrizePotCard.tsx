@@ -117,7 +117,7 @@ export default function PrizePotCard({
     title: '',
     message: '',
   })
-  const { toastSuccess, toastError } = useToast()
+  const { toastSuccess, toastError } = useToast();
   const [onPresentViewTicketModal] = useModal(<ViewTickets roundID={roundID} winningCards={winningCards} />)
 
 
