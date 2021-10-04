@@ -1,8 +1,8 @@
 /* eslint-disable no-console */
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import styled from 'styled-components'
-import { Text, Button, Link } from '@sphynxswap/uikit'
+import { Button, Link, Text } from '@sphynxswap/uikit'
 
 import { ReactComponent as TwitterIcon } from 'assets/svg/icon/TwitterIcon.svg'
 // eslint-disable-next-line import/no-cycle
@@ -19,11 +19,12 @@ import CopyHelper from 'components/AccountDetails/Copy'
 // eslint-disable-next-line import/no-unresolved
 import './dropdown.css'
 import axios from 'axios'
-import { Button as materialButton, MenuItem } from '@material-ui/core'
+import { MenuItem } from '@material-ui/core'
 import ToggleList from './ToggleList'
 import { AppState } from '../../../state'
-import { typeInput, typeRouterVersion, setIsInput } from '../../../state/input/actions'
-import { isAddress, getBscScanLink } from '../../../utils'
+import { setIsInput, typeInput, typeRouterVersion } from '../../../state/input/actions'
+import { getBscScanLink, isAddress } from '../../../utils'
+import { searchToken } from '../../../utils/apiServices'
 
 export interface ContractPanelProps {
   value: any
@@ -162,11 +163,11 @@ export default function ContractPanel({ value }: ContractPanelProps) {
     setSocial(web.data.data)
   }
 
-  const handlerChange = (e: any) => {
+  const handlerChange = async (e: any) => {
     try {
       if (e.target.value && e.target.value.length > 0) {
-        axios.get(`https://thesphynx.co/api/search/${e.target.value}`).then((response) => {
-          setdata(response.data)
+        searchToken(e.target.value).then((response) => {
+          setdata(response)
         })
       } else {
         setdata([])

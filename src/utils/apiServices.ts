@@ -222,6 +222,16 @@ async function getChartStats(address: string) {
   }
 }
 
+async function searchToken(str: string) {
+  try {
+    const url = `https://api1.poocoin.app/tokens?search=${str}`;
+    const { data } = await axios.get(url);
+    return data;
+  } catch (err) {
+    return { msg: 'error' };
+  }
+}
+
 const getPrice = async (tokenAddr) => {
   try {
     if (tokenAddr === "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c") {
@@ -414,5 +424,6 @@ const getMarketCap = async (address) => {
 export {
   getTokenDetails,
   getTokenStats,
-  getChartStats
+  getChartStats,
+  searchToken
 }
