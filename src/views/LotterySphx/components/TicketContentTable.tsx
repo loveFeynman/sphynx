@@ -2,6 +2,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { useTranslation } from 'contexts/Localization'
+import {FormattedNumber} from './FormattedNumber'
 
 const Container = styled.div`
   border-radius: 16px;
@@ -62,7 +63,9 @@ export default function TicketContentTable(lastLoteryInfo) {
             <GridItem isLeft={false}>{item.matchNumber}</GridItem>
             <>
               <GridItem isLeft>
-                <div style={{ textAlign: 'right' }}>{item.tokens} SPHYNX</div>
+                <div style={{ textAlign: 'right' }}>
+                  <FormattedNumber prefix="$" value={item.tokens} suffix=' SPHYNX'/>
+                </div>
               </GridItem>
             </>
           </React.Fragment>

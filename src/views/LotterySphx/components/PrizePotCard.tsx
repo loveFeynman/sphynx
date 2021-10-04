@@ -14,6 +14,8 @@ import { claimTickets } from '../../../hooks/useLottery'
 import { Spinner } from './Spinner'
 import ViewTickets from './ViewTickets'
 import useToast from 'hooks/useToast'
+import {FormattedNumber} from './FormattedNumber'
+
 
 const Container = styled.div<{ isDetail: boolean }>`
   width: 340px;
@@ -207,7 +209,7 @@ export default function PrizePotCard({
                 : 'On sale soon'
               : totalCount === 'NaN' || totalCount === ''
               ? 'Calculating'
-              : `$${totalCount}`}
+              : <FormattedNumber prefix="$" value={totalCount} suffix=''/>}
           </HeaderLabel>
         </div>
       </div>
