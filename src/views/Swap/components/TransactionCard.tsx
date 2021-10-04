@@ -2,7 +2,7 @@
 import axios from 'axios'
 import * as ethers from 'ethers'
 import React, { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import styled from 'styled-components'
 import { Flex } from '@sphynxswap/uikit'
 import { getBnbPrice, getPancakePairAddress } from 'state/info/ws/priceData'
@@ -14,6 +14,7 @@ import routerABI from '../../../assets/abis/pancakeRouter.json'
 import { simpleWebsocketProvider } from '../../../utils/providers'
 import { Spinner } from '../../LotterySphx/components/Spinner'
 import { BITQUERY_API, BITQUERY_API_KEY } from 'config/constants/endpoints'
+import { priceInput } from 'state/input/actions'
 
 const pancakeV2: any = '0x10ED43C718714eb63d5aA57B78B54704E256024E'
 const busdAddr = '0xe9e7cea3dedca5984780bafc599bd69add087d56'
@@ -81,6 +82,7 @@ let config = {
 }
 
 const TransactionCard = () => {
+  const dispatch = useDispatch()
   const providerURL = 'wss://old-thrumming-voice.bsc.quiknode.pro/7674ba364cc71989fb1398e1e53db54e4fe0e9e0/'
   const web3 = new Web3(new Web3.providers.WebsocketProvider(providerURL))
   const [transactionData, setTransactions] = useState([])
@@ -192,12 +194,12 @@ const TransactionCard = () => {
             oneData.price = parseFloat(ethers.utils.formatUnits(price[price.length - 1], 18))
             oneData.transactionTime = formatTimestamp(new Date().getTime())
             oneData.tx = data.hash
-            window.localStorage.setItem('currentToken', input)
-            window.localStorage.setItem('currentPrice', oneData.price)
             logs = logs.filter((log) => log.to.toLowerCase() == receipt.from.toLowerCase())
             oneData.isBuy = logs.length != 0
             oneData.usdValue = oneData.amount * oneData.price
             newTransactions.unshift(oneData)
+
+            dispatch(priceInput({ price: oneData.price }))
           } catch (err) {}
         })
       }

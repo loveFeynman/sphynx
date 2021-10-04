@@ -1,14 +1,16 @@
 import { createReducer } from '@reduxjs/toolkit'
-import { resetMintState, typeInput, setIsInput, typeRouterVersion } from './actions'
+import { resetMintState, typeInput, priceInput, setIsInput, typeRouterVersion } from './actions'
 
 interface InputState {
   input: string
+  price: string
   isInput: boolean
   routerVersion: string
 }
 
 const initialState: InputState = {
   input: '0x2e121ed64eeeb58788ddb204627ccb7c7c59884c',
+  price: '-1',
   isInput: true,
   routerVersion: 'v2',
 }
@@ -22,6 +24,16 @@ export default createReducer<any>(initialState, (builder) =>
       return {
         ...state,
         input,
+      }
+
+      // they're typing into a new field, store the other value
+    })
+    .addCase(priceInput, (state, { payload: { price } }) => {
+      // they're typing into the field they've last typed in
+
+      return {
+        ...state,
+        price,
       }
 
       // they're typing into a new field, store the other value

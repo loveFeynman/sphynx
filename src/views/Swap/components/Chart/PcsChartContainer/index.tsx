@@ -66,6 +66,7 @@ let currentResolutions: any
 
 const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
   const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
+  const realPrice = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.price)
   const routerVersion = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.routerVersion)
   const result = isAddress(input)
 
@@ -89,6 +90,7 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
       // Bitfinex
     ],
   }
+
   async function getAllSymbols() {
     let allSymbols: any = []
     return allSymbols
@@ -208,15 +210,12 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
           '1W': 7 * 24 * 3600000,
           '1M': 30 * 24 * 3600000,
         }
-
+        
         if (lastBarsCache === undefined) return
-        let currentToken = window.localStorage.getItem('currentToken')
-        if (currentToken !== input) return
-        let price = window.localStorage.getItem('currentPrice')
-        if (!price) return
+        if (Number(realPrice) < 0) return
         const isNew = new Date().getTime() - lastBarsCache.time >= resolutionMapping[currentResolutions]
 
-        lastBarsCache.close = price
+        lastBarsCache.close = realPrice
         if (isNew) {
           lastBarsCache.time = new Date().getTime()
           lastBarsCache.open = lastBarsCache.close
@@ -231,7 +230,7 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
           }
         }
         onRealtimeCallback(lastBarsCache)
-      }, 1000 * 4) // 4s update interval
+      }, 1000 * 5) // 5s update interval
     },
     unsubscribeBars: (subscriberUID) => {
       console.log('[unsubscribeBars]: Method call with subscriberUID:', subscriberUID)
