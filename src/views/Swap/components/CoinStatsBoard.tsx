@@ -6,8 +6,9 @@ import styled from 'styled-components'
 import { Flex, Text } from '@sphynxswap/uikit'
 import Column from 'components/Column'
 import { isAddress } from 'utils'
+import axios from 'axios'
 import { AppState } from '../../../state'
-import { getChartStats, getTokenStats } from '../../../utils/apiServices'
+import { getChartStats } from '../../../utils/apiServices'
 
 const IconWrapper = styled.div<{ size?: number }>`
   display: flex;
@@ -115,8 +116,9 @@ export default function CoinStatsBoard() {
   const getTableData = async () => {
     try {
       if (result) {
-        const tokenStats = await getTokenStats(input);
-        setTokenData(tokenStats);
+        axios.post('https://thesphynx.co/api/tokenStats', { address: input }).then((response) => {
+          setTokenData(response.data)
+        })
         const chartStats: any = await getChartStats(input);
         setalldata(chartStats)
         setLinkIcon(

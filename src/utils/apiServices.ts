@@ -35,39 +35,6 @@ async function getTokenDetails(address: string): Promise<{
   return { name, symbol, pair: `${symbol }/BNB`, version: version.version }
 }
 
-async function getTokenStats(address: string) {
-  const url = `https://bscscan.com/token/${address}`;
-  const trxUrl = `https://bscscan.com/address/${address}`;
-  const response = await axios.get(url);
-  const $ = cheerio.load(response.data);
-  let holders = $(".mr-3").text();
-  holders = holders.replace(/\D/g, "");
-  const marketCap = await getMarketCap(address);
-
-  const response1 = await axios.get(trxUrl);
-  const $1 = cheerio.load(response1.data);
-  let txs = $1(".d-md-flex").text();
-  txs = txs.split(" transactions")[0].split("total of ")[1];
-
-  const contract = new web3.eth.Contract(abi as AbiItem[], address);
-  let totalSupply = await contract.methods.totalSupply().call();
-  const decimals = await contract.methods.decimals().call();
-  const symbol = await contract.methods.symbol().call();
-  const name = await contract.methods.name().call();
-
-  totalSupply /= 10 ** decimals;
-
-  return {
-    holders,
-    marketCap: `${marketCap}`,
-    totalSupply,
-    txs,
-    decimals,
-    symbol: `${name} (${symbol})`,
-  }
-
-}
-
 async function getChartStats(address: string) {
   try {
     if (!address) {
@@ -423,7 +390,6 @@ const getMarketCap = async (address) => {
 
 export {
   getTokenDetails,
-  getTokenStats,
   getChartStats,
   searchToken
 }
