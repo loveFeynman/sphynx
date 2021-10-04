@@ -22,16 +22,7 @@ export async function makeApiRequest1(path: any, routerVersion: any, resolution:
     };
     const version = await getVersion(path);
     const url = `https://api2.poocoin.app/candles-bsc?to=${till}&limit=320&lpAddress=${version.pairAddress}&interval=${resolutionMap[resolution]}&baseLp=0x1B96B92314C44b159149f7E0303511fB2Fc4774f`;
-    const { data } = await axios.get(url, {
-      headers: {
-        origin: "https://poocoin.app",
-        referer: "https://poocoin.app/",
-        accept: "*/*",
-        "accept-encoding": "gzip, deflate, br",
-        "user-agent": "PostmanRuntime/7.26.8",
-        Connection: "keep-alive",
-      },
-    });
+    const { data } = await axios.get(url);
     return data;
   } catch (error) {
     throw new Error(`CryptoCompare request error: ${error.status}`)
