@@ -125,6 +125,7 @@ const ToggleList = ({ poolDatas }: { poolDatas: PoolData[] }) => {
             {menuItems.map((item: any) => {
               return (
                 <MenuItem
+                  key={item.key}
                   onClick={() => {
                     setSelectedItem(item.value)
                     dispatch(typeRouterVersion({ routerVersion: item.key }))
