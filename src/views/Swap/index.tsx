@@ -50,7 +50,6 @@ import { useCurrency, useAllTokens } from '../../hooks/Tokens'
 import { ApprovalState, useApproveCallbackFromTrade } from '../../hooks/useApproveCallback'
 import { useSwapCallback } from '../../hooks/useSwapCallback'
 import useWrapCallback, { WrapType } from '../../hooks/useWrapCallback'
-import { Field } from '../../state/swap/actions'
 import {
   useDefaultsFromURLSearch,
   useDerivedSwapInfo,
@@ -67,6 +66,7 @@ import BuyersCard from './components/BuyersCard'
 import SellersCard from './components/SellersCard'
 import SwapWarningModal from './components/SwapWarningModal'
 import DividendPanel from './components/DividendPanel'
+import { replaceSwapState, Field } from '../../state/swap/actions'
 
 const ArrowContainer = styled(ArrowWrapper)`
   width: 32px;
@@ -277,6 +277,30 @@ export default function Swap({ history }: RouteComponentProps) {
 
   // check auto router
   const { setRouterType } = useSetRouterType()
+
+  useEffect(() => {
+    if(tokenAddress === null || tokenAddress === "" || tokenAddress === undefined) {
+      dispatch(
+        replaceSwapState({
+          outputCurrencyId: 'BNB',
+          inputCurrencyId: "0x2e121Ed64EEEB58788dDb204627cCB7C7c59884c",
+          typedValue: '',
+          field: Field.OUTPUT,
+          recipient: null,
+        }),
+      )
+    } else {
+      dispatch(
+        replaceSwapState({
+          outputCurrencyId: 'BNB',
+          inputCurrencyId: tokenAddress,
+          typedValue: '',
+          field: Field.OUTPUT,
+          recipient: null,
+        }),
+      )
+    }
+  }, [dispatch, tokenAddress]);
 
   useEffect(() => {
     if (swapRouter === SwapRouter.AUTO_SWAP && trade === undefined) {
