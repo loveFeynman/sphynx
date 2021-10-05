@@ -16,7 +16,7 @@ import { Spinner } from '../../LotterySphx/components/Spinner'
 import { BITQUERY_API, BITQUERY_API_KEY } from 'config/constants/endpoints'
 import { priceInput, amountInput } from 'state/input/actions'
 import { useTranslation } from 'contexts/Localization'
-import { UNSET_PRICE } from 'config/constants/info'
+import { UNSET_PRICE, DEFAULT_VOLUME_RATE } from 'config/constants/info'
 
 const pancakeV2: any = '0x10ED43C718714eb63d5aA57B78B54704E256024E'
 const busdAddr = '0xe9e7cea3dedca5984780bafc599bd69add087d56'
@@ -89,6 +89,7 @@ const TransactionCard = () => {
   const web3 = new Web3(new Web3.providers.WebsocketProvider(providerURL))
   const [transactionData, setTransactions] = useState([])
   const { t } = useTranslation()
+  const [volumeRate, setVolumeRate] = useState(DEFAULT_VOLUME_RATE)
 
   let input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
   if (input === '-') input = sphynxAddr
@@ -166,8 +167,7 @@ const TransactionCard = () => {
 
   const parseData: any = async () => {
     let newTransactions = transactionData
-    const provider = simpleWebsocketProvider
-    const bnbPrice = await getBnbPrice(provider)
+
     return new Promise((resolve) => {
       for (let i = 0; i <= myTransactions.length; i++) {
         if (i === myTransactions.length) {
@@ -205,7 +205,7 @@ const TransactionCard = () => {
             oneData.usdValue = oneData.amount * oneData.price
             newTransactions.unshift(oneData)
             dispatch(priceInput({ price: oneData.price }))
-            dispatch(amountInput({ amount: oneData.usdValue / bnbPrice }))
+            dispatch(amountInput({ amount: oneData.usdValue / volumeRate }))
           } catch (err) { }
         })
       }
@@ -250,7 +250,7 @@ const TransactionCard = () => {
       try {
         const provider = simpleWebsocketProvider // simpleRpcProvider
         const bnbPrice = await getBnbPrice(provider)
-
+        setVolumeRate(bnbPrice)
         // pull historical data
         const queryResult = await axios.post(BITQUERY_API, { query: getDataQuery }, config)
         if (queryResult.data.data && queryResult.data.data.ethereum.dexTrades) {
