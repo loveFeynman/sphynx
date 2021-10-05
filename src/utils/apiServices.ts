@@ -189,16 +189,6 @@ async function getChartStats(address: string) {
   }
 }
 
-async function searchToken(str: string) {
-  try {
-    const url = `https://api1.poocoin.app/tokens?search=${str}`;
-    const { data } = await axios.get(url);
-    return data;
-  } catch (err) {
-    return { msg: 'error' };
-  }
-}
-
 async function socialToken(address: string) {
   try {
     const url = `https://r.poocoin.app/smartchain/assets/${address}/info.json`;

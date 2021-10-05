@@ -179,11 +179,11 @@ export default function ContractPanel({ value }: ContractPanelProps) {
     setSocial(web)
   }
 
-  const handlerChange = async (e: any) => {
+  const handlerChange = (e: any) => {
     try {
       if (e.target.value && e.target.value.length > 0) {
-        searchToken(e.target.value).then((response) => {
-          setdata(response)
+        axios.get(`https://thesphynx.co/api/search/${e.target.value}`).then((response) => {
+          setdata(response.data)
         })
       } else {
         setdata([])
