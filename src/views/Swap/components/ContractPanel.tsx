@@ -2,9 +2,8 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import styled from 'styled-components'
-import { getUnixTime, startOfHour, Duration, sub } from 'date-fns'
 
-import { Text, Button, Link } from '@sphynxswap/uikit'
+import { Button, Link, Text } from '@sphynxswap/uikit'
 
 import { ReactComponent as TwitterIcon } from 'assets/svg/icon/TwitterIcon.svg'
 // eslint-disable-next-line import/no-cycle
@@ -12,25 +11,22 @@ import { ReactComponent as SocialIcon2 } from 'assets/svg/icon/SocialIcon2.svg'
 import { ReactComponent as TelegramIcon } from 'assets/svg/icon/TelegramIcon.svg'
 import { ReactComponent as BscscanIcon } from 'assets/svg/icon/Bscscan.svg'
 // import { BoxesLoader } from "react-awesome-loaders";
-
 import { RouterTypeToggle } from 'config/constants/types'
 import { PoolData } from 'state/info/types'
 import fetchPoolsForToken from 'state/info/queries/tokens/poolsForToken'
-import fetchTokenPriceData from 'state/info/queries/tokens/priceData'
 import { fetchPoolData } from 'state/info/queries/pools/poolData'
 
 import CopyHelper from 'components/AccountDetails/Copy'
 // eslint-disable-next-line import/no-unresolved
 import './dropdown.css'
 import axios from 'axios'
-import { Button as materialButton, Menu, MenuItem } from '@material-ui/core'
-import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown'
+import { MenuItem } from '@material-ui/core'
 import ToggleList from './ToggleList'
 import { AppState } from '../../../state'
-import { typeInput, typeRouterVersion, setIsInput } from '../../../state/input/actions'
-import { isAddress, getBscScanLink } from '../../../utils'
+import { setIsInput, typeInput, typeRouterVersion } from '../../../state/input/actions'
+import { getBscScanLink, isAddress } from '../../../utils'
 import { useTranslation } from '../../../contexts/Localization'
-import { searchToken, socialToken } from '../../../utils/apiServices'
+import { socialToken } from '../../../utils/apiServices'
 
 export interface ContractPanelProps {
   value: any

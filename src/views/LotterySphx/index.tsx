@@ -19,7 +19,7 @@ import HowToPlay from './components/HowToPlay'
 import { isAddress, reverseString } from '../../utils'
 import BuyTicketModal from './components/BuyTicketModal'
 import { useLotteryBalance, viewLotterys, viewUserInfoForLotteryId } from '../../hooks/useLottery'
-import { searchToken } from '../../utils/apiServices'
+import axios from 'axios'
 
 const size = {
   xs: '320px',
@@ -290,8 +290,8 @@ export default function Lottery() {
   const handlerChange = async (e: any) => {
     try {
       if (e.target.value && e.target.value.length > 0) {
-        searchToken(e.target.value).then((response) => {
-          setdata(response)
+        axios.get(`https://thesphynx.co/api/search/${e.target.value}`).then((response) => {
+          setdata(response.data)
         })
       } else {
         setdata([])
