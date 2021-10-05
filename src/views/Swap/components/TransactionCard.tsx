@@ -88,6 +88,7 @@ const TransactionCard = () => {
   const providerURL = 'wss://speedy-nodes-nyc.moralis.io/fbb4b2b82993bf507eaaab13/bsc/mainnet/ws/'
   const web3 = new Web3(new Web3.providers.WebsocketProvider(providerURL))
   const [transactionData, setTransactions] = useState([])
+  const [isLoading, setLoading] = useState(false)
   const { t } = useTranslation()
   const [volumeRate, setVolumeRate] = useState(DEFAULT_VOLUME_RATE)
 
@@ -167,50 +168,55 @@ const TransactionCard = () => {
 
   const parseData: any = async () => {
     let newTransactions = transactionData
-
     return new Promise((resolve) => {
-      for (let i = 0; i < myTransactions.length; i++) {
-        if (i === (myTransactions.length - 1)) {
-          setTransactions(newTransactions)
-          resolve(true)
-        }
-
-        web3.eth.getTransaction(myTransactions[i]).then(async (data) => {
-          try {
-            let receipt = await web3.eth.getTransactionReceipt(data.hash)
-            let logs: any = receipt.logs.filter(
-              (data) => data.topics[0] === transferEventTopic && data.hasOwnProperty('data'),
-            )
-            logs = logs.map((log: any) => {
-              log.from = web3.eth.abi.decodeParameter('address', log.topics[1])
-              log.to = web3.eth.abi.decodeParameter('address', log.topics[2])
-              log.amount = web3.eth.abi.decodeParameter('uint256', log.data)
-              return log
+      if (!isLoading) {
+        console.log("hello", "hello")
+        resolve(true)
+      } else {
+        for (let i = 0; i <= myTransactions.length; i++) {
+          if (i === myTransactions.length) {
+            setTransactions(newTransactions)
+            resolve(true)
+            return
+          } else {
+            web3.eth.getTransaction(myTransactions[i]).then(async (data) => {
+              try {
+                let receipt = await web3.eth.getTransactionReceipt(data.hash)
+                let logs: any = receipt.logs.filter(
+                  (data) => data.topics[0] === transferEventTopic && data.hasOwnProperty('data'),
+                )
+                logs = logs.map((log: any) => {
+                  log.from = web3.eth.abi.decodeParameter('address', log.topics[1])
+                  log.to = web3.eth.abi.decodeParameter('address', log.topics[2])
+                  log.amount = web3.eth.abi.decodeParameter('uint256', log.data)
+                  return log
+                })
+                if (logs.length === 0) return
+                logs = logs.filter(
+                  (log) =>
+                    log.address.toLowerCase() === input.toLowerCase() &&
+                    (log.to.toLowerCase() === receipt.from.toLowerCase() ||
+                      log.from.toLowerCase() === receipt.from.toLowerCase()),
+                )
+                const price = await getPrice()
+                let oneData: any = {}
+                oneData.amount = parseFloat(ethers.utils.formatUnits(logs[0].amount, tokenDecimal))
+                oneData.price = parseFloat(ethers.utils.formatUnits(price[price.length - 1], 18))
+                oneData.transactionTime = formatTimestamp(new Date().getTime())
+                oneData.tx = data.hash
+                logs = logs.filter((log) => log.to.toLowerCase() == receipt.from.toLowerCase())
+                oneData.isBuy = logs.length != 0
+                oneData.usdValue = oneData.amount * oneData.price
+                newTransactions.unshift(oneData)
+                dispatch(priceInput({ price: oneData.price }))
+                dispatch(amountInput({ amount: oneData.usdValue / volumeRate }))
+              } catch (err) {}
             })
-            if (logs.length === 0) return
-            logs = logs.filter(
-              (log) =>
-                log.address.toLowerCase() === input.toLowerCase() &&
-                (log.to.toLowerCase() === receipt.from.toLowerCase() ||
-                  log.from.toLowerCase() === receipt.from.toLowerCase()),
-            )
-            const price = await getPrice()
-            let oneData: any = {}
-            oneData.amount = parseFloat(ethers.utils.formatUnits(logs[0].amount, tokenDecimal))
-            oneData.price = parseFloat(ethers.utils.formatUnits(price[price.length - 1], 18))
-            oneData.transactionTime = formatTimestamp(new Date().getTime())
-            oneData.tx = data.hash
-            logs = logs.filter((log) => log.to.toLowerCase() == receipt.from.toLowerCase())
-            oneData.isBuy = logs.length != 0
-            oneData.usdValue = oneData.amount * oneData.price
-            newTransactions.unshift(oneData)
-            dispatch(priceInput({ price: oneData.price }))
-            dispatch(amountInput({ amount: oneData.usdValue / volumeRate }))
-          } catch (err) { }
-        })
+          }
+        }
+        blocks = 0
+        myTransactions = []
       }
-      blocks = 0
-      myTransactions = []
     })
   }
 
@@ -266,6 +272,7 @@ const TransactionCard = () => {
           })
 
           setTransactions(newTransactions)
+          setLoading(true)
         }
       } catch (err) {
         // eslint-disable-next-line no-console
@@ -293,7 +300,7 @@ const TransactionCard = () => {
   // eslint-disable-next-line no-console
   return (
     <>
-      {transactionData.length > 0 ? (
+      {isLoading ? (
         <TableWrapper>
           <table>
             <thead>
@@ -317,7 +324,11 @@ const TransactionCard = () => {
                     </td>
                     <td style={{ width: '25%' }}>
                       <a href={'https://bscscan.com/tx/' + data.tx} target="_blank" rel="noreferrer">
-                        <h2 className={!data.isBuy ? 'success' : 'error'}>{Number(data.amount).toFixed(4).replace(/(\d)(?=(\d{3})+\.)/g, '1,')}</h2>
+                        <h2 className={!data.isBuy ? 'success' : 'error'}>
+                          {Number(data.amount)
+                            .toFixed(4)
+                            .replace(/(\d)(?=(\d{3})+\.)/g, '1,')}
+                        </h2>
                       </a>
                     </td>
                     <td style={{ width: '25%' }}>
@@ -327,8 +338,8 @@ const TransactionCard = () => {
                           {data.price < 0.00001
                             ? data.price
                             : Number(data.price)
-                              .toFixed(4)
-                              .replace(/(\d)(?=(\d{3})+\.)/g, '$1,')}
+                                .toFixed(4)
+                                .replace(/(\d)(?=(\d{3})+\.)/g, '$1,')}
                         </h2>
                       </a>
                     </td>
