@@ -1332,7 +1332,7 @@
   "Prediction (coming soon)": "预测 (即将推出)",
   "Learning Hub": "学习中心",
   "Bridge": "桥梁",
-  "Swap & charts": "交换和图表",
+  "Swap & charts (live)": "交换和图表 (实时)",
   "Main Menu": "主菜单",
   "Top Pairs": "前币对",
   "Amount to be Distributed": "分配金额",
@@ -1377,5 +1377,9 @@
   "Sphynx Injections": "Sphynx 注入",
   "Buy Now": "立即购买",
   "View your ticket": "查看您的彩票",
-  "Manual SPHYNX": "手动 SPHYNX"
+  "Manual SPHYNX": "手动 SPHYNX",
+  "Farms (coming soon)": "农场 (即将推出)",
+  "Pools (coming soon)": "资金池 (即将推出)",
+  "Lottery (live)": "彩票 (实时)",
+  "Bridge (coming soon)": "桥梁 (即将推出)"
 }
