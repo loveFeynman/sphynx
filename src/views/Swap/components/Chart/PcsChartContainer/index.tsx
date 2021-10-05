@@ -14,6 +14,7 @@ import { useSelector } from 'react-redux'
 import { AppState } from 'state'
 import { isAddress } from 'utils'
 import { getTokenDetails } from '../../../../../utils/apiServices'
+import { UNSET_PRICE } from 'config/constants/info'
 
 const ChartContainer = styled.div<{ height: number }>`
   position: relative;
@@ -70,7 +71,7 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
   const realAmount = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.amount)
   const routerVersion = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.routerVersion)
   const result = isAddress(input)
-  const priceRef = React.useRef(-1);
+  const priceRef = React.useRef(UNSET_PRICE);
   const amountRef = React.useRef(0);
 
   const [tokendetails, setTokenDetails] = React.useState({
@@ -220,7 +221,7 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
         }
         
         if (lastBarsCache === undefined) return
-        if (priceRef.current < 0) return
+        if (priceRef.current === UNSET_PRICE) return
         const isNew = new Date().getTime() - Number(lastBarsCache.time) >= resolutionMapping[currentResolutions]
 
         lastBarsCache.close = priceRef.current
