@@ -555,7 +555,7 @@ const Menu = (props) => {
               >
                 <Icon />
                 <p>
-                  <b>{link.label}</b>
+                  <b>{t(`${link.label}`)}</b>
                 </p>
               </MenuItemMobile>
             </>
