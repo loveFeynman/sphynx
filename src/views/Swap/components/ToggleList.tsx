@@ -96,7 +96,7 @@ const ToggleList = ({ poolDatas }: { poolDatas: PoolData[] }) => {
     let newMenuItems: ToggleMenuItem[] = []
     if (poolDatas.length > 0 && checksumAddress) {
       newMenuItems.push({
-        key: checksumAddress,
+        key: "sphynx",
         value: 'SPHYNX DEX',
       })
     }

@@ -13,27 +13,27 @@ import { ReactComponent as FAQIcon } from 'assets/svg/icon/HelpIcon.svg'
 
 export const links = [
   {
-    label: 'Swap & charts',
+    label: 'Swap & charts (live)',
     icon: ChartIcon,
     href: '/#/swap',
   },
   {
-    label: 'Farms',
+    label: 'Farms (coming soon)',
     icon: FarmIcon,
     href: '/#/farms',
   },
   {
-    label: 'Pools',
+    label: 'Pools (coming soon)',
     icon: PoolIcon,
     href: '/#/pools',
   },
   {
-    label: 'Lottery',
+    label: 'Lottery (live)',
     icon: IFOIcon,
     href: '/#/lottery',
   },
   {
-    label: 'Bridge',
+    label: 'Bridge (coming soon)',
     icon: BridgeIcon,
     href: '/#/bridge', // 'https://farm.sphynxswap.finance/bridge'
   },

@@ -1,30 +1,25 @@
 /* eslint-disable */
 
-import React, { useState, useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import axios from 'axios'
+import React, { useState } from 'react'
+import { useDispatch } from 'react-redux'
 import styled from 'styled-components'
-import Web3 from 'web3'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import Nav from 'components/LotteryCardNav'
-import { Heading, Text, Button, Link, useModal, Flex } from '@sphynxswap/uikit'
-import { Button as materialButton, Menu, MenuItem } from '@material-ui/core'
+import { Button, Flex, Heading, Link, Text, useModal } from '@sphynxswap/uikit'
+import { MenuItem } from '@material-ui/core'
 import PageHeader from 'components/PageHeader'
 import WebFont from 'webfontloader'
 import { useTranslation } from 'contexts/Localization'
 import SearchIcon from 'assets/images/search.png'
-import { typeInput, setIsInput } from '../../state/input/actions'
+import { setIsInput, typeInput } from '../../state/input/actions'
 import PrizePotCard from './components/PrizePotCard'
 import TicketCard from './components/TicketCard'
 import History from './components/LotteryHistory'
 import HowToPlay from './components/HowToPlay'
-import { isAddress, getBscScanLink, reverseString } from '../../utils'
+import { isAddress, reverseString } from '../../utils'
 import BuyTicketModal from './components/BuyTicketModal'
-import {
-  useLotteryBalance,
-  viewLotterys,
-  viewUserInfoForLotteryId,
-} from '../../hooks/useLottery'
+import { useLotteryBalance, viewLotterys, viewUserInfoForLotteryId } from '../../hooks/useLottery'
+import axios from 'axios'
 
 const size = {
   xs: '320px',
@@ -257,8 +252,8 @@ export default function Lottery() {
       setActiveIndex(1)
     } else {
       setActiveIndex(0)
-    } 
-      
+    }
+
   }
 
   const submitFuntioncall = () => {
@@ -292,7 +287,7 @@ export default function Lottery() {
     }
   }
 
-  const handlerChange = (e: any) => {
+  const handlerChange = async (e: any) => {
     try {
       if (e.target.value && e.target.value.length > 0) {
         axios.get(`https://thesphynx.co/api/search/${e.target.value}`).then((response) => {

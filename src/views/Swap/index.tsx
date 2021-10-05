@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import styled from 'styled-components'
 import { useLocation } from 'react-router'
-import { CurrencyAmount, JSBI, Token, Trade } from '@sphynxswap/sdk'
+import { CurrencyAmount, JSBI, Token, Trade, RouterType } from '@sphynxswap/sdk'
 import { Button, Text, ArrowDownIcon, Box, useModal, Flex, Link } from '@sphynxswap/uikit'
 import { useIsTransactionUnsupported } from 'hooks/Trades'
 import { RouteComponentProps } from 'react-router-dom'
@@ -18,7 +18,7 @@ import { AutoRow, RowBetween } from 'components/Layout/Row'
 import ConnectWalletButton from 'components/ConnectWalletButton'
 import { AppHeader } from 'components/App'
 
-import { useSwapType, useSwapTransCard } from 'state/application/hooks'
+import { useSwapType, useSwapTransCard, useSetRouterType } from 'state/application/hooks'
 import { ReactComponent as DownArrow } from 'assets/svg/icon/DownArrow.svg'
 import FarmBanner from 'assets/images/farmbanner.png'
 import StakingBanner from 'assets/images/stakebanner.png'
@@ -26,6 +26,7 @@ import BannerWrapper from 'components/BannerWrapper'
 import axios from 'axios'
 import { typeInput } from 'state/input/actions'
 import { BITQUERY_API, BITQUERY_API_KEY } from 'config/constants/endpoints'
+import SwapRouter from 'config/constants/swaps'
 import AddressInputPanel from './components/AddressInputPanel'
 import Card, { GreyCard } from '../../components/Card'
 import ConfirmSwapModal from './components/ConfirmSwapModal'
@@ -49,7 +50,6 @@ import { useCurrency, useAllTokens } from '../../hooks/Tokens'
 import { ApprovalState, useApproveCallbackFromTrade } from '../../hooks/useApproveCallback'
 import { useSwapCallback } from '../../hooks/useSwapCallback'
 import useWrapCallback, { WrapType } from '../../hooks/useWrapCallback'
-import { Field } from '../../state/swap/actions'
 import {
   useDefaultsFromURLSearch,
   useDerivedSwapInfo,
@@ -66,6 +66,7 @@ import BuyersCard from './components/BuyersCard'
 import SellersCard from './components/SellersCard'
 import SwapWarningModal from './components/SwapWarningModal'
 import DividendPanel from './components/DividendPanel'
+import { replaceSwapState, Field } from '../../state/swap/actions'
 
 const ArrowContainer = styled(ArrowWrapper)`
   width: 32px;
@@ -171,6 +172,7 @@ export default function Swap({ history }: RouteComponentProps) {
   const dispatch = useDispatch()
   const { pathname } = useLocation()
   const tokenAddress = pathname.substr(6)
+  const [swapRouter, setSwapRouter] = useState(SwapRouter.AUTO_SWAP)
 
   if (tokenAddress && tokenAddress !== '') {
     dispatch(typeInput({ input: tokenAddress }))
@@ -222,13 +224,13 @@ export default function Swap({ history }: RouteComponentProps) {
 
   const parsedAmounts = showWrap
     ? {
-        [Field.INPUT]: parsedAmount,
-        [Field.OUTPUT]: parsedAmount,
-      }
+      [Field.INPUT]: parsedAmount,
+      [Field.OUTPUT]: parsedAmount,
+    }
     : {
-        [Field.INPUT]: independentField === Field.INPUT ? parsedAmount : trade?.inputAmount,
-        [Field.OUTPUT]: independentField === Field.OUTPUT ? parsedAmount : trade?.outputAmount,
-      }
+      [Field.INPUT]: independentField === Field.INPUT ? parsedAmount : trade?.inputAmount,
+      [Field.OUTPUT]: independentField === Field.OUTPUT ? parsedAmount : trade?.outputAmount,
+    }
 
   const { onSwitchTokens, onCurrencySelection, onUserInput, onChangeRecipient } = useSwapActionHandlers()
   const isValid = !swapInputError
@@ -272,6 +274,39 @@ export default function Swap({ history }: RouteComponentProps) {
     currencies[Field.INPUT] && currencies[Field.OUTPUT] && parsedAmounts[independentField]?.greaterThan(JSBI.BigInt(0)),
   )
   const noRoute = !route
+
+  // check auto router
+  const { setRouterType } = useSetRouterType()
+
+  useEffect(() => {
+    if(tokenAddress === null || tokenAddress === "" || tokenAddress === undefined) {
+      dispatch(
+        replaceSwapState({
+          outputCurrencyId: 'BNB',
+          inputCurrencyId: "0x2e121Ed64EEEB58788dDb204627cCB7C7c59884c",
+          typedValue: '',
+          field: Field.OUTPUT,
+          recipient: null,
+        }),
+      )
+    } else {
+      dispatch(
+        replaceSwapState({
+          outputCurrencyId: 'BNB',
+          inputCurrencyId: tokenAddress,
+          typedValue: '',
+          field: Field.OUTPUT,
+          recipient: null,
+        }),
+      )
+    }
+  }, [dispatch, tokenAddress]);
+
+  useEffect(() => {
+    if (swapRouter === SwapRouter.AUTO_SWAP && trade === undefined) {
+      setRouterType(RouterType.pancake)
+    } 
+  }, [swapRouter, trade, setRouterType])
 
   // check whether the user has approved the router on the input token
   const [approval, approveCallback] = useApproveCallbackFromTrade(trade, allowedSlippage)
@@ -453,7 +488,7 @@ export default function Swap({ history }: RouteComponentProps) {
               <SwapCardNav />
             </Flex>
             <Flex alignItems="center" justifyContent="center">
-              <AutoCardNav />
+              <AutoCardNav swapRouter={swapRouter} setSwapRouter={setSwapRouter} />
             </Flex>
           </div>
           <Card bgColor="rgba(0, 0, 0, 0.2)" borderRadius="8px" padding="0 10px 20px 10px">
@@ -518,7 +553,7 @@ export default function Swap({ history }: RouteComponentProps) {
                   <Flex justifyContent="space-between" alignItems="center" marginTop="20px">
                     <Flex alignItems="center">
                       <SlippageText>
-                        <span>Slippage Tolerance</span>
+                        <span>{t('Slippage Tolerance')}</span>
                         <b>: {allowedSlippage / 100}%</b>
                       </SlippageText>
                     </Flex>
@@ -599,8 +634,8 @@ export default function Swap({ history }: RouteComponentProps) {
                         {priceImpactSeverity > 3 && !isExpertMode
                           ? t('Price Impact High')
                           : priceImpactSeverity > 2
-                          ? t('Swap Anyway')
-                          : t('Swap')}
+                            ? t('Swap Anyway')
+                            : t('Swap')}
                       </Button>
                     </RowBetween>
                   ) : (
@@ -627,8 +662,8 @@ export default function Swap({ history }: RouteComponentProps) {
                         (priceImpactSeverity > 3 && !isExpertMode
                           ? `Price Impact Too High`
                           : priceImpactSeverity > 2
-                          ? t('Swap Anyway')
-                          : t('Swap'))}
+                            ? t('Swap Anyway')
+                            : t('Swap'))}
                     </Button>
                   )}
                   {showApproveFlow && (
@@ -669,17 +704,17 @@ export default function Swap({ history }: RouteComponentProps) {
           {swapTransCard === 'sellers' && <SellersCard />}
         </div>
         <BottomCard style={{ backgroundImage: `url(${FarmBanner})` }}>
-          <h1>Farms</h1>
+          <h1>{t('Farms')}</h1>
           <div />
           <Link href="#/farms">
-            <Button>Start Farming</Button>
+            <Button>{t('Start Farming')}</Button>
           </Link>
         </BottomCard>
         <BottomCard style={{ backgroundImage: `url(${StakingBanner})` }}>
-          <h1>Staking</h1>
+          <h1>{t('Staking')}</h1>
           <div />
           <Link href="#/pools">
-            <Button>Start Staking</Button>
+            <Button>{t('Start Staking')}</Button>
           </Link>
         </BottomCard>
       </Cards>

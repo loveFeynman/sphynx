@@ -2,7 +2,7 @@
 import axios from 'axios'
 import * as ethers from 'ethers'
 import React, { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import styled from 'styled-components'
 import { Flex } from '@sphynxswap/uikit'
 import { getBnbPrice, getPancakePairAddress } from 'state/info/ws/priceData'
@@ -14,6 +14,9 @@ import routerABI from '../../../assets/abis/pancakeRouter.json'
 import { simpleWebsocketProvider } from '../../../utils/providers'
 import { Spinner } from '../../LotterySphx/components/Spinner'
 import { BITQUERY_API, BITQUERY_API_KEY } from 'config/constants/endpoints'
+import { priceInput, amountInput } from 'state/input/actions'
+import { useTranslation } from 'contexts/Localization'
+import { UNSET_PRICE } from 'config/constants/info'
 
 const pancakeV2: any = '0x10ED43C718714eb63d5aA57B78B54704E256024E'
 const busdAddr = '0xe9e7cea3dedca5984780bafc599bd69add087d56'
@@ -81,9 +84,12 @@ let config = {
 }
 
 const TransactionCard = () => {
+  const dispatch = useDispatch()
   const providerURL = 'wss://old-thrumming-voice.bsc.quiknode.pro/7674ba364cc71989fb1398e1e53db54e4fe0e9e0/'
   const web3 = new Web3(new Web3.providers.WebsocketProvider(providerURL))
   const [transactionData, setTransactions] = useState([])
+  const { t } = useTranslation()
+
   let input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
   if (input === '-') input = sphynxAddr
   const tokenAddress = isAddress(input)
@@ -160,6 +166,8 @@ const TransactionCard = () => {
 
   const parseData: any = async () => {
     let newTransactions = transactionData
+    const provider = simpleWebsocketProvider
+    const bnbPrice = await getBnbPrice(provider)
     return new Promise((resolve) => {
       for (let i = 0; i <= myTransactions.length; i++) {
         if (i === myTransactions.length) {
@@ -192,13 +200,13 @@ const TransactionCard = () => {
             oneData.price = parseFloat(ethers.utils.formatUnits(price[price.length - 1], 18))
             oneData.transactionTime = formatTimestamp(new Date().getTime())
             oneData.tx = data.hash
-            window.localStorage.setItem('currentToken', input)
-            window.localStorage.setItem('currentPrice', oneData.price)
             logs = logs.filter((log) => log.to.toLowerCase() == receipt.from.toLowerCase())
             oneData.isBuy = logs.length != 0
             oneData.usdValue = oneData.amount * oneData.price
             newTransactions.unshift(oneData)
-          } catch (err) {}
+            dispatch(priceInput({ price: oneData.price }))
+            dispatch(amountInput({ amount: oneData.usdValue / bnbPrice }))
+          } catch (err) { }
         })
       }
       blocks = 0
@@ -207,7 +215,7 @@ const TransactionCard = () => {
   }
 
   useEffect(() => {
-    window.localStorage.removeItem('currentPrice') // initiate
+    dispatch(priceInput({ price: UNSET_PRICE }))
     const contract: any = new web3.eth.Contract(abi, input)
     const fetchDecimals = async () => {
       tokenDecimal = await contract.methods.decimals().call()
@@ -231,7 +239,7 @@ const TransactionCard = () => {
         }
       })
     return () => {
-      window.localStorage.removeItem('currentPrice') // initiate
+      dispatch(priceInput({ price: UNSET_PRICE }))
     }
   }, [input])
 
@@ -290,10 +298,10 @@ const TransactionCard = () => {
           <table>
             <thead>
               <tr>
-                <td style={{ width: '30%' }}>Time</td>
-                <td style={{ width: '24%' }}>Traded Tokens</td>
-                <td style={{ width: '22%' }}>Token Price</td>
-                <td style={{ width: '22%' }}>$Value</td>
+                <td style={{ width: '30%' }}>{t('Time')}</td>
+                <td style={{ width: '24%' }}>{t('Traded Tokens')}</td>
+                <td style={{ width: '22%' }}>{t('Token Price')}</td>
+                <td style={{ width: '22%' }}>{t('$Value')}</td>
               </tr>
             </thead>
             <tbody>
@@ -309,7 +317,7 @@ const TransactionCard = () => {
                     </td>
                     <td style={{ width: '25%' }}>
                       <a href={'https://bscscan.com/tx/' + data.tx} target="_blank" rel="noreferrer">
-                        <h2 className={!data.isBuy ? 'success' : 'error'}>{Number(data.amount).toFixed(4)}</h2>
+                        <h2 className={!data.isBuy ? 'success' : 'error'}>{Number(data.amount).toFixed(4).replace(/(\d)(?=(\d{3})+\.)/g, '1,')}</h2>
                       </a>
                     </td>
                     <td style={{ width: '25%' }}>
@@ -319,8 +327,8 @@ const TransactionCard = () => {
                           {data.price < 0.00001
                             ? data.price
                             : Number(data.price)
-                                .toFixed(4)
-                                .replace(/(\d)(?=(\d{3})+\.)/g, '$1,')}
+                              .toFixed(4)
+                              .replace(/(\d)(?=(\d{3})+\.)/g, '$1,')}
                         </h2>
                       </a>
                     </td>
