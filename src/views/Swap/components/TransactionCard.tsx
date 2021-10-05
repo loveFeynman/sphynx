@@ -317,7 +317,7 @@ const TransactionCard = () => {
                     </td>
                     <td style={{ width: '25%' }}>
                       <a href={'https://bscscan.com/tx/' + data.tx} target="_blank" rel="noreferrer">
-                        <h2 className={!data.isBuy ? 'success' : 'error'}>{Number(data.amount).toFixed(4)}</h2>
+                        <h2 className={!data.isBuy ? 'success' : 'error'}>{Number(data.amount).toFixed(4).replace(/(\d)(?=(\d{3})+\.)/g, '1,')}</h2>
                       </a>
                     </td>
                     <td style={{ width: '25%' }}>

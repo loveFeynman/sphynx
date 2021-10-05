@@ -14,7 +14,7 @@ const initialState: InputState = {
   price: -1,
   amount: 0,
   isInput: true,
-  routerVersion: 'v2',
+  routerVersion: 'sphynx',
 }
 
 export default createReducer<any>(initialState, (builder) =>

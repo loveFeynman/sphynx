@@ -63,7 +63,7 @@ export default function HotTokenBar() {
   const { t } = useTranslation()
 
   const prevDate = moment().subtract(1, 'day').format('YYYY-MM-DD')
-  const currentDate =moment().format('YYYY-MM-DD')
+  const currentDate = moment().format('YYYY-MM-DD')
   const getDataQuery = `
   {
     ethereum(network: bsc) {
@@ -84,25 +84,25 @@ export default function HotTokenBar() {
     }
   }`
 
-  const handleClick = useCallback(async () => {
-    setLoader(true)
-    const bitConfig = {
-      headers: {
-        'X-API-KEY': BITQUERY_API_KEY,
-      },
-    }
-    const queryResult = await axios.post(BITQUERY_API, { query: getDataQuery }, bitConfig)
-    if (queryResult.data.data) {
-      setData(queryResult.data.data.ethereum.dexTrades)
-      setLoader(false)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  // const handleClick = useCallback(async () => {
+  //   setLoader(true)
+  //   const bitConfig = {
+  //     headers: {
+  //       'X-API-KEY': BITQUERY_API_KEY,
+  //     },
+  //   }
+  //   const queryResult = await axios.post(BITQUERY_API, { query: getDataQuery }, bitConfig)
+  //   if (queryResult.data.data) {
+  //     setData(queryResult.data.data.ethereum.dexTrades)
+  //     setLoader(false)
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [])
 
-  React.useEffect(() => {
-    handleClick()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  // React.useEffect(() => {
+  //   handleClick()
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [])
 
   return (
     <>
@@ -112,7 +112,10 @@ export default function HotTokenBar() {
         </BarIntro>
 
         <FlowBar>
-          {loader ? (
+          <Marquee gradient={false} speed={40} className="marquee-container" style={{ overflow: 'hidden !important', color: "white" }}>
+            Coming soon
+          </Marquee>
+          {/* {loader ? (
             <div style={{ display: 'flex', justifyContent: 'center' }}>
               <ReactLoading type="spin" color="green" height="2%" width="2%" />
             </div>
@@ -139,7 +142,7 @@ export default function HotTokenBar() {
                 })}
               </ul>
             </Marquee>
-          )}
+          )} */}
         </FlowBar>
 
         <div className="paddingRight: 30px" />
