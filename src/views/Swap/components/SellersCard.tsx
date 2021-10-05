@@ -14,11 +14,14 @@ const TableWrapper = styled.div`
   height: 100%;
   max-height: 500px;
   overflow: auto;
-  overflow-x: auto;
+  position: relative;
+  width: 100%;
   & table {
     background: transparent;
-    min-width: 420px;
+    min-width: 280px;
     width: 100%;
+    max-width: 100%;
+    word-break: break-all;
     & tr {
       background: transparent;
     }

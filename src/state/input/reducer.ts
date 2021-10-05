@@ -14,7 +14,7 @@ const initialState: InputState = {
   price: -1,
   amount: 0,
   isInput: true,
-  routerVersion: 'v2',
+  routerVersion: 'sphynx',
 }
 
 export default createReducer<any>(initialState, (builder) =>
@@ -22,7 +22,7 @@ export default createReducer<any>(initialState, (builder) =>
     .addCase(resetMintState, () => initialState)
     .addCase(typeInput, (state, { payload: { input } }) => {
       // they're typing into the field they've last typed in
-
+      console.log("input", input);
       return {
         ...state,
         input,

@@ -16,6 +16,7 @@ import { Spinner } from '../../LotterySphx/components/Spinner'
 import { BITQUERY_API, BITQUERY_API_KEY } from 'config/constants/endpoints'
 import { priceInput, amountInput } from 'state/input/actions'
 import { useTranslation } from 'contexts/Localization'
+import { UNSET_PRICE } from 'config/constants/info'
 
 const pancakeV2: any = '0x10ED43C718714eb63d5aA57B78B54704E256024E'
 const busdAddr = '0xe9e7cea3dedca5984780bafc599bd69add087d56'
@@ -214,7 +215,7 @@ const TransactionCard = () => {
   }
 
   useEffect(() => {
-    dispatch(priceInput({ price: -1 }))
+    dispatch(priceInput({ price: UNSET_PRICE }))
     const contract: any = new web3.eth.Contract(abi, input)
     const fetchDecimals = async () => {
       tokenDecimal = await contract.methods.decimals().call()
@@ -238,7 +239,7 @@ const TransactionCard = () => {
         }
       })
     return () => {
-      dispatch(priceInput({ price: -1 }))
+      dispatch(priceInput({ price: UNSET_PRICE }))
     }
   }, [input])
 
@@ -316,7 +317,7 @@ const TransactionCard = () => {
                     </td>
                     <td style={{ width: '25%' }}>
                       <a href={'https://bscscan.com/tx/' + data.tx} target="_blank" rel="noreferrer">
-                        <h2 className={!data.isBuy ? 'success' : 'error'}>{Number(data.amount).toFixed(4)}</h2>
+                        <h2 className={!data.isBuy ? 'success' : 'error'}>{Number(data.amount).toFixed(4).replace(/(\d)(?=(\d{3})+\.)/g, '1,')}</h2>
                       </a>
                     </td>
                     <td style={{ width: '25%' }}>

@@ -4,6 +4,7 @@ import { RouterType } from '@sphynxswap/sdk'
 import { useTranslation } from 'contexts/Localization'
 import { useSetRouterType } from 'state/application/hooks'
 import { Button } from '@sphynxswap/uikit'
+import SwapRouter from 'config/constants/swaps'
 
 const StyledNav = styled.div`
   text-align: center;
@@ -27,40 +28,40 @@ const StyledNav = styled.div`
   }
 `
 
-const AutoNav = () => {
+const AutoNav = (props) => {
   const { setRouterType } = useSetRouterType()
-  const [activeIndex, setActiveIndex] = useState(0)
+  const { swapRouter, setSwapRouter } = props
 
   const { t } = useTranslation()
 
   return (
     <StyledNav>
       <Button
-        className={activeIndex === 0 ? 'active' : ''}
+        className={swapRouter === SwapRouter.AUTO_SWAP ? 'active' : ''}
         id="auto-nav-link"
         onClick={() => {
           setRouterType(RouterType.sphynx)
-          setActiveIndex(0)
+          setSwapRouter(SwapRouter.AUTO_SWAP)
         }}
       >
         {t('AUTO')}
       </Button>
       <Button
-        className={activeIndex === 1 ? 'active' : ''}
+        className={swapRouter === SwapRouter.SPHYNX_SWAP ? 'active' : ''}
         id="dgsn-nav-link"
         onClick={() => {
           setRouterType(RouterType.sphynx)
-          setActiveIndex(1)
+          setSwapRouter(SwapRouter.SPHYNX_SWAP)
         }}
       >
         {t('SPXLP')}
       </Button>
       <Button
-        className={activeIndex === 2 ? 'active' : ''}
+        className={swapRouter === SwapRouter.PANCAKE_SWAP ? 'active' : ''}
         id="pcv-nav-link"
         onClick={() => {
           setRouterType(RouterType.pancake)
-          setActiveIndex(2)
+          setSwapRouter(SwapRouter.PANCAKE_SWAP)
         }}
       >
         {t('PCV2')}
