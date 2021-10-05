@@ -15,26 +15,12 @@ import { ReactComponent as SocialIcon2 } from 'assets/svg/icon/SocialIcon2.svg'
 import { ReactComponent as TelegramIcon } from 'assets/svg/icon/TelegramIcon.svg'
 import Web3 from 'web3'
 import axios from 'axios'
-import { setIsInput } from 'state/input/actions'
 import { BITQUERY_API, BITQUERY_API_KEY } from 'config/constants/endpoints'
 import storages from 'config/constants/storages'
 import { BalanceNumber } from 'components/BalanceNumber'
 import { useTranslation } from 'contexts/Localization'
-import Select, { OptionProps } from 'components/Select/Select'
 import { links } from './config'
 import { replaceSwapState, Field } from '../../state/swap/actions'
-import { EN, ZHCN } from '../../config/localization/languages'
-
-const LANGUAGE_OPTIONS = [
-  {
-    label: EN.language,
-    value: EN.code,
-  },
-  {
-    label: ZHCN.language,
-    value: ZHCN.code,
-  },
-]
 
 const MenuWrapper = styled.div<{ toggled: boolean }>`
   width: 320px;
@@ -257,14 +243,6 @@ const TokenIconContainer = styled.div`
   position: relative;
 `
 
-const LanguageWrapper = styled.div`
-  margin: 10px 0 32px;
-  & p {
-    margin-left: 12px;
-    margin-bottom: 10px;
-  }
-`
-
 const Menu = (props) => {
   const { account } = useWeb3React()
   const { menuToggled, toggleMenu } = useMenuToggle()
@@ -279,11 +257,7 @@ const Menu = (props) => {
   const [sum, setSum] = useState(0)
   const [getAllToken, setAllTokens] = useState([])
 
-  // Language setting
-  const { t, setLanguage, currentLanguage } = useTranslation()
-  const language = useMemo(() => {
-    return LANGUAGE_OPTIONS.findIndex((option) => option.value === currentLanguage.code) ?? 0
-  }, [currentLanguage])
+  const { t } = useTranslation()
 
   const getBalance = () => {
     const testnet = 'https://bsc-dataseed1.defibit.io'
@@ -458,19 +432,6 @@ const Menu = (props) => {
     setRemovedAssets([])
   }
 
-  const handleLanguageOptionChange = (option: OptionProps): void => {
-    switch (option.value) {
-      case EN.code:
-        setLanguage(EN)
-        break
-      case ZHCN.code:
-        setLanguage(ZHCN)
-        break
-      default:
-        setLanguage(EN)
-    }
-  }
-
   return (
     <MenuWrapper toggled={menuToggled}>
       <Link external href="https://thesphynx.co">
@@ -577,12 +538,6 @@ const Menu = (props) => {
             </div>
           </SocialIconsWrapper>
         </SocialWrapper>
-        <LanguageWrapper>
-          <p>
-            <b>{t('Languages')}</b>
-          </p>
-          <Select options={LANGUAGE_OPTIONS} defaultValue={language} onChange={handleLanguageOptionChange} />
-        </LanguageWrapper>
         {!menuToggled && (
           <IllustrationWrapper>
             <img src={Illustration} alt="Illustration" />
