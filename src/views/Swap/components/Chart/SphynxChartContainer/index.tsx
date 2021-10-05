@@ -1,6 +1,7 @@
 /* eslint-disable */
 import * as React from 'react'
 import styled from 'styled-components'
+import './index.css'
 import {
   ChartingLibraryWidgetOptions,
   IChartingLibraryWidget,
@@ -8,12 +9,12 @@ import {
   ResolutionString,
   widget,
 } from 'charting_library/charting_library'
+import { makeApiRequest1 } from './helpers'
 import { useSelector } from 'react-redux'
-import { Duration, getUnixTime, startOfHour, sub } from 'date-fns'
 import { AppState } from 'state'
-import fetchTokenPriceData from 'state/info/queries/tokens/priceData'
 import { isAddress } from 'utils'
-import { getTokenDetails } from '../../../../utils/apiServices'
+import { getTokenDetails } from '../../../../../utils/apiServices'
+import { UNSET_PRICE } from 'config/constants/info'
 
 const ChartContainer = styled.div<{ height: number }>`
   position: relative;
@@ -41,12 +42,12 @@ export interface ChartContainerProps {
 
 const ChartContainerProps = {
   symbol: 'AAPL',
-  interval: 'H' as ResolutionString,
-  container: 'sphynx_chart_container',
+  interval: '15' as ResolutionString,
+  container: 'tv_chart_container',
   datafeedUrl: 'https://demo_feed.tradingview.com',
   libraryPath: '/charting_library/',
   chartsStorageUrl: 'https://saveload.tradingview.com',
-  chartsStorageApiVersion: '1.0',
+  chartsStorageApiVersion: '1.1',
   clientId: 'tradingview.com',
   userId: 'public_user_id',
   fullscreen: false,
@@ -61,88 +62,76 @@ function getLanguageFromURL(): LanguageCode | null {
   return results === null ? null : (decodeURIComponent(results[1].replace(/\+/g, ' ')) as LanguageCode)
 }
 
+let myInterval: any
+let currentResolutions: any
+
 const SphynxChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
   const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
-  const checksumAddress = isAddress(input)
+  const realPrice = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.price)
+  const realAmount = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.amount)
+  const routerVersion = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.routerVersion)
+  const result = isAddress(input)
+  const priceRef = React.useRef(UNSET_PRICE);
+  const amountRef = React.useRef(0);
 
   const [tokendetails, setTokenDetails] = React.useState({
-    pair: ' ',
+    name: 'PancakeSwap Token',
+    pair: 'Cake/BNB',
+    symbol: 'CAKE',
+    version: 'SPHYNX DEX',
   })
 
-  const fetchPriceData = async (resolution) => {
-    if (checksumAddress) {
-      let interval = 3600 // one hour per seconds
-      let duration: Duration = { weeks: 1 }
-
-      if (resolution === '1') {
-        interval = 60
-        duration = { hours: 6 }
-      } else if (resolution === '5') {
-        interval = 300
-        duration = { hours: 12 }
-      } else if (resolution === '10') {
-        interval = 600
-        duration = { days: 1 }
-      } else if (resolution === '15') {
-        interval = 900
-        duration = { days: 2 }
-      } else if (resolution === '30') {
-        interval = 1800
-        duration = { days: 3 }
-      } else if (resolution === '1H') {
-        interval = 3600
-        duration = { months: 6 }
-      } else if (resolution === '1D') {
-        interval = 86400
-        duration = { months: 6 }
-      } else if (resolution === '1W') {
-        interval = 604800
-        duration = { years: 6 }
-      } else if (resolution === '1M') {
-        interval = 18144000
-        duration = { years: 12 }
-      }
-
-      const utcCurrentTime = getUnixTime(new Date()) * 1000
-      const startTimestamp = getUnixTime(startOfHour(sub(utcCurrentTime, duration)))
-
-      const { error: fetchError3, data: priceData } = await fetchTokenPriceData(
-        checksumAddress.toLocaleLowerCase(),
-        interval,
-        startTimestamp,
-      )
-      return priceData
-    }
-    return []
-  }
-
-  // const lastBarsCache = new Map()
+  let lastBarsCache: any
 
   const configurationData = {
     supported_resolutions: ['1', '5', '10', '15', '30', '1H', '1D', '1W', '1M'],
+    exchanges: [
+      {
+        value: 'Bitfinex',
+        name: 'Bitfinex',
+        desc: 'Bitfinex',
+      },
+      // Bitfinex
+    ],
   }
+
   async function getAllSymbols() {
     let allSymbols: any = []
     return allSymbols
   }
+
   const feed = {
     onReady: (callback: any) => {
       setTimeout(() => callback(configurationData), 0)
     },
+    searchSymbols: async (userInput: any, exchange: any, symbolType: any, onResultReadyCallback: any) => {
+      const symbols = await getAllSymbols()
+      const newSymbols = symbols.filter((symbol) => {
+        const isExchangeValid = exchange === '' || symbol.exchange === exchange
+        const isFullSymbolContainsInput = symbol.full_name.toLowerCase().indexOf(userInput.toLowerCase()) !== -1
+        return isExchangeValid && isFullSymbolContainsInput
+      })
+      onResultReadyCallback(newSymbols)
+    },
     resolveSymbol: async (symbolName: any, onSymbolResolvedCallback: any, onResolveErrorCallback: any) => {
-      const response = await getTokenDetails(checksumAddress.toString())
-      setTokenDetails(response)
+      const res = await getTokenDetails(input)
+      setTokenDetails(res)
+
+      const version =
+        res.version.indexOf(' ') > 0
+          ? res.version.split(' ')[0] + ' ' + routerVersion
+          : res.version
 
       const symbolInfo = {
-        ticker: response.pair,
-        name: response.pair,
-        description: response.symbol,
+        ticker: res.pair,
+        name: res.pair,
+        description: res.symbol,
         type: 'crypto',
         session: '24x7',
         timezone: 'Etc/UTC',
-        exchange: 'Sphynx',
+        exchange: version,
         minmov: 1,
-        pricescale: 100,
+        pricescale: 1000000,
         has_intraday: true,
         has_no_volume: false,
         has_weekly_and_monthly: false,
@@ -150,7 +139,6 @@ const SphynxChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => 
         volume_precision: 2,
         data_status: 'streaming',
       }
-      // eslint-disable-next-line no-console
       onSymbolResolvedCallback(symbolInfo)
     },
     getBars: async (
@@ -160,9 +148,15 @@ const SphynxChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => 
       onHistoryCallback: any,
       onErrorCallback: any,
     ) => {
+      const { from, to, firstDataRequest } = periodParams
+
+      console.log('............from', from)
+      console.log('............to', to)
+      console.log('............firstDataRequest', firstDataRequest)
+
       try {
-        const { from, to, firstDataRequest } = periodParams
-        if (checksumAddress) {
+        const data = await makeApiRequest1(input, routerVersion, resolution)
+        if (result) {
           if (!firstDataRequest) {
             // "noData" should be set if there is no data in the requested period.
             onHistoryCallback([], {
@@ -172,32 +166,87 @@ const SphynxChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => 
           }
         }
 
-        const data = await fetchPriceData(resolution)
         let bars: any = []
         data.map((bar: any, i: any) => {
-          const obj = {
-            time: bar.time * 1000,
-            low: bar.low,
-            high: bar.high,
-            open: bar.open,
-            close: bar.close,
+          const obj: any = {
+            time: new Date(bar.time).getTime(),
+            low: bar.low * bar.baseLow,
+            high: bar.high * bar.baseHigh,
+            open: bar.open * bar.baseOpen,
+            close: bar.close * bar.baseClose,
+            volume: bar.volume,
             isBarClosed: true,
             isLastBar: false,
           }
           if (i === data.length - 1) {
             obj.isLastBar = true
             obj.isBarClosed = false
+            lastBarsCache = obj
           }
           bars = [...bars, obj]
+          priceRef.current = obj.close
+          amountRef.current = obj.volume
           return {}
         })
-
+        // eslint-disable-next-line no-console
         onHistoryCallback(bars, {
           noData: false,
         })
       } catch (error) {
         onErrorCallback(error)
       }
+    },
+    subscribeBars: (
+      symbolInfo: any,
+      resolution: any,
+      onRealtimeCallback: any,
+      subscribeUID: any,
+      onResetCacheNeededCallback: any,
+    ) => {
+      console.log('[subscribeBars]: Method call with subscribeUID:', subscribeUID)
+
+      currentResolutions = resolution
+      myInterval = setInterval(async function () {
+        const resolutionMapping: any = {
+          '1': 60000,
+          '5': 300000,
+          '10': 600000,
+          '15': 900000,
+          '30': 1800000,
+          '60': 3600000,
+          '1H': 3600000,
+          '1D': 24 * 3600000,
+          '1W': 7 * 24 * 3600000,
+          '1M': 30 * 24 * 3600000,
+        }
+        
+        if (lastBarsCache === undefined) return
+        if (priceRef.current === UNSET_PRICE) return
+        const isNew = new Date().getTime() - Number(lastBarsCache.time) >= resolutionMapping[currentResolutions]
+
+        lastBarsCache.close = priceRef.current
+        lastBarsCache.volume = amountRef.current
+        if (isNew) {
+          lastBarsCache.time = new Date().getTime()
+          lastBarsCache.open = lastBarsCache.close
+          lastBarsCache.high = lastBarsCache.close
+          lastBarsCache.low = lastBarsCache.close
+          amountRef.current = 0
+        } else {
+          if (Number(lastBarsCache.low) > Number(lastBarsCache.close)) {
+            lastBarsCache.low = lastBarsCache.close
+          }
+          if (Number(lastBarsCache.high) < Number(lastBarsCache.close)) {
+            lastBarsCache.high = lastBarsCache.close
+          }
+        }
+
+        onRealtimeCallback(lastBarsCache)
+      }, 1000 * 5) // 5s update interval
+    },
+    unsubscribeBars: (subscriberUID) => {
+      console.log('[unsubscribeBars]: Method call with subscriberUID:', subscriberUID)
+      console.log('[unsubscribeBars]: cleared')
     },
   }
 
@@ -227,7 +276,15 @@ const SphynxChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => 
 
   React.useEffect(() => {
     getWidget()
-  }, [])
+  }, [input])
+
+  React.useEffect(() => {
+    priceRef.current = realPrice
+  }, [realPrice])
+
+  React.useEffect(() => {
+    amountRef.current = amountRef.current + realAmount
+  }, [realAmount])
 
   return (
     <ChartContainer height={props.height}>

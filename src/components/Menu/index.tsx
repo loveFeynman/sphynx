@@ -22,7 +22,8 @@ import { BalanceNumber } from 'components/BalanceNumber'
 import { useTranslation } from 'contexts/Localization'
 import Select, { OptionProps } from 'components/Select/Select'
 import { links } from './config'
-import { EN, ZHCN} from '../../config/localization/languages'
+import { replaceSwapState, Field } from '../../state/swap/actions'
+import { EN, ZHCN } from '../../config/localization/languages'
 
 const LANGUAGE_OPTIONS = [
   {
@@ -32,8 +33,8 @@ const LANGUAGE_OPTIONS = [
   {
     label: ZHCN.language,
     value: ZHCN.code,
-  }
-];
+  },
+]
 
 const MenuWrapper = styled.div<{ toggled: boolean }>`
   width: 320px;
@@ -281,8 +282,8 @@ const Menu = (props) => {
   // Language setting
   const { t, setLanguage, currentLanguage } = useTranslation()
   const language = useMemo(() => {
-    return LANGUAGE_OPTIONS.findIndex(option => option.value === currentLanguage.code) ?? 0
-  }, [currentLanguage]) ;
+    return LANGUAGE_OPTIONS.findIndex((option) => option.value === currentLanguage.code) ?? 0
+  }, [currentLanguage])
 
   const getBalance = () => {
     const testnet = 'https://bsc-dataseed1.defibit.io'
@@ -313,7 +314,7 @@ const Menu = (props) => {
   const fetchData = async () => {
     if (account) {
       let removedTokens = JSON.parse(localStorage.getItem(storages.LOCAL_REMOVED_TOKENS))
-      if(removedTokens === null){
+      if (removedTokens === null) {
         removedTokens = []
       }
       setRemovedAssets(removedTokens)
@@ -329,7 +330,8 @@ const Menu = (props) => {
         const balances = queryResult.data.data.ethereum.address[0].balances
         const promises = balances.map((elem) => {
           return axios.get(
-            `https://thesphynx.co/api/price/${elem.currency.address === '-' ? '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c' : elem.currency.address
+            `https://thesphynx.co/api/price/${
+              elem.currency.address === '-' ? '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c' : elem.currency.address
             }`,
           )
         })
@@ -341,7 +343,7 @@ const Menu = (props) => {
           const dollerprice: any = prices[i].data.price * elem.value
           elem.dollarPrice = dollerprice
           i++
-          if(removedTokens.indexOf(elem.currency.symbol) === -1){
+          if (removedTokens.indexOf(elem.currency.symbol) === -1) {
             allsum += dollerprice
           }
         }
@@ -377,7 +379,7 @@ const Menu = (props) => {
     const assets = removedAssets.map((val) => val)
     assets.push(asset.currency.symbol)
     setRemovedAssets(assets)
-    localStorage.setItem(storages.LOCAL_REMOVED_TOKENS, JSON.stringify(assets));
+    localStorage.setItem(storages.LOCAL_REMOVED_TOKENS, JSON.stringify(assets))
   }
 
   const tokenData = getAllToken
@@ -393,8 +395,12 @@ const Menu = (props) => {
               toggled={menuToggled}
               onClick={() => {
                 dispatch(
-                  setIsInput({
-                    isInput: false,
+                  replaceSwapState({
+                    outputCurrencyId: 'BNB',
+                    inputCurrencyId: currency.address,
+                    typedValue: '',
+                    field: Field.OUTPUT,
+                    recipient: null,
                   }),
                 )
                 toggleMenu(true)
@@ -407,10 +413,10 @@ const Menu = (props) => {
                       <b>{currency.symbol}</b>
                     </p>
                     <p>
-                      <BalanceNumber prefix='$' value={Number(dollarPrice).toFixed(2)} />
+                      <BalanceNumber prefix="$" value={Number(dollarPrice).toFixed(2)} />
                     </p>
                     <p>
-                      <BalanceNumber prefix='' value={Number(value).toFixed(2)} />
+                      <BalanceNumber prefix="" value={Number(value).toFixed(2)} />
                     </p>
                   </div>
                 </>
@@ -421,12 +427,12 @@ const Menu = (props) => {
                       <b>{currency.symbol}</b>
                     </p>
                     <p>
-                      <BalanceNumber prefix='$' value={Number(dollarPrice).toFixed(2)} />
+                      <BalanceNumber prefix="$" value={Number(dollarPrice).toFixed(2)} />
                     </p>
                   </div>
                   <div>
                     <p>
-                      <BalanceNumber prefix='' value={Number(value).toFixed(2)} />
+                      <BalanceNumber prefix="" value={Number(value).toFixed(2)} />
                     </p>
                     <p />
                   </div>
@@ -456,10 +462,10 @@ const Menu = (props) => {
     switch (option.value) {
       case EN.code:
         setLanguage(EN)
-        break;
+        break
       case ZHCN.code:
         setLanguage(ZHCN)
-        break;
+        break
       default:
         setLanguage(EN)
     }
@@ -491,12 +497,7 @@ const Menu = (props) => {
           <WalletIcon />
           {!menuToggled && <p>{t('Wallet')}</p>}
         </div>
-        {!menuToggled && (
-          <p>
-            {account ? <BalanceNumber prefix='$ ' value={Number(sum).toFixed(2)} /> : ''}
-
-          </p>
-        )}
+        {!menuToggled && <p>{account ? <BalanceNumber prefix="$ " value={Number(sum).toFixed(2)} /> : ''}</p>}
       </WalletHeading>
       {account ? (
         <div style={{ width: '100%', padding: '0px 24px' }}>
@@ -511,21 +512,18 @@ const Menu = (props) => {
               <b>{showAllToken ? 'Show Some Tokens' : 'Show All Tokens'}</b>
             </p>
           </ButtonWrapper>
-          {
-            removedAssets.length === 0 ?
-              null
-              :
-              <ButtonWrapper
-                style={{ margin: '10px 0' }}
-                onClick={() => {
-                  showAllRemovedTokens()
-                }}
-              >
-                <p>
-                  <b>Show all removed Tokens</b>
-                </p>
-              </ButtonWrapper>
-          }
+          {removedAssets.length === 0 ? null : (
+            <ButtonWrapper
+              style={{ margin: '10px 0' }}
+              onClick={() => {
+                showAllRemovedTokens()
+              }}
+            >
+              <p>
+                <b>Show all removed Tokens</b>
+              </p>
+            </ButtonWrapper>
+          )}
         </div>
       ) : (
         ''
@@ -583,11 +581,7 @@ const Menu = (props) => {
           <p>
             <b>{t('Languages')}</b>
           </p>
-          <Select
-            options={LANGUAGE_OPTIONS}
-            defaultValue={language}
-            onChange={handleLanguageOptionChange}
-          />
+          <Select options={LANGUAGE_OPTIONS} defaultValue={language} onChange={handleLanguageOptionChange} />
         </LanguageWrapper>
         {!menuToggled && (
           <IllustrationWrapper>
