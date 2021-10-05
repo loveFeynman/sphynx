@@ -13,6 +13,8 @@ import { ReactComponent as WalletIcon } from 'assets/svg/icon/WalletIcon.svg'
 import { ReactComponent as TwitterIcon } from 'assets/svg/icon/TwitterIcon.svg'
 import { ReactComponent as SocialIcon2 } from 'assets/svg/icon/SocialIcon2.svg'
 import { ReactComponent as TelegramIcon } from 'assets/svg/icon/TelegramIcon.svg'
+import DiscordIcon from 'assets/images/discord.png'
+import InstaIcon from 'assets/images/insta.png'
 import Web3 from 'web3'
 import axios from 'axios'
 import { BITQUERY_API, BITQUERY_API_KEY } from 'config/constants/endpoints'
@@ -535,6 +537,12 @@ const Menu = (props) => {
               <Link external href="https://t.me/sphynxswap">
                 <TelegramIcon />
               </Link>
+              <Link external href="https://discord.gg/QeR679MKdW">
+                <img src={DiscordIcon} alt="discord" style={{height: "45px", width: "45px", padding: "8px"}} />
+              </Link>
+              {/* <Link external href="https://instagram.com/sphynxswap?utm_medium=copy_link">
+                <img src={InstaIcon} alt="insta" style={{height: "45px", width: "45px", padding: "8px"}} />
+              </Link> */}
             </div>
           </SocialIconsWrapper>
         </SocialWrapper>

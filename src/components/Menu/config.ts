@@ -40,7 +40,7 @@ export const links = [
   {
     label: 'CoinMarketCap',
     icon: CoinMarketCapsIcon,
-    href: 'https://coinmarketcap.com/',
+    href: 'https://coinmarketcap.com/currencies/sphynx-token/',
     newTab: true
   },
   {

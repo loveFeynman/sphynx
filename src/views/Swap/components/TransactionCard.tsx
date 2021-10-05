@@ -85,7 +85,7 @@ let config = {
 
 const TransactionCard = () => {
   const dispatch = useDispatch()
-  const providerURL = 'wss://old-thrumming-voice.bsc.quiknode.pro/7674ba364cc71989fb1398e1e53db54e4fe0e9e0/'
+  const providerURL = 'wss://speedy-nodes-nyc.moralis.io/fbb4b2b82993bf507eaaab13/bsc/mainnet/ws/'
   const web3 = new Web3(new Web3.providers.WebsocketProvider(providerURL))
   const [transactionData, setTransactions] = useState([])
   const { t } = useTranslation()
@@ -169,8 +169,8 @@ const TransactionCard = () => {
     let newTransactions = transactionData
 
     return new Promise((resolve) => {
-      for (let i = 0; i <= myTransactions.length; i++) {
-        if (i === myTransactions.length) {
+      for (let i = 0; i < myTransactions.length; i++) {
+        if (i === (myTransactions.length - 1)) {
           setTransactions(newTransactions)
           resolve(true)
         }
@@ -215,7 +215,6 @@ const TransactionCard = () => {
   }
 
   useEffect(() => {
-    dispatch(priceInput({ price: UNSET_PRICE }))
     const contract: any = new web3.eth.Contract(abi, input)
     const fetchDecimals = async () => {
       tokenDecimal = await contract.methods.decimals().call()
@@ -244,6 +243,7 @@ const TransactionCard = () => {
   }, [input])
 
   useEffect(() => {
+    dispatch(priceInput({ price: UNSET_PRICE }))
     let newTransactions = []
 
     const fetchData = async (tokenAddr: string) => {

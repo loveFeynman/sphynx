@@ -22,7 +22,6 @@ export default createReducer<any>(initialState, (builder) =>
     .addCase(resetMintState, () => initialState)
     .addCase(typeInput, (state, { payload: { input } }) => {
       // they're typing into the field they've last typed in
-      console.log("input", input);
       return {
         ...state,
         input,
