@@ -420,50 +420,9 @@ const getPriceInfo = async (input, decimals) => {
   });
 };
 
-const getMarketCap = async (address) => {
-  try {
-    if (!address) {
-      return 0;
-    }
-    const query = `
-    {
-      ethereum(network: bsc) {
-        dexTrades(
-          baseCurrency: {is: "${address}"}
-          quoteCurrency: {in: ["0xe9e7cea3dedca5984780bafc599bd69add087d56", "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"]}
-          exchangeName: {in: ["Pancake v2"]}
-        ) {
-          quoteCurrency {
-            symbol
-          }
-          baseCurrency {
-            symbol
-          }
-          baseAmount(calculate: sum)
-        }
-      }
-    }
-    
-    `;
-    const {
-      data: {
-        data: {
-          ethereum: { dexTrades },
-        },
-      },
-    } = await axios.post(`https://graphql.bitquery.io/`, { query }, config);
-
-    const price = await getPrice(address);
-    return dexTrades[0] ? dexTrades[0].baseAmount * +price : 0;
-  } catch (error) {
-    return 0;
-  }
-};
-
 export {
   getTokenDetails,
   getChartStats,
-  searchToken,
   socialToken,
   topTrades,
   getPrice
