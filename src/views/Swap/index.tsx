@@ -22,7 +22,6 @@ import { useSwapType, useSwapTransCard, useSetRouterType } from 'state/applicati
 import { ReactComponent as DownArrow } from 'assets/svg/icon/DownArrow.svg'
 import FarmBanner from 'assets/images/farmbanner.png'
 import StakingBanner from 'assets/images/stakebanner.png'
-import BannerWrapper from 'components/BannerWrapper'
 import axios from 'axios'
 import { typeInput } from 'state/input/actions'
 import { BITQUERY_API, BITQUERY_API_KEY } from 'config/constants/endpoints'
@@ -479,7 +478,6 @@ export default function Swap({ history }: RouteComponentProps) {
 
   return (
     <SwapPage>
-      <BannerWrapper />
       <Cards>
         <div>
           <DividendPanel />
