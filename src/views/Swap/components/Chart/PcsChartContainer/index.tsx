@@ -150,10 +150,6 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
     ) => {
       const { from, to, firstDataRequest } = periodParams
 
-      console.log('............from', from)
-      console.log('............to', to)
-      console.log('............firstDataRequest', firstDataRequest)
-
       try {
         const data = await makeApiRequest1(input, routerVersion, resolution)
         if (result) {
@@ -219,7 +215,7 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
           '1W': 7 * 24 * 3600000,
           '1M': 30 * 24 * 3600000,
         }
-        
+
         if (lastBarsCache === undefined) return
         if (priceRef.current === UNSET_PRICE) return
         const isNew = new Date().getTime() - Number(lastBarsCache.time) >= resolutionMapping[currentResolutions]
