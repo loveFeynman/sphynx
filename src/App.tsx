@@ -15,6 +15,7 @@ import ConnectWalletButton from 'components/ConnectWalletButton'
 import LanguageOptionButton from 'components/LanguageOptionButton'
 import Loader from 'components/myLoader/Loader'
 import { useSelector } from 'react-redux'
+import { useTranslation } from 'contexts/Localization'
 import HotTokenBar from './views/Swap/components/HotTokenBar'
 import Menu from './components/Menu'
 import UserMenu from './components/Menu/UserMenu'
@@ -164,6 +165,7 @@ const App: React.FC = () => {
   const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
   const routerVersion = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.routerVersion)
   const [showLoader, setShowLoader] = useState<any>(false)
+  const { t } = useTranslation()
 
   React.useEffect(() => {
     setTimeout(() => {
@@ -204,7 +206,7 @@ const App: React.FC = () => {
                 <LanguageOptionButton />
                 {account ? (
                   <AccountWrapper>
-                    <div>Connected</div>
+                    <div>{t('Connected')}</div>
                     <div>
                       <UserMenu />
                     </div>
