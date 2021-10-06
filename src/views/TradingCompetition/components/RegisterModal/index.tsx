@@ -6,7 +6,7 @@ import { CompetitionProps } from '../../types'
 import MakeProfile from './MakeProfile'
 import ReactivateProfile from './ReactivateProfile'
 import RegisterWithProfile from './RegisterWithProfile'
-import ProfileAvatar from '../../../Profile/components/ProfileAvatar'
+import ProfileAvatar from 'components/ProfileAvatar'
 
 const AvatarWrapper = styled.div`
   height: 64px;
