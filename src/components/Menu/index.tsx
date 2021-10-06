@@ -482,7 +482,8 @@ const Menu = () => {
         {links.map((link) => {
           const Icon = link.icon
           return (
-            <>
+            <div
+              key={link.label}>
               <MenuItem
                 className={realPath.indexOf(link.href) > -1 && link.href !== '#' ? 'active' : ''}
                 href={link.href}
@@ -506,7 +507,7 @@ const Menu = () => {
                   <b>{t(`${link.label}`)}</b>
                 </p>
               </MenuItemMobile>
-            </>
+            </div>
           )
         })}
         <SocialWrapper>
