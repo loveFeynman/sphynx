@@ -1,7 +1,7 @@
 /* eslint-disable */
 import axios from 'axios'
 import * as ethers from 'ethers'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import styled from 'styled-components'
 import { Flex } from '@sphynxswap/uikit'
@@ -170,7 +170,6 @@ const TransactionCard = () => {
     let newTransactions = transactionData
     return new Promise((resolve) => {
       if (!isLoading) {
-        console.log("hello", "hello")
         resolve(true)
       } else {
         for (let i = 0; i <= myTransactions.length; i++) {
@@ -208,6 +207,9 @@ const TransactionCard = () => {
                 oneData.isBuy = logs.length != 0
                 oneData.usdValue = oneData.amount * oneData.price
                 newTransactions.unshift(oneData)
+                if(newTransactions.length > 100) {
+                  newTransactions.pop();
+                }
                 dispatch(priceInput({ price: oneData.price }))
                 dispatch(amountInput({ amount: oneData.usdValue / volumeRate }))
               } catch (err) {}
@@ -220,13 +222,13 @@ const TransactionCard = () => {
     })
   }
 
-  useEffect(() => {
+  const getTransactions = useCallback(() => {
     const contract: any = new web3.eth.Contract(abi, input)
     const fetchDecimals = async () => {
       tokenDecimal = await contract.methods.decimals().call()
     }
     fetchDecimals()
-    let emitter = contract.events
+    contract.events
       .Transfer({}, async function (error, event) {
         if (error) {
           console.error
@@ -246,7 +248,9 @@ const TransactionCard = () => {
     return () => {
       dispatch(priceInput({ price: UNSET_PRICE }))
     }
-  }, [input])
+  }, [input, isLoading, transactionData]);
+
+  getTransactions();
 
   useEffect(() => {
     dispatch(priceInput({ price: UNSET_PRICE }))
