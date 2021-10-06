@@ -3,7 +3,7 @@
 export async function makeApiRequest1(path: any, routerVersion: any, resolution: any) {
   try {
     const response = await fetch(
-      `https://thesphynx.co/api/${routerVersion === 'v1' ? 'v1/' : ''}chart/${path}?resolution=${resolution}`,
+      `${process.env.REACT_APP_BACKEND_API_URL}/${routerVersion === 'v1' ? 'v1/' : ''}chart/${path}?resolution=${resolution}`,
       {
         method: 'GET',
         headers: {
