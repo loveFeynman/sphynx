@@ -7,6 +7,7 @@ import { computeSlippageAdjustedAmounts, computeTradePriceBreakdown } from 'util
 import { AutoColumn } from 'components/Layout/Column'
 import QuestionHelper from 'components/QuestionHelper'
 import { RowBetween, RowFixed } from 'components/Layout/Row'
+import { useTranslation } from 'contexts/Localization'
 import FormattedPriceImpact from './FormattedPriceImpact'
 import SwapRoute from './SwapRoute'
 
@@ -14,17 +15,18 @@ function TradeSummary({ trade, allowedSlippage }: { trade: Trade; allowedSlippag
   const { priceImpactWithoutFee, realizedLPFee } = computeTradePriceBreakdown(trade)
   const isExactIn = trade.tradeType === TradeType.EXACT_INPUT
   const slippageAdjustedAmounts = computeSlippageAdjustedAmounts(trade, allowedSlippage)
+  const { t } = useTranslation()
 
   return (
     <AutoColumn style={{ padding: '0 16px' }}>
       <RowBetween>
         <RowFixed>
           <Text fontSize="14px" color="white">
-            {isExactIn ? 'Minimum received' : 'Maximum sold'}
+            {isExactIn ? t('Minimum received') : t('Maximum sold')}
           </Text>
           <QuestionHelper
             color="white"
-            text="Your transaction will revert if there is a large, unfavorable price movement before it is confirmed."
+            text={t('Your transaction will revert if there is a large, unfavorable price movement before it is confirmed.')}
             ml="4px"
           />
         </RowFixed>
@@ -40,10 +42,10 @@ function TradeSummary({ trade, allowedSlippage }: { trade: Trade; allowedSlippag
       <RowBetween>
         <RowFixed>
           <Text color="white" fontSize="14px">
-            Price Impact
+            {t('Price Impact')}
           </Text>
           <QuestionHelper
-            text="The difference between the market price and estimated price due to trade size."
+            text={t('The difference between the market price and estimated price due to trade size.')}
             ml="4px"
           />
         </RowFixed>
@@ -53,15 +55,15 @@ function TradeSummary({ trade, allowedSlippage }: { trade: Trade; allowedSlippag
       <RowBetween>
         <RowFixed>
           <Text color="white" fontSize="14px">
-            Liquidity Provider Fee
+            {t('Liquidity Provider Fee')}
           </Text>
           <QuestionHelper
             text={
               <>
-                <Text mb="12px">For each trade a 0.25% fee is paid</Text>
-                <Text>- 0.17% to LP token holders</Text>
-                <Text>- 0.03% to the Treasury</Text>
-                <Text>- 0.05% towards CAKE buyback and burn</Text>
+                <Text mb="12px">{t('For each trade a 0.25% fee is paid')}</Text>
+                <Text>- {t('0.17% to LP token holders')}</Text>
+                <Text>- {t('0.03% to the Treasury')}</Text>
+                <Text>- {t('0.05% towards CAKE buyback and burn')}</Text>
               </>
             }
             ml="4px"

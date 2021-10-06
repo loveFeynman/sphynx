@@ -472,7 +472,7 @@ const Menu = (props) => {
             }}
           >
             <p>
-              <b>{showAllToken ? 'Show Some Tokens' : 'Show All Tokens'}</b>
+              <b>{showAllToken ? t('Show Some Tokens') : t('Show All Tokens')}</b>
             </p>
           </ButtonWrapper>
           {removedAssets.length === 0 ? null : (
@@ -483,7 +483,7 @@ const Menu = (props) => {
               }}
             >
               <p>
-                <b>Show all removed Tokens</b>
+                <b>{t('Show all removed Tokens')}</b>
               </p>
             </ButtonWrapper>
           )}

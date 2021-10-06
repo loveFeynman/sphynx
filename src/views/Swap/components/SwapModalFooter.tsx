@@ -12,6 +12,7 @@ import {
 import { AutoColumn } from 'components/Layout/Column'
 import QuestionHelper from 'components/QuestionHelper'
 import { AutoRow, RowBetween, RowFixed } from 'components/Layout/Row'
+import { useTranslation } from 'contexts/Localization'
 import FormattedPriceImpact from './FormattedPriceImpact'
 import { StyledBalanceMaxMini, SwapCallbackError } from './styleds'
 
@@ -43,6 +44,7 @@ export default function SwapModalFooter({
   )
   const { priceImpactWithoutFee, realizedLPFee } = useMemo(() => computeTradePriceBreakdown(trade), [trade])
   const severity = warningSeverity(priceImpactWithoutFee)
+  const { t } = useTranslation()
 
   return (
     <>
@@ -72,7 +74,7 @@ export default function SwapModalFooter({
               {trade.tradeType === TradeType.EXACT_INPUT ? 'Minimum received' : 'Maximum sold'}
             </Text>
             <QuestionHelper
-              text="Your transaction will revert if there is a large, unfavorable price movement before it is confirmed."
+              text={t("Your transaction will revert if there is a large, unfavorable price movement before it is confirmed.")}
               ml="4px"
             />
           </RowFixed>
@@ -92,20 +94,20 @@ export default function SwapModalFooter({
         <RowBetween>
           <RowFixed>
             <Text fontSize="14px">Price Impact</Text>
-            <QuestionHelper text="The difference between the market price and your price due to trade size." ml="4px" />
+            <QuestionHelper text={t("The difference between the market price and your price due to trade size.")} ml="4px" />
           </RowFixed>
           <FormattedPriceImpact priceImpact={priceImpactWithoutFee} />
         </RowBetween>
         <RowBetween>
           <RowFixed>
-            <Text fontSize="14px">Liquidity Provider Fee</Text>
+            <Text fontSize="14px">{t('Liquidity Provider Fee')}</Text>
             <QuestionHelper
               text={
                 <>
-                  <Text mb="12px">For each trade a 0.25% fee is paid</Text>
-                  <Text>- 0.17% to LP token holders</Text>
-                  <Text>- 0.03% to the Treasury</Text>
-                  <Text>- 0.05% towards CAKE buyback and burn</Text>
+                  <Text mb="12px">{t('For each trade a 0.25% fee is paid')}</Text>
+                  <Text>- {t('0.17% to LP token holders')}</Text>
+                  <Text>- {t('0.03% to the Treasury')}</Text>
+                  <Text>- {t('0.05% towards CAKE buyback and burn')}</Text>
                 </>
               }
               ml="4px"
