@@ -42,8 +42,6 @@ const AprWrapper = styled.div`
 const Apr: React.FC<AprProps> = ({
   value,
   lpLabel,
-  tokenAddress,
-  quoteTokenAddress,
   cakePrice,
   originalValue,
   hideButton = false,

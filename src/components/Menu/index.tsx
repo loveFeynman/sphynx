@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import styled from 'styled-components'
 import { useLocation } from 'react-router'
@@ -14,15 +14,13 @@ import { ReactComponent as TwitterIcon } from 'assets/svg/icon/TwitterIcon.svg'
 import { ReactComponent as SocialIcon2 } from 'assets/svg/icon/SocialIcon2.svg'
 import { ReactComponent as TelegramIcon } from 'assets/svg/icon/TelegramIcon.svg'
 import DiscordIcon from 'assets/images/discord.png'
-import InstaIcon from 'assets/images/insta.png'
-import Web3 from 'web3'
 import axios from 'axios'
 import { BITQUERY_API, BITQUERY_API_KEY } from 'config/constants/endpoints'
 import storages from 'config/constants/storages'
 import { BalanceNumber } from 'components/BalanceNumber'
 import { useTranslation } from 'contexts/Localization'
 import { links } from './config'
-import { replaceSwapState, Field } from '../../state/swap/actions'
+import { Field, replaceSwapState } from '../../state/swap/actions'
 
 const MenuWrapper = styled.div<{ toggled: boolean }>`
   width: 320px;
@@ -245,13 +243,12 @@ const TokenIconContainer = styled.div`
   position: relative;
 `
 
-const Menu = (props) => {
+const Menu = () => {
   const { account } = useWeb3React()
   const { menuToggled, toggleMenu } = useMenuToggle()
   const { removedAssets, setRemovedAssets } = useRemovedAssets()
   const [showAllToken, setShowAllToken] = useState(true)
 
-  const [walletbalance, setWalletBalance] = useState(0)
   const dispatch = useDispatch()
   const { pathname } = useLocation()
   const realPath = `/#${pathname}`
@@ -260,16 +257,6 @@ const Menu = (props) => {
   const [getAllToken, setAllTokens] = useState([])
 
   const { t } = useTranslation()
-
-  const getBalance = () => {
-    const testnet = 'https://bsc-dataseed1.defibit.io'
-    const web3 = new Web3(new Web3.providers.HttpProvider(testnet))
-    const balance =
-      account &&
-      web3.eth.getBalance(account).then((res: any) => {
-        setWalletBalance(res / 1000000000000000000)
-      })
-  }
 
   const getDataQuery = `
   {
@@ -303,7 +290,7 @@ const Menu = (props) => {
       const queryResult = await axios.post(BITQUERY_API, { query: getDataQuery }, bitConfig)
       if (queryResult.data.data) {
         let allsum: any = 0
-        const balances = queryResult.data.data.ethereum.address[0].balances
+        const { balances } = queryResult.data.data.ethereum.address[0]
         const promises = balances.map((elem) => {
           return axios.get(
             `https://thesphynx.co/api/price/${

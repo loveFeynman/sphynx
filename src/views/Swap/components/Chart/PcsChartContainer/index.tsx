@@ -199,7 +199,6 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
       subscribeUID: any,
       onResetCacheNeededCallback: any,
     ) => {
-      console.log('[subscribeBars]: Method call with subscribeUID:', subscribeUID)
 
       currentResolutions = resolution
       myInterval = setInterval(async function () {
