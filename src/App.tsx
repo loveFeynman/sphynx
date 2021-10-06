@@ -7,7 +7,6 @@ import useEagerConnect from 'hooks/useEagerConnect'
 import { AppState } from 'state'
 import { usePollBlockNumber } from 'state/block/hooks'
 import { usePollCoreFarmData } from 'state/farms/hooks'
-import { useFetchProfile } from 'state/profile/hooks'
 import { useMenuToggle } from 'state/application/hooks'
 import { useWeb3React } from '@web3-react/core'
 import { DatePickerPortal } from 'components/DatePicker'
@@ -155,7 +154,6 @@ BigNumber.config({
 const App: React.FC = () => {
   usePollBlockNumber()
   useEagerConnect()
-  useFetchProfile()
   usePollCoreFarmData()
   const { account } = useWeb3React()
   const { isSm, isXs, isMd } = useMatchBreakpoints()
