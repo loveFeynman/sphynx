@@ -703,20 +703,6 @@ export default function Swap({ history }: RouteComponentProps) {
           {swapTransCard === 'buyers' && <BuyersCard />}
           {swapTransCard === 'sellers' && <SellersCard />}
         </div>
-        <BottomCard style={{ backgroundImage: `url(${FarmBanner})` }}>
-          <h1>{t('Farms')}</h1>
-          <div />
-          <Link href="#/farms">
-            <Button>{t('Start Farming')}</Button>
-          </Link>
-        </BottomCard>
-        <BottomCard style={{ backgroundImage: `url(${StakingBanner})` }}>
-          <h1>{t('Staking')}</h1>
-          <div />
-          <Link href="#/pools">
-            <Button>{t('Start Staking')}</Button>
-          </Link>
-        </BottomCard>
       </Cards>
     </SwapPage>
   )

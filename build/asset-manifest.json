@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/static/css/main.1fcd5279.chunk.css",
-    "main.js": "/static/js/main.a423b49f.chunk.js",
-    "main.js.map": "/static/js/main.a423b49f.chunk.js.map",
+    "main.js": "/static/js/main.1617f4fa.chunk.js",
+    "main.js.map": "/static/js/main.1617f4fa.chunk.js.map",
     "runtime-main.js": "/static/js/runtime-main.239bd337.js",
     "runtime-main.js.map": "/static/js/runtime-main.239bd337.js.map",
     "static/css/2.ecdd39c8.chunk.css": "/static/css/2.ecdd39c8.chunk.css",
@@ -50,16 +50,14 @@
     "static/media/WalletIcon.b61a5746.svg": "/static/media/WalletIcon.b61a5746.svg",
     "static/media/chart-swap.77ae65b6.svg": "/static/media/chart-swap.77ae65b6.svg",
     "static/media/discord.590e2c19.png": "/static/media/discord.590e2c19.png",
-    "static/media/farmbanner.05c89953.png": "/static/media/farmbanner.05c89953.png",
     "static/media/logo_new.svg": "/static/media/logo_new.cdaad6db.svg",
-    "static/media/pyramid.4e69d7c0.png": "/static/media/pyramid.4e69d7c0.png",
-    "static/media/stakebanner.21587f76.png": "/static/media/stakebanner.21587f76.png"
+    "static/media/pyramid.4e69d7c0.png": "/static/media/pyramid.4e69d7c0.png"
   },
   "entrypoints": [
     "static/js/runtime-main.239bd337.js",
     "static/css/2.ecdd39c8.chunk.css",
     "static/js/2.68b8f315.chunk.js",
     "static/css/main.1fcd5279.chunk.css",
-    "static/js/main.a423b49f.chunk.js"
+    "static/js/main.1617f4fa.chunk.js"
   ]
 }
