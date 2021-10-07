@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux'
 import { AppState } from 'state'
 import styled from 'styled-components'
 import { useTranslation } from 'contexts/Localization'
+import { v4 as uuidv4 } from 'uuid'
 import { Spinner } from '../../LotterySphx/components/Spinner'
 import { topTrades } from '../../../utils/apiServices'
 
@@ -102,9 +103,12 @@ const SellersCard = () => {
               </tr>
             </thead>
             <tbody>
-              {tableData?.map((td) => {
+              {tableData?.map(item => ({
+                ...item,
+                id: uuidv4()
+              })).map((td) => {
                 return (
-                  <tr style={{ fontSize: '14px', fontWeight: 'bold' }}>
+                  <tr key={td.id} style={{ fontSize: '14px', fontWeight: 'bold' }}>
                     <td style={{ color: '#fff', fontWeight: 'bold' }}>{td.wallet}</td>
                     <td style={{ color: '#ea3843', fontWeight: 'bold' }}>
                       $ {td.usdAmount.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,')}

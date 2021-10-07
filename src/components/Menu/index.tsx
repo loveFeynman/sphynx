@@ -7,6 +7,7 @@ import { useMenuToggle, useRemovedAssets } from 'state/application/hooks'
 import { useWeb3React } from '@web3-react/core'
 import MainLogo from 'assets/svg/icon/logo_new.svg'
 import Illustration from 'assets/images/Illustration.svg'
+import { v4 as uuidv4 } from 'uuid'
 import CloseIcon from '@material-ui/icons/Close'
 import { ReactComponent as MenuOpenIcon } from 'assets/svg/icon/MenuOpenIcon.svg'
 import { ReactComponent as WalletIcon } from 'assets/svg/icon/WalletIcon.svg'
@@ -348,11 +349,15 @@ const Menu = () => {
   const tokenData = getAllToken
     .filter((val) => removedAssets.findIndex((item) => item === val.currency.symbol) === -1)
     .sort((a, b) => (Number(a.dollarPrice) < Number(b.dollarPrice) ? 1 : -1))
+    .map(item => ({
+      ...item,
+      id: uuidv4()
+    }))
     .map((elem: any) => {
-      const { currency, value, dollarPrice } = elem
+      const { currency, value, dollarPrice, id } = elem
 
       return (
-        <TokenIconContainer>
+        <TokenIconContainer key={id}>
           <a href={`#/swap/${currency.address}`}>
             <TokenItemWrapper
               toggled={menuToggled}
@@ -479,11 +484,14 @@ const Menu = () => {
         ''
       )}
       <MenuContentWrapper toggled={menuToggled}>
-        {links.map((link) => {
+        {links.map(item => ({
+          ...item,
+          id: uuidv4()
+        })).map((link) => {
           const Icon = link.icon
           return (
             <div
-              key={link.label}>
+              key={link.id}>
               <MenuItem
                 className={realPath.indexOf(link.href) > -1 && link.href !== '#' ? 'active' : ''}
                 href={link.href}
