@@ -291,10 +291,14 @@ export default function Swap({ history }: RouteComponentProps) {
         setSwapState({ attemptingTxn: false, tradeToConfirm, swapErrorMessage: undefined, txHash: hash })
       })
       .catch((error) => {
+        let message = error.message
+        if(error.message.includes("INSUFFICIENT_OUTPUT_AMOUNT")) {
+          message = "Please increase Slippage Tolerance percent!"
+        }
         setSwapState({
           attemptingTxn: false,
           tradeToConfirm,
-          swapErrorMessage: error.message,
+          swapErrorMessage: message,
           txHash: undefined,
         })
       })

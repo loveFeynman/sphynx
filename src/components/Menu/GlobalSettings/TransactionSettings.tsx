@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import { Text, Button, Input, Flex, Box } from '@sphynxswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 import { useUserSlippageTolerance, useUserTransactionTTL } from 'state/user/hooks'
+import { INITIAL_ALLOWED_SLIPPAGE } from 'config/constants/index'
 import QuestionHelper from '../../QuestionHelper'
 
 enum SlippageError {
@@ -58,7 +59,7 @@ const SlippageTabs = () => {
 
     try {
       const valueAsIntFromRoundedFloat = Number.parseInt((Number.parseFloat(value) * 100).toString())
-      if (!Number.isNaN(valueAsIntFromRoundedFloat) && valueAsIntFromRoundedFloat < 5000) {
+      if (!Number.isNaN(valueAsIntFromRoundedFloat) && valueAsIntFromRoundedFloat <= INITIAL_ALLOWED_SLIPPAGE * 100) {
         setUserslippageTolerance(valueAsIntFromRoundedFloat)
       }
     } catch (error) {
