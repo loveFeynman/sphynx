@@ -147,9 +147,6 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
       onErrorCallback: any,
     ) => {
       const { from, to, firstDataRequest } = periodParams
-      console.log('............from', from)
-      console.log('............to', to)
-      console.log('............firstDataRequest', firstDataRequest)
 
       try {
         const data = await makeApiRequest1(input, routerVersion, resolution)
@@ -198,7 +195,6 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
       subscribeUID: any,
       onResetCacheNeededCallback: any,
     ) => {
-      console.log('[subscribeBars]: Method call with subscribeUID:', subscribeUID)
 
       currentResolutions = resolution
       myInterval = setInterval(async function () {

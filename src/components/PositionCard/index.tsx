@@ -1,19 +1,10 @@
 import React, { useState } from 'react'
 import { JSBI, Pair, Percent } from '@sphynxswap/sdk'
-import {
-  Button,
-  Text,
-  ChevronUpIcon,
-  ChevronDownIcon,
-  Card,
-  Flex,
-  CardProps,
-  AddIcon,
-} from '@sphynxswap/uikit'
+import { AddIcon, Button, Card, CardProps, ChevronDownIcon, ChevronUpIcon, Flex, Text } from '@sphynxswap/uikit'
 import styled from 'styled-components'
 import MainLogo from 'assets/svg/icon/logo_new.svg'
 import { useTranslation } from 'contexts/Localization'
-import { useSwapType, useLiquidityPairA, useLiquidityPairB } from 'state/application/hooks'
+import { useLiquidityPairA, useLiquidityPairB, useSwapType } from 'state/application/hooks'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import useTotalSupply from '../../hooks/useTotalSupply'
 
@@ -146,9 +137,9 @@ export default function FullPositionCard({ pair, ...props }: PositionCardProps) 
   const currency1 = unwrappedToken(pair.token1)
 
   const [showMore, setShowMore] = useState(false)
-  const { swapType, setSwapType } = useSwapType()
-  const { liquidityPairA, setLiquidityPairA } = useLiquidityPairA()
-  const { liquidityPairB, setLiquidityPairB } = useLiquidityPairB()
+  const { setSwapType } = useSwapType()
+  const { setLiquidityPairA } = useLiquidityPairA()
+  const { setLiquidityPairB } = useLiquidityPairB()
 
   const userPoolBalance = useTokenBalance(account ?? undefined, pair.liquidityToken)
   const totalPoolTokens = useTotalSupply(pair.liquidityToken)

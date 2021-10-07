@@ -34,8 +34,6 @@ const Staked: React.FunctionComponent<StackedActionProps> = ({
   pid,
   lpSymbol,
   lpAddresses,
-  quoteToken,
-  token,
   userDataReady,
 }) => {
   const { t } = useTranslation()

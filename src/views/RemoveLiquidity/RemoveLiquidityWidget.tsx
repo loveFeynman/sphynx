@@ -4,7 +4,7 @@ import { splitSignature } from '@ethersproject/bytes'
 import { Contract } from '@ethersproject/contracts'
 import { TransactionResponse } from '@ethersproject/providers'
 import { Currency, currencyEquals, ETHER, Percent, WETH } from '@sphynxswap/sdk'
-import { Button, Text, AddIcon, ArrowDownIcon, Slider, Box, Flex, useModal } from '@sphynxswap/uikit'
+import { AddIcon, ArrowDownIcon, Box, Button, Flex, Slider, Text, useModal } from '@sphynxswap/uikit'
 import { BigNumber } from '@ethersproject/bignumber'
 import { useTranslation } from 'contexts/Localization'
 import { AutoColumn, ColumnCenter } from '../../components/Layout/Column'
@@ -22,16 +22,16 @@ import { useCurrency } from '../../hooks/Tokens'
 import { usePairContract, useRouterAddress } from '../../hooks/useContract'
 import useTransactionDeadline from '../../hooks/useTransactionDeadline'
 
-import { useSetRouterType, useLiquidityPairA, useLiquidityPairB } from '../../state/application/hooks'
+import { useLiquidityPairA, useLiquidityPairB, useSetRouterType } from '../../state/application/hooks'
 import { useTransactionAdder } from '../../state/transactions/hooks'
 import StyledInternalLink from '../../components/Links'
 import { calculateGasMargin, calculateSlippageAmount, getRouterContract } from '../../utils'
 import { currencyId } from '../../utils/currencyId'
 import useDebouncedChangeHandler from '../../hooks/useDebouncedChangeHandler'
 import { wrappedCurrency } from '../../utils/wrappedCurrency'
-import { useApproveCallback, ApprovalState } from '../../hooks/useApproveCallback'
+import { ApprovalState, useApproveCallback } from '../../hooks/useApproveCallback'
 import Dots from '../../components/Loader/Dots'
-import { useBurnActionHandlers, useDerivedBurnInfo, useBurnState } from '../../state/burn/hooks'
+import { useBurnActionHandlers, useBurnState, useDerivedBurnInfo } from '../../state/burn/hooks'
 
 import { Field } from '../../state/burn/actions'
 import { useUserSlippageTolerance } from '../../state/user/hooks'
@@ -60,13 +60,12 @@ export default function RemoveLiquidityWidget({
   currencyIdA?: string
   currencyIdB?: string
 }) {
-  const { liquidityPairA, setLiquidityPairA } = useLiquidityPairA()
-  const { liquidityPairB, setLiquidityPairB } = useLiquidityPairB()
+  const { liquidityPairA } = useLiquidityPairA()
+  const { liquidityPairB } = useLiquidityPairB()
 
   const [currencyA1, setCurrencyA1] = useState(liquidityPairA || 'ETH')
   const [currencyB1, setCurrencyB1] = useState(liquidityPairB || 'ETH')
 
-  console.log('currencyA1=', currencyA1, ', currencyB1=', currencyB1)
 
   const [currencyA, currencyB] = [useCurrency(currencyA1) ?? undefined, useCurrency(currencyB1) ?? undefined]
 

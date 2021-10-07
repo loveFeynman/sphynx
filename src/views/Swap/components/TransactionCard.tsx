@@ -251,6 +251,9 @@ const TransactionCard = React.memo(() => {
     fetchDecimals()
     getPairAddress()
 
+  useEffect(() => {
+    const ac = new AbortController();
+    dispatch(priceInput({ price: UNSET_PRICE }))
     let newTransactions = []
     const fetchData = async (tokenAddr: string) => {
       try {
@@ -287,6 +290,8 @@ const TransactionCard = React.memo(() => {
     if (tokenAddress) {
       fetchData(tokenAddress)
     }
+
+    return () => ac.abort();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])

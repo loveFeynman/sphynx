@@ -1,7 +1,6 @@
 import React, { useCallback, useState } from 'react'
 import styled from 'styled-components'
 import { Button } from '@sphynxswap/uikit'
-import { useTranslation } from 'contexts/Localization'
 import { Currency, TokenAmount } from '@sphynxswap/sdk'
 import { ReactComponent as ArrowRightIcon } from 'assets/svg/icon/ArrowRight.svg'
 import { Field } from '../../../state/mint/actions'
@@ -92,12 +91,11 @@ const ConnectWalletButton = styled.div`
   text-align: -webkit-center;
 `
 export default function BridgeCard({ label, isSpynx = false }) {
-  const { liquidityPairA, setLiquidityPairA } = useLiquidityPairA()
-  const { liquidityPairB, setLiquidityPairB } = useLiquidityPairB()
+  const { liquidityPairA } = useLiquidityPairA()
+  const { liquidityPairB } = useLiquidityPairB()
 
   const [currencyA1, setCurrencyA1] = useState(liquidityPairA || 'ETH')
   const [currencyB1, setCurrencyB1] = useState(liquidityPairB || 'ETH')
-  const { t } = useTranslation()
 
   const currencyA = useCurrency(currencyA1)
   const currencyB = useCurrency(currencyB1)
@@ -117,7 +115,7 @@ export default function BridgeCard({ label, isSpynx = false }) {
     [dependentField]: noLiquidity ? otherTypedValue : parsedAmounts[dependentField]?.toSignificant(6) ?? '',
   }
 
-  const { onFieldAInput, onFieldBInput } = useMintActionHandlers(noLiquidity)
+  const { onFieldAInput } = useMintActionHandlers(noLiquidity)
 
   // get the max amounts user can add
   const maxAmounts: { [field in Field]?: TokenAmount } = [Field.CURRENCY_A, Field.CURRENCY_B].reduce(
@@ -153,14 +151,6 @@ export default function BridgeCard({ label, isSpynx = false }) {
     },
     [currencyB1, currencyA1],
   )
-  const handleMaxClick = () => {
-    console.log('max clicked')
-
-  }
-
-  const handleSwitchClick = () => {
-    console.log('switch clicked')
-  }
 
   return (
     <Container>
@@ -188,7 +178,6 @@ export default function BridgeCard({ label, isSpynx = false }) {
             color: 'white',
             borderRadius: '4px',
           }}
-          onClick={() => handleMaxClick()}
         >
           Max
         </Button>
@@ -234,7 +223,6 @@ export default function BridgeCard({ label, isSpynx = false }) {
             borderRadius: '8px',
             padding: '8px',
           }}
-          onClick={() => handleSwitchClick()}
         >
           Click Here to Switch
         </Button>
@@ -258,7 +246,6 @@ export default function BridgeCard({ label, isSpynx = false }) {
             alignItems: 'center',
             padding: '8px',
           }}
-          onClick={() => handleSwitchClick()}
         >
           Connect Wallet
         </Button>

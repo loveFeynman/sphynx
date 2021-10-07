@@ -1,7 +1,6 @@
 import Web3 from 'web3'
 import { AbiItem } from 'web3-utils'
 import axios from 'axios'
-import cheerio from 'cheerio';
 import abi from '../config/abi/erc20ABI.json'
 import factoryAbi from '../config/abi/factoryAbi.json'
 import { getVersion } from './getVersion'
@@ -185,7 +184,6 @@ async function getChartStats(address: string) {
       liquidityV2: '',
       liquidityV2BNB: '',
     }
-    console.log(error);
   }
 }
 
@@ -282,7 +280,6 @@ const getPrice = async (tokenAddr) => {
     // @ts-ignore
     return parseFloat(web3.utils.fromWei(data[data.length - 1]));
   } catch (error) {
-    console.log("error", error);
     return 0;
   }
 };
