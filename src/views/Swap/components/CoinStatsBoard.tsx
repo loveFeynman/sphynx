@@ -136,7 +136,9 @@ export default function CoinStatsBoard() {
     }
   }
   useEffect(() => {
+    const ac = new AbortController();
     getTableData()
+    return () => ac.abort();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [input])
 

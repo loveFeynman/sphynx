@@ -40,6 +40,7 @@ const DividendPanel: React.FC = () => {
   const [onPresentDividendModal] = useModal(<DividendModal balance={balance * price} />)
 
   useEffect(() => {
+    const ac = new AbortController();
     axios.get('https://thesphynx.co/api/price/0x2e121Ed64EEEB58788dDb204627cCB7C7c59884c').then(({ data }) => {
       setPrice(data.price)
     })
@@ -54,6 +55,8 @@ const DividendPanel: React.FC = () => {
         const bal: any = web3.utils.fromWei(data)
         setBalance(bal / 2)
       })
+
+    return () => ac.abort();
   }, [])
 
   return (

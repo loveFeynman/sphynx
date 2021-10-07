@@ -57,6 +57,7 @@ export const useLotteryBalance = () => {
   const { account } = useActiveWeb3React()
 
   useMemo(() => {
+    const ac = new AbortController();
     const fetchLotteryID = async () => {
       try {
         await lotteryContractWeb3.methods
@@ -97,6 +98,8 @@ export const useLotteryBalance = () => {
       getBalance()
       viewLotterys(roundID)
     }
+
+    return () => ac.abort();
   }, [roundID, account, fetchFlag])
   return { balance, roundID, lotteryInfo, setRefetch }
 }

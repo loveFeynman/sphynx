@@ -240,6 +240,7 @@ const Farms: React.FC = () => {
   chosenFarmsLength.current = chosenFarmsMemoized.length
 
   useEffect(() => {
+    const ac = new AbortController();
     const showMoreFarms = (entries) => {
       const [entry] = entries
       if (entry.isIntersecting) {
@@ -260,6 +261,8 @@ const Farms: React.FC = () => {
       loadMoreObserver.observe(loadMoreRef.current)
       setObserverIsSet(true)
     }
+
+    return () => ac.abort();
   }, [chosenFarmsMemoized, observerIsSet])
 
   const rowData = chosenFarmsMemoized.map((farm) => {

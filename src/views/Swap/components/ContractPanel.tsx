@@ -226,6 +226,7 @@ export default function ContractPanel({ value }: ContractPanelProps) {
   }
 
   useEffect(() => {
+    const ac = new AbortController();
     const fetchPools = async () => {
       if (checksumAddress) {
         const { addresses } = await fetchPoolsForToken(checksumAddress.toLocaleLowerCase())
@@ -248,7 +249,9 @@ export default function ContractPanel({ value }: ContractPanelProps) {
     document.addEventListener('keydown', listener)
     return () => {
       document.removeEventListener('keydown', listener)
+      ac.abort();
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [input])
 

@@ -253,6 +253,7 @@ const TransactionCard = () => {
   getTransactions();
 
   useEffect(() => {
+    const ac = new AbortController();
     dispatch(priceInput({ price: UNSET_PRICE }))
     let newTransactions = []
 
@@ -287,6 +288,8 @@ const TransactionCard = () => {
     if (tokenAddress) {
       fetchData(tokenAddress)
     }
+
+    return () => ac.abort();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])

@@ -119,9 +119,11 @@ export default function Swap({ history }: RouteComponentProps) {
   const tokenAddress = pathname.substr(6)
   const [swapRouter, setSwapRouter] = useState(SwapRouter.AUTO_SWAP)
 
-  if (tokenAddress && tokenAddress !== '') {
-    dispatch(typeInput({ input: tokenAddress }))
-  }
+  React.useEffect(() => {
+    if (tokenAddress && tokenAddress !== '') {
+      dispatch(typeInput({ input: tokenAddress }))
+    }
+  }, [dispatch, tokenAddress])
 
   const loadedUrlParams = useDefaultsFromURLSearch()
 
