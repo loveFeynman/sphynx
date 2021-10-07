@@ -1,7 +1,7 @@
 /* eslint-disable */
 import axios from 'axios'
 import * as ethers from 'ethers'
-import React, { useEffect, useState, useCallback } from 'react'
+import React, { useEffect, useState, useCallback, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import styled from 'styled-components'
 import { Flex } from '@sphynxswap/uikit'
@@ -11,7 +11,7 @@ import { isAddress } from '../../../utils'
 import Web3 from 'web3'
 import ERC20ABI from '../../../assets/abis/erc20.json'
 import routerABI from '../../../assets/abis/pancakeRouter.json'
-import { simpleWebsocketProvider } from '../../../utils/providers'
+import { simpleRpcProvider } from '../../../utils/providers'
 import { Spinner } from '../../LotterySphx/components/Spinner'
 import { BITQUERY_API, BITQUERY_API_KEY } from 'config/constants/endpoints'
 import { priceInput, amountInput } from 'state/input/actions'
@@ -19,10 +19,13 @@ import { useTranslation } from 'contexts/Localization'
 import { UNSET_PRICE, DEFAULT_VOLUME_RATE } from 'config/constants/info'
 
 const pancakeV2: any = '0x10ED43C718714eb63d5aA57B78B54704E256024E'
+const pancakeV1: any = '0x05fF2B0DB69458A0750badebc4f9e13aDd608C7F'
+const metamaskSwap: any = '0x1a1ec25dc08e98e5e93f1104b5e5cdd298707d31'
 const busdAddr = '0xe9e7cea3dedca5984780bafc599bd69add087d56'
 const wBNBAddr = '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c'
 const sphynxAddr = '0x2e121Ed64EEEB58788dDb204627cCB7C7c59884c'
-const transferEventTopic = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef'
+const zeroAddr = '0x0000000000000000000000000000000000000000'
+const routerAddresses = [pancakeV1.toLowerCase(), pancakeV2.toLowerCase(), metamaskSwap.toLowerCase()]
 let tokenDecimal = 18
 
 const abi: any = ERC20ABI
@@ -75,26 +78,37 @@ const TableWrapper = styled.div`
   }
 `
 
-let blocks = 0
-let myTransactions = []
 let config = {
   headers: {
     'X-API-KEY': BITQUERY_API_KEY,
   },
 }
 
-const TransactionCard = () => {
+const TransactionCard = React.memo(() => {
   const dispatch = useDispatch()
-  const providerURL = 'wss://speedy-nodes-nyc.moralis.io/fbb4b2b82993bf507eaaab13/bsc/mainnet/ws/'
-  const web3 = new Web3(new Web3.providers.WebsocketProvider(providerURL))
+  const providerURL = 'https://speedy-nodes-nyc.moralis.io/fbb4b2b82993bf507eaaab13/bsc/mainnet/archive'
+  const web3 = new Web3(new Web3.providers.HttpProvider(providerURL))
   const [transactionData, setTransactions] = useState([])
+  const stateRef = useRef([])
   const [isLoading, setLoading] = useState(false)
+  const [isBusy, setBusy] = useState(false)
   const { t } = useTranslation()
   const [volumeRate, setVolumeRate] = useState(DEFAULT_VOLUME_RATE)
 
   let input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
   if (input === '-') input = sphynxAddr
+  const contract: any = new web3.eth.Contract(abi, input)
   const tokenAddress = isAddress(input)
+
+  // pair infos
+  let busdPair
+  let wBNBPair
+  const getPairAddress = async () => {
+    busdPair = await getPancakePairAddress(input, busdAddr, simpleRpcProvider)
+    wBNBPair = await getPancakePairAddress(input, wBNBAddr, simpleRpcProvider)
+  }
+
+  stateRef.current = transactionData
 
   const getDataQuery = `
   {
@@ -155,8 +169,7 @@ const TransactionCard = () => {
     return new Promise(async (resolve) => {
       const pancakeRouterContract = new web3.eth.Contract(routerAbi, pancakeV2)
       let path = [input, busdAddr]
-      const pairAddress = await getPancakePairAddress(input, busdAddr, simpleWebsocketProvider)
-      if (pairAddress === null) {
+      if (busdPair === null) {
         path = [input, wBNBAddr, busdAddr]
       }
       pancakeRouterContract.methods
@@ -166,99 +179,82 @@ const TransactionCard = () => {
     })
   }
 
-  const parseData: any = async () => {
-    let newTransactions = transactionData
-    return new Promise((resolve) => {
-      if (!isLoading) {
-        resolve(true)
-      } else {
-        for (let i = 0; i <= myTransactions.length; i++) {
-          if (i === myTransactions.length) {
-            setTransactions(newTransactions)
-            resolve(true)
-            return
-          } else {
-            web3.eth.getTransaction(myTransactions[i]).then(async (data) => {
-              try {
-                let receipt = await web3.eth.getTransactionReceipt(data.hash)
-                let logs: any = receipt.logs.filter(
-                  (data) => data.topics[0] === transferEventTopic && data.hasOwnProperty('data'),
-                )
-                logs = logs.map((log: any) => {
-                  log.from = web3.eth.abi.decodeParameter('address', log.topics[1])
-                  log.to = web3.eth.abi.decodeParameter('address', log.topics[2])
-                  log.amount = web3.eth.abi.decodeParameter('uint256', log.data)
-                  return log
-                })
-                if (logs.length === 0) return
-                logs = logs.filter(
-                  (log) =>
-                    log.address.toLowerCase() === input.toLowerCase() &&
-                    (log.to.toLowerCase() === receipt.from.toLowerCase() ||
-                      log.from.toLowerCase() === receipt.from.toLowerCase()),
-                )
-                const price = await getPrice()
-                let oneData: any = {}
-                oneData.amount = parseFloat(ethers.utils.formatUnits(logs[0].amount, tokenDecimal))
-                oneData.price = parseFloat(ethers.utils.formatUnits(price[price.length - 1], 18))
-                oneData.transactionTime = formatTimestamp(new Date().getTime())
-                oneData.tx = data.hash
-                logs = logs.filter((log) => log.to.toLowerCase() == receipt.from.toLowerCase())
-                oneData.isBuy = logs.length != 0
-                oneData.usdValue = oneData.amount * oneData.price
-                newTransactions.unshift(oneData)
-                if(newTransactions.length > 100) {
-                  newTransactions.pop();
-                }
-                dispatch(priceInput({ price: oneData.price }))
-                dispatch(amountInput({ amount: oneData.usdValue / volumeRate }))
-              } catch (err) {}
-            })
+  const parseData: any = async (myTransactions) => {
+    setBusy(true)
+    let newTransactions = stateRef.current
+    return new Promise(async (resolve) => {
+      const price = await getPrice()
+      for (let i = 0; i <= myTransactions.length; i++) {
+        if (i === myTransactions.length) {
+          setTransactions(newTransactions)
+          setBusy(false)
+          resolve(true)
+        } else {
+          try {
+            const event = myTransactions[i]
+            if (event.returnValues.from === zeroAddr || event.returnValues.to === zeroAddr) continue
+            if (event.returnValues.to === input) continue
+
+            if (
+              wBNBPair.toLocaleLowerCase() !== event.returnValues.from.toLowerCase() &&
+              wBNBPair.toLocaleLowerCase() !== event.returnValues.to.toLowerCase()
+            )
+              continue
+            let oneData: any = {}
+            oneData.amount = parseFloat(ethers.utils.formatUnits(event.returnValues.value + '', tokenDecimal))
+            oneData.price = parseFloat(ethers.utils.formatUnits(price[price.length - 1] + '', tokenDecimal))
+            oneData.transactionTime = formatTimestamp(new Date().getTime())
+            oneData.tx = event.transactionHash
+            oneData.isBuy = wBNBPair.toLocaleLowerCase() === event.returnValues.to.toLowerCase()
+            oneData.usdValue = oneData.amount * oneData.price
+            newTransactions.unshift(oneData)
+            if (newTransactions.length > 100) {
+              newTransactions.pop()
+            }
+            dispatch(priceInput({ price: oneData.price }))
+            dispatch(amountInput({ amount: oneData.usdValue / volumeRate }))
+          } catch (err) {
+            console.log('error', err)
           }
         }
-        blocks = 0
-        myTransactions = []
       }
     })
   }
 
-  const getTransactions = useCallback(() => {
-    const contract: any = new web3.eth.Contract(abi, input)
+  const startRealTimeData = useCallback(() => {
+    web3.eth.getBlockNumber().then((blockNumber) => {
+      const getTransactions = async (blockNumber) => {
+        let cachedBlockNumber = blockNumber
+        let myTransactions = []
+        contract
+          .getPastEvents('Transfer', { fromBlock: blockNumber, toBlock: 'latest' }, (error, events) => {})
+          .then(async (events) => {
+            myTransactions = events
+
+            if (!isBusy) {
+              await parseData(myTransactions)
+              blockNumber = cachedBlockNumber
+              setTimeout(() => getTransactions(blockNumber), 10000)
+            }
+          })
+      }
+
+      getTransactions(blockNumber)
+    })
+  }, [transactionData])
+
+  useEffect(() => {
+    dispatch(priceInput({ price: UNSET_PRICE }))
     const fetchDecimals = async () => {
       tokenDecimal = await contract.methods.decimals().call()
     }
     fetchDecimals()
-    contract.events
-      .Transfer({}, async function (error, event) {
-        if (error) {
-          console.error
-        }
-      })
-      .on('data', async (event) => {
-        if (blocks < event.blockNumber && blocks !== 0) {
-          await parseData()
-          blocks = event.blockNumber
-          return
-        }
-        blocks = event.blockNumber
-        if (myTransactions.indexOf(event.transactionHash) == -1) {
-          myTransactions.push(event.transactionHash)
-        }
-      })
-    return () => {
-      dispatch(priceInput({ price: UNSET_PRICE }))
-    }
-  }, [input, isLoading, transactionData]);
+    getPairAddress()
 
-  getTransactions();
-
-  useEffect(() => {
-    dispatch(priceInput({ price: UNSET_PRICE }))
     let newTransactions = []
-
     const fetchData = async (tokenAddr: string) => {
       try {
-        const provider = simpleWebsocketProvider // simpleRpcProvider
+        const provider = simpleRpcProvider // simpleRpcProvider
         const bnbPrice = await getBnbPrice(provider)
         setVolumeRate(bnbPrice)
         // pull historical data
@@ -277,6 +273,10 @@ const TransactionCard = () => {
 
           setTransactions(newTransactions)
           setLoading(true)
+
+          setTimeout(() => {
+            startRealTimeData()
+          }, 2000)
         }
       } catch (err) {
         // eslint-disable-next-line no-console
@@ -365,6 +365,6 @@ const TransactionCard = () => {
       )}
     </>
   )
-}
+})
 
 export default TransactionCard
