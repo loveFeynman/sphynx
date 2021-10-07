@@ -14,7 +14,7 @@ import { useSelector } from 'react-redux'
 import { AppState } from 'state'
 import { isAddress } from 'utils'
 import { getTokenDetails } from '../../../../../utils/apiServices'
-import { UNSET_PRICE } from 'config/constants/info'
+import storages from 'config/constants/storages'
 
 const ChartContainer = styled.div<{ height: number }>`
   position: relative;
@@ -64,15 +64,13 @@ function getLanguageFromURL(): LanguageCode | null {
 
 let myInterval: any
 let currentResolutions: any
+let lastestTime: any
+let volume: any
 
 const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
   const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
-  const realPrice = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.price)
-  const realAmount = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.amount)
   const routerVersion = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.routerVersion)
   const result = isAddress(input)
-  const priceRef = React.useRef(UNSET_PRICE);
-  const amountRef = React.useRef(0);
 
   const [tokendetails, setTokenDetails] = React.useState({
     name: 'PancakeSwap Token',
@@ -180,8 +178,6 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
             lastBarsCache = obj
           }
           bars = [...bars, obj]
-          priceRef.current = obj.close
-          amountRef.current = obj.volume
           return {}
         })
         // eslint-disable-next-line no-console
@@ -215,18 +211,19 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
           '1M': 30 * 24 * 3600000,
         }
 
+        let sessionData = JSON.parse(sessionStorage.getItem(storages.SESSION_LIVE_PRICE));
+
         if (lastBarsCache === undefined) return
-        if (priceRef.current === UNSET_PRICE) return
+        if (sessionData === null) return
+        if (sessionData.input != input) return
         const isNew = new Date().getTime() - Number(lastBarsCache.time) >= resolutionMapping[currentResolutions]
 
-        lastBarsCache.close = priceRef.current
-        lastBarsCache.volume = amountRef.current
         if (isNew) {
           lastBarsCache.time = new Date().getTime()
           lastBarsCache.open = lastBarsCache.close
           lastBarsCache.high = lastBarsCache.close
           lastBarsCache.low = lastBarsCache.close
-          amountRef.current = 0
+          volume = 0
         } else {
           if (Number(lastBarsCache.low) > Number(lastBarsCache.close)) {
             lastBarsCache.low = lastBarsCache.close
@@ -234,10 +231,16 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
           if (Number(lastBarsCache.high) < Number(lastBarsCache.close)) {
             lastBarsCache.high = lastBarsCache.close
           }
+          if (lastestTime < Number(sessionData.timestamp)) {
+            volume = volume + Number(sessionData.amount)
+            lastestTime = Number(sessionData.timestamp)
+          }
         }
 
+        lastBarsCache.close = sessionData.price
+        lastBarsCache.volume = volume
         onRealtimeCallback(lastBarsCache)
-      }, 1000 * 5) // 5s update interval
+      }, 1000 * 4) // 4s update interval
     },
     unsubscribeBars: (subscriberUID) => {
       console.log('[unsubscribeBars]: Method call with subscriberUID:', subscriberUID)
@@ -271,15 +274,8 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
 
   React.useEffect(() => {
     getWidget()
+    lastestTime = 0
   }, [input])
-
-  React.useEffect(() => {
-    priceRef.current = realPrice
-  }, [realPrice])
-
-  React.useEffect(() => {
-    amountRef.current = amountRef.current + realAmount
-  }, [realAmount])
 
   return (
     <ChartContainer height={props.height}>

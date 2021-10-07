@@ -173,7 +173,7 @@ export default function ContractPanel({ value }: ContractPanelProps) {
   const handlerChange = (e: any) => {
     try {
       if (e.target.value && e.target.value.length > 0) {
-        axios.get(`https://thesphynx.co/api/search/${e.target.value}`).then((response) => {
+        axios.get(`${process.env.REACT_APP_BACKEND_API_URL}/search/${e.target.value}`).then((response) => {
           setdata(response.data)
         })
       } else {

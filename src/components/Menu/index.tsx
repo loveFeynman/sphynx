@@ -294,7 +294,7 @@ const Menu = () => {
         const { balances } = queryResult.data.data.ethereum.address[0]
         const promises = balances.map((elem) => {
           return axios.get(
-            `https://thesphynx.co/api/price/${
+            `${process.env.REACT_APP_BACKEND_API_URL}/price/${
               elem.currency.address === '-' ? '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c' : elem.currency.address
             }`,
           )
