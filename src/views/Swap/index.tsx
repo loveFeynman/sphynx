@@ -591,7 +591,7 @@ export default function Swap({ history }: RouteComponentProps) {
       })
       .catch((error) => {
         let message = error.message
-        if (error.message.includes('INSUFFICIENT_OUTPUT_AMOUNT')) {
+        if(error.message.includes(messages.SWAP_TRANSACTION_ERROR)) {
           message = messages.SLIPPAGE_ISSUE
         }
         setSwapState({
