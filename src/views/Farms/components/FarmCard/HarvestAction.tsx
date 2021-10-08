@@ -29,6 +29,26 @@ const HarvestAction: React.FC<FarmCardActionsProps> = ({ earnings, pid }) => {
   const displayBalance = rawEarningsBalance.toFixed(3, BigNumber.ROUND_DOWN)
   const earningsBusd = rawEarningsBalance ? rawEarningsBalance.multipliedBy(cakePrice).toNumber() : 0
 
+  const handleHarvest = async () => {
+    setPendingTx(true)
+    try {
+      await onReward()
+      toastSuccess(
+        `${t('Harvested')}!`,
+        t('Your %symbol% earnings have been sent to your wallet!', { symbol: 'SPHYNX' }),
+      )
+    } catch (e) {
+      toastError(
+        t('Error'),
+        t('Please try again. Confirm the transaction and make sure you are paying enough gas!'),
+      )
+      console.error(e)
+    } finally {
+      setPendingTx(false)
+    }
+    dispatch(fetchFarmUserDataAsync({ account, pids: [pid] }))
+  }
+
   return (
     <Flex mb="8px" justifyContent="space-between" alignItems="center">
       <Flex flexDirection="column" alignItems="flex-start">
@@ -39,25 +59,7 @@ const HarvestAction: React.FC<FarmCardActionsProps> = ({ earnings, pid }) => {
       </Flex>
       <Button
         disabled={rawEarningsBalance.eq(0) || pendingTx}
-        onClick={async () => {
-          setPendingTx(true)
-          try {
-            await onReward()
-            toastSuccess(
-              `${t('Harvested')}!`,
-              t('Your %symbol% earnings have been sent to your wallet!', { symbol: 'SPHYNX' }),
-            )
-          } catch (e) {
-            toastError(
-              t('Error'),
-              t('Please try again. Confirm the transaction and make sure you are paying enough gas!'),
-            )
-            console.error(e)
-          } finally {
-            setPendingTx(false)
-          }
-          dispatch(fetchFarmUserDataAsync({ account, pids: [pid] }))
-        }}
+        onClick={handleHarvest}
       >
         {t('Harvest')}
       </Button>

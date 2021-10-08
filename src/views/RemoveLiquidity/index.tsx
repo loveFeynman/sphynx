@@ -668,9 +668,7 @@ export default function RemoveLiquidity({
                       ? 'danger'
                       : 'primary'
                   }
-                  onClick={() => {
-                    onPresentRemoveLiquidity()
-                  }}
+                  onClick={onPresentRemoveLiquidity}
                   width="100%"
                   disabled={!isValid || (signatureData === null && approval !== ApprovalState.APPROVED)}
                 >

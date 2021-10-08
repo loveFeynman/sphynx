@@ -72,6 +72,10 @@ function TransactionSubmittedContent({
 
   const token: Token | undefined = wrappedCurrency(currencyToAdd, chainId)
 
+  const handleRegisterToken = () => {
+    registerToken(token.address, token.symbol, token.decimals)
+  }
+
   return (
     <Wrapper>
       <Section>
@@ -90,7 +94,7 @@ function TransactionSubmittedContent({
               variant="tertiary"
               mt="12px"
               width="fit-content"
-              onClick={() => registerToken(token.address, token.symbol, token.decimals)}
+              onClick={handleRegisterToken}
             >
               <RowFixed>
                 {t('Add %asset% to Metamask', { asset: currencyToAdd.symbol })}

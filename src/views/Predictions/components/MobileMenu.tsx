@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import styled from 'styled-components'
 import { useWeb3React } from '@web3-react/core'
 import {
@@ -75,10 +75,18 @@ const MobileMenu = () => {
     }
   }
 
+  const handleSlidePrev = () => {
+    swiper.slidePrev()
+  }
+
+  const handleSlideNext = () => {
+    swiper.slideNext()
+  }
+
   return (
     <StyledMobileMenu>
       <ButtonNav>
-        <IconButton variant="text" onClick={() => swiper.slidePrev()} disabled={status !== PredictionStatus.LIVE}>
+        <IconButton variant="text" onClick={handleSlidePrev} disabled={status !== PredictionStatus.LIVE}>
           <ArrowBackIcon width="24px" color="primary" />
         </IconButton>
       </ButtonNav>
@@ -96,7 +104,7 @@ const MobileMenu = () => {
         </ButtonMenu>
       </TabNav>
       <ButtonNav>
-        <IconButton variant="text" onClick={() => swiper.slideNext()} disabled={status !== PredictionStatus.LIVE}>
+        <IconButton variant="text" onClick={handleSlideNext} disabled={status !== PredictionStatus.LIVE}>
           <ArrowForwardIcon width="24px" color="primary" />
         </IconButton>
       </ButtonNav>

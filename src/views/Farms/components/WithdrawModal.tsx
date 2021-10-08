@@ -38,6 +38,23 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ onConfirm, onDismiss, max
     setVal(fullBalance)
   }, [fullBalance, setVal])
 
+  const handleConfirm = useCallback(async() => {
+    setPendingTx(true)
+    try {
+      await onConfirm(val)
+      toastSuccess(t('Unstaked!'), t('Your earnings have also been harvested to your wallet'))
+      onDismiss()
+    } catch (e) {
+      toastError(
+        t('Error'),
+        t('Please try again. Confirm the transaction and make sure you are paying enough gas!'),
+      )
+      console.error(e)
+    } finally {
+      setPendingTx(false)
+    }
+  }, [onConfirm, onDismiss, t, toastError, toastSuccess, val])
+
   return (
     <Modal title={t('Unstake LP tokens')} onDismiss={onDismiss}>
       <ModalInput
@@ -54,22 +71,7 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ onConfirm, onDismiss, max
         </Button>
         <Button
           disabled={pendingTx || !valNumber.isFinite() || valNumber.eq(0) || valNumber.gt(fullBalanceNumber)}
-          onClick={async () => {
-            setPendingTx(true)
-            try {
-              await onConfirm(val)
-              toastSuccess(t('Unstaked!'), t('Your earnings have also been harvested to your wallet'))
-              onDismiss()
-            } catch (e) {
-              toastError(
-                t('Error'),
-                t('Please try again. Confirm the transaction and make sure you are paying enough gas!'),
-              )
-              console.error(e)
-            } finally {
-              setPendingTx(false)
-            }
-          }}
+          onClick={handleConfirm}
           width="100%"
         >
           {pendingTx ? t('Confirming') : t('Confirm')}

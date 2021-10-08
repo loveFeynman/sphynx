@@ -131,6 +131,13 @@ export default function CurrencyInputPanel({
       showCommonBases={showCommonBases}
     />,
   )
+  
+  const handleSelectCurrencyModal = () => {
+    if (!disableCurrencySelect) {
+      onPresentCurrencyModal()
+    }
+  }
+
   return (
     <InputPanel id={id} isBridge={isBridge}>
       <Container hideInput={hideInput}>
@@ -138,11 +145,7 @@ export default function CurrencyInputPanel({
           <CurrencySelectButton
             selected={!!currency}
             className="open-currency-select-button"
-            onClick={() => {
-              if (!disableCurrencySelect) {
-                onPresentCurrencyModal()
-              }
-            }}
+            onClick={handleSelectCurrencyModal}
           >
             <Flex alignItems="center" justifyContent="space-between">
               {pair ? (
