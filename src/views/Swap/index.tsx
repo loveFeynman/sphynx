@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux'
 import styled from 'styled-components'
 import { useLocation } from 'react-router'
 import { CurrencyAmount, JSBI, Token, Trade, RouterType } from '@sphynxswap/sdk'
-import { Button, Text, ArrowDownIcon, Box, useModal, Flex, Link } from '@sphynxswap/uikit'
+import { Button, Text, ArrowDownIcon, Box, useModal, Flex } from '@sphynxswap/uikit'
 import { useIsTransactionUnsupported } from 'hooks/Trades'
 import { RouteComponentProps } from 'react-router-dom'
 import { useTranslation } from 'contexts/Localization'
@@ -20,11 +20,7 @@ import { AppHeader } from 'components/App'
 
 import { useSwapType, useSwapTransCard, useSetRouterType } from 'state/application/hooks'
 import { ReactComponent as DownArrow } from 'assets/svg/icon/DownArrow.svg'
-import FarmBanner from 'assets/images/farmbanner.png'
-import StakingBanner from 'assets/images/stakebanner.png'
-import axios from 'axios'
 import { typeInput } from 'state/input/actions'
-import { BITQUERY_API, BITQUERY_API_KEY } from 'config/constants/endpoints'
 import SwapRouter from 'config/constants/swaps'
 import AddressInputPanel from './components/AddressInputPanel'
 import Card, { GreyCard } from '../../components/Card'
@@ -94,56 +90,6 @@ const SlippageText = styled.p`
   margin: 0 8px;
   & span {
     text-decoration: underline;
-  }
-`
-
-const BottomCard = styled.div`
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-color: #000;
-  height: 420px;
-  filter: drop-shadow(0 2px 12px rgba(37, 51, 66, 0.15));
-  border-radius: 8px;
-  overflow: hidden;
-  position: relative;
-  ${({ theme }) => theme.mediaQueries.md} {
-    width: 320px !important;
-  }
-  & div {
-    position: absolute;
-    left: 0;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    background-color: transparent; // rgba(0, 0, 0, 0.4);
-    z-index: 1;
-    border: 1px solid rgba(0, 0, 0, 0.4);
-    border-radius: 12px;
-  }
-  & h1,
-  & button {
-    position: absolute;
-    z-index: 2;
-  }
-  & h1 {
-    top: 0;
-    width: 100%;
-    color: white;
-    font-size: 24px;
-    font-weight: 600;
-    line-height: 68px;
-    text-align: center;
-    border-bottom: 1px solid #c4c4c4;
-  }
-  & button {
-    bottom: 40px;
-    left: 5%;
-    width: 90%;
-    background: #8b2a9b;
-    outline: none;
-    box-shadow: none;
-    border: none;
   }
 `
 
@@ -223,13 +169,13 @@ export default function Swap({ history }: RouteComponentProps) {
 
   const parsedAmounts = showWrap
     ? {
-      [Field.INPUT]: parsedAmount,
-      [Field.OUTPUT]: parsedAmount,
-    }
+        [Field.INPUT]: parsedAmount,
+        [Field.OUTPUT]: parsedAmount,
+      }
     : {
-      [Field.INPUT]: independentField === Field.INPUT ? parsedAmount : trade?.inputAmount,
-      [Field.OUTPUT]: independentField === Field.OUTPUT ? parsedAmount : trade?.outputAmount,
-    }
+        [Field.INPUT]: independentField === Field.INPUT ? parsedAmount : trade?.inputAmount,
+        [Field.OUTPUT]: independentField === Field.OUTPUT ? parsedAmount : trade?.outputAmount,
+      }
 
   const { onSwitchTokens, onCurrencySelection, onUserInput, onChangeRecipient } = useSwapActionHandlers()
   const isValid = !swapInputError
@@ -278,11 +224,11 @@ export default function Swap({ history }: RouteComponentProps) {
   const { setRouterType } = useSetRouterType()
 
   useEffect(() => {
-    if(tokenAddress === null || tokenAddress === "" || tokenAddress === undefined) {
+    if (tokenAddress === null || tokenAddress === '' || tokenAddress === undefined) {
       dispatch(
         replaceSwapState({
           outputCurrencyId: 'BNB',
-          inputCurrencyId: "0x2e121Ed64EEEB58788dDb204627cCB7C7c59884c",
+          inputCurrencyId: '0x2e121Ed64EEEB58788dDb204627cCB7C7c59884c',
           typedValue: '',
           field: Field.OUTPUT,
           recipient: null,
@@ -299,12 +245,12 @@ export default function Swap({ history }: RouteComponentProps) {
         }),
       )
     }
-  }, [dispatch, tokenAddress]);
+  }, [dispatch, tokenAddress])
 
   useEffect(() => {
     if (swapRouter === SwapRouter.AUTO_SWAP && trade === undefined) {
       setRouterType(RouterType.pancake)
-    } 
+    }
   }, [swapRouter, trade, setRouterType])
 
   // check whether the user has approved the router on the input token
@@ -632,8 +578,8 @@ export default function Swap({ history }: RouteComponentProps) {
                         {priceImpactSeverity > 3 && !isExpertMode
                           ? t('Price Impact High')
                           : priceImpactSeverity > 2
-                            ? t('Swap Anyway')
-                            : t('Swap')}
+                          ? t('Swap Anyway')
+                          : t('Swap')}
                       </Button>
                     </RowBetween>
                   ) : (
@@ -660,8 +606,8 @@ export default function Swap({ history }: RouteComponentProps) {
                         (priceImpactSeverity > 3 && !isExpertMode
                           ? `Price Impact Too High`
                           : priceImpactSeverity > 2
-                            ? t('Swap Anyway')
-                            : t('Swap'))}
+                          ? t('Swap Anyway')
+                          : t('Swap'))}
                     </Button>
                   )}
                   {showApproveFlow && (
