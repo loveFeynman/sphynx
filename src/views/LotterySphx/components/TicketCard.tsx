@@ -57,6 +57,7 @@ export default function TicketCard({ lastLoteryInfo, roundID }) {
   const [showDetail, setShowDetail] = React.useState(false)
   const { account } = useWeb3React()
   React.useEffect(() => {
+    const ac = new AbortController();
     if (lastLoteryInfo !== null) {
       const arrayData = []
       for (let i = 1; i <= 6; i++) {
@@ -76,6 +77,8 @@ export default function TicketCard({ lastLoteryInfo, roundID }) {
         )
       })
     }
+
+    return () => ac.abort();
   }, [lastLoteryInfo])
 
   const { t } = useTranslation()

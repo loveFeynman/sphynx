@@ -157,6 +157,7 @@ const BuyTicketModal: React.FC<BuyTicketModalProps> = ({ setUpdateUserTicket, on
   }, [toastMessage])
 
   useEffect(() => {
+    const ac = new AbortController();
     const ticket = parseInt(tickets) > 100 ? 100 : parseInt(tickets)
     if (tickets === '0' || tickets === '') {
       setBulkDiscountPercent('0')
@@ -188,13 +189,15 @@ const BuyTicketModal: React.FC<BuyTicketModalProps> = ({ setUpdateUserTicket, on
     }
     const isApproved = async () => {
       const maxBuyPrice = 5000 * 10 ** 18
-      const approved = await getApproveAmount(account)
-      if (approved > maxBuyPrice) {
-        setEnabled(true)
+        const approved = await getApproveAmount(account)
+        if (approved > maxBuyPrice) {
+          setEnabled(true)
+        setChecked(true)
       }
-      setChecked(true)
     }
     isApproved()
+
+    return () => ac.abort();
   }, [tickets, lotteryInfo])
 
   const randomTickets = useCallback(() => {

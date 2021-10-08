@@ -1,10 +1,9 @@
 import React from 'react'
-import styled, { keyframes, css } from 'styled-components'
+import styled, { css, keyframes } from 'styled-components'
 import { useTranslation } from 'contexts/Localization'
 import { LinkExternal, Text } from '@sphynxswap/uikit'
 import { BASE_SWAP_URL } from 'config'
 import { FarmWithStakedValue } from 'views/Farms/components/FarmCard/FarmCard'
-import getLiquidityUrlPathParts from 'utils/getLiquidityUrlPathParts'
 import { getAddress } from 'utils/addressHelpers'
 import { getBscScanLink } from 'utils'
 import { CommunityTag, CoreTag, DualTag } from 'components/Tags'
@@ -143,12 +142,8 @@ const ActionPanel: React.FunctionComponent<ActionPanelProps> = ({
 
   const { t } = useTranslation()
   const isActive = farm.multiplier !== '0X'
-  const { quoteToken, token, dual } = farm
+  const { dual } = farm
   const lpLabel = farm.lpSymbol && farm.lpSymbol.toUpperCase().replace('PANCAKE', '')
-  const liquidityUrlPathParts = getLiquidityUrlPathParts({
-    quoteTokenAddress: quoteToken.address,
-    tokenAddress: token.address,
-  })
   const lpAddress = getAddress(farm.lpAddresses)
   const bsc = getBscScanLink(lpAddress, 'address')
   const info = `${BASE_SWAP_URL}/pool/${lpAddress}`
