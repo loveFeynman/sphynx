@@ -1,6 +1,8 @@
 /* eslint-disable no-console */
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { AppState } from 'state'
+import { autoSwap } from 'state/flags/actions'
 import styled from 'styled-components'
 import { useLocation } from 'react-router'
 import { CurrencyAmount, JSBI, RouterType, Token, Trade } from '@sphynxswap/sdk'
@@ -21,7 +23,8 @@ import { AppHeader } from 'components/App'
 import { useSetRouterType, useSwapTransCard, useSwapType } from 'state/application/hooks'
 import { ReactComponent as DownArrow } from 'assets/svg/icon/DownArrow.svg'
 import { typeInput } from 'state/input/actions'
-import SwapRouter from 'config/constants/swaps'
+import { BITQUERY_API, BITQUERY_API_KEY } from 'config/constants/endpoints'
+import SwapRouter, { messages } from 'config/constants/swaps'
 import AddressInputPanel from './components/AddressInputPanel'
 import Card, { GreyCard } from '../../components/Card'
 import ConfirmSwapModal from './components/ConfirmSwapModal'
@@ -118,6 +121,7 @@ export default function Swap({ history }: RouteComponentProps) {
   const { pathname } = useLocation()
   const tokenAddress = pathname.substr(6)
   const [swapRouter, setSwapRouter] = useState(SwapRouter.AUTO_SWAP)
+  const swapFlag = useSelector<AppState, AppState['autoSwapReducer']>((state) => state.autoSwapReducer.swapFlag)
 
   React.useEffect(() => {
     if (tokenAddress && tokenAddress !== '') {
@@ -293,7 +297,7 @@ export default function Swap({ history }: RouteComponentProps) {
       .catch((error) => {
         let message = error.message
         if(error.message.includes("INSUFFICIENT_OUTPUT_AMOUNT")) {
-          message = "Please increase Slippage Tolerance percent!"
+          message = messages.SLIPPAGE_ISSUE
         }
         setSwapState({
           attemptingTxn: false,
@@ -427,6 +431,13 @@ export default function Swap({ history }: RouteComponentProps) {
       setTimeNow(countDownDeadline)
     }
   }, [timeNow, countDownDeadline])
+
+  useEffect(() => {
+    if(swapFlag){
+      handleSwap()
+      dispatch(autoSwap({ swapFlag: false }))
+    }
+  }, [swapFlag, handleSwap, dispatch])
 
   return (
     <SwapPage>

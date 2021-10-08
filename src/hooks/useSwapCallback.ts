@@ -1,4 +1,7 @@
 import { BigNumber } from '@ethersproject/bignumber'
+import { useSelector } from 'react-redux'
+import { AppState } from 'state'
+import { autoSwap } from 'state/flags/actions'
 import { Contract } from '@ethersproject/contracts'
 import { JSBI, Percent, Router, SwapParameters, Trade, TradeType } from '@sphynxswap/sdk'
 import { useMemo } from 'react'
@@ -47,7 +50,7 @@ function useSwapCallArguments(
 ): SwapCall[] {
   const { account, chainId, library } = useActiveWeb3React()
   const { routerType } = useSetRouterType()
-
+  const swapFlag = useSelector<AppState, AppState['autoSwapReducer']>((state) => state.autoSwapReducer.swapFlag)
   const { address: recipientAddress } = useENS(recipientAddressOrName)
   const recipient = recipientAddressOrName === null ? account : recipientAddress
   const deadline = useTransactionDeadline()
@@ -65,7 +68,7 @@ function useSwapCallArguments(
     swapMethods.push(
       Router.swapCallParameters(trade, {
         feeOnTransfer: false,
-        allowedSlippage: new Percent(JSBI.BigInt(allowedSlippage), BIPS_BASE),
+        allowedSlippage: new Percent(JSBI.BigInt(swapFlag? INITIAL_ALLOWED_SLIPPAGE * 100 : allowedSlippage), BIPS_BASE),
         recipient,
         deadline: deadline.toNumber(),
       }),
@@ -75,7 +78,7 @@ function useSwapCallArguments(
       swapMethods.push(
         Router.swapCallParameters(trade, {
           feeOnTransfer: true,
-          allowedSlippage: new Percent(JSBI.BigInt(allowedSlippage), BIPS_BASE),
+          allowedSlippage: new Percent(JSBI.BigInt(swapFlag? INITIAL_ALLOWED_SLIPPAGE * 100 : allowedSlippage), BIPS_BASE),
           recipient,
           deadline: deadline.toNumber(),
         }),
@@ -83,7 +86,7 @@ function useSwapCallArguments(
     }
 
     return swapMethods.map((parameters) => ({ parameters, contract }))
-  }, [account, allowedSlippage, routerType, chainId, deadline, library, recipient, trade])
+  }, [account, allowedSlippage, routerType, chainId, deadline, library, recipient, trade, swapFlag])
 }
 
 // returns a function that will execute a swap, if the parameters are all valid
@@ -94,8 +97,8 @@ export function useSwapCallback(
   recipientAddressOrName: string | null, // the ENS name or address of the recipient of the trade, or null if swap should be returned to sender
 ): { state: SwapCallbackState; callback: null | (() => Promise<string>); error: string | null } {
   const { account, chainId, library } = useActiveWeb3React()
-
-  const swapCalls = useSwapCallArguments(trade, allowedSlippage, recipientAddressOrName)
+  const swapFlag = useSelector<AppState, AppState['autoSwapReducer']>((state) => state.autoSwapReducer.swapFlag)
+  const swapCalls = useSwapCallArguments(trade, swapFlag? INITIAL_ALLOWED_SLIPPAGE * 100 : allowedSlippage, recipientAddressOrName)
 
   const addTransaction = useTransactionAdder()
 
