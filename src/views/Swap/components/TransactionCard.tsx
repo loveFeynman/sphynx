@@ -5,9 +5,7 @@ import React, { useEffect, useState, useCallback, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import styled from 'styled-components'
 import { Flex } from '@sphynxswap/uikit'
-import { getBnbPrice, getPancakePairAddress } from 'state/info/ws/priceData'
-import { AppState } from '../../../state'
-import { isAddress } from '../../../utils'
+import { getPancakePairAddress, getPancakePairAddressV1 } from 'state/info/ws/priceData'
 import Web3 from 'web3'
 import ERC20ABI from '../../../assets/abis/erc20.json'
 import routerABI from '../../../assets/abis/pancakeRouter.json'
@@ -24,8 +22,6 @@ const metamaskSwap: any = '0x1a1ec25dc08e98e5e93f1104b5e5cdd298707d31'
 const busdAddr = '0xe9e7cea3dedca5984780bafc599bd69add087d56'
 const wBNBAddr = '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c'
 const sphynxAddr = '0x2e121Ed64EEEB58788dDb204627cCB7C7c59884c'
-const zeroAddr = '0x0000000000000000000000000000000000000000'
-const routerAddresses = [pancakeV1.toLowerCase(), pancakeV2.toLowerCase(), metamaskSwap.toLowerCase()]
 let tokenDecimal = 18
 
 const abi: any = ERC20ABI
@@ -84,10 +80,16 @@ let config = {
   },
 }
 
-const TransactionCard = React.memo(() => {
+interface TransactionProps {
+  tokenAddress?: string
+}
+
+const providerURL = 'https://speedy-nodes-nyc.moralis.io/fbb4b2b82993bf507eaaab13/bsc/mainnet/archive'
+const web3 = new Web3(new Web3.providers.HttpProvider(providerURL))
+const pancakeRouterContract = new web3.eth.Contract(routerAbi, pancakeV2)
+
+const TransactionCard: React.SFC<TransactionProps> = (props) => {
   const dispatch = useDispatch()
-  const providerURL = 'https://speedy-nodes-nyc.moralis.io/fbb4b2b82993bf507eaaab13/bsc/mainnet/archive'
-  const web3 = new Web3(new Web3.providers.HttpProvider(providerURL))
   const [transactionData, setTransactions] = useState([])
   const stateRef = useRef([])
   const [isLoading, setLoading] = useState(false)
@@ -95,120 +97,197 @@ const TransactionCard = React.memo(() => {
   const { t } = useTranslation()
   const [volumeRate, setVolumeRate] = useState(DEFAULT_VOLUME_RATE)
 
-  let input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
-  if (input === '-') input = sphynxAddr
+  let input = props.tokenAddress
+  if (input === '-' || input === '') input = sphynxAddr
   const contract: any = new web3.eth.Contract(abi, input)
-  const tokenAddress = isAddress(input)
 
   // pair infos
-  let busdPair
-  let wBNBPair
-  const getPairAddress = async () => {
-    busdPair = await getPancakePairAddress(input, busdAddr, simpleRpcProvider)
-    wBNBPair = await getPancakePairAddress(input, wBNBAddr, simpleRpcProvider)
-  }
+  let wBNBPair, wBNBPairV1
+  useEffect(() => {
+    const getPairAddress = async () => {
+      wBNBPair = await getPancakePairAddress(input, wBNBAddr, simpleRpcProvider)
+      wBNBPairV1 = await getPancakePairAddressV1(input, wBNBAddr, simpleRpcProvider)
+    }
+    getPairAddress()
+  }, [input])
 
   stateRef.current = transactionData
 
-  const getDataQuery = `
-  {
-  ethereum(network: bsc) {
-      dexTrades(
-      options: {desc: ["block.height", "tradeIndex"], limit: 30, offset: 0}
-      date: {since: "2021-08-05", till: null}
-      baseCurrency: {is: "${input}"}
-      quoteCurrency:{is : "${wBNBAddr}"}
-      ) {
-      block {
-        timestamp {
-        time(format: "%Y-%m-%d %H:%M:%S")
+  const getDataQuery = useCallback(() => {
+    return `
+    {
+    ethereum(network: bsc) {
+        dexTrades(
+        options: {desc: ["block.height", "tradeIndex"], limit: 30, offset: 0}
+        date: {till: null}
+        baseCurrency: {is: "${input}"}
+        quoteCurrency:{is : "${wBNBAddr}"}
+        ) {
+        block {
+          timestamp {
+          time(format: "%Y-%m-%d %H:%M:%S")
+          }
+          height
         }
-        height
-      }
-      tradeIndex
-      protocol
-      exchange {
-        fullName
-      }
-      smartContract {
-        address {
-        address
-        annotation
+        tradeIndex
+        protocol
+        exchange {
+          fullName
+        }
+        smartContract {
+          address {
+          address
+          annotation
+          }
+        }
+        baseAmount
+        baseCurrency {
+          address
+          symbol
+        }
+        quoteAmount
+        quoteCurrency {
+          address
+          symbol
+        }
+        transaction {
+          hash
+        }
+        buyCurrency {
+          symbol
+          address
+          name
+        }
+        sellCurrency {
+          symbol
+          address
+          name
+          }
+        price
+        quotePrice
         }
       }
-      baseAmount
-      baseCurrency {
-        address
-        symbol
-      }
-      quoteAmount
-      quoteCurrency {
-        address
-        symbol
-      }
-      transaction {
-        hash
-      }
-      buyCurrency {
-        symbol
-        address
-        name
-      }
-      sellCurrency {
-        symbol
-        address
-        name
-        }
-      price
-      quotePrice
-      }
-    }
-  }`
+    }`
+  }, [input])
 
-  const getPrice: any = async () => {
+  const getBNBPrice: any = async () => {
     return new Promise(async (resolve) => {
-      const pancakeRouterContract = new web3.eth.Contract(routerAbi, pancakeV2)
-      let path = [input, busdAddr]
-      if (busdPair === null) {
-        path = [input, wBNBAddr, busdAddr]
-      }
+      let path = [wBNBAddr, busdAddr]
       pancakeRouterContract.methods
         .getAmountsOut(web3.utils.toBN(1 * Math.pow(10, tokenDecimal)), path)
         .call()
-        .then((data) => resolve(data))
+        .then((data) => resolve(parseFloat(ethers.utils.formatUnits(data[data.length - 1] + '', 18))))
     })
   }
 
-  const parseData: any = async (myTransactions) => {
+  // const parseData: any = async (myTransactions) => {
+  //   setBusy(true)
+  //   let newTransactions = stateRef.current
+  //   return new Promise(async (resolve) => {
+  //     const price = await getBNBPrice()
+  //     console.log("price", price);
+  //     for (let i = 0; i <= myTransactions.length; i++) {
+  //       if (i === myTransactions.length) {
+  //         setTransactions(newTransactions)
+  //         setBusy(false)
+  //         resolve(true)
+  //       } else {
+  //         try {
+  //           const event = myTransactions[i]
+  //           if (event.returnValues.from === zeroAddr || event.returnValues.to === zeroAddr) continue
+  //           if (event.returnValues.to === input) continue
+
+  //           if (
+  //             wBNBPair.toLocaleLowerCase() !== event.returnValues.from.toLowerCase() &&
+  //             wBNBPair.toLocaleLowerCase() !== event.returnValues.to.toLowerCase()
+  //           )
+  //             continue
+  //           let oneData: any = {}
+  //           oneData.amount = parseFloat(ethers.utils.formatUnits(event.returnValues.value + '', tokenDecimal))
+  //           oneData.price = parseFloat(ethers.utils.formatUnits(price[price.length - 1] + '', 18))
+  //           oneData.transactionTime = formatTimeString(
+  //             `${new Date().getUTCFullYear()}-${
+  //               new Date().getUTCMonth() + 1
+  //             }-${new Date().getDate()} ${new Date().getUTCHours()}:${new Date().getUTCMinutes()}:${new Date().getUTCSeconds()}`,
+  //           )
+  //           oneData.tx = event.transactionHash
+  //           oneData.isBuy = wBNBPair.toLocaleLowerCase() === event.returnValues.to.toLowerCase()
+  //           oneData.usdValue = oneData.amount * oneData.price
+  //           newTransactions.unshift(oneData)
+  //           if (newTransactions.length > 1000) {
+  //             newTransactions.pop()
+  //           }
+  //           dispatch(priceInput({ price: oneData.price }))
+  //           dispatch(amountInput({ amount: oneData.usdValue / volumeRate }))
+  //         } catch (err) {
+  //           console.log('error', err)
+  //         }
+  //       }
+  //     }
+  //   })
+  // }
+
+  const parseData: any = async (events) => {
     setBusy(true)
     let newTransactions = stateRef.current
     return new Promise(async (resolve) => {
-      const price = await getPrice()
-      for (let i = 0; i <= myTransactions.length; i++) {
-        if (i === myTransactions.length) {
+      const price = await getBNBPrice()
+      for (let i = 0; i <= events.length; i++) {
+        if (i === events.length) {
           setTransactions(newTransactions)
           setBusy(false)
           resolve(true)
         } else {
           try {
-            const event = myTransactions[i]
-            if (event.returnValues.from === zeroAddr || event.returnValues.to === zeroAddr) continue
-            if (event.returnValues.to === input) continue
-
-            if (
-              wBNBPair.toLocaleLowerCase() !== event.returnValues.from.toLowerCase() &&
-              wBNBPair.toLocaleLowerCase() !== event.returnValues.to.toLowerCase()
+            const event = events[i]
+            const datas = web3.eth.abi.decodeParameters(
+              [
+                { type: 'uint256', name: 'amount0In' },
+                { type: 'uint256', name: 'amount1In' },
+                { type: 'uint256', name: 'amount0Out' },
+                { type: 'uint256', name: 'amount1Out' },
+              ],
+              event.data,
             )
-              continue
+
+            let tokenAmt, BNBAmt, isBuy;
+
+            if (input < wBNBAddr) {
+              tokenAmt = Math.abs(
+                parseFloat(ethers.utils.formatUnits(datas.amount0In + '', tokenDecimal)) -
+                  parseFloat(ethers.utils.formatUnits(datas.amount0Out + '', tokenDecimal)),
+              )
+
+              isBuy = datas.amount1In === "0";
+              BNBAmt = Math.abs(
+                parseFloat(ethers.utils.formatUnits(datas.amount1In + '', 18)) -
+                  parseFloat(ethers.utils.formatUnits(datas.amount1Out + '', 18)),
+              )
+            } else {
+              BNBAmt = Math.abs(
+                parseFloat(ethers.utils.formatUnits(datas.amount0In + '', tokenDecimal)) -
+                  parseFloat(ethers.utils.formatUnits(datas.amount0Out + '', tokenDecimal)),
+              )
+              tokenAmt = Math.abs(
+                parseFloat(ethers.utils.formatUnits(datas.amount1In + '', 18)) -
+                  parseFloat(ethers.utils.formatUnits(datas.amount1Out + '', 18)),
+              )
+              isBuy = datas.amount0In === "0";
+            }
+
             let oneData: any = {}
-            oneData.amount = parseFloat(ethers.utils.formatUnits(event.returnValues.value + '', tokenDecimal))
-            oneData.price = parseFloat(ethers.utils.formatUnits(price[price.length - 1] + '', tokenDecimal))
-            oneData.transactionTime = formatTimestamp(new Date().getTime())
+            oneData.amount = tokenAmt
+            oneData.price = BNBAmt / tokenAmt * price;
+            oneData.transactionTime = formatTimeString(
+              `${new Date().getUTCFullYear()}-${
+                new Date().getUTCMonth() + 1
+              }-${new Date().getDate()} ${new Date().getUTCHours()}:${new Date().getUTCMinutes()}:${new Date().getUTCSeconds()}`,
+            )
             oneData.tx = event.transactionHash
-            oneData.isBuy = wBNBPair.toLocaleLowerCase() === event.returnValues.to.toLowerCase()
+            oneData.isBuy = isBuy;
             oneData.usdValue = oneData.amount * oneData.price
             newTransactions.unshift(oneData)
-            if (newTransactions.length > 100) {
+            if (newTransactions.length > 1000) {
               newTransactions.pop()
             }
             dispatch(priceInput({ price: oneData.price }))
@@ -225,16 +304,25 @@ const TransactionCard = React.memo(() => {
     web3.eth.getBlockNumber().then((blockNumber) => {
       const getTransactions = async (blockNumber) => {
         let cachedBlockNumber = blockNumber
-        let myTransactions = []
-        contract
-          .getPastEvents('Transfer', { fromBlock: blockNumber, toBlock: 'latest' }, (error, events) => {})
-          .then(async (events) => {
-            myTransactions = events
+        web3.eth
+          .getPastLogs({
+            fromBlock: blockNumber,
+            toBlock: 'latest',
+            topics: ['0xd78ad95fa46c994b6551d0da85fc275fe613ce37657fb8d5e3d130840159d822'],
+          })
+          .then(async (info) => {
+            const pairs = [wBNBPair?.toLowerCase(), wBNBPairV1?.toLowerCase()];
+            if (info.length) {
+              cachedBlockNumber = info[info.length - 1].blockNumber
+            }
+            info = info.filter((oneData) => oneData.blockNumber !== cachedBlockNumber)
+            info = info.filter((oneData) => pairs.indexOf(oneData.address.toLowerCase()) !== -1)
+            info = [...new Set(info)]
 
             if (!isBusy) {
-              await parseData(myTransactions)
+              await parseData(info)
               blockNumber = cachedBlockNumber
-              setTimeout(() => getTransactions(blockNumber), 10000)
+              setTimeout(() => getTransactions(blockNumber), 3000)
             }
           })
       }
@@ -249,19 +337,16 @@ const TransactionCard = React.memo(() => {
       tokenDecimal = await contract.methods.decimals().call()
     }
     fetchDecimals()
-    getPairAddress()
 
-  useEffect(() => {
-    const ac = new AbortController();
-    dispatch(priceInput({ price: UNSET_PRICE }))
+    const ac = new AbortController()
     let newTransactions = []
     const fetchData = async (tokenAddr: string) => {
       try {
         const provider = simpleRpcProvider // simpleRpcProvider
-        const bnbPrice = await getBnbPrice(provider)
+        const bnbPrice = await getBNBPrice(provider)
         setVolumeRate(bnbPrice)
         // pull historical data
-        const queryResult = await axios.post(BITQUERY_API, { query: getDataQuery }, config)
+        const queryResult = await axios.post(BITQUERY_API, { query: getDataQuery() }, config)
         if (queryResult.data.data && queryResult.data.data.ethereum.dexTrades) {
           newTransactions = queryResult.data.data.ethereum.dexTrades.map((item, index) => {
             return {
@@ -287,18 +372,25 @@ const TransactionCard = React.memo(() => {
       }
     }
 
-    if (tokenAddress) {
-      fetchData(tokenAddress)
+    if (input) {
+      fetchData(input)
     }
 
-    return () => ac.abort();
+    return () => ac.abort()
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const formatTimeString = (timeString) => {
     let dateArray = timeString.split(/[- :\/]/)
-    let date = new Date(dateArray[0], dateArray[1] - 1, dateArray[2], dateArray[3], dateArray[4], dateArray[5])
+    let date = new Date(
+      dateArray[0],
+      dateArray[1] - 1,
+      dateArray[2].slice(0, -1),
+      dateArray[3],
+      dateArray[4],
+      dateArray[5],
+    )
     return date.toString().split('GMT')[0]
   }
 
@@ -370,6 +462,6 @@ const TransactionCard = React.memo(() => {
       )}
     </>
   )
-})
+}
 
-export default TransactionCard
+export default React.memo(TransactionCard)

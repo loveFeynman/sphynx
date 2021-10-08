@@ -41,6 +41,15 @@ export const getPancakePairAddress = async (quoteToken, baseToken, provider) => 
   return pairAddress
 }
 
+export const getPancakePairAddressV1 = async (quoteToken, baseToken, provider) => {
+  const pancakeFactoryContract = new Contract("0xbcfccbde45ce874adcb698cc183debcf17952812", pancakeFactoryAbi, provider)
+  const pairAddress = await pancakeFactoryContract.getPair(quoteToken, baseToken)
+  if (pairAddress === ZERO_ADDRESS) {
+    return null
+  }
+  return pairAddress
+}
+
 const getPancakeLiquidityInfo = async (quoteToken, baseToken, provider) => {
   const lpAddress = await getPancakePairAddress(quoteToken, baseToken, provider)
   const lpContract = new Contract(lpAddress, pancakeLpAbi, provider)

@@ -660,7 +660,7 @@ export default function Swap({ history }: RouteComponentProps) {
             textAlign: 'center',
           }}
         >
-          {swapTransCard === 'tokenDX' && <TransactionCard />}
+          {swapTransCard === 'tokenDX' && <TransactionCard tokenAddress={tokenAddress} />}
           {swapTransCard === 'buyers' && <BuyersCard />}
           {swapTransCard === 'sellers' && <SellersCard />}
         </div>
