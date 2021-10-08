@@ -60,8 +60,8 @@ export default function RemoveLiquidityWidget({
   currencyIdA?: string
   currencyIdB?: string
 }) {
-  const { liquidityPairA, setLiquidityPairA } = useLiquidityPairA()
-  const { liquidityPairB, setLiquidityPairB } = useLiquidityPairB()
+  const { liquidityPairA } = useLiquidityPairA()
+  const { liquidityPairB } = useLiquidityPairB()
 
   const [currencyA1, setCurrencyA1] = useState(liquidityPairA || 'ETH')
   const [currencyB1, setCurrencyB1] = useState(liquidityPairB || 'ETH')
