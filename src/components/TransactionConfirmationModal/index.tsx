@@ -1,4 +1,7 @@
-import React, { useCallback } from 'react'
+import React, { useState, useCallback, useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { AppState } from 'state'
+import { autoSwap } from 'state/flags/actions'
 import { ChainId, Currency, Token } from '@sphynxswap/sdk'
 import styled from 'styled-components'
 import MainLogo from 'assets/svg/icon/logo_new.svg'
@@ -18,6 +21,7 @@ import { registerToken } from 'utils/wallet'
 import { useTranslation } from 'contexts/Localization'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import { wrappedCurrency } from 'utils/wrappedCurrency'
+import { messages } from 'config/constants/swaps'
 import { RowFixed } from '../Layout/Row'
 import { AutoColumn, ColumnCenter } from '../Layout/Column'
 import { getBscScanLink } from '../../utils'
@@ -123,7 +127,23 @@ export function ConfirmationModalContent({
 }
 
 export function TransactionErrorContent({ message, onDismiss }: { message: string; onDismiss: () => void }) {
+  const dispatch = useDispatch()
   const { t } = useTranslation()
+  const [showSwapBtn, setShowSwapBtn] = useState(false)
+  const swapFlag = useSelector<AppState, AppState['autoSwapReducer']>((state) => state.autoSwapReducer.swapFlag)
+
+  useEffect(() => {
+    if (message === messages.SLIPPAGE_ISSUE) {
+      setShowSwapBtn(true)
+    }
+  }, [message])
+
+  const onAutoSwap = () => {
+    if (swapFlag === false) {
+      dispatch(autoSwap({ swapFlag: true }))
+    }
+  }
+
   return (
     <Wrapper>
       <AutoColumn justify="center">
@@ -133,7 +153,12 @@ export function TransactionErrorContent({ message, onDismiss }: { message: strin
         </Text>
       </AutoColumn>
 
-      <Flex justifyContent="center" pt="24px">
+      <Flex justifyContent="space-evenly" pt="24px" >
+        {showSwapBtn ?
+          <Button onClick={onAutoSwap}>{t('Auto Swap')}</Button>
+          :
+          null
+        }
         <Button onClick={onDismiss}>{t('Dismiss')}</Button>
       </Flex>
     </Wrapper>

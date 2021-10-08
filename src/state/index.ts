@@ -21,6 +21,7 @@ import lists from './lists/reducer'
 import burn from './burn/reducer'
 import multicall from './multicall/reducer'
 import inputReducer from './input/reducer'
+import autoSwapReducer from './flags/reducer'
 
 const PERSISTED_KEYS: string[] = ['user', 'transactions', 'lists']
 
@@ -48,6 +49,7 @@ const store = configureStore({
     multicall,
     lists,
     inputReducer,
+    autoSwapReducer,
   },
   middleware: [...getDefaultMiddleware({ thunk: true }), save({ states: PERSISTED_KEYS })],
   preloadedState: load({ states: PERSISTED_KEYS }),
