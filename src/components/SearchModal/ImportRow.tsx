@@ -63,6 +63,13 @@ export default function ImportRow({
   const isAdded = useIsUserAddedToken(token)
   const isActive = useIsTokenActive(token)
 
+  const handleImportToken = () => {
+    if (setImportToken) {
+      setImportToken(token)
+    }
+    showImportView()
+  }
+
   return (
     <TokenSection style={style}>
       <CurrencyLogo currency={token} size="24px" style={{ opacity: dim ? '0.6' : '1' }} />
@@ -85,12 +92,7 @@ export default function ImportRow({
       {!isActive && !isAdded ? (
         <Button
           width="fit-content"
-          onClick={() => {
-            if (setImportToken) {
-              setImportToken(token)
-            }
-            showImportView()
-          }}
+          onClick={handleImportToken}
         >
           {t('Import')}
         </Button>

@@ -40,6 +40,26 @@ const HarvestAction: React.FunctionComponent<HarvestActionProps> = ({ pid, userD
   const dispatch = useAppDispatch()
   const { account } = useWeb3React()
 
+  const handleHarvest = async () => {
+    setPendingTx(true)
+    try {
+      await onReward()
+      toastSuccess(
+        `${t('Harvested')}!`,
+        t('Your %symbol% earnings have been sent to your wallet!', { symbol: 'CAKE' }),
+      )
+    } catch (e) {
+      toastError(
+        t('Error'),
+        t('Please try again. Confirm the transaction and make sure you are paying enough gas!'),
+      )
+      console.error(e)
+    } finally {
+      setPendingTx(false)
+    }
+    dispatch(fetchFarmUserDataAsync({ account, pids: [pid] }))
+  }
+
   return (
     <ActionContainer>
       <ActionTitles>
@@ -59,25 +79,7 @@ const HarvestAction: React.FunctionComponent<HarvestActionProps> = ({ pid, userD
         </div>
         <Button
           disabled={earnings.eq(0) || pendingTx || !userDataReady}
-          onClick={async () => {
-            setPendingTx(true)
-            try {
-              await onReward()
-              toastSuccess(
-                `${t('Harvested')}!`,
-                t('Your %symbol% earnings have been sent to your wallet!', { symbol: 'CAKE' }),
-              )
-            } catch (e) {
-              toastError(
-                t('Error'),
-                t('Please try again. Confirm the transaction and make sure you are paying enough gas!'),
-              )
-              console.error(e)
-            } finally {
-              setPendingTx(false)
-            }
-            dispatch(fetchFarmUserDataAsync({ account, pids: [pid] }))
-          }}
+          onClick={handleHarvest}
           ml="4px"
         >
           {t('Harvest')}

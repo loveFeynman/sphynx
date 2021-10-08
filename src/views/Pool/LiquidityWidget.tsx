@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { useCallback, useMemo } from 'react'
 import { Pair } from '@sphynxswap/sdk'
 import { Text, CardBody, CardFooter, Button, AddIcon } from '@sphynxswap/uikit'
 import { useTranslation } from 'contexts/Localization'
@@ -82,6 +82,10 @@ export default function LiquidityWidget() {
 
   const { swapType, setSwapType } = useSwapType()
 
+  const handleSwapType = useCallback(() => {
+    setSwapType('addLiquidity')
+  }, [setSwapType])
+
   return (
     <div>
       {swapType === 'addLiquidity' ? (
@@ -97,9 +101,7 @@ export default function LiquidityWidget() {
           <CardFooter style={{ textAlign: 'center', padding: '24px 0px 0px' }}>
             <Button
               id="join-pool-button"
-              onClick={() => {
-                setSwapType('addLiquidity')
-              }}
+              onClick={handleSwapType}
               width="100%"
               startIcon={<AddIcon color="white" />}
             >

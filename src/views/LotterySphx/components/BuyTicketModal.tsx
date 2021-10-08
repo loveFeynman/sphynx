@@ -283,6 +283,26 @@ const BuyTicketModal: React.FC<BuyTicketModalProps> = ({ setUpdateUserTicket, on
     setForceValue(forceValue + 1)
   }
 
+  const handleSpinner = useCallback(async () => {
+    setLoading(true)
+    await approveCall(signer, setEnabled, setToastMessage)
+    setLoading(false)
+  }, [setLoading, signer])
+
+  const handleViewMannual = useCallback(() => {
+    if (ticketNumbers.length !== 0) {
+      setManualTicketGenerate(true)
+      if (ticketNumbers[0].ticketNumbers.length === 0) randomTickets()
+    } else {
+      if (tickets === '0') {
+        setToastMessage({
+          title: 'Error',
+          message: 'No tickets',
+        })
+      }
+    }
+  }, [ticketNumbers, tickets, setManualTicketGenerate])
+
   return (
     <Modal
       title={!manualTicketGenerate ? t('Buy Tickets') : 'Round '.concat(roundID.toString())}
@@ -402,11 +422,7 @@ const BuyTicketModal: React.FC<BuyTicketModalProps> = ({ setUpdateUserTicket, on
                 <ApplyButton
                   className="selected"
                   disabled={!checked}
-                  onClick={async () => {
-                    setLoading(true)
-                    await approveCall(signer, setEnabled, setToastMessage)
-                    setLoading(false)
-                  }}
+                  onClick={handleSpinner}
                   style={{ width: '100%' }}
                 >
                   {isLoading ? <Spinner /> : 'Enable'}
@@ -425,19 +441,7 @@ const BuyTicketModal: React.FC<BuyTicketModalProps> = ({ setUpdateUserTicket, on
                   </ApplyButton>
                   <ApplyButton
                     className="selected"
-                    onClick={() => {
-                      if (ticketNumbers.length !== 0) {
-                        setManualTicketGenerate(true)
-                        if (ticketNumbers[0].ticketNumbers.length === 0) randomTickets()
-                      } else {
-                        if (tickets === '0') {
-                          setToastMessage({
-                            title: 'Error',
-                            message: 'No tickets',
-                          })
-                        }
-                      }
-                    }}
+                    onClick={handleViewMannual}
                     style={{
                       backgroundColor: 'transparent',
                       width: '100%',

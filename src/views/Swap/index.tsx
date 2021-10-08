@@ -477,6 +477,33 @@ export default function Swap({ history }: RouteComponentProps) {
     }
   }, [timeNow, countDownDeadline])
 
+  const handleArrowContainer = useCallback(() => {
+    setApprovalSubmitted(false) // reset 2 step UI for approvals
+    onSwitchTokens()
+  }, [onSwitchTokens])
+
+  const handleChangeRecipient = useCallback(() => {
+    onChangeRecipient('')
+  }, [onChangeRecipient])
+
+  const handleRemoveRecipient = useCallback(() => {
+    onChangeRecipient(null)
+  }, [onChangeRecipient])
+
+  const handleSwapState = useCallback(() => {
+    if (isExpertMode) {
+      handleSwap()
+    } else {
+      setSwapState({
+        tradeToConfirm: trade,
+        attemptingTxn: false,
+        swapErrorMessage: undefined,
+        txHash: undefined,
+      })
+      onPresentConfirmModal()
+    }
+  }, [handleSwap, isExpertMode, onPresentConfirmModal, trade])
+
   return (
     <SwapPage>
       <BannerWrapper />
@@ -511,16 +538,13 @@ export default function Swap({ history }: RouteComponentProps) {
                     <AutoRow justify={isExpertMode ? 'space-between' : 'center'} style={{ padding: '0 1rem' }}>
                       <ArrowContainer
                         clickable
-                        onClick={() => {
-                          setApprovalSubmitted(false) // reset 2 step UI for approvals
-                          onSwitchTokens()
-                        }}
+                        onClick={handleArrowContainer}
                         color={currencies[Field.INPUT] && currencies[Field.OUTPUT] ? 'primary' : 'text'}
                       >
                         <DownArrow />
                       </ArrowContainer>
                       {recipient === null && !showWrap && isExpertMode ? (
-                        <Button variant="text" id="add-recipient-button" onClick={() => onChangeRecipient('')}>
+                        <Button variant="text" id="add-recipient-button" onClick={handleChangeRecipient}>
                           {t('+ Add a send (optional)')}
                         </Button>
                       ) : null}
@@ -543,7 +567,7 @@ export default function Swap({ history }: RouteComponentProps) {
                         <ArrowWrapper clickable={false}>
                           <ArrowDownIcon width="16px" />
                         </ArrowWrapper>
-                        <Button variant="text" id="remove-recipient-button" onClick={() => onChangeRecipient(null)}>
+                        <Button variant="text" id="remove-recipient-button" onClick={handleRemoveRecipient}>
                           {t('- Remove send')}
                         </Button>
                       </AutoRow>
@@ -612,19 +636,7 @@ export default function Swap({ history }: RouteComponentProps) {
                       </Button>
                       <Button
                         variant={isValid && priceImpactSeverity > 2 ? 'danger' : 'primary'}
-                        onClick={() => {
-                          if (isExpertMode) {
-                            handleSwap()
-                          } else {
-                            setSwapState({
-                              tradeToConfirm: trade,
-                              attemptingTxn: false,
-                              swapErrorMessage: undefined,
-                              txHash: undefined,
-                            })
-                            onPresentConfirmModal()
-                          }
-                        }}
+                        onClick={handleSwapState}
                         width="48%"
                         id="swap-button"
                         disabled={
@@ -641,19 +653,7 @@ export default function Swap({ history }: RouteComponentProps) {
                   ) : (
                     <Button
                       variant={isValid && priceImpactSeverity > 2 && !swapCallbackError ? 'danger' : 'primary'}
-                      onClick={() => {
-                        if (isExpertMode) {
-                          handleSwap()
-                        } else {
-                          setSwapState({
-                            tradeToConfirm: trade,
-                            attemptingTxn: false,
-                            swapErrorMessage: undefined,
-                            txHash: undefined,
-                          })
-                          onPresentConfirmModal()
-                        }
-                      }}
+                      onClick={handleSwapState}
                       id="swap-button"
                       width="100%"
                       disabled={!isValid || (priceImpactSeverity > 3 && !isExpertMode) || !!swapCallbackError}

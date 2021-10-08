@@ -64,6 +64,12 @@ const FarmsPoolsRow = () => {
     })
   }
 
+  const handleShowFarms = useCallback(() => {
+    setShowFarms((prev) => !prev)
+    clearInterval(timer.current)
+    startTimer()
+  }, [timer])
+
   return (
     <div ref={observerRef}>
       <Flex flexDirection="column" mt="24px">
@@ -73,11 +79,7 @@ const FarmsPoolsRow = () => {
             variant="text"
             height="100%"
             width="auto"
-            onClick={() => {
-              setShowFarms((prev) => !prev)
-              clearInterval(timer.current)
-              startTimer()
-            }}
+            onClick={handleShowFarms}
           >
             <SwapVertIcon height="24px" width="24px" color="textSubtle" />
           </IconButton>

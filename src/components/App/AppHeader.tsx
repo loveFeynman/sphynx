@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import styled from 'styled-components'
 import { RouterType } from '@sphynxswap/sdk'
 import {
@@ -66,14 +66,26 @@ const AppHeader: React.FC<Props> = ({ title, subtitle, helper, backTo, showAuto,
 
   const [onPresentSettingsModal] = useModal(<SettingsModal />)
 
+  const handleSwapType = useCallback(() => {
+    setSwapType(backTo)
+  }, [backTo, setSwapType])
+
+  const handleAutoFocused = useCallback(() => {
+    setAutoFocused(true)
+    setRouterType(RouterType.sphynx)
+  }, [setRouterType])
+  
+  const handleSettingsModal = useCallback(() => {
+    onPresentSettingsModal()
+    setAutoFocused(false)
+  }, [onPresentSettingsModal])
+
   return (
     <AppHeaderContainer>
       <Flex alignItems="center" mr={noConfig ? 0 : '16px'} style={{ flex: 1 }}>
         {backTo && (
           <TransparentIconButton
-            onClick={() => {
-              setSwapType(backTo)
-            }}
+            onClick={handleSwapType}
           >
             <ArrowBackIcon width="32px" />
           </TransparentIconButton>
@@ -95,10 +107,7 @@ const AppHeader: React.FC<Props> = ({ title, subtitle, helper, backTo, showAuto,
       {showAuto && (
         <AutoButton
           className={autoFocused ? 'focused' : ''}
-          onClick={() => {
-            setAutoFocused(true)
-            setRouterType(RouterType.sphynx)
-          }}
+          onClick={handleAutoFocused}
         >
           {t('Auto')}
         </AutoButton>
@@ -108,10 +117,7 @@ const AppHeader: React.FC<Props> = ({ title, subtitle, helper, backTo, showAuto,
           <NotificationDot show={expertMode}>
             <Flex>
               <IconButton
-                onClick={() => {
-                  onPresentSettingsModal()
-                  setAutoFocused(false)
-                }}
+                onClick={handleSettingsModal}
                 variant="text"
                 scale="sm"
                 mr="8px"
