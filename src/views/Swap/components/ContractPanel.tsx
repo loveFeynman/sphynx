@@ -134,7 +134,7 @@ export default function ContractPanel({ value }: ContractPanelProps) {
   const [addressSearch, setAddressSearch] = useState('')
   const [show, setShow] = useState(true)
   // const [showDrop, setshowDrop] = useState(false);
-  const [anchorEl, setAnchorEl] = useState(null)
+  // const [anchorEl, setAnchorEl] = useState(null)
   const [showDrop, setShowDrop] = useState(false)
   const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
 
@@ -159,7 +159,7 @@ export default function ContractPanel({ value }: ContractPanelProps) {
   // const find=social.links.find(elem=>elem)
   // console.log("socials",social.links)
   const getWebsite = async () => {
-    const web: any = await socialToken(checksumAddress.toString());
+    const web: any = await socialToken(checksumAddress.toString())
     const links = web.links || []
     const twitter = links.find((e) => e.name === 'twitter')
     const telegram = links.find((e) => e.name === 'telegram')
@@ -201,14 +201,15 @@ export default function ContractPanel({ value }: ContractPanelProps) {
     }
   }
 
-  const handleClick = (event: any) => {
-    setAnchorEl(event.currentTarget)
-    setShowDrop(true)
-  }
+  // const handleClick = (event: any) => {
+  //   setAnchorEl(event.currentTarget)
+  //   setShowDrop(true)
+  // }
 
-  const handleClose = () => {
-    setAnchorEl(null)
-  }
+  // const handleClose = () => {
+  //   setAnchorEl(null)
+  // }
+
   const submitFuntioncall = () => {
     dispatch(typeInput({ input: addressSearch }))
     dispatch(
@@ -243,8 +244,8 @@ export default function ContractPanel({ value }: ContractPanelProps) {
     const fetchPools = async () => {
       // console.log('started fetchPools, checksumAddress=', checksumAddress)
       if (checksumAddress) {
-        const { error: fetchError, addresses } = await fetchPoolsForToken(checksumAddress.toLocaleLowerCase())
-        const { error: fetchError2, poolDatas: poolDatas1 } = await fetchPoolData(addresses)
+        const { addresses } = await fetchPoolsForToken(checksumAddress.toLocaleLowerCase())
+        const { poolDatas: poolDatas1 } = await fetchPoolData(addresses)
         setPoolDatas(poolDatas1)
         // console.log('poolDatas=', poolDatas1)
 
