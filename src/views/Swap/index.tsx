@@ -240,7 +240,7 @@ export default function Swap({ history }: RouteComponentProps) {
       let wBNBPair = await getPancakePairAddress(input, wBNBAddr, simpleRpcProvider)
       if (wBNBPair !== null) pairs.push(wBNBPair.toLowerCase())
       let wBNBPairV1 = await getPancakePairAddressV1(input, wBNBAddr, simpleRpcProvider)
-      if (wBNBPair !== null) pairs.push(wBNBPairV1.toLowerCase())
+      if (wBNBPairV1 !== null) pairs.push(wBNBPairV1.toLowerCase())
       setPairs(pairs)
     }
     getPairs()
