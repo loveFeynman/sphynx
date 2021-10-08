@@ -66,8 +66,6 @@ export default function RemoveLiquidityWidget({
   const [currencyA1, setCurrencyA1] = useState(liquidityPairA || 'ETH')
   const [currencyB1, setCurrencyB1] = useState(liquidityPairB || 'ETH')
 
-  console.log('currencyA1=', currencyA1, ', currencyB1=', currencyB1)
-
   const [currencyA, currencyB] = [useCurrency(currencyA1) ?? undefined, useCurrency(currencyB1) ?? undefined]
 
   const { account, chainId, library } = useActiveWeb3React()
