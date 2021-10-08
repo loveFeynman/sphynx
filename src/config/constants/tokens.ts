@@ -1,5 +1,21 @@
 import { ChainId, Token } from '@sphynxswap/sdk'
 
+export const SPHYNX: { [chainId: number]: Token } = {
+  [ChainId.MAINNET]: new Token(
+    ChainId.MAINNET,
+    '0x2e121ed64eeeb58788ddb204627ccb7c7c59884c',
+    18,
+    'SPHYNX',
+    'Sphynx Token',
+  ),
+  [ChainId.TESTNET]: new Token(
+    ChainId.TESTNET,
+    '0x58c27851490415250fdea7CE1872C0c798Ba014b',
+    18,
+    'SPHYNX',
+    'Sphynx Token',
+  ),
+}
 export const CAKE: { [chainId: number]: Token } = {
   [ChainId.MAINNET]: new Token(
     ChainId.MAINNET,
@@ -64,15 +80,6 @@ const tokens = {
     symbol: 'BNB',
     projectLink: 'https://www.binance.com/',
   },
-  cake: {
-    symbol: 'CAKE',
-    address: {
-      56: '0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82',
-      97: '0xa35062141Fa33BCA92Ce69FeD37D0E8908868AAe',
-    },
-    decimals: 18,
-    projectLink: 'https://pancakeswap.finance/',
-  },
   sphynx: {
     symbol: 'SPHYNX',
     address: {
@@ -81,6 +88,15 @@ const tokens = {
     },
     decimals: 18,
     projectLink: 'https://thesphynx.co/',
+  },
+  cake: {
+    symbol: 'CAKE',
+    address: {
+      56: '0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82',
+      97: '0xa35062141Fa33BCA92Ce69FeD37D0E8908868AAe',
+    },
+    decimals: 18,
+    projectLink: 'https://pancakeswap.finance/',
   },
   babycake: {
     symbol: 'BABYCAKE',

@@ -148,7 +148,7 @@ export default function ContractPanel({ value }: ContractPanelProps) {
   const [poolDatas, setPoolDatas] = useState<PoolData[]>([])
   const { t } = useTranslation()
 
-  const getWebsite = useCallback(async () => {
+    const getWebsite = useCallback(async () => {
     const web: any = await socialToken(checksumAddress.toString());
     const links = web.links || []
     const twitter = links.find((e) => e.name === 'twitter')
@@ -168,7 +168,7 @@ export default function ContractPanel({ value }: ContractPanelProps) {
   const handlerChange = (e: any) => {
     try {
       if (e.target.value && e.target.value.length > 0) {
-        axios.get(`https://thesphynx.co/api/search/${e.target.value}`).then((response) => {
+        axios.get(`${process.env.REACT_APP_BACKEND_API_URL}/search/${e.target.value}`).then((response) => {
           setdata(response.data)
         })
       } else {
@@ -188,16 +188,7 @@ export default function ContractPanel({ value }: ContractPanelProps) {
     }
   }
 
-  // const handleClick = (event: any) => {
-  //   setAnchorEl(event.currentTarget)
-  //   setShowDrop(true)
-  // }
-
-  // const handleClose = () => {
-  //   setAnchorEl(null)
-  // }
-
-  const submitFuntioncall = useCallback(() => {
+  const submitFuntioncall = () => {
     dispatch(typeInput({ input: addressSearch }))
     dispatch(
       setIsInput({
@@ -232,8 +223,8 @@ export default function ContractPanel({ value }: ContractPanelProps) {
     const fetchPools = async () => {
       // console.log('started fetchPools, checksumAddress=', checksumAddress)
       if (checksumAddress) {
-        const { error: fetchError, addresses } = await fetchPoolsForToken(checksumAddress.toLocaleLowerCase())
-        const { error: fetchError2, poolDatas: poolDatas1 } = await fetchPoolData(addresses)
+        const { addresses } = await fetchPoolsForToken(checksumAddress.toLocaleLowerCase())
+        const { poolDatas: poolDatas1 } = await fetchPoolData(addresses)
         setPoolDatas(poolDatas1)
         // console.log('poolDatas=', poolDatas1)
 

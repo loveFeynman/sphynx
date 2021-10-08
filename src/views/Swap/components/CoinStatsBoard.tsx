@@ -118,7 +118,7 @@ export default function CoinStatsBoard() {
   const getTableData = async () => {
     try {
       if (result) {
-        axios.post('https://thesphynx.co/api/tokenStats', { address: input }).then((response) => {
+        axios.post(`${process.env.REACT_APP_BACKEND_API_URL}/tokenStats`, { address: input }).then((response) => {
           setTokenData(response.data)
         })
         const chartStats: any = await getChartStats(input);

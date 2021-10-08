@@ -63,7 +63,7 @@ export default function TicketCard({ lastLoteryInfo, roundID }) {
         arrayData.push(lastLoteryInfo.finalNumber.toString().charAt(i))
       }
       setWinningCard(arrayData.reverse())
-      axios.get(`https://thesphynx.co/api/price/0x2e121ed64eeeb58788ddb204627ccb7c7c59884c`).then((response) => {
+      axios.get(`${process.env.REACT_APP_BACKEND_API_URL}/price/0x2e121ed64eeeb58788ddb204627ccb7c7c59884c`).then((response) => {
         let price = response.data.price
         let _amountCollectedInSphynx = (lastLoteryInfo?.amountCollectedInSphynx / 10 ** 18).toString()
         let prizePot = (parseFloat(_amountCollectedInSphynx) * parseFloat(price)).toFixed(5)

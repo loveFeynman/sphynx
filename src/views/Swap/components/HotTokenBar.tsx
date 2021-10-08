@@ -1,18 +1,19 @@
 /* eslint-disable no-script-url */
 /* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable no-console */
-import React, { useState, useCallback } from 'react'
+import React from 'react'
+// import React, { useState, useCallback } from 'react'
 import styled from 'styled-components'
 import Marquee from 'react-fast-marquee'
-import { useDispatch, useSelector } from 'react-redux'
-import axios from 'axios'
-import moment from 'moment'
-import ReactLoading from 'react-loading'
-import { BITQUERY_API, BITQUERY_API_KEY } from 'config/constants/endpoints'
+// import { useDispatch, useSelector } from 'react-redux'
+// import axios from 'axios'
+// import moment from 'moment'
+// import ReactLoading from 'react-loading'
+// import { BITQUERY_API, BITQUERY_API_KEY } from 'config/constants/endpoints'
 import { useTranslation } from 'contexts/Localization'
 import { HotTokenType } from './types'
-import { AppState } from '../../../state'
-import { setIsInput } from '../../../state/input/actions'
+// import { AppState } from '../../../state'
+// import { setIsInput } from '../../../state/input/actions'
 
 export interface HotTokenBarProps {
   tokens?: HotTokenType[] | null
@@ -49,40 +50,40 @@ const BarIntro = styled.div`
 `
 
 export default function HotTokenBar() {
-  const [data, setData] = React.useState([
-    {
-      currency: {
-        symbol: '',
-        name: '',
-      },
-    },
-  ])
-  const [loader, setLoader] = useState(false)
-  const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
-  const dispatch = useDispatch()
+  // const [data, setData] = React.useState([
+  //   {
+  //     currency: {
+  //       symbol: '',
+  //       name: '',
+  //     },
+  //   },
+  // ])
+  // const [loader, setLoader] = useState(false)
+  // const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
+  // const dispatch = useDispatch()
   const { t } = useTranslation()
 
-  const prevDate = moment().subtract(1, 'day').format('YYYY-MM-DD')
-  const currentDate = moment().format('YYYY-MM-DD')
-  const getDataQuery = `
-  {
-    ethereum(network: bsc) {
-      dexTrades(
-        options: {desc: "currencyAmount", limit: 10 }
-        date: {since: "${prevDate}", till: "${currentDate}"}
-        baseCurrency: {notIn: ["BNB", "", "WBNB", "BTCB", "ETH", "BUSD", "USDT", "USDC", "DAI"]}
-      ) {
-        currency: baseCurrency {
-          symbol
-          address
-        }
-        count
-        currencyAmount: baseAmount(in: USD)
-        dates: count(uniq: dates)
-        started: minimum(of: date)
-      }
-    }
-  }`
+  // const prevDate = moment().subtract(1, 'day').format('YYYY-MM-DD')
+  // const currentDate = moment().format('YYYY-MM-DD')
+  // const getDataQuery = `
+  // {
+  //   ethereum(network: bsc) {
+  //     dexTrades(
+  //       options: {desc: "currencyAmount", limit: 10 }
+  //       date: {since: "${prevDate}", till: "${currentDate}"}
+  //       baseCurrency: {notIn: ["BNB", "", "WBNB", "BTCB", "ETH", "BUSD", "USDT", "USDC", "DAI"]}
+  //     ) {
+  //       currency: baseCurrency {
+  //         symbol
+  //         address
+  //       }
+  //       count
+  //       currencyAmount: baseAmount(in: USD)
+  //       dates: count(uniq: dates)
+  //       started: minimum(of: date)
+  //     }
+  //   }
+  // }`
 
   // const handleClick = useCallback(async () => {
   //   setLoader(true)
@@ -112,7 +113,12 @@ export default function HotTokenBar() {
         </BarIntro>
 
         <FlowBar>
-          <Marquee gradient={false} speed={40} className="marquee-container" style={{ overflow: 'hidden !important', color: "white" }}>
+          <Marquee
+            gradient={false}
+            speed={40}
+            className="marquee-container"
+            style={{ overflow: 'hidden !important', color: 'white' }}
+          >
             Coming soon
           </Marquee>
           {/* {loader ? (

@@ -1381,5 +1381,21 @@
   "Farms (coming soon)": "农场 (即将推出)",
   "Pools (coming soon)": "资金池 (即将推出)",
   "Lottery (live)": "彩票 (实时)",
-  "Bridge (coming soon)": "桥梁 (即将推出)"
+  "Bridge (coming soon)": "桥梁 (即将推出)",
+  "Connected": "已连接",
+  "Minimum received": "最小已收到",
+  "Maximum sold": "最小销售量",
+  "Price Impact": "价格影响",
+  "Liquidity Provider Fee": "流动性供应商收费",
+  "Your transaction will revert if there is a large, unfavorable price movement before it is confirmed.": "如果在确认之前出现大的、不利的价格变动，您的交易将恢复。",
+  "The difference between the market price and your price due to trade size.": "由于交易规模而导致的市场价格和您的价格之间的差异。",
+  "The difference between the market price and estimated price due to trade size.": "由于交易规模而导致的市场价格和估计价格之间的差异。",
+  "For each trade a 0.25% fee is paid": "每笔交易支付 0.25% 的费用。",
+  "0.17% to LP token holders": "0.17% 给 LP 代币持有者",
+  "0.03% to the Treasury": "0.03% 存入国库",
+  "0.05% towards CAKE buyback and burn": "0.05% 用于 CAKE 回购和销毁",
+  "Show Some Tokens": "显示一些代币",
+  "Show All Tokens": "显示所有代币",
+  "Show all removed Tokens": "显示所有移除的代币",
+  "MAX": "最大"
 }
