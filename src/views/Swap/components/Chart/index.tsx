@@ -47,7 +47,7 @@ const TransactionNavWrapper = styled.div`
   }
 `
 
-const ChartContainer = () => {
+const ChartContainer = React.memo(() => {
   const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
   const routerVersion = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.routerVersion)
 
@@ -99,6 +99,6 @@ const ChartContainer = () => {
       </UpDownArrowBox>
     </Wrapper>
   )
-}
+});
 
 export default ChartContainer

@@ -133,17 +133,12 @@ const ContractPanelOverlay = styled.div`
 export default function ContractPanel({ value }: ContractPanelProps) {
   const [addressSearch, setAddressSearch] = useState('')
   const [show, setShow] = useState(true)
-  // const [showDrop, setshowDrop] = useState(false);
-  const [anchorEl, setAnchorEl] = useState(null)
   const [showDrop, setShowDrop] = useState(false)
   const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
 
   const checksumAddress = isAddress(input)
-  // eslint-disable-next-line no-console
-  // console.log("result===============================>",result)  // => true
   const [data, setdata] = useState([])
   const dispatch = useDispatch()
-  // const [website, setWebsite]=useState('');
 
   const [social, setSocial] = useState({
     website: '',
@@ -200,15 +195,6 @@ export default function ContractPanel({ value }: ContractPanelProps) {
       setShow(true)
     }
   }
-
-  const handleClick = (event: any) => {
-    setAnchorEl(event.currentTarget)
-    setShowDrop(true)
-  }
-
-  const handleClose = () => {
-    setAnchorEl(null)
-  }
   const submitFuntioncall = () => {
     dispatch(typeInput({ input: addressSearch }))
     dispatch(
@@ -240,33 +226,15 @@ export default function ContractPanel({ value }: ContractPanelProps) {
   }
 
   useEffect(() => {
+    const ac = new AbortController();
     const fetchPools = async () => {
-      // console.log('started fetchPools, checksumAddress=', checksumAddress)
       if (checksumAddress) {
-        const { error: fetchError, addresses } = await fetchPoolsForToken(checksumAddress.toLocaleLowerCase())
-        const { error: fetchError2, poolDatas: poolDatas1 } = await fetchPoolData(addresses)
+        const { addresses } = await fetchPoolsForToken(checksumAddress.toLocaleLowerCase())
+        const { poolDatas: poolDatas1 } = await fetchPoolData(addresses)
         setPoolDatas(poolDatas1)
-        // console.log('poolDatas=', poolDatas1)
 
-        // if (poolDatas1.length > 0) {
-        //   const interval = 3600 // one hour per seconds
-        //   const DEFAULT_TIME_WINDOW: Duration = { weeks: 1 }
-
-        //   const utcCurrentTime = getUnixTime(new Date()) * 1000
-        //   const startTimestamp = getUnixTime(startOfHour(sub(utcCurrentTime, DEFAULT_TIME_WINDOW)))
-
-        //   const { error: fetchError3, data:priceData } = await fetchTokenPriceData(
-        //     checksumAddress.toLocaleLowerCase(),
-        //     interval,
-        //     startTimestamp
-        //   )
-        //   // todo
-        //   console.log('[fetchTokenPriceData] data=', priceData)
-        // }
       }
     }
-
-    console.log('start fetchPools')
     fetchPools()
 
     getWebsite()
@@ -281,7 +249,9 @@ export default function ContractPanel({ value }: ContractPanelProps) {
     document.addEventListener('keydown', listener)
     return () => {
       document.removeEventListener('keydown', listener)
+      ac.abort();
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [input])
 

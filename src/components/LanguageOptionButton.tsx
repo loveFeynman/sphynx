@@ -1,5 +1,5 @@
-import React, { useMemo, useCallback } from 'react'
-import Select, { OptionProps } from 'components/Select/Select'
+import React, { useCallback, useMemo } from 'react'
+import Select from 'components/Select/Select'
 import { useTranslation } from 'contexts/Localization'
 import { EN, ZHCN } from '../config/localization/languages'
 

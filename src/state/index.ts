@@ -5,12 +5,9 @@ import farmsReducer from './farms'
 import poolsReducer from './pools'
 import predictionsReducer from './predictions'
 import profileReducer from './profile'
-import teamsReducer from './teams'
 import achievementsReducer from './achievements'
 import blockReducer from './block'
 import collectiblesReducer from './collectibles'
-import votingReducer from './voting'
-import lotteryReducer from './lottery'
 import application from './application/reducer'
 import { updateVersion } from './global/actions'
 import user from './user/reducer'
@@ -34,10 +31,7 @@ const store = configureStore({
     pools: poolsReducer,
     predictions: predictionsReducer,
     profile: profileReducer,
-    teams: teamsReducer,
     collectibles: collectiblesReducer,
-    voting: votingReducer,
-    lottery: lotteryReducer,
 
     // Exchange
     application,

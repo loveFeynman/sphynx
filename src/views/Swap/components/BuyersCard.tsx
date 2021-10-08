@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { AppState } from 'state'
 import styled from 'styled-components'
+import { v4 as uuidv4 } from 'uuid'
 import { useTranslation } from 'contexts/Localization'
 import { Spinner } from '../../LotterySphx/components/Spinner'
 import { topTrades } from '../../../utils/apiServices'
@@ -88,7 +89,6 @@ const BuyersCard = () => {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [input])
-
   return (
     <>
       {tableData.length > 0 ? (
@@ -101,9 +101,12 @@ const BuyersCard = () => {
               </tr>
             </thead>
             <tbody>
-              {tableData?.map((td) => {
+              {tableData?.map(item => ({
+                ...item,
+                id: uuidv4()
+              })).map((td) => {
                 return (
-                  <tr style={{ fontSize: '14px', fontWeight: 'bold' }}>
+                  <tr key={td.id} style={{ fontSize: '14px', fontWeight: 'bold' }}>
                     <td style={{ color: '#fff', fontWeight: 'bold' }}>{td.wallet}</td>
                     <td style={{ color: '#04ab1d', fontWeight: 'bold' }}>
                       $ {td.usdAmount.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,')}
