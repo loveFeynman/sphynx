@@ -99,7 +99,7 @@ const SellersCard = () => {
             <thead>
               <tr>
                 <td>{t('Wallet')}</td>
-                <td>{t('Total Bought')}</td>
+                <td>{t('Total Sold')}</td>
               </tr>
             </thead>
             <tbody>
