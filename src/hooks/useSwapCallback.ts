@@ -6,6 +6,7 @@ import { Contract } from '@ethersproject/contracts'
 import { JSBI, Percent, Router, SwapParameters, Trade, TradeType } from '@sphynxswap/sdk'
 import { useMemo } from 'react'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
+import { messages } from 'config/constants/swaps'
 import { BIPS_BASE, INITIAL_ALLOWED_SLIPPAGE } from '../config/constants'
 import { useSetRouterType } from '../state/application/hooks'
 import { useTransactionAdder } from '../state/transactions/hooks'
@@ -145,7 +146,7 @@ export function useSwapCallback(
                   .catch((callError) => {
                     console.error('Call threw error', call, callError)
                     const reason: string = callError.reason || callError.data?.message || callError.message
-                    const errorMessage = `The transaction cannot succeed due to error: ${
+                    const errorMessage = `${messages.SWAP_TRANSACTION_ERROR}: ${
                       reason ?? 'Unknown error, check the logs'
                     }.`
 

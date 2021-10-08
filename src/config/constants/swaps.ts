@@ -1,5 +1,6 @@
 export const messages = {
-    SLIPPAGE_ISSUE: "Please increase Slippage Tolerance percent."
+    SWAP_TRANSACTION_ERROR: "The transaction cannot succeed due to error",
+    SLIPPAGE_ISSUE: "Please increase Slippage Tolerance percent.",
 }
 
 const SwapRouter = {
