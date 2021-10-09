@@ -409,6 +409,12 @@ export default function Swap({ history }: RouteComponentProps) {
       } catch (err) {
         // eslint-disable-next-line no-console
         console.log('err', err.message)
+        setTransactions([])
+          setLoading(true)
+
+          setTimeout(() => {
+            startRealTimeData()
+          }, 2000)
       }
     }
 
