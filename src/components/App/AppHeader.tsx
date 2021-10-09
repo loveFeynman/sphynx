@@ -58,7 +58,7 @@ const AutoButton = styled(Button)`
 const AppHeader: React.FC<Props> = ({ title, subtitle, helper, backTo, showAuto, noConfig = false, showHistory }) => {
   const [expertMode] = useExpertModeManager()
 
-  const { swapType, setSwapType } = useSwapType()
+  const { setSwapType } = useSwapType()
   const [autoFocused, setAutoFocused] = useState(true)
 
   const { t } = useTranslation()

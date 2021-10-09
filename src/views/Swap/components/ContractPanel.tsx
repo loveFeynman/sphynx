@@ -1,19 +1,23 @@
-import React, { useEffect, useState, useCallback } from 'react'
+/* eslint-disable no-console */
+import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import styled from 'styled-components'
 
 import { Button, Link, Text } from '@sphynxswap/uikit'
 
 import { ReactComponent as TwitterIcon } from 'assets/svg/icon/TwitterIcon.svg'
+// eslint-disable-next-line import/no-cycle
 import { ReactComponent as SocialIcon2 } from 'assets/svg/icon/SocialIcon2.svg'
 import { ReactComponent as TelegramIcon } from 'assets/svg/icon/TelegramIcon.svg'
 import { ReactComponent as BscscanIcon } from 'assets/svg/icon/Bscscan.svg'
+// import { BoxesLoader } from "react-awesome-loaders";
 import { RouterTypeToggle } from 'config/constants/types'
 import { PoolData } from 'state/info/types'
 import fetchPoolsForToken from 'state/info/queries/tokens/poolsForToken'
 import { fetchPoolData } from 'state/info/queries/pools/poolData'
 
 import CopyHelper from 'components/AccountDetails/Copy'
+// eslint-disable-next-line import/no-unresolved
 import './dropdown.css'
 import axios from 'axios'
 import { MenuItem } from '@material-ui/core'
@@ -129,7 +133,6 @@ const ContractPanelOverlay = styled.div`
 export default function ContractPanel({ value }: ContractPanelProps) {
   const [addressSearch, setAddressSearch] = useState('')
   const [show, setShow] = useState(true)
-  const [anchorEl, setAnchorEl] = useState(null)
   const [showDrop, setShowDrop] = useState(false)
   const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
 
@@ -148,7 +151,9 @@ export default function ContractPanel({ value }: ContractPanelProps) {
   const [poolDatas, setPoolDatas] = useState<PoolData[]>([])
   const { t } = useTranslation()
 
-    const getWebsite = useCallback(async () => {
+  // const find=social.links.find(elem=>elem)
+  // console.log("socials",social.links)
+  const getWebsite = async () => {
     const web: any = await socialToken(checksumAddress.toString());
     const links = web.links || []
     const twitter = links.find((e) => e.name === 'twitter')
@@ -163,19 +168,22 @@ export default function ContractPanel({ value }: ContractPanelProps) {
     }
 
     setSocial(web)
-  }, [checksumAddress])
+  }
 
   const handlerChange = (e: any) => {
     try {
       if (e.target.value && e.target.value.length > 0) {
-        axios.get(`${process.env.REACT_APP_BACKEND_API_URL}/search/${e.target.value}`).then((response) => {
+        axios.get(`https://thesphynx.co/api/search/${e.target.value}`).then((response) => {
           setdata(response.data)
         })
       } else {
         setdata([])
       }
     } catch (err) {
-      throw new Error (err.message)
+      // eslint-disable-next-line no-console
+      // console.log(err);
+      // alert("Invalid Address")
+      console.log('errr', err.message)
     }
 
     const result = isAddress(e.target.value)
@@ -187,7 +195,6 @@ export default function ContractPanel({ value }: ContractPanelProps) {
       setShow(true)
     }
   }
-
   const submitFuntioncall = () => {
     dispatch(typeInput({ input: addressSearch }))
     dispatch(
@@ -195,15 +202,14 @@ export default function ContractPanel({ value }: ContractPanelProps) {
         isInput: true,
       }),
     )
-  }, [addressSearch, dispatch])
-
-  const handleKeyPress = useCallback((event) => {
+  }
+  const handleKeyPress = (event) => {
     if (event.key === 'Enter') {
       submitFuntioncall()
     }
-  }, [submitFuntioncall])
+  }
 
-  const onSearchKeyDown = useCallback((event) => {
+  const onSearchKeyDown = (event) => {
     if (event.key === 'ArrowDown') {
       if (selectedItemIndex < data.length - 1) {
         setSelectedItemIndex(selectedItemIndex + 1)
@@ -217,36 +223,18 @@ export default function ContractPanel({ value }: ContractPanelProps) {
         setSelectedItemIndex(data.length - 1)
       }
     }
-  }, [data, selectedItemIndex])
+  }
 
   useEffect(() => {
+    const ac = new AbortController();
     const fetchPools = async () => {
-      // console.log('started fetchPools, checksumAddress=', checksumAddress)
       if (checksumAddress) {
         const { addresses } = await fetchPoolsForToken(checksumAddress.toLocaleLowerCase())
         const { poolDatas: poolDatas1 } = await fetchPoolData(addresses)
         setPoolDatas(poolDatas1)
-        // console.log('poolDatas=', poolDatas1)
 
-        // if (poolDatas1.length > 0) {
-        //   const interval = 3600 // one hour per seconds
-        //   const DEFAULT_TIME_WINDOW: Duration = { weeks: 1 }
-
-        //   const utcCurrentTime = getUnixTime(new Date()) * 1000
-        //   const startTimestamp = getUnixTime(startOfHour(sub(utcCurrentTime, DEFAULT_TIME_WINDOW)))
-
-        //   const { error: fetchError3, data:priceData } = await fetchTokenPriceData(
-        //     checksumAddress.toLocaleLowerCase(),
-        //     interval,
-        //     startTimestamp
-        //   )
-        //   // todo
-        //   console.log('[fetchTokenPriceData] data=', priceData)
-        // }
       }
     }
-
-    console.log('start fetchPools')
     fetchPools()
 
     getWebsite()
@@ -261,20 +249,11 @@ export default function ContractPanel({ value }: ContractPanelProps) {
     document.addEventListener('keydown', listener)
     return () => {
       document.removeEventListener('keydown', listener)
+      ac.abort();
     }
-  }, [input, checksumAddress, getWebsite])
 
-  const handleLinkClick = useCallback(() => {
-    dispatch(setIsInput({ isInput: true }))
-  }, [dispatch])
-
-  const handleMenuItemClick = useCallback(() => {
-    dispatch(typeRouterVersion({ routerVersion: RouterTypeToggle[0].key }))
-  }, [dispatch])
-
-  const handleShowDrop = () => {
-    setShowDrop(false)
-  }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [input])
 
   return (
     <ContractPanelWrapper>
@@ -300,11 +279,15 @@ export default function ContractPanel({ value }: ContractPanelProps) {
                     return (
                       <Link
                         href={`#/swap/${item.address}`}
-                        onClick={handleLinkClick}
+                        onClick={() => {
+                          dispatch(setIsInput({ isInput: true }))
+                        }}
                       >
                         <MenuItem
                           className={index === selectedItemIndex ? 'selectedItem' : ''}
-                          onClick={handleMenuItemClick}
+                          onClick={() => {
+                            dispatch(typeRouterVersion({ routerVersion: RouterTypeToggle[0].key }))
+                          }}
                         >
                           {item.name}
                           <br />
@@ -341,7 +324,7 @@ export default function ContractPanel({ value }: ContractPanelProps) {
           <TelegramIcon />
         </Link>
       </SocialIconsWrapper>
-      {showDrop && <ContractPanelOverlay onClick={handleShowDrop} />}
+      {showDrop && <ContractPanelOverlay onClick={() => setShowDrop(false)} />}
     </ContractPanelWrapper>
   )
 }

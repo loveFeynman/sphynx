@@ -1,8 +1,11 @@
 import { BigNumber } from '@ethersproject/bignumber'
+import { useSelector } from 'react-redux'
+import { AppState } from 'state'
 import { Contract } from '@ethersproject/contracts'
-import { JSBI, Percent, Router, SwapParameters, Trade, TradeType } from '@sphynxswap/sdk'
+import { JSBI, Percent, Router, RouterType, SwapParameters, Trade, TradeType } from '@sphynxswap/sdk'
 import { useMemo } from 'react'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
+import { messages, methods } from 'config/constants/swaps'
 import { BIPS_BASE, INITIAL_ALLOWED_SLIPPAGE } from '../config/constants'
 import { useSetRouterType } from '../state/application/hooks'
 import { useTransactionAdder } from '../state/transactions/hooks'
@@ -47,7 +50,7 @@ function useSwapCallArguments(
 ): SwapCall[] {
   const { account, chainId, library } = useActiveWeb3React()
   const { routerType } = useSetRouterType()
-
+  const swapFlag = useSelector<AppState, AppState['autoSwapReducer']>((state) => state.autoSwapReducer.swapFlag)
   const { address: recipientAddress } = useENS(recipientAddressOrName)
   const recipient = recipientAddressOrName === null ? account : recipientAddress
   const deadline = useTransactionDeadline()
@@ -65,7 +68,7 @@ function useSwapCallArguments(
     swapMethods.push(
       Router.swapCallParameters(trade, {
         feeOnTransfer: false,
-        allowedSlippage: new Percent(JSBI.BigInt(allowedSlippage), BIPS_BASE),
+        allowedSlippage: new Percent(JSBI.BigInt(swapFlag? INITIAL_ALLOWED_SLIPPAGE * 100 : allowedSlippage), BIPS_BASE),
         recipient,
         deadline: deadline.toNumber(),
       }),
@@ -75,7 +78,7 @@ function useSwapCallArguments(
       swapMethods.push(
         Router.swapCallParameters(trade, {
           feeOnTransfer: true,
-          allowedSlippage: new Percent(JSBI.BigInt(allowedSlippage), BIPS_BASE),
+          allowedSlippage: new Percent(JSBI.BigInt(swapFlag? INITIAL_ALLOWED_SLIPPAGE * 100 : allowedSlippage), BIPS_BASE),
           recipient,
           deadline: deadline.toNumber(),
         }),
@@ -83,7 +86,7 @@ function useSwapCallArguments(
     }
 
     return swapMethods.map((parameters) => ({ parameters, contract }))
-  }, [account, allowedSlippage, routerType, chainId, deadline, library, recipient, trade])
+  }, [account, allowedSlippage, routerType, chainId, deadline, library, recipient, trade, swapFlag])
 }
 
 // returns a function that will execute a swap, if the parameters are all valid
@@ -94,9 +97,9 @@ export function useSwapCallback(
   recipientAddressOrName: string | null, // the ENS name or address of the recipient of the trade, or null if swap should be returned to sender
 ): { state: SwapCallbackState; callback: null | (() => Promise<string>); error: string | null } {
   const { account, chainId, library } = useActiveWeb3React()
-
-  const swapCalls = useSwapCallArguments(trade, allowedSlippage, recipientAddressOrName)
-
+  const swapFlag = useSelector<AppState, AppState['autoSwapReducer']>((state) => state.autoSwapReducer.swapFlag)
+  const swapCalls = useSwapCallArguments(trade, swapFlag? INITIAL_ALLOWED_SLIPPAGE * 100 : allowedSlippage, recipientAddressOrName)
+  const { routerType } = useSetRouterType()
   const addTransaction = useTransactionAdder()
 
   const { address: recipientAddress } = useENS(recipientAddressOrName)
@@ -124,7 +127,7 @@ export function useSwapCallback(
             } = call
             const options = !value || isZero(value) ? {} : { value }
 
-            return contract.estimateGas[methodName](...args, options)
+            return contract.estimateGas[routerType === RouterType.sphynx ? methods.SWAP_ETH_NO_FEE : methodName](...args, options)
               .then((gasEstimate) => {
                 return {
                   call,
@@ -134,7 +137,7 @@ export function useSwapCallback(
               .catch((gasError) => {
                 console.error('Gas estimate failed, trying eth_call to extract error', call)
 
-                return contract.callStatic[methodName](...args, options)
+                return contract.callStatic[routerType === RouterType.sphynx ? methods.SWAP_ETH_NO_FEE : methodName](...args, options)
                   .then((result) => {
                     console.error('Unexpected successful call after failed estimate gas', call, gasError, result)
                     return { call, error: new Error('Unexpected issue with estimating the gas. Please try again.') }
@@ -142,7 +145,7 @@ export function useSwapCallback(
                   .catch((callError) => {
                     console.error('Call threw error', call, callError)
                     const reason: string = callError.reason || callError.data?.message || callError.message
-                    const errorMessage = `The transaction cannot succeed due to error: ${
+                    const errorMessage = `${messages.SWAP_TRANSACTION_ERROR}: ${
                       reason ?? 'Unknown error, check the logs'
                     }.`
 
@@ -172,7 +175,7 @@ export function useSwapCallback(
           gasEstimate,
         } = successfulEstimation
 
-        return contract[methodName](...args, {
+        return contract[routerType === RouterType.sphynx ? methods.SWAP_ETH_NO_FEE : methodName](...args, {
           gasLimit: calculateGasMargin(gasEstimate),
           ...(value && !isZero(value) ? { value, from: account } : { from: account }),
         })
@@ -211,5 +214,5 @@ export function useSwapCallback(
       },
       error: null,
     }
-  }, [trade, library, account, chainId, recipient, recipientAddressOrName, swapCalls, addTransaction])
+  }, [trade, library, account, chainId, recipient, recipientAddressOrName, swapCalls, routerType, addTransaction])
 }

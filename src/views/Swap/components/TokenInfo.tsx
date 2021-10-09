@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import styled from 'styled-components'
 import { Flex, Text, Link } from '@sphynxswap/uikit'
@@ -83,7 +83,7 @@ export default function TokenInfo() {
     totalSupply: '',
   })
 
-  const getTableData = async () => {
+  const getTableData = useCallback(async () => {
     try {
       if (result) {
         axios.post(`${process.env.REACT_APP_BACKEND_API_URL}/tokenStats`, { address: input }).then((response) => {
@@ -106,12 +106,13 @@ export default function TokenInfo() {
       // eslint-disable-next-line no-console
       console.log(err)
     }
-  }
+  }, [dispatch, input, isInput, result])
 
   useEffect(() => {
+    const ac = new AbortController();
     getTableData()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [input, isInput])
+    return () => ac.abort();
+  }, [getTableData, input, isInput])
 
   return (
     <TokenInfoContainer>

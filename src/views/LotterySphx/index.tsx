@@ -224,6 +224,7 @@ export default function Lottery() {
   }, [])
   //getting lottery status
   React.useEffect(() => {
+    const ac= new AbortController();
     if (lotteryInfo !== null) {
       if (new Date().getTime() / 1000 > lotteryInfo?.endTime) {
         viewLotterys(roundID, lastLoteryInfo, setLastLotteryInfo)
@@ -233,6 +234,8 @@ export default function Lottery() {
       }
       setCursor(lotteryInfo?.firstTicketId)
     }
+
+    return () => ac.abort();
   }, [lotteryInfo, roundID])
 
   //getting user tickets

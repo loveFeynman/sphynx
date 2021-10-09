@@ -1,8 +1,8 @@
 import Web3 from 'web3'
-import { AbiItem } from 'web3-utils';
-import abi from '../config/abi/erc20ABI.json';
-import factoryAbi from '../config/abi/factoryAbi.json';
-import factoryV1Abi from '../config/abi/factoryV1.json';
+import { AbiItem } from 'web3-utils'
+import abi from '../config/abi/erc20ABI.json'
+import factoryAbi from '../config/abi/factoryAbi.json'
+import factoryV1Abi from '../config/abi/factoryV1.json'
 
 
 const httpProvider = new Web3.providers.HttpProvider(
@@ -56,7 +56,6 @@ const getVersion = async (address: string) => {
 
     return { status: true, version, pairAddress };
   } catch (error) {
-    console.log(error);
     return { status: false, version: "", pairAddress: "" };
   }
 };
@@ -81,7 +80,6 @@ const getVersion1 = async (address) => {
 
     return { status: true, version, pairAddress };
   } catch (error) {
-    console.log(error);
     return { status: false, version: "", pairAddress: "" };
   }
 };

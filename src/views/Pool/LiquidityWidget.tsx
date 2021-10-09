@@ -89,7 +89,7 @@ export default function LiquidityWidget() {
   return (
     <div>
       {swapType === 'addLiquidity' ? (
-        <AddLiquidityWidget currencyIdA="ETH" />
+        <AddLiquidityWidget />
       ) : swapType === 'removeLiquidity' ? (
         <RemoveLiquidityWidget />
       ) : (

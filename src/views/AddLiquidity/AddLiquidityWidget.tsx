@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { BigNumber } from '@ethersproject/bignumber'
 import { TransactionResponse } from '@ethersproject/providers'
 import { Currency, currencyEquals, ETHER, TokenAmount, WETH } from '@sphynxswap/sdk'
-import { Button, Text, Flex, AddIcon, Message, useModal } from '@sphynxswap/uikit'
+import { AddIcon, Button, Flex, Message, Text, useModal } from '@sphynxswap/uikit'
 import { useIsTransactionUnsupported } from 'hooks/Trades'
 import { useTranslation } from 'contexts/Localization'
 import UnsupportedCurrencyFooter from 'components/UnsupportedCurrencyFooter'
@@ -26,7 +26,7 @@ import useTransactionDeadline from '../../hooks/useTransactionDeadline'
 import { Field } from '../../state/mint/actions'
 import { useDerivedMintInfo, useMintActionHandlers, useMintState } from '../../state/mint/hooks'
 
-import { useSetRouterType, useLiquidityPairA, useLiquidityPairB } from '../../state/application/hooks'
+import { useLiquidityPairA, useLiquidityPairB, useSetRouterType } from '../../state/application/hooks'
 import { useTransactionAdder } from '../../state/transactions/hooks'
 import { useIsExpertMode, useUserSlippageTolerance } from '../../state/user/hooks'
 import { calculateGasMargin, calculateSlippageAmount, getRouterContract } from '../../utils'
@@ -48,18 +48,13 @@ const ArrowContainer = styled(ColumnCenter)`
   margin: 0;
 `
 
-export default function AddLiquidityWidget({
-  currencyIdA,
-  currencyIdB,
-}: {
-  currencyIdA?: string
-  currencyIdB?: string
-}) {
+export default function AddLiquidityWidget() {
   const { account, chainId, library } = useActiveWeb3React()
   const { routerType } = useSetRouterType()
 
-  const { liquidityPairA, setLiquidityPairA } = useLiquidityPairA()
-  const { liquidityPairB, setLiquidityPairB } = useLiquidityPairB()
+  const { liquidityPairA } = useLiquidityPairA()
+
+  const { liquidityPairB } = useLiquidityPairB()
 
   const [currencyA1, setCurrencyA1] = useState(liquidityPairA || 'ETH')
   const [currencyB1, setCurrencyB1] = useState(liquidityPairB || 'ETH')

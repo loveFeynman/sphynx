@@ -1,19 +1,14 @@
 /* eslint-disable no-script-url */
 /* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable no-console */
-import React from 'react'
-// import React, { useState, useCallback } from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
 import Marquee from 'react-fast-marquee'
-// import { useDispatch, useSelector } from 'react-redux'
-// import axios from 'axios'
-// import moment from 'moment'
-// import ReactLoading from 'react-loading'
-// import { BITQUERY_API, BITQUERY_API_KEY } from 'config/constants/endpoints'
+import { useDispatch, useSelector } from 'react-redux'
+import moment from 'moment'
 import { useTranslation } from 'contexts/Localization'
 import { HotTokenType } from './types'
-// import { AppState } from '../../../state'
-// import { setIsInput } from '../../../state/input/actions'
+import { AppState } from '../../../state'
 
 export interface HotTokenBarProps {
   tokens?: HotTokenType[] | null

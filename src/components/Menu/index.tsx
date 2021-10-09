@@ -7,6 +7,7 @@ import { useMenuToggle, useRemovedAssets } from 'state/application/hooks'
 import { useWeb3React } from '@web3-react/core'
 import MainLogo from 'assets/svg/icon/logo_new.svg'
 import Illustration from 'assets/images/Illustration.svg'
+import { v4 as uuidv4 } from 'uuid'
 import CloseIcon from '@material-ui/icons/Close'
 import { ReactComponent as MenuOpenIcon } from 'assets/svg/icon/MenuOpenIcon.svg'
 import { ReactComponent as WalletIcon } from 'assets/svg/icon/WalletIcon.svg'
@@ -14,15 +15,13 @@ import { ReactComponent as TwitterIcon } from 'assets/svg/icon/TwitterIcon.svg'
 import { ReactComponent as SocialIcon2 } from 'assets/svg/icon/SocialIcon2.svg'
 import { ReactComponent as TelegramIcon } from 'assets/svg/icon/TelegramIcon.svg'
 import DiscordIcon from 'assets/images/discord.png'
-import InstaIcon from 'assets/images/insta.png'
-import Web3 from 'web3'
 import axios from 'axios'
 import { BITQUERY_API, BITQUERY_API_KEY } from 'config/constants/endpoints'
 import storages from 'config/constants/storages'
 import { BalanceNumber } from 'components/BalanceNumber'
 import { useTranslation } from 'contexts/Localization'
 import { links } from './config'
-import { replaceSwapState, Field } from '../../state/swap/actions'
+import { Field, replaceSwapState } from '../../state/swap/actions'
 
 const MenuWrapper = styled.div<{ toggled: boolean }>`
   width: 320px;
@@ -245,13 +244,12 @@ const TokenIconContainer = styled.div`
   position: relative;
 `
 
-const Menu = (props) => {
+const Menu = () => {
   const { account } = useWeb3React()
   const { menuToggled, toggleMenu } = useMenuToggle()
   const { removedAssets, setRemovedAssets } = useRemovedAssets()
   const [showAllToken, setShowAllToken] = useState(true)
 
-  const [walletbalance, setWalletBalance] = useState(0)
   const dispatch = useDispatch()
   const { pathname } = useLocation()
   const realPath = `/#${pathname}`
@@ -260,16 +258,6 @@ const Menu = (props) => {
   const [getAllToken, setAllTokens] = useState([])
 
   const { t } = useTranslation()
-
-  const getBalance = () => {
-    const testnet = 'https://bsc-dataseed1.defibit.io'
-    const web3 = new Web3(new Web3.providers.HttpProvider(testnet))
-    const balance =
-      account &&
-      web3.eth.getBalance(account).then((res: any) => {
-        setWalletBalance(res / 1000000000000000000)
-      })
-  }
 
   const getDataQuery = `
   {
@@ -303,7 +291,7 @@ const Menu = (props) => {
       const queryResult = await axios.post(BITQUERY_API, { query: getDataQuery }, bitConfig)
       if (queryResult.data.data) {
         let allsum: any = 0
-        const balances = queryResult.data.data.ethereum.address[0].balances
+        const { balances } = queryResult.data.data.ethereum.address[0]
         const promises = balances.map((elem) => {
           return axios.get(
             `${process.env.REACT_APP_BACKEND_API_URL}/price/${
@@ -361,8 +349,12 @@ const Menu = (props) => {
   const tokenData = getAllToken
     .filter((val) => removedAssets.findIndex((item) => item === val.currency.symbol) === -1)
     .sort((a, b) => (Number(a.dollarPrice) < Number(b.dollarPrice) ? 1 : -1))
+    .map(item => ({
+      ...item,
+      id: uuidv4()
+    }))
     .map((elem: any) => {
-      const { currency, value, dollarPrice } = elem
+      const { currency, value, dollarPrice, id } = elem
 
   const handleTokenItem = () => {
     dispatch(
@@ -381,7 +373,7 @@ const Menu = (props) => {
     removeAsset(elem)
   }
       return (
-        <TokenIconContainer>
+        <TokenIconContainer key={id}>
           <a href={`#/swap/${currency.address}`}>
             <TokenItemWrapper
               toggled={menuToggled}
@@ -501,10 +493,14 @@ const Menu = (props) => {
         ''
       )}
       <MenuContentWrapper toggled={menuToggled}>
-        {links.map((link) => {
+        {links.map(item => ({
+          ...item,
+          id: uuidv4()
+        })).map((link) => {
           const Icon = link.icon
           return (
-            <>
+            <div
+              key={link.id}>
               <MenuItem
                 className={realPath.indexOf(link.href) > -1 && link.href !== '#' ? 'active' : ''}
                 href={link.href}
@@ -528,7 +524,7 @@ const Menu = (props) => {
                   <b>{t(`${link.label}`)}</b>
                 </p>
               </MenuItemMobile>
-            </>
+            </div>
           )
         })}
         <SocialWrapper>

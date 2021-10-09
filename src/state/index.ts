@@ -5,12 +5,9 @@ import farmsReducer from './farms'
 import poolsReducer from './pools'
 import predictionsReducer from './predictions'
 import profileReducer from './profile'
-import teamsReducer from './teams'
 import achievementsReducer from './achievements'
 import blockReducer from './block'
 import collectiblesReducer from './collectibles'
-import votingReducer from './voting'
-import lotteryReducer from './lottery'
 import application from './application/reducer'
 import { updateVersion } from './global/actions'
 import user from './user/reducer'
@@ -21,6 +18,7 @@ import lists from './lists/reducer'
 import burn from './burn/reducer'
 import multicall from './multicall/reducer'
 import inputReducer from './input/reducer'
+import autoSwapReducer from './flags/reducer'
 
 const PERSISTED_KEYS: string[] = ['user', 'transactions', 'lists']
 
@@ -33,10 +31,7 @@ const store = configureStore({
     pools: poolsReducer,
     predictions: predictionsReducer,
     profile: profileReducer,
-    teams: teamsReducer,
     collectibles: collectiblesReducer,
-    voting: votingReducer,
-    lottery: lotteryReducer,
 
     // Exchange
     application,
@@ -48,6 +43,7 @@ const store = configureStore({
     multicall,
     lists,
     inputReducer,
+    autoSwapReducer,
   },
   middleware: [...getDefaultMiddleware({ thunk: true }), save({ states: PERSISTED_KEYS })],
   preloadedState: load({ states: PERSISTED_KEYS }),

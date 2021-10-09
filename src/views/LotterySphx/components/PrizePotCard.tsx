@@ -171,6 +171,7 @@ export default function PrizePotCard({
   }
 
   React.useEffect(() => {
+    const ac = new AbortController();
     if (lotteryInfo !== null) {
       const now = new Date()
       if (new Date().getTime() / 1000 > lotteryInfo.endTime) {
@@ -194,6 +195,8 @@ export default function PrizePotCard({
         setTotalCount(prizePot)
       })
     }
+
+    return () => ac.abort();
   }, [lotteryInfo])
 
   const handleShowDetail = useCallback(() => {
