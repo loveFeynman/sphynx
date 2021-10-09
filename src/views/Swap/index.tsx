@@ -249,7 +249,7 @@ export default function Swap({ history }: RouteComponentProps) {
     }
   }, [tokenAddress])
 
-  const parseData: any = async (events) => {
+  const parseData: any = async (events, blockNumber) => {
     setBusy(true)
     let newTransactions = stateRef.current
     return new Promise(async (resolve) => {
@@ -258,6 +258,7 @@ export default function Swap({ history }: RouteComponentProps) {
         if (i === events.length) {
           setTransactions(newTransactions)
           setBusy(false)
+          setTimeout(() => getTransactions(blockNumber), 3000);
           resolve(true)
         } else {
           try {
@@ -322,40 +323,37 @@ export default function Swap({ history }: RouteComponentProps) {
     })
   }
 
+  const getTransactions = async (blockNumber) => {
+    let cachedBlockNumber = blockNumber
+    try{
+      web3.eth
+      .getPastLogs({
+        fromBlock: blockNumber,
+        toBlock: 'latest',
+        topics: ['0xd78ad95fa46c994b6551d0da85fc275fe613ce37657fb8d5e3d130840159d822'],
+      })
+      .then(async (info) => {
+        if (info.length) {
+          cachedBlockNumber = info[info.length - 1].blockNumber
+        }
+        info = info.filter((oneData) => oneData.blockNumber !== cachedBlockNumber)
+        info = info.filter((oneData) => pairsRef.current.indexOf(oneData.address.toLowerCase()) !== -1)
+        info = [...new Set(info)]
+
+        if (!isBusy) {
+          await parseData(info, cachedBlockNumber)
+        }
+      })
+    } catch (err) {
+      console.log("error", err);
+      setTimeout(() => getTransactions(blockNumber), 3000)
+    }
+  }
+
   const startRealTimeData = () => {
     web3.eth.getBlockNumber().then((blockNumber) => {
-      const getTransactions = async (blockNumber) => {
-        let cachedBlockNumber = blockNumber
-        try{
-          web3.eth
-          .getPastLogs({
-            fromBlock: blockNumber,
-            toBlock: 'latest',
-            topics: ['0xd78ad95fa46c994b6551d0da85fc275fe613ce37657fb8d5e3d130840159d822'],
-          })
-          .then(async (info) => {
-            if (info.length) {
-              cachedBlockNumber = info[info.length - 1].blockNumber
-            }
-            if (pairsRef.current.length === 0) return
-            info = info.filter((oneData) => oneData.blockNumber !== cachedBlockNumber)
-            info = info.filter((oneData) => pairsRef.current.indexOf(oneData.address.toLowerCase()) !== -1)
-            info = [...new Set(info)]
-
-            if (!isBusy) {
-              await parseData(info)
-              blockNumber = cachedBlockNumber
-              return setTimeout(() => getTransactions(blockNumber), 3000)
-            }
-          })
-        } catch (err) {
-          console.log("error", err);
-          return setTimeout(() => getTransactions(blockNumber), 3000)
-        }
-      }
-
       getTransactions(blockNumber)
-    })
+    });
   }
 
   const formatTimeString = (timeString) => {
