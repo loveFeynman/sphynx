@@ -26,6 +26,17 @@ function ImportToken({ tokens, handleCurrencySelect }: ImportProps) {
   // use for showing import source on inactive tokens
   const inactiveTokenList = useCombinedInactiveList()
 
+  const handleConfirm = () => {
+    setConfirmed(!confirmed)
+  }
+
+  const handleSelectedCurrency = () => {
+    tokens.map((token) => addToken(token))
+    if (handleCurrencySelect) {
+      handleCurrencySelect(tokens[0])
+    }
+  }
+
   return (
     <AutoColumn gap="lg">
       <Message variant="warning">
@@ -77,13 +88,13 @@ function ImportToken({ tokens, handleCurrencySelect }: ImportProps) {
       })}
 
       <Flex justifyContent="space-between" alignItems="center">
-        <Flex alignItems="center" onClick={() => setConfirmed(!confirmed)}>
+        <Flex alignItems="center" onClick={handleConfirm}>
           <Checkbox
             scale="sm"
             name="confirmed"
             type="checkbox"
             checked={confirmed}
-            onChange={() => setConfirmed(!confirmed)}
+            onChange={handleConfirm}
           />
           <Text ml="8px" style={{ userSelect: 'none' }}>
             {t('I understand')}
@@ -92,12 +103,7 @@ function ImportToken({ tokens, handleCurrencySelect }: ImportProps) {
         <Button
           variant="danger"
           disabled={!confirmed}
-          onClick={() => {
-            tokens.map((token) => addToken(token))
-            if (handleCurrencySelect) {
-              handleCurrencySelect(tokens[0])
-            }
-          }}
+          onClick={handleSelectedCurrency}
           className=".token-dismiss-button"
         >
           {t('Import')}

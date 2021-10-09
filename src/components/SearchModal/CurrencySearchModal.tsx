@@ -83,6 +83,10 @@ export default function CurrencySearchModal({
     [CurrencyModalView.importList]: { title: t('Import List'), onBack: () => setModalView(CurrencyModalView.search) },
   }
 
+  const handleCurrencyModal = () => {
+    setModalView(CurrencyModalView.manage)
+  }
+
   return (
     <StyledModalContainer minWidth="320px">
       <ModalHeader>
@@ -121,7 +125,7 @@ export default function CurrencySearchModal({
             <Button
               scale="sm"
               variant="text"
-              onClick={() => setModalView(CurrencyModalView.manage)}
+              onClick={handleCurrencyModal}
               className="list-token-manage-button"
             >
               {t('Manage Tokens')}

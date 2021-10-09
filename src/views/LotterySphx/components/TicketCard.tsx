@@ -120,7 +120,7 @@ export default function TicketCard({ lastLoteryInfo, roundID }) {
       </div>
       <SeperateLine />
       <TicketContentTable lastLoteryInfo={lastLoteryInfo} />
-      <ButtonWrapper style={{ margin: '65px 20px 20px' }} onClick={() => onPresentViewTicketModal()}>
+      <ButtonWrapper style={{ margin: '65px 20px 20px' }} onClick={onPresentViewTicketModal}>
         View your ticket
       </ButtonWrapper>
       <div style={{ display: 'flex', justifyContent: 'center', paddingBottom: '36px' }}>

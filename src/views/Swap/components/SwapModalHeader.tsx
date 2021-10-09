@@ -7,6 +7,7 @@ import { computeSlippageAdjustedAmounts, computeTradePriceBreakdown, warningSeve
 import { AutoColumn } from 'components/Layout/Column'
 import { CurrencyLogo } from 'components/Logo'
 import { RowBetween, RowFixed } from 'components/Layout/Row'
+import { useTranslation } from 'contexts/Localization'
 import { TruncatedText, SwapShowAcceptChanges } from './styleds'
 
 export default function SwapModalHeader({
@@ -28,6 +29,7 @@ export default function SwapModalHeader({
   )
   const { priceImpactWithoutFee } = useMemo(() => computeTradePriceBreakdown(trade), [trade])
   const priceImpactSeverity = warningSeverity(priceImpactWithoutFee)
+  const { t } = useTranslation()
 
   return (
     <AutoColumn gap="md">
@@ -77,28 +79,28 @@ export default function SwapModalHeader({
           <RowBetween>
             <RowFixed>
               <ErrorIcon mr="8px" />
-              <Text bold> Price Updated</Text>
+              <Text bold>{t('Price Updated')}</Text>
             </RowFixed>
-            <Button onClick={onAcceptChanges}>Accept</Button>
+            <Button onClick={onAcceptChanges}>{t('Accept')}</Button>
           </RowBetween>
         </SwapShowAcceptChanges>
       ) : null}
       <AutoColumn justify="flex-start" gap="sm" style={{ padding: '24px 0 0 0px' }}>
         {trade.tradeType === TradeType.EXACT_INPUT ? (
           <Text small color="textSubtle" textAlign="left" style={{ width: '100%' }}>
-            {`Output is estimated. You will receive at least `}
+            {t(`Output is estimated. You will receive at least `)}
             <b>
               {slippageAdjustedAmounts[Field.OUTPUT]?.toSignificant(6)} {trade.outputAmount.currency.symbol}
             </b>
-            {' or the transaction will revert.'}
+            {t(' or the transaction will revert.')}
           </Text>
         ) : (
           <Text small color="textSubtle" textAlign="left" style={{ width: '100%' }}>
-            {`Input is estimated. You will sell at most `}
+            {t(`Input is estimated. You will sell at most `)}
             <b>
               {slippageAdjustedAmounts[Field.INPUT]?.toSignificant(6)} {trade.inputAmount.currency.symbol}
             </b>
-            {' or the transaction will revert.'}
+            {t(' or the transaction will revert.')}
           </Text>
         )}
       </AutoColumn>

@@ -1,5 +1,5 @@
 /* eslint-disable */
-import React from 'react'
+import React, { useCallback } from 'react'
 import styled from 'styled-components'
 import { useModal, Flex } from '@sphynxswap/uikit'
 import axios from 'axios'
@@ -199,6 +199,14 @@ export default function PrizePotCard({
     return () => ac.abort();
   }, [lotteryInfo])
 
+  const handleShowDetail = useCallback(() => {
+    setShowDetail(!showDetail)
+  }, [showDetail])
+
+  const handleBuyModal = useCallback(() => {
+    if (enabled) setModal()
+  }, [enabled])
+
   return (
     <Container isDetail={showDetail}>
       <div style={{ display: 'flex', paddingTop: '25px', paddingLeft: '25px' }}>
@@ -223,7 +231,7 @@ export default function PrizePotCard({
             {t(`Claim Tickets`)}
           </ButtonWrapper>
           <SeperateLine />
-          <Footer onClick={(e) => setShowDetail(!showDetail)}>
+          <Footer onClick={handleShowDetail}>
             {showDetail ? t('Hide') : t('Details')}
             <img style={{ marginLeft: '10px' }} src={DownArrow} alt="Logo" />
           </Footer>
@@ -255,13 +263,11 @@ export default function PrizePotCard({
           <ButtonWrapper
             isEnable={enabled}
             style={{ marginTop: '30px' }}
-            onClick={() => {
-              if (enabled) setModal()
-            }}
+            onClick={handleBuyModal}
           >
             {t(`Buy Now`)}
           </ButtonWrapper>
-          <ButtonWrapper isEnable={userTicketInfos.length > 0}style={{ marginTop: '20px' }} onClick={() => onPresentViewTicketModal()}>
+          <ButtonWrapper isEnable={userTicketInfos.length > 0}style={{ marginTop: '20px' }} onClick={onPresentViewTicketModal}>
             {t('View your ticket')}
           </ButtonWrapper>
           {isClaimable && (

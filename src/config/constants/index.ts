@@ -1,5 +1,5 @@
 import { ChainId, JSBI, Percent, Token, WETH } from '@sphynxswap/sdk'
-import { BUSD, DAI, USDT, BTCB, CAKE, WBNB, UST, ETH, USDC } from './tokens'
+import { BUSD, DAI, USDT, BTCB, CAKE, WBNB, UST, ETH, USDC, SPHYNX } from './tokens'
 
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 export const ROUTER_ADDRESS = '0xEF3A73b639719fDBe775411b41683E0aBee17025' // sphynx router v1 for mainnet
@@ -12,8 +12,18 @@ type ChainTokenList = {
 
 // used to construct intermediary pairs for trading
 export const BASES_TO_CHECK_TRADES_AGAINST: ChainTokenList = {
-  [ChainId.MAINNET]: [WETH[ChainId.MAINNET], CAKE[ChainId.MAINNET], BUSD[ChainId.MAINNET], USDT, BTCB, UST, ETH, USDC],
-  [ChainId.TESTNET]: [WETH[ChainId.TESTNET], CAKE[ChainId.TESTNET], BUSD[ChainId.TESTNET]],
+  [ChainId.MAINNET]: [
+    WETH[ChainId.MAINNET],
+    SPHYNX[ChainId.MAINNET],
+    CAKE[ChainId.MAINNET],
+    BUSD[ChainId.MAINNET],
+    USDT,
+    BTCB,
+    UST,
+    ETH,
+    USDC,
+  ],
+  [ChainId.TESTNET]: [WETH[ChainId.TESTNET], SPHYNX[ChainId.TESTNET], CAKE[ChainId.TESTNET], BUSD[ChainId.TESTNET]],
 }
 
 /**

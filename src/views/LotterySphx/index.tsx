@@ -1,6 +1,6 @@
 /* eslint-disable */
 
-import React, { useState } from 'react'
+import React, { useState, useCallback } from 'react'
 import { useDispatch } from 'react-redux'
 import styled from 'styled-components'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
@@ -312,6 +312,10 @@ export default function Lottery() {
     }
   }
 
+  const handleShowDrop = () => {
+    setShowDrop(false)
+  }
+
   return (
     <div style={{ fontFamily: 'Raleway' }}>
       <PageHeader>
@@ -471,7 +475,7 @@ export default function Lottery() {
               <History />
             </div>
           </PastDrawCardContainer>
-          {showDrop && <ContractPanelOverlay onClick={() => setShowDrop(false)} />}
+          {showDrop && <ContractPanelOverlay onClick={handleShowDrop} />}
         </>
       )}
       <Flex mt='24px'>

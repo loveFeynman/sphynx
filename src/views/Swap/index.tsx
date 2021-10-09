@@ -6,8 +6,8 @@ import { AppState } from 'state'
 import { autoSwap } from 'state/flags/actions'
 import styled from 'styled-components'
 import { useLocation } from 'react-router'
-import { CurrencyAmount, JSBI, RouterType, Token, Trade } from '@sphynxswap/sdk'
-import { ArrowDownIcon, Box, Button, Flex, Text, useModal } from '@sphynxswap/uikit'
+import { CurrencyAmount, JSBI, Token, Trade, RouterType } from '@sphynxswap/sdk'
+import { Button, Text, ArrowDownIcon, Box, useModal, Flex } from '@sphynxswap/uikit'
 import { useIsTransactionUnsupported } from 'hooks/Trades'
 import { RouteComponentProps } from 'react-router-dom'
 import { useTranslation } from 'contexts/Localization'
@@ -326,7 +326,8 @@ export default function Swap({ history }: RouteComponentProps) {
     web3.eth.getBlockNumber().then((blockNumber) => {
       const getTransactions = async (blockNumber) => {
         let cachedBlockNumber = blockNumber
-        web3.eth
+        try{
+          web3.eth
           .getPastLogs({
             fromBlock: blockNumber,
             toBlock: 'latest',
@@ -347,6 +348,10 @@ export default function Swap({ history }: RouteComponentProps) {
               return setTimeout(() => getTransactions(blockNumber), 3000)
             }
           })
+        } catch (err) {
+          console.log("error", err);
+          return setTimeout(() => getTransactions(blockNumber), 3000)
+        }
       }
 
       getTransactions(blockNumber)
@@ -733,6 +738,32 @@ export default function Swap({ history }: RouteComponentProps) {
       dispatch(autoSwap({ swapFlag: false }))
     }
   }, [swapFlag, handleSwap, dispatch])
+  const handleArrowContainer = useCallback(() => {
+    setApprovalSubmitted(false) // reset 2 step UI for approvals
+    onSwitchTokens()
+  }, [onSwitchTokens])
+
+  const handleChangeRecipient = useCallback(() => {
+    onChangeRecipient('')
+  }, [onChangeRecipient])
+
+  const handleRemoveRecipient = useCallback(() => {
+    onChangeRecipient(null)
+  }, [onChangeRecipient])
+
+  const handleSwapState = useCallback(() => {
+    if (isExpertMode) {
+      handleSwap()
+    } else {
+      setSwapState({
+        tradeToConfirm: trade,
+        attemptingTxn: false,
+        swapErrorMessage: undefined,
+        txHash: undefined,
+      })
+      onPresentConfirmModal()
+    }
+  }, [handleSwap, isExpertMode, onPresentConfirmModal, trade])
 
   return (
     <SwapPage>
@@ -767,16 +798,13 @@ export default function Swap({ history }: RouteComponentProps) {
                     <AutoRow justify={isExpertMode ? 'space-between' : 'center'} style={{ padding: '0 1rem' }}>
                       <ArrowContainer
                         clickable
-                        onClick={() => {
-                          setApprovalSubmitted(false) // reset 2 step UI for approvals
-                          onSwitchTokens()
-                        }}
+                        onClick={handleArrowContainer}
                         color={currencies[Field.INPUT] && currencies[Field.OUTPUT] ? 'primary' : 'text'}
                       >
                         <DownArrow />
                       </ArrowContainer>
                       {recipient === null && !showWrap && isExpertMode ? (
-                        <Button variant="text" id="add-recipient-button" onClick={() => onChangeRecipient('')}>
+                        <Button variant="text" id="add-recipient-button" onClick={handleChangeRecipient}>
                           {t('+ Add a send (optional)')}
                         </Button>
                       ) : null}
@@ -799,7 +827,7 @@ export default function Swap({ history }: RouteComponentProps) {
                         <ArrowWrapper clickable={false}>
                           <ArrowDownIcon width="16px" />
                         </ArrowWrapper>
-                        <Button variant="text" id="remove-recipient-button" onClick={() => onChangeRecipient(null)}>
+                        <Button variant="text" id="remove-recipient-button" onClick={handleRemoveRecipient}>
                           {t('- Remove send')}
                         </Button>
                       </AutoRow>
@@ -868,19 +896,7 @@ export default function Swap({ history }: RouteComponentProps) {
                       </Button>
                       <Button
                         variant={isValid && priceImpactSeverity > 2 ? 'danger' : 'primary'}
-                        onClick={() => {
-                          if (isExpertMode) {
-                            handleSwap()
-                          } else {
-                            setSwapState({
-                              tradeToConfirm: trade,
-                              attemptingTxn: false,
-                              swapErrorMessage: undefined,
-                              txHash: undefined,
-                            })
-                            onPresentConfirmModal()
-                          }
-                        }}
+                        onClick={handleSwapState}
                         width="48%"
                         id="swap-button"
                         disabled={
@@ -897,19 +913,7 @@ export default function Swap({ history }: RouteComponentProps) {
                   ) : (
                     <Button
                       variant={isValid && priceImpactSeverity > 2 && !swapCallbackError ? 'danger' : 'primary'}
-                      onClick={() => {
-                        if (isExpertMode) {
-                          handleSwap()
-                        } else {
-                          setSwapState({
-                            tradeToConfirm: trade,
-                            attemptingTxn: false,
-                            swapErrorMessage: undefined,
-                            txHash: undefined,
-                          })
-                          onPresentConfirmModal()
-                        }
-                      }}
+                      onClick={handleSwapState}
                       id="swap-button"
                       width="100%"
                       disabled={!isValid || (priceImpactSeverity > 3 && !isExpertMode) || !!swapCallbackError}

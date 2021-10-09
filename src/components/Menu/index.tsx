@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState, useEffect, useMemo, useCallback } from 'react'
 import { useDispatch } from 'react-redux'
 import styled from 'styled-components'
 import { useLocation } from 'react-router'
@@ -356,23 +356,28 @@ const Menu = () => {
     .map((elem: any) => {
       const { currency, value, dollarPrice, id } = elem
 
+  const handleTokenItem = () => {
+    dispatch(
+      replaceSwapState({
+        outputCurrencyId: 'BNB',
+        inputCurrencyId: currency.address,
+        typedValue: '',
+        field: Field.OUTPUT,
+        recipient: null,
+      }),
+    )
+    toggleMenu(true)
+  }
+
+  const handleRemoveAsset = () => {
+    removeAsset(elem)
+  }
       return (
         <TokenIconContainer key={id}>
           <a href={`#/swap/${currency.address}`}>
             <TokenItemWrapper
               toggled={menuToggled}
-              onClick={() => {
-                dispatch(
-                  replaceSwapState({
-                    outputCurrencyId: 'BNB',
-                    inputCurrencyId: currency.address,
-                    typedValue: '',
-                    field: Field.OUTPUT,
-                    recipient: null,
-                  }),
-                )
-                toggleMenu(true)
-              }}
+              onClick={handleTokenItem}
             >
               {menuToggled ? (
                 <>
@@ -410,9 +415,7 @@ const Menu = () => {
           </a>
           {!menuToggled && (
             <RemoveIconWrapper
-              onClick={() => {
-                removeAsset(elem)
-              }}
+              onClick={handleRemoveAsset}
             >
               <CloseIcon />
             </RemoveIconWrapper>
@@ -421,10 +424,22 @@ const Menu = () => {
       )
     })
 
-  const showAllRemovedTokens = () => {
+  const showAllRemovedTokens = useCallback(() => {
     localStorage.setItem(storages.LOCAL_REMOVED_TOKENS, null)
     setRemovedAssets([])
-  }
+  }, [setRemovedAssets])
+
+  const handleToggleMenu = useCallback(() => {
+    toggleMenu(!menuToggled)
+  }, [menuToggled, toggleMenu])
+
+  const handleShowAllToken = useCallback(() => {
+    setShowAllToken(!showAllToken)
+  }, [showAllToken])
+
+  const handleMobileMenuItem = useCallback(() => {
+    toggleMenu(false)
+  }, [toggleMenu])
 
   return (
     <MenuWrapper toggled={menuToggled}>
@@ -434,9 +449,7 @@ const Menu = () => {
       <MenuIconWrapper>
         {!menuToggled && <span>{t('Main Menu')}</span>}
         <Button
-          onClick={() => {
-            toggleMenu(!menuToggled)
-          }}
+          onClick={handleToggleMenu}
         >
           {menuToggled ? (
             <svg viewBox="0 0 24 24" width="24px">
@@ -459,9 +472,7 @@ const Menu = () => {
           <TokenListWrapper>{showAllToken ? tokenData : tokenData.slice(0, 3)}</TokenListWrapper>
           <ButtonWrapper
             style={{ margin: '10px 0' }}
-            onClick={() => {
-              setShowAllToken(!showAllToken)
-            }}
+            onClick={handleShowAllToken}
           >
             <p>
               <b>{showAllToken ? t('Show Some Tokens') : t('Show All Tokens')}</b>
@@ -470,9 +481,7 @@ const Menu = () => {
           {removedAssets.length === 0 ? null : (
             <ButtonWrapper
               style={{ margin: '10px 0' }}
-              onClick={() => {
-                showAllRemovedTokens()
-              }}
+              onClick={showAllRemovedTokens}
             >
               <p>
                 <b>{t('Show all removed Tokens')}</b>
@@ -508,7 +517,7 @@ const Menu = () => {
                 className={realPath.indexOf(link.href) > -1 && link.href !== '#' ? 'active' : ''}
                 href={link.href}
                 target={link.newTab ? '_blank' : ''}
-                onClick={() => toggleMenu(false)}
+                onClick={handleMobileMenuItem}
               >
                 <Icon />
                 <p>

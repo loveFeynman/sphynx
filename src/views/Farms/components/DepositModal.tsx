@@ -39,6 +39,23 @@ const DepositModal: React.FC<DepositModalProps> = ({ max, onConfirm, onDismiss, 
     setVal(fullBalance)
   }, [fullBalance, setVal])
 
+  const handleConfirm = useCallback(async () => {
+    setPendingTx(true)
+    try {
+      await onConfirm(val)
+      toastSuccess(t('Staked!'), t('Your funds have been staked in the farm'))
+      onDismiss()
+    } catch (e) {
+      toastError(
+        t('Error'),
+        t('Please try again. Confirm the transaction and make sure you are paying enough gas!'),
+      )
+      console.error(e)
+    } finally {
+      setPendingTx(false)
+    }
+  }, [onConfirm, onDismiss, t, toastError, toastSuccess, val])
+
   return (
     <Modal title={t('Stake LP tokens')} onDismiss={onDismiss}>
       <ModalInput
@@ -57,22 +74,7 @@ const DepositModal: React.FC<DepositModalProps> = ({ max, onConfirm, onDismiss, 
         <Button
           width="100%"
           disabled={pendingTx || !valNumber.isFinite() || valNumber.eq(0) || valNumber.gt(fullBalanceNumber)}
-          onClick={async () => {
-            setPendingTx(true)
-            try {
-              await onConfirm(val)
-              toastSuccess(t('Staked!'), t('Your funds have been staked in the farm'))
-              onDismiss()
-            } catch (e) {
-              toastError(
-                t('Error'),
-                t('Please try again. Confirm the transaction and make sure you are paying enough gas!'),
-              )
-              console.error(e)
-            } finally {
-              setPendingTx(false)
-            }
-          }}
+          onClick={handleConfirm}
         >
           {pendingTx ? t('Confirming') : t('Confirm')}
         </Button>

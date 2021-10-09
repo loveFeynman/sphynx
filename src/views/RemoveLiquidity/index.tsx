@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { splitSignature } from '@ethersproject/bytes'
 import { Contract } from '@ethersproject/contracts'
 import { TransactionResponse } from '@ethersproject/providers'
-import { Currency, currencyEquals, ETHER, Percent, WETH } from '@sphynxswap/sdk'
+import { Currency, currencyEquals, ETHER, Percent, WETH, RouterType } from '@sphynxswap/sdk'
 import { Button, Text, AddIcon, ArrowDownIcon, CardBody, Slider, Box, Flex, useModal } from '@sphynxswap/uikit'
 import { RouteComponentProps } from 'react-router'
 import { BigNumber } from '@ethersproject/bignumber'
@@ -115,12 +115,25 @@ export default function RemoveLiquidity({
       { name: 'chainId', type: 'uint256' },
       { name: 'verifyingContract', type: 'address' },
     ]
-    const domain = {
-      name: 'Pancake LPs',
-      version: '1',
-      chainId,
-      verifyingContract: pair.liquidityToken.address,
+
+    let domain
+
+    if (routerType === RouterType.sphynx) {
+      domain = {
+        name: 'Sphynx LPs',
+        version: '1',
+        chainId,
+        verifyingContract: pair.liquidityToken.address,
+      }
+    } else {
+      domain = {
+        name: 'Pancake LPs',
+        version: '1',
+        chainId,
+        verifyingContract: pair.liquidityToken.address,
+      }
     }
+
     const Permit = [
       { name: 'owner', type: 'address' },
       { name: 'spender', type: 'address' },
@@ -655,9 +668,7 @@ export default function RemoveLiquidity({
                       ? 'danger'
                       : 'primary'
                   }
-                  onClick={() => {
-                    onPresentRemoveLiquidity()
-                  }}
+                  onClick={onPresentRemoveLiquidity}
                   width="100%"
                   disabled={!isValid || (signatureData === null && approval !== ApprovalState.APPROVED)}
                 >

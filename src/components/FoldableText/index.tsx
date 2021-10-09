@@ -29,12 +29,16 @@ const FoldableText: React.FC<FoldableTextProps> = ({ title, children, ...props }
   const { t } = useTranslation()
   const [isExpanded, setIsExpanded] = useState(false)
 
+  const handleExpand = () => {
+    setIsExpanded(!isExpanded)
+  }
+
   return (
-    <Wrapper {...props} flexDirection="column" onClick={() => setIsExpanded(!isExpanded)}>
+    <Wrapper {...props} flexDirection="column" onClick={handleExpand}>
       <Flex justifyContent="space-between" alignItems="center" pb="16px">
         <Text fontWeight="bold">{title}</Text>
         <StyledExpandableLabelWrapper>
-          <ExpandableLabel expanded={isExpanded} onClick={() => setIsExpanded(!isExpanded)}>
+          <ExpandableLabel expanded={isExpanded} onClick={handleExpand}>
             {isExpanded ? t('Hide') : t('Details')}
           </ExpandableLabel>
         </StyledExpandableLabelWrapper>

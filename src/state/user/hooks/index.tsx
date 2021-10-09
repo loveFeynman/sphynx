@@ -1,4 +1,4 @@
-import { Pair, Token } from '@sphynxswap/sdk'
+import { Pair, Token, RouterType } from '@sphynxswap/sdk'
 import flatMap from 'lodash/flatMap'
 import { useCallback, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -177,7 +177,10 @@ export function usePairAdder(): (pair: Pair) => void {
  * @param tokenB the other token
  */
 export function toV2LiquidityToken([routerType, tokenA, tokenB]: [string, Token, Token]): Token {
-  return new Token(tokenA.chainId, Pair.getAddress(routerType, tokenA, tokenB), 18, 'Cake-LP', 'Pancake LPs')
+  if (routerType && routerType === RouterType.pancake) {
+    return new Token(tokenA.chainId, Pair.getAddress(routerType, tokenA, tokenB), 18, 'Cake-LP', 'Pancake LPs')
+  }
+  return new Token(tokenA.chainId, Pair.getAddress(routerType, tokenA, tokenB), 18, 'Sphynx-LP', 'Sphynx LPs')
 }
 
 /**

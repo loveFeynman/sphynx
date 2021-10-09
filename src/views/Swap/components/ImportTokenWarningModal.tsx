@@ -9,15 +9,18 @@ interface Props extends InjectedModalProps {
 }
 
 const ImportTokenWarningModal: React.FC<Props> = ({ tokens, onDismiss, onCancel }) => {
+
+  const handleDismiss = () => {
+    if (onDismiss) {
+      onDismiss()
+    }
+    onCancel()
+  }
+
   return (
     <Modal
       title="Import Token"
-      onDismiss={() => {
-        if (onDismiss) {
-          onDismiss()
-        }
-        onCancel()
-      }}
+      onDismiss={handleDismiss}
       style={{ maxWidth: '420px' }}
     >
       <ImportToken tokens={tokens} handleCurrencySelect={onDismiss} />

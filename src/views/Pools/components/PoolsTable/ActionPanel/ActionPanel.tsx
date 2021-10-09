@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import styled, { keyframes, css } from 'styled-components'
 import {
   Box,
@@ -225,6 +225,10 @@ const ActionPanel: React.FC<ActionPanelProps> = ({ account, pool, userDataLoaded
     </Flex>
   )
 
+  const handleRegisterToken = useCallback(() => {
+    registerToken(tokenAddress, earningToken.symbol, earningToken.decimals)
+  }, [earningToken, tokenAddress])
+
   return (
     <StyledActionPanel expanded={expanded}>
       <InfoSection>
@@ -258,7 +262,7 @@ const ActionPanel: React.FC<ActionPanelProps> = ({ account, pool, userDataLoaded
               variant="text"
               p="0"
               height="auto"
-              onClick={() => registerToken(tokenAddress, earningToken.symbol, earningToken.decimals)}
+              onClick={handleRegisterToken}
             >
               <Text color="primary">{t('Add to Metamask')}</Text>
               <MetamaskIcon ml="4px" />

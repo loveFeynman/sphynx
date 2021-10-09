@@ -53,7 +53,7 @@ const DividendPanel: React.FC = () => {
       .call()
       .then((data) => {
         const bal: any = web3.utils.fromWei(data)
-        setBalance(bal / 2)
+        setBalance(bal / 2) 
       })
 
     return () => ac.abort();
@@ -66,7 +66,7 @@ const DividendPanel: React.FC = () => {
         <Text color="white" mt={2} ml={1}>
           {t('Sphynx Dividend')}
         </Text>
-        <DetailsImage src={MoreIcon} alt="More Icon" onClick={() => onPresentDividendModal()} />
+        <DetailsImage src={MoreIcon} alt="More Icon" onClick={onPresentDividendModal} />
       </Flex>
       <Flex justifyContent="space-between" mt={2}>
         <Text color="white" fontSize="14px">

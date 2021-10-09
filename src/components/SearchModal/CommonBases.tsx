@@ -36,6 +36,13 @@ export default function CommonBases({
   onSelect: (currency: Currency) => void
 }) {
   const { t } = useTranslation()
+
+  const handleSelectCurrency = () => {
+    if (!selectedCurrency || !currencyEquals(selectedCurrency, ETHER)) {
+      onSelect(ETHER)
+    }
+  }
+
   return (
     <AutoColumn gap="md">
       <AutoRow>
@@ -44,11 +51,7 @@ export default function CommonBases({
       </AutoRow>
       <AutoRow gap="auto">
         <BaseWrapper
-          onClick={() => {
-            if (!selectedCurrency || !currencyEquals(selectedCurrency, ETHER)) {
-              onSelect(ETHER)
-            }
-          }}
+          onClick={handleSelectCurrency}
           disable={selectedCurrency === ETHER}
         >
           <CurrencyLogo currency={ETHER} style={{ marginRight: 8 }} />
