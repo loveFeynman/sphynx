@@ -2,7 +2,7 @@ import { ChainId, JSBI, Percent, Token, WETH } from '@sphynxswap/sdk'
 import { BUSD, DAI, USDT, BTCB, CAKE, WBNB, UST, ETH, USDC, SPHYNX } from './tokens'
 
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
-export const ROUTER_ADDRESS = '0xEF3A73b639719fDBe775411b41683E0aBee17025' // sphynx router v1 for mainnet
+export const ROUTER_ADDRESS = '0xBA42b1EBF47dd2E0B61aB7e214c14445cea18fd9' // sphynx router v1 for mainnet
 export const PANCAKE_ROUTER_ADDRESS = '0x10ED43C718714eb63d5aA57B78B54704E256024E'
 
 // a list of tokens by chain

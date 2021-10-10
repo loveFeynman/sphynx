@@ -70,7 +70,7 @@ import { Field, replaceSwapState } from '../../state/swap/actions'
 import Web3 from 'web3'
 import ERC20ABI from 'assets/abis/erc20.json'
 import routerABI from 'assets/abis/pancakeRouter.json'
-import { getPancakePairAddress, getPancakePairAddressV1 } from 'state/info/ws/priceData'
+import { getPancakePairAddress, getPancakePairAddressV1, getSphynxPairAddress } from 'state/info/ws/priceData'
 import * as ethers from 'ethers'
 import { simpleRpcProvider } from 'utils/providers'
 import { priceInput, amountInput } from 'state/input/actions'
@@ -244,6 +244,8 @@ export default function Swap({ history }: RouteComponentProps) {
       if (wBNBPair !== null) pairs.push(wBNBPair.toLowerCase())
       let wBNBPairV1 = await getPancakePairAddressV1(input, wBNBAddr, simpleRpcProvider)
       if (wBNBPairV1 !== null) pairs.push(wBNBPairV1.toLowerCase())
+      let wBNBPairSphynx = await getSphynxPairAddress(input, wBNBAddr, simpleRpcProvider)
+      if (wBNBPairSphynx !== null) pairs.push(wBNBPairSphynx.toLowerCase())
       setPairs(pairs)
     }
     getPairs()
