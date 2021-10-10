@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import styled from 'styled-components'
 import { RouterType } from '@sphynxswap/sdk'
 import { useTranslation } from 'contexts/Localization'
@@ -31,6 +31,11 @@ const StyledNav = styled.div`
 const AutoNav = (props) => {
   const { setRouterType } = useSetRouterType()
   const { swapRouter, setSwapRouter } = props
+
+  useEffect(() => {
+    setSwapRouter(SwapRouter.SPHYNX_SWAP)
+    setRouterType(RouterType.sphynx)
+  }, [setSwapRouter, setRouterType])
 
   const { t } = useTranslation()
 
