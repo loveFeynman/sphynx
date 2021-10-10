@@ -1,5 +1,5 @@
 /* eslint-disable */
-import * as React from 'react'
+import React from 'react'
 import styled from 'styled-components'
 import './index.css'
 import {
@@ -14,7 +14,7 @@ import { useSelector } from 'react-redux'
 import { AppState } from 'state'
 import { isAddress } from 'utils'
 import { getTokenDetails } from '../../../../../utils/apiServices'
-import { UNSET_PRICE } from 'config/constants/info'
+import storages from 'config/constants/storages'
 
 const ChartContainer = styled.div<{ height: number }>`
   position: relative;
@@ -67,12 +67,8 @@ let currentResolutions: any
 
 const SphynxChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
   const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
-  const realPrice = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.price)
-  const realAmount = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.amount)
   const routerVersion = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.routerVersion)
   const result = isAddress(input)
-  const priceRef = React.useRef(UNSET_PRICE);
-  const amountRef = React.useRef(0);
 
   const [tokendetails, setTokenDetails] = React.useState({
     name: 'PancakeSwap Token',
@@ -179,8 +175,6 @@ const SphynxChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => 
             lastBarsCache = obj
           }
           bars = [...bars, obj]
-          priceRef.current = obj.close
-          amountRef.current = obj.volume
           return {}
         })
         // eslint-disable-next-line no-console
@@ -198,7 +192,7 @@ const SphynxChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => 
       subscribeUID: any,
       onResetCacheNeededCallback: any,
     ) => {
-      console.log("subscribeBars");
+
       currentResolutions = resolution
       myInterval = setInterval(async function () {
         const resolutionMapping: any = {
@@ -214,18 +208,21 @@ const SphynxChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => 
           '1M': 30 * 24 * 3600000,
         }
 
+        let sessionData = JSON.parse(sessionStorage.getItem(storages.SESSION_LIVE_PRICE))
+        let latestTime = Number(sessionStorage.getItem(storages.SESSION_LATEST_TIME))
+        let volume = Number(sessionStorage.getItem(storages.SESSION_LIVE_VOLUME))
+
         if (lastBarsCache === undefined) return
-        if (priceRef.current === UNSET_PRICE) return
+        if (sessionData === null) return
+        if (sessionData.input != input) return
         const isNew = new Date().getTime() - Number(lastBarsCache.time) >= resolutionMapping[currentResolutions]
 
-        lastBarsCache.close = priceRef.current
-        lastBarsCache.volume = amountRef.current
         if (isNew) {
           lastBarsCache.time = new Date().getTime()
           lastBarsCache.open = lastBarsCache.close
           lastBarsCache.high = lastBarsCache.close
           lastBarsCache.low = lastBarsCache.close
-          amountRef.current = 0
+          volume = 0
         } else {
           if (Number(lastBarsCache.low) > Number(lastBarsCache.close)) {
             lastBarsCache.low = lastBarsCache.close
@@ -233,15 +230,22 @@ const SphynxChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => 
           if (Number(lastBarsCache.high) < Number(lastBarsCache.close)) {
             lastBarsCache.high = lastBarsCache.close
           }
+          if (latestTime < Number(sessionData.timestamp)) {
+            volume = volume + Number(sessionData.amount)
+            latestTime = Number(sessionData.timestamp)
+            sessionStorage.setItem(storages.SESSION_LATEST_TIME, latestTime.toString())
+          }
         }
 
+        lastBarsCache.close = sessionData.price
+        lastBarsCache.volume = volume
+        sessionStorage.setItem(storages.SESSION_LIVE_VOLUME, volume.toString())
         onRealtimeCallback(lastBarsCache)
-      }, 1000 * 5) // 5s update interval
+      }, 1000 * 2) // 2s update interval
     },
     unsubscribeBars: (subscriberUID) => {
       console.log('[unsubscribeBars]: Method call with subscriberUID:', subscriberUID)
       console.log('[unsubscribeBars]: cleared')
-      clearInterval(myInterval);
     },
   }
 
@@ -270,16 +274,11 @@ const SphynxChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => 
   }
 
   React.useEffect(() => {
+    let curTime = new Date().getTime()
+    sessionStorage.setItem(storages.SESSION_LATEST_TIME, curTime.toString())
+    sessionStorage.setItem(storages.SESSION_LIVE_VOLUME, '0')
     getWidget()
   }, [input])
-
-  React.useEffect(() => {
-    priceRef.current = realPrice
-  }, [realPrice])
-
-  React.useEffect(() => {
-    amountRef.current = amountRef.current + realAmount
-  }, [realAmount])
 
   return (
     <ChartContainer height={props.height}>
