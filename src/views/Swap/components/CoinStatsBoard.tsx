@@ -8,6 +8,7 @@ import Column from 'components/Column'
 import { isAddress } from 'utils'
 import { useTranslation } from 'contexts/Localization'
 import axios from 'axios'
+import DefaultImg from 'assets/images/MainLogo.png'
 import { AppState } from '../../../state'
 import { getChartStats } from '../../../utils/apiServices'
 
@@ -142,18 +143,23 @@ export default function CoinStatsBoard() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [input])
 
+  const onImgLoadError = (event: any) => {
+    const elem = event.target
+    elem.src = DefaultImg;
+  }
+
   return (
     <Container>
       <StyledWrapper>
         <Column>
           <Flex>
             <IconWrapper size={32}>
-              <img src={linkIcon} alt="Coin icon" />
+              <img src={linkIcon} onError={onImgLoadError} alt="No icon yet" />
             </IconWrapper>
             {tokenData && (
               <Flex flexDirection="column" justifyContent="center">
                 <Text>{t(`${tokenData.symbol}`)}</Text>
-                <Text>$ {Number(tokenData.marketCap).toLocaleString()}</Text>
+                <Text>$ {Number(parseInt(tokenData.totalSupply) * parseFloat(alldata.price)).toLocaleString()}</Text>
               </Flex>
             )}
           </Flex>
