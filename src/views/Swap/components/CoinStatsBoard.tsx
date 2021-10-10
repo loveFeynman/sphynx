@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { useSelector } from 'react-redux'
 import { utils } from 'ethers'
 import styled from 'styled-components'
@@ -9,6 +9,7 @@ import { isAddress } from 'utils'
 import { useTranslation } from 'contexts/Localization'
 import axios from 'axios'
 import DefaultImg from 'assets/images/MainLogo.png'
+import storages from 'config/constants/storages'
 import { AppState } from '../../../state'
 import { getChartStats } from '../../../utils/apiServices'
 
@@ -95,6 +96,7 @@ const StyledWrapper = styled.div`
 export default function CoinStatsBoard() {
   const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
   const result = isAddress(input)
+  const interval = useRef(null)
   const { t } = useTranslation()
 
   const [alldata, setalldata] = useState({
@@ -107,6 +109,7 @@ export default function CoinStatsBoard() {
   })
 
   const [tokenData, setTokenData] = useState<any>(null)
+  const [price, setPrice] = useState<any>(null)
 
   const [linkIcon, setLinkIcon] = useState(
     'https://r.poocoin.app/smartchain/assets/0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82/logo.png',
@@ -124,6 +127,7 @@ export default function CoinStatsBoard() {
         })
         const chartStats: any = await getChartStats(input);
         setalldata(chartStats)
+        setPrice(chartStats.price)
         setLinkIcon(
           `https://r.poocoin.app/smartchain/assets/${
             input ? utils.getAddress(input) : '0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82'
@@ -136,10 +140,20 @@ export default function CoinStatsBoard() {
       setTimeout(() => getTableData(), 5000)
     }
   }
+  const myInterval = interval.current;
   useEffect(() => {
     const ac = new AbortController();
     getTableData()
-    return () => ac.abort();
+    interval.current = setInterval(() => {
+      const sessionData = JSON.parse(sessionStorage.getItem(storages.SESSION_LIVE_PRICE))
+      if (sessionData === null) return
+      if (sessionData.input !== input) return
+      setPrice(sessionData.price)
+    }, 2000)
+    return () => {
+      clearInterval(interval.current)
+      ac.abort();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [input])
 
@@ -159,14 +173,14 @@ export default function CoinStatsBoard() {
             {tokenData && (
               <Flex flexDirection="column" justifyContent="center">
                 <Text>{t(`${tokenData.symbol}`)}</Text>
-                <Text>$ {Number(parseInt(tokenData.totalSupply) * parseFloat(alldata.price)).toLocaleString()}</Text>
+                <Text>$ {Number(parseInt(tokenData.totalSupply) * parseFloat(price)).toLocaleString()}</Text>
               </Flex>
             )}
           </Flex>
         </Column>
         <Column>
           <Text>{t('Price')}</Text>
-          <Text>${Number(alldata.price).toFixed(6).toLocaleString()}</Text>
+          <Text>${Number(price).toFixed(6).toLocaleString()}</Text>
         </Column>
         <Column>
           <Text>{t('24h Change')}</Text>

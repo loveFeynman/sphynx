@@ -64,7 +64,7 @@ const DividendPanel: React.FC = () => {
       <Flex>
         <img src={MainLogo} alt="Main Logo" />
         <Text color="white" mt={2} ml={1}>
-          {t('Sphynx Dividend')}
+          {t('Sphynx Swap Fee Rewards')}
         </Text>
         <DetailsImage src={MoreIcon} alt="More Icon" onClick={onPresentDividendModal} />
       </Flex>

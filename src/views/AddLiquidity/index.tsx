@@ -143,7 +143,11 @@ export default function AddLiquidity({
     let value: BigNumber | null
     if (currencyA === ETHER || currencyB === ETHER) {
       const tokenBIsETH = currencyB === ETHER
-      estimate = router.estimateGas.addLiquidityETH
+      try{
+        estimate = router.estimateGas.addLiquidityETH
+      } catch (err) {
+        console.log("err", err);
+      }
       method = router.addLiquidityETH
       args = [
         wrappedCurrency(tokenBIsETH ? currencyA : currencyB, chainId)?.address ?? '', // token
