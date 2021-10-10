@@ -41,7 +41,7 @@ const AutoNav = (props) => {
 
   return (
     <StyledNav>
-      <Button
+      {/* <Button
         className={swapRouter === SwapRouter.AUTO_SWAP ? 'active' : ''}
         id="auto-nav-link"
         onClick={() => {
@@ -50,7 +50,7 @@ const AutoNav = (props) => {
         }}
       >
         {t('AUTO')}
-      </Button>
+      </Button> */}
       <Button
         className={swapRouter === SwapRouter.SPHYNX_SWAP ? 'active' : ''}
         id="dgsn-nav-link"
@@ -59,7 +59,7 @@ const AutoNav = (props) => {
           setSwapRouter(SwapRouter.SPHYNX_SWAP)
         }}
       >
-        {t('SPXLP')}
+        {t('SPHYNX-LP')}
       </Button>
       <Button
         className={swapRouter === SwapRouter.PANCAKE_SWAP ? 'active' : ''}
