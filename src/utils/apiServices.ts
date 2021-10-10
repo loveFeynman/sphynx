@@ -285,12 +285,15 @@ const getPrice = async (tokenAddr) => {
 };
 
 async function topTrades(address: string, type: 'buy' | 'sell') {
+  const till = new Date().toISOString();
+  const since = new Date(new Date().getTime() - 3600 * 24 * 1000 * 3).toISOString();
   const query = `{
     ethereum(network: bsc) {
       dexTrades(
-        options: {limit: 300, desc: "block.height"}
+        options: {desc: "block.height"}
+        date: {since: "${since}", till: "${till}"}
         exchangeName: {in: ["Pancake", "Pancake v2"]}
-        baseCurrency: {is: "0x2e121Ed64EEEB58788dDb204627cCB7C7c59884c"}
+        baseCurrency: {is: "${address}"}
         quoteCurrency: {is: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"}
       ) {
         block {
@@ -329,7 +332,7 @@ async function topTrades(address: string, type: 'buy' | 'sell') {
   } = await axios.post(url, { query }, config);
   const wallets = [];
   const tradeAmounts = [];
-  const keyWord = type === "buy" ? "buyCurrency" : "sellCurrency";
+  const keyWord = type === "buy" ? "sellCurrency" : "buyCurrency";
   for (let i = 0; i < dexTrades.length; i++) {
     if (dexTrades[i].baseCurrency.symbol === dexTrades[i][keyWord].symbol) {
       if (wallets.indexOf(dexTrades[i].transaction.txFrom.address) === -1) {
