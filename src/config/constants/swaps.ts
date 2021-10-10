@@ -6,6 +6,8 @@ export const messages = {
 export const methods = {
     SWAP_ETH_NO_FEE: "swapETHForExactTokens",
     SWAP_ETH_USE_FEE: "swapExactETHForTokensSupportingFeeOnTransferTokens",
+    SWAP_TOKEN_NO_FEE: "swapExactTokensForETH",
+    SWAP_TOKEN_USE_FEE: "swapExactTokensForETHSupportingFeeOnTransferTokens"
 }
 
 const SwapRouter = {

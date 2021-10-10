@@ -172,6 +172,7 @@ export default function Swap({ history }: RouteComponentProps) {
   const [blockFlag, setBlockFlag] = useState(false)
   const swapFlag = useSelector<AppState, AppState['autoSwapReducer']>((state) => state.autoSwapReducer.swapFlag)
   const inputTokenName = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
+  const routerVersion = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.routerVersion)
 
   stateRef.current = transactionData
   pairsRef.current = pairs
@@ -240,10 +241,12 @@ export default function Swap({ history }: RouteComponentProps) {
     const ab = new AbortController()
     const getPairs = async () => {
       let pairs = []
+     if(routerVersion !== 'sphynx') {
       let wBNBPair = await getPancakePairAddress(input, wBNBAddr, simpleRpcProvider)
       if (wBNBPair !== null) pairs.push(wBNBPair.toLowerCase())
       let wBNBPairV1 = await getPancakePairAddressV1(input, wBNBAddr, simpleRpcProvider)
       if (wBNBPairV1 !== null) pairs.push(wBNBPairV1.toLowerCase())
+     }
       let wBNBPairSphynx = await getSphynxPairAddress(input, wBNBAddr, simpleRpcProvider)
       if (wBNBPairSphynx !== null) pairs.push(wBNBPairSphynx.toLowerCase())
       setPairs(pairs)
@@ -252,7 +255,7 @@ export default function Swap({ history }: RouteComponentProps) {
     return () => {
       ab.abort()
     }
-  }, [tokenAddress])
+  }, [tokenAddress, routerVersion])
 
   const parseData: any = async (events, blockNumber) => {
     setBusy(true)
@@ -360,6 +363,7 @@ export default function Swap({ history }: RouteComponentProps) {
             cachedBlockNumber = info[info.length - 1].blockNumber
           }
           info = info.filter((oneData) => oneData.blockNumber !== cachedBlockNumber)
+          console.log("PairsRef", pairsRef.current);
           info = info.filter((oneData) => pairsRef.current.indexOf(oneData.address.toLowerCase()) !== -1)
           info = [...new Set(info)]
 
