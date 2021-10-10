@@ -1,11 +1,11 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { useSelector } from 'react-redux'
 import { AppState } from 'state'
+import { autoSwap } from 'state/flags/actions'
 import { Contract } from '@ethersproject/contracts'
-import { JSBI, Percent, Router, RouterType, SwapParameters, Trade, TradeType } from '@sphynxswap/sdk'
+import { JSBI, Percent, Router, SwapParameters, Trade, TradeType } from '@sphynxswap/sdk'
 import { useMemo } from 'react'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
-import { messages, methods } from 'config/constants/swaps'
 import { BIPS_BASE, INITIAL_ALLOWED_SLIPPAGE } from '../config/constants'
 import { useSetRouterType } from '../state/application/hooks'
 import { useTransactionAdder } from '../state/transactions/hooks'
@@ -99,7 +99,7 @@ export function useSwapCallback(
   const { account, chainId, library } = useActiveWeb3React()
   const swapFlag = useSelector<AppState, AppState['autoSwapReducer']>((state) => state.autoSwapReducer.swapFlag)
   const swapCalls = useSwapCallArguments(trade, swapFlag? INITIAL_ALLOWED_SLIPPAGE * 100 : allowedSlippage, recipientAddressOrName)
-  const { routerType } = useSetRouterType()
+
   const addTransaction = useTransactionAdder()
 
   const { address: recipientAddress } = useENS(recipientAddressOrName)
@@ -127,7 +127,7 @@ export function useSwapCallback(
             } = call
             const options = !value || isZero(value) ? {} : { value }
 
-            return contract.estimateGas[routerType === RouterType.sphynx ? methods.SWAP_ETH_NO_FEE : methodName](...args, options)
+            return contract.estimateGas[methodName](...args, options)
               .then((gasEstimate) => {
                 return {
                   call,
@@ -137,7 +137,7 @@ export function useSwapCallback(
               .catch((gasError) => {
                 console.error('Gas estimate failed, trying eth_call to extract error', call)
 
-                return contract.callStatic[routerType === RouterType.sphynx ? methods.SWAP_ETH_NO_FEE : methodName](...args, options)
+                return contract.callStatic[methodName](...args, options)
                   .then((result) => {
                     console.error('Unexpected successful call after failed estimate gas', call, gasError, result)
                     return { call, error: new Error('Unexpected issue with estimating the gas. Please try again.') }
@@ -145,7 +145,7 @@ export function useSwapCallback(
                   .catch((callError) => {
                     console.error('Call threw error', call, callError)
                     const reason: string = callError.reason || callError.data?.message || callError.message
-                    const errorMessage = `${messages.SWAP_TRANSACTION_ERROR}: ${
+                    const errorMessage = `The transaction cannot succeed due to error: ${
                       reason ?? 'Unknown error, check the logs'
                     }.`
 
@@ -175,7 +175,7 @@ export function useSwapCallback(
           gasEstimate,
         } = successfulEstimation
 
-        return contract[routerType === RouterType.sphynx ? methods.SWAP_ETH_NO_FEE : methodName](...args, {
+        return contract[methodName](...args, {
           gasLimit: calculateGasMargin(gasEstimate),
           ...(value && !isZero(value) ? { value, from: account } : { from: account }),
         })
@@ -214,5 +214,5 @@ export function useSwapCallback(
       },
       error: null,
     }
-  }, [trade, library, account, chainId, recipient, recipientAddressOrName, swapCalls, routerType, addTransaction])
+  }, [trade, library, account, chainId, recipient, recipientAddressOrName, swapCalls, addTransaction])
 }

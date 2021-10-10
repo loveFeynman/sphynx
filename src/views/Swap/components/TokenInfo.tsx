@@ -86,7 +86,7 @@ export default function TokenInfo() {
   const getTableData = useCallback(async () => {
     try {
       if (result) {
-        axios.post(`${process.env.REACT_APP_BACKEND_API_URL}/tokenStats`, { address: input }).then((response) => {
+        axios.post(`http://localhost:9000/tokenStats`, { address: input }).then((response) => {
           setalldata(response.data)
         })
         dispatch(
