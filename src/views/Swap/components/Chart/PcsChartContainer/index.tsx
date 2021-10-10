@@ -1,5 +1,5 @@
 /* eslint-disable */
-import * as React from 'react'
+import React, { useRef } from 'react'
 import styled from 'styled-components'
 import './index.css'
 import {
@@ -64,8 +64,6 @@ function getLanguageFromURL(): LanguageCode | null {
 
 let myInterval: any
 let currentResolutions: any
-let lastestTime: any
-let volume: any
 
 const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
   const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
@@ -211,7 +209,9 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
           '1M': 30 * 24 * 3600000,
         }
 
-        let sessionData = JSON.parse(sessionStorage.getItem(storages.SESSION_LIVE_PRICE));
+        let sessionData = JSON.parse(sessionStorage.getItem(storages.SESSION_LIVE_PRICE))
+        let latestTime = Number(sessionStorage.getItem(storages.SESSION_LATEST_TIME))
+        let volume = Number(sessionStorage.getItem(storages.SESSION_LIVE_VOLUME))
 
         if (lastBarsCache === undefined) return
         if (sessionData === null) return
@@ -231,16 +231,18 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
           if (Number(lastBarsCache.high) < Number(lastBarsCache.close)) {
             lastBarsCache.high = lastBarsCache.close
           }
-          if (lastestTime < Number(sessionData.timestamp)) {
+          if (latestTime < Number(sessionData.timestamp)) {
             volume = volume + Number(sessionData.amount)
-            lastestTime = Number(sessionData.timestamp)
+            latestTime = Number(sessionData.timestamp)
+            sessionStorage.setItem(storages.SESSION_LATEST_TIME, latestTime.toString())
           }
         }
 
         lastBarsCache.close = sessionData.price
         lastBarsCache.volume = volume
+        sessionStorage.setItem(storages.SESSION_LIVE_VOLUME, volume.toString())
         onRealtimeCallback(lastBarsCache)
-      }, 1000 * 4) // 4s update interval
+      }, 1000 * 2) // 4s update interval
     },
     unsubscribeBars: (subscriberUID) => {
       console.log('[unsubscribeBars]: Method call with subscriberUID:', subscriberUID)
@@ -273,8 +275,10 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
   }
 
   React.useEffect(() => {
+    let curTime = new Date().getTime()
+    sessionStorage.setItem(storages.SESSION_LATEST_TIME, curTime.toString())
+    sessionStorage.setItem(storages.SESSION_LIVE_VOLUME, '0')
     getWidget()
-    lastestTime = 0
   }, [input])
 
   return (

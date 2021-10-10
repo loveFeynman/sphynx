@@ -75,6 +75,7 @@ import * as ethers from 'ethers'
 import { simpleRpcProvider } from 'utils/providers'
 import { priceInput, amountInput } from 'state/input/actions'
 import { UNSET_PRICE, DEFAULT_VOLUME_RATE } from 'config/constants/info'
+import storages from 'config/constants/storages'
 const pancakeV2: any = '0x10ED43C718714eb63d5aA57B78B54704E256024E'
 const pancakeV1: any = '0x05fF2B0DB69458A0750badebc4f9e13aDd608C7F'
 const metamaskSwap: any = '0x1a1ec25dc08e98e5e93f1104b5e5cdd298707d31'
@@ -167,8 +168,8 @@ export default function Swap({ history }: RouteComponentProps) {
   const pairsRef = useRef([])
   const [isLoading, setLoading] = useState(false)
   const [isBusy, setBusy] = useState(false)
-  const [volumeRate, setVolumeRate] = useState(DEFAULT_VOLUME_RATE)
   const swapFlag = useSelector<AppState, AppState['autoSwapReducer']>((state) => state.autoSwapReducer.swapFlag)
+  const inputTokenName = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
 
   stateRef.current = transactionData
   pairsRef.current = pairs
@@ -254,8 +255,21 @@ export default function Swap({ history }: RouteComponentProps) {
     let newTransactions = stateRef.current
     return new Promise(async (resolve) => {
       const price = await getBNBPrice()
+      let curPrice = UNSET_PRICE;
+      let curAmount = 0;
+
       for (let i = 0; i <= events.length; i++) {
         if (i === events.length) {
+          if(events.length > 0 && curPrice !== UNSET_PRICE){
+            let sessionData = {
+              "input": inputTokenName,
+              "price": curPrice,
+              "amount": curAmount,
+              "timestamp": new Date().getTime(),
+            }
+            sessionStorage.setItem(storages.SESSION_LIVE_PRICE, JSON.stringify(sessionData))
+          }
+          
           setTransactions(newTransactions)
           setBusy(false)
           setTimeout(() => getTransactions(blockNumber), 3000);
@@ -313,8 +327,8 @@ export default function Swap({ history }: RouteComponentProps) {
             if (newTransactions.length > 1000) {
               newTransactions.pop()
             }
-            dispatch(priceInput({ price: oneData.price }))
-            dispatch(amountInput({ amount: oneData.usdValue / volumeRate }))
+            curPrice = oneData.price
+            curAmount += oneData.amount
           } catch (err) {
             console.log('error', err)
           }
@@ -370,7 +384,6 @@ export default function Swap({ history }: RouteComponentProps) {
   }
 
   useEffect(() => {
-    dispatch(priceInput({ price: UNSET_PRICE }))
     const fetchDecimals = async () => {
       tokenDecimal = await contract.methods.decimals().call()
     }
@@ -382,7 +395,6 @@ export default function Swap({ history }: RouteComponentProps) {
       try {
         const provider = simpleRpcProvider // simpleRpcProvider
         const bnbPrice = await getBNBPrice(provider)
-        setVolumeRate(bnbPrice)
         // pull historical data
         const queryResult = await axios.post(BITQUERY_API, { query: getDataQuery() }, config)
         if (queryResult.data.data && queryResult.data.data.ethereum.dexTrades) {
@@ -432,6 +444,10 @@ export default function Swap({ history }: RouteComponentProps) {
       ab.abort()
     }
   }, [dispatch, tokenAddress])
+
+  React.useEffect(() => {
+    sessionStorage.removeItem(storages.SESSION_LIVE_PRICE)
+  }, [inputTokenName])
 
   const loadedUrlParams = useDefaultsFromURLSearch()
 
