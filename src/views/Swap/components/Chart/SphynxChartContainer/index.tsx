@@ -198,7 +198,7 @@ const SphynxChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => 
       subscribeUID: any,
       onResetCacheNeededCallback: any,
     ) => {
-
+      console.log("subscribeBars");
       currentResolutions = resolution
       myInterval = setInterval(async function () {
         const resolutionMapping: any = {
@@ -241,6 +241,7 @@ const SphynxChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => 
     unsubscribeBars: (subscriberUID) => {
       console.log('[unsubscribeBars]: Method call with subscriberUID:', subscriberUID)
       console.log('[unsubscribeBars]: cleared')
+      clearInterval(myInterval);
     },
   }
 

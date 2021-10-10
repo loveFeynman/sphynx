@@ -31,7 +31,6 @@ export default createReducer<any>(initialState, (builder) =>
     })
     .addCase(priceInput, (state, { payload: { price } }) => {
       // they're typing into the field they've last typed in
-
       return {
         ...state,
         price,
