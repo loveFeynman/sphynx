@@ -89,7 +89,7 @@ async function getChartStats(address: string) {
 
     const factory = new web3.eth.Contract(
       factoryAbi as AbiItem[],
-      "0xcA143Ce32Fe78f1f7019d7d551a6402fC5350c73"
+      "0x0C1Bf16f69B88955C177a223759d2B58681d84A3"
     );
     const pairAddress = await factory.methods
       .getPair(baseAddress, quoteAddress)
