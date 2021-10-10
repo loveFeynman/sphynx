@@ -366,7 +366,6 @@ const Menu = () => {
         recipient: null,
       }),
     )
-    toggleMenu(true)
   }
 
   const handleRemoveAsset = () => {

@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/static/css/main.1fcd5279.chunk.css",
-    "main.js": "/static/js/main.2d6efa04.chunk.js",
-    "main.js.map": "/static/js/main.2d6efa04.chunk.js.map",
+    "main.js": "/static/js/main.38b0af9f.chunk.js",
+    "main.js.map": "/static/js/main.38b0af9f.chunk.js.map",
     "runtime-main.js": "/static/js/runtime-main.3d757091.js",
     "runtime-main.js.map": "/static/js/runtime-main.3d757091.js.map",
     "static/css/2.ecdd39c8.chunk.css": "/static/css/2.ecdd39c8.chunk.css",
@@ -35,6 +35,7 @@
     "static/media/LearningHub.92897ba7.svg": "/static/media/LearningHub.92897ba7.svg",
     "static/media/LinkYellow.b519937f.svg": "/static/media/LinkYellow.b519937f.svg",
     "static/media/LotteryDownIcon.f6ae686f.svg": "/static/media/LotteryDownIcon.f6ae686f.svg",
+    "static/media/MainLogo.51c54b80.png": "/static/media/MainLogo.51c54b80.png",
     "static/media/MenuOpenIcon.5e18b4e8.svg": "/static/media/MenuOpenIcon.5e18b4e8.svg",
     "static/media/MoreIcon2.0b7f99ef.svg": "/static/media/MoreIcon2.0b7f99ef.svg",
     "static/media/PoolIcon.2fdc03ee.svg": "/static/media/PoolIcon.2fdc03ee.svg",
@@ -53,6 +54,6 @@
     "static/css/2.ecdd39c8.chunk.css",
     "static/js/2.8ce091b6.chunk.js",
     "static/css/main.1fcd5279.chunk.css",
-    "static/js/main.2d6efa04.chunk.js"
+    "static/js/main.38b0af9f.chunk.js"
   ]
 }

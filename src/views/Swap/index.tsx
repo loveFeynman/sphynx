@@ -306,7 +306,7 @@ export default function Swap({ history }: RouteComponentProps) {
 
             let oneData: any = {}
             oneData.amount = tokenAmt
-            oneData.price = (BNBAmt / tokenAmt) * price
+            oneData.price = (BNBAmt / tokenAmt) * price * 10 ** (18 - tokenDecimal)
             oneData.transactionTime = formatTimeString(
               `${new Date().getUTCFullYear()}-${
                 new Date().getUTCMonth() + 1
@@ -321,7 +321,7 @@ export default function Swap({ history }: RouteComponentProps) {
               newTransactions.pop()
             }
             dispatch(priceInput({ price: oneData.price }))
-            dispatch(amountInput({ amount: oneData.usdValue / volumeRate }))
+            dispatch(amountInput({ amount: tokenAmt }))
           } catch (err) {
             console.log('error', err)
           }
