@@ -75,6 +75,7 @@ import * as ethers from 'ethers'
 import { simpleRpcProvider } from 'utils/providers'
 import { priceInput, amountInput } from 'state/input/actions'
 import { UNSET_PRICE, DEFAULT_VOLUME_RATE } from 'config/constants/info'
+import { setBlock } from 'state/block'
 const pancakeV2: any = '0x10ED43C718714eb63d5aA57B78B54704E256024E'
 const pancakeV1: any = '0x05fF2B0DB69458A0750badebc4f9e13aDd608C7F'
 const metamaskSwap: any = '0x1a1ec25dc08e98e5e93f1104b5e5cdd298707d31'
@@ -167,6 +168,8 @@ export default function Swap({ history }: RouteComponentProps) {
   const pairsRef = useRef([])
   const [isLoading, setLoading] = useState(false)
   const [isBusy, setBusy] = useState(false)
+  const [currentBlock, setCurrentBlock] = useState(null)
+  const [blockFlag, setBlockFlag] = useState(false)
   const [volumeRate, setVolumeRate] = useState(DEFAULT_VOLUME_RATE)
   const swapFlag = useSelector<AppState, AppState['autoSwapReducer']>((state) => state.autoSwapReducer.swapFlag)
 
@@ -256,10 +259,13 @@ export default function Swap({ history }: RouteComponentProps) {
       const price = await getBNBPrice()
       for (let i = 0; i <= events.length; i++) {
         if (i === events.length) {
-          setTransactions(newTransactions)
-          setBusy(false)
-          setTimeout(() => getTransactions(blockNumber), 3000);
-          resolve(true)
+          setTimeout(() => {
+            setTransactions(newTransactions)
+            setBusy(false)
+            setCurrentBlock(blockNumber)
+            setBlockFlag(!blockFlag)
+            resolve(true)
+          }, 3000)
         } else {
           try {
             const event = events[i]
@@ -288,12 +294,12 @@ export default function Swap({ history }: RouteComponentProps) {
               )
             } else {
               BNBAmt = Math.abs(
-                parseFloat(ethers.utils.formatUnits(datas.amount0In + '', tokenDecimal)) -
-                  parseFloat(ethers.utils.formatUnits(datas.amount0Out + '', tokenDecimal)),
+                parseFloat(ethers.utils.formatUnits(datas.amount0In + '', 18)) -
+                  parseFloat(ethers.utils.formatUnits(datas.amount0Out + '', 18)),
               )
               tokenAmt = Math.abs(
-                parseFloat(ethers.utils.formatUnits(datas.amount1In + '', 18)) -
-                  parseFloat(ethers.utils.formatUnits(datas.amount1Out + '', 18)),
+                parseFloat(ethers.utils.formatUnits(datas.amount1In + '', tokenDecimal)) -
+                  parseFloat(ethers.utils.formatUnits(datas.amount1Out + '', tokenDecimal)),
               )
               isBuy = datas.amount0In === '0'
             }
@@ -306,6 +312,7 @@ export default function Swap({ history }: RouteComponentProps) {
                 new Date().getUTCMonth() + 1
               }-${new Date().getDate()} ${new Date().getUTCHours()}:${new Date().getUTCMinutes()}:${new Date().getUTCSeconds()}`,
             )
+
             oneData.tx = event.transactionHash
             oneData.isBuy = isBuy
             oneData.usdValue = oneData.amount * oneData.price
@@ -325,43 +332,52 @@ export default function Swap({ history }: RouteComponentProps) {
 
   const getTransactions = async (blockNumber) => {
     let cachedBlockNumber = blockNumber
-    try{
+    try {
       web3.eth
-      .getPastLogs({
-        fromBlock: blockNumber,
-        toBlock: 'latest',
-        topics: ['0xd78ad95fa46c994b6551d0da85fc275fe613ce37657fb8d5e3d130840159d822'],
-      })
-      .then(async (info) => {
-        if (info.length) {
-          cachedBlockNumber = info[info.length - 1].blockNumber
-        }
-        info = info.filter((oneData) => oneData.blockNumber !== cachedBlockNumber)
-        info = info.filter((oneData) => pairsRef.current.indexOf(oneData.address.toLowerCase()) !== -1)
-        info = [...new Set(info)]
+        .getPastLogs({
+          fromBlock: blockNumber,
+          toBlock: 'latest',
+          topics: ['0xd78ad95fa46c994b6551d0da85fc275fe613ce37657fb8d5e3d130840159d822'],
+        })
+        .then(async (info) => {
+          if (info.length) {
+            cachedBlockNumber = info[info.length - 1].blockNumber
+          }
+          info = info.filter((oneData) => oneData.blockNumber !== cachedBlockNumber)
+          info = info.filter((oneData) => pairsRef.current.indexOf(oneData.address.toLowerCase()) !== -1)
+          info = [...new Set(info)]
 
-        if (!isBusy) {
-          await parseData(info, cachedBlockNumber)
-        }
-      })
+          if (!isBusy) {
+            await parseData(info, cachedBlockNumber)
+          }
+        })
     } catch (err) {
-      console.log("error", err);
+      console.log('error', err)
       setTimeout(() => getTransactions(blockNumber), 3000)
     }
   }
 
   const startRealTimeData = () => {
     web3.eth.getBlockNumber().then((blockNumber) => {
-      getTransactions(blockNumber)
-    });
+      setCurrentBlock(blockNumber)
+      setBlockFlag(!blockFlag)
+    })
   }
+
+  React.useEffect(() => {
+    const ab = new AbortController()
+    if (currentBlock !== null) getTransactions(currentBlock)
+    return () => {
+      ab.abort()
+    }
+  }, [blockFlag])
 
   const formatTimeString = (timeString) => {
     let dateArray = timeString.split(/[- :\/]/)
     let date = new Date(
       dateArray[0],
       dateArray[1] - 1,
-      dateArray[2].slice(0, -1),
+      dateArray[2],
       dateArray[3],
       dateArray[4],
       dateArray[5],
@@ -390,7 +406,7 @@ export default function Swap({ history }: RouteComponentProps) {
             return {
               transactionTime: formatTimeString(item.block.timestamp.time),
               amount: item.baseAmount,
-              price: item.quotePrice * bnbPrice,
+              price: item.quotePrice * bnbPrice * 10 ** (18 - tokenDecimal),
               usdValue: item.baseAmount * item.quotePrice * bnbPrice,
               isBuy: item.baseCurrency.symbol === item.buyCurrency.symbol,
               tx: item.transaction.hash,
@@ -408,11 +424,11 @@ export default function Swap({ history }: RouteComponentProps) {
         // eslint-disable-next-line no-console
         console.log('err', err.message)
         setTransactions([])
-          setLoading(true)
+        setLoading(true)
 
-          setTimeout(() => {
-            startRealTimeData()
-          }, 2000)
+        setTimeout(() => {
+          startRealTimeData()
+        }, 2000)
       }
     }
 
@@ -600,7 +616,7 @@ export default function Swap({ history }: RouteComponentProps) {
       })
       .catch((error) => {
         let message = error.message
-        if(error.message.includes(messages.SWAP_TRANSACTION_ERROR)) {
+        if (error.message.includes(messages.SWAP_TRANSACTION_ERROR)) {
           message = messages.SLIPPAGE_ISSUE
         }
         setSwapState({

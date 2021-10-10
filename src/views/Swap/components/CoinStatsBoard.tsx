@@ -153,7 +153,7 @@ export default function CoinStatsBoard() {
             {tokenData && (
               <Flex flexDirection="column" justifyContent="center">
                 <Text>{t(`${tokenData.symbol}`)}</Text>
-                <Text>$ {Number(tokenData.marketCap).toLocaleString()}</Text>
+                <Text>$ {Number(parseInt(tokenData.totalSupply) * parseFloat(alldata.price)).toLocaleString()}</Text>
               </Flex>
             )}
           </Flex>
