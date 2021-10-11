@@ -94,7 +94,7 @@ const ToggleList = ({ poolDatas }: { poolDatas: PoolData[] }) => {
   useEffect(() => {
     // eslint-disable-next-line prefer-const
     let newMenuItems: ToggleMenuItem[] = []
-    if (poolDatas.length > 0 && checksumAddress) {
+    if (poolDatas?.length > 0 && checksumAddress) {
       newMenuItems.push({
         key: "sphynx",
         value: 'SPHYNX DEX',

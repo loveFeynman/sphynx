@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { useEffect } from 'react'
 import styled from 'styled-components'
 import { RouterType } from '@sphynxswap/sdk'
@@ -35,7 +36,7 @@ const AutoNav = (props) => {
   useEffect(() => {
     setSwapRouter(SwapRouter.SPHYNX_SWAP)
     setRouterType(RouterType.sphynx)
-  }, [setSwapRouter, setRouterType])
+  }, [])
 
   const { t } = useTranslation()
 
