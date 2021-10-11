@@ -107,7 +107,7 @@ export default function SwapModalFooter({
                   <Text mb="12px">{t('For each trade a 0.25% fee is paid')}</Text>
                   <Text>- {t('0.17% to LP token holders')}</Text>
                   <Text>- {t('0.03% to the Treasury')}</Text>
-                  <Text>- {t('0.05% towards CAKE buyback and burn')}</Text>
+                  <Text>- {t('0.05% towards SPHYNX buyback and burn')}</Text>
                 </>
               }
               ml="4px"

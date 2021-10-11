@@ -34,8 +34,10 @@ const AutoNav = (props) => {
   const { swapRouter, setSwapRouter } = props
 
   useEffect(() => {
-    setSwapRouter(SwapRouter.SPHYNX_SWAP)
-    setRouterType(RouterType.sphynx)
+    setTimeout(() => {
+      setSwapRouter(SwapRouter.SPHYNX_SWAP)
+      setRouterType(RouterType.sphynx)
+    })
   }, [])
 
   const { t } = useTranslation()

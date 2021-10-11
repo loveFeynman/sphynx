@@ -161,7 +161,7 @@ export default function Swap({ history }: RouteComponentProps) {
   const dispatch = useDispatch()
   const { pathname } = useLocation()
   const tokenAddress = pathname.substr(6)
-  const [swapRouter, setSwapRouter] = useState(SwapRouter.AUTO_SWAP)
+  const [swapRouter, setSwapRouter] = useState(SwapRouter.SPHYNX_SWAP)
   const [pairs, setPairs] = useState([])
   const [transactionData, setTransactions] = useState([])
   const stateRef = useRef([])
