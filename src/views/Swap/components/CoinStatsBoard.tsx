@@ -93,7 +93,7 @@ const StyledWrapper = styled.div`
   }
 `
 
-export default function CoinStatsBoard() {
+export default function CoinStatsBoard(props) {
   const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
   const routerVersion = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.routerVersion)
   const result = isAddress(input)
@@ -109,7 +109,7 @@ export default function CoinStatsBoard() {
     liquidityV2BNB: '0',
   })
 
-  const [tokenData, setTokenData] = useState<any>(null)
+  const { tokenData } = props
   const [price, setPrice] = useState<any>(null)
 
   const [linkIcon, setLinkIcon] = useState(
@@ -123,9 +123,6 @@ export default function CoinStatsBoard() {
   const getTableData = async () => {
     try {
       if (result) {
-        axios.post(`${process.env.REACT_APP_BACKEND_API_URL}/tokenStats`, { address: input }).then((response) => {
-          setTokenData(response.data)
-        })
         const chartStats: any = await getChartStats(input, routerVersion);
         setalldata(chartStats)
         setPrice(chartStats.price)

@@ -170,6 +170,7 @@ export default function Swap({ history }: RouteComponentProps) {
   const [isBusy, setBusy] = useState(false)
   const [currentBlock, setCurrentBlock] = useState(null)
   const [blockFlag, setBlockFlag] = useState(false)
+  const [tokenData, setTokenData] = useState<any>(null)
   const swapFlag = useSelector<AppState, AppState['autoSwapReducer']>((state) => state.autoSwapReducer.swapFlag)
   const inputTokenName = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
   const routerVersion = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.routerVersion)
@@ -459,8 +460,21 @@ export default function Swap({ history }: RouteComponentProps) {
     }
   }, [dispatch, tokenAddress])
 
+  const getTokenData = async () => {
+    try {
+      axios.post(`${process.env.REACT_APP_BACKEND_API_URL}/tokenStats`, { address: input }).then((response) => {
+        setTokenData(response.data)
+      })
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.log(err)
+      setTimeout(() => getTokenData(), 5000)
+    }
+  }
+
   React.useEffect(() => {
     sessionStorage.removeItem(storages.SESSION_LIVE_PRICE)
+    getTokenData()
   }, [inputTokenName])
 
   const loadedUrlParams = useDefaultsFromURLSearch()
@@ -980,12 +994,12 @@ export default function Swap({ history }: RouteComponentProps) {
         <div>
           <FullHeightColumn>
             <ContractPanel value="" />
-            <CoinStatsBoard />
+            <CoinStatsBoard tokenData={tokenData}/>
             <ChartContainer />
           </FullHeightColumn>
         </div>
         <TokenInfoWrapper>
-          <TokenInfo />
+          <TokenInfo tokenData={tokenData}/>
         </TokenInfoWrapper>
         <div
           style={{

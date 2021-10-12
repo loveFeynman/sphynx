@@ -64,31 +64,21 @@ const TokenInfoContainer = styled.div`
     margin: 0;
   }
 `
-// {tokenInfo}: {tokenInfo?: TokenDetailProps | null}
-export default function TokenInfo() {
+
+export default function TokenInfo(props) {
   const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
   const isInput = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.isInput)
 
+  const { tokenData } = props
   const { t } = useTranslation()
   const result = isAddress(input)
   // eslint-disable-next-line no-console
 
   const dispatch = useDispatch<AppDispatch>()
 
-  const [alldata, setalldata] = useState({
-    holders: '',
-    txs: '',
-    marketCap: '',
-    symbol: '',
-    totalSupply: '',
-  })
-
   const getTableData = useCallback(async () => {
     try {
       if (result) {
-        axios.post(`${process.env.REACT_APP_BACKEND_API_URL}/tokenStats`, { address: input }).then((response) => {
-          setalldata(response.data)
-        })
         dispatch(
           selectCurrency({
             field: isInput ? Field.OUTPUT : Field.INPUT,
@@ -119,7 +109,7 @@ export default function TokenInfo() {
       <Flex alignItems="center" justifyContent="space-between">
         <Flex alignItems="center">
           <IconWrapper size={32}>
-            <Text color="white">{t(`${alldata.symbol}`)}</Text>
+            <Text color="white">{tokenData&&t(`${tokenData.symbol}`)}</Text>
           </IconWrapper>
         </Flex>
         <Flex style={{ width: 40 }}>
@@ -131,15 +121,15 @@ export default function TokenInfo() {
       <Flex flexDirection="column">
         <TextWrapper>
           <Text>{t('Total Supply')}</Text>
-          <Text>{Number(alldata.totalSupply).toLocaleString()}</Text>
+          <Text>{tokenData&&Number(tokenData.totalSupply).toLocaleString()}</Text>
         </TextWrapper>
         <TextWrapper>
           <Text>{t('Market Cap')}:</Text>
-          <Text>$ {Number(alldata.marketCap).toLocaleString()}</Text>
+          <Text>$ {tokenData&&Number(tokenData.marketCap).toLocaleString()}</Text>
         </TextWrapper>
         <TextWrapper>
           <Text>{t('Transactions')}</Text>
-          <Text>{alldata.txs}</Text>
+          <Text>{tokenData&&tokenData.txs}</Text>
         </TextWrapper>
         <TextWrapper>
           <Text className="textWithCopy">
@@ -156,7 +146,7 @@ export default function TokenInfo() {
           <Text>{t('Holders')}</Text>
           <Text>
             <a href={`https://bscscan.com/token/${input}#balances`} target="_blank" rel="noreferrer">
-              {Number(alldata.holders).toLocaleString()}
+            {tokenData&&Number(tokenData.holders).toLocaleString()}
             </a>
           </Text>
         </TextWrapper>
