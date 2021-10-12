@@ -1,10 +1,9 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import styled from 'styled-components'
 import { Flex, Text, Link } from '@sphynxswap/uikit'
 import { ReactComponent as BscscanIcon } from 'assets/svg/icon/Bscscan.svg'
 import CopyHelper from 'components/AccountDetails/Copy'
-import axios from 'axios'
 import { AppState, AppDispatch } from '../../../state'
 import { selectCurrency, Field } from '../../../state/swap/actions'
 import { isAddress, getBscScanLink } from '../../../utils'
@@ -68,6 +67,7 @@ const TokenInfoContainer = styled.div`
 export default function TokenInfo(props) {
   const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
   const isInput = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.isInput)
+  const marketCapacity = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.marketCapacity)
 
   const { tokenData } = props
   const { t } = useTranslation()
@@ -125,7 +125,7 @@ export default function TokenInfo(props) {
         </TextWrapper>
         <TextWrapper>
           <Text>{t('Market Cap')}:</Text>
-          <Text>$ {tokenData&&Number(tokenData.marketCap).toLocaleString()}</Text>
+          <Text>$ {marketCapacity.toLocaleString()}</Text>
         </TextWrapper>
         <TextWrapper>
           <Text>{t('Transactions')}</Text>

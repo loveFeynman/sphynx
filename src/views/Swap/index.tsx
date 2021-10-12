@@ -23,7 +23,7 @@ import { AppHeader } from 'components/App'
 
 import { useSetRouterType, useSwapTransCard, useSwapType } from 'state/application/hooks'
 import { ReactComponent as DownArrow } from 'assets/svg/icon/DownArrow.svg'
-import { typeInput } from 'state/input/actions'
+import { typeInput, marketCap } from 'state/input/actions'
 import { BITQUERY_API, BITQUERY_API_KEY } from 'config/constants/endpoints'
 import SwapRouter, { messages } from 'config/constants/swaps'
 import AddressInputPanel from './components/AddressInputPanel'
@@ -73,8 +73,7 @@ import routerABI from 'assets/abis/pancakeRouter.json'
 import { getPancakePairAddress, getPancakePairAddressV1, getSphynxPairAddress } from 'state/info/ws/priceData'
 import * as ethers from 'ethers'
 import { simpleRpcProvider } from 'utils/providers'
-import { priceInput, amountInput } from 'state/input/actions'
-import { UNSET_PRICE, DEFAULT_VOLUME_RATE } from 'config/constants/info'
+import { UNSET_PRICE } from 'config/constants/info'
 import storages from 'config/constants/storages'
 const pancakeV2: any = '0x10ED43C718714eb63d5aA57B78B54704E256024E'
 const pancakeV1: any = '0x05fF2B0DB69458A0750badebc4f9e13aDd608C7F'
@@ -464,6 +463,7 @@ export default function Swap({ history }: RouteComponentProps) {
     try {
       axios.post(`${process.env.REACT_APP_BACKEND_API_URL}/tokenStats`, { address: input }).then((response) => {
         setTokenData(response.data)
+        dispatch(marketCap({ marketCapacity:parseFloat(response.data.marketCap) }))
       })
     } catch (err) {
       // eslint-disable-next-line no-console

@@ -1,13 +1,13 @@
 /* eslint-disable no-console */
 import React, { useEffect, useState, useRef } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { utils } from 'ethers'
 import styled from 'styled-components'
 import { Flex, Text } from '@sphynxswap/uikit'
 import Column from 'components/Column'
 import { isAddress } from 'utils'
 import { useTranslation } from 'contexts/Localization'
-import axios from 'axios'
+import { marketCap } from 'state/input/actions'
 import DefaultImg from 'assets/images/MainLogo.png'
 import storages from 'config/constants/storages'
 import { AppState } from '../../../state'
@@ -94,8 +94,10 @@ const StyledWrapper = styled.div`
 `
 
 export default function CoinStatsBoard(props) {
+  const dispatch = useDispatch()
   const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
   const routerVersion = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.routerVersion)
+  const marketCapacity = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.marketCapacity)
   const result = isAddress(input)
   const interval = useRef(null)
   const { t } = useTranslation()
@@ -147,6 +149,7 @@ export default function CoinStatsBoard(props) {
       if (sessionData === null) return
       if (sessionData.input !== input) return
       setPrice(sessionData.price)
+        dispatch(marketCap({ marketCapacity: Number(parseInt(tokenData.totalSupply) * parseFloat(sessionData.price))}))
     }, 2000)
     return () => {
       clearInterval(interval.current)
@@ -171,7 +174,7 @@ export default function CoinStatsBoard(props) {
             {tokenData && (
               <Flex flexDirection="column" justifyContent="center">
                 <Text>{t(`${tokenData.symbol}`)}</Text>
-                <Text>$ {Number(parseInt(tokenData.totalSupply) * parseFloat(price)).toLocaleString()}</Text>
+                <Text>$ {marketCapacity.toLocaleString()}</Text>
               </Flex>
             )}
           </Flex>
