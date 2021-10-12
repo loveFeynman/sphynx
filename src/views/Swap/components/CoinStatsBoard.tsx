@@ -129,8 +129,7 @@ export default function CoinStatsBoard(props) {
         setalldata(chartStats)
         setPrice(chartStats.price)
         setLinkIcon(
-          `https://r.poocoin.app/smartchain/assets/${
-            input ? utils.getAddress(input) : '0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82'
+          `https://r.poocoin.app/smartchain/assets/${input ? utils.getAddress(input) : '0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82'
           }/logo.png`,
         )
       }
@@ -149,7 +148,6 @@ export default function CoinStatsBoard(props) {
       if (sessionData === null) return
       if (sessionData.input !== input) return
       setPrice(sessionData.price)
-        dispatch(marketCap({ marketCapacity: Number(parseInt(tokenData.totalSupply) * parseFloat(sessionData.price))}))
     }, 2000)
     return () => {
       clearInterval(interval.current)
@@ -157,6 +155,12 @@ export default function CoinStatsBoard(props) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [input])
+
+  useEffect(() => {
+    if(tokenData)
+      dispatch(marketCap({ marketCapacity: Number(parseInt(tokenData.totalSupply) * parseFloat(price)) }))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tokenData, price])
 
   const onImgLoadError = (event: any) => {
     const elem = event.target
