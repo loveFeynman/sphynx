@@ -17,7 +17,6 @@ import fetchPoolsForToken from 'state/info/queries/tokens/poolsForToken'
 import { fetchPoolData } from 'state/info/queries/pools/poolData'
 
 import CopyHelper from 'components/AccountDetails/Copy'
-// eslint-disable-next-line import/no-unresolved
 import './dropdown.css'
 import axios from 'axios'
 import { MenuItem } from '@material-ui/core'

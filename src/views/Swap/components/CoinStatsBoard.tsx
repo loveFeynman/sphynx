@@ -169,7 +169,7 @@ export default function CoinStatsBoard() {
         <Column>
           <Flex>
             <IconWrapper size={32}>
-              <img src={linkIcon} onError={onImgLoadError} alt="No icon yet" />
+              <img src={linkIcon} width="32" onError={onImgLoadError} alt="No icon yet" />
             </IconWrapper>
             {tokenData && (
               <Flex flexDirection="column" justifyContent="center">
