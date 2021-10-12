@@ -1,56 +1,187 @@
 import Web3 from 'web3'
 import { AbiItem } from 'web3-utils'
 import axios from 'axios'
+import { PANCAKE_FACTORY_ADDRESS, SPHYNX_FACTORY_ADDRESS, RouterType } from '@sphynxswap/sdk'
 import abi from '../config/abi/erc20ABI.json'
 import factoryAbi from '../config/abi/factoryAbi.json'
 import { getVersion } from './getVersion'
 import { BITQUERY_API_KEY } from '../config/constants/endpoints'
+import { web3Provider } from './providers'
 
-const httpProvider = new Web3.providers.HttpProvider(
-  "https://old-thrumming-voice.bsc.quiknode.pro/7674ba364cc71989fb1398e1e53db54e4fe0e9e0/"
-);
-const web3 = new Web3(httpProvider);
+const web3 = new Web3(web3Provider)
 
 const config = {
   headers: {
-    "X-API-KEY": BITQUERY_API_KEY,
+    'X-API-KEY': BITQUERY_API_KEY,
   },
-};
+}
 
-
-async function getTokenDetails(address: string): Promise<{
-  name: string,
-  symbol: string,
-  pair: string,
+async function getTokenDetails(address: string, routerVersion: string): Promise<{
+  name: string
+  symbol: string
+  pair: string
   version: string
 }> {
   if (!address) {
-    return null;
+    return null
   }
-  const token = new web3.eth.Contract(abi as AbiItem[], address);
-  const name = await token.methods.name().call();
-  const symbol = await token.methods.symbol().call();
-  const version = await getVersion(address);
-  return { name, symbol, pair: `${symbol }/BNB`, version: version.version }
+  const token = new web3.eth.Contract(abi as AbiItem[], address)
+  const name = await token.methods.name().call()
+  const symbol = await token.methods.symbol().call()
+  const version = await getVersion(address, routerVersion)
+  return { name, symbol, pair: `${symbol}/BNB`, version: version.version }
 }
 
-async function getChartStats(address: string) {
+async function getChartData(input: any, pair: any, resolution: any) {
+  const resolutionMap = {
+    1: 1,
+    5: 5,
+    10: 10,
+    15: 15,
+    30: 30,
+    60: 60,
+    '1H': 60,
+    '1D': 1440,
+    '1W': 1440 * 7,
+    '1M': 1440 * 30,
+  }
+  return new Promise((resolve) => {
+    const minutes = resolutionMap[resolution]
+    const query = `{
+    ethereum(network: bsc) {
+      dexTrades(
+        options: {limit: 500, asc: "timeInterval.minute"}
+        smartContractAddress: {is: "${pair}"}
+        protocol: {is: "Uniswap v2"}
+        baseCurrency: {is: "${input}"}
+        quoteCurrency: {is: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"}
+      ) {
+        exchange {
+          name
+        }
+        timeInterval {
+          minute(count: ${minutes})
+        }
+        baseCurrency {
+          symbol
+          address
+        }
+        baseAmount
+        quoteCurrency {
+          symbol
+          address
+        }
+        quoteAmount
+        trades: count
+        maximum_price: quotePrice(calculate: maximum)
+        minimum_price: quotePrice(calculate: minimum)
+        open_price: minimum(of: time, get: quote_price)
+        close_price: maximum(of: time, get: quote_price)
+        tradeAmount(in: USD, calculate: sum)
+      }
+    }
+  }
+  `
+    const url = `https://graphql.bitquery.io/`
+    axios.post(url, { query }, config).then((tradeData) => {
+      const dexTrades = tradeData.data.data.ethereum.dexTrades
+
+      const bnbPriceQuery = `{
+        ethereum(network: bsc) {
+          dexTrades(
+            options: {limit: 500, desc: "timeInterval.minute"}
+            #BNB:
+            baseCurrency: {is: "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c"}
+            #USDT:
+            quoteCurrency: {is: "0x55d398326f99059ff775485246999027b3197955"}
+      
+            exchangeName: {in: ["Pancake", "Pancake v2"]}
+          ) {
+            timeInterval {
+              minute(count: ${minutes})
+            }
+            price: quotePrice(calculate: average)
+          }
+        }
+      }`
+
+      axios.post(url, { query: bnbPriceQuery }, config).then((priceData) => {
+        const dexTrades1 = priceData.data.data.ethereum.dexTrades
+        const bnbPrices = dexTrades1.map((data) => {
+          return {
+            price: data.price,
+            time: new Date(data.timeInterval.minute).getTime(),
+          }
+        })
+
+        const bnbPriceObj = {}
+        bnbPrices.forEach((element) => {
+          bnbPriceObj[element.time] = element.price
+        })
+
+        const offset = new Date().getTimezoneOffset();
+
+        const data = dexTrades.map((trade) => {
+          return {
+            open: trade.open_price * bnbPriceObj[new Date(trade.timeInterval.minute).getTime()],
+            close: trade.close_price * bnbPriceObj[new Date(trade.timeInterval.minute).getTime()],
+            low: trade.minimum_price * bnbPriceObj[new Date(trade.timeInterval.minute).getTime()],
+            high: trade.maximum_price * bnbPriceObj[new Date(trade.timeInterval.minute).getTime()],
+            volume: trade.tradeAmount * bnbPriceObj[new Date(trade.timeInterval.minute).getTime()],
+            time: new Date(trade.timeInterval.minute).getTime() - offset * 60000,
+          }
+        })
+
+        resolve(data)
+      })
+    })
+  })
+}
+
+async function getChartStats(address: string, routerVersion: string) {
   try {
     if (!address) {
       return {
         error: true,
-        message: 'Invalid address!'
-      };
+        message: 'Invalid address!',
+      }
     }
-    const till = new Date().toISOString();
-    const since = new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString();
+    const till = new Date().toISOString()
+    const since = new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString()
 
-    const baseAddress = address;
+    const baseAddress = address
     const quoteAddress =
-      baseAddress === "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c"
-        ? "0xe9e7cea3dedca5984780bafc599bd69add087d56"
-        : "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c";
-    let query = `{
+      baseAddress === '0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c'
+        ? '0xe9e7cea3dedca5984780bafc599bd69add087d56'
+        : '0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c'
+
+    const factoryAddress = routerVersion === RouterType.sphynx ? SPHYNX_FACTORY_ADDRESS : PANCAKE_FACTORY_ADDRESS
+    const factory = new web3.eth.Contract(factoryAbi as AbiItem[], factoryAddress)
+    const pairAddress = await factory.methods.getPair(baseAddress, quoteAddress).call()
+    let query =
+      routerVersion === RouterType.sphynx
+        ? `{
+      ethereum(network: bsc) {
+        dexTrades(
+          date: {since: "${since}", till: "${till}"}
+          smartContractAddress: {is: "${pairAddress}"}
+          baseCurrency: {is: "${baseAddress}"}
+          quoteCurrency: {is: "${quoteAddress}"}
+        ) {
+          baseCurrency {
+            symbol
+          }
+          quoteCurrency {
+            symbol
+          }
+          open_price: minimum(of: block, get: quote_price)
+          close_price: maximum(of: block, get: quote_price)
+          tradeAmount(in: USD, calculate: sum)
+        }
+      }
+    }
+    `
+        : `{
               ethereum(network: bsc) {
                 dexTrades(
                   date: {since: "${since}", till: "${till}"}
@@ -70,49 +201,39 @@ async function getChartStats(address: string) {
                 }
               }
             }
-            `;
-    const url = `https://graphql.bitquery.io/`;
+            `
+    const url = `https://graphql.bitquery.io/`
     const {
       data: {
         data: {
           ethereum: { dexTrades },
         },
       },
-    } = await axios.post(url, { query }, config);
+    } = await axios.post(url, { query }, config)
 
     if (!dexTrades) {
       return {
         error: true,
-        message: 'Invalid dexTrades!'
-      };
+        message: 'Invalid dexTrades!',
+      }
     }
 
-    const factory = new web3.eth.Contract(
-      factoryAbi as AbiItem[],
-      "0x0C1Bf16f69B88955C177a223759d2B58681d84A3"
-    );
-    const pairAddress = await factory.methods
-      .getPair(baseAddress, quoteAddress)
-      .call();
+    const baseContract = new web3.eth.Contract(abi as AbiItem[], baseAddress)
+    const quoteContract = new web3.eth.Contract(abi as AbiItem[], quoteAddress)
 
-    const baseContract = new web3.eth.Contract(abi as AbiItem[], baseAddress);
-    const quoteContract = new web3.eth.Contract(abi as AbiItem[], quoteAddress);
+    let baseBalance = await baseContract.methods.balanceOf(pairAddress).call()
+    const baseDecimals = await baseContract.methods.decimals().call()
 
-    let baseBalance = await baseContract.methods.balanceOf(pairAddress).call();
-    const baseDecimals = await baseContract.methods.decimals().call();
+    let quoteBalance = await quoteContract.methods.balanceOf(pairAddress).call()
+    const quoteDecimals = await quoteContract.methods.decimals().call()
 
-    let quoteBalance = await quoteContract.methods
-      .balanceOf(pairAddress)
-      .call();
-    const quoteDecimals = await quoteContract.methods.decimals().call();
+    baseBalance /= 10 ** baseDecimals
+    quoteBalance /= 10 ** quoteDecimals
 
-    baseBalance /= 10 ** baseDecimals;
-    quoteBalance /= 10 ** quoteDecimals;
-
-    let price;
-    let liquidityV2;
-    let liquidityV2BNB;
-    if (baseAddress !== "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c") {
+    let price
+    let liquidityV2
+    let liquidityV2BNB
+    if (baseAddress !== '0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c') {
       query = `{
                 ethereum(network: bsc) {
                   dexTrades(
@@ -131,43 +252,38 @@ async function getChartStats(address: string) {
                   }
                 }
               }
-            `;
+            `
       const {
         data: {
           data: {
             ethereum: { dexTrades: newDexTrades },
           },
         },
-      } = await axios.post(url, { query }, config);
+      } = await axios.post(url, { query }, config)
       if (!newDexTrades) {
         return {
           error: true,
-          message: 'No data found of this address'
+          message: 'No data found of this address',
         }
       }
-      price =
-        parseFloat(dexTrades[0].close_price) *
-        parseFloat(newDexTrades[0].close_price);
-      liquidityV2 = quoteBalance * parseFloat(newDexTrades[0].close_price);
-      liquidityV2BNB = quoteBalance;
-      if (price.toString().includes("e")) {
-        price = price.toFixed(12);
+      price = parseFloat(dexTrades[0].close_price) * parseFloat(newDexTrades[0].close_price)
+      liquidityV2 = quoteBalance * parseFloat(newDexTrades[0].close_price)
+      liquidityV2BNB = quoteBalance
+      if (price.toString().includes('e')) {
+        price = price.toFixed(12)
       }
     } else {
-      price = dexTrades[0].close_price;
-      liquidityV2 = baseBalance * price;
-      liquidityV2BNB = baseBalance;
+      price = dexTrades[0].close_price
+      liquidityV2 = baseBalance * price
+      liquidityV2BNB = baseBalance
     }
     const percDiff =
       100 *
       Math.abs(
-        (parseFloat(dexTrades[0].open_price) -
-          parseFloat(dexTrades[0].close_price)) /
-        ((parseFloat(dexTrades[0].open_price) +
-          parseFloat(dexTrades[0].close_price)) /
-          2)
-      );
-    const sign = dexTrades[0].open_price > dexTrades[0].close_price ? "-" : "+";
+        (parseFloat(dexTrades[0].open_price) - parseFloat(dexTrades[0].close_price)) /
+          ((parseFloat(dexTrades[0].open_price) + parseFloat(dexTrades[0].close_price)) / 2),
+      )
+    const sign = dexTrades[0].open_price > dexTrades[0].close_price ? '-' : '+'
 
     return {
       volume: dexTrades[0].tradeAmount,
@@ -175,7 +291,7 @@ async function getChartStats(address: string) {
       price,
       liquidityV2,
       liquidityV2BNB,
-    };
+    }
   } catch (error) {
     return {
       volume: '',
@@ -189,18 +305,18 @@ async function getChartStats(address: string) {
 
 async function socialToken(address: string) {
   try {
-    const url = `https://r.poocoin.app/smartchain/assets/${address}/info.json`;
-    const { data } = await axios.get(url);
-    delete data.links;
-    return data;
+    const url = `https://r.poocoin.app/smartchain/assets/${address}/info.json`
+    const { data } = await axios.get(url)
+    delete data.links
+    return data
   } catch (e) {
-    return {msg: 'error'}
+    return { msg: 'error' }
   }
 }
 
 const getPrice = async (tokenAddr) => {
   try {
-    if (tokenAddr === "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c") {
+    if (tokenAddr === '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c') {
       const query = `{
         ethereum(network: bsc) {
           dexTrades(
@@ -220,13 +336,13 @@ const getPrice = async (tokenAddr) => {
             quotePrice
           }
         }
-      }`;
+      }`
 
-      const url = `https://graphql.bitquery.io/`;
-      const response = await axios.post(url, { query }, config);
-      const {dexTrades} = response.data.data.ethereum;
+      const url = `https://graphql.bitquery.io/`
+      const response = await axios.post(url, { query }, config)
+      const { dexTrades } = response.data.data.ethereum
 
-      return (1 / dexTrades[0].quotePrice).toFixed(4);
+      return (1 / dexTrades[0].quotePrice).toFixed(4)
     }
     const query = `{
       ethereum(network: bsc) {
@@ -244,49 +360,49 @@ const getPrice = async (tokenAddr) => {
           }
         }
       }
-    }`;
+    }`
 
-    const url = `https://graphql.bitquery.io/`;
+    const url = `https://graphql.bitquery.io/`
     const {
       data: {
         data: {
           ethereum: { dexTrades },
         },
       },
-    } = await axios.post(url, { query }, config);
+    } = await axios.post(url, { query }, config)
 
     if (dexTrades.length === 0) {
-      return 0;
+      return 0
     }
 
     const erc20ABI = [
       {
         inputs: [],
-        name: "decimals",
+        name: 'decimals',
         outputs: [
           {
-            internalType: "uint8",
-            name: "",
-            type: "uint8",
+            internalType: 'uint8',
+            name: '',
+            type: 'uint8',
           },
         ],
-        stateMutability: "view",
-        type: "function",
+        stateMutability: 'view',
+        type: 'function',
       },
-    ];
-    const tokenInstance = new web3.eth.Contract(erc20ABI as AbiItem[], tokenAddr);
-    const tokenDecimals = await tokenInstance.methods.decimals().call();
-    const data = await getPriceInfo(tokenAddr, tokenDecimals);
+    ]
+    const tokenInstance = new web3.eth.Contract(erc20ABI as AbiItem[], tokenAddr)
+    const tokenDecimals = await tokenInstance.methods.decimals().call()
+    const data = await getPriceInfo(tokenAddr, tokenDecimals)
     // @ts-ignore
-    return parseFloat(web3.utils.fromWei(data[data.length - 1]));
+    return parseFloat(web3.utils.fromWei(data[data.length - 1]))
   } catch (error) {
-    return 0;
+    return 0
   }
-};
+}
 
 async function topTrades(address: string, type: 'buy' | 'sell') {
-  const till = new Date().toISOString();
-  const since = new Date(new Date().getTime() - 3600 * 24 * 1000 * 3).toISOString();
+  const till = new Date().toISOString()
+  const since = new Date(new Date().getTime() - 3600 * 24 * 1000 * 3).toISOString()
   const query = `{
     ethereum(network: bsc) {
       dexTrades(
@@ -320,110 +436,106 @@ async function topTrades(address: string, type: 'buy' | 'sell') {
       }
     }
   }
-  `;
+  `
 
-  const url = `https://graphql.bitquery.io/`;
+  const url = `https://graphql.bitquery.io/`
   const {
     data: {
       data: {
         ethereum: { dexTrades },
       },
     },
-  } = await axios.post(url, { query }, config);
-  const wallets = [];
-  const tradeAmounts = [];
-  const keyWord = type === "buy" ? "sellCurrency" : "buyCurrency";
+  } = await axios.post(url, { query }, config)
+  const wallets = []
+  const tradeAmounts = []
+  const keyWord = type === 'buy' ? 'sellCurrency' : 'buyCurrency'
   for (let i = 0; i < dexTrades.length; i++) {
     if (dexTrades[i].baseCurrency.symbol === dexTrades[i][keyWord].symbol) {
       if (wallets.indexOf(dexTrades[i].transaction.txFrom.address) === -1) {
-        wallets.push(dexTrades[i].transaction.txFrom.address);
-        tradeAmounts.push(dexTrades[i].tradeAmount);
+        wallets.push(dexTrades[i].transaction.txFrom.address)
+        tradeAmounts.push(dexTrades[i].tradeAmount)
       } else {
-        const index = wallets.indexOf(dexTrades[i].transaction.txFrom.address);
-        tradeAmounts[index] += dexTrades[i].tradeAmount;
+        const index = wallets.indexOf(dexTrades[i].transaction.txFrom.address)
+        tradeAmounts[index] += dexTrades[i].tradeAmount
       }
     }
   }
   for (let i = 0; i < wallets.length - 1; i++) {
     for (let j = i + 1; j < wallets.length; j++) {
       if (tradeAmounts[j] > tradeAmounts[i]) {
-        const tradeAmount = tradeAmounts[j];
-        tradeAmounts[j] = tradeAmounts[i];
-        tradeAmounts[i] = tradeAmount;
-        const wallet = wallets[i];
-        wallets[i] = wallets[j];
-        wallets[j] = wallet;
+        const tradeAmount = tradeAmounts[j]
+        tradeAmounts[j] = tradeAmounts[i]
+        tradeAmounts[i] = tradeAmount
+        const wallet = wallets[i]
+        wallets[i] = wallets[j]
+        wallets[j] = wallet
       }
     }
   }
-  const returnData = [];
+  const returnData = []
   for (let i = 0; i < wallets.length; i++) {
     returnData.push({
       wallet: wallets[i],
       usdAmount: tradeAmounts[i],
-    });
+    })
   }
-  return returnData;
+  return returnData
 }
 
 const getPancakePairAddress = async (quoteToken, baseToken) => {
-  const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
-  const PANCAKE_FACTORY_ADDRESS = "0xcA143Ce32Fe78f1f7019d7d551a6402fC5350c73";
-  const pancakeFactoryContract = new web3.eth.Contract(
-    factoryAbi as AbiItem[],
-    PANCAKE_FACTORY_ADDRESS
-  );
-  const pairAddress = await pancakeFactoryContract.methods
-    .getPair(quoteToken, baseToken)
-    .call();
+  const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
+  const pancakeFactoryContract = new web3.eth.Contract(factoryAbi as AbiItem[], PANCAKE_FACTORY_ADDRESS)
+  const pairAddress = await pancakeFactoryContract.methods.getPair(quoteToken, baseToken).call()
   if (pairAddress === ZERO_ADDRESS) {
-    return null;
+    return null
   }
-  return pairAddress;
-};
+  return pairAddress
+}
+
+const getSphynxPairAddress = async (quoteToken, baseToken, provider) => {
+  const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
+  const sphynxFactoryContract = new web3.eth.Contract(factoryAbi as AbiItem[], SPHYNX_FACTORY_ADDRESS)
+  const pairAddress = await sphynxFactoryContract.methods.getPair(quoteToken, baseToken).call()
+  if (pairAddress === ZERO_ADDRESS) {
+    return null
+  }
+  return pairAddress
+}
 
 const getPriceInfo = async (input, decimals) => {
-  const pancakeV2 = "0x10ED43C718714eb63d5aA57B78B54704E256024E";
-  const busdAddr = "0xe9e7cea3dedca5984780bafc599bd69add087d56";
-  const wBNBAddr = "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c";
+  const pancakeV2 = '0x10ED43C718714eb63d5aA57B78B54704E256024E'
+  const busdAddr = '0xe9e7cea3dedca5984780bafc599bd69add087d56'
+  const wBNBAddr = '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c'
   const routerABI = [
     {
       inputs: [
-        { internalType: "uint256", name: "amountIn", type: "uint256" },
-        { internalType: "address[]", name: "path", type: "address[]" },
+        { internalType: 'uint256', name: 'amountIn', type: 'uint256' },
+        { internalType: 'address[]', name: 'path', type: 'address[]' },
       ],
-      name: "getAmountsOut",
-      outputs: [
-        { internalType: "uint256[]", name: "amounts", type: "uint256[]" },
-      ],
-      stateMutability: "view",
-      type: "function",
+      name: 'getAmountsOut',
+      outputs: [{ internalType: 'uint256[]', name: 'amounts', type: 'uint256[]' }],
+      stateMutability: 'view',
+      type: 'function',
     },
-  ];
+  ]
   // eslint-disable-next-line no-async-promise-executor
   return new Promise(async (resolve) => {
-    const routerInstance = new web3.eth.Contract(routerABI as AbiItem[], pancakeV2);
-    let path = [input, busdAddr];
-    const pairAddress = await getPancakePairAddress(input, busdAddr);
+    const routerInstance = new web3.eth.Contract(routerABI as AbiItem[], pancakeV2)
+    let path = [input, busdAddr]
+    const pairAddress = await getPancakePairAddress(input, busdAddr)
     if (pairAddress === null) {
-      path = [input, wBNBAddr, busdAddr];
+      path = [input, wBNBAddr, busdAddr]
       routerInstance.methods
         .getAmountsOut(web3.utils.toBN(10 ** decimals), path)
         .call()
-        .then((data) => resolve(data));
+        .then((data) => resolve(data))
     } else {
       routerInstance.methods
         .getAmountsOut(web3.utils.toBN(10 ** decimals), path)
         .call()
-        .then((data) => resolve(data));
+        .then((data) => resolve(data))
     }
-  });
-};
-
-export {
-  getTokenDetails,
-  getChartStats,
-  socialToken,
-  topTrades,
-  getPrice
+  })
 }
+
+export { getTokenDetails, getChartStats, socialToken, topTrades, getPrice, getChartData }

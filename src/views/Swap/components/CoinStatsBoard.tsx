@@ -95,6 +95,7 @@ const StyledWrapper = styled.div`
 
 export default function CoinStatsBoard() {
   const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
+  const routerVersion = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.routerVersion)
   const result = isAddress(input)
   const interval = useRef(null)
   const { t } = useTranslation()
@@ -125,7 +126,7 @@ export default function CoinStatsBoard() {
         axios.post(`${process.env.REACT_APP_BACKEND_API_URL}/tokenStats`, { address: input }).then((response) => {
           setTokenData(response.data)
         })
-        const chartStats: any = await getChartStats(input);
+        const chartStats: any = await getChartStats(input, routerVersion);
         setalldata(chartStats)
         setPrice(chartStats.price)
         setLinkIcon(

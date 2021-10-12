@@ -71,9 +71,9 @@ const SphynxChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => 
   const result = isAddress(input)
 
   const [tokendetails, setTokenDetails] = React.useState({
-    name: 'PancakeSwap Token',
-    pair: 'Cake/BNB',
-    symbol: 'CAKE',
+    name: 'Sphynx Token',
+    pair: 'SPHYNX/BNB',
+    symbol: 'SPHYNX',
     version: 'SPHYNX DEX',
   })
 
@@ -110,7 +110,7 @@ const SphynxChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => 
       onResultReadyCallback(newSymbols)
     },
     resolveSymbol: async (symbolName: any, onSymbolResolvedCallback: any, onResolveErrorCallback: any) => {
-      const res = await getTokenDetails(input)
+      const res = await getTokenDetails(input, routerVersion)
       setTokenDetails(res)
 
       const version =
@@ -146,7 +146,6 @@ const SphynxChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => 
     ) => {
       const { from, to, firstDataRequest } = periodParams
       try {
-        const data = await makeApiRequest1(input, routerVersion, resolution)
         if (result) {
           if (!firstDataRequest) {
             // "noData" should be set if there is no data in the requested period.
@@ -157,14 +156,16 @@ const SphynxChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => 
           }
         }
 
+        const data = await makeApiRequest1(input, routerVersion, resolution)
+
         let bars: any = []
         data.map((bar: any, i: any) => {
           const obj: any = {
-            time: new Date(bar.time).getTime(),
-            low: bar.low * bar.baseLow,
-            high: bar.high * bar.baseHigh,
-            open: bar.open * bar.baseOpen,
-            close: bar.close * bar.baseClose,
+            time: bar.time,
+            low: bar.low,
+            high: bar.high,
+            open: bar.open,
+            close: bar.close,
             volume: bar.volume,
             isBarClosed: true,
             isLastBar: false,

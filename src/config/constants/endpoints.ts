@@ -8,8 +8,6 @@ export const SNAPSHOT_HUB_API = `${SNAPSHOT_BASE_URL}/api/message`
 export const BITQUERY_API = 'https://graphql.bitquery.io/'
 export const BITQUERY_API_KEY = 'BQYtw5cN2icONV51CELWQAq387ZAOAtr'
 
-export const WS_BSC_NODE = 'wss://old-thrumming-voice.bsc.quiknode.pro/7674ba364cc71989fb1398e1e53db54e4fe0e9e0/'
-
 // Pancake Endpoint
 export const INFO_CLIENT = 'https://bsc.streamingfast.io/subgraphs/name/pancakeswap/exchange-v2'
 export const BLOCKS_CLIENT = 'https://api.thegraph.com/subgraphs/name/pancakeswap/blocks'

@@ -110,7 +110,7 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
       onResultReadyCallback(newSymbols)
     },
     resolveSymbol: async (symbolName: any, onSymbolResolvedCallback: any, onResolveErrorCallback: any) => {
-      const res = await getTokenDetails(input)
+      const res = await getTokenDetails(input, routerVersion)
       setTokenDetails(res)
 
       const version =

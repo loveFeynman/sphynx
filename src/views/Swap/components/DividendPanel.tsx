@@ -6,7 +6,7 @@ import axios from 'axios'
 import Web3 from 'web3'
 import MainLogo from 'assets/svg/icon/logo_new.svg'
 import MoreIcon from 'assets/svg/icon/MoreIcon2.svg'
-import { WEBSOCKET_URL } from 'utils/providers'
+import { web3Provider } from 'utils/providers'
 import { useTranslation } from 'contexts/Localization'
 import tokenABI from '../../../assets/abis/erc20.json'
 
@@ -44,8 +44,7 @@ const DividendPanel: React.FC = () => {
     axios.get('https://thesphynx.co/api/price/0x2e121Ed64EEEB58788dDb204627cCB7C7c59884c').then(({ data }) => {
       setPrice(data.price)
     })
-    const providerURL = WEBSOCKET_URL
-    const web3 = new Web3(new Web3.providers.HttpProvider(providerURL))
+    const web3 = new Web3(web3Provider)
     const abi: any = tokenABI
     const tokenContract = new web3.eth.Contract(abi, '0x2e121Ed64EEEB58788dDb204627cCB7C7c59884c')
     tokenContract.methods
