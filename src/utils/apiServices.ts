@@ -16,7 +16,10 @@ const config = {
   },
 }
 
-async function getTokenDetails(address: string, routerVersion: string): Promise<{
+async function getTokenDetails(
+  address: string,
+  routerVersion: string,
+): Promise<{
   name: string
   symbol: string
   pair: string
@@ -45,9 +48,8 @@ async function getChartData(input: any, pair: any, resolution: any) {
     '1W': 1440 * 7,
     '1M': 1440 * 30,
   }
-  return new Promise((resolve) => {
-    const minutes = resolutionMap[resolution]
-    const query = `{
+  const minutes = resolutionMap[resolution]
+  const query = `{
     ethereum(network: bsc) {
       dexTrades(
         options: {limit: 500, asc: "timeInterval.minute"}
@@ -82,14 +84,19 @@ async function getChartData(input: any, pair: any, resolution: any) {
     }
   }
   `
-    const url = `https://graphql.bitquery.io/`
-    axios.post(url, { query }, config).then((tradeData) => {
-      const dexTrades = tradeData.data.data.ethereum.dexTrades
+  const url = `https://graphql.bitquery.io/`
+  const {
+    data: {
+      data: {
+        ethereum: { dexTrades },
+      },
+    },
+  } = await axios.post(url, { query }, config)
 
-      const bnbPriceQuery = `{
+  const bnbPriceQuery = `{
         ethereum(network: bsc) {
           dexTrades(
-            options: {limit: 500, desc: "timeInterval.minute"}
+            options: {limit: 1, desc: "timeInterval.minute"}
             #BNB:
             baseCurrency: {is: "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c"}
             #USDT:
@@ -105,37 +112,31 @@ async function getChartData(input: any, pair: any, resolution: any) {
         }
       }`
 
-      axios.post(url, { query: bnbPriceQuery }, config).then((priceData) => {
-        const dexTrades1 = priceData.data.data.ethereum.dexTrades
-        const bnbPrices = dexTrades1.map((data) => {
-          return {
-            price: data.price,
-            time: new Date(data.timeInterval.minute).getTime(),
-          }
-        })
+  const {
+    data: {
+      data: {
+        ethereum: { dexTrades: newDexTrades },
+      },
+    },
+  } = await axios.post(url, { query: bnbPriceQuery }, config)
 
-        const bnbPriceObj = {}
-        bnbPrices.forEach((element) => {
-          bnbPriceObj[element.time] = element.price
-        })
+  const bnbPrice = newDexTrades[0].price
 
-        const offset = new Date().getTimezoneOffset();
+  const offset = new Date().getTimezoneOffset()
 
-        const data = dexTrades.map((trade) => {
-          return {
-            open: trade.open_price * bnbPriceObj[new Date(trade.timeInterval.minute).getTime()],
-            close: trade.close_price * bnbPriceObj[new Date(trade.timeInterval.minute).getTime()],
-            low: trade.minimum_price * bnbPriceObj[new Date(trade.timeInterval.minute).getTime()],
-            high: trade.maximum_price * bnbPriceObj[new Date(trade.timeInterval.minute).getTime()],
-            volume: trade.tradeAmount * bnbPriceObj[new Date(trade.timeInterval.minute).getTime()],
-            time: new Date(trade.timeInterval.minute).getTime() - offset * 60000,
-          }
-        })
-
-        resolve(data)
-      })
-    })
+  const data = dexTrades.map((trade) => {
+    return {
+      open: trade.open_price * bnbPrice,
+      close: trade.close_price * bnbPrice,
+      low: trade.minimum_price * bnbPrice,
+      high: trade.maximum_price * bnbPrice,
+      volume: trade.tradeAmount * bnbPrice,
+      time: new Date(trade.timeInterval.minute).getTime() - offset * 60000,
+    }
   })
+
+  console.log("data", data);
+  return data
 }
 
 async function getChartStats(address: string, routerVersion: string) {
