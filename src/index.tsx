@@ -2,7 +2,6 @@
 
 import React, { useMemo, ReactNode } from 'react'
 import ReactDOM from 'react-dom'
-import {registerObserver} from "react-perf-devtool"
 import useActiveWeb3React from './hooks/useActiveWeb3React'
 import { BLOCKED_ADDRESSES } from './config/constants'
 import ApplicationUpdater from './state/application/updater'
@@ -12,7 +11,6 @@ import TransactionUpdater from './state/transactions/updater'
 import App from './App'
 import Providers from './Providers'
 
-registerObserver()
 require('dotenv').config()
 
 function Updaters() {
