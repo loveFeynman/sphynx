@@ -182,9 +182,7 @@ export default function Swap({ history }: RouteComponentProps) {
   const routerVersion = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.routerVersion)
   const tokens = useSelector<AppState, AppState['tokens']>((state) => state.tokens);
   const [inputBalance, setInputBalance] = useState(0)
-  const [inputSymbol, setInputSymbol] = useState('')
   const [outputBalance, setOutputBalance] = useState(0)
-  const [ouputSymbol, setOuputSymbol] = useState('')
 
   stateRef.current = transactionData
   pairsRef.current = pairs
@@ -701,8 +699,6 @@ export default function Swap({ history }: RouteComponentProps) {
       } else {
         setSwapWarningCurrency(null)
       }
-
-      setInputSymbol(inputCurrency.symbol)
     },
     [onCurrencySelection],
   )
@@ -716,8 +712,6 @@ export default function Swap({ history }: RouteComponentProps) {
       } else {
         setSwapWarningCurrency(null)
       }
-
-      setOuputSymbol(outputCurrency.symbol)
     },
     [onCurrencySelection],
   )
@@ -725,7 +719,7 @@ export default function Swap({ history }: RouteComponentProps) {
   useEffect(() => {
     let flag = false
     tokens.forEach((cell) => {
-      if (cell.symbol === inputSymbol) {
+      if (cell.symbol === currencies?.INPUT?.symbol) {
         setInputBalance(cell.value)
         flag = true
         return
@@ -734,12 +728,12 @@ export default function Swap({ history }: RouteComponentProps) {
     if (!flag) {
       setInputBalance(0)
     }
-  }, [inputSymbol])
+  }, [currencies?.INPUT?.symbol, tokens])
 
   useEffect(() => {
     let flag = false
     tokens.forEach((cell) => {
-      if (cell.symbol === ouputSymbol) {
+      if (cell.symbol === currencies?.OUTPUT?.symbol) {
         setOutputBalance(cell.value)
         flag = true
         return
@@ -748,7 +742,7 @@ export default function Swap({ history }: RouteComponentProps) {
     if (!flag) {
       setOutputBalance(0)
     }
-  }, [ouputSymbol])
+  }, [currencies?.OUTPUT?.symbol, tokens])
 
   const handleMaxInput = useCallback(() => {
     if (maxAmountInput) {
