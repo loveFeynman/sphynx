@@ -23,12 +23,6 @@ import { ToastListener } from './contexts/ToastsContext'
 import PageLoader from './components/Loader/PageLoader'
 import EasterEgg from './components/EasterEgg'
 import GlobalStyle from './style/Global'
-import Swap from './views/Swap'
-import Farms from './views/Farms'
-import Pools from './views/Pools'
-import Lottery from './views/LotterySphx'
-import Bridge from './views/Bridge'
-import FAQ from './views/FAQ'
 import {
   RedirectDuplicateTokenIds,
   RedirectOldAddLiquidityPathStructure,
@@ -40,6 +34,12 @@ import { RedirectPathToSwapOnly, RedirectToSwap } from './views/Swap/redirects'
 const NotFound = lazy(() => import('./views/NotFound'))
 const AddLiquidity = lazy(() => import('./views/AddLiquidity'))
 const RemoveLiquidity = lazy(() => import('./views/RemoveLiquidity'))
+const Swap = lazy(() => import('./views/Swap'))
+const Farms = lazy(() => import('./views/Farms'))
+const Pools = lazy(() => import('./views/Pools'))
+const Lottery = lazy(() => import('./views/LotterySphx'))
+const Bridge = lazy(() => import('./views/Bridge'))
+const FAQ = lazy(() => import('./views/FAQ'))
 
 const BodyWrapper = styled.div<{ toggled: boolean }>`
   display: flex;

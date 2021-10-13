@@ -4,8 +4,6 @@ import styled from 'styled-components'
 
 import { PoolData } from 'state/info/types'
 import { ToggleMenuItem, RouterTypeToggle } from 'config/constants/types'
-
-// eslint-disable-next-line import/no-unresolved
 import './dropdown.css'
 import Button from '@material-ui/core/Button'
 import MenuItem from '@material-ui/core/MenuItem'
