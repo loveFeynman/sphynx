@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux'
 import styled from 'styled-components'
 import { useLocation } from 'react-router'
 import { Button, Link } from '@sphynxswap/uikit'
+import { addToken, deleteTokens } from 'state/wallet/tokenSlice'
 import { useMenuToggle, useRemovedAssets } from 'state/application/hooks'
 import { useWeb3React } from '@web3-react/core'
 import MainLogo from 'assets/svg/icon/logo_new.svg'
@@ -294,14 +295,15 @@ const Menu = () => {
         const { balances } = queryResult.data.data.ethereum.address[0]
         const promises = balances.map((elem) => {
           return axios.get(
-            `${process.env.REACT_APP_BACKEND_API_URL}/price/${
-              elem.currency.address === '-' ? '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c' : elem.currency.address
+            `${process.env.REACT_APP_BACKEND_API_URL}/price/${elem.currency.address === '-' ? '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c' : elem.currency.address
             }`,
           )
         })
 
         const prices: any = await Promise.all(promises)
         let i = 0
+
+        dispatch(deleteTokens())
         // eslint-disable-next-line no-restricted-syntax
         for (const elem of balances) {
           const dollerprice: any = prices[i].data.price * elem.value
@@ -310,6 +312,8 @@ const Menu = () => {
           if (removedTokens.indexOf(elem.currency.symbol) === -1) {
             allsum += dollerprice
           }
+          const token = { symbol: elem.currency.symbol, value: elem.value }
+          dispatch(addToken(token))
         }
 
         setSum(allsum)
@@ -356,21 +360,21 @@ const Menu = () => {
     .map((elem: any) => {
       const { currency, value, dollarPrice, id } = elem
 
-  const handleTokenItem = () => {
-    dispatch(
-      replaceSwapState({
-        outputCurrencyId: 'BNB',
-        inputCurrencyId: currency.address,
-        typedValue: '',
-        field: Field.OUTPUT,
-        recipient: null,
-      }),
-    )
-  }
+      const handleTokenItem = () => {
+        dispatch(
+          replaceSwapState({
+            outputCurrencyId: 'BNB',
+            inputCurrencyId: currency.address,
+            typedValue: '',
+            field: Field.OUTPUT,
+            recipient: null,
+          }),
+        )
+      }
 
-  const handleRemoveAsset = () => {
-    removeAsset(elem)
-  }
+      const handleRemoveAsset = () => {
+        removeAsset(elem)
+      }
       return (
         <TokenIconContainer key={id}>
           <a href={`#/swap/${currency.address}`}>
@@ -544,7 +548,7 @@ const Menu = () => {
                 <TelegramIcon />
               </Link>
               <Link external href="https://discord.gg/QeR679MKdW" aria-label="discord">
-                <img src={DiscordIcon} alt="discord" style={{height: "45px", width: "45px", padding: "8px"}} />
+                <img src={DiscordIcon} alt="discord" style={{ height: "45px", width: "45px", padding: "8px" }} />
               </Link>
               {/* <Link external href="https://instagram.com/sphynxswap?utm_medium=copy_link">
                 <img src={InstaIcon} alt="insta" style={{height: "45px", width: "45px", padding: "8px"}} />
