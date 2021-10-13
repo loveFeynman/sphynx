@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { utils } from 'ethers'
 import styled from 'styled-components'
 import { Flex, Text } from '@sphynxswap/uikit'
@@ -9,8 +9,8 @@ import { useTranslation } from 'contexts/Localization'
 import { marketCap } from 'state/input/actions'
 import DefaultImg from 'assets/images/MainLogo.png'
 import storages from 'config/constants/storages'
+import { getChartStats } from 'utils/apiServices'
 import { AppState } from '../../../state'
-import { getChartStats } from '../../../utils/apiServices'
 
 const IconWrapper = styled.div<{ size?: number }>`
   display: flex;

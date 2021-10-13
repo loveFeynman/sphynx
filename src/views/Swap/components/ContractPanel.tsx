@@ -11,16 +11,15 @@ import fetchPoolsForToken from 'state/info/queries/tokens/poolsForToken'
 import { fetchPoolData } from 'state/info/queries/pools/poolData'
 
 import CopyHelper from 'components/AccountDetails/Copy'
-import { RouterTypeToggle } from 'config/constants/types'
 import './dropdown.css'
 import axios from 'axios'
 import { MenuItem } from '@material-ui/core'
+import { socialToken } from 'utils/apiServices'
 import ToggleList from './ToggleList'
 import { AppState } from '../../../state'
-import { setIsInput, typeInput, typeRouterVersion } from '../../../state/input/actions'
+import { setIsInput, typeInput } from '../../../state/input/actions'
 import { getBscScanLink, isAddress } from '../../../utils'
 import { useTranslation } from '../../../contexts/Localization'
-import { socialToken } from '../../../utils/apiServices'
 
 export interface ContractPanelProps {
   value: any
