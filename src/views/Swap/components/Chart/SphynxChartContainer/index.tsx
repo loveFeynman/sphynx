@@ -178,11 +178,13 @@ const SphynxChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => 
           bars = [...bars, obj]
           return {}
         })
+
         // eslint-disable-next-line no-console
         onHistoryCallback(bars, {
           noData: false,
         })
       } catch (error) {
+        console.log("errorasdsdf", error)
         onErrorCallback(error)
       }
     },

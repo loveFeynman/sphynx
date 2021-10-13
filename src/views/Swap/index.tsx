@@ -21,7 +21,7 @@ import { AutoRow, RowBetween } from 'components/Layout/Row'
 import ConnectWalletButton from 'components/ConnectWalletButton'
 import { AppHeader } from 'components/App'
 
-import { useSetRouterType, useSwapTransCard, useSwapType } from 'state/application/hooks'
+import { useSwapTransCard, useSwapType } from 'state/application/hooks'
 import { ReactComponent as DownArrow } from 'assets/svg/icon/DownArrow.svg'
 import { typeInput } from 'state/input/actions'
 import { BITQUERY_API, BITQUERY_API_KEY } from 'config/constants/endpoints'
@@ -73,8 +73,7 @@ import routerABI from 'assets/abis/pancakeRouter.json'
 import { getPancakePairAddress, getPancakePairAddressV1, getSphynxPairAddress } from 'state/info/ws/priceData'
 import * as ethers from 'ethers'
 import { simpleRpcProvider } from 'utils/providers'
-import { priceInput, amountInput } from 'state/input/actions'
-import { UNSET_PRICE, DEFAULT_VOLUME_RATE } from 'config/constants/info'
+import { UNSET_PRICE } from 'config/constants/info'
 import storages from 'config/constants/storages'
 const pancakeV2: any = '0x10ED43C718714eb63d5aA57B78B54704E256024E'
 const pancakeV1: any = '0x05fF2B0DB69458A0750badebc4f9e13aDd608C7F'
@@ -180,13 +179,14 @@ export default function Swap({ history }: RouteComponentProps) {
   if (input === '-' || input === '') input = sphynxAddr
   const contract: any = new web3.eth.Contract(abi, input)
 
-  const getDataQuery = useCallback(() => {
+  const getDataQuery = useCallback((pairAddress: any) => {
     return `
     {
     ethereum(network: bsc) {
         dexTrades(
         options: {desc: ["block.height", "tradeIndex"], limit: 30, offset: 0}
         date: {till: null}
+        smartContractAddress: {is: "${pairAddress}"}
         baseCurrency: {is: "${input}"}
         quoteCurrency:{is : "${wBNBAddr}"}
         ) {
@@ -237,27 +237,7 @@ export default function Swap({ history }: RouteComponentProps) {
     }`
   }, [input])
 
-  React.useEffect(() => {
-    const ab = new AbortController()
-    const getPairs = async () => {
-      let pairs = []
-      if (routerVersion !== 'sphynx') {
-        let wBNBPair = await getPancakePairAddress(input, wBNBAddr, simpleRpcProvider)
-        if (wBNBPair !== null) pairs.push(wBNBPair.toLowerCase())
-        let wBNBPairV1 = await getPancakePairAddressV1(input, wBNBAddr, simpleRpcProvider)
-        if (wBNBPairV1 !== null) pairs.push(wBNBPairV1.toLowerCase())
-      }
-      let wBNBPairSphynx = await getSphynxPairAddress(input, wBNBAddr, simpleRpcProvider)
-      if (wBNBPairSphynx !== null) pairs.push(wBNBPairSphynx.toLowerCase())
-      setPairs(pairs)
-    }
-    getPairs()
-    return () => {
-      ab.abort()
-    }
-  }, [tokenAddress, routerVersion])
-
-  const parseData: any = async (events, blockNumber) => {
+  const parseData: any = async (events: any, blockNumber: any) => {
     setBusy(true)
     let newTransactions = stateRef.current
     return new Promise(async (resolve) => {
@@ -362,12 +342,11 @@ export default function Swap({ history }: RouteComponentProps) {
             cachedBlockNumber = info[info.length - 1].blockNumber
           }
           info = info.filter((oneData) => oneData.blockNumber !== cachedBlockNumber)
-          // console.log("PairsRef", pairsRef.current);
           info = info.filter((oneData) => pairsRef.current.indexOf(oneData.address.toLowerCase()) !== -1)
           info = [...new Set(info)]
 
           if (!isBusy) {
-            await parseData(info, cachedBlockNumber)
+            parseData(info, cachedBlockNumber)
           }
         })
     } catch (err) {
@@ -407,10 +386,19 @@ export default function Swap({ history }: RouteComponentProps) {
     let newTransactions = []
     const fetchData = async () => {
       try {
-        const provider = simpleRpcProvider // simpleRpcProvider
-        const bnbPrice = await getBNBPrice(provider)
+        let pairs = []
+        if (routerVersion !== 'sphynx') {
+          let wBNBPair = await getPancakePairAddress(input, wBNBAddr, simpleRpcProvider)
+          if (wBNBPair !== null) pairs.push(wBNBPair.toLowerCase())
+          let wBNBPairV1 = await getPancakePairAddressV1(input, wBNBAddr, simpleRpcProvider)
+          if (wBNBPairV1 !== null) pairs.push(wBNBPairV1.toLowerCase())
+        }
+        let wBNBPairSphynx = await getSphynxPairAddress(input, wBNBAddr, simpleRpcProvider)
+        if (wBNBPairSphynx !== null) pairs.push(wBNBPairSphynx.toLowerCase())
+        setPairs(pairs)
+        const bnbPrice = await getBNBPrice(simpleRpcProvider)
         // pull historical data
-        const queryResult = await axios.post(BITQUERY_API, { query: getDataQuery() }, config)
+        const queryResult = await axios.post(BITQUERY_API, { query: getDataQuery(pairs[0]) }, config)
         if (queryResult.data.data && queryResult.data.data.ethereum.dexTrades) {
           newTransactions = queryResult.data.data.ethereum.dexTrades.map((item, index) => {
             return {
@@ -447,7 +435,7 @@ export default function Swap({ history }: RouteComponentProps) {
     }
 
     return () => ac.abort()
-  }, [tokenAddress])
+  }, [tokenAddress, routerVersion])
 
   React.useEffect(() => {
     const ab = new AbortController()
@@ -560,9 +548,6 @@ export default function Swap({ history }: RouteComponentProps) {
   )
   const noRoute = !route
 
-  // check auto router
-  const { setRouterType } = useSetRouterType()
-
   useEffect(() => {
     if (tokenAddress === null || tokenAddress === '' || tokenAddress === undefined) {
       dispatch(
@@ -586,12 +571,6 @@ export default function Swap({ history }: RouteComponentProps) {
       )
     }
   }, [dispatch, tokenAddress])
-
-  useEffect(() => {
-    if (swapRouter === SwapRouter.AUTO_SWAP && trade === undefined) {
-      setRouterType(RouterType.pancake)
-    }
-  }, [swapRouter, trade, setRouterType])
 
   // check whether the user has approved the router on the input token
   const [approval, approveCallback] = useApproveCallbackFromTrade(trade, allowedSlippage)

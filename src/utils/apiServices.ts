@@ -122,21 +122,31 @@ async function getChartData(input: any, pair: any, resolution: any) {
 
   const bnbPrice = newDexTrades[0].price
 
-  const offset = new Date().getTimezoneOffset()
-
-  const data = dexTrades.map((trade) => {
-    return {
-      open: trade.open_price * bnbPrice,
-      close: trade.close_price * bnbPrice,
-      low: trade.minimum_price * bnbPrice,
-      high: trade.maximum_price * bnbPrice,
-      volume: trade.tradeAmount * bnbPrice,
-      time: new Date(trade.timeInterval.minute).getTime() - offset * 60000,
+  return new Promise((resolve, reject) => {
+    try {
+      const data = dexTrades.map((trade) => {
+        const dateTest = trade.timeInterval.minute
+        const year = dateTest.slice(0, 4)
+        const month = dateTest.slice(5, 7) - 1
+        const day = dateTest.slice(8, 10)
+        const hour = dateTest.slice(11, 13)
+        const minute = dateTest.slice(14, 16)
+        const date = new Date(year, month, day, hour, minute, 0)
+        return {
+          open: trade.open_price * bnbPrice,
+          close: trade.close_price * bnbPrice,
+          low: trade.minimum_price * bnbPrice,
+          high: trade.maximum_price * bnbPrice,
+          volume: trade.tradeAmount * bnbPrice,
+          time: date.getTime(),
+        }
+      })
+      resolve(data)
+    } catch (error) {
+      console.log('error', error)
+      reject(error)
     }
   })
-
-  console.log("data", data);
-  return data
 }
 
 async function getChartStats(address: string, routerVersion: string) {
