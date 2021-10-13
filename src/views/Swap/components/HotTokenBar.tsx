@@ -4,11 +4,11 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
 import Marquee from 'react-fast-marquee'
-import { useDispatch, useSelector } from 'react-redux'
-import moment from 'moment'
+// import { useDispatch, useSelector } from 'react-redux'
+// import moment from 'moment'
 import { useTranslation } from 'contexts/Localization'
 import { HotTokenType } from './types'
-import { AppState } from '../../../state'
+// import { AppState } from '../../../state'
 
 export interface HotTokenBarProps {
   tokens?: HotTokenType[] | null
