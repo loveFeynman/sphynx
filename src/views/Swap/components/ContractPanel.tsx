@@ -285,9 +285,6 @@ export default function ContractPanel({ value }: ContractPanelProps) {
                       >
                         <MenuItem
                           className={index === selectedItemIndex ? 'selectedItem' : ''}
-                          onClick={() => {
-                            dispatch(typeRouterVersion({ routerVersion: RouterTypeToggle[0].key }))
-                          }}
                         >
                           {item.name}
                           <br />
