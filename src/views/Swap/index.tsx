@@ -796,6 +796,17 @@ export default function Swap({ history }: RouteComponentProps) {
               <Wrapper id="swap-page">
                 <AppHeader title={t('Swap')} showAuto />
                 <AutoColumn gap="md">
+                  <CurrencyInputPanel
+                    label={independentField === Field.OUTPUT && !showWrap && trade ? t('From (estimated)') : t('From')}
+                    value={formattedAmounts[Field.INPUT]}
+                    showMaxButton={!atMaxAmountInput}
+                    currency={currencies[Field.INPUT]}
+                    onUserInput={handleTypeInput}
+                    onMax={handleMaxInput}
+                    onCurrencySelect={handleInputSelect}
+                    otherCurrency={currencies[Field.OUTPUT]}
+                    id="swap-currency-input"
+                  />
                   <AutoColumn justify="space-between">
                     <AutoRow justify={isExpertMode ? 'space-between' : 'center'} style={{ padding: '0 1rem' }}>
                       <ArrowContainer
