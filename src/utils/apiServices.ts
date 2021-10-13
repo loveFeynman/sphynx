@@ -16,7 +16,10 @@ const config = {
   },
 }
 
-async function getTokenDetails(address: string, routerVersion: string): Promise<{
+async function getTokenDetails(
+  address: string,
+  routerVersion: string,
+): Promise<{
   name: string
   symbol: string
   pair: string
@@ -45,9 +48,8 @@ async function getChartData(input: any, pair: any, resolution: any) {
     '1W': 1440 * 7,
     '1M': 1440 * 30,
   }
-  return new Promise((resolve) => {
-    const minutes = resolutionMap[resolution]
-    const query = `{
+  const minutes = resolutionMap[resolution]
+  const query = `{
     ethereum(network: bsc) {
       dexTrades(
         options: {limit: 500, asc: "timeInterval.minute"}
@@ -86,10 +88,10 @@ async function getChartData(input: any, pair: any, resolution: any) {
     axios.post(url, { query }, config).then((tradeData) => {
       const { dexTrades } = tradeData.data.data.ethereum
 
-      const bnbPriceQuery = `{
+  const bnbPriceQuery = `{
         ethereum(network: bsc) {
           dexTrades(
-            options: {limit: 500, desc: "timeInterval.minute"}
+            options: {limit: 1, desc: "timeInterval.minute"}
             #BNB:
             baseCurrency: {is: "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c"}
             #USDT:
@@ -105,36 +107,40 @@ async function getChartData(input: any, pair: any, resolution: any) {
         }
       }`
 
-      axios.post(url, { query: bnbPriceQuery }, config).then((priceData) => {
-        const dexTrades1 = priceData.data.data.ethereum.dexTrades
-        const bnbPrices = dexTrades1.map((data) => {
-          return {
-            price: data.price,
-            time: new Date(data.timeInterval.minute).getTime(),
-          }
-        })
+  const {
+    data: {
+      data: {
+        ethereum: { dexTrades: newDexTrades },
+      },
+    },
+  } = await axios.post(url, { query: bnbPriceQuery }, config)
 
-        const bnbPriceObj = {}
-        bnbPrices.forEach((element) => {
-          bnbPriceObj[element.time] = element.price
-        })
+  const bnbPrice = newDexTrades[0].price
 
-        const offset = new Date().getTimezoneOffset();
-
-        const data = dexTrades.map((trade) => {
-          return {
-            open: trade.open_price * bnbPriceObj[new Date(trade.timeInterval.minute).getTime()],
-            close: trade.close_price * bnbPriceObj[new Date(trade.timeInterval.minute).getTime()],
-            low: trade.minimum_price * bnbPriceObj[new Date(trade.timeInterval.minute).getTime()],
-            high: trade.maximum_price * bnbPriceObj[new Date(trade.timeInterval.minute).getTime()],
-            volume: trade.tradeAmount * bnbPriceObj[new Date(trade.timeInterval.minute).getTime()],
-            time: new Date(trade.timeInterval.minute).getTime() - offset * 60000,
-          }
-        })
-
-        resolve(data)
+  return new Promise((resolve, reject) => {
+    try {
+      const data = dexTrades.map((trade) => {
+        const dateTest = trade.timeInterval.minute
+        const year = dateTest.slice(0, 4)
+        const month = dateTest.slice(5, 7) - 1
+        const day = dateTest.slice(8, 10)
+        const hour = dateTest.slice(11, 13)
+        const minute = dateTest.slice(14, 16)
+        const date = new Date(year, month, day, hour, minute, 0)
+        return {
+          open: trade.open_price * bnbPrice,
+          close: trade.close_price * bnbPrice,
+          low: trade.minimum_price * bnbPrice,
+          high: trade.maximum_price * bnbPrice,
+          volume: trade.tradeAmount * bnbPrice,
+          time: date.getTime(),
+        }
       })
-    })
+      resolve(data)
+    } catch (error) {
+      console.log('error', error)
+      reject(error)
+    }
   })
 }
 

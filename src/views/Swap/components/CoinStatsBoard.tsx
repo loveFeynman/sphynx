@@ -6,7 +6,7 @@ import { Flex, Text } from '@sphynxswap/uikit'
 import Column from 'components/Column'
 import { isAddress } from 'utils'
 import { useTranslation } from 'contexts/Localization'
-import axios from 'axios'
+import { marketCap } from 'state/input/actions'
 import DefaultImg from 'assets/images/MainLogo.png'
 import storages from 'config/constants/storages'
 import { AppState } from '../../../state'
@@ -92,9 +92,11 @@ const StyledWrapper = styled.div`
   }
 `
 
-export default function CoinStatsBoard() {
+export default function CoinStatsBoard(props) {
+  const dispatch = useDispatch()
   const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
   const routerVersion = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.routerVersion)
+  const marketCapacity = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.marketCapacity)
   const result = isAddress(input)
   const interval = useRef(null)
   const { t } = useTranslation()
@@ -108,7 +110,7 @@ export default function CoinStatsBoard() {
     liquidityV2BNB: '0',
   })
 
-  const [tokenData, setTokenData] = useState<any>(null)
+  const { tokenData } = props
   const [price, setPrice] = useState<any>(null)
 
   const [linkIcon, setLinkIcon] = useState(
@@ -122,15 +124,11 @@ export default function CoinStatsBoard() {
   const getTableData = useCallback(async () => {
     try {
       if (result) {
-        axios.post(`${process.env.REACT_APP_BACKEND_API_URL}/tokenStats`, { address: input }).then((response) => {
-          setTokenData(response.data)
-        })
         const chartStats: any = await getChartStats(input, routerVersion);
         setalldata(chartStats)
         setPrice(chartStats.price)
         setLinkIcon(
-          `https://r.poocoin.app/smartchain/assets/${
-            input ? utils.getAddress(input) : '0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82'
+          `https://r.poocoin.app/smartchain/assets/${input ? utils.getAddress(input) : '0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82'
           }/logo.png`,
         )
       }
@@ -155,6 +153,12 @@ export default function CoinStatsBoard() {
     
   }, [input, getTableData])
 
+  useEffect(() => {
+    if(tokenData)
+      dispatch(marketCap({ marketCapacity: Number(parseInt(tokenData.totalSupply) * parseFloat(price)) }))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tokenData, price])
+
   const onImgLoadError = (event: any) => {
     const elem = event.target
     elem.src = DefaultImg;
@@ -171,7 +175,7 @@ export default function CoinStatsBoard() {
             {tokenData && (
               <Flex flexDirection="column" justifyContent="center">
                 <Text>{t(`${tokenData.symbol}`)}</Text>
-                <Text>$ {Number(parseInt(tokenData.totalSupply) * parseFloat(price)).toLocaleString()}</Text>
+                <Text>$ {marketCapacity.toLocaleString()}</Text>
               </Flex>
             )}
           </Flex>

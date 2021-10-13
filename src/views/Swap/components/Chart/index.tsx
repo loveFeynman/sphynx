@@ -6,8 +6,6 @@ import styled from 'styled-components'
 import { RouterTypeToggle } from 'config/constants/types'
 import TransactionNav from 'components/TransactionNav'
 import { AppState } from 'state'
-import PcsChartContainer from './PcsChartContainer'
-import SphynxChartContainer from './SphynxChartContainer'
 import { ReactComponent as UpDownArrow } from 'assets/svg/icon/UpDownArrow.svg'
 
 const Wrapper = styled.div`
@@ -46,6 +44,9 @@ const TransactionNavWrapper = styled.div`
     margin: 0;
   }
 `
+
+const PcsChartContainer = React.lazy(() => import("./PcsChartContainer"))
+const SphynxChartContainer = React.lazy(() => import("./SphynxChartContainer"))
 
 const ChartContainer = React.memo(() => {
   const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)

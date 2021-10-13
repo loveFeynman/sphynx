@@ -443,7 +443,7 @@ const Menu = () => {
   return (
     <MenuWrapper toggled={menuToggled}>
       <Link external href="https://thesphynx.co">
-        <img src={MainLogo} width="160" height="151" alt="Main Logo" />
+        <img src={MainLogo} alt="Main Logo" width="159.118" height="151" />
       </Link>
       <MenuIconWrapper>
         {!menuToggled && <span>{t('Main Menu')}</span>}
