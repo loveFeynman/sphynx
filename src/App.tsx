@@ -36,12 +36,6 @@ const FAQ = React.lazy(() => import('./views/FAQ'))
 const NotFound = lazy(() => import('./views/NotFound'))
 const AddLiquidity = lazy(() => import('./views/AddLiquidity'))
 const RemoveLiquidity = lazy(() => import('./views/RemoveLiquidity'))
-const Swap = lazy(() => import('./views/Swap'))
-const Farms = lazy(() => import('./views/Farms'))
-const Pools = lazy(() => import('./views/Pools'))
-const Lottery = lazy(() => import('./views/LotterySphx'))
-const Bridge = lazy(() => import('./views/Bridge'))
-const FAQ = lazy(() => import('./views/FAQ'))
 
 const BodyWrapper = styled.div<{ toggled: boolean }>`
   display: flex;
