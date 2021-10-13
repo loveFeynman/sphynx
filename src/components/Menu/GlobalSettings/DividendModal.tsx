@@ -23,7 +23,7 @@ const DividendModal: React.FC<DividendModalProps> = ({ onDismiss, balance }) => 
 
   return (
     <Modal
-      title={t('Sphynx Dividend')}
+      title={t('Sphynx Swap Fee Reward')}
       headerBackground="gradients.cardHeader"
       onDismiss={onDismiss}
       style={{ maxWidth: '420px' }}
