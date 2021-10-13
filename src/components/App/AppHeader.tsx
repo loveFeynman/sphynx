@@ -121,6 +121,7 @@ const AppHeader: React.FC<Props> = ({ title, subtitle, helper, backTo, showAuto,
                 variant="text"
                 scale="sm"
                 mr="8px"
+                aria-label="setting modal"
               >
                 <CogIcon height={22} width={22} color="white" />
               </IconButton>

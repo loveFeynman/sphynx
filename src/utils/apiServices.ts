@@ -84,7 +84,7 @@ async function getChartData(input: any, pair: any, resolution: any) {
   `
     const url = `https://graphql.bitquery.io/`
     axios.post(url, { query }, config).then((tradeData) => {
-      const dexTrades = tradeData.data.data.ethereum.dexTrades
+      const { dexTrades } = tradeData.data.data.ethereum
 
       const bnbPriceQuery = `{
         ethereum(network: bsc) {
@@ -492,15 +492,15 @@ const getPancakePairAddress = async (quoteToken, baseToken) => {
   return pairAddress
 }
 
-const getSphynxPairAddress = async (quoteToken, baseToken, provider) => {
-  const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
-  const sphynxFactoryContract = new web3.eth.Contract(factoryAbi as AbiItem[], SPHYNX_FACTORY_ADDRESS)
-  const pairAddress = await sphynxFactoryContract.methods.getPair(quoteToken, baseToken).call()
-  if (pairAddress === ZERO_ADDRESS) {
-    return null
-  }
-  return pairAddress
-}
+// const getSphynxPairAddress = async (quoteToken, baseToken, provider) => {
+//   const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
+//   const sphynxFactoryContract = new web3.eth.Contract(factoryAbi as AbiItem[], SPHYNX_FACTORY_ADDRESS)
+//   const pairAddress = await sphynxFactoryContract.methods.getPair(quoteToken, baseToken).call()
+//   if (pairAddress === ZERO_ADDRESS) {
+//     return null
+//   }
+//   return pairAddress
+// }
 
 const getPriceInfo = async (input, decimals) => {
   const pancakeV2 = '0x10ED43C718714eb63d5aA57B78B54704E256024E'

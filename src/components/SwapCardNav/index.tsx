@@ -45,7 +45,7 @@ const SwapCardNav = () => {
         className={
           swapType === 'liquidity' || swapType === 'addLiquidity' || swapType === 'removeLiquidity' ? 'active' : ''
         }
-        id="dgsn-nav-link"
+        id="liquidity-nav-link"
         onClick={() => {
           setSwapType('liquidity')
         }}

@@ -1,5 +1,4 @@
-/* eslint-disable no-console */
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState, useRef, useCallback } from 'react'
 import { useSelector } from 'react-redux'
 import { utils } from 'ethers'
 import styled from 'styled-components'
@@ -120,7 +119,7 @@ export default function CoinStatsBoard() {
   const liquidityV2decimal = parseFloat(alldata.liquidityV2).toFixed(3)
   const liquidityV2BNBdecimal = parseFloat(alldata.liquidityV2BNB).toFixed(3)
 
-  const getTableData = async () => {
+  const getTableData = useCallback(async () => {
     try {
       if (result) {
         axios.post(`${process.env.REACT_APP_BACKEND_API_URL}/tokenStats`, { address: input }).then((response) => {
@@ -136,12 +135,10 @@ export default function CoinStatsBoard() {
         )
       }
     } catch (err) {
-      // eslint-disable-next-line no-console
-      console.log(err)
       setTimeout(() => getTableData(), 5000)
     }
-  }
-  const myInterval = interval.current;
+  }, [input, result, routerVersion])
+
   useEffect(() => {
     const ac = new AbortController();
     getTableData()
@@ -155,8 +152,8 @@ export default function CoinStatsBoard() {
       clearInterval(interval.current)
       ac.abort();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [input])
+    
+  }, [input, getTableData])
 
   const onImgLoadError = (event: any) => {
     const elem = event.target
@@ -169,7 +166,7 @@ export default function CoinStatsBoard() {
         <Column>
           <Flex>
             <IconWrapper size={32}>
-              <img src={linkIcon} onError={onImgLoadError} alt="No icon yet" />
+              <img src={linkIcon} width="32" height="32" onError={onImgLoadError} alt="No icon yet" />
             </IconWrapper>
             {tokenData && (
               <Flex flexDirection="column" justifyContent="center">

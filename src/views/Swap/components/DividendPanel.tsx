@@ -61,7 +61,7 @@ const DividendPanel: React.FC = () => {
   return (
     <Wrapper>
       <Flex>
-        <img src={MainLogo} alt="Main Logo" />
+        <img src={MainLogo} width="160" height="151" alt="Main Logo" />
         <Text color="white" mt={2} ml={1}>
           {t('Sphynx Swap Fee Rewards')}
         </Text>

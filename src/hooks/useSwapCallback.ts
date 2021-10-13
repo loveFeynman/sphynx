@@ -1,7 +1,6 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { useSelector } from 'react-redux'
 import { AppState } from 'state'
-import { autoSwap } from 'state/flags/actions'
 import { Contract } from '@ethersproject/contracts'
 import { JSBI, Percent, Router, SwapParameters, Trade, TradeType } from '@sphynxswap/sdk'
 import { useMemo } from 'react'
