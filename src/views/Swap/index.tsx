@@ -23,7 +23,7 @@ import { AppHeader } from 'components/App'
 
 import { useSwapTransCard, useSwapType } from 'state/application/hooks'
 import { ReactComponent as DownArrow } from 'assets/svg/icon/DownArrow.svg'
-import { typeInput } from 'state/input/actions'
+import { typeInput, marketCap } from 'state/input/actions'
 import { BITQUERY_API, BITQUERY_API_KEY } from 'config/constants/endpoints'
 import SwapRouter, { messages } from 'config/constants/swaps'
 import AddressInputPanel from './components/AddressInputPanel'
@@ -167,6 +167,7 @@ export default function Swap({ history }: RouteComponentProps) {
   const [isBusy, setBusy] = useState(false)
   const [currentBlock, setCurrentBlock] = useState(null)
   const [blockFlag, setBlockFlag] = useState(false)
+  const [tokenData, setTokenData] = useState<any>(null)
   const swapFlag = useSelector<AppState, AppState['autoSwapReducer']>((state) => state.autoSwapReducer.swapFlag)
   const inputTokenName = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
   const routerVersion = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.routerVersion)
@@ -445,8 +446,22 @@ export default function Swap({ history }: RouteComponentProps) {
     }
   }, [dispatch, tokenAddress])
 
+  const getTokenData = async () => {
+    try {
+      axios.post(`${process.env.REACT_APP_BACKEND_API_URL}/tokenStats`, { address: input }).then((response) => {
+        setTokenData(response.data)
+        dispatch(marketCap({ marketCapacity:parseFloat(response.data.marketCap) }))
+      })
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.log(err)
+      setTimeout(() => getTokenData(), 5000)
+    }
+  }
+
   React.useEffect(() => {
     sessionStorage.removeItem(storages.SESSION_LIVE_PRICE)
+    getTokenData()
   }, [inputTokenName])
 
   const loadedUrlParams = useDefaultsFromURLSearch()
@@ -957,12 +972,12 @@ export default function Swap({ history }: RouteComponentProps) {
         <div>
           <FullHeightColumn>
             <ContractPanel value="" />
-            <CoinStatsBoard />
+            <CoinStatsBoard tokenData={tokenData}/>
             <ChartContainer />
           </FullHeightColumn>
         </div>
         <TokenInfoWrapper>
-          <TokenInfo />
+          <TokenInfo tokenData={tokenData}/>
         </TokenInfoWrapper>
         <div
           style={{
