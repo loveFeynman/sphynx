@@ -1,6 +1,5 @@
-/* eslint-disable no-console */
-import React, { useEffect, useState, useRef } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import React, { useEffect, useState, useRef, useCallback } from 'react'
+import { useSelector } from 'react-redux'
 import { utils } from 'ethers'
 import styled from 'styled-components'
 import { Flex, Text } from '@sphynxswap/uikit'
@@ -122,7 +121,7 @@ export default function CoinStatsBoard(props) {
   const liquidityV2decimal = parseFloat(alldata.liquidityV2).toFixed(3)
   const liquidityV2BNBdecimal = parseFloat(alldata.liquidityV2BNB).toFixed(3)
 
-  const getTableData = async () => {
+  const getTableData = useCallback(async () => {
     try {
       if (result) {
         const chartStats: any = await getChartStats(input, routerVersion);
@@ -134,12 +133,10 @@ export default function CoinStatsBoard(props) {
         )
       }
     } catch (err) {
-      // eslint-disable-next-line no-console
-      console.log(err)
       setTimeout(() => getTableData(), 5000)
     }
-  }
-  const myInterval = interval.current;
+  }, [input, result, routerVersion])
+
   useEffect(() => {
     const ac = new AbortController();
     getTableData()
@@ -153,8 +150,8 @@ export default function CoinStatsBoard(props) {
       clearInterval(interval.current)
       ac.abort();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [input])
+    
+  }, [input, getTableData])
 
   useEffect(() => {
     if(tokenData)
@@ -173,7 +170,7 @@ export default function CoinStatsBoard(props) {
         <Column>
           <Flex>
             <IconWrapper size={32}>
-              <img src={linkIcon} width="32" onError={onImgLoadError} alt="No icon yet" />
+              <img src={linkIcon} width="32" height="32" onError={onImgLoadError} alt="No icon yet" />
             </IconWrapper>
             {tokenData && (
               <Flex flexDirection="column" justifyContent="center">

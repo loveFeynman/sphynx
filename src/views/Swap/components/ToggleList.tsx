@@ -90,7 +90,7 @@ const ToggleList = ({ poolDatas }: { poolDatas: PoolData[] }) => {
   }
 
   useEffect(() => {
-    // eslint-disable-next-line prefer-const
+    
     let newMenuItems: ToggleMenuItem[] = []
     if (poolDatas?.length > 0 && checksumAddress) {
       newMenuItems.push({
@@ -106,13 +106,13 @@ const ToggleList = ({ poolDatas }: { poolDatas: PoolData[] }) => {
         setSelectedItem(item.value)
       }
     })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [poolDatas, routerVersion])
+    
+  }, [poolDatas, routerVersion, checksumAddress])
 
   return (
     <>
       <ToggleWrapper>
-        <Button aria-controls="fade-menu1" aria-haspopup="true" onClick={handleClick} style={{ width: '100%' }}>
+        <Button onClick={handleClick} style={{ width: '100%' }} aria-label="token version">
           <MenuTitle>
             <span>{selectedItem}</span>
           </MenuTitle>

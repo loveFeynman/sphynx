@@ -31,7 +31,7 @@ export default function CopyHelper(props: { toCopy: string; children: React.Reac
   const { children, toCopy } = props
 
   return (
-    <CopyIcon onClick={() => setCopied(toCopy)}>
+    <CopyIcon onClick={() => setCopied(toCopy)} aria-label="copy helper">
       {isCopied ? (
         <TransactionStatusText>
           <CheckCircle size="16" />

@@ -146,7 +146,7 @@ export default function AddLiquidity({
       try{
         estimate = router.estimateGas.addLiquidityETH
       } catch (err) {
-        console.log("err", err);
+        throw new Error(err);
       }
       method = router.addLiquidityETH
       args = [

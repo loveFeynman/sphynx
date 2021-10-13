@@ -10,12 +10,14 @@ declare module 'styled-components' {
 const GlobalStyle = createGlobalStyle`
   @font-face {
     font-family: 'Roboto Regular';
+    font-display: swap;
     font-style: normal;
     font-weight: normal;
     src: local('/fonts/Roboto Regular'), url('/fonts/Roboto-Regular.woff') format('woff');
   }
   * {
     font-family: 'Montserrat', sans-serif;
+    font-display: swap;
   }
   body {
     // background-color: ${({ theme }) => theme.colors.background};

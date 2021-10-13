@@ -1,22 +1,17 @@
-/* eslint-disable no-console */
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import styled from 'styled-components'
-
 import { Button, Link, Text } from '@sphynxswap/uikit'
-
 import { ReactComponent as TwitterIcon } from 'assets/svg/icon/TwitterIcon.svg'
-// eslint-disable-next-line import/no-cycle
 import { ReactComponent as SocialIcon2 } from 'assets/svg/icon/SocialIcon2.svg'
 import { ReactComponent as TelegramIcon } from 'assets/svg/icon/TelegramIcon.svg'
 import { ReactComponent as BscscanIcon } from 'assets/svg/icon/Bscscan.svg'
-// import { BoxesLoader } from "react-awesome-loaders";
-import { RouterTypeToggle } from 'config/constants/types'
 import { PoolData } from 'state/info/types'
 import fetchPoolsForToken from 'state/info/queries/tokens/poolsForToken'
 import { fetchPoolData } from 'state/info/queries/pools/poolData'
 
 import CopyHelper from 'components/AccountDetails/Copy'
+import { RouterTypeToggle } from 'config/constants/types'
 import './dropdown.css'
 import axios from 'axios'
 import { MenuItem } from '@material-ui/core'
@@ -150,9 +145,7 @@ export default function ContractPanel({ value }: ContractPanelProps) {
   const [poolDatas, setPoolDatas] = useState<PoolData[]>([])
   const { t } = useTranslation()
 
-  // const find=social.links.find(elem=>elem)
-  // console.log("socials",social.links)
-  const getWebsite = async () => {
+  const getWebsite = useCallback(async () => {
     const web: any = await socialToken(checksumAddress.toString());
     const links = web.links || []
     const twitter = links.find((e) => e.name === 'twitter')
@@ -167,7 +160,7 @@ export default function ContractPanel({ value }: ContractPanelProps) {
     }
 
     setSocial(web)
-  }
+  }, [checksumAddress])
 
   const handlerChange = (e: any) => {
     try {
@@ -179,10 +172,7 @@ export default function ContractPanel({ value }: ContractPanelProps) {
         setdata([])
       }
     } catch (err) {
-      // eslint-disable-next-line no-console
-      // console.log(err);
-      // alert("Invalid Address")
-      console.log('errr', err.message)
+      throw new Error(err)
     }
 
     const result = isAddress(e.target.value)
@@ -245,14 +235,13 @@ export default function ContractPanel({ value }: ContractPanelProps) {
       }
     }
 
-    document.addEventListener('keydown', listener)
+    document.addEventListener('keydown', listener, {passive: true})
     return () => {
       document.removeEventListener('keydown', listener)
       ac.abort();
     }
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [input])
+  }, [input, checksumAddress, getWebsite])
 
   return (
     <ContractPanelWrapper>
@@ -307,16 +296,16 @@ export default function ContractPanel({ value }: ContractPanelProps) {
       </ContractCard>
       <ToggleList poolDatas={poolDatas} />
       <SocialIconsWrapper>
-        <Link href={getBscScanLink(checksumAddress === false ? '' : checksumAddress, 'token')} external>
+        <Link href={getBscScanLink(checksumAddress === false ? '' : checksumAddress, 'token')} aria-label="Bscscan" external>
           <BscscanIcon />
         </Link>
-        <Link external href={twitterUrl}>
+        <Link external href={twitterUrl} aria-label="twitter">
           <TwitterIcon />
         </Link>
         <Link external href={social.website}>
           <SocialIcon2 />
         </Link>
-        <Link external href={telegramUrl}>
+        <Link external href={telegramUrl} aria-label="telegram">
           <TelegramIcon />
         </Link>
       </SocialIconsWrapper>

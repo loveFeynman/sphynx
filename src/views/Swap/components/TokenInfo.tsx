@@ -72,7 +72,6 @@ export default function TokenInfo(props) {
   const { tokenData } = props
   const { t } = useTranslation()
   const result = isAddress(input)
-  // eslint-disable-next-line no-console
 
   const dispatch = useDispatch<AppDispatch>()
 
@@ -113,8 +112,8 @@ export default function TokenInfo(props) {
           </IconWrapper>
         </Flex>
         <Flex style={{ width: 40 }}>
-          <Link href={getBscScanLink(result === false ? '' : result, 'token')} external>
-            <BscscanIcon />
+          <Link href={getBscScanLink(result === false ? '' : result, 'token')} aria-label="bscscan" external>
+            <BscscanIcon /> 
           </Link>
         </Flex>
       </Flex>

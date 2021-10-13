@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { useDispatch } from 'react-redux'
 import styled from 'styled-components'
 import { useLocation } from 'react-router'
@@ -449,6 +449,7 @@ const Menu = () => {
         {!menuToggled && <span>{t('Main Menu')}</span>}
         <Button
           onClick={handleToggleMenu}
+          aria-label="menu toggle"
         >
           {menuToggled ? (
             <svg viewBox="0 0 24 24" width="24px">
@@ -504,6 +505,7 @@ const Menu = () => {
                 className={realPath.indexOf(link.href) > -1 && link.href !== '#' ? 'active' : ''}
                 href={link.href}
                 target={link.newTab ? '_blank' : ''}
+                rel="noreferrer"
               >
                 <Icon />
                 {!menuToggled && (
@@ -532,16 +534,16 @@ const Menu = () => {
           </p>
           <SocialIconsWrapper toggled={menuToggled}>
             <div>
-              <Link external href="https://twitter.com/sphynxswap?s=21">
+              <Link external href="https://twitter.com/sphynxswap?s=21" aria-label="twitter">
                 <TwitterIcon />
               </Link>
-              <Link external href="https://sphynxtoken.co">
+              <Link external href="https://sphynxtoken.co" aria-label="social2">
                 <SocialIcon2 />
               </Link>
-              <Link external href="https://t.me/sphynxswap">
+              <Link external href="https://t.me/sphynxswap" aria-label="telegram">
                 <TelegramIcon />
               </Link>
-              <Link external href="https://discord.gg/QeR679MKdW">
+              <Link external href="https://discord.gg/QeR679MKdW" aria-label="discord">
                 <img src={DiscordIcon} alt="discord" style={{height: "45px", width: "45px", padding: "8px"}} />
               </Link>
               {/* <Link external href="https://instagram.com/sphynxswap?utm_medium=copy_link">
@@ -552,7 +554,7 @@ const Menu = () => {
         </SocialWrapper>
         {!menuToggled && (
           <IllustrationWrapper>
-            <img src={Illustration} alt="Illustration" />
+            <img src={Illustration} width="321" height="501" alt="Illustration" />
           </IllustrationWrapper>
         )}
       </MenuContentWrapper>
