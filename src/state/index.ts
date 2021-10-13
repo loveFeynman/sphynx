@@ -19,6 +19,7 @@ import burn from './burn/reducer'
 import multicall from './multicall/reducer'
 import inputReducer from './input/reducer'
 import autoSwapReducer from './flags/reducer'
+import tokenReducer from './wallet/tokenSlice'
 
 const PERSISTED_KEYS: string[] = ['user', 'transactions', 'lists']
 
@@ -32,6 +33,7 @@ const store = configureStore({
     predictions: predictionsReducer,
     profile: profileReducer,
     collectibles: collectiblesReducer,
+    tokens: tokenReducer,
 
     // Exchange
     application,
