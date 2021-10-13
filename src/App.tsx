@@ -1,4 +1,4 @@
-import React, { lazy } from 'react'
+import React, { lazy, useState, Suspense } from 'react'
 import { HashRouter as Router, Redirect, Route, Switch } from 'react-router-dom'
 import styled from 'styled-components'
 import { ResetCSS, Button, useMatchBreakpoints } from '@sphynxswap/uikit'
@@ -16,6 +16,7 @@ import { useTranslation } from 'contexts/Localization'
 import HotTokenBar from './views/Swap/components/HotTokenBar'
 import Menu from './components/Menu'
 import UserMenu from './components/Menu/UserMenu'
+import SuspenseWithChunkError from './components/SuspenseWithChunkError'
 import { ToastListener } from './contexts/ToastsContext'
 import EasterEgg from './components/EasterEgg'
 import GlobalStyle from './style/Global'
@@ -27,15 +28,15 @@ import {
 import RedirectOldRemoveLiquidityPathStructure from './views/RemoveLiquidity/redirects'
 import { RedirectPathToSwapOnly, RedirectToSwap } from './views/Swap/redirects'
 
-const Swap = React.lazy(() => import('./views/Swap'))
-const Farms = React.lazy(() => import('./views/Farms'))
-const Pools = React.lazy(() => import('./views/Pools'))
-const LotterySphx = React.lazy(() => import('./views/LotterySphx'))
-const Bridge = React.lazy(() => import('./views/Bridge'))
-const FAQ = React.lazy(() => import('./views/FAQ'))
 const NotFound = lazy(() => import('./views/NotFound'))
 const AddLiquidity = lazy(() => import('./views/AddLiquidity'))
 const RemoveLiquidity = lazy(() => import('./views/RemoveLiquidity'))
+const Swap = lazy(() => import('./views/Swap'))
+const Farms = lazy(() => import('./views/Farms'))
+const Pools = lazy(() => import('./views/Pools'))
+const Lottery = lazy(() => import('./views/LotterySphx'))
+const Bridge = lazy(() => import('./views/Bridge'))
+const FAQ = lazy(() => import('./views/FAQ'))
 
 const BodyWrapper = styled.div<{ toggled: boolean }>`
   display: flex;
@@ -111,6 +112,7 @@ const AccountWrapper = styled.div`
 
 const PageContent = styled.div`
   width: 100%;
+  min-height: 100vh;
 `
 
 const MenuOpenButton = styled(Button)`
@@ -165,8 +167,8 @@ const App: React.FC = () => {
 
   return (
     <>
-      <React.Suspense fallback={<Loader />}>
-        <Router>
+      <Router>
+        <Suspense fallback={<Loader />}>
           <ResetCSS />
           <GlobalStyle />
           <Menu />
@@ -197,40 +199,42 @@ const App: React.FC = () => {
               <HotTokenBar />
             </TokenBarMobile>
             <PageContent>
-              <Switch>
-                <Route path="/" exact>
-                  <Redirect to="/swap" />
-                </Route>
-                {/* Using this format because these components use routes injected props. We need to rework them with hooks */}
-                <Route path="/swap" component={Swap} />
-                <Route exact strict path="/farms" component={Farms} />
-                <Route exact strict path="/farms/history" component={Farms} />
-                <Route exact strict path="/pools" component={Pools} />
-                <Route exact strict path="/pools/history" component={Pools} />
-                <Route exact strict path="/lottery" component={LotterySphx} />
-                <Route exact strict path="/bridge" component={Bridge} />
-                <Route exact strict path="/swap/:outputCurrency" component={RedirectToSwap} />
-                <Route exact strict path="/send" component={RedirectPathToSwapOnly} />
-                <Route exact strict path="/create" component={RedirectToAddLiquidity} />
-                <Route exact strict path="/faq" component={FAQ} />
+              <SuspenseWithChunkError fallback={<Loader />}>
+                <Switch>
+                  <Route path="/" exact>
+                    <Redirect to="/swap" />
+                  </Route>
+                  {/* Using this format because these components use routes injected props. We need to rework them with hooks */}
+                  <Route path="/swap" component={Swap} />
+                  <Route exact strict path="/farms" component={Farms} />
+                  <Route exact strict path="/farms/history" component={Farms} />
+                  <Route exact strict path="/pools" component={Pools} />
+                  <Route exact strict path="/pools/history" component={Pools} />
+                  <Route exact strict path="/lottery" component={Lottery} />
+                  <Route exact strict path="/bridge" component={Bridge} />
+                  <Route exact strict path="/swap/:outputCurrency" component={RedirectToSwap} />
+                  <Route exact strict path="/send" component={RedirectPathToSwapOnly} />
+                  <Route exact strict path="/create" component={RedirectToAddLiquidity} />
+                  <Route exact strict path="/faq" component={FAQ} />
 
-                <Route exact path="/add" component={AddLiquidity} />
-                <Route exact path="/add/:currencyIdA" component={RedirectOldAddLiquidityPathStructure} />
-                <Route exact path="/add/:currencyIdA/:currencyIdB" component={RedirectDuplicateTokenIds} />
-                <Route exact path="/create" component={AddLiquidity} />
-                <Route exact path="/create/:currencyIdA" component={RedirectOldAddLiquidityPathStructure} />
-                <Route exact path="/create/:currencyIdA/:currencyIdB" component={RedirectDuplicateTokenIds} />
-                <Route exact strict path="/remove/:tokens" component={RedirectOldRemoveLiquidityPathStructure} />
-                <Route exact strict path="/remove/:currencyIdA/:currencyIdB" component={RemoveLiquidity} />
-                <Route component={NotFound} />
-              </Switch>
+                  <Route exact path="/add" component={AddLiquidity} />
+                  <Route exact path="/add/:currencyIdA" component={RedirectOldAddLiquidityPathStructure} />
+                  <Route exact path="/add/:currencyIdA/:currencyIdB" component={RedirectDuplicateTokenIds} />
+                  <Route exact path="/create" component={AddLiquidity} />
+                  <Route exact path="/create/:currencyIdA" component={RedirectOldAddLiquidityPathStructure} />
+                  <Route exact path="/create/:currencyIdA/:currencyIdB" component={RedirectDuplicateTokenIds} />
+                  <Route exact strict path="/remove/:tokens" component={RedirectOldRemoveLiquidityPathStructure} />
+                  <Route exact strict path="/remove/:currencyIdA/:currencyIdB" component={RemoveLiquidity} />
+                  <Route component={NotFound} />
+                </Switch>
+              </SuspenseWithChunkError>
             </PageContent>
           </BodyWrapper>
           <EasterEgg iterations={2} />
           <ToastListener />
           <DatePickerPortal />
-        </Router>
-      </React.Suspense>
+        </Suspense>
+      </Router>
     </>
   )
 }

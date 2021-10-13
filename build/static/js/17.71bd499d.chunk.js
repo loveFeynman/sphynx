@@ -1,2 +1,0 @@
-(this["webpackJsonppancake-frontend"]=this["webpackJsonppancake-frontend"]||[]).push([[17],{1721:function(n,e,t){"use strict";t.r(e);var c,a=t(14),i=(t(0),t(6)),p=t(1),r=i.e.div(c||(c=Object(a.a)(["\n  min-height: calc(100vh - 64px);\n"])));e.default=function(){return Object(p.jsx)(r,{children:"FAQ"})}}}]);
-//# sourceMappingURL=17.71bd499d.chunk.js.map
