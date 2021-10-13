@@ -52,7 +52,7 @@ const DividendPanel: React.FC = () => {
       .call()
       .then((data) => {
         const bal: any = web3.utils.fromWei(data)
-        setBalance(bal / 2) 
+        setBalance(bal / 2)
       })
 
     return () => ac.abort();
@@ -61,7 +61,7 @@ const DividendPanel: React.FC = () => {
   return (
     <Wrapper>
       <Flex>
-        <img src={MainLogo} alt="Main Logo" />
+        <img src={MainLogo} alt="Main Logo" width="159.118" height="151" />
         <Text color="white" mt={2} ml={1}>
           {t('Sphynx Swap Fee Rewards')}
         </Text>
