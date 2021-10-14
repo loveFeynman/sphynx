@@ -113,6 +113,15 @@ const ArrowContainer = styled(ArrowWrapper)`
   }
 `
 
+const BalanceText = styled.p`
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 12px;
+  color: white;
+  margin: 0 8px;
+  margin-left: auto;
+`
+
 const SlippageText = styled.p`
   font-size: 10px;
   font-weight: 500;
@@ -171,6 +180,9 @@ export default function Swap({ history }: RouteComponentProps) {
   const swapFlag = useSelector<AppState, AppState['autoSwapReducer']>((state) => state.autoSwapReducer.swapFlag)
   const inputTokenName = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
   const routerVersion = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.routerVersion)
+  const tokens = useSelector<AppState, AppState['tokens']>((state) => state.tokens);
+  const [inputBalance, setInputBalance] = useState(0)
+  const [outputBalance, setOutputBalance] = useState(0)
 
   stateRef.current = transactionData
   pairsRef.current = pairs
@@ -281,22 +293,22 @@ export default function Swap({ history }: RouteComponentProps) {
             if (input < wBNBAddr) {
               tokenAmt = Math.abs(
                 parseFloat(ethers.utils.formatUnits(datas.amount0In + '', tokenDecimal)) -
-                  parseFloat(ethers.utils.formatUnits(datas.amount0Out + '', tokenDecimal)),
+                parseFloat(ethers.utils.formatUnits(datas.amount0Out + '', tokenDecimal)),
               )
 
               isBuy = datas.amount1In === '0'
               BNBAmt = Math.abs(
                 parseFloat(ethers.utils.formatUnits(datas.amount1In + '', 18)) -
-                  parseFloat(ethers.utils.formatUnits(datas.amount1Out + '', 18)),
+                parseFloat(ethers.utils.formatUnits(datas.amount1Out + '', 18)),
               )
             } else {
               BNBAmt = Math.abs(
                 parseFloat(ethers.utils.formatUnits(datas.amount0In + '', 18)) -
-                  parseFloat(ethers.utils.formatUnits(datas.amount0Out + '', 18)),
+                parseFloat(ethers.utils.formatUnits(datas.amount0Out + '', 18)),
               )
               tokenAmt = Math.abs(
                 parseFloat(ethers.utils.formatUnits(datas.amount1In + '', tokenDecimal)) -
-                  parseFloat(ethers.utils.formatUnits(datas.amount1Out + '', tokenDecimal)),
+                parseFloat(ethers.utils.formatUnits(datas.amount1Out + '', tokenDecimal)),
               )
               isBuy = datas.amount0In === '0'
             }
@@ -305,8 +317,7 @@ export default function Swap({ history }: RouteComponentProps) {
             oneData.amount = tokenAmt
             oneData.price = (BNBAmt / tokenAmt) * price * 10 ** (18 - tokenDecimal)
             oneData.transactionTime = formatTimeString(
-              `${new Date().getUTCFullYear()}-${
-                new Date().getUTCMonth() + 1
+              `${new Date().getUTCFullYear()}-${new Date().getUTCMonth() + 1
               }-${new Date().getDate()} ${new Date().getUTCHours()}:${new Date().getUTCMinutes()}:${new Date().getUTCSeconds()}`,
             )
 
@@ -450,7 +461,7 @@ export default function Swap({ history }: RouteComponentProps) {
     try {
       axios.post(`${process.env.REACT_APP_BACKEND_API_URL}/tokenStats`, { address: input }).then((response) => {
         setTokenData(response.data)
-        dispatch(marketCap({ marketCapacity:parseFloat(response.data.marketCap) }))
+        dispatch(marketCap({ marketCapacity: parseFloat(response.data.marketCap) }))
       })
     } catch (err) {
       // eslint-disable-next-line no-console
@@ -510,13 +521,13 @@ export default function Swap({ history }: RouteComponentProps) {
 
   const parsedAmounts = showWrap
     ? {
-        [Field.INPUT]: parsedAmount,
-        [Field.OUTPUT]: parsedAmount,
-      }
+      [Field.INPUT]: parsedAmount,
+      [Field.OUTPUT]: parsedAmount,
+    }
     : {
-        [Field.INPUT]: independentField === Field.INPUT ? parsedAmount : trade?.inputAmount,
-        [Field.OUTPUT]: independentField === Field.OUTPUT ? parsedAmount : trade?.outputAmount,
-      }
+      [Field.INPUT]: independentField === Field.INPUT ? parsedAmount : trade?.inputAmount,
+      [Field.OUTPUT]: independentField === Field.OUTPUT ? parsedAmount : trade?.outputAmount,
+    }
 
   const { onSwitchTokens, onCurrencySelection, onUserInput, onChangeRecipient } = useSwapActionHandlers()
   const isValid = !swapInputError
@@ -702,9 +713,36 @@ export default function Swap({ history }: RouteComponentProps) {
         setSwapWarningCurrency(null)
       }
     },
-
     [onCurrencySelection],
   )
+
+  useEffect(() => {
+    let flag = false
+    tokens.forEach((cell) => {
+      if (cell.symbol === currencies?.INPUT?.symbol) {
+        setInputBalance(cell.value)
+        flag = true
+        return
+      }
+    })
+    if (!flag) {
+      setInputBalance(0)
+    }
+  }, [currencies?.INPUT?.symbol, tokens])
+
+  useEffect(() => {
+    let flag = false
+    tokens.forEach((cell) => {
+      if (cell.symbol === currencies?.OUTPUT?.symbol) {
+        setOutputBalance(cell.value)
+        flag = true
+        return
+      }
+    })
+    if (!flag) {
+      setOutputBalance(0)
+    }
+  }, [currencies?.OUTPUT?.symbol, tokens])
 
   const handleMaxInput = useCallback(() => {
     if (maxAmountInput) {
@@ -821,6 +859,9 @@ export default function Swap({ history }: RouteComponentProps) {
                     id="swap-currency-input"
                   />
                   <AutoColumn justify="space-between">
+                    <BalanceText>
+                      <b>{inputBalance}</b>
+                    </BalanceText>
                     <AutoRow justify={isExpertMode ? 'space-between' : 'center'} style={{ padding: '0 1rem' }}>
                       <ArrowContainer
                         clickable
@@ -846,7 +887,9 @@ export default function Swap({ history }: RouteComponentProps) {
                     otherCurrency={currencies[Field.INPUT]}
                     id="swap-currency-output"
                   />
-
+                  <BalanceText>
+                    <b>{outputBalance}</b>
+                  </BalanceText>
                   {isExpertMode && recipient !== null && !showWrap ? (
                     <>
                       <AutoRow justify="space-between" style={{ padding: '0 1rem' }}>
@@ -932,8 +975,8 @@ export default function Swap({ history }: RouteComponentProps) {
                         {priceImpactSeverity > 3 && !isExpertMode
                           ? t('Price Impact High')
                           : priceImpactSeverity > 2
-                          ? t('Swap Anyway')
-                          : t('Swap')}
+                            ? t('Swap Anyway')
+                            : t('Swap')}
                       </Button>
                     </RowBetween>
                   ) : (
@@ -948,8 +991,8 @@ export default function Swap({ history }: RouteComponentProps) {
                         (priceImpactSeverity > 3 && !isExpertMode
                           ? `Price Impact Too High`
                           : priceImpactSeverity > 2
-                          ? t('Swap Anyway')
-                          : t('Swap'))}
+                            ? t('Swap Anyway')
+                            : t('Swap'))}
                     </Button>
                   )}
                   {showApproveFlow && (
@@ -972,12 +1015,12 @@ export default function Swap({ history }: RouteComponentProps) {
         <div>
           <FullHeightColumn>
             <ContractPanel value="" />
-            <CoinStatsBoard tokenData={tokenData}/>
+            <CoinStatsBoard tokenData={tokenData} />
             <ChartContainer />
           </FullHeightColumn>
         </div>
         <TokenInfoWrapper>
-          <TokenInfo tokenData={tokenData}/>
+          <TokenInfo tokenData={tokenData} />
         </TokenInfoWrapper>
         <div
           style={{
