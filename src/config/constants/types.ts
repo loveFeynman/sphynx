@@ -21,6 +21,10 @@ export interface ToggleMenuItem {
 
 export const RouterTypeToggle: ToggleMenuItem[] = [
   {
+    key: "sphynx",
+    value: 'SPHYNX DEX',
+  },
+  {
     key: 'v2',
     value: 'V2 PANCAKE',
   },

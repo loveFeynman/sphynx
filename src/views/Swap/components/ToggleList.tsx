@@ -92,13 +92,7 @@ const ToggleList = ({ poolDatas }: { poolDatas: PoolData[] }) => {
   useEffect(() => {
     
     let newMenuItems: ToggleMenuItem[] = []
-    if (poolDatas?.length > 0 && checksumAddress) {
-      newMenuItems.push({
-        key: "sphynx",
-        value: 'SPHYNX DEX',
-      })
-    }
-    newMenuItems = [...newMenuItems, ...RouterTypeToggle]
+    newMenuItems = [...RouterTypeToggle]
     setMenuItems(newMenuItems)
 
     newMenuItems.forEach((item) => {
