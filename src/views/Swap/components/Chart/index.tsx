@@ -70,12 +70,8 @@ const ChartContainer = React.memo(() => {
   }
 
   useEffect(() => {
-    let isPancakeRouterNew = false
-    RouterTypeToggle.forEach((item) => {
-      if (item.key === routerVersion) {
-        isPancakeRouterNew = true
-      }
-    })
+    let isPancakeRouterNew = true
+    isPancakeRouterNew = routerVersion !== "sphynx"
 
     setIsPancakeRouter(isPancakeRouterNew)
 
