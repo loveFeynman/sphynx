@@ -20,6 +20,7 @@ import Column, { AutoColumn } from 'components/Layout/Column'
 import { AutoRow, RowBetween } from 'components/Layout/Row'
 import ConnectWalletButton from 'components/ConnectWalletButton'
 import { AppHeader } from 'components/App'
+import { BalanceNumber } from 'components/BalanceNumber'
 
 import { useSwapTransCard, useSwapType } from 'state/application/hooks'
 import { ReactComponent as DownArrow } from 'assets/svg/icon/DownArrow.svg'
@@ -861,7 +862,7 @@ export default function Swap({ history }: RouteComponentProps) {
                   />
                   <AutoColumn justify="space-between">
                     <BalanceText>
-                      <b>{inputBalance}</b>
+                      <BalanceNumber prefix="" value={Number(inputBalance).toFixed(2)} />
                     </BalanceText>
                     <AutoRow justify={isExpertMode ? 'space-between' : 'center'} style={{ padding: '0 1rem' }}>
                       <ArrowContainer
@@ -889,7 +890,7 @@ export default function Swap({ history }: RouteComponentProps) {
                     id="swap-currency-output"
                   />
                   <BalanceText>
-                    <b>{outputBalance}</b>
+                    <BalanceNumber prefix="" value={Number(outputBalance).toFixed(2)} />
                   </BalanceText>
                   {isExpertMode && recipient !== null && !showWrap ? (
                     <>

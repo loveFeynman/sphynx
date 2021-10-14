@@ -1,9 +1,11 @@
-import React, { useCallback, useEffect } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import styled from 'styled-components'
 import { Flex, Text, Link } from '@sphynxswap/uikit'
 import { ReactComponent as BscscanIcon } from 'assets/svg/icon/Bscscan.svg'
 import CopyHelper from 'components/AccountDetails/Copy'
+import { BITQUERY_API, BITQUERY_API_KEY } from 'config/constants/endpoints'
+import axios from 'axios'
 import { AppState, AppDispatch } from '../../../state'
 import { selectCurrency, Field } from '../../../state/swap/actions'
 import { isAddress, getBscScanLink } from '../../../utils'
@@ -68,7 +70,8 @@ export default function TokenInfo(props) {
   const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
   const isInput = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.isInput)
   const marketCapacity = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.marketCapacity)
-
+  const [transactionNum, setTransactionNum] = useState(0)
+  const [holderNum, setHolderNum] = useState(0)
   const { tokenData } = props
   const { t } = useTranslation()
   const result = isAddress(input)
@@ -103,6 +106,52 @@ export default function TokenInfo(props) {
     return () => ac.abort();
   }, [getTableData, input, isInput])
 
+  useEffect(() => {
+    const ac = new AbortController()
+    const fetchTransaction = async () => {
+      try {
+        const bitConfig = {
+          headers: {
+            'X-API-KEY': BITQUERY_API_KEY,
+          },
+        }
+
+        const queryTx = `{
+          ethereum(network: bsc) {
+            transactions(txTo: {is: "${input}"}) {
+              count
+            }
+          }
+        }`
+        const queryResult = await axios.post(BITQUERY_API, { query: queryTx }, bitConfig)
+        setTransactionNum(queryResult.data.data.ethereum.transactions[0].count)
+      } catch (err) {
+        // eslint-disable-next-line no-console
+        console.log('err', err.message)
+        setTransactionNum(0)
+      }
+    }
+
+    const fetchHolder = async () => {
+      try {
+        axios.post(`${process.env.REACT_APP_BACKEND_API_URL}/holders`, { address: input }).then((response) => {
+          setHolderNum(Number(response.data.holders))
+        })
+      } catch (err) {
+        // eslint-disable-next-line no-console
+        console.log(err)
+        setHolderNum(0)
+      }
+    }
+
+    if (input) {
+      fetchTransaction()
+      fetchHolder()
+    }
+
+    return () => ac.abort()
+  }, [input])
+
   return (
     <TokenInfoContainer>
       <Flex alignItems="center" justifyContent="space-between">
@@ -128,7 +177,7 @@ export default function TokenInfo(props) {
         </TextWrapper>
         <TextWrapper>
           <Text>{t('Transactions')}</Text>
-          <Text>{tokenData&&tokenData.txs}</Text>
+          <Text>{transactionNum}</Text>
         </TextWrapper>
         <TextWrapper>
           <Text className="textWithCopy">
@@ -145,7 +194,7 @@ export default function TokenInfo(props) {
           <Text>{t('Holders')}</Text>
           <Text>
             <a href={`https://bscscan.com/token/${input}#balances`} target="_blank" rel="noreferrer">
-            {tokenData&&Number(tokenData.holders).toLocaleString()}
+            {holderNum}
             </a>
           </Text>
         </TextWrapper>
