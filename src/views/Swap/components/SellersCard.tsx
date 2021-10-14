@@ -77,7 +77,7 @@ const SellersCard = (props) => {
     const to = new Date().toISOString()
     try {
       if (result && address && from && to) {
-        const topBuyers = await topTrades(address, 'buy', pair);
+        const topBuyers = await topTrades(address, 'sell', pair);
         if (topBuyers) {
           setTableData(topBuyers);
         }
