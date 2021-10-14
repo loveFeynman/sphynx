@@ -320,6 +320,9 @@ const Menu = () => {
         setAllTokens(balances)
       }
     }
+    else{
+      dispatch(deleteTokens())
+    }
   }
 
   const updateWallet = () => {

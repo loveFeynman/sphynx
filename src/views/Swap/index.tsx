@@ -862,7 +862,7 @@ export default function Swap({ history }: RouteComponentProps) {
                   />
                   <AutoColumn justify="space-between">
                     <BalanceText>
-                      <BalanceNumber prefix="" value={Number(inputBalance)} />
+                      <BalanceNumber prefix="" value={Number(inputBalance).toFixed(2)} />
                     </BalanceText>
                     <AutoRow justify={isExpertMode ? 'space-between' : 'center'} style={{ padding: '0 1rem' }}>
                       <ArrowContainer
@@ -890,7 +890,7 @@ export default function Swap({ history }: RouteComponentProps) {
                     id="swap-currency-output"
                   />
                   <BalanceText>
-                    <BalanceNumber prefix="" value={Number(outputBalance)} />
+                    <BalanceNumber prefix="" value={Number(outputBalance).toFixed(2)} />
                   </BalanceText>
                   {isExpertMode && recipient !== null && !showWrap ? (
                     <>
