@@ -7,6 +7,7 @@ import {
   IChartingLibraryWidget,
   LanguageCode,
   ResolutionString,
+  Timezone,
   widget,
 } from 'charting_library/charting_library'
 import { makeApiRequest1 } from './helpers'
@@ -251,6 +252,9 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
   }
 
   const getWidget = async () => {
+    const local_timezone: string = Intl.DateTimeFormat().resolvedOptions().timeZone
+    const custom_timezone: Timezone = local_timezone as Timezone
+
     let tvWidget: IChartingLibraryWidget | null = null
     const widgetOptions: ChartingLibraryWidgetOptions = {
       symbol: tokendetails.pair,
@@ -269,6 +273,7 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
       fullscreen: ChartContainerProps.fullscreen,
       autosize: ChartContainerProps.autosize,
       studies_overrides: ChartContainerProps.studiesOverrides,
+      timezone: custom_timezone
     }
 
     tvWidget = await new widget(widgetOptions)
