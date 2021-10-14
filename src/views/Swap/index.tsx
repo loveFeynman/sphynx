@@ -371,7 +371,7 @@ export default function Swap({ history }: RouteComponentProps) {
 
   const formatTimeString = (timeString) => {
     let dateArray = timeString.split(/[- :\/]/)
-    let date = new Date(dateArray[0], dateArray[1] - 1, dateArray[2], dateArray[3], dateArray[4], dateArray[5])
+    let date = new Date(`${dateArray[1] - 1}/${dateArray[2]}/${dateArray[0]} ${dateArray[3]}:${dateArray[4]}:${dateArray[5]} UTC`)
     return date.toString().split('GMT')[0]
   }
 

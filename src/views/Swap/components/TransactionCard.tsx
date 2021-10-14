@@ -2,13 +2,8 @@
 import React from 'react'
 import styled from 'styled-components'
 import { Flex } from '@sphynxswap/uikit'
-import ERC20ABI from '../../../assets/abis/erc20.json'
-import routerABI from '../../../assets/abis/pancakeRouter.json'
 import { Spinner } from '../../LotterySphx/components/Spinner'
 import { useTranslation } from 'contexts/Localization'
-
-const abi: any = ERC20ABI
-const routerAbi: any = routerABI
 
 const TableWrapper = styled.div`
   background: rgba(0, 0, 0, 0.4);
