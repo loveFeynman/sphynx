@@ -8,6 +8,21 @@ interface FarmTabButtonsProps {
   hasStakeInFinishedFarms: boolean
 }
 
+const Wrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  a {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  ${({ theme }) => theme.mediaQueries.sm} {
+    margin-left: 16px;
+  }
+`
+
 const FarmTabButtons: React.FC<FarmTabButtonsProps> = ({ hasStakeInFinishedFarms }) => {
   const location = useLocation()
   const { t } = useTranslation()
@@ -45,18 +60,3 @@ const FarmTabButtons: React.FC<FarmTabButtonsProps> = ({ hasStakeInFinishedFarms
 }
 
 export default FarmTabButtons
-
-const Wrapper = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  a {
-    padding-left: 12px;
-    padding-right: 12px;
-  }
-
-  ${({ theme }) => theme.mediaQueries.sm} {
-    margin-left: 16px;
-  }
-`

@@ -25,10 +25,12 @@ const TransactionStatusText = styled.span`
   flex-flow: row nowrap;
   align-items: center;
 `
+interface CopyHelperProps {
+  toCopy: string,
+}
 
-export default function CopyHelper(props: { toCopy: string; children: React.ReactNode }) {
+const CopyHelper: React.FC<CopyHelperProps> = ({ toCopy, children }) => {
   const [isCopied, setCopied] = useCopyClipboard()
-  const { children, toCopy } = props
 
   return (
     <CopyIcon onClick={() => setCopied(toCopy)} aria-label="copy helper">
@@ -46,3 +48,5 @@ export default function CopyHelper(props: { toCopy: string; children: React.Reac
     </CopyIcon>
   )
 }
+
+export default CopyHelper

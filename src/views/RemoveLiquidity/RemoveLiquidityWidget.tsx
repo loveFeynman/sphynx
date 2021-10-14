@@ -619,7 +619,6 @@ export default function RemoveLiquidityWidget({
                   </AutoRow>
                 </AutoColumn>
                 <CurrencyInputPanel
-                  hideBalance
                   value={formattedAmounts[Field.CURRENCY_A]}
                   onUserInput={onCurrencyAInput}
                   onMax={() => onUserInput(Field.LIQUIDITY_PERCENT, '100')}
@@ -637,7 +636,6 @@ export default function RemoveLiquidityWidget({
                   </AutoRow>
                 </AutoColumn>
                 <CurrencyInputPanel
-                  hideBalance
                   value={formattedAmounts[Field.CURRENCY_B]}
                   onUserInput={onCurrencyBInput}
                   onMax={() => onUserInput(Field.LIQUIDITY_PERCENT, '100')}

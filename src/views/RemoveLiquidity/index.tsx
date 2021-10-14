@@ -591,7 +591,6 @@ export default function RemoveLiquidity({
                 <ArrowDownIcon width="24px" my="16px" />
               </ColumnCenter>
               <CurrencyInputPanel
-                hideBalance
                 value={formattedAmounts[Field.CURRENCY_A]}
                 onUserInput={onCurrencyAInput}
                 onMax={() => onUserInput(Field.LIQUIDITY_PERCENT, '100')}
@@ -605,7 +604,6 @@ export default function RemoveLiquidity({
                 <AddIcon width="24px" my="16px" />
               </ColumnCenter>
               <CurrencyInputPanel
-                hideBalance
                 value={formattedAmounts[Field.CURRENCY_B]}
                 onUserInput={onCurrencyBInput}
                 onMax={() => onUserInput(Field.LIQUIDITY_PERCENT, '100')}

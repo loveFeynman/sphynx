@@ -12,3 +12,5 @@ export function BalanceNumber({ prefix, value }) {
       />
     );
 }
+
+export default BalanceNumber

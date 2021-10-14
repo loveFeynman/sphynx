@@ -60,38 +60,42 @@ const TableWrapper = styled.div`
   }
 `
 
-const BuyersCard = () => {
+const BuyersCard = (props) => {
   const [tableData, setTableData] = useState([])
+  const [isLoading, setLoading] = useState(true)
   const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
   const { t } = useTranslation()
-
   const result = isAddress(input)
+  const { pairAddress } = props
   // eslint-disable-next-line no-console
 
-  const getTableData = async () => {
+  const getTableData = async (pair) => {
+    setLoading(true)
     const address = input
     const from = new Date(new Date().setMonth(new Date().getMonth() - 1)).toISOString()
     const to = new Date().toISOString()
     try {
       if (result && address && from && to) {
-        const topBuyers = await topTrades(address, 'buy');
+        const topBuyers = await topTrades(address, 'buy', pair);
         if (topBuyers) {
           setTableData(topBuyers);
         }
       }
+      setLoading(false)
     } catch (error) {
       console.log(error)
+      setLoading(false)
     }
   }
 
   useEffect(() => {
-    getTableData()
+    getTableData(pairAddress)
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [input])
+  }, [input, pairAddress])
   return (
     <>
-      {tableData.length > 0 ? (
+      {!isLoading ? (
         <TableWrapper>
           <table>
             <thead>

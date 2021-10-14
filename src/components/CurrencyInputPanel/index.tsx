@@ -93,7 +93,6 @@ interface CurrencyInputPanelProps {
   currency?: Currency | null
   disableCurrencySelect?: boolean
   isBridge?: boolean
-  hideBalance?: boolean
   pair?: Pair | null
   hideInput?: boolean
   otherCurrency?: Currency | null
@@ -111,7 +110,6 @@ export default function CurrencyInputPanel({
   currency,
   disableCurrencySelect = false,
   isBridge = false,
-  hideBalance = false,
   pair = null, // used for double token logo
   hideInput = false,
   otherCurrency,

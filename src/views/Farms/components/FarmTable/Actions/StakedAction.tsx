@@ -49,6 +49,7 @@ const Staked: React.FunctionComponent<StackedActionProps> = ({
 
   const lpAddress = getAddress(lpAddresses)
   const addLiquidityUrl = `${BASE_SWAP_URL}`
+  const dispatch = useAppDispatch()
 
   const handleStake = async (amount: string) => {
     await onStake(amount)
@@ -78,7 +79,6 @@ const Staked: React.FunctionComponent<StackedActionProps> = ({
     <WithdrawModal max={stakedBalance} onConfirm={handleUnstake} tokenName={lpSymbol} />,
   )
   const lpContract = useERC20(lpAddress)
-  const dispatch = useAppDispatch()
   const { onApprove } = useApproveFarm(lpContract)
 
   const handleApprove = useCallback(async () => {

@@ -42,30 +42,6 @@ export const numberOrNull = (value: string) => {
   return Number.isNaN(valueNum) ? null : valueNum
 }
 
-export const transformBetResponse = (betResponse: BetResponse): Bet => {
-  const bet = {
-    id: betResponse.id,
-    hash: betResponse.hash,
-    amount: betResponse.amount ? parseFloat(betResponse.amount) : 0,
-    position: betResponse.position === 'Bull' ? BetPosition.BULL : BetPosition.BEAR,
-    claimed: betResponse.claimed,
-    claimedHash: betResponse.claimedHash,
-    user: {
-      id: betResponse.user.id,
-      address: betResponse.user.address,
-      block: numberOrNull(betResponse.user.block),
-      totalBets: numberOrNull(betResponse.user.totalBets),
-      totalBNB: numberOrNull(betResponse.user.totalBNB),
-    },
-  } as Bet
-
-  if (betResponse.round) {
-    bet.round = transformRoundResponse(betResponse.round)
-  }
-
-  return bet
-}
-
 export const transformRoundResponse = (roundResponse: RoundResponse): Round => {
   const {
     id,
@@ -120,6 +96,31 @@ export const transformRoundResponse = (roundResponse: RoundResponse): Round => {
     position: getRoundPosition(position),
     bets: bets.map(transformBetResponse),
   }
+}
+
+
+export const transformBetResponse = (betResponse: BetResponse): Bet => {
+  const bet = {
+    id: betResponse.id,
+    hash: betResponse.hash,
+    amount: betResponse.amount ? parseFloat(betResponse.amount) : 0,
+    position: betResponse.position === 'Bull' ? BetPosition.BULL : BetPosition.BEAR,
+    claimed: betResponse.claimed,
+    claimedHash: betResponse.claimedHash,
+    user: {
+      id: betResponse.user.id,
+      address: betResponse.user.address,
+      block: numberOrNull(betResponse.user.block),
+      totalBets: numberOrNull(betResponse.user.totalBets),
+      totalBNB: numberOrNull(betResponse.user.totalBNB),
+    },
+  } as Bet
+
+  if (betResponse.round) {
+    bet.round = transformRoundResponse(betResponse.round)
+  }
+
+  return bet
 }
 
 export const transformTotalWonResponse = (

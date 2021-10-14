@@ -392,6 +392,7 @@ export default function Swap({ history }: RouteComponentProps) {
     }
     fetchDecimals()
 
+    setLoading(false)
     const ac = new AbortController()
     let newTransactions = []
     const fetchData = async () => {
@@ -1029,8 +1030,8 @@ export default function Swap({ history }: RouteComponentProps) {
           }}
         >
           {swapTransCard === 'tokenDX' && <TransactionCard transactionData={transactionData} isLoading={isLoading} />}
-          {swapTransCard === 'buyers' && <BuyersCard />}
-          {swapTransCard === 'sellers' && <SellersCard />}
+          {swapTransCard === 'buyers' && <BuyersCard pairAddress={pairs[0]} />}
+          {swapTransCard === 'sellers' && <SellersCard pairAddress={pairs[0]} />}
         </div>
       </Cards>
     </SwapPage>

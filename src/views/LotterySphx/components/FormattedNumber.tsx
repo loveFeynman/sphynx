@@ -14,3 +14,5 @@ export function FormattedNumber({prefix, value, suffix }) {
     />
   );
 }
+
+export default FormattedNumber

@@ -325,6 +325,52 @@ async function socialToken(address: string) {
   }
 }
 
+const getPancakePairAddress = async (quoteToken, baseToken) => {
+  const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
+  const pancakeFactoryContract = new web3.eth.Contract(factoryAbi as AbiItem[], PANCAKE_FACTORY_ADDRESS)
+  const pairAddress = await pancakeFactoryContract.methods.getPair(quoteToken, baseToken).call()
+  if (pairAddress === ZERO_ADDRESS) {
+    return null
+  }
+  return pairAddress
+}
+
+const getPriceInfo = async (input, decimals) => {
+  const pancakeV2 = '0x10ED43C718714eb63d5aA57B78B54704E256024E'
+  const busdAddr = '0xe9e7cea3dedca5984780bafc599bd69add087d56'
+  const wBNBAddr = '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c'
+  const routerABI = [
+    {
+      inputs: [
+        { internalType: 'uint256', name: 'amountIn', type: 'uint256' },
+        { internalType: 'address[]', name: 'path', type: 'address[]' },
+      ],
+      name: 'getAmountsOut',
+      outputs: [{ internalType: 'uint256[]', name: 'amounts', type: 'uint256[]' }],
+      stateMutability: 'view',
+      type: 'function',
+    },
+  ]
+  // eslint-disable-next-line no-async-promise-executor
+  return new Promise(async (resolve) => {
+    const routerInstance = new web3.eth.Contract(routerABI as AbiItem[], pancakeV2)
+    let path = [input, busdAddr]
+    const pairAddress = await getPancakePairAddress(input, busdAddr)
+    if (pairAddress === null) {
+      path = [input, wBNBAddr, busdAddr]
+      routerInstance.methods
+        .getAmountsOut(web3.utils.toBN(10 ** decimals), path)
+        .call()
+        .then((data) => resolve(data))
+    } else {
+      routerInstance.methods
+        .getAmountsOut(web3.utils.toBN(10 ** decimals), path)
+        .call()
+        .then((data) => resolve(data))
+    }
+  })
+}
+
 const getPrice = async (tokenAddr) => {
   try {
     if (tokenAddr === '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c') {
@@ -411,7 +457,8 @@ const getPrice = async (tokenAddr) => {
   }
 }
 
-async function topTrades(address: string, type: 'buy' | 'sell') {
+async function topTrades(address: string, type: 'buy' | 'sell', pairAddress) {
+  if(!pairAddress) return []
   const till = new Date().toISOString()
   const since = new Date(new Date().getTime() - 3600 * 24 * 1000 * 3).toISOString()
   const query = `{
@@ -419,7 +466,7 @@ async function topTrades(address: string, type: 'buy' | 'sell') {
       dexTrades(
         options: {desc: "block.height"}
         date: {since: "${since}", till: "${till}"}
-        exchangeName: {in: ["Pancake", "Pancake v2"]}
+        smartContractAddress: {is: "${pairAddress}"}
         baseCurrency: {is: "${address}"}
         quoteCurrency: {is: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"}
       ) {
@@ -493,60 +540,5 @@ async function topTrades(address: string, type: 'buy' | 'sell') {
   return returnData
 }
 
-const getPancakePairAddress = async (quoteToken, baseToken) => {
-  const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
-  const pancakeFactoryContract = new web3.eth.Contract(factoryAbi as AbiItem[], PANCAKE_FACTORY_ADDRESS)
-  const pairAddress = await pancakeFactoryContract.methods.getPair(quoteToken, baseToken).call()
-  if (pairAddress === ZERO_ADDRESS) {
-    return null
-  }
-  return pairAddress
-}
-
-const getSphynxPairAddress = async (quoteToken, baseToken, provider) => {
-  const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
-  const sphynxFactoryContract = new web3.eth.Contract(factoryAbi as AbiItem[], SPHYNX_FACTORY_ADDRESS)
-  const pairAddress = await sphynxFactoryContract.methods.getPair(quoteToken, baseToken).call()
-  if (pairAddress === ZERO_ADDRESS) {
-    return null
-  }
-  return pairAddress
-}
-
-const getPriceInfo = async (input, decimals) => {
-  const pancakeV2 = '0x10ED43C718714eb63d5aA57B78B54704E256024E'
-  const busdAddr = '0xe9e7cea3dedca5984780bafc599bd69add087d56'
-  const wBNBAddr = '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c'
-  const routerABI = [
-    {
-      inputs: [
-        { internalType: 'uint256', name: 'amountIn', type: 'uint256' },
-        { internalType: 'address[]', name: 'path', type: 'address[]' },
-      ],
-      name: 'getAmountsOut',
-      outputs: [{ internalType: 'uint256[]', name: 'amounts', type: 'uint256[]' }],
-      stateMutability: 'view',
-      type: 'function',
-    },
-  ]
-  // eslint-disable-next-line no-async-promise-executor
-  return new Promise(async (resolve) => {
-    const routerInstance = new web3.eth.Contract(routerABI as AbiItem[], pancakeV2)
-    let path = [input, busdAddr]
-    const pairAddress = await getPancakePairAddress(input, busdAddr)
-    if (pairAddress === null) {
-      path = [input, wBNBAddr, busdAddr]
-      routerInstance.methods
-        .getAmountsOut(web3.utils.toBN(10 ** decimals), path)
-        .call()
-        .then((data) => resolve(data))
-    } else {
-      routerInstance.methods
-        .getAmountsOut(web3.utils.toBN(10 ** decimals), path)
-        .call()
-        .then((data) => resolve(data))
-    }
-  })
-}
-
 export { getTokenDetails, getChartStats, socialToken, topTrades, getPrice, getChartData }
+export default getTokenDetails

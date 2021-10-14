@@ -41,11 +41,6 @@ interface PoolsQueryResponse {
   twoWeeksAgo: PoolFields[]
 }
 
-/**
- * Data for displaying pool tables (on multiple pages, used throughout the site)
- * Note: Don't try to refactor it to use variables, server throws error if blocks passed as undefined variable
- * only works if its hard-coded into query string
- */
 const POOL_AT_BLOCK = (block: number | null, pools: string[]) => {
   const blockString = block ? `block: {number: ${block}}` : ``
   const addressesString = `["${pools.join('","')}"]`
@@ -75,6 +70,25 @@ const POOL_AT_BLOCK = (block: number | null, pools: string[]) => {
   }`
 }
 
+const parsePoolData = (pairs?: PoolFields[]) => {
+  if (!pairs) {
+    return {}
+  }
+  return pairs.reduce((accum: { [address: string]: FormattedPoolFields }, poolData) => {
+    const { volumeUSD, reserveUSD, reserve0, reserve1, token0Price, token1Price } = poolData
+    accum[poolData.id] = {
+      ...poolData,
+      volumeUSD: parseFloat(volumeUSD),
+      reserveUSD: parseFloat(reserveUSD),
+      reserve0: parseFloat(reserve0),
+      reserve1: parseFloat(reserve1),
+      token0Price: parseFloat(token0Price),
+      token1Price: parseFloat(token1Price),
+    }
+    return accum
+  }, {})
+}
+
 export const fetchPoolData = async (
   poolAddresses: string[],
 ): Promise<{
@@ -91,8 +105,7 @@ export const fetchPoolData = async (
     if (data) {
       const formattedPoolData = parsePoolData(data?.now)
 
-      // eslint-disable-next-line prefer-const
-      let formatted: PoolData[] = []
+      const formatted: PoolData[] = []
       poolAddresses.forEach((address) => {
         const current: FormattedPoolFields | undefined = formattedPoolData[address]
         formatted.push({
@@ -126,22 +139,4 @@ export const fetchPoolData = async (
   }
 }
 
-// Transforms pools into "0xADDRESS: { ...PoolFields }" format and cast strigns to numbers
-const parsePoolData = (pairs?: PoolFields[]) => {
-  if (!pairs) {
-    return {}
-  }
-  return pairs.reduce((accum: { [address: string]: FormattedPoolFields }, poolData) => {
-    const { volumeUSD, reserveUSD, reserve0, reserve1, token0Price, token1Price } = poolData
-    accum[poolData.id] = {
-      ...poolData,
-      volumeUSD: parseFloat(volumeUSD),
-      reserveUSD: parseFloat(reserveUSD),
-      reserve0: parseFloat(reserve0),
-      reserve1: parseFloat(reserve1),
-      token0Price: parseFloat(token0Price),
-      token1Price: parseFloat(token1Price),
-    }
-    return accum
-  }, {})
-}
+export default fetchPoolData
