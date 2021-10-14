@@ -547,7 +547,7 @@ const Menu = () => {
               <Link external href="https://t.me/sphynxswap" aria-label="telegram">
                 <TelegramIcon />
               </Link>
-              <Link external href="https://discord.gg/QeR679MKdW" aria-label="discord">
+              <Link external href="https://discord.gg/ZEuDaFk4qz" aria-label="discord">
                 <img src={DiscordIcon} alt="discord" style={{ height: "45px", width: "45px", padding: "8px" }} />
               </Link>
               {/* <Link external href="https://instagram.com/sphynxswap?utm_medium=copy_link">

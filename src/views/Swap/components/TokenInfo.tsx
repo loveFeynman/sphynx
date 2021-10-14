@@ -71,6 +71,7 @@ export default function TokenInfo(props) {
   const isInput = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.isInput)
   const marketCapacity = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.marketCapacity)
   const [transactionNum, setTransactionNum] = useState(0)
+  const [holderNum, setHolderNum] = useState(0)
   const { tokenData } = props
   const { t } = useTranslation()
   const result = isAddress(input)
@@ -107,7 +108,7 @@ export default function TokenInfo(props) {
 
   useEffect(() => {
     const ac = new AbortController()
-    const fetchData = async () => {
+    const fetchTransaction = async () => {
       try {
         const bitConfig = {
           headers: {
@@ -131,8 +132,21 @@ export default function TokenInfo(props) {
       }
     }
 
+    const fetchHolder = async () => {
+      try {
+        axios.post(`${process.env.REACT_APP_BACKEND_API_URL}/holders`, { address: input }).then((response) => {
+          setHolderNum(Number(response.data.holders))
+        })
+      } catch (err) {
+        // eslint-disable-next-line no-console
+        console.log(err)
+        setHolderNum(0)
+      }
+    }
+
     if (input) {
-      fetchData()
+      fetchTransaction()
+      fetchHolder()
     }
 
     return () => ac.abort()
@@ -180,7 +194,7 @@ export default function TokenInfo(props) {
           <Text>{t('Holders')}</Text>
           <Text>
             <a href={`https://bscscan.com/token/${input}#balances`} target="_blank" rel="noreferrer">
-            {tokenData&&Number(tokenData.holders).toLocaleString()}
+            {holderNum}
             </a>
           </Text>
         </TextWrapper>
