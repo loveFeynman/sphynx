@@ -37,9 +37,10 @@ const TableWrapper = styled.div`
       & tr {
         border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         & h2 {
-          font-size: 14px;
+          font-size: 10px;
           line-height: 16px;
           font-weight: bold;
+          word-break: break-word;
           &.success {
             color: #00ac1c;
           }
@@ -97,10 +98,10 @@ const TransactionCard: React.FC<TransactionProps> = (props) => {
                       <a href={'https://bscscan.com/tx/' + data.tx} target="_blank" rel="noreferrer">
                         <h2 className={!data.isBuy ? 'success' : 'error'}>
                           $
-                          {data.price < 0.00001
-                            ? data.price
+                          {data.price < 1
+                            ? data.price.toFixed(6)
                             : Number(data.price)
-                                .toFixed(4)
+                                .toFixed(2)
                                 .replace(/(\d)(?=(\d{3})+\.)/g, '$1,')}
                         </h2>
                       </a>
