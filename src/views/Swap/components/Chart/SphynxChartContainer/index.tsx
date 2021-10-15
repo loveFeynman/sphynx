@@ -184,7 +184,6 @@ const SphynxChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => 
           noData: false,
         })
       } catch (error) {
-        console.log("errorasdsdf", error)
         onErrorCallback(error)
       }
     },

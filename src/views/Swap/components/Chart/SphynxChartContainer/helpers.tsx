@@ -12,7 +12,6 @@ const factoryContract = new web3.eth.Contract(abi, SPHYNX_FACTORY_ADDRESS)
 
 export async function makeApiRequest1(path: any, routerVersion: any, resolution: any) {
   try {
-    console.log("Hellooooo")
     const pairAddress = await factoryContract.methods.getPair(path, WBNB.address).call()
     const data: any = await getChartData(path, pairAddress, resolution)
     return data

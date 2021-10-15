@@ -89,7 +89,7 @@ const TransactionCard: React.FC<TransactionProps> = (props) => {
                         <h2 className={!data.isBuy ? 'success' : 'error'}>
                           {Number(data.amount)
                             .toFixed(4)
-                            .replace(/(\d)(?=(\d{3})+\.)/g, '1,')}
+                            .replace(/(\d)(?=(\d{3})+\.)/g, '$&,')}
                         </h2>
                       </a>
                     </td>
