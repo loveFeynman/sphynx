@@ -4,6 +4,7 @@ export interface Field {
   input: ''
   typeRouterVersion: 'v1'
   type: 'INPUT_ADDRESS'
+  setCustomChartType: 1
 }
 
 export const typeInput = createAction<{ input: string }>('input/typeInput')
@@ -11,3 +12,4 @@ export const setIsInput = createAction<{ isInput: boolean }>('input/setIsInput')
 export const typeRouterVersion = createAction<{ routerVersion: string }>('input/typeRouterVersion')
 export const resetMintState = createAction<void>('input/resetState')
 export const marketCap = createAction<{ marketCapacity: number }>('input/marketCap')
+export const setCustomChartType = createAction<{ customChartType: number }>('input/setCustomChartType')
