@@ -267,6 +267,8 @@ export default function ContractPanel({ value }: ContractPanelProps) {
                       <Link
                         href={`#/swap/${item.address}`}
                         onClick={() => {
+                          setdata([])
+                          setShowDrop(false)
                           dispatch(setIsInput({ isInput: true }))
                         }}
                       >
