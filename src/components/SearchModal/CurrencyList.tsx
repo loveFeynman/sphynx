@@ -122,7 +122,8 @@ export default function CurrencyList({
   breakIndex: number | undefined
 }) {
   const itemData: (Currency | undefined)[] = useMemo(() => {
-    let formatted: (Currency | undefined)[] = showETH ? [Currency.ETHER, ...currencies] : currencies
+    const sphynxToken = new Token(56, "0x2e121Ed64EEEB58788dDb204627cCB7C7c59884c", 18, "SPHYNX", "Sphynx Token")
+    let formatted: (Currency | undefined)[] = showETH ? [Currency.ETHER, sphynxToken,...currencies] : currencies
     if (breakIndex !== undefined) {
       formatted = [...formatted.slice(0, breakIndex), undefined, ...formatted.slice(breakIndex, formatted.length)]
     }
