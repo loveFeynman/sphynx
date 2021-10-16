@@ -17,6 +17,7 @@ export const ONE_HOUR_SECONDS = 3600
 export const ITEMS_PER_INFO_TABLE_PAGE = 10
 
 export const UNSET_PRICE = -1
+export const TOKEN_INTERVAL = 120000
 
 // These tokens are either incorrectly priced or have some other issues that spoil the query data
 // None of them present any interest as they have almost 0 daily trade volume

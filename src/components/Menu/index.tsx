@@ -6,6 +6,8 @@ import { Button, Link } from '@sphynxswap/uikit'
 import { addToken, deleteTokens } from 'state/wallet/tokenSlice'
 import { useMenuToggle, useRemovedAssets } from 'state/application/hooks'
 import { useWeb3React } from '@web3-react/core'
+import Web3 from 'web3'
+import tokenABI from 'assets/abis/erc20.json'
 import MainLogo from 'assets/svg/icon/logo_new.svg'
 import Illustration from 'assets/images/Illustration.svg'
 import { v4 as uuidv4 } from 'uuid'
@@ -19,6 +21,7 @@ import DiscordIcon from 'assets/images/discord.png'
 import axios from 'axios'
 import { BITQUERY_API, BITQUERY_API_KEY } from 'config/constants/endpoints'
 import storages from 'config/constants/storages'
+import { TOKEN_INTERVAL } from 'config/constants/info'
 import { BalanceNumber } from 'components/BalanceNumber'
 import { useTranslation } from 'contexts/Localization'
 import { links } from './config'
@@ -320,7 +323,7 @@ const Menu = () => {
         setAllTokens(balances)
       }
     }
-    else{
+    else {
       dispatch(deleteTokens())
     }
   }
@@ -335,6 +338,18 @@ const Menu = () => {
 
     setSum(allsum)
   }
+
+  const checkTokens = () => {
+    fetchData()
+  }
+
+  useEffect(() => {
+    const intervalId = setInterval(checkTokens, TOKEN_INTERVAL)
+    return (() => {
+      clearInterval(intervalId)
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   useEffect(() => {
     fetchData()
