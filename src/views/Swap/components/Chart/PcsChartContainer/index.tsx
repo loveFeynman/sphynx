@@ -40,7 +40,8 @@ export interface ChartContainerProps {
   autosize: ChartingLibraryWidgetOptions['autosize']
   studiesOverrides: ChartingLibraryWidgetOptions['studies_overrides']
   container: ChartingLibraryWidgetOptions['container']
-  height: number
+  height: number,
+  tokenAddress: string
 }
 
 const ChartContainerProps = {
@@ -70,7 +71,8 @@ let currentResolutions: any
 
 const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
   const dispatch = useDispatch()
-  const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
+  // const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
+  const input = props.tokenAddress
   const routerVersion = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.routerVersion)
   const customChartType = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.customChartType)
   const result = isAddress(input)

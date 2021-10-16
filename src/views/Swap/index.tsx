@@ -24,7 +24,7 @@ import { BalanceNumber } from 'components/BalanceNumber'
 
 import { useSwapTransCard, useSwapType } from 'state/application/hooks'
 import { ReactComponent as DownArrow } from 'assets/svg/icon/DownArrow.svg'
-import { typeInput, marketCap } from 'state/input/actions'
+import { typeInput, marketCap, typeRouterVersion } from 'state/input/actions'
 import { BITQUERY_API, BITQUERY_API_KEY } from 'config/constants/endpoints'
 import SwapRouter, { messages } from 'config/constants/swaps'
 import AddressInputPanel from './components/AddressInputPanel'
@@ -184,6 +184,16 @@ export default function Swap({ history }: RouteComponentProps) {
   const tokens = useSelector<AppState, AppState['tokens']>((state) => state.tokens);
   const [inputBalance, setInputBalance] = useState(0)
   const [outputBalance, setOutputBalance] = useState(0)
+
+  if(tokenAddress === '' || tokenAddress.toLowerCase() === sphynxAddr.toLowerCase()) {
+    if (routerVersion !== 'sphynx') {
+      dispatch(typeRouterVersion({ routerVersion: 'sphynx' }))
+    }
+  } else {
+    if (routerVersion !== 'v2') {
+      dispatch(typeRouterVersion({ routerVersion: 'v2' }))
+    }
+  }
 
   stateRef.current = transactionData
   pairsRef.current = pairs
@@ -1018,7 +1028,7 @@ export default function Swap({ history }: RouteComponentProps) {
           <FullHeightColumn>
             <ContractPanel value="" />
             <CoinStatsBoard tokenData={tokenData} />
-            <ChartContainer />
+            <ChartContainer tokenAddress={input} />
           </FullHeightColumn>
         </div>
         <TokenInfoWrapper>
