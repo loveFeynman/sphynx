@@ -37,7 +37,7 @@ const TableWrapper = styled.div`
       & tr {
         border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         & h2 {
-          font-size: 10px;
+          font-size: 14px;
           line-height: 16px;
           font-weight: bold;
           word-break: break-word;
