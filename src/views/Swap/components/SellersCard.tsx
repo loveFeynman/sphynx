@@ -35,6 +35,7 @@ const TableWrapper = styled.div`
         font-size: 16px;
         border-bottom: 1px solid white;
         padding: 16px 8px;
+        word-break: break-word;
         & > div > div {
           font-size: 16px;
           font-weight: 500;

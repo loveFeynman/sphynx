@@ -5,6 +5,8 @@ import { Flex } from '@sphynxswap/uikit'
 import { Spinner } from '../../LotterySphx/components/Spinner'
 import { useTranslation } from 'contexts/Localization'
 
+const fontSize = window.screen.width > 768 ? "14px" : "12px"
+
 const TableWrapper = styled.div`
   background: rgba(0, 0, 0, 0.4);
   border-radius: 8px;
@@ -37,7 +39,7 @@ const TableWrapper = styled.div`
       & tr {
         border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         & h2 {
-          font-size: 14px;
+          font-size: ${fontSize};
           line-height: 16px;
           font-weight: bold;
           word-break: break-word;
