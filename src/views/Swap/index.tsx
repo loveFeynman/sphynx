@@ -273,6 +273,8 @@ export default function Swap({ history }: RouteComponentProps) {
       for (let i = 0; i <= events.length; i++) {
         if(loadingRef.current === false) {
           setBusy(false)
+          setCurrentBlock(blockNumber)
+          setBlockFlag(!blockFlag)
           resolve(true)
           break
         }
@@ -376,8 +378,6 @@ export default function Swap({ history }: RouteComponentProps) {
 
           if (!isBusy) {
             parseData(info, cachedBlockNumber)
-          } else {
-            setTimeout(() => getTransactions(blockNumber), 3000)
           }
         })
     } catch (err) {
@@ -494,7 +494,7 @@ export default function Swap({ history }: RouteComponentProps) {
   React.useEffect(() => {
     sessionStorage.removeItem(storages.SESSION_LIVE_PRICE)
     getTokenData()
-  }, [inputTokenName])
+  }, [input])
 
   const loadedUrlParams = useDefaultsFromURLSearch()
 
