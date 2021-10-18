@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { AppState } from 'state'
 import styled from 'styled-components'
+import { Flex } from '@sphynxswap/uikit'
 import { v4 as uuidv4 } from 'uuid'
 import { useTranslation } from 'contexts/Localization'
 import { Spinner } from '../../LotterySphx/components/Spinner'
@@ -53,6 +54,15 @@ const TableWrapper = styled.div`
           }
           &.error {
             color: #ea3943;
+          }
+        }
+        
+        & td {
+          a:hover {
+            color: white;
+            text-decoration: underline;
+            text-decoration-color: #007bff;
+            -webkit-text-decoration-color: #007bff;
           }
         }
       }
@@ -111,7 +121,11 @@ const BuyersCard = (props) => {
               })).map((td) => {
                 return (
                   <tr key={td.id} style={{ fontSize: '14px', fontWeight: 'bold' }}>
-                    <td style={{ color: '#fff', fontWeight: 'bold' }}>{td.wallet}</td>
+                    <td style={{ color: '#fff', fontWeight: 'bold' }}>
+                      <a href={`https://bscscan.com/token/0x2e121ed64eeeb58788ddb204627ccb7c7c59884c?a=${td.wallet}`} target="_blank" rel="noreferrer">
+                        {td.wallet}
+                      </a>
+                    </td>
                     <td style={{ color: '#04ab1d', fontWeight: 'bold' }}>
                       $ {td.usdAmount.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,')}
                     </td>

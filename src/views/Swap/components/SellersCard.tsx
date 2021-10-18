@@ -55,6 +55,15 @@ const TableWrapper = styled.div`
             color: #ea3943;
           }
         }
+
+        & td {
+          a:hover {
+            color: white;
+            text-decoration: underline;
+            text-decoration-color: #007bff;
+            -webkit-text-decoration-color: #007bff;
+          }
+        }
       }
     }
   }
@@ -114,7 +123,11 @@ const SellersCard = (props) => {
               })).map((td) => {
                 return (
                   <tr key={td.id} style={{ fontSize: '14px', fontWeight: 'bold' }}>
-                    <td style={{ color: '#fff', fontWeight: 'bold' }}>{td.wallet}</td>
+                    <td style={{ color: '#fff', fontWeight: 'bold' }}>
+                      <a href={`https://bscscan.com/token/0x2e121ed64eeeb58788ddb204627ccb7c7c59884c?a=${td.wallet}`} target="_blank" rel="noreferrer">
+                        {td.wallet}
+                      </a>
+                    </td>
                     <td style={{ color: '#ea3843', fontWeight: 'bold' }}>
                       $ {td.usdAmount.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,')}
                     </td>
