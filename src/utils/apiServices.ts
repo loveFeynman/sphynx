@@ -52,7 +52,7 @@ async function getChartData(input: any, pair: any, resolution: any) {
   const query = `{
     ethereum(network: bsc) {
       dexTrades(
-        options: {limit: 500, asc: "timeInterval.minute"}
+        options: {limit: 500, desc: "timeInterval.minute"}
         smartContractAddress: {is: "${pair}"}
         protocol: {is: "Uniswap v2"}
         baseCurrency: {is: "${input}"}
@@ -84,14 +84,17 @@ async function getChartData(input: any, pair: any, resolution: any) {
     }
   }
   `
+
   const url = `https://graphql.bitquery.io/`
-  const {
+  let {
     data: {
       data: {
         ethereum: { dexTrades },
       },
     },
   } = await axios.post(url, { query }, config)
+
+  dexTrades = dexTrades.reverse()
 
   const bnbPriceQuery = `{
         ethereum(network: bsc) {
