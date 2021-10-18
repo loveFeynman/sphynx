@@ -48,8 +48,8 @@ const TransactionNavWrapper = styled.div`
 const PcsChartContainer = React.lazy(() => import("./PcsChartContainer"))
 const SphynxChartContainer = React.lazy(() => import("./SphynxChartContainer"))
 
-const ChartContainer = React.memo(() => {
-  const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
+const ChartContainer = ({tokenAddress}) => {
+  const input = tokenAddress
   const routerVersion = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.routerVersion)
 
   const draggableArrow = React.useRef<any>(null)
@@ -80,7 +80,7 @@ const ChartContainer = React.memo(() => {
 
   return (
     <Wrapper>
-      {isPancakeRouter ? <PcsChartContainer height={chartHeight} /> : <SphynxChartContainer height={chartHeight} />}
+      {isPancakeRouter ? <PcsChartContainer tokenAddress={input} height={chartHeight} /> : <SphynxChartContainer tokenAddress={input} height={chartHeight} />}
       <UpDownArrowBox>
         <ArrowWrapper
           ref={draggableArrow}
@@ -96,6 +96,6 @@ const ChartContainer = React.memo(() => {
       </UpDownArrowBox>
     </Wrapper>
   )
-});
+};
 
 export default ChartContainer

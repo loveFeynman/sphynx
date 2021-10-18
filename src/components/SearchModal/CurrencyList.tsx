@@ -121,6 +121,12 @@ export default function CurrencyList({
   setImportToken: (token: Token) => void
   breakIndex: number | undefined
 }) {
+  const sphynxIndex = currencies.findIndex(currency => currency.symbol === 'SPHYNX')
+  if(sphynxIndex !== -1) {
+    const token = currencies[sphynxIndex]
+    currencies.splice(sphynxIndex, 1);
+    currencies.unshift(token)
+  }
   const itemData: (Currency | undefined)[] = useMemo(() => {
     let formatted: (Currency | undefined)[] = showETH ? [Currency.ETHER, ...currencies] : currencies
     if (breakIndex !== undefined) {

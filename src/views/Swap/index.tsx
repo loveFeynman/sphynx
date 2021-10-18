@@ -24,7 +24,7 @@ import { BalanceNumber } from 'components/BalanceNumber'
 
 import { useSwapTransCard, useSwapType } from 'state/application/hooks'
 import { ReactComponent as DownArrow } from 'assets/svg/icon/DownArrow.svg'
-import { typeInput, marketCap } from 'state/input/actions'
+import { typeInput, marketCap, typeRouterVersion } from 'state/input/actions'
 import { BITQUERY_API, BITQUERY_API_KEY } from 'config/constants/endpoints'
 import SwapRouter, { messages } from 'config/constants/swaps'
 import AddressInputPanel from './components/AddressInputPanel'
@@ -173,6 +173,7 @@ export default function Swap({ history }: RouteComponentProps) {
   const [transactionData, setTransactions] = useState([])
   const stateRef = useRef([])
   const pairsRef = useRef([])
+  const loadingRef = useRef(false)
   const [isLoading, setLoading] = useState(false)
   const [isBusy, setBusy] = useState(false)
   const [currentBlock, setCurrentBlock] = useState(null)
@@ -185,8 +186,19 @@ export default function Swap({ history }: RouteComponentProps) {
   const [inputBalance, setInputBalance] = useState(0)
   const [outputBalance, setOutputBalance] = useState(0)
 
+  if(tokenAddress === '' || tokenAddress.toLowerCase() === sphynxAddr.toLowerCase()) {
+    if (routerVersion !== 'sphynx') {
+      dispatch(typeRouterVersion({ routerVersion: 'sphynx' }))
+    }
+  } else {
+    if (routerVersion !== 'v2') {
+      dispatch(typeRouterVersion({ routerVersion: 'v2' }))
+    }
+  }
+
   stateRef.current = transactionData
   pairsRef.current = pairs
+  loadingRef.current = isLoading
   let input = tokenAddress
   if (input === '-' || input === '') input = sphynxAddr
   const contract: any = new web3.eth.Contract(abi, input)
@@ -251,6 +263,7 @@ export default function Swap({ history }: RouteComponentProps) {
 
   const parseData: any = async (events: any, blockNumber: any) => {
     setBusy(true)
+
     let newTransactions = stateRef.current
     return new Promise(async (resolve) => {
       const price = await getBNBPrice()
@@ -258,6 +271,13 @@ export default function Swap({ history }: RouteComponentProps) {
       let curAmount = 0
 
       for (let i = 0; i <= events.length; i++) {
+        if(loadingRef.current === false) {
+          setBusy(false)
+          setCurrentBlock(blockNumber)
+          setBlockFlag(!blockFlag)
+          resolve(true)
+          break
+        }
         if (i === events.length) {
           if (events.length > 0 && curPrice !== UNSET_PRICE) {
             let sessionData = {
@@ -275,7 +295,7 @@ export default function Swap({ history }: RouteComponentProps) {
             setCurrentBlock(blockNumber)
             setBlockFlag(!blockFlag)
             resolve(true)
-          }, 3000)
+          }, 200)
         } else {
           try {
             const event = events[i]
@@ -383,7 +403,7 @@ export default function Swap({ history }: RouteComponentProps) {
 
   const formatTimeString = (timeString) => {
     let dateArray = timeString.split(/[- :\/]/)
-    let date = new Date(`${dateArray[1] - 1}/${dateArray[2]}/${dateArray[0]} ${dateArray[3]}:${dateArray[4]}:${dateArray[5]} UTC`)
+    let date = new Date(`${dateArray[1]}/${dateArray[2]}/${dateArray[0]} ${dateArray[3]}:${dateArray[4]}:${dateArray[5]} UTC`)
     return date.toString().split('GMT')[0]
   }
 
@@ -423,10 +443,9 @@ export default function Swap({ history }: RouteComponentProps) {
             }
           })
 
-          setTransactions(newTransactions)
-          setLoading(true)
-
           setTimeout(() => {
+            setTransactions(newTransactions)
+            setLoading(true)
             startRealTimeData()
           }, 2000)
         }
@@ -475,7 +494,7 @@ export default function Swap({ history }: RouteComponentProps) {
   React.useEffect(() => {
     sessionStorage.removeItem(storages.SESSION_LIVE_PRICE)
     getTokenData()
-  }, [inputTokenName])
+  }, [input])
 
   const loadedUrlParams = useDefaultsFromURLSearch()
 
@@ -1018,7 +1037,7 @@ export default function Swap({ history }: RouteComponentProps) {
           <FullHeightColumn>
             <ContractPanel value="" />
             <CoinStatsBoard tokenData={tokenData} />
-            <ChartContainer />
+            <ChartContainer tokenAddress={input} />
           </FullHeightColumn>
         </div>
         <TokenInfoWrapper>

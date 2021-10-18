@@ -7,14 +7,17 @@ import {
   IChartingLibraryWidget,
   LanguageCode,
   ResolutionString,
+  SeriesStyle,
+  Timezone,
   widget,
 } from 'charting_library/charting_library'
 import { makeApiRequest1 } from './helpers'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { AppState } from 'state'
 import { isAddress } from 'utils'
 import { getTokenDetails } from '../../../../../utils/apiServices'
 import storages from 'config/constants/storages'
+import { setCustomChartType } from 'state/input/actions'
 
 const ChartContainer = styled.div<{ height: number }>`
   position: relative;
@@ -37,7 +40,8 @@ export interface ChartContainerProps {
   autosize: ChartingLibraryWidgetOptions['autosize']
   studiesOverrides: ChartingLibraryWidgetOptions['studies_overrides']
   container: ChartingLibraryWidgetOptions['container']
-  height: number
+  height: number,
+  tokenAddress: string
 }
 
 const ChartContainerProps = {
@@ -53,7 +57,7 @@ const ChartContainerProps = {
   fullscreen: false,
   autosize: true,
   studiesOverrides: {},
-  height: 600,
+  height: 600
 }
 
 function getLanguageFromURL(): LanguageCode | null {
@@ -66,8 +70,11 @@ let myInterval: any
 let currentResolutions: any
 
 const SphynxChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
-  const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
+  const dispatch = useDispatch()
+  // const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
+  const input = props.tokenAddress
   const routerVersion = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.routerVersion)
+  const customChartType = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.customChartType)
   const result = isAddress(input)
 
   const [tokendetails, setTokenDetails] = React.useState({
@@ -252,6 +259,9 @@ const SphynxChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => 
   }
 
   const getWidget = async () => {
+    const local_timezone: string = Intl.DateTimeFormat().resolvedOptions().timeZone
+    const custom_timezone: Timezone = local_timezone as Timezone
+
     let tvWidget: IChartingLibraryWidget | null = null
     const widgetOptions: ChartingLibraryWidgetOptions = {
       symbol: tokendetails.pair,
@@ -270,9 +280,14 @@ const SphynxChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => 
       fullscreen: ChartContainerProps.fullscreen,
       autosize: ChartContainerProps.autosize,
       studies_overrides: ChartContainerProps.studiesOverrides,
+      timezone: custom_timezone,
+      overrides: {
+        "mainSeriesProperties.style": customChartType,
+      }
     }
 
     tvWidget = await new widget(widgetOptions)
+    return tvWidget;
   }
 
   React.useEffect(() => {
@@ -280,7 +295,17 @@ const SphynxChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => 
     sessionStorage.setItem(storages.SESSION_LATEST_TIME, curTime.toString())
     sessionStorage.setItem(storages.SESSION_LIVE_VOLUME, '0')
     getWidget()
-  }, [input])
+    .then(widget => {
+      widget.onChartReady(() => {
+        widget.activeChart()
+        .onChartTypeChanged()
+        .subscribe(null, (chartType: SeriesStyle) => {
+          dispatch(setCustomChartType({ customChartType: chartType }));
+        })
+      });
+      
+    })
+  }, [input, dispatch])
 
   return (
     <ChartContainer height={props.height}>

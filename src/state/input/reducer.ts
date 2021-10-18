@@ -1,11 +1,12 @@
 import { createReducer } from '@reduxjs/toolkit'
-import { resetMintState, typeInput, setIsInput, typeRouterVersion, marketCap } from './actions'
+import { resetMintState, typeInput, setIsInput, typeRouterVersion, marketCap, setCustomChartType } from './actions'
 
 interface InputState {
   input: string
   isInput: boolean
   routerVersion: string
   marketCapacity: number
+  customChartType: number
 }
 
 const initialState: InputState = {
@@ -13,6 +14,7 @@ const initialState: InputState = {
   isInput: true,
   routerVersion: 'sphynx',
   marketCapacity: 0,
+  customChartType: 1,
 }
 
 export default createReducer<any>(initialState, (builder) =>
@@ -52,5 +54,14 @@ export default createReducer<any>(initialState, (builder) =>
       }
 
       // they're typing into a new field, store the other value
-    }),
+    })
+    .addCase(setCustomChartType, (state, { payload: { customChartType } }) => {
+      // they're typing into the field they've last typed in
+
+      return {
+        ...state,
+        customChartType,
+      }
+    })
+    ,
 )
