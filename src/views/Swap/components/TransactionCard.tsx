@@ -37,7 +37,7 @@ const TableWrapper = styled.div`
       & tr {
         border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         & h2 {
-          font-size: 12px;
+          font-size: 14px;
           line-height: 16px;
           font-weight: bold;
           word-break: break-word;
@@ -69,9 +69,9 @@ const TransactionCard: React.FC<TransactionProps> = (props) => {
             <thead>
               <tr>
                 <td style={{ width: '30%' }}>{t('Time')}</td>
-                <td style={{ width: '19%' }}>{t('Traded Tokens')}</td>
-                <td style={{ width: '19%' }}>{t('Token Price')}</td>
-                <td style={{ width: '32%' }}>{t('$Value')}</td>
+                <td style={{ width: '26%' }}>{t('Traded Tokens')}</td>
+                <td style={{ width: '22%' }}>{t('Token Price')}</td>
+                <td style={{ width: '22%' }}>{t('$Value')}</td>
               </tr>
             </thead>
             <tbody>
