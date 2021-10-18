@@ -101,6 +101,8 @@ const TransactionCard: React.FC<TransactionProps> = (props) => {
                           {Number(data.value)
                             .toFixed(4)
                             .replace(/(\d)(?=(\d{3})+\.)/g, '$&,')}
+                          <br />
+                          (BNB)
                         </h2>
                       </a>
                     </td>
@@ -119,7 +121,9 @@ const TransactionCard: React.FC<TransactionProps> = (props) => {
                     <td style={{ width: '25%' }}>
                       <a href={'https://bscscan.com/tx/' + data.tx} target="_blank" rel="noreferrer">
                         <h2 className={!data.isBuy ? 'success' : 'error'}>
-                          ${(data.price * data.amount).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,')}
+                          {(data.price * data.amount).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,')}
+                          <br/>
+                          ($)
                         </h2>
                       </a>
                     </td>
