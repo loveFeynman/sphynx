@@ -271,8 +271,11 @@ export default function Swap({ history }: RouteComponentProps) {
       let curAmount = 0
 
       for (let i = 0; i <= events.length; i++) {
-        if(loadingRef.current === false)
+        if(loadingRef.current === false) {
+          setBusy(false)
+          resolve(true)
           break
+        }
         if (i === events.length) {
           if (events.length > 0 && curPrice !== UNSET_PRICE) {
             let sessionData = {
@@ -373,6 +376,8 @@ export default function Swap({ history }: RouteComponentProps) {
 
           if (!isBusy) {
             parseData(info, cachedBlockNumber)
+          } else {
+            setTimeout(() => getTransactions(blockNumber), 3000)
           }
         })
     } catch (err) {
