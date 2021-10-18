@@ -336,6 +336,7 @@ export default function Swap({ history }: RouteComponentProps) {
 
             let oneData: any = {}
             oneData.amount = tokenAmt
+            oneData.value = BNBAmt
             oneData.price = (BNBAmt / tokenAmt) * price * 10 ** (18 - tokenDecimal)
             oneData.transactionTime = formatTimeString(
               `${new Date().getUTCFullYear()}-${new Date().getUTCMonth() + 1
@@ -436,6 +437,7 @@ export default function Swap({ history }: RouteComponentProps) {
             return {
               transactionTime: formatTimeString(item.block.timestamp.time),
               amount: item.baseAmount,
+              value: item.quoteAmount,
               price: item.quotePrice * bnbPrice * 10 ** (18 - tokenDecimal),
               usdValue: item.baseAmount * item.quotePrice * bnbPrice,
               isBuy: item.baseCurrency.symbol === item.buyCurrency.symbol,

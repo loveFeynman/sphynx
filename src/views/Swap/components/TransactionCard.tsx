@@ -68,10 +68,11 @@ const TransactionCard: React.FC<TransactionProps> = (props) => {
           <table>
             <thead>
               <tr>
-                <td style={{ width: '30%' }}>{t('Time')}</td>
-                <td style={{ width: '24%' }}>{t('Traded Tokens')}</td>
-                <td style={{ width: '22%' }}>{t('Token Price')}</td>
-                <td style={{ width: '22%' }}>{t('$Value')}</td>
+                <td style={{ width: '25%' }}>{t('Time')}</td>
+                <td style={{ width: '20%' }}>{t('Traded Tokens')}</td>
+                <td style={{ width: '20%' }}>{t('Value')}</td>
+                <td style={{ width: '17%' }}>{t('Token Price')}</td>
+                <td style={{ width: '18%' }}>{t('$Value')}</td>
               </tr>
             </thead>
             <tbody>
@@ -89,6 +90,15 @@ const TransactionCard: React.FC<TransactionProps> = (props) => {
                       <a href={'https://bscscan.com/tx/' + data.tx} target="_blank" rel="noreferrer">
                         <h2 className={!data.isBuy ? 'success' : 'error'}>
                           {Number(data.amount)
+                            .toFixed(4)
+                            .replace(/(\d)(?=(\d{3})+\.)/g, '$&,')}
+                        </h2>
+                      </a>
+                    </td>
+                    <td style={{ width: '25%' }}>
+                      <a href={'https://bscscan.com/tx/' + data.tx} target="_blank" rel="noreferrer">
+                        <h2 className={!data.isBuy ? 'success' : 'error'}>
+                          {Number(data.value)
                             .toFixed(4)
                             .replace(/(\d)(?=(\d{3})+\.)/g, '$&,')}
                         </h2>
