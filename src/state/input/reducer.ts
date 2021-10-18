@@ -1,4 +1,5 @@
 import { createReducer } from '@reduxjs/toolkit'
+import { Tv } from 'react-feather'
 import { resetMintState, typeInput, setIsInput, typeRouterVersion, marketCap, setCustomChartType } from './actions'
 
 interface InputState {
@@ -9,13 +10,16 @@ interface InputState {
   customChartType: number
 }
 
+const CHART_TYPE = 'tv.chart.type'
+
 const initialState: InputState = {
   input: '0x2e121ed64eeeb58788ddb204627ccb7c7c59884c',
   isInput: true,
   routerVersion: 'sphynx',
   marketCapacity: 0,
-  customChartType: 1,
+  customChartType: Number(localStorage.getItem(CHART_TYPE))?? 1,
 }
+
 
 export default createReducer<any>(initialState, (builder) =>
   builder
@@ -58,6 +62,7 @@ export default createReducer<any>(initialState, (builder) =>
     .addCase(setCustomChartType, (state, { payload: { customChartType } }) => {
       // they're typing into the field they've last typed in
 
+      localStorage.setItem(CHART_TYPE, customChartType.toString())
       return {
         ...state,
         customChartType,
