@@ -521,7 +521,7 @@ export default function Swap({ history }: RouteComponentProps) {
   React.useEffect(() => {
     sessionStorage.removeItem(storages.SESSION_LIVE_PRICE)
     getTokenData(input)
-  }, [input, routerVersion])
+  }, [pairs])
 
   const loadedUrlParams = useDefaultsFromURLSearch()
 
