@@ -133,7 +133,7 @@ export default function CoinStatsBoard(props) {
         )
       }
     } catch (err) {
-      setTimeout(() => getTableData(), 5000)
+      setTimeout(() => getTableData(), 3000)
     }
   }, [input, result, routerVersion])
 

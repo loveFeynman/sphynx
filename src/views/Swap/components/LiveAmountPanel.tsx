@@ -18,7 +18,7 @@ const LiveAmountPanel: React.FC<LiveAmountPanelProps> = ({ symbol, amount, price
     return (
         <Card bgColor="rgba(0, 0, 0, 0.2)" borderRadius="8px" margin={isMobile? "0 0 0 0": "1em 0 0 0"}>
             <Flex justifyContent="center">
-                <Text color="white" fontSize="16px">
+                <Text color="white" fontSize="16px" style={{fontWeight: 'bold'}}>
                     {t(symbol)}
                 </Text>
             </Flex>

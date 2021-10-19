@@ -494,22 +494,22 @@ export default function Swap({ history }: RouteComponentProps) {
     }
   }, [dispatch, tokenAddress])
 
-  const getTokenData = async () => {
+  const getTokenData = async (tokenAddress) => {
     try {
-      axios.post(`${process.env.REACT_APP_BACKEND_API_URL}/tokenStats`, { address: input }).then((response) => {
+      axios.post(`${process.env.REACT_APP_BACKEND_API_URL}/tokenStats`, { address: tokenAddress }).then((response) => {
         setTokenData(response.data)
         dispatch(marketCap({ marketCapacity: parseFloat(response.data.marketCap) }))
       })
     } catch (err) {
       // eslint-disable-next-line no-console
       console.log(err)
-      setTimeout(() => getTokenData(), 5000)
+      setTimeout(() => getTokenData(tokenAddress), 3000)
     }
   }
 
   React.useEffect(() => {
     sessionStorage.removeItem(storages.SESSION_LIVE_PRICE)
-    getTokenData()
+    getTokenData(input)
   }, [input])
 
   const loadedUrlParams = useDefaultsFromURLSearch()
