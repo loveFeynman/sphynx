@@ -176,6 +176,7 @@ export default function Swap({ history }: RouteComponentProps) {
   const stateRef = useRef([])
   const pairsRef = useRef([])
   const loadingRef = useRef(false)
+  const busyRef = useRef(false)
   const [isLoading, setLoading] = useState(false)
   const [isBusy, setBusy] = useState(false)
   const [currentBlock, setCurrentBlock] = useState(null)
@@ -184,7 +185,7 @@ export default function Swap({ history }: RouteComponentProps) {
   const swapFlag = useSelector<AppState, AppState['autoSwapReducer']>((state) => state.autoSwapReducer.swapFlag)
   const inputTokenName = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
   const routerVersion = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.routerVersion)
-  const tokens = useSelector<AppState, AppState['tokens']>((state) => state.tokens);
+  const tokens = useSelector<AppState, AppState['tokens']>((state) => state.tokens)
   const [inputBalance, setInputBalance] = useState(0)
   const [outputBalance, setOutputBalance] = useState(0)
   const [tokenAmount, setTokenAmount] = useState(0)
@@ -206,12 +207,14 @@ export default function Swap({ history }: RouteComponentProps) {
   stateRef.current = transactionData
   pairsRef.current = pairs
   loadingRef.current = isLoading
+  busyRef.current = isBusy
   let input = tokenAddress
   if (input === '-' || input === '') input = sphynxAddr
   const contract: any = new web3.eth.Contract(abi, input)
 
-  const getDataQuery = useCallback((pairAddress: any) => {
-    return `
+  const getDataQuery = useCallback(
+    (pairAddress: any) => {
+      return `
     {
     ethereum(network: bsc) {
         dexTrades(
@@ -266,7 +269,9 @@ export default function Swap({ history }: RouteComponentProps) {
         }
       }
     }`
-  }, [input])
+    },
+    [input],
+  )
 
   const parseData: any = async (events: any, blockNumber: any) => {
     setBusy(true)
@@ -321,22 +326,22 @@ export default function Swap({ history }: RouteComponentProps) {
             if (input < wBNBAddr) {
               tokenAmt = Math.abs(
                 parseFloat(ethers.utils.formatUnits(datas.amount0In + '', tokenDecimal)) -
-                parseFloat(ethers.utils.formatUnits(datas.amount0Out + '', tokenDecimal)),
+                  parseFloat(ethers.utils.formatUnits(datas.amount0Out + '', tokenDecimal)),
               )
 
               isBuy = datas.amount1In === '0'
               BNBAmt = Math.abs(
                 parseFloat(ethers.utils.formatUnits(datas.amount1In + '', 18)) -
-                parseFloat(ethers.utils.formatUnits(datas.amount1Out + '', 18)),
+                  parseFloat(ethers.utils.formatUnits(datas.amount1Out + '', 18)),
               )
             } else {
               BNBAmt = Math.abs(
                 parseFloat(ethers.utils.formatUnits(datas.amount0In + '', 18)) -
-                parseFloat(ethers.utils.formatUnits(datas.amount0Out + '', 18)),
+                  parseFloat(ethers.utils.formatUnits(datas.amount0Out + '', 18)),
               )
               tokenAmt = Math.abs(
                 parseFloat(ethers.utils.formatUnits(datas.amount1In + '', tokenDecimal)) -
-                parseFloat(ethers.utils.formatUnits(datas.amount1Out + '', tokenDecimal)),
+                  parseFloat(ethers.utils.formatUnits(datas.amount1Out + '', tokenDecimal)),
               )
               isBuy = datas.amount0In === '0'
             }
@@ -346,7 +351,8 @@ export default function Swap({ history }: RouteComponentProps) {
             oneData.value = BNBAmt
             oneData.price = (BNBAmt / tokenAmt) * price * 10 ** (18 - tokenDecimal)
             oneData.transactionTime = formatTimeString(
-              `${new Date().getUTCFullYear()}-${new Date().getUTCMonth() + 1
+              `${new Date().getUTCFullYear()}-${
+                new Date().getUTCMonth() + 1
               }-${new Date().getDate()} ${new Date().getUTCHours()}:${new Date().getUTCMinutes()}:${new Date().getUTCSeconds()}`,
             )
 
@@ -412,8 +418,22 @@ export default function Swap({ history }: RouteComponentProps) {
 
   const formatTimeString = (timeString) => {
     let dateArray = timeString.split(/[- :\/]/)
-    let date = new Date(`${dateArray[1]}/${dateArray[2]}/${dateArray[0]} ${dateArray[3]}:${dateArray[4]}:${dateArray[5]} UTC`)
+    let date = new Date(
+      `${dateArray[1]}/${dateArray[2]}/${dateArray[0]} ${dateArray[3]}:${dateArray[4]}:${dateArray[5]} UTC`,
+    )
     return date.toString().split('GMT')[0]
+  }
+
+  const setDatas = (transactions) => {
+    if (busyRef.current === false) {
+      setTransactions(transactions)
+      setLoading(true)
+      startRealTimeData()
+    } else {
+      setTimeout(() => {
+        setDatas(transactions)
+      }, 1000)
+    }
   }
 
   useEffect(() => {
@@ -458,21 +478,12 @@ export default function Swap({ history }: RouteComponentProps) {
             setTokenPrice(newTransactions[newTransactions.length - 1].price)
           }
 
-          setTimeout(() => {
-            setTransactions(newTransactions)
-            setLoading(true)
-            startRealTimeData()
-          }, 2000)
+          setDatas(newTransactions)
         }
       } catch (err) {
         // eslint-disable-next-line no-console
         console.log('err', err.message)
-        setTransactions([])
-        setLoading(true)
-
-        setTimeout(() => {
-          startRealTimeData()
-        }, 2000)
+        setDatas([])
       }
     }
 
@@ -510,7 +521,7 @@ export default function Swap({ history }: RouteComponentProps) {
   React.useEffect(() => {
     sessionStorage.removeItem(storages.SESSION_LIVE_PRICE)
     getTokenData(input)
-  }, [input])
+  }, [input, routerVersion])
 
   const loadedUrlParams = useDefaultsFromURLSearch()
 
@@ -558,13 +569,13 @@ export default function Swap({ history }: RouteComponentProps) {
 
   const parsedAmounts = showWrap
     ? {
-      [Field.INPUT]: parsedAmount,
-      [Field.OUTPUT]: parsedAmount,
-    }
+        [Field.INPUT]: parsedAmount,
+        [Field.OUTPUT]: parsedAmount,
+      }
     : {
-      [Field.INPUT]: independentField === Field.INPUT ? parsedAmount : trade?.inputAmount,
-      [Field.OUTPUT]: independentField === Field.OUTPUT ? parsedAmount : trade?.outputAmount,
-    }
+        [Field.INPUT]: independentField === Field.INPUT ? parsedAmount : trade?.inputAmount,
+        [Field.OUTPUT]: independentField === Field.OUTPUT ? parsedAmount : trade?.outputAmount,
+      }
 
   const { onSwitchTokens, onCurrencySelection, onUserInput, onChangeRecipient } = useSwapActionHandlers()
   const isValid = !swapInputError
@@ -754,8 +765,7 @@ export default function Swap({ history }: RouteComponentProps) {
   )
 
   useEffect(() => {
-    if (tokenData === null || tokenData.symbol === null)
-      return
+    if (tokenData === null || tokenData.symbol === null) return
 
     let flag = false
     tokens.forEach((cell) => {
@@ -888,10 +898,13 @@ export default function Swap({ history }: RouteComponentProps) {
       <Cards>
         <div>
           <DividendPanel />
-          {!isMobile ?
-            < LiveAmountPanel symbol={tokenData && tokenData.symbol ? tokenData.symbol : ''} amount={tokenAmount} price={tokenPrice} />
-            : null
-          }
+          {!isMobile ? (
+            <LiveAmountPanel
+              symbol={tokenData && tokenData.symbol ? tokenData.symbol : ''}
+              amount={tokenAmount}
+              price={tokenPrice}
+            />
+          ) : null}
           <div style={{ height: 48, marginTop: 16, marginBottom: 25 }}>
             <Flex alignItems="center" justifyContent="center" style={{ marginBottom: 8 }}>
               <SwapCardNav />
@@ -1033,8 +1046,8 @@ export default function Swap({ history }: RouteComponentProps) {
                         {priceImpactSeverity > 3 && !isExpertMode
                           ? t('Price Impact High')
                           : priceImpactSeverity > 2
-                            ? t('Swap Anyway')
-                            : t('Swap')}
+                          ? t('Swap Anyway')
+                          : t('Swap')}
                       </Button>
                     </RowBetween>
                   ) : (
@@ -1049,8 +1062,8 @@ export default function Swap({ history }: RouteComponentProps) {
                         (priceImpactSeverity > 3 && !isExpertMode
                           ? `Price Impact Too High`
                           : priceImpactSeverity > 2
-                            ? t('Swap Anyway')
-                            : t('Swap'))}
+                          ? t('Swap Anyway')
+                          : t('Swap'))}
                     </Button>
                   )}
                   {showApproveFlow && (
@@ -1072,7 +1085,12 @@ export default function Swap({ history }: RouteComponentProps) {
         </div>
         <div>
           <FullHeightColumn>
-            <ContractPanel value="" symbol={tokenData && tokenData.symbol ? tokenData.symbol : ''} amount={tokenAmount} price={tokenPrice} />
+            <ContractPanel
+              value=""
+              symbol={tokenData && tokenData.symbol ? tokenData.symbol : ''}
+              amount={tokenAmount}
+              price={tokenPrice}
+            />
             <CoinStatsBoard tokenData={tokenData} />
             <ChartContainer tokenAddress={input} />
           </FullHeightColumn>
@@ -1086,7 +1104,9 @@ export default function Swap({ history }: RouteComponentProps) {
             textAlign: 'center',
           }}
         >
-          {swapTransCard === 'tokenDX' && <TransactionCard transactionData={transactionData} isLoading={isLoading} symbol={symbol} />}
+          {swapTransCard === 'tokenDX' && (
+            <TransactionCard transactionData={transactionData} isLoading={isLoading} symbol={symbol} />
+          )}
           {swapTransCard === 'buyers' && <BuyersCard pairAddress={pairs[0]} />}
           {swapTransCard === 'sellers' && <SellersCard pairAddress={pairs[0]} />}
         </div>

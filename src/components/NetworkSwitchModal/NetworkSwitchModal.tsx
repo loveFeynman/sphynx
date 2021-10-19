@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Currency, Token } from '@sphynxswap/sdk'
 import {
   ModalContainer,
@@ -94,32 +94,32 @@ const NetworkItem = styled(Box)<{ selected?: boolean }>`
   const NETWORK_LIST = [
     {
       btIcon: "/images/net/mainnet.png",
-      networkName: "Ethereum(coming soon)",
+      networkName: "Ethereum (coming soon)",
       selected: false,
     },
     {
       btIcon: "/images/net/polygon.png",
-      networkName: "Polygon(coming soon)",
+      networkName: "Polygon (coming soon)",
       selected: false,
     },
     {
       btIcon: "/images/net/fantom.png",
-      networkName: "Fantom(coming soon)",
+      networkName: "Fantom (coming soon)",
       selected: false,
     },
     {
       btIcon: "/images/net/arbitrum.png",
-      networkName: "Arbitrum(coming soon)",
+      networkName: "Arbitrum (coming soon)",
       selected: false,
     },
     {
       btIcon: "/images/net/okex.png",
-      networkName: "OKEx(coming soon)",
+      networkName: "OKEx (coming soon)",
       selected: false,
     },
     {
       btIcon: "/images/net/heco.png",
-      networkName: "HECO(coming soon)",
+      networkName: "HECO (coming soon)",
       selected: false,
     },
     {
@@ -129,32 +129,32 @@ const NetworkItem = styled(Box)<{ selected?: boolean }>`
     },
     {
       btIcon: "/images/net/xdai.png",
-      networkName: "xDai(coming soon)",
+      networkName: "xDai (coming soon)",
       selected: false,
     },
     {
       btIcon: "/images/net/harmonyone.png",
-      networkName: "Harmony(coming soon)",
+      networkName: "Harmony (coming soon)",
       selected: false,
     },
     {
       btIcon: "/images/net/avalanche.png",
-      networkName: "Avalanche(coming soon)",
+      networkName: "Avalanche (coming soon)",
       selected: false,
     },
     {
       btIcon: "/images/net/celo.png",
-      networkName: "Celo(coming soon)",
+      networkName: "Celo (coming soon)",
       selected: false,
     },
     {
       btIcon: "/images/net/palm.png",
-      networkName: "Palm(coming soon)",
+      networkName: "Palm (coming soon)",
       selected: false,
     },
     {
       btIcon: "/images/net/moonriver.png",
-      networkName: "Moonriver(coming soon)",
+      networkName: "Moonriver (coming soon)",
       selected: false,
     },
   ]
@@ -166,6 +166,13 @@ export default function NetworkSwitchModal({
     otherSelectedNetwork,
     showCommonBases = false,
   }: NetworkSearchModalProps) {
+
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = 'unset';
+    }
+  }, [])
     
   const { t } = useTranslation()
 
