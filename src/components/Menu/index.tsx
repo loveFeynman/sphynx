@@ -1,10 +1,11 @@
 /* eslint-disable */
-import React, { useState, useEffect, useCallback } from 'react'
-import { useDispatch } from 'react-redux'
+import React, { useState, useEffect, useCallback, useRef } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { AppState } from 'state'
 import styled from 'styled-components'
 import { useLocation } from 'react-router'
 import { Button, Link } from '@sphynxswap/uikit'
-import { addToken, deleteTokens } from 'state/wallet/tokenSlice'
+import { addToken, updateToken, deleteTokens } from 'state/wallet/tokenSlice'
 import { useMenuToggle, useRemovedAssets } from 'state/application/hooks'
 import { useWeb3React } from '@web3-react/core'
 import MainLogo from 'assets/svg/icon/logo_new.svg'
@@ -283,6 +284,8 @@ const Menu = () => {
 
   const [sum, setSum] = useState(0)
   const [getAllToken, setAllTokens] = useState([])
+  const [updateFlag, setUpdateFlag] = useState(false)
+  const tokens = useSelector<AppState, AppState['tokens']>((state) => state.tokens);
 
   const { t } = useTranslation()
 
@@ -375,40 +378,54 @@ const Menu = () => {
       if (queryResult.data.data) {
         let allsum: any = 0
         const { balances } = queryResult.data.data.ethereum.address[0]
-        const promises = balances.map((elem) => {
-          return axios.get(
-            `${process.env.REACT_APP_BACKEND_API_URL}/price/${elem.currency.address === '-' ? '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c' : elem.currency.address
-            }`,
-          )
-        })
-
-        const prices: any = await Promise.all(promises)
-        let i = 0
-
-        dispatch(deleteTokens())
-        // eslint-disable-next-line no-restricted-syntax
-        for (const elem of balances) {
-          let sphynxPrice
-          if (elem.currency.symbol === "SPHYNX") {
-            const queryResult1 = await axios.post(BITQUERY_API, { query: getSphynxQuery }, bitConfig)
-            if (queryResult1.data.data && queryResult1.data.data.ethereum.dexTrades) {
-              const bnbPrice = await getBNBPrice(simpleRpcProvider)
-              sphynxPrice = queryResult1.data.data.ethereum.dexTrades[0].quotePrice * bnbPrice
+        if( balances && balances.length > 0 ) {
+          const promises = balances.map((elem) => {
+            return axios.get(
+              `${process.env.REACT_APP_BACKEND_API_URL}/price/${elem.currency.address === '-' ? '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c' : elem.currency.address
+              }`,
+            )
+          })
+  
+          const prices: any = await Promise.all(promises)
+          let i = 0
+  
+          // eslint-disable-next-line no-restricted-syntax
+          for (const elem of balances) {
+            let sphynxPrice
+            if (elem.currency.symbol === "SPHYNX") {
+              const queryResult1 = await axios.post(BITQUERY_API, { query: getSphynxQuery }, bitConfig)
+              if (queryResult1.data.data && queryResult1.data.data.ethereum.dexTrades) {
+                const bnbPrice = await getBNBPrice(simpleRpcProvider)
+                sphynxPrice = queryResult1.data.data.ethereum.dexTrades[0].quotePrice * bnbPrice
+              }
             }
-          }
+  
+            const dollerprice: any = (elem.currency.symbol === "SPHYNX" ? sphynxPrice : prices[i].data.price) * elem.value
+            elem.dollarPrice = dollerprice
+            i++
+            if (removedTokens.indexOf(elem.currency.symbol) === -1) {
+              allsum += dollerprice
+            }
 
-          const dollerprice: any = (elem.currency.symbol === "SPHYNX" ? sphynxPrice : prices[i].data.price) * elem.value
-          elem.dollarPrice = dollerprice
-          i++
-          if (removedTokens.indexOf(elem.currency.symbol) === -1) {
-            allsum += dollerprice
+            let flag = false
+            const token = { symbol: elem.currency.symbol, value: elem.value }
+            tokens.forEach((cell) => {
+              if(cell.symbol === token.symbol) {
+                dispatch(updateToken(token))
+                flag = true
+                return
+              }
+            })
+
+            if(!flag)
+              dispatch(addToken(token))
           }
-          const token = { symbol: elem.currency.symbol, value: elem.value }
-          dispatch(addToken(token))
         }
-
+        else {
+          dispatch(deleteTokens())
+        }
         setSum(allsum)
-        setAllTokens(balances)
+        setAllTokens(balances? balances : [])
       }
     }
     else {
@@ -428,8 +445,15 @@ const Menu = () => {
   }
 
   const checkTokens = () => {
-    fetchData()
+    setUpdateFlag(false)
+    setUpdateFlag(true)
   }
+
+  useEffect(() => {
+    if(!updateFlag) return
+    fetchData()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [updateFlag])
 
   useEffect(() => {
     const intervalId = setInterval(checkTokens, TOKEN_INTERVAL)
