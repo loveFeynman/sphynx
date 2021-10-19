@@ -26,7 +26,7 @@ const LiveAmountPanel: React.FC<LiveAmountPanelProps> = ({ symbol, amount, price
                 <Text color="white" fontSize="14px">
                     {t('Amount')}
                 </Text>
-                <Text color="white" fontSize="14px">
+                <Text color="#00ac1c" fontSize="14px">
                     <BalanceNumber prefix="" value={Number(amount).toFixed(2)} />
                 </Text>
             </Flex>
@@ -34,7 +34,7 @@ const LiveAmountPanel: React.FC<LiveAmountPanelProps> = ({ symbol, amount, price
                 <Text color="white" fontSize="14px">
                     {t('Balance')}
                 </Text>
-                <Text color="white" fontSize="14px">
+                <Text color="#00ac1c" fontSize="14px">
                     <BalanceNumber prefix="$ " value={Number(amount * price).toFixed(3)} />
                 </Text>
             </Flex>
