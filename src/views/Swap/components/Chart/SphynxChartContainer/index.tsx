@@ -262,6 +262,8 @@ const SphynxChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => 
     const local_timezone: string = Intl.DateTimeFormat().resolvedOptions().timeZone
     const custom_timezone: Timezone = local_timezone as Timezone
 
+    console.log("customChartType", customChartType)
+
     let tvWidget: IChartingLibraryWidget | null = null
     const widgetOptions: ChartingLibraryWidgetOptions = {
       symbol: tokendetails.pair,

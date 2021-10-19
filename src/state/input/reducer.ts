@@ -7,7 +7,7 @@ interface InputState {
   isInput: boolean
   routerVersion: string
   marketCapacity: number
-  customChartType: number
+  customChartType: any
 }
 
 const CHART_TYPE = 'tv.chart.type'
@@ -17,7 +17,7 @@ const initialState: InputState = {
   isInput: true,
   routerVersion: 'sphynx',
   marketCapacity: 0,
-  customChartType: Number(localStorage.getItem(CHART_TYPE))?? 1,
+  customChartType: localStorage.getItem(CHART_TYPE) ?? 1,
 }
 
 
