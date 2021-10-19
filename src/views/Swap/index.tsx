@@ -21,6 +21,7 @@ import { AutoRow, RowBetween } from 'components/Layout/Row'
 import ConnectWalletButton from 'components/ConnectWalletButton'
 import { AppHeader } from 'components/App'
 import { BalanceNumber } from 'components/BalanceNumber'
+import { useMatchBreakpoints } from '@sphynxswap/uikit'
 
 import { useSwapTransCard, useSwapType } from 'state/application/hooks'
 import { ReactComponent as DownArrow } from 'assets/svg/icon/DownArrow.svg'
@@ -66,6 +67,7 @@ import BuyersCard from './components/BuyersCard'
 import SellersCard from './components/SellersCard'
 import SwapWarningModal from './components/SwapWarningModal'
 import DividendPanel from './components/DividendPanel'
+import LiveAmountPanel from './components/LiveAmountPanel'
 import { Field, replaceSwapState } from '../../state/swap/actions'
 
 import Web3 from 'web3'
@@ -187,6 +189,8 @@ export default function Swap({ history }: RouteComponentProps) {
   const [outputBalance, setOutputBalance] = useState(0)
   const [tokenAmount, setTokenAmount] = useState(0)
   const [tokenPrice, setTokenPrice] = useState(0)
+  const { isXl } = useMatchBreakpoints()
+  const isMobile = !isXl
 
   if (tokenAddress === '' || tokenAddress.toLowerCase() === sphynxAddr.toLowerCase()) {
     if (routerVersion !== 'sphynx') {
@@ -881,29 +885,10 @@ export default function Swap({ history }: RouteComponentProps) {
       <Cards>
         <div>
           <DividendPanel />
-          <Card bgColor="rgba(0, 0, 0, 0.2)" borderRadius="8px" margin="1em 0 0 0">
-            <Flex justifyContent="center">
-              <Text color="white" fontSize="16px">
-                {t(tokenData && tokenData.symbol ? tokenData.symbol : '')}
-              </Text>
-            </Flex>
-            <Flex justifyContent="space-between" mt={2}>
-              <Text color="white" fontSize="14px">
-                {t('Amount')}
-              </Text>
-              <Text color="white" fontSize="14px">
-                <BalanceNumber prefix="" value={Number(tokenAmount).toFixed(2)} />
-              </Text>
-            </Flex>
-            <Flex justifyContent="space-between" mt={2}>
-              <Text color="white" fontSize="14px">
-                {t('Balance')}
-              </Text>
-              <Text color="white" fontSize="14px">
-                <BalanceNumber prefix="$ " value={Number(tokenAmount * tokenPrice).toFixed(3)} />
-              </Text>
-            </Flex>
-          </Card>
+          {!isMobile ?
+            < LiveAmountPanel symbol={tokenData && tokenData.symbol ? tokenData.symbol : ''} amount={tokenAmount} price={tokenAmount * tokenPrice} />
+            : null
+          }
           <div style={{ height: 48, marginTop: 16, marginBottom: 25 }}>
             <Flex alignItems="center" justifyContent="center" style={{ marginBottom: 8 }}>
               <SwapCardNav />
@@ -1084,7 +1069,7 @@ export default function Swap({ history }: RouteComponentProps) {
         </div>
         <div>
           <FullHeightColumn>
-            <ContractPanel value="" />
+            <ContractPanel value="" symbol={tokenData && tokenData.symbol ? tokenData.symbol : ''} amount={tokenAmount} price={tokenAmount * tokenPrice} />
             <CoinStatsBoard tokenData={tokenData} />
             <ChartContainer tokenAddress={input} />
           </FullHeightColumn>

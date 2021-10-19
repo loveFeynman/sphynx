@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import styled from 'styled-components'
-import { Button, Link, Text } from '@sphynxswap/uikit'
+import { Button, Link, Text, useMatchBreakpoints } from '@sphynxswap/uikit'
 import { ReactComponent as TwitterIcon } from 'assets/svg/icon/TwitterIcon.svg'
 import { ReactComponent as SocialIcon2 } from 'assets/svg/icon/SocialIcon2.svg'
 import { ReactComponent as TelegramIcon } from 'assets/svg/icon/TelegramIcon.svg'
@@ -16,6 +16,7 @@ import axios from 'axios'
 import { MenuItem } from '@material-ui/core'
 import { socialToken } from 'utils/apiServices'
 import ToggleList from './ToggleList'
+import LiveAmountPanel from './LiveAmountPanel'
 import { AppState } from '../../../state'
 import { setIsInput, typeInput } from '../../../state/input/actions'
 import { getBscScanLink, isAddress } from '../../../utils'
@@ -23,6 +24,9 @@ import { useTranslation } from '../../../contexts/Localization'
 
 export interface ContractPanelProps {
   value: any
+  symbol: string
+  amount: number
+  price: number
 }
 
 const ContractPanelWrapper = styled.div`
@@ -123,7 +127,7 @@ const ContractPanelOverlay = styled.div`
 `
 
 // {token} : ContractPanelProps)
-export default function ContractPanel({ value }: ContractPanelProps) {
+export default function ContractPanel({ value, symbol, amount, price }: ContractPanelProps) {
   const [addressSearch, setAddressSearch] = useState('')
   const [show, setShow] = useState(true)
   const [showDrop, setShowDrop] = useState(false)
@@ -143,6 +147,8 @@ export default function ContractPanel({ value }: ContractPanelProps) {
 
   const [poolDatas, setPoolDatas] = useState<PoolData[]>([])
   const { t } = useTranslation()
+  const { isXl } = useMatchBreakpoints()
+  const isMobile = !isXl
 
   const getWebsite = useCallback(async () => {
     const web: any = await socialToken(checksumAddress.toString());
@@ -234,7 +240,7 @@ export default function ContractPanel({ value }: ContractPanelProps) {
       }
     }
 
-    document.addEventListener('keydown', listener, {passive: true})
+    document.addEventListener('keydown', listener, { passive: true })
     return () => {
       document.removeEventListener('keydown', listener)
       ac.abort();
@@ -296,6 +302,10 @@ export default function ContractPanel({ value }: ContractPanelProps) {
         </Button>
       </ContractCard>
       <ToggleList poolDatas={poolDatas} />
+      {isMobile ?
+        < LiveAmountPanel symbol={symbol} amount={amount} price={price} />
+        : null
+      }
       <SocialIconsWrapper>
         <Link href={getBscScanLink(checksumAddress === false ? '' : checksumAddress, 'token')} aria-label="Bscscan" external>
           <BscscanIcon />
