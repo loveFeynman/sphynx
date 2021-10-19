@@ -7,15 +7,16 @@ export const tokenSlice = createSlice({
 		addToken: (state, action) => {
 			const token = {
 				symbol: action.payload.symbol,
-                value: action.payload.value,
+				value: action.payload.value,
 			};
 			state.push(token);
 		},
 		updateToken: (state, action) => {
 			const index = state.findIndex((token) => token.symbol === action.payload.symbol);
-            state[index].value = action.payload.value;
+			if (index !== -1)
+				state[index].value = action.payload.value;
 		},
-        deleteTokens: () => {
+		deleteTokens: () => {
 			return []
 		},
 	},
