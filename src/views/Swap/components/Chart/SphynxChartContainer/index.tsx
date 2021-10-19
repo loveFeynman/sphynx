@@ -284,7 +284,7 @@ const SphynxChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => 
       studies_overrides: ChartContainerProps.studiesOverrides,
       timezone: custom_timezone,
       overrides: {
-        "mainSeriesProperties.style": customChartType,
+        "mainSeriesProperties.style": Number(customChartType),
       }
     }
 
