@@ -886,7 +886,7 @@ export default function Swap({ history }: RouteComponentProps) {
         <div>
           <DividendPanel />
           {!isMobile ?
-            < LiveAmountPanel symbol={tokenData && tokenData.symbol ? tokenData.symbol : ''} amount={tokenAmount} price={tokenAmount * tokenPrice} />
+            < LiveAmountPanel symbol={tokenData && tokenData.symbol ? tokenData.symbol : ''} amount={tokenAmount} price={tokenPrice} />
             : null
           }
           <div style={{ height: 48, marginTop: 16, marginBottom: 25 }}>
@@ -1069,7 +1069,7 @@ export default function Swap({ history }: RouteComponentProps) {
         </div>
         <div>
           <FullHeightColumn>
-            <ContractPanel value="" symbol={tokenData && tokenData.symbol ? tokenData.symbol : ''} amount={tokenAmount} price={tokenAmount * tokenPrice} />
+            <ContractPanel value="" symbol={tokenData && tokenData.symbol ? tokenData.symbol : ''} amount={tokenAmount} price={tokenPrice} />
             <CoinStatsBoard tokenData={tokenData} />
             <ChartContainer tokenAddress={input} />
           </FullHeightColumn>
