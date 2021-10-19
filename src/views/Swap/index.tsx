@@ -475,6 +475,7 @@ export default function Swap({ history }: RouteComponentProps) {
     }
 
     if (input) {
+      setTokenPrice(0)
       fetchData()
     }
 
