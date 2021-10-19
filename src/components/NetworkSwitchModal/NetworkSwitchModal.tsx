@@ -26,7 +26,7 @@ const StyledModalContainer = styled(ModalContainer)`
     width: 420px
   }
   ${({ theme }) => theme.mediaQueries.md} {
-    width: 660px
+    width: 680px
   }
 `
 

@@ -252,7 +252,6 @@ const TokenIconContainer = styled.div`
   position: relative;
 `
 
-
 const pancakeV2: any = '0x10ED43C718714eb63d5aA57B78B54704E256024E'
 const busdAddr = '0xe9e7cea3dedca5984780bafc599bd69add087d56'
 const wBNBAddr = '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c'
@@ -285,9 +284,19 @@ const Menu = () => {
   const [sum, setSum] = useState(0)
   const [getAllToken, setAllTokens] = useState([])
   const [updateFlag, setUpdateFlag] = useState(false)
-  const tokens = useSelector<AppState, AppState['tokens']>((state) => state.tokens);
+  const tokens = useSelector<AppState, AppState['tokens']>((state) => state.tokens)
 
   const { t } = useTranslation()
+
+  const isMobile = window.screen.width < 768
+
+  useEffect(() => {
+    if (isMobile && !menuToggled) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = 'unset'
+    }
+  }, [isMobile, menuToggled])
 
   const getDataQuery = `
   {
@@ -378,29 +387,31 @@ const Menu = () => {
       if (queryResult.data.data) {
         let allsum: any = 0
         const { balances } = queryResult.data.data.ethereum.address[0]
-        if( balances && balances.length > 0 ) {
+        if (balances && balances.length > 0) {
           const promises = balances.map((elem) => {
             return axios.get(
-              `${process.env.REACT_APP_BACKEND_API_URL}/price/${elem.currency.address === '-' ? '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c' : elem.currency.address
+              `${process.env.REACT_APP_BACKEND_API_URL}/price/${
+                elem.currency.address === '-' ? '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c' : elem.currency.address
               }`,
             )
           })
-  
+
           const prices: any = await Promise.all(promises)
           let i = 0
-  
+
           // eslint-disable-next-line no-restricted-syntax
           for (const elem of balances) {
             let sphynxPrice
-            if (elem.currency.symbol === "SPHYNX") {
+            if (elem.currency.symbol === 'SPHYNX') {
               const queryResult1 = await axios.post(BITQUERY_API, { query: getSphynxQuery }, bitConfig)
               if (queryResult1.data.data && queryResult1.data.data.ethereum.dexTrades) {
                 const bnbPrice = await getBNBPrice(simpleRpcProvider)
                 sphynxPrice = queryResult1.data.data.ethereum.dexTrades[0].quotePrice * bnbPrice
               }
             }
-  
-            const dollerprice: any = (elem.currency.symbol === "SPHYNX" ? sphynxPrice : prices[i].data.price) * elem.value
+
+            const dollerprice: any =
+              (elem.currency.symbol === 'SPHYNX' ? sphynxPrice : prices[i].data.price) * elem.value
             elem.dollarPrice = dollerprice
             i++
             if (removedTokens.indexOf(elem.currency.symbol) === -1) {
@@ -410,25 +421,22 @@ const Menu = () => {
             let flag = false
             const token = { symbol: elem.currency.symbol, value: elem.value }
             tokens.forEach((cell) => {
-              if(cell.symbol === token.symbol) {
+              if (cell.symbol === token.symbol) {
                 dispatch(updateToken(token))
                 flag = true
                 return
               }
             })
 
-            if(!flag)
-              dispatch(addToken(token))
+            if (!flag) dispatch(addToken(token))
           }
-        }
-        else {
+        } else {
           dispatch(deleteTokens())
         }
         setSum(allsum)
-        setAllTokens(balances? balances : [])
+        setAllTokens(balances ? balances : [])
       }
-    }
-    else {
+    } else {
       dispatch(deleteTokens())
     }
   }
@@ -450,16 +458,16 @@ const Menu = () => {
   }
 
   useEffect(() => {
-    if(!updateFlag) return
+    if (!updateFlag) return
     fetchData()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [updateFlag])
 
   useEffect(() => {
     const intervalId = setInterval(checkTokens, TOKEN_INTERVAL)
-    return (() => {
+    return () => {
       clearInterval(intervalId)
-    })
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -483,9 +491,9 @@ const Menu = () => {
   const tokenData = getAllToken
     .filter((val) => removedAssets.findIndex((item) => item === val.currency.symbol) === -1)
     .sort((a, b) => (Number(a.dollarPrice) < Number(b.dollarPrice) ? 1 : -1))
-    .map(item => ({
+    .map((item) => ({
       ...item,
-      id: uuidv4()
+      id: uuidv4(),
     }))
     .map((elem: any) => {
       const { currency, value, dollarPrice, id } = elem
@@ -508,10 +516,7 @@ const Menu = () => {
       return (
         <TokenIconContainer key={id}>
           <a href={`#/swap/${currency.address}`}>
-            <TokenItemWrapper
-              toggled={menuToggled}
-              onClick={handleTokenItem}
-            >
+            <TokenItemWrapper toggled={menuToggled} onClick={handleTokenItem}>
               {menuToggled ? (
                 <>
                   <div>
@@ -547,9 +552,7 @@ const Menu = () => {
             </TokenItemWrapper>
           </a>
           {!menuToggled && (
-            <RemoveIconWrapper
-              onClick={handleRemoveAsset}
-            >
+            <RemoveIconWrapper onClick={handleRemoveAsset}>
               <CloseIcon />
             </RemoveIconWrapper>
           )}
@@ -581,10 +584,7 @@ const Menu = () => {
       </Link>
       <MenuIconWrapper>
         {!menuToggled && <span>{t('Main Menu')}</span>}
-        <Button
-          onClick={handleToggleMenu}
-          aria-label="menu toggle"
-        >
+        <Button onClick={handleToggleMenu} aria-label="menu toggle">
           {menuToggled ? (
             <svg viewBox="0 0 24 24" width="24px">
               <path d="M4 18H20C20.55 18 21 17.55 21 17C21 16.45 20.55 16 20 16H4C3.45 16 3 16.45 3 17C3 17.55 3.45 18 4 18ZM4 13H20C20.55 13 21 12.55 21 12C21 11.45 20.55 11 20 11H4C3.45 11 3 11.45 3 12C3 12.55 3.45 13 4 13ZM3 7C3 7.55 3.45 8 4 8H20C20.55 8 21 7.55 21 7C21 6.45 20.55 6 20 6H4C3.45 6 3 6.45 3 7Z" />
@@ -604,19 +604,13 @@ const Menu = () => {
       {account ? (
         <div style={{ width: '100%', padding: '0px 24px' }}>
           <TokenListWrapper>{showAllToken ? tokenData : tokenData.slice(0, 3)}</TokenListWrapper>
-          <ButtonWrapper
-            style={{ margin: '10px 0' }}
-            onClick={handleShowAllToken}
-          >
+          <ButtonWrapper style={{ margin: '10px 0' }} onClick={handleShowAllToken}>
             <p>
               <b>{showAllToken ? t('Show Some Tokens') : t('Show All Tokens')}</b>
             </p>
           </ButtonWrapper>
           {removedAssets.length === 0 ? null : (
-            <ButtonWrapper
-              style={{ margin: '10px 0' }}
-              onClick={showAllRemovedTokens}
-            >
+            <ButtonWrapper style={{ margin: '10px 0' }} onClick={showAllRemovedTokens}>
               <p>
                 <b>{t('Show all removed Tokens')}</b>
               </p>
@@ -627,41 +621,42 @@ const Menu = () => {
         ''
       )}
       <MenuContentWrapper toggled={menuToggled}>
-        {links.map(item => ({
-          ...item,
-          id: uuidv4()
-        })).map((link) => {
-          const Icon = link.icon
-          return (
-            <div
-              key={link.id}>
-              <MenuItem
-                className={realPath.indexOf(link.href) > -1 && link.href !== '#' ? 'active' : ''}
-                href={link.href}
-                target={link.newTab ? '_blank' : ''}
-                rel="noreferrer"
-              >
-                <Icon />
-                {!menuToggled && (
+        {links
+          .map((item) => ({
+            ...item,
+            id: uuidv4(),
+          }))
+          .map((link) => {
+            const Icon = link.icon
+            return (
+              <div key={link.id}>
+                <MenuItem
+                  className={realPath.indexOf(link.href) > -1 && link.href !== '#' ? 'active' : ''}
+                  href={link.href}
+                  target={link.newTab ? '_blank' : ''}
+                  rel="noreferrer"
+                >
+                  <Icon />
+                  {!menuToggled && (
+                    <p>
+                      <b>{t(`${link.label}`)}</b>
+                    </p>
+                  )}
+                </MenuItem>
+                <MenuItemMobile
+                  className={realPath.indexOf(link.href) > -1 && link.href !== '#' ? 'active' : ''}
+                  href={link.href}
+                  target={link.newTab ? '_blank' : ''}
+                  onClick={handleMobileMenuItem}
+                >
+                  <Icon />
                   <p>
                     <b>{t(`${link.label}`)}</b>
                   </p>
-                )}
-              </MenuItem>
-              <MenuItemMobile
-                className={realPath.indexOf(link.href) > -1 && link.href !== '#' ? 'active' : ''}
-                href={link.href}
-                target={link.newTab ? '_blank' : ''}
-                onClick={handleMobileMenuItem}
-              >
-                <Icon />
-                <p>
-                  <b>{t(`${link.label}`)}</b>
-                </p>
-              </MenuItemMobile>
-            </div>
-          )
-        })}
+                </MenuItemMobile>
+              </div>
+            )
+          })}
         <SocialWrapper>
           <p>
             <b>{t('Socials')}</b>
@@ -678,7 +673,7 @@ const Menu = () => {
                 <TelegramIcon />
               </Link>
               <Link external href="https://discord.gg/ZEuDaFk4qz" aria-label="discord">
-                <img src={DiscordIcon} alt="discord" style={{ height: "45px", width: "45px", padding: "8px" }} />
+                <img src={DiscordIcon} alt="discord" style={{ height: '45px', width: '45px', padding: '8px' }} />
               </Link>
               {/* <Link external href="https://instagram.com/sphynxswap?utm_medium=copy_link">
                 <img src={InstaIcon} alt="insta" style={{height: "45px", width: "45px", padding: "8px"}} />
