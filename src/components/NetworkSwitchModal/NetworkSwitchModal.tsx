@@ -26,7 +26,7 @@ const StyledModalContainer = styled(ModalContainer)`
     width: 420px
   }
   ${({ theme }) => theme.mediaQueries.md} {
-    width: 600px
+    width: 660px
   }
 `
 
@@ -94,32 +94,32 @@ const NetworkItem = styled(Box)<{ selected?: boolean }>`
   const NETWORK_LIST = [
     {
       btIcon: "/images/net/mainnet.png",
-      networkName: "Ethereum",
+      networkName: "Ethereum(coming soon)",
       selected: false,
     },
     {
       btIcon: "/images/net/polygon.png",
-      networkName: "Polygon",
+      networkName: "Polygon(coming soon)",
       selected: false,
     },
     {
       btIcon: "/images/net/fantom.png",
-      networkName: "Fantom",
+      networkName: "Fantom(coming soon)",
       selected: false,
     },
     {
       btIcon: "/images/net/arbitrum.png",
-      networkName: "Arbitrum",
+      networkName: "Arbitrum(coming soon)",
       selected: false,
     },
     {
       btIcon: "/images/net/okex.png",
-      networkName: "OKEx",
+      networkName: "OKEx(coming soon)",
       selected: false,
     },
     {
       btIcon: "/images/net/heco.png",
-      networkName: "HECO",
+      networkName: "HECO(coming soon)",
       selected: false,
     },
     {
@@ -129,32 +129,32 @@ const NetworkItem = styled(Box)<{ selected?: boolean }>`
     },
     {
       btIcon: "/images/net/xdai.png",
-      networkName: "xDai",
+      networkName: "xDai(coming soon)",
       selected: false,
     },
     {
       btIcon: "/images/net/harmonyone.png",
-      networkName: "Harmony",
+      networkName: "Harmony(coming soon)",
       selected: false,
     },
     {
       btIcon: "/images/net/avalanche.png",
-      networkName: "Avalanche",
+      networkName: "Avalanche(coming soon)",
       selected: false,
     },
     {
       btIcon: "/images/net/celo.png",
-      networkName: "Celo",
+      networkName: "Celo(coming soon)",
       selected: false,
     },
     {
       btIcon: "/images/net/palm.png",
-      networkName: "Palm",
+      networkName: "Palm(coming soon)",
       selected: false,
     },
     {
       btIcon: "/images/net/moonriver.png",
-      networkName: "Moonriver",
+      networkName: "Moonriver(coming soon)",
       selected: false,
     },
   ]
@@ -177,7 +177,7 @@ export default function NetworkSwitchModal({
   }
 
   return (
-    <StyledModalContainer minWidth="360px">
+    <StyledModalContainer minWidth="320px">
       <ModalHeader>
         <ModalTitle>
           <Heading>Select a Network</Heading>

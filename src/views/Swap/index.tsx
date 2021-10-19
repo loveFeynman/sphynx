@@ -191,6 +191,7 @@ export default function Swap({ history }: RouteComponentProps) {
   const [tokenPrice, setTokenPrice] = useState(0)
   const { isXl } = useMatchBreakpoints()
   const isMobile = !isXl
+  const [symbol, setSymbol] = useState('')
 
   if (tokenAddress === '' || tokenAddress.toLowerCase() === sphynxAddr.toLowerCase()) {
     if (routerVersion !== 'sphynx') {
@@ -440,6 +441,7 @@ export default function Swap({ history }: RouteComponentProps) {
         // pull historical data
         const queryResult = await axios.post(BITQUERY_API, { query: getDataQuery(pairs[0]) }, config)
         if (queryResult.data.data && queryResult.data.data.ethereum.dexTrades) {
+          setSymbol(queryResult.data.data.ethereum.dexTrades[0].baseCurrency.symbol)
           newTransactions = queryResult.data.data.ethereum.dexTrades.map((item, index) => {
             return {
               transactionTime: formatTimeString(item.block.timestamp.time),
@@ -1083,7 +1085,7 @@ export default function Swap({ history }: RouteComponentProps) {
             textAlign: 'center',
           }}
         >
-          {swapTransCard === 'tokenDX' && <TransactionCard transactionData={transactionData} isLoading={isLoading} />}
+          {swapTransCard === 'tokenDX' && <TransactionCard transactionData={transactionData} isLoading={isLoading} symbol={symbol} />}
           {swapTransCard === 'buyers' && <BuyersCard pairAddress={pairs[0]} />}
           {swapTransCard === 'sellers' && <SellersCard pairAddress={pairs[0]} />}
         </div>

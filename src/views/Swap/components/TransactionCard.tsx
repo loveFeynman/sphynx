@@ -58,6 +58,7 @@ const TableWrapper = styled.div`
 interface TransactionProps {
   transactionData?: any
   isLoading?: boolean
+  symbol?: string
 }
 
 const TransactionCard: React.FC<TransactionProps> = (props) => {
@@ -91,6 +92,8 @@ const TransactionCard: React.FC<TransactionProps> = (props) => {
                           {Number(data.amount)
                             .toFixed(4)
                             .replace(/(\d)(?=(\d{3})+\.)/g, '$&,')}
+                          <br/>
+                          {props.symbol}
                         </h2>
                       </a>
                     </td>
