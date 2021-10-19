@@ -263,9 +263,6 @@ export default function ContractPanel({ value, symbol, amount, price }: Contract
           />
           {showDrop && (
             <MenuWrapper>
-              {/* <Button aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick}>
-              <ArrowDropDownIcon />
-            </Button> */}
               {data.length > 0 ? (
                 <span>
                   {data?.map((item: any, index: number) => {
