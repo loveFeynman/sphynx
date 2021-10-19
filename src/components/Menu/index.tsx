@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { useState, useEffect, useCallback } from 'react'
 import { useDispatch } from 'react-redux'
 import styled from 'styled-components'
@@ -6,8 +7,6 @@ import { Button, Link } from '@sphynxswap/uikit'
 import { addToken, deleteTokens } from 'state/wallet/tokenSlice'
 import { useMenuToggle, useRemovedAssets } from 'state/application/hooks'
 import { useWeb3React } from '@web3-react/core'
-import Web3 from 'web3'
-import tokenABI from 'assets/abis/erc20.json'
 import MainLogo from 'assets/svg/icon/logo_new.svg'
 import Illustration from 'assets/images/Illustration.svg'
 import { v4 as uuidv4 } from 'uuid'
@@ -24,6 +23,10 @@ import storages from 'config/constants/storages'
 import { TOKEN_INTERVAL } from 'config/constants/info'
 import { BalanceNumber } from 'components/BalanceNumber'
 import { useTranslation } from 'contexts/Localization'
+import Web3 from 'web3'
+import routerABI from 'assets/abis/pancakeRouter.json'
+import * as ethers from 'ethers'
+import { simpleRpcProvider } from 'utils/providers'
 import { links } from './config'
 import { Field, replaceSwapState } from '../../state/swap/actions'
 
@@ -248,6 +251,26 @@ const TokenIconContainer = styled.div`
   position: relative;
 `
 
+
+const pancakeV2: any = '0x10ED43C718714eb63d5aA57B78B54704E256024E'
+const busdAddr = '0xe9e7cea3dedca5984780bafc599bd69add087d56'
+const wBNBAddr = '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c'
+const tokenDecimal = 18
+const routerAbi: any = routerABI
+const providerURL = 'https://speedy-nodes-nyc.moralis.io/fbb4b2b82993bf507eaaab13/bsc/mainnet/archive'
+const web3 = new Web3(new Web3.providers.HttpProvider(providerURL))
+const pancakeRouterContract = new web3.eth.Contract(routerAbi, pancakeV2)
+
+const getBNBPrice: any = async () => {
+  return new Promise(async (resolve) => {
+    const path = [wBNBAddr, busdAddr]
+    pancakeRouterContract.methods
+      .getAmountsOut(web3.utils.toBN(1 * Math.pow(10, tokenDecimal)), path)
+      .call()
+      .then((data) => resolve(parseFloat(ethers.utils.formatUnits(data[data.length - 1] + '', 18))))
+  })
+}
+
 const Menu = () => {
   const { account } = useWeb3React()
   const { menuToggled, toggleMenu } = useMenuToggle()
@@ -275,6 +298,62 @@ const Menu = () => {
             tokenType 
           }
         }
+      }
+    }
+  }`
+
+  const getSphynxQuery = `
+  {
+  ethereum(network: bsc) {
+      dexTrades(
+      options: {desc: ["block.height", "tradeIndex"], limit: 1, offset: 0}
+      date: {till: null}
+      smartContractAddress: {is: "0xe4023ee4d957a5391007ae698b3a730b2dc2ba67"}
+      baseCurrency: {is: "0x2e121ed64eeeb58788ddb204627ccb7c7c59884c"}
+      quoteCurrency:{is : "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"}
+      ) {
+      block {
+        timestamp {
+        time(format: "%Y-%m-%d %H:%M:%S")
+        }
+        height
+      }
+      tradeIndex
+      protocol
+      exchange {
+        fullName
+      }
+      smartContract {
+        address {
+        address
+        annotation
+        }
+      }
+      baseAmount
+      baseCurrency {
+        address
+        symbol
+      }
+      quoteAmount
+      quoteCurrency {
+        address
+        symbol
+      }
+      transaction {
+        hash
+      }
+      buyCurrency {
+        symbol
+        address
+        name
+      }
+      sellCurrency {
+        symbol
+        address
+        name
+        }
+      price
+      quotePrice
       }
     }
   }`
@@ -309,7 +388,16 @@ const Menu = () => {
         dispatch(deleteTokens())
         // eslint-disable-next-line no-restricted-syntax
         for (const elem of balances) {
-          const dollerprice: any = prices[i].data.price * elem.value
+          let sphynxPrice
+          if (elem.currency.symbol === "SPHYNX") {
+            const queryResult1 = await axios.post(BITQUERY_API, { query: getSphynxQuery }, bitConfig)
+            if (queryResult1.data.data && queryResult1.data.data.ethereum.dexTrades) {
+              const bnbPrice = await getBNBPrice(simpleRpcProvider)
+              sphynxPrice = queryResult1.data.data.ethereum.dexTrades[0].quotePrice * bnbPrice
+            }
+          }
+
+          const dollerprice: any = (elem.currency.symbol === "SPHYNX" ? sphynxPrice : prices[i].data.price) * elem.value
           elem.dollarPrice = dollerprice
           i++
           if (removedTokens.indexOf(elem.currency.symbol) === -1) {
