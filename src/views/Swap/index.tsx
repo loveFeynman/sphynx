@@ -185,8 +185,10 @@ export default function Swap({ history }: RouteComponentProps) {
   const tokens = useSelector<AppState, AppState['tokens']>((state) => state.tokens);
   const [inputBalance, setInputBalance] = useState(0)
   const [outputBalance, setOutputBalance] = useState(0)
+  const [tokenAmount, setTokenAmount] = useState(0)
+  const [tokenPrice, setTokenPrice] = useState(0)
 
-  if(tokenAddress === '' || tokenAddress.toLowerCase() === sphynxAddr.toLowerCase()) {
+  if (tokenAddress === '' || tokenAddress.toLowerCase() === sphynxAddr.toLowerCase()) {
     if (routerVersion !== 'sphynx') {
       dispatch(typeRouterVersion({ routerVersion: 'sphynx' }))
     }
@@ -271,7 +273,7 @@ export default function Swap({ history }: RouteComponentProps) {
       let curAmount = 0
 
       for (let i = 0; i <= events.length; i++) {
-        if(loadingRef.current === false) {
+        if (loadingRef.current === false) {
           setBusy(false)
           setCurrentBlock(blockNumber)
           setBlockFlag(!blockFlag)
@@ -352,6 +354,7 @@ export default function Swap({ history }: RouteComponentProps) {
             }
             curPrice = oneData.price
             curAmount += oneData.amount
+            setTokenPrice(curPrice)
           } catch (err) {
             console.log('error', err)
           }
@@ -444,6 +447,10 @@ export default function Swap({ history }: RouteComponentProps) {
               tx: item.transaction.hash,
             }
           })
+
+          if (newTransactions.length > 0) {
+            setTokenPrice(newTransactions[newTransactions.length - 1].price)
+          }
 
           setTimeout(() => {
             setTransactions(newTransactions)
@@ -740,6 +747,23 @@ export default function Swap({ history }: RouteComponentProps) {
   )
 
   useEffect(() => {
+    if (tokenData === null || tokenData.symbol === null)
+      return
+
+    let flag = false
+    tokens.forEach((cell) => {
+      if (tokenData.symbol.indexOf('(' + cell.symbol + ')') !== -1) {
+        setTokenAmount(cell.value)
+        flag = true
+        return
+      }
+    })
+    if (!flag) {
+      setTokenAmount(0)
+    }
+  }, [tokenData, tokens])
+
+  useEffect(() => {
     let flag = false
     tokens.forEach((cell) => {
       if (cell.symbol === currencies?.INPUT?.symbol) {
@@ -857,6 +881,29 @@ export default function Swap({ history }: RouteComponentProps) {
       <Cards>
         <div>
           <DividendPanel />
+          <Card bgColor="rgba(0, 0, 0, 0.2)" borderRadius="8px" margin="1em 0 0 0">
+            <Flex justifyContent="center">
+              <Text color="white" fontSize="16px">
+                {t(tokenData && tokenData.symbol ? tokenData.symbol : '')}
+              </Text>
+            </Flex>
+            <Flex justifyContent="space-between" mt={2}>
+              <Text color="white" fontSize="14px">
+                {t('Amount')}
+              </Text>
+              <Text color="white" fontSize="14px">
+                <BalanceNumber prefix="" value={Number(tokenAmount).toFixed(2)} />
+              </Text>
+            </Flex>
+            <Flex justifyContent="space-between" mt={2}>
+              <Text color="white" fontSize="14px">
+                {t('Balance')}
+              </Text>
+              <Text color="white" fontSize="14px">
+                <BalanceNumber prefix="$ " value={Number(tokenAmount * tokenPrice).toFixed(3)} />
+              </Text>
+            </Flex>
+          </Card>
           <div style={{ height: 48, marginTop: 16, marginBottom: 25 }}>
             <Flex alignItems="center" justifyContent="center" style={{ marginBottom: 8 }}>
               <SwapCardNav />
