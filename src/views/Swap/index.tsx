@@ -475,7 +475,15 @@ export default function Swap({ history }: RouteComponentProps) {
           })
 
           if (newTransactions.length > 0) {
-            setTokenPrice(newTransactions[newTransactions.length - 1].price)
+            const curPrice = newTransactions[newTransactions.length - 1].price
+            const sessionData = {
+              input: inputTokenName,
+              price: curPrice,
+              amount: 0,
+              timestamp: new Date().getTime(),
+            }
+            sessionStorage.setItem(storages.SESSION_LIVE_PRICE, JSON.stringify(sessionData))
+            setTokenPrice(curPrice)
           }
 
           setDatas(newTransactions)
