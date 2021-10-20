@@ -31,7 +31,7 @@ const SwitchNetworkButton = (props) => {
   return (
     <Button onClick={handleSelectNetworkModal} {...props} variant="tertiary">
       <Flex>
-          <img src="/images/net/bsc.png" width="24" height="24" alt="network" />
+          <img src="/images/net/bsc.png" style={{width: '24px', height: '24px'}} alt="network" />
         <ButtonText>
           <Text color="white" bold ml={3} textAlign="center">
             {t('BSC')}
