@@ -1,4 +1,5 @@
-/* eslint-disable */ !(function (t, e) {
+/* eslint-disable */
+!(function (t, e) {
   'object' == typeof exports && 'undefined' != typeof module
     ? e(exports)
     : 'function' == typeof define && define.amd
@@ -71,7 +72,7 @@
       favorites: { intervals: [], chartTypes: [] },
     }
   function r() {
-    return 'CL v19.027 (internal id 287b0032 @ 2021-05-26T14:41:25.403Z)'
+    return 'CL v19.037 (internal id ca0cc69b @ 2021-07-09T16:54:01.189Z)'
   }
   var s = (function () {
     function t(t) {
@@ -366,7 +367,7 @@
           throw new Error("Symbol is not defined: either 'symbol' or 'load_last_chart' option must be set")
         var e =
           (this._options.library_path || '') +
-          (encodeURIComponent(this._options.locale) + '-tv-chart.287b0032.html#symbol=') +
+          (encodeURIComponent(this._options.locale) + '-tv-chart.ca0cc69b.html#symbol=') +
           encodeURIComponent(this._options.symbol || '') +
           '&interval=' +
           encodeURIComponent(this._options.interval) +

@@ -130,11 +130,11 @@ async function getChartData(input: any, pair: any, resolution: any) {
       const data = dexTrades.map((trade) => {
         const dateTest = trade.timeInterval.minute
         const year = dateTest.slice(0, 4)
-        const month = dateTest.slice(5, 7) - 1
+        const month = dateTest.slice(5, 7)
         const day = dateTest.slice(8, 10)
         const hour = dateTest.slice(11, 13)
         const minute = dateTest.slice(14, 16)
-        const date = new Date(year, month, day, hour, minute, 0)
+        const date = new Date(`${month}/${day}/${year} ${hour}:${minute}:00 UTC`)
         return {
           open: trade.open_price * bnbPrice,
           close: trade.close_price * bnbPrice,
@@ -144,6 +144,7 @@ async function getChartData(input: any, pair: any, resolution: any) {
           time: date.getTime(),
         }
       })
+      console.log("data", data)
       resolve(data)
     } catch (error) {
       console.log('error', error)
