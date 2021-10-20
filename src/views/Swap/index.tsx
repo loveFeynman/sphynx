@@ -475,7 +475,7 @@ export default function Swap({ history }: RouteComponentProps) {
           })
 
           if (newTransactions.length > 0) {
-            const curPrice = newTransactions[newTransactions.length - 1].price
+            const curPrice = newTransactions[0].price
             const sessionData = {
               input: inputTokenName,
               price: curPrice,
