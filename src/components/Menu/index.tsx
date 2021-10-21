@@ -86,6 +86,7 @@ const MenuIconWrapper = styled.div`
 const MenuContentWrapper = styled.div<{ toggled: boolean }>`
   width: 100%;
   flex: 1;
+  justify-content: center;
   overflow-y: auto;
   padding: 0 24px 32px;
   ${({ theme }) => theme.mediaQueries.xl} {
@@ -634,6 +635,7 @@ const Menu = () => {
                   className={realPath.indexOf(link.href) > -1 && link.href !== '#' ? 'active' : ''}
                   href={link.href}
                   target={link.newTab ? '_blank' : ''}
+                  style={menuToggled ? { justifyContent: 'center' } : {}}
                   rel="noreferrer"
                 >
                   <Icon />
