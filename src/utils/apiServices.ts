@@ -518,11 +518,12 @@ async function topTrades(address: string, type: 'buy' | 'sell', pairAddress) {
 }
 
 async function getMarksData(account: any, input: any, pair: any) {
+  const option = pair ? `smartContractAddress: {is: "${pair}"}` : `exchangeName: {in: ["Pancake", "Pancake v2"]}`
   const query = `{
     ethereum(network: bsc) {
       dexTrades(
         options: {limit: 500, desc: "block.height"}
-        smartContractAddress: {is: "${pair}"}
+        ${option}
         baseCurrency: {is: "${input}"}
         quoteCurrency: {is: "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c"}
         taker: {is: "${account}"}

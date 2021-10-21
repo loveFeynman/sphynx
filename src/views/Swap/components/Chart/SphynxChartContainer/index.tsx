@@ -1,6 +1,7 @@
 /* eslint-disable */
 import React from 'react'
 import styled from 'styled-components'
+import { useWeb3React } from '@web3-react/core'
 import './index.css'
 import {
   ChartingLibraryWidgetOptions,
@@ -71,7 +72,7 @@ let currentResolutions: any
 
 const SphynxChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
   const dispatch = useDispatch()
-  const account = "0x7b5DEf50571cfE1A4e4401232433b8E603e483c2"
+  const { account } = useWeb3React()
   const input = props.tokenAddress
   const routerVersion = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.routerVersion)
   const customChartType = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.customChartType)
@@ -255,7 +256,7 @@ const SphynxChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => 
         onDataCallback(bars)
       }
       catch (error) {
-
+        console.error(error)
       }
     },
     subscribeBars: (
