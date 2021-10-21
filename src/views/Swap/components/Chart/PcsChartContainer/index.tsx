@@ -305,10 +305,8 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
             id: i,
             time: bar.time,
             color: color,
-            text: html,
             label: label,
-            labelFontColor: '#444444',
-            minSize: 5,
+            tooltip: html
           }
 
           bars = [...bars, obj]
