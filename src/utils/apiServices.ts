@@ -517,5 +517,87 @@ async function topTrades(address: string, type: 'buy' | 'sell', pairAddress) {
   return returnData
 }
 
-export { getTokenDetails, getChartStats, socialToken, topTrades, getPrice, getChartData }
+async function getMarksData(account: any, input: any, pair: any) {
+  const query = `{
+    ethereum(network: bsc) {
+      dexTrades(
+        options: {limit: 500, desc: "block.height"}
+        smartContractAddress: {is: "${pair}"}
+        baseCurrency: {is: "${input}"}
+        quoteCurrency: {is: "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c"}
+        taker: {is: "${account}"}
+      ) {
+        transaction {
+          hash
+        }
+        smartContract {
+          address {
+            address
+          }
+          contractType
+          currency {
+            name
+          }
+        }
+        tradeIndex
+        block {
+          timestamp {
+            unixtime
+          }
+          height
+        }
+        buyAmount
+        buyAmountInUsd: buyAmount(in: USD)
+        buyCurrency {
+          symbol
+          address
+        }
+        sellAmount
+        sellAmountInUsd: sellAmount(in: USD)
+        sellCurrency {
+          symbol
+          address
+        }
+        sellAmountInUsd: sellAmount(in: USD)
+        tradeAmount(in: USD)
+        transaction {
+          gasValue
+          gasPrice
+          gas
+        }
+      }
+    }
+  }
+  `
+
+  const url = `https://graphql.bitquery.io/`
+  const {
+    data: {
+      data: {
+        ethereum: { dexTrades },
+      },
+    },
+  } = await axios.post(url, { query }, config)
+
+  return new Promise((resolve, reject) => {
+    try {
+      const data = dexTrades.map((trade) => {
+        return {
+          buyAmount: trade.buyAmount,
+          buyCurrency: trade.buyCurrency.symbol,
+          sellAmount: trade.sellAmount,
+          sellCurrency: trade.sellCurrency.symbol,
+          tradeAmount: trade.tradeAmount,
+          time: trade.block.timestamp.unixtime,
+        }
+      })
+      resolve(data)
+    } catch (error) {
+      console.log('error', error)
+      reject(error)
+    }
+  })
+}
+
+export { getTokenDetails, getChartStats, socialToken, topTrades, getPrice, getChartData, getMarksData }
 export default getTokenDetails
