@@ -17,7 +17,7 @@ const initialState: InputState = {
   isInput: true,
   routerVersion: 'sphynx',
   marketCapacity: 0,
-  customChartType: localStorage.getItem(CHART_TYPE) ?? 1,
+  customChartType: localStorage.getItem(CHART_TYPE) ?? 2,
 }
 
 
