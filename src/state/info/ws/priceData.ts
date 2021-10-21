@@ -1,10 +1,8 @@
 import { Contract, utils } from 'ethers'
-import { PANCAKE_FACTORY_ADDRESS, ChainId } from '@sphynxswap/sdk'
+import { PANCAKE_FACTORY_ADDRESS } from '@sphynxswap/sdk'
 import pancakeFactoryAbi from 'config/abi/pancakeSwapFactory.json'
-import pancakeLpAbi from 'config/abi/lpToken.json'
 import bscTokenAbi from 'config/abi/erc20.json'
 import { ZERO_ADDRESS } from 'config/constants'
-import { BUSD, WBNB } from 'config/constants/tokens'
 
 export interface TokenInfo {
   name: string
@@ -57,57 +55,4 @@ export const getPancakePairAddressV1 = async (quoteToken, baseToken, provider) =
     return null
   }
   return pairAddress
-}
-
-const getPancakeLiquidityInfo = async (quoteToken, baseToken, provider) => {
-  const lpAddress = await getPancakePairAddress(quoteToken, baseToken, provider)
-  const lpContract = new Contract(lpAddress, pancakeLpAbi, provider)
-  const quoteTokenInfo = await getMinTokenInfo(quoteToken, provider)
-  const baseTokenInfo = await getMinTokenInfo(baseToken, provider)
-  const reserves = await lpContract.getReserves()
-  let quoteTokenReserve
-  let baseTokenReserve
-  const token0 = await lpContract.token0()
-  if (token0.toLowerCase() === quoteToken.toLowerCase()) {
-    quoteTokenReserve = utils.formatUnits(reserves[0], quoteTokenInfo.decimals)
-    baseTokenReserve = utils.formatUnits(reserves[1], baseTokenInfo.decimals)
-  } else {
-    quoteTokenReserve = utils.formatUnits(reserves[1], quoteTokenInfo.decimals)
-    baseTokenReserve = utils.formatUnits(reserves[0], baseTokenInfo.decimals)
-  }
-
-  return {
-    quoteToken: {
-      ...quoteTokenInfo,
-      address: quoteToken,
-      reserve: quoteTokenReserve,
-    },
-    baseToken: {
-      ...baseTokenInfo,
-      address: baseToken,
-      reserve: baseTokenReserve,
-    },
-  }
-}
-
-export const getBnbPrice = async (provider) => {
-  const bnbBusdLp = await getPancakeLiquidityInfo(WBNB.address, BUSD[ChainId.MAINNET].address, provider)
-  return bnbBusdLp.baseToken.reserve / bnbBusdLp.quoteToken.reserve
-}
-
-export const getTokenPrice = async (tokenAddress, provider) => {
-  const bnbPrice = await getBnbPrice(provider)
-  if (tokenAddress.toLowerCase() === WBNB.address.toLowerCase()) {
-    return bnbPrice
-  }
-  if (tokenAddress.toLowerCase() === BUSD[ChainId.MAINNET].address.toLowerCase()) {
-    const tokenBnbLp = await getPancakeLiquidityInfo(tokenAddress, WBNB.address, provider)
-    return (tokenBnbLp.baseToken.reserve / tokenBnbLp.quoteToken.reserve) * bnbPrice
-  }
-  const tokenBnbLp = await getPancakeLiquidityInfo(tokenAddress, WBNB.address, provider)
-  const tokenBusdLp = await getPancakeLiquidityInfo(tokenAddress, BUSD[ChainId.MAINNET].address, provider)
-  if (tokenBnbLp.quoteToken.reserve >= tokenBusdLp.quoteToken.reserve) {
-    return (tokenBnbLp.baseToken.reserve / tokenBnbLp.quoteToken.reserve) * bnbPrice
-  }
-  return tokenBusdLp.baseToken.reserve / tokenBusdLp.quoteToken.reserve
 }

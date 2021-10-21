@@ -72,20 +72,17 @@ import { Field, replaceSwapState } from '../../state/swap/actions'
 
 import Web3 from 'web3'
 import ERC20ABI from 'assets/abis/erc20.json'
-import routerABI from 'assets/abis/pancakeRouter.json'
 import { getPancakePairAddress, getPancakePairAddressV1, getSphynxPairAddress } from 'state/info/ws/priceData'
 import * as ethers from 'ethers'
+import { getBNBPrice } from 'utils/priceProvider'
 import { simpleRpcProvider } from 'utils/providers'
 import { UNSET_PRICE } from 'config/constants/info'
 import storages from 'config/constants/storages'
-const pancakeV2: any = '0x10ED43C718714eb63d5aA57B78B54704E256024E'
-const busdAddr = '0xe9e7cea3dedca5984780bafc599bd69add087d56'
 const wBNBAddr = '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c'
 const sphynxAddr = '0x2e121Ed64EEEB58788dDb204627cCB7C7c59884c'
 let tokenDecimal = 18
 
 const abi: any = ERC20ABI
-const routerAbi: any = routerABI
 
 let config = {
   headers: {
@@ -95,7 +92,6 @@ let config = {
 
 const providerURL = 'https://speedy-nodes-nyc.moralis.io/fbb4b2b82993bf507eaaab13/bsc/mainnet/archive'
 const web3 = new Web3(new Web3.providers.HttpProvider(providerURL))
-const pancakeRouterContract = new web3.eth.Contract(routerAbi, pancakeV2)
 
 const ArrowContainer = styled(ArrowWrapper)`
   width: 32px;
@@ -155,16 +151,6 @@ const TokenInfoWrapper = styled.div`
 const SwapPage = styled(Page)`
   padding: 0;
 `
-
-const getBNBPrice: any = async () => {
-  return new Promise(async (resolve) => {
-    let path = [wBNBAddr, busdAddr]
-    pancakeRouterContract.methods
-      .getAmountsOut(web3.utils.toBN(1 * Math.pow(10, tokenDecimal)), path)
-      .call()
-      .then((data) => resolve(parseFloat(ethers.utils.formatUnits(data[data.length - 1] + '', 18))))
-  })
-}
 
 export default function Swap({ history }: RouteComponentProps) {
   const dispatch = useDispatch()
@@ -457,7 +443,7 @@ export default function Swap({ history }: RouteComponentProps) {
         let wBNBPairSphynx = await getSphynxPairAddress(input, wBNBAddr, simpleRpcProvider)
         if (wBNBPairSphynx !== null) pairs.push(wBNBPairSphynx.toLowerCase())
         setPairs(pairs)
-        const bnbPrice = await getBNBPrice(simpleRpcProvider)
+        const bnbPrice = await getBNBPrice()
         // pull historical data
         const queryResult = await axios.post(BITQUERY_API, { query: getDataQuery(pairs[0]) }, config)
         if (queryResult.data.data && queryResult.data.data.ethereum.dexTrades) {

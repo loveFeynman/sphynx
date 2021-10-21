@@ -7,6 +7,7 @@ import factoryAbi from '../config/abi/factoryAbi.json'
 import { getVersion } from './getVersion'
 import { BITQUERY_API_KEY } from '../config/constants/endpoints'
 import { web3Provider } from './providers'
+import { getBNBPrice } from './priceProvider'
 
 const web3 = new Web3(web3Provider)
 
@@ -96,34 +97,7 @@ async function getChartData(input: any, pair: any, resolution: any) {
 
   dexTrades = dexTrades.reverse()
 
-  const bnbPriceQuery = `{
-        ethereum(network: bsc) {
-          dexTrades(
-            options: {limit: 1, desc: "timeInterval.minute"}
-            #BNB:
-            baseCurrency: {is: "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c"}
-            #USDT:
-            quoteCurrency: {is: "0x55d398326f99059ff775485246999027b3197955"}
-      
-            exchangeName: {in: ["Pancake", "Pancake v2"]}
-          ) {
-            timeInterval {
-              minute(count: ${minutes})
-            }
-            price: quotePrice(calculate: average)
-          }
-        }
-      }`
-
-  const {
-    data: {
-      data: {
-        ethereum: { dexTrades: newDexTrades },
-      },
-    },
-  } = await axios.post(url, { query: bnbPriceQuery }, config)
-
-  const bnbPrice = newDexTrades[0].price
+  const bnbPrice = await getBNBPrice()
 
   return new Promise((resolve, reject) => {
     try {
