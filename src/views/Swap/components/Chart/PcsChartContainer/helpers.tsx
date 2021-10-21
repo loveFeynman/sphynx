@@ -39,7 +39,7 @@ export function parseFullSymbol(fullSymbol: any) {
 
 export async function getAllTransactions(account: any, path: any) {
   try {
-    const data: any = await getMarksData(account, path, null)
+    const data: any = await getMarksData(account, path)
     return data
   } catch (error) {
     console.log("error", error)
