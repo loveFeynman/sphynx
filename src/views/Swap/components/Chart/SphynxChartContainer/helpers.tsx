@@ -42,8 +42,7 @@ export function parseFullSymbol(fullSymbol: any) {
 
 export async function getAllTransactions(account: any, path: any) {
   try {
-    const pairAddress = await factoryContract.methods.getPair(path, WBNB.address).call()
-    const data: any = await getMarksData(account, path, pairAddress)
+    const data: any = await getMarksData(account, path)
     return data
   } catch (error) {
     console.log("error", error)
