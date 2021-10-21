@@ -258,6 +258,68 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
         console.error(error)
       }
     },
+    getTimescaleMarks: async (
+      symbolInfo: any,
+      startDate: any,
+      endDate: any,
+      onDataCallback: any,
+      resolution: any
+    ) => {
+      try {
+        const data = await getAllTransactions(account, input)
+        const sessionData = JSON.parse(sessionStorage.getItem(storages.SESSION_LIVE_PRICE))
+        let bars: any = []
+        data.forEach((bar: any, i: any) => {
+          let labelText: any
+          let label: any
+          let amount: any
+          let price: any
+          let curValue: any
+          let color: any
+          let date = (new Date(bar.time * 1000)).toLocaleString()
+
+          if (bar.buyCurrency === symbolInfo.description) {
+            labelText = "Sell"
+            label = "Sell"
+            amount = bar.buyAmount
+            color = 'red'
+          }
+          else {
+            labelText = "Buy"
+            label = "Buy"
+            amount = bar.sellAmount
+            color = 'green'
+          }
+          price = bar.tradeAmount
+          curValue = amount * sessionData.price
+
+          const html = `
+            <div>
+              <br>${labelText} at ${date}</br>
+              <br>Amount: ${amount.toFixed(4)}</br>
+              <br>Price: $${price.toFixed(2)}</br>
+              <br>Current value: $${curValue.toFixed(2)}</br>
+            </div>
+          `
+          const obj: any = {
+            id: i,
+            time: bar.time,
+            color: color,
+            text: html,
+            label: label,
+            labelFontColor: '#444444',
+            minSize: 5,
+          }
+
+          bars = [...bars, obj]
+        })
+
+        onDataCallback(bars)
+      }
+      catch (error) {
+        console.error(error)
+      }
+    },
     subscribeBars: (
       symbolInfo: any,
       resolution: any,
