@@ -99,6 +99,8 @@ export default function CoinStatsBoard(props) {
   const marketCapacity = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.marketCapacity)
   const result = isAddress(input)
   const interval = useRef(null)
+  const tokenAddress = useRef(null)
+  tokenAddress.current = input
   const { t } = useTranslation()
 
   const [alldata, setalldata] = useState({
@@ -143,7 +145,7 @@ export default function CoinStatsBoard(props) {
     interval.current = setInterval(() => {
       const sessionData = JSON.parse(sessionStorage.getItem(storages.SESSION_LIVE_PRICE))
       if (sessionData === null) return
-      if (sessionData.input !== input) return
+      if (sessionData.input.toLowerCase() !== tokenAddress.current.toLowerCase()) return
       setPrice(sessionData.price)
     }, 2000)
     return () => {
