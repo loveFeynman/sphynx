@@ -477,9 +477,9 @@ export default function Swap({ history }: RouteComponentProps) {
           if (newTransactions.length > 0) {
             const curPrice = newTransactions[0].price
             const sessionData = {
-              input: inputTokenName,
+              input,
               price: curPrice,
-              amount: 0,
+              amount: newTransactions[0].amount,
               timestamp: new Date().getTime(),
             }
             sessionStorage.setItem(storages.SESSION_LIVE_PRICE, JSON.stringify(sessionData))

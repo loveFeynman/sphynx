@@ -144,7 +144,6 @@ async function getChartData(input: any, pair: any, resolution: any) {
           time: date.getTime(),
         }
       })
-      console.log("data", data)
       resolve(data)
     } catch (error) {
       console.log('error', error)
