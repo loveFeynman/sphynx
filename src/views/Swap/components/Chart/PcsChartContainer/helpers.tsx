@@ -1,5 +1,6 @@
-// Make requests to CryptoCompare API
+import { getMarksData } from 'utils/apiServices'
 
+// Make requests to CryptoCompare API
 export async function makeApiRequest1(path: any, routerVersion: any, resolution: any) {
   try {
     const response = await fetch(
@@ -35,3 +36,14 @@ export function parseFullSymbol(fullSymbol: any) {
     toSymbol: match[3],
   }
 }
+
+export async function getAllTransactions(account: any, path: any) {
+  try {
+    const data: any = await getMarksData(account, path, null)
+    return data
+  } catch (error) {
+    console.log("error", error)
+    return []
+  }
+}
+

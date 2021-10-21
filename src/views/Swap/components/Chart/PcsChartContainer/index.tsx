@@ -1,6 +1,7 @@
 /* eslint-disable */
 import React from 'react'
 import styled from 'styled-components'
+import { useWeb3React } from '@web3-react/core'
 import './index.css'
 import {
   ChartingLibraryWidgetOptions,
@@ -11,7 +12,7 @@ import {
   Timezone,
   widget,
 } from 'charting_library/charting_library'
-import { makeApiRequest1 } from './helpers'
+import { makeApiRequest1, getAllTransactions } from './helpers'
 import { useSelector, useDispatch } from 'react-redux'
 import { AppState } from 'state'
 import { isAddress } from 'utils'
@@ -71,7 +72,7 @@ let currentResolutions: any
 
 const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
   const dispatch = useDispatch()
-  // const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
+  const { account } = useWeb3React()
   const input = props.tokenAddress
   const routerVersion = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.routerVersion)
   const customChartType = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.customChartType)
@@ -87,6 +88,8 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
   let lastBarsCache: any
 
   const configurationData = {
+    supports_marks: true,
+    supports_timescale_marks: true,
     supported_resolutions: ['1', '5', '10', '15', '30', '1H', '1D', '1W', '1M'],
     exchanges: [
       {
@@ -191,6 +194,68 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
         })
       } catch (error) {
         onErrorCallback(error)
+      }
+    },
+    getMarks: async (
+      symbolInfo: any,
+      startDate: any,
+      endDate: any,
+      onDataCallback: any,
+      resolution: any
+    ) => {
+      try {
+        const data = await getAllTransactions(account, input)
+        const sessionData = JSON.parse(sessionStorage.getItem(storages.SESSION_LIVE_PRICE))
+        let bars: any = []
+        data.forEach((bar: any, i: any) => {
+          let labelText: any
+          let label: any
+          let amount: any
+          let price: any
+          let curValue: any
+          let color: any
+          let date = (new Date(bar.time * 1000)).toLocaleString()
+
+          if (bar.buyCurrency === symbolInfo.description) {
+            labelText = "Sell"
+            label = "S"
+            amount = bar.buyAmount
+            color = 'red'
+          }
+          else {
+            labelText = "Buy"
+            label = "B"
+            amount = bar.sellAmount
+            color = 'green'
+          }
+          price = bar.tradeAmount
+          curValue = amount * sessionData.price
+
+          const html = `
+            <div>
+              <br>${labelText} at ${date}</br>
+              <br>Amount: ${amount.toFixed(4)}</br>
+              <br>Price: $${price.toFixed(2)}</br>
+              <br>Current value: $${curValue.toFixed(2)}</br>
+            </div>
+          `
+          const obj: any = {
+            id: i,
+            time: bar.time,
+            color: color,
+            text: html,
+            label: label,
+            labelFontColor: '#444444',
+            minSize: 5,
+          }
+
+          bars = [...bars, obj]
+        })
+
+        onDataCallback(bars)
+      }
+      catch (error) {
+        console.error(error)
       }
     },
     subscribeBars: (
