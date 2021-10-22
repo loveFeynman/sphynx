@@ -268,7 +268,7 @@ export default function ContractPanel({ value, symbol, amount, price }: Contract
                   {data?.map((item: any, index: number) => {
                     return (
                       <Link
-                        href={`#/swap/${item.address}`}
+                        href={`/swap/${item.address}`}
                         onClick={() => {
                           setdata([])
                           setShowDrop(false)

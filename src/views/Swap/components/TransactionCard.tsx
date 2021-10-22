@@ -1,7 +1,6 @@
 /* eslint-disable */
 import React from 'react'
 import styled from 'styled-components'
-import { Flex } from '@sphynxswap/uikit'
 import { Spinner } from '../../LotterySphx/components/Spinner'
 import { useTranslation } from 'contexts/Localization'
 
@@ -102,17 +101,17 @@ const TransactionCard: React.FC<TransactionProps> = (props) => {
                         <h2 className={!data.isBuy ? 'success' : 'error'}>
                           $
                           {data.price < 1
-                            ? data.price.toFixed(6)
+                            ? data.price.toFixed(10)
                             : Number(data.price)
                                 .toFixed(2)
-                                .replace(/(\d)(?=(\d{3})+\.)/g, '$1,')}
+                                .replace(/(\d)(?=(\d{3})+\.)/g, '$&,')}
                         </h2>
                       </a>
                     </td>
                     <td style={{ width: '32%' }}>
                       <a href={'https://bscscan.com/tx/' + data.tx} target="_blank" rel="noreferrer">
                         <h2 className={!data.isBuy ? 'success' : 'error'}>
-                          ${(data.price * data.amount).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,')}
+                          ${(data.price * data.amount).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$&,')}
                           <br/>
                           {Number(data.value)
                             .toFixed(4)

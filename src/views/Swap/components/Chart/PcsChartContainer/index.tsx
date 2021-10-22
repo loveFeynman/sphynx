@@ -137,7 +137,7 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
         timezone: 'Etc/UTC',
         exchange: version,
         minmov: 1,
-        pricescale: 1000000,
+        pricescale: 1000000000000,
         has_intraday: true,
         has_no_volume: false,
         has_weekly_and_monthly: false,
