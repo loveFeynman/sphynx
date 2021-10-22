@@ -1,5 +1,6 @@
 /* eslint-disable */
 import React, { useState, useEffect, useCallback, useRef } from 'react'
+import { Link as ReactLink } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { AppState } from 'state'
 import styled from 'styled-components'
@@ -24,12 +25,10 @@ import storages from 'config/constants/storages'
 import { TOKEN_INTERVAL } from 'config/constants/info'
 import { BalanceNumber } from 'components/BalanceNumber'
 import { useTranslation } from 'contexts/Localization'
-import Web3 from 'web3'
-import routerABI from 'assets/abis/pancakeRouter.json'
-import * as ethers from 'ethers'
 import { simpleRpcProvider } from 'utils/providers'
 import { links } from './config'
 import { Field, replaceSwapState } from '../../state/swap/actions'
+import { getBNBPrice } from 'utils/priceProvider'
 
 const MenuWrapper = styled.div<{ toggled: boolean }>`
   width: 320px;
@@ -253,25 +252,6 @@ const TokenIconContainer = styled.div`
   position: relative;
 `
 
-const pancakeV2: any = '0x10ED43C718714eb63d5aA57B78B54704E256024E'
-const busdAddr = '0xe9e7cea3dedca5984780bafc599bd69add087d56'
-const wBNBAddr = '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c'
-const tokenDecimal = 18
-const routerAbi: any = routerABI
-const providerURL = 'https://speedy-nodes-nyc.moralis.io/fbb4b2b82993bf507eaaab13/bsc/mainnet/archive'
-const web3 = new Web3(new Web3.providers.HttpProvider(providerURL))
-const pancakeRouterContract = new web3.eth.Contract(routerAbi, pancakeV2)
-
-const getBNBPrice: any = async () => {
-  return new Promise(async (resolve) => {
-    const path = [wBNBAddr, busdAddr]
-    pancakeRouterContract.methods
-      .getAmountsOut(web3.utils.toBN(1 * Math.pow(10, tokenDecimal)), path)
-      .call()
-      .then((data) => resolve(parseFloat(ethers.utils.formatUnits(data[data.length - 1] + '', 18))))
-  })
-}
-
 const Menu = () => {
   const { account } = useWeb3React()
   const { menuToggled, toggleMenu } = useMenuToggle()
@@ -387,7 +367,9 @@ const Menu = () => {
       const queryResult = await axios.post(BITQUERY_API, { query: getDataQuery }, bitConfig)
       if (queryResult.data.data) {
         let allsum: any = 0
-        const { balances } = queryResult.data.data.ethereum.address[0]
+        let balances = queryResult.data.data.ethereum.address[0].balances
+        balances = balances.filter((balance) => balance.value !== 0)
+        balances = balances.filter((balance) => balance.value !== 0)
         if (balances && balances.length > 0) {
           const promises = balances.map((elem) => {
             return axios.get(
@@ -516,42 +498,44 @@ const Menu = () => {
       }
       return (
         <TokenIconContainer key={id}>
-          <a href={`#/swap/${currency.address}`}>
-            <TokenItemWrapper toggled={menuToggled} onClick={handleTokenItem}>
-              {menuToggled ? (
-                <>
-                  <div>
-                    <p>
-                      <b>{currency.symbol}</b>
-                    </p>
-                    <p>
-                      <BalanceNumber prefix="$" value={Number(dollarPrice).toFixed(2)} />
-                    </p>
-                    <p>
-                      <BalanceNumber prefix="" value={Number(value).toFixed(2)} />
-                    </p>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div>
-                    <p>
-                      <b>{currency.symbol}</b>
-                    </p>
-                    <p>
-                      <BalanceNumber prefix="$" value={Number(dollarPrice).toFixed(2)} />
-                    </p>
-                  </div>
-                  <div>
-                    <p>
-                      <BalanceNumber prefix="" value={Number(value).toFixed(2)} />
-                    </p>
-                    <p />
-                  </div>
-                </>
-              )}
-            </TokenItemWrapper>
-          </a>
+          <ReactLink to={`/swap/${currency.address}`}>
+            <a>
+              <TokenItemWrapper toggled={menuToggled} onClick={handleTokenItem}>
+                {menuToggled ? (
+                  <>
+                    <div>
+                      <p>
+                        <b>{currency.symbol}</b>
+                      </p>
+                      <p>
+                        <BalanceNumber prefix="$" value={Number(dollarPrice).toFixed(2)} />
+                      </p>
+                      <p>
+                        <BalanceNumber prefix="" value={Number(value).toFixed(2)} />
+                      </p>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div>
+                      <p>
+                        <b>{currency.symbol}</b>
+                      </p>
+                      <p>
+                        <BalanceNumber prefix="$" value={Number(dollarPrice).toFixed(2)} />
+                      </p>
+                    </div>
+                    <div>
+                      <p>
+                        <BalanceNumber prefix="" value={Number(value).toFixed(2)} />
+                      </p>
+                      <p />
+                    </div>
+                  </>
+                )}
+              </TokenItemWrapper>
+            </a>
+          </ReactLink>
           {!menuToggled && (
             <RemoveIconWrapper onClick={handleRemoveAsset}>
               <CloseIcon />
@@ -632,7 +616,7 @@ const Menu = () => {
             return (
               <div key={link.id}>
                 <MenuItem
-                  className={realPath.indexOf(link.href) > -1 && link.href !== '#' ? 'active' : ''}
+                  className={realPath.indexOf(link.href) > -1 && link.href !== '/' ? 'active' : ''}
                   href={link.href}
                   target={link.newTab ? '_blank' : ''}
                   style={menuToggled ? { justifyContent: 'center' } : {}}
@@ -646,7 +630,7 @@ const Menu = () => {
                   )}
                 </MenuItem>
                 <MenuItemMobile
-                  className={realPath.indexOf(link.href) > -1 && link.href !== '#' ? 'active' : ''}
+                  className={realPath.indexOf(link.href) > -1 && link.href !== '/' ? 'active' : ''}
                   href={link.href}
                   target={link.newTab ? '_blank' : ''}
                   onClick={handleMobileMenuItem}
