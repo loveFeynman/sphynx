@@ -1,6 +1,6 @@
 import { createReducer } from '@reduxjs/toolkit'
 import { Tv } from 'react-feather'
-import { resetMintState, typeInput, setIsInput, typeRouterVersion, marketCap, setCustomChartType } from './actions'
+import { resetMintState, typeInput, setIsInput, typeRouterVersion, marketCap, setCustomChartType, setConnectedNetworkID } from './actions'
 
 interface InputState {
   input: string
@@ -8,9 +8,11 @@ interface InputState {
   routerVersion: string
   marketCapacity: number
   customChartType: any
+  connectedNetworkID: number
 }
 
 const CHART_TYPE = 'tv.chart.type'
+const CONNECTED_NETWORKID = 'chainID'
 
 const initialState: InputState = {
   input: '0x2e121ed64eeeb58788ddb204627ccb7c7c59884c',
@@ -18,6 +20,7 @@ const initialState: InputState = {
   routerVersion: 'sphynx',
   marketCapacity: 0,
   customChartType: localStorage.getItem(CHART_TYPE) ?? 2,
+  connectedNetworkID: Number(localStorage.getItem(CONNECTED_NETWORKID)) ?? 0,
 }
 
 
@@ -66,6 +69,14 @@ export default createReducer<any>(initialState, (builder) =>
       return {
         ...state,
         customChartType,
+      }
+    })
+    .addCase(setConnectedNetworkID, (state, { payload: { connectedNetworkID }}) => {
+
+      localStorage.setItem(CONNECTED_NETWORKID, connectedNetworkID.toString())
+      return {
+        ...state,
+        connectedNetworkID,
       }
     })
     ,

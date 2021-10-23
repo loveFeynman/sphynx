@@ -2,24 +2,18 @@ import React from 'react'
 import styled from 'styled-components'
 import { Button, useWalletModal, Text, Flex, useModal } from '@sphynxswap/uikit'
 import { useTranslation } from 'contexts/Localization'
-import CurrencySearchModal from './NetworkSwitchModal/NetworkSwitchModal'
-
-const ButtonText = styled.div`
-  display: flex;
-  align-items: center;
-`
+import { ChainId } from '@sphynxswap/sdk'
+import { useSelector } from 'react-redux'
+import { AppState } from 'state'
+import NetworkSwitchModal from './NetworkSwitchModal/NetworkSwitchModal'
 
 const SwitchNetworkButton = (props) => {
   const { t } = useTranslation()
-  const disableNetworkSelect = false
-  const onNetworkSelect = () => {
-    console.log('onNetworkSelect')
-  }
+  const connectedNetworkID = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.connectedNetworkID)
 
+  const disableNetworkSelect = false
   const [onPresentNetworkModal] = useModal(
-    <CurrencySearchModal
-      onNetworkSelect={onNetworkSelect}
-    />
+    <NetworkSwitchModal />
   )
 
   const handleSelectNetworkModal = () => {
@@ -30,13 +24,15 @@ const SwitchNetworkButton = (props) => {
 
   return (
     <Button onClick={handleSelectNetworkModal} {...props} variant="tertiary">
-      <Flex>
-          <img src="/images/net/bsc.png" style={{width: '24px', height: '24px'}} alt="network" />
-        <ButtonText>
-          <Text color="white" bold ml={3} textAlign="center">
-            {t('BSC')}
-          </Text>
-        </ButtonText>
+      <Flex alignItems="center">
+        <img
+          src={`/images/net/${connectedNetworkID === ChainId.MAINNET ? "bsc" : "mainnet"}.png`}
+          style={{ width: '28px', height: '28px', borderRadius: '0.375rem' }}
+          alt="network" />
+        <Text color="white" bold ml={3} textAlign="center">
+          {connectedNetworkID === ChainId.MAINNET ? t('BSC') : t('ETH')}
+        </Text>
+
       </Flex>
     </Button>
   )
