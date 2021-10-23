@@ -200,7 +200,64 @@ export default function Swap({ history }: RouteComponentProps) {
 
   const getDataQuery = useCallback(
     (pairAddress: any) => {
-      return `
+      if (pairAddress === '0xc522ce70f8aeb1205223659156d6c398743e3e7a') {
+        return `
+    {
+    ethereum(network: bsc) {
+        dexTrades(
+        options: {desc: ["block.height", "tradeIndex"], limit: 30, offset: 0}
+        date: {till: null}
+        smartContractAddress: {in: ["0xE4023ee4d957A5391007aE698B3A730B2dc2ba67", "${pairAddress}"]}
+        baseCurrency: {is: "${input}"}
+        quoteCurrency:{is : "${wBNBAddr}"}
+        ) {
+        block {
+          timestamp {
+          time(format: "%Y-%m-%d %H:%M:%S")
+          }
+          height
+        }
+        tradeIndex
+        protocol
+        exchange {
+          fullName
+        }
+        smartContract {
+          address {
+          address
+          annotation
+          }
+        }
+        baseAmount
+        baseCurrency {
+          address
+          symbol
+        }
+        quoteAmount
+        quoteCurrency {
+          address
+          symbol
+        }
+        transaction {
+          hash
+        }
+        buyCurrency {
+          symbol
+          address
+          name
+        }
+        sellCurrency {
+          symbol
+          address
+          name
+          }
+        price
+        quotePrice
+        }
+      }
+    }`
+      } else {
+        return `
     {
     ethereum(network: bsc) {
         dexTrades(
@@ -255,6 +312,7 @@ export default function Swap({ history }: RouteComponentProps) {
         }
       }
     }`
+      }
     },
     [input],
   )
