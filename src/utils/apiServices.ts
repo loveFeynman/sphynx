@@ -1,5 +1,6 @@
 import Web3 from 'web3'
 import { AbiItem } from 'web3-utils'
+import { ethers } from 'ethers'
 import axios from 'axios'
 import { PANCAKE_FACTORY_ADDRESS, SPHYNX_FACTORY_ADDRESS, RouterType } from '@sphynxswap/sdk'
 import abi from '../config/abi/erc20ABI.json'
@@ -50,41 +51,82 @@ async function getChartData(input: any, pair: any, resolution: any) {
     '1M': 1440 * 30,
   }
   const minutes = resolutionMap[resolution]
-  const query = `{
-    ethereum(network: bsc) {
-      dexTrades(
-        options: {limit: 500, desc: "timeInterval.minute"}
-        smartContractAddress: {is: "${pair}"}
-        protocol: {is: "Uniswap v2"}
-        baseCurrency: {is: "${input}"}
-        quoteCurrency: {is: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"}
-      ) {
-        exchange {
-          name
+  console.log('pair', pair)
+  let query
+  if (pair === '0xc522CE70F8aeb1205223659156D6C398743E3e7a') {
+    const pairs = ['0xE4023ee4d957A5391007aE698B3A730B2dc2ba67', pair]
+    query = `{
+      ethereum(network: bsc) {
+        dexTrades(
+          options: {limit: 500, desc: "timeInterval.minute"}
+          smartContractAddress: {in: ["${pairs[0]}", "${pairs[1]}"]}
+          protocol: {is: "Uniswap v2"}
+          baseCurrency: {is: "${input}"}
+          quoteCurrency: {is: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"}
+        ) {
+          exchange {
+            name
+          }
+          timeInterval {
+            minute(count: ${minutes})
+          }
+          baseCurrency {
+            symbol
+            address
+          }
+          baseAmount
+          quoteCurrency {
+            symbol
+            address
+          }
+          quoteAmount
+          trades: count
+          maximum_price: quotePrice(calculate: maximum)
+          minimum_price: quotePrice(calculate: minimum)
+          open_price: minimum(of: time, get: quote_price)
+          close_price: maximum(of: time, get: quote_price)
+          tradeAmount(in: USD, calculate: sum)
         }
-        timeInterval {
-          minute(count: ${minutes})
-        }
-        baseCurrency {
-          symbol
-          address
-        }
-        baseAmount
-        quoteCurrency {
-          symbol
-          address
-        }
-        quoteAmount
-        trades: count
-        maximum_price: quotePrice(calculate: maximum)
-        minimum_price: quotePrice(calculate: minimum)
-        open_price: minimum(of: time, get: quote_price)
-        close_price: maximum(of: time, get: quote_price)
-        tradeAmount(in: USD, calculate: sum)
       }
     }
+    `
+  } else {
+    query = `{
+      ethereum(network: bsc) {
+        dexTrades(
+          options: {limit: 500, desc: "timeInterval.minute"}
+          smartContractAddress: {is: "${pair}"}
+          protocol: {is: "Uniswap v2"}
+          baseCurrency: {is: "${input}"}
+          quoteCurrency: {is: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"}
+        ) {
+          exchange {
+            name
+          }
+          timeInterval {
+            minute(count: ${minutes})
+          }
+          baseCurrency {
+            symbol
+            address
+          }
+          baseAmount
+          quoteCurrency {
+            symbol
+            address
+          }
+          quoteAmount
+          trades: count
+          maximum_price: quotePrice(calculate: maximum)
+          minimum_price: quotePrice(calculate: minimum)
+          open_price: minimum(of: time, get: quote_price)
+          close_price: maximum(of: time, get: quote_price)
+          tradeAmount(in: USD, calculate: sum)
+        }
+      }
+    }
+    `
   }
-  `
 
   const url = `https://graphql.bitquery.io/`
   let {
@@ -127,6 +169,7 @@ async function getChartData(input: any, pair: any, resolution: any) {
 }
 
 async function getChartStats(address: string, routerVersion: string) {
+  const wBNBContract = new web3.eth.Contract(abi as AbiItem[], '0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c')
   try {
     if (!address) {
       return {
@@ -152,7 +195,7 @@ async function getChartStats(address: string, routerVersion: string) {
       ethereum(network: bsc) {
         dexTrades(
           date: {since: "${since}", till: "${till}"}
-          smartContractAddress: {is: "${pairAddress}"}
+          smartContractAddress: {in: ["0xE4023ee4d957A5391007aE698B3A730B2dc2ba67", "${pairAddress}"]}
           baseCurrency: {is: "${baseAddress}"}
           quoteCurrency: {is: "${quoteAddress}"}
         ) {
@@ -273,6 +316,8 @@ async function getChartStats(address: string, routerVersion: string) {
       )
     const sign = dexTrades[0].open_price > dexTrades[0].close_price ? '-' : '+'
 
+    liquidityV2BNB = await wBNBContract.methods.balanceOf(pairAddress).call()
+    liquidityV2BNB = ethers.utils.formatUnits(liquidityV2BNB, 18)
     return {
       volume: dexTrades[0].tradeAmount,
       change: sign + percDiff,
@@ -281,12 +326,24 @@ async function getChartStats(address: string, routerVersion: string) {
       liquidityV2BNB,
     }
   } catch (error) {
+    console.log('error', error)
+    const baseAddress = address
+    const quoteAddress =
+      baseAddress === '0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c'
+        ? '0xe9e7cea3dedca5984780bafc599bd69add087d56'
+        : '0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c'
+
+    const factoryAddress = routerVersion === RouterType.sphynx ? SPHYNX_FACTORY_ADDRESS : PANCAKE_FACTORY_ADDRESS
+    const factory = new web3.eth.Contract(factoryAbi as AbiItem[], factoryAddress)
+    const pairAddress = await factory.methods.getPair(baseAddress, quoteAddress).call()
+    let liquidityV2BNB = await wBNBContract.methods.balanceOf(pairAddress).call()
+    liquidityV2BNB = ethers.utils.formatUnits(liquidityV2BNB, 18)
     return {
       volume: '',
       change: '',
       price: '',
       liquidityV2: '',
-      liquidityV2BNB: '',
+      liquidityV2BNB,
     }
   }
 }
@@ -435,7 +492,7 @@ const getPrice = async (tokenAddr) => {
 }
 
 async function topTrades(address: string, type: 'buy' | 'sell', pairAddress) {
-  if(!pairAddress) return []
+  if (!pairAddress) return []
   const till = new Date().toISOString()
   const since = new Date(new Date().getTime() - 3600 * 24 * 1000 * 3).toISOString()
   const query = `{
