@@ -12,7 +12,7 @@ import {
   Timezone,
   widget,
 } from 'charting_library/charting_library'
-import { makeApiRequest1, getAllTransactions } from './helpers'
+import { makeApiRequest1, getAllTransactions, makeApiDurationRequest } from './helpers'
 import { useSelector, useDispatch } from 'react-redux'
 import { AppState } from 'state'
 import { isAddress } from 'utils'
@@ -155,19 +155,20 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
       onErrorCallback: any,
     ) => {
       const { from, to, firstDataRequest } = periodParams
-
       try {
-        const data = await makeApiRequest1(input, routerVersion, resolution)
         if (result) {
           if (!firstDataRequest) {
+            const data1 = await makeApiDurationRequest(input, routerVersion, resolution, (new Date(from* 1000)).toISOString(), (new Date(to* 1000)).toISOString())
+            const noDataFlag = data1.length === 0 ? true : false
             // "noData" should be set if there is no data in the requested period.
-            onHistoryCallback([], {
-              noData: true,
+            onHistoryCallback(data1, {
+              noData: noDataFlag,
             })
             return
           }
         }
 
+        const data = await makeApiRequest1(input, routerVersion, resolution)
         let bars: any = []
         data.map((bar: any, i: any) => {
           const obj: any = {
@@ -419,18 +420,18 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
     sessionStorage.setItem(storages.SESSION_LATEST_TIME, curTime.toString())
     sessionStorage.setItem(storages.SESSION_LIVE_VOLUME, '0')
     getWidget()
-    .then(widget => {
-      widget.onChartReady(() => {
-        widget.activeChart()
-        .onChartTypeChanged()
-        .subscribe(null, (chartType: SeriesStyle) => {
-          dispatch(setCustomChartType({ customChartType: chartType }));
-        })
-      });
-      
-    })
+      .then(widget => {
+        widget.onChartReady(() => {
+          widget.activeChart()
+            .onChartTypeChanged()
+            .subscribe(null, (chartType: SeriesStyle) => {
+              dispatch(setCustomChartType({ customChartType: chartType }));
+            })
+        });
+
+      })
   }, [input, dispatch])
-  
+
   return (
     <ChartContainer height={props.height}>
       <div id={ChartContainerProps.container} style={{ height: '100%', paddingBottom: '10px' }} />

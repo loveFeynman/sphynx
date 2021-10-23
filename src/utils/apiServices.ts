@@ -269,7 +269,7 @@ async function getChartStats(address: string, routerVersion: string) {
       100 *
       Math.abs(
         (parseFloat(dexTrades[0].open_price) - parseFloat(dexTrades[0].close_price)) /
-          ((parseFloat(dexTrades[0].open_price) + parseFloat(dexTrades[0].close_price)) / 2),
+        ((parseFloat(dexTrades[0].open_price) + parseFloat(dexTrades[0].close_price)) / 2),
       )
     const sign = dexTrades[0].open_price > dexTrades[0].close_price ? '-' : '+'
 
@@ -435,7 +435,7 @@ const getPrice = async (tokenAddr) => {
 }
 
 async function topTrades(address: string, type: 'buy' | 'sell', pairAddress) {
-  if(!pairAddress) return []
+  if (!pairAddress) return []
   const till = new Date().toISOString()
   const since = new Date(new Date().getTime() - 3600 * 24 * 1000 * 3).toISOString()
   const query = `{
@@ -689,5 +689,96 @@ async function getChartDurationData(input: any, pair: any, resolution: any, from
   })
 }
 
-export { getTokenDetails, getChartStats, socialToken, topTrades, getPrice, getChartData, getMarksData, getChartDurationData }
+async function getChartDurationPanData(input: any, routerVersion: any, resolution: any, from: any, to: any) {
+  const resolutionMap = {
+    1: 1,
+    5: 5,
+    10: 10,
+    15: 15,
+    30: 30,
+    60: 60,
+    '1H': 60,
+    '1D': 1440,
+    '1W': 1440 * 7,
+    '1M': 1440 * 30,
+  }
+
+  const minutes = resolutionMap[resolution]
+  const query = `{
+    ethereum(network: bsc) {
+      dexTrades(
+        options: {limit: 50, desc: "timeInterval.minute"}
+        baseCurrency: {is: "${input}"}
+        quoteCurrency: {is: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"}
+        exchangeName: {is: "Pancake ${routerVersion}"}
+        time: {before: "${to}"}
+      ) {
+        exchange {
+          name
+        }
+        timeInterval {
+          minute(count: ${minutes})
+        }
+        baseCurrency {
+          symbol
+          address
+        }
+        baseAmount
+        quoteCurrency {
+          symbol
+          address
+        }
+        quoteAmount
+        trades: count
+        maximum_price: quotePrice(calculate: maximum)
+        minimum_price: quotePrice(calculate: minimum)
+        open_price: minimum(of: time, get: quote_price)
+        close_price: maximum(of: time, get: quote_price)
+        tradeAmount(in: USD, calculate: sum)
+      }
+    }
+  }
+  `
+
+  const url = `https://graphql.bitquery.io/`
+  let {
+    data: {
+      data: {
+        ethereum: { dexTrades },
+      },
+    },
+  } = await axios.post(url, { query }, config)
+
+  dexTrades = dexTrades.reverse()
+
+  const bnbPrice = await getBNBPrice()
+
+  return new Promise((resolve, reject) => {
+    try {
+      const data = dexTrades.map((trade) => {
+        const dateTest = trade.timeInterval.minute
+        const year = dateTest.slice(0, 4)
+        const month = dateTest.slice(5, 7)
+        const day = dateTest.slice(8, 10)
+        const hour = dateTest.slice(11, 13)
+        const minute = dateTest.slice(14, 16)
+        const date = new Date(`${month}/${day}/${year} ${hour}:${minute}:00 UTC`)
+        return {
+          open: trade.open_price * bnbPrice,
+          close: trade.close_price * bnbPrice,
+          low: trade.minimum_price * bnbPrice,
+          high: trade.maximum_price * bnbPrice,
+          volume: trade.tradeAmount * bnbPrice,
+          time: date.getTime(),
+        }
+      })
+      resolve(data)
+    } catch (error) {
+      console.log('error', error)
+      reject(error)
+    }
+  })
+}
+
+export { getTokenDetails, getChartStats, socialToken, topTrades, getPrice, getChartData, getMarksData, getChartDurationData, getChartDurationPanData }
 export default getTokenDetails
