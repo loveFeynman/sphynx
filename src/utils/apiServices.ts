@@ -598,5 +598,96 @@ async function getMarksData(account: any, input: any) {
   })
 }
 
-export { getTokenDetails, getChartStats, socialToken, topTrades, getPrice, getChartData, getMarksData }
+async function getChartDurationData(input: any, pair: any, resolution: any, from: any, to: any) {
+  const resolutionMap = {
+    1: 1,
+    5: 5,
+    10: 10,
+    15: 15,
+    30: 30,
+    60: 60,
+    '1H': 60,
+    '1D': 1440,
+    '1W': 1440 * 7,
+    '1M': 1440 * 30,
+  }
+  const minutes = resolutionMap[resolution]
+  const query = `{
+    ethereum(network: bsc) {
+      dexTrades(
+        options: {limit: 50, desc: "timeInterval.minute"}
+        smartContractAddress: {is: "${pair}"}
+        protocol: {is: "Uniswap v2"}
+        baseCurrency: {is: "${input}"}
+        quoteCurrency: {is: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"}
+        time: {before: "${to}"}
+      ) {
+        exchange {
+          name
+        }
+        timeInterval {
+          minute(count: ${minutes})
+        }
+        baseCurrency {
+          symbol
+          address
+        }
+        baseAmount
+        quoteCurrency {
+          symbol
+          address
+        }
+        quoteAmount
+        trades: count
+        maximum_price: quotePrice(calculate: maximum)
+        minimum_price: quotePrice(calculate: minimum)
+        open_price: minimum(of: time, get: quote_price)
+        close_price: maximum(of: time, get: quote_price)
+        tradeAmount(in: USD, calculate: sum)
+      }
+    }
+  }
+  `
+
+  const url = `https://graphql.bitquery.io/`
+  let {
+    data: {
+      data: {
+        ethereum: { dexTrades },
+      },
+    },
+  } = await axios.post(url, { query }, config)
+
+  dexTrades = dexTrades.reverse()
+
+  const bnbPrice = await getBNBPrice()
+
+  return new Promise((resolve, reject) => {
+    try {
+      const data = dexTrades.map((trade) => {
+        const dateTest = trade.timeInterval.minute
+        const year = dateTest.slice(0, 4)
+        const month = dateTest.slice(5, 7)
+        const day = dateTest.slice(8, 10)
+        const hour = dateTest.slice(11, 13)
+        const minute = dateTest.slice(14, 16)
+        const date = new Date(`${month}/${day}/${year} ${hour}:${minute}:00 UTC`)
+        return {
+          open: trade.open_price * bnbPrice,
+          close: trade.close_price * bnbPrice,
+          low: trade.minimum_price * bnbPrice,
+          high: trade.maximum_price * bnbPrice,
+          volume: trade.tradeAmount * bnbPrice,
+          time: date.getTime(),
+        }
+      })
+      resolve(data)
+    } catch (error) {
+      console.log('error', error)
+      reject(error)
+    }
+  })
+}
+
+export { getTokenDetails, getChartStats, socialToken, topTrades, getPrice, getChartData, getMarksData, getChartDurationData }
 export default getTokenDetails

@@ -4,7 +4,7 @@ import factoryAbi from 'config/abi/factoryAbi.json'
 import Web3 from 'web3'
 import { web3Provider } from 'utils/providers'
 import { WBNB } from 'config/constants/tokens'
-import { getChartData, getMarksData } from 'utils/apiServices'
+import { getChartData, getMarksData, getChartDurationData } from 'utils/apiServices'
 
 const web3 = new Web3(web3Provider)
 const abi: any = factoryAbi
@@ -43,6 +43,17 @@ export function parseFullSymbol(fullSymbol: any) {
 export async function getAllTransactions(account: any, path: any) {
   try {
     const data: any = await getMarksData(account, path)
+    return data
+  } catch (error) {
+    console.log("error", error)
+    return []
+  }
+}
+
+export async function makeApiDurationRequest(path: any, routerVersion: any, resolution: any, from: any, to: any) {
+  try {
+    const pairAddress = await factoryContract.methods.getPair(path, WBNB.address).call()
+    const data: any = await getChartDurationData(path, pairAddress, resolution, from, to)
     return data
   } catch (error) {
     console.log("error", error)
