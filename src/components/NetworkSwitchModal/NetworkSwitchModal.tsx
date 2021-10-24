@@ -14,6 +14,10 @@ import {
 import styled from 'styled-components'
 import { useTranslation } from 'contexts/Localization'
 import { AutoRow } from 'components/Row'
+import { useSelector, useDispatch } from 'react-redux'
+import { AppState } from 'state'
+import { setConnectedNetworkID } from 'state/input/actions'
+import { switchNetwork } from 'utils/wallet'
 
 const Footer = styled.div`
 width: 100%;
@@ -78,7 +82,7 @@ const NetworkItem = styled(Box)<{ selected?: boolean }>`
 `
   
   interface NetworkData {
-    id: number,
+    ChainID: number,
     btIcon: string,
     networkName: string,
     selected: boolean,
@@ -86,86 +90,102 @@ const NetworkItem = styled(Box)<{ selected?: boolean }>`
   
   interface NetworkSearchModalProps extends InjectedModalProps {
     selectedNetwork?: NetworkData | null
-    onNetworkSelect: (network: NetworkData) => void
     otherSelectedNetwork?: NetworkData | null
     showCommonBases?: boolean
   }
 
   const NETWORK_LIST = [
     {
+      ChainID: 1,
       btIcon: "/images/net/mainnet.png",
       networkName: "Ethereum (coming soon)",
       selected: false,
     },
     {
+      ChainID: 137,
       btIcon: "/images/net/polygon.png",
       networkName: "Polygon (coming soon)",
       selected: false,
     },
     {
+      ChainID: 250,
       btIcon: "/images/net/fantom.png",
       networkName: "Fantom (coming soon)",
       selected: false,
     },
     {
+      ChainID: 42161,
       btIcon: "/images/net/arbitrum.png",
       networkName: "Arbitrum (coming soon)",
       selected: false,
     },
     {
+      ChainID: 66,
       btIcon: "/images/net/okex.png",
       networkName: "OKEx (coming soon)",
       selected: false,
     },
     {
+      ChainID: 4441,
       btIcon: "/images/net/heco.png",
       networkName: "HECO (coming soon)",
       selected: false,
     },
     {
+      ChainID: 56,
       btIcon: "/images/net/bsc.png",
       networkName: "BSC",
       selected: false,
     },
     {
+      ChainID: 100,
       btIcon: "/images/net/xdai.png",
       networkName: "xDai (coming soon)",
       selected: false,
     },
     {
+      ChainID: 4442,
       btIcon: "/images/net/harmonyone.png",
       networkName: "Harmony (coming soon)",
       selected: false,
     },
     {
+      ChainID: 43114,
       btIcon: "/images/net/avalanche.png",
       networkName: "Avalanche (coming soon)",
       selected: false,
     },
     {
+      ChainID: 42220,
       btIcon: "/images/net/celo.png",
       networkName: "Celo (coming soon)",
       selected: false,
     },
     {
+      ChainID: 11297108109,
       btIcon: "/images/net/palm.png",
       networkName: "Palm (coming soon)",
       selected: false,
     },
     {
+      ChainID: 1285,
       btIcon: "/images/net/moonriver.png",
       networkName: "Moonriver (coming soon)",
       selected: false,
     },
   ]
+
+  const PREFIX = '0x'
   
 export default function NetworkSwitchModal({
     onDismiss = () => null,
-    onNetworkSelect,
     selectedNetwork,
     otherSelectedNetwork,
     showCommonBases = false,
   }: NetworkSearchModalProps) {
+
+  const dispatch = useDispatch()
+  const connectedNetworkID = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.connectedNetworkID)
 
   useEffect(() => {
     document.body.style.overflow = 'hidden';
@@ -176,11 +196,10 @@ export default function NetworkSwitchModal({
     
   const { t } = useTranslation()
 
-  const [selectedItem, setSelectedItem] = useState('')
-
   const handleNetworkItemClick = (networkItem) => {
-    console.log('networkItem: ', networkItem)
-    setSelectedItem(networkItem.networkName)
+    dispatch(setConnectedNetworkID({ connectedNetworkID: networkItem.ChainID }));
+    switchNetwork(PREFIX + networkItem.ChainID.toString(16))
+    onDismiss()
   }
 
   return (
@@ -195,7 +214,7 @@ export default function NetworkSwitchModal({
         <NetworkList>
           {NETWORK_LIST.map((item) => (
             <>
-              <NetworkItem onClick={() => handleNetworkItemClick(item)} selected={item.networkName === selectedItem}>
+              <NetworkItem onClick={() => handleNetworkItemClick(item)} selected={item.ChainID === connectedNetworkID}>
                 <AutoRow>
                   <img src={item.btIcon} width="32" height="32" alt="icon" />
                   <Text bold>{item.networkName}</Text>

@@ -1,7 +1,7 @@
 /* eslint-disable */
 import React, { useEffect } from 'react'
 import styled from 'styled-components'
-import { RouterType } from '@sphynxswap/sdk'
+import { RouterType, ChainId } from '@sphynxswap/sdk'
 import { useTranslation } from 'contexts/Localization'
 import { useSetRouterType } from 'state/application/hooks'
 import { Button } from '@sphynxswap/uikit'
@@ -31,7 +31,7 @@ const StyledNav = styled.div`
 
 const AutoNav = (props) => {
   const { setRouterType } = useSetRouterType()
-  const { swapRouter, setSwapRouter } = props
+  const { swapRouter, setSwapRouter, connectedNetworkID } = props
 
   useEffect(() => {
     setTimeout(() => {
@@ -72,7 +72,7 @@ const AutoNav = (props) => {
           setSwapRouter(SwapRouter.PANCAKE_SWAP)
         }}
       >
-        {t('PCV2')}
+        {t(Number(connectedNetworkID) === ChainId.MAINNET? 'PCV2': 'UniSwap')}
       </Button>
     </StyledNav>
   )

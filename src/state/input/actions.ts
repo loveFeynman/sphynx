@@ -5,6 +5,7 @@ export interface Field {
   typeRouterVersion: 'v1'
   type: 'INPUT_ADDRESS'
   setCustomChartType: 1
+  connectedNetworkID: 0
 }
 
 export const typeInput = createAction<{ input: string }>('input/typeInput')
@@ -13,3 +14,4 @@ export const typeRouterVersion = createAction<{ routerVersion: string }>('input/
 export const resetMintState = createAction<void>('input/resetState')
 export const marketCap = createAction<{ marketCapacity: number }>('input/marketCap')
 export const setCustomChartType = createAction<{ customChartType: number }>('input/setCustomChartType')
+export const setConnectedNetworkID = createAction<{ connectedNetworkID: number}>('input/setConnectedNetworkID')

@@ -172,6 +172,7 @@ export default function Swap({ history }: RouteComponentProps) {
   const inputTokenName = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
   const routerVersion = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.routerVersion)
   const tokens = useSelector<AppState, AppState['tokens']>((state) => state.tokens)
+  const connectedNetworkID = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.connectedNetworkID)
   const [inputBalance, setInputBalance] = useState(0)
   const [outputBalance, setOutputBalance] = useState(0)
   const [tokenAmount, setTokenAmount] = useState(0)
@@ -962,7 +963,7 @@ export default function Swap({ history }: RouteComponentProps) {
               <SwapCardNav />
             </Flex>
             <Flex alignItems="center" justifyContent="center">
-              <AutoCardNav swapRouter={swapRouter} setSwapRouter={setSwapRouter} />
+              <AutoCardNav swapRouter={swapRouter} setSwapRouter={setSwapRouter} connectedNetworkID={connectedNetworkID}/>
             </Flex>
           </div>
           <Card bgColor="rgba(0, 0, 0, 0.2)" borderRadius="8px" padding="0 10px 20px 10px">

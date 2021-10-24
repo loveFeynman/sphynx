@@ -62,3 +62,40 @@ export const registerToken = async (tokenAddress: string, tokenSymbol: string, t
 
   return tokenAdded
 }
+
+export const switchNetwork = async (selectedChainID: string) => {
+  const provider = window.ethereum
+  if (provider) {
+
+    try {
+      await provider.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: selectedChainID }],
+      })
+      return true
+    } catch (error) {
+      // This error code indicates that the chain has not been added to MetaMask
+      // if it is not, then install it into the user MetaMask
+      if (error.code === 4902) {
+        try {
+          await window.ethereum.request({
+            method: 'wallet_addEthereumChain',
+            params: [
+              {
+                chainId: selectedChainID,
+                rpcUrl: 'https://main-light.eth.linkpool.io/',
+              },
+            ],
+          });
+        } catch (addError) {
+          console.error(addError);
+        }
+      }
+      console.error('Failed to setup the network in Metamask:', error)
+      return false
+    }
+  } else {
+    console.error("MetaMask is not installed. Please consider installing it: https://metamask.io/download.html")
+    return false
+  }
+}
