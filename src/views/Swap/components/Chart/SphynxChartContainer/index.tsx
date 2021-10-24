@@ -12,7 +12,7 @@ import {
   Timezone,
   widget,
 } from 'charting_library/charting_library'
-import { makeApiRequest1, getAllTransactions } from './helpers'
+import { makeApiRequest1, getAllTransactions, makeApiDurationRequest } from './helpers'
 import { useSelector, useDispatch } from 'react-redux'
 import { AppState } from 'state'
 import { isAddress } from 'utils'
@@ -154,18 +154,21 @@ const SphynxChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => 
       onHistoryCallback: any,
       onErrorCallback: any,
     ) => {
+      
       const { from, to, firstDataRequest } = periodParams
       try {
         if (result) {
           if (!firstDataRequest) {
+            const data1 = await makeApiDurationRequest(input, routerVersion, resolution, (new Date(from* 1000)).toISOString(), (new Date(to* 1000)).toISOString())
+            const noDataFlag = data1.length === 0 ? true : false
             // "noData" should be set if there is no data in the requested period.
-            onHistoryCallback([], {
-              noData: true,
+            onHistoryCallback(data1, {
+              noData: noDataFlag,
             })
             return
           }
         }
-
+        
         const data = await makeApiRequest1(input, routerVersion, resolution)
 
         let bars: any = []

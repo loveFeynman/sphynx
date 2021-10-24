@@ -1,4 +1,4 @@
-import { getMarksData } from 'utils/apiServices'
+import { getMarksData, getChartDurationPanData } from 'utils/apiServices'
 
 // Make requests to CryptoCompare API
 export async function makeApiRequest1(path: any, routerVersion: any, resolution: any) {
@@ -47,3 +47,13 @@ export async function getAllTransactions(account: any, path: any) {
   }
 }
 
+export async function makeApiDurationRequest(path: any, routerVersion: any, resolution: any, from: any, to: any) {
+  try {
+
+    const data: any = await getChartDurationPanData(path, routerVersion, resolution, from, to)
+    return data
+  } catch (error) {
+    console.log("error", error)
+    return []
+  }
+}
