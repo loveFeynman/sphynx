@@ -3,6 +3,7 @@ import React from 'react'
 import styled from 'styled-components'
 import { Spinner } from '../../LotterySphx/components/Spinner'
 import { useTranslation } from 'contexts/Localization'
+import { formatPrice } from '../../../utils'
 
 const fontSize = window.screen.width > 768 ? "14px" : "12px"
 
@@ -101,7 +102,7 @@ const TransactionCard: React.FC<TransactionProps> = (props) => {
                         <h2 className={!data.isBuy ? 'success' : 'error'}>
                           $
                           {data.price < 1
-                            ? data.price.toFixed(10)
+                            ? formatPrice(data.price, 10)
                             : Number(data.price)
                                 .toFixed(2)
                                 .replace(/(\d)(?=(\d{3})+\.)/g, '$&,')}

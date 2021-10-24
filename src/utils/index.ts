@@ -113,8 +113,32 @@ export function isTokenOnList(defaultTokens: TokenAddressMap, currency?: Currenc
 }
 
 export function reverseString(str) {
-  const splitString = str.split(""); 
-  const reverseArray = splitString.reverse(); 
+  const splitString = str.split("");
+  const reverseArray = splitString.reverse();
   const joinArray = reverseArray.join("");
   return joinArray;
+}
+
+export function formatPrice (num: number, defaultFixed: number) {
+  const formatNumber = num.toFixed(defaultFixed);
+  if (Number(formatNumber) === 0) {
+    const found = Array.from(convertNumberToString(num), Number).findIndex(e => Number(e) > 0)
+    return found < 0 ? 0 : Number(num).toFixed(found);
+  }
+  return formatNumber;
+}
+
+function convertNumberToString (n) {
+  const sign = +n < 0 ? '-' : ''
+  const toStr = n.toString()
+  if (!/e/i.test(toStr)) {
+    return n;
+  }
+  const [lead, decimal, pow] = n.toString()
+    .replace(/^-/, '')
+    .replace(/^([0-9]+)(e.*)/, '$1.$2')
+    .split(/[e.]/)
+  return +pow < 0
+    ? `${sign}0.${"0".repeat(Math.max(Math.abs(pow) - 1 || 0, 0))}${lead}${decimal}`
+    : sign + lead + (+pow >= decimal.length ? (decimal + "0".repeat(Math.max(+pow-decimal.length || 0, 0))) : (`${decimal.slice(0, +pow)}.${decimal.slice(+pow)}`))
 }
