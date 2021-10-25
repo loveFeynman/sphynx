@@ -98,7 +98,7 @@ export default function SwapModalFooter({
           </RowFixed>
           <FormattedPriceImpact priceImpact={priceImpactWithoutFee} />
         </RowBetween>
-        <RowBetween>
+        {/* <RowBetween>
           <RowFixed>
             <Text fontSize="14px">{t('Liquidity Provider Fee')}</Text>
             <QuestionHelper
@@ -106,8 +106,8 @@ export default function SwapModalFooter({
                 <>
                   <Text mb="12px">{t('For each trade a .1% fee is paid')}</Text>
                   <Text>- {t('.1% to LP token holders')}</Text>
-                  {/* <Text>- {t('0.03% to the Treasury')}</Text>
-                  <Text>- {t('0.05% towards SPHYNX buyback and burn')}</Text> */}
+                  <Text>- {t('0.03% to the Treasury')}</Text>
+                  <Text>- {t('0.05% towards SPHYNX buyback and burn')}</Text>
                 </>
               }
               ml="4px"
@@ -116,7 +116,7 @@ export default function SwapModalFooter({
           <Text fontSize="14px">
             {realizedLPFee ? `${realizedLPFee?.toSignificant(6)} ${trade.inputAmount.currency.symbol}` : '-'}
           </Text>
-        </RowBetween>
+        </RowBetween> */}
       </SwapModalFooterContainer>
 
       <AutoRow>
