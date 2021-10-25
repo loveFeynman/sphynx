@@ -59,7 +59,7 @@ const ChartContainerProps = {
   fullscreen: false,
   autosize: true,
   studiesOverrides: {},
-  height: 600
+  height: 600,
 }
 
 function getLanguageFromURL(): LanguageCode | null {
@@ -436,7 +436,7 @@ const SphynxChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => 
         });
 
       })
-  }, [input, dispatch, props.priceScale])
+  }, [input, dispatch])
 
   return (
     <ChartContainer height={props.height}>

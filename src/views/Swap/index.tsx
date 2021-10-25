@@ -78,6 +78,7 @@ import { getBNBPrice } from 'utils/priceProvider'
 import { simpleRpcProvider } from 'utils/providers'
 import { UNSET_PRICE } from 'config/constants/info'
 import storages from 'config/constants/storages'
+import Spinner from '../LotterySphx/components/Spinner'
 const wBNBAddr = '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c'
 const sphynxAddr = '0x2e121Ed64EEEB58788dDb204627cCB7C7c59884c'
 let tokenDecimal = 18
@@ -180,7 +181,7 @@ export default function Swap({ history }: RouteComponentProps) {
   const { isXl } = useMatchBreakpoints()
   const isMobile = !isXl
   const [symbol, setSymbol] = useState('')
-  const [priceScale, setPriceScale] = useState(100)
+  const [priceScale, setPriceScale] = useState(null)
 
   if (tokenAddress === '' || tokenAddress.toLowerCase() === sphynxAddr.toLowerCase()) {
     if (routerVersion !== 'sphynx') {
@@ -1160,7 +1161,11 @@ export default function Swap({ history }: RouteComponentProps) {
               price={tokenPrice}
             />
             <CoinStatsBoard tokenData={tokenData} />
-            <ChartContainer tokenAddress={input} priceScale={priceScale} />
+            {
+              priceScale ? (
+                <ChartContainer tokenAddress={input} priceScale={priceScale} />
+              ) : <Spinner />
+            }
           </FullHeightColumn>
         </div>
         <TokenInfoWrapper>
