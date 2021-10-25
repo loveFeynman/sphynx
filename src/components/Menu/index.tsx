@@ -369,12 +369,10 @@ const Menu = () => {
         let allsum: any = 0
         let balances = queryResult.data.data.ethereum.address[0].balances
         balances = balances.filter((balance) => balance.value !== 0)
-        balances = balances.filter((balance) => balance.value !== 0)
         if (balances && balances.length > 0) {
           const promises = balances.map((elem) => {
             return axios.get(
-              `${process.env.REACT_APP_BACKEND_API_URL}/price/${
-                elem.currency.address === '-' ? '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c' : elem.currency.address
+              `${process.env.REACT_APP_BACKEND_API_URL}/price/${elem.currency.address === '-' ? '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c' : elem.currency.address
               }`,
             )
           })
@@ -401,18 +399,22 @@ const Menu = () => {
               allsum += dollerprice
             }
 
-            let flag = false
-            const token = { symbol: elem.currency.symbol, value: elem.value }
-            tokens.forEach((cell) => {
-              if (cell.symbol === token.symbol) {
-                dispatch(updateToken(token))
-                flag = true
-                return
-              }
-            })
+            if (elem.dollarPrice > 0) {
+              let flag = false
+              const token = { symbol: elem.currency.symbol, value: elem.value }
+              tokens.forEach((cell) => {
+                if (cell.symbol === token.symbol) {
+                  dispatch(updateToken(token))
+                  flag = true
+                  return
+                }
+              })
 
-            if (!flag) dispatch(addToken(token))
+              if (!flag) dispatch(addToken(token))
+            }
           }
+
+          balances = balances.filter((balance) => balance.dollarPrice !== 0)
         } else {
           dispatch(deleteTokens())
         }
