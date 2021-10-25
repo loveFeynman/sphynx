@@ -2,12 +2,12 @@ import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import { Flex, Text, useModal } from '@sphynxswap/uikit'
 import DividendModal from 'components/Menu/GlobalSettings/DividendModal'
-import axios from 'axios'
 import Web3 from 'web3'
 import MainLogo from 'assets/svg/icon/logo_new.svg'
 import MoreIcon from 'assets/svg/icon/MoreIcon2.svg'
 import { web3Provider } from 'utils/providers'
 import { useTranslation } from 'contexts/Localization'
+import { FEE_WALLET } from 'config/constants'
 import tokenABI from '../../../assets/abis/erc20.json'
 
 const Wrapper = styled.div`
@@ -34,26 +34,22 @@ const DetailsImage = styled.img`
 
 const DividendPanel: React.FC = () => {
   const [balance, setBalance] = useState(0)
-  const [price, setPrice] = useState(0)
   const { t } = useTranslation()
 
-  const [onPresentDividendModal] = useModal(<DividendModal balance={balance * price} />)
+  const [onPresentDividendModal] = useModal(<DividendModal balance={balance} />)
 
   useEffect(() => {
     const ac = new AbortController();
-    axios.get('https://thesphynx.co/api/price/0x2e121Ed64EEEB58788dDb204627cCB7C7c59884c').then(({ data }) => {
-      setPrice(data.price)
-    })
     const web3 = new Web3(web3Provider)
     const abi: any = tokenABI
-    const tokenContract = new web3.eth.Contract(abi, '0x2e121Ed64EEEB58788dDb204627cCB7C7c59884c')
-    tokenContract.methods
-      .balanceOf('0x795BAb595218150833bc4bBc96541D37Ed7658cf')
-      .call()
-      .then((data) => {
-        const bal: any = web3.utils.fromWei(data)
-        setBalance(bal / 2)
-      })
+    web3.eth.getBalance(FEE_WALLET)
+    .then(bnbBalance => {
+      let bnb: any = web3.utils.fromWei(bnbBalance)
+      bnb = Number(bnb)
+      .toFixed(3)
+      .replace(/(\d)(?=(\d{3})+\.)/g, '$&,')
+      setBalance(bnb)
+    })
 
     return () => ac.abort();
   }, [])
@@ -72,7 +68,7 @@ const DividendPanel: React.FC = () => {
           {t('Amount to be Distributed')}
         </Text>
         <Text color="white" fontSize="14px">
-          $ {balance * price}
+          {balance} BNB
         </Text>
       </Flex>
     </Wrapper>

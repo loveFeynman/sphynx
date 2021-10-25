@@ -172,11 +172,11 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
         let bars: any = []
         data.map((bar: any, i: any) => {
           const obj: any = {
-            time: new Date(bar.time).getTime(),
-            low: bar.low * bar.baseLow,
-            high: bar.high * bar.baseHigh,
-            open: bar.open * bar.baseOpen,
-            close: bar.close * bar.baseClose,
+            time: bar.time,
+            low: bar.low,
+            high: bar.high,
+            open: bar.open,
+            close: bar.close,
             volume: bar.volume,
             isBarClosed: true,
             isLastBar: false,
