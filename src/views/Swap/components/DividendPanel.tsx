@@ -8,7 +8,8 @@ import MoreIcon from 'assets/svg/icon/MoreIcon2.svg'
 import { web3Provider } from 'utils/providers'
 import { useTranslation } from 'contexts/Localization'
 import { FEE_WALLET } from 'config/constants'
-import tokenABI from '../../../assets/abis/erc20.json'
+import { RowBetween, RowFixed } from 'components/Layout/Row'
+import QuestionHelper from 'components/QuestionHelper'
 
 const Wrapper = styled.div`
   background: black;
@@ -66,14 +67,24 @@ const DividendPanel: React.FC = () => {
         </Text>
         <DetailsImage src={MoreIcon} alt="More Icon" onClick={onPresentDividendModal} />
       </Flex>
-      <Flex justifyContent="space-between" mt={2}>
-        <Text color="white" fontSize="14px">
-          {t('Amount to be Distributed')}
-        </Text>
-        <Text color="white" fontSize="14px">
-          {balance} BNB
-        </Text>
-      </Flex>
+      <RowBetween>
+        <RowFixed>
+          <Text fontSize="14px">
+            {t('Total Transaction fees collected')}
+          </Text>
+        </RowFixed>
+        <RowFixed>
+        <QuestionHelper
+              text={t(
+                'Total fees will be redistributed to holders on a weekly basis. Holders must hold Sphynx Token for 7 days to be eligible for the reward. Amount distributed will be dependent on the amount of supply investor holds.',
+              )}
+              ml="4px"
+            />
+        </RowFixed>
+        <RowFixed>
+          <Text fontSize="14px">{balance}BNB</Text>
+        </RowFixed>
+      </RowBetween>
     </Wrapper>
   )
 }

@@ -52,7 +52,7 @@ function TradeSummary({ trade, allowedSlippage }: { trade: Trade; allowedSlippag
         <FormattedPriceImpact priceImpact={priceImpactWithoutFee} />
       </RowBetween>
 
-      {/* <RowBetween>
+      <RowBetween>
         <RowFixed>
           <Text color="white" fontSize="14px">
             {t('Liquidity Provider Fee')}
@@ -62,8 +62,8 @@ function TradeSummary({ trade, allowedSlippage }: { trade: Trade; allowedSlippag
               <>
                 <Text mb="12px">{t('For each trade a .1% fee is paid')}</Text>
                 <Text>- {t('.1% to LP token holders')}</Text>
-                <Text>- {t('0.03% to the Treasury')}</Text>
-                <Text>- {t('0.05% towards SPHYNX buyback and burn')}</Text>
+                {/* <Text>- {t('0.03% to the Treasury')}</Text>
+                <Text>- {t('0.05% towards SPHYNX buyback and burn')}</Text> */}
               </>
             }
             ml="4px"
@@ -72,7 +72,7 @@ function TradeSummary({ trade, allowedSlippage }: { trade: Trade; allowedSlippag
         <Text color="white" fontSize="14px">
           {realizedLPFee ? `${realizedLPFee.toSignificant(4)} ${trade.inputAmount.currency.symbol}` : '-'}
         </Text>
-      </RowBetween> */}
+      </RowBetween>
     </AutoColumn>
   )
 }
