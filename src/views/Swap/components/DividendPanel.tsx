@@ -39,19 +39,22 @@ const DividendPanel: React.FC = () => {
   const [onPresentDividendModal] = useModal(<DividendModal balance={balance} />)
 
   useEffect(() => {
-    const ac = new AbortController();
+    const ac = new AbortController()
     const web3 = new Web3(web3Provider)
-    const abi: any = tokenABI
-    web3.eth.getBalance(FEE_WALLET)
-    .then(bnbBalance => {
-      let bnb: any = web3.utils.fromWei(bnbBalance)
-      bnb = Number(bnb)
-      .toFixed(3)
-      .replace(/(\d)(?=(\d{3})+\.)/g, '$&,')
-      setBalance(bnb)
-    })
+    const getBalance = () => {
+      web3.eth.getBalance(FEE_WALLET).then((bnbBalance) => {
+        let bnb: any = web3.utils.fromWei(bnbBalance)
+        bnb = Number(bnb)
+          .toFixed(3)
+          .replace(/(\d)(?=(\d{3})+\.)/g, '$&,')
+        setBalance(bnb)
+        setTimeout(() => getBalance(), 60000)
+      })
+    }
 
-    return () => ac.abort();
+    getBalance()
+
+    return () => ac.abort()
   }, [])
 
   return (

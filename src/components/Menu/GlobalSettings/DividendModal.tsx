@@ -60,7 +60,7 @@ const DividendModal: React.FC<DividendModalProps> = ({ onDismiss, balance }) => 
       </Text>
       <Flex justifyContent="space-between" mt={3}>
         <Text>{t('Previously Distributed')}</Text>
-        <Text>{balance} BNB</Text>
+        <Text>{0.00} BNB</Text>
       </Flex>
       <Flex flexDirection="column" mt={3}>
         <ApplyButton className="selected" onClick={onDismiss}>
