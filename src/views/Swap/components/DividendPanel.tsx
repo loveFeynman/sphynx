@@ -76,7 +76,7 @@ const DividendPanel: React.FC = () => {
         <RowFixed>
         <QuestionHelper
               text={t(
-                'Total fees will be redistributed to holders on a weekly basis. Holders must hold Sphynx Token for 7 days to be eligible for the reward. Amount distributed will be dependent on the amount of supply investor holds.',
+                'Total fees will be redistributed to holders on a weekly basis. Holders must hold Sphynx Token for 7 days to be eligible for the reward. Amount distributed will be dependent on the amount of supply an investor holds.',
               )}
               ml="4px"
             />
