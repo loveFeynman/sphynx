@@ -42,7 +42,8 @@ export interface ChartContainerProps {
   studiesOverrides: ChartingLibraryWidgetOptions['studies_overrides']
   container: ChartingLibraryWidgetOptions['container']
   height: number,
-  tokenAddress: string
+  tokenAddress: string,
+  priceScale: number
 }
 
 const ChartContainerProps = {
@@ -137,7 +138,7 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
         timezone: 'Etc/UTC',
         exchange: version,
         minmov: 1,
-        pricescale: 1000000000000,
+        pricescale: props.priceScale,
         has_intraday: true,
         has_no_volume: false,
         has_weekly_and_monthly: false,
@@ -158,7 +159,7 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
       try {
         if (result) {
           if (!firstDataRequest) {
-            const data1 = await makeApiDurationRequest(input, routerVersion, resolution, (new Date(from* 1000)).toISOString(), (new Date(to* 1000)).toISOString())
+            const data1 = await makeApiDurationRequest(input, routerVersion, resolution, (new Date(from * 1000)).toISOString(), (new Date(to * 1000)).toISOString())
             const noDataFlag = data1.length === 0 ? true : false
             // "noData" should be set if there is no data in the requested period.
             onHistoryCallback(data1, {
@@ -202,7 +203,7 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
       startDate: any,
       endDate: any,
       onDataCallback: any,
-      resolution: any
+      resolution: any,
     ) => {
       try {
         const data = await getAllTransactions(account, input)
@@ -218,14 +219,13 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
           let date = (new Date(bar.time * 1000)).toLocaleString()
 
           if (bar.buyCurrency === symbolInfo.description) {
-            labelText = "Sell"
-            label = "S"
+            labelText = 'Sell'
+            label = 'S'
             amount = bar.buyAmount
             color = 'red'
-          }
-          else {
-            labelText = "Buy"
-            label = "B"
+          } else {
+            labelText = 'Buy'
+            label = 'B'
             amount = bar.sellAmount
             color = 'green'
           }
@@ -254,8 +254,7 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
         })
 
         onDataCallback(bars)
-      }
-      catch (error) {
+      } catch (error) {
         console.error(error)
       }
     },
@@ -264,7 +263,7 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
       startDate: any,
       endDate: any,
       onDataCallback: any,
-      resolution: any
+      resolution: any,
     ) => {
       try {
         const data = await getAllTransactions(account, input)
@@ -280,14 +279,13 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
           let date = (new Date(bar.time * 1000)).toLocaleString()
 
           if (bar.buyCurrency === symbolInfo.description) {
-            labelText = "Sell"
-            label = "Sell"
+            labelText = 'Sell'
+            label = 'Sell'
             amount = bar.buyAmount
             color = 'red'
-          }
-          else {
-            labelText = "Buy"
-            label = "Buy"
+          } else {
+            labelText = 'Buy'
+            label = 'Buy'
             amount = bar.sellAmount
             color = 'green'
           }
@@ -307,15 +305,14 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
             time: bar.time,
             color: color,
             label: label,
-            tooltip: html
+            tooltip: html,
           }
 
           bars = [...bars, obj]
         })
 
         onDataCallback(bars)
-      }
-      catch (error) {
+      } catch (error) {
         console.error(error)
       }
     },
@@ -328,7 +325,7 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
     ) => {
 
       currentResolutions = resolution
-      myInterval = setInterval(async function () {
+      myInterval = setInterval(async function() {
         const resolutionMapping: any = {
           '1': 60000,
           '5': 300000,
@@ -392,6 +389,7 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
       symbol: tokendetails.pair,
       // BEWARE: no trailing slash is expected in feed URL
       datafeed: feed,
+
       interval: ChartContainerProps.interval as ChartingLibraryWidgetOptions['interval'],
       library_path: ChartContainerProps.libraryPath as string,
       container: ChartContainerProps.container as ChartingLibraryWidgetOptions['container'],
@@ -407,12 +405,12 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
       studies_overrides: ChartContainerProps.studiesOverrides,
       timezone: custom_timezone,
       overrides: {
-        "mainSeriesProperties.style": Number(customChartType),
-      }
+        'mainSeriesProperties.style': Number(customChartType),
+      },
     }
 
     tvWidget = await new widget(widgetOptions)
-    return tvWidget;
+    return tvWidget
   }
 
   React.useEffect(() => {
@@ -425,12 +423,12 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
           widget.activeChart()
             .onChartTypeChanged()
             .subscribe(null, (chartType: SeriesStyle) => {
-              dispatch(setCustomChartType({ customChartType: chartType }));
+              dispatch(setCustomChartType({ customChartType: chartType }))
             })
-        });
 
+        })
       })
-  }, [input, dispatch])
+  }, [input, dispatch, props.priceScale])
 
   return (
     <ChartContainer height={props.height}>

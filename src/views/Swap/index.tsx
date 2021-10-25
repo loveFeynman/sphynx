@@ -180,6 +180,7 @@ export default function Swap({ history }: RouteComponentProps) {
   const { isXl } = useMatchBreakpoints()
   const isMobile = !isXl
   const [symbol, setSymbol] = useState('')
+  const [priceScale, setPriceScale] = useState(100)
 
   if (tokenAddress === '' || tokenAddress.toLowerCase() === sphynxAddr.toLowerCase()) {
     if (routerVersion !== 'sphynx') {
@@ -348,6 +349,7 @@ export default function Swap({ history }: RouteComponentProps) {
 
           setTimeout(() => {
             setTransactions(newTransactions)
+            getPriceScaleFromTransactions(newTransactions);
             setBusy(false)
             setCurrentBlock(blockNumber)
             setBlockFlag(!blockFlag)
@@ -472,12 +474,25 @@ export default function Swap({ history }: RouteComponentProps) {
   const setDatas = (transactions) => {
     if (busyRef.current === false) {
       setTransactions(transactions)
+      getPriceScaleFromTransactions(transactions)
       setLoading(true)
       startRealTimeData()
     } else {
       setTimeout(() => {
         setDatas(transactions)
       }, 1000)
+    }
+  }
+
+  const getPriceScaleFromTransactions = (data) => {
+    if (data?.length > 0) {
+      const lastTransactionPrice = data?.[0].price
+      if (lastTransactionPrice < 1) {
+        const log10 = Math.round(Math.abs(Math.log10(lastTransactionPrice)))
+        setPriceScale(Math.pow(10, log10+1))
+      } else {
+        setPriceScale(100)
+      }
     }
   }
 
@@ -1145,7 +1160,7 @@ export default function Swap({ history }: RouteComponentProps) {
               price={tokenPrice}
             />
             <CoinStatsBoard tokenData={tokenData} />
-            <ChartContainer tokenAddress={input} />
+            <ChartContainer tokenAddress={input} priceScale={priceScale} />
           </FullHeightColumn>
         </div>
         <TokenInfoWrapper>

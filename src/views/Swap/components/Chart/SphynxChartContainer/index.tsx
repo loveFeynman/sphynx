@@ -42,7 +42,8 @@ export interface ChartContainerProps {
   studiesOverrides: ChartingLibraryWidgetOptions['studies_overrides']
   container: ChartingLibraryWidgetOptions['container']
   height: number,
-  tokenAddress: string
+  tokenAddress: string,
+  priceScale: number
 }
 
 const ChartContainerProps = {
@@ -137,7 +138,7 @@ const SphynxChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => 
         timezone: 'Etc/UTC',
         exchange: version,
         minmov: 1,
-        pricescale: 1000000,
+        pricescale: props.priceScale,
         has_intraday: true,
         has_no_volume: false,
         has_weekly_and_monthly: false,
@@ -154,7 +155,7 @@ const SphynxChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => 
       onHistoryCallback: any,
       onErrorCallback: any,
     ) => {
-      
+
       const { from, to, firstDataRequest } = periodParams
       try {
         if (result) {
@@ -168,7 +169,7 @@ const SphynxChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => 
             return
           }
         }
-        
+
         const data = await makeApiRequest1(input, routerVersion, resolution)
 
         let bars: any = []
@@ -435,7 +436,7 @@ const SphynxChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => 
         });
 
       })
-  }, [input, dispatch])
+  }, [input, dispatch, props.priceScale])
 
   return (
     <ChartContainer height={props.height}>
