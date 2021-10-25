@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import styled from 'styled-components'
 import { Text, Flex, Modal, Button } from '@sphynxswap/uikit'
 import { useTranslation } from 'contexts/Localization'
@@ -21,6 +21,25 @@ const ApplyButton = styled(Button)`
 const DividendModal: React.FC<DividendModalProps> = ({ onDismiss, balance }) => {
   const { t } = useTranslation()
 
+  const [time, setRemainTime] = useState(0)
+  const interval = useRef(null)
+
+  useEffect(() => {
+    const remainTime = () => {
+      const finishDate = new Date('11/01/2021 12:00:00 UTC').getTime()
+      const remain = finishDate - new Date().getTime()
+      setRemainTime(remain)
+    }
+    const ab = new AbortController()
+    interval.current = setInterval(() => {
+      remainTime()
+    }, 1000)
+    return () => {
+      clearInterval(interval?.current)
+      ab.abort();
+    }
+  }, [])
+
   return (
     <Modal
       title={t('Sphynx Swap Fee Reward')}
@@ -36,7 +55,8 @@ const DividendModal: React.FC<DividendModalProps> = ({ onDismiss, balance }) => 
         {t('Distribution in:')}
       </Text>
       <Text textAlign="center" mt={1}>
-        6 {t('days')}: 23 {t('hrs')}: 43 {t('min')}: 23 {t('sec')}
+        {Math.floor(time / 86400000)} {t('days')}: {Math.floor((time % 86400000) / 3600000)} {t('hrs')}: {Math.floor((time % 3600000) / 60000)} {t('min')}:{' '}
+        {Math.floor(time % 60000 / 1000)} {t('sec')}
       </Text>
       <Flex justifyContent="space-between" mt={3}>
         <Text>{t('Previously Distributed')}</Text>

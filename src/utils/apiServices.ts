@@ -672,6 +672,12 @@ async function getMarksData(account: any, input: any) {
     },
   } = await axios.post(url, { query }, config)
 
+  if(dexTrades.length === 0) {
+    return new Promise((resolve, reject) => {
+      resolve([])
+    })
+  }
+
   return new Promise((resolve, reject) => {
     try {
       const data = dexTrades.map((trade) => {
