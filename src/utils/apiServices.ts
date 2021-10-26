@@ -863,42 +863,83 @@ async function getChartDurationData(input: any, pair: any, resolution: any, from
     '1M': 1440 * 30,
   }
   const minutes = resolutionMap[resolution]
-  const query = `{
-    ethereum(network: bsc) {
-      dexTrades(
-        options: {limit: 50, desc: "timeInterval.minute"}
-        smartContractAddress: {is: "${pair}"}
-        protocol: {is: "Uniswap v2"}
-        baseCurrency: {is: "${input}"}
-        quoteCurrency: {is: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"}
-        time: {before: "${to}"}
-      ) {
-        exchange {
-          name
+  let query
+  if (pair === '0xc522CE70F8aeb1205223659156D6C398743E3e7a') {
+    const pairs = ['0xE4023ee4d957A5391007aE698B3A730B2dc2ba67', pair]
+    query = `{
+      ethereum(network: bsc) {
+        dexTrades(
+          options: {limit: 50, desc: "timeInterval.minute"}
+          smartContractAddress: {in: ["${pairs[0]}", "${pairs[1]}"]}
+          protocol: {is: "Uniswap v2"}
+          baseCurrency: {is: "${input}"}
+          quoteCurrency: {is: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"}
+          time: {before: "${to}"}
+        ) {
+          exchange {
+            name
+          }
+          timeInterval {
+            minute(count: ${minutes})
+          }
+          baseCurrency {
+            symbol
+            address
+          }
+          baseAmount
+          quoteCurrency {
+            symbol
+            address
+          }
+          quoteAmount
+          trades: count
+          maximum_price: quotePrice(calculate: maximum)
+          minimum_price: quotePrice(calculate: minimum)
+          open_price: minimum(of: time, get: quote_price)
+          close_price: maximum(of: time, get: quote_price)
+          tradeAmount(in: USD, calculate: sum)
         }
-        timeInterval {
-          minute(count: ${minutes})
-        }
-        baseCurrency {
-          symbol
-          address
-        }
-        baseAmount
-        quoteCurrency {
-          symbol
-          address
-        }
-        quoteAmount
-        trades: count
-        maximum_price: quotePrice(calculate: maximum)
-        minimum_price: quotePrice(calculate: minimum)
-        open_price: minimum(of: time, get: quote_price)
-        close_price: maximum(of: time, get: quote_price)
-        tradeAmount(in: USD, calculate: sum)
       }
     }
+    `
+  } else {
+    query = `{
+      ethereum(network: bsc) {
+        dexTrades(
+          options: {limit: 50, desc: "timeInterval.minute"}
+          smartContractAddress: {is: "${pair}"}
+          protocol: {is: "Uniswap v2"}
+          baseCurrency: {is: "${input}"}
+          quoteCurrency: {is: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"}
+          time: {before: "${to}"}
+        ) {
+          exchange {
+            name
+          }
+          timeInterval {
+            minute(count: ${minutes})
+          }
+          baseCurrency {
+            symbol
+            address
+          }
+          baseAmount
+          quoteCurrency {
+            symbol
+            address
+          }
+          quoteAmount
+          trades: count
+          maximum_price: quotePrice(calculate: maximum)
+          minimum_price: quotePrice(calculate: minimum)
+          open_price: minimum(of: time, get: quote_price)
+          close_price: maximum(of: time, get: quote_price)
+          tradeAmount(in: USD, calculate: sum)
+        }
+      }
+    }
+    `
   }
-  `
 
   const url = `https://graphql.bitquery.io/`
   let {

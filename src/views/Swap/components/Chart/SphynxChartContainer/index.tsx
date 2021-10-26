@@ -68,7 +68,6 @@ function getLanguageFromURL(): LanguageCode | null {
   return results === null ? null : (decodeURIComponent(results[1].replace(/\+/g, ' ')) as LanguageCode)
 }
 
-let myInterval: any
 let currentResolutions: any
 
 const SphynxChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
@@ -333,7 +332,7 @@ const SphynxChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => 
     ) => {
 
       currentResolutions = resolution
-      myInterval = setInterval(async function () {
+      setInterval(async function () {
         const resolutionMapping: any = {
           '1': 60000,
           '5': 300000,
@@ -353,7 +352,6 @@ const SphynxChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => 
 
         if (lastBarsCache === undefined) return
         if (sessionData === null) return
-        if (sessionData.input != input) return
         const isNew = new Date().getTime() - Number(lastBarsCache.time) >= resolutionMapping[currentResolutions]
 
         if (isNew) {
