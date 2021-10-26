@@ -254,7 +254,7 @@ export default function ContractPanel({ value, symbol, amount, price }: Contract
         <CopyHelper toCopy={value ? value.contractAddress : addressSearch}>&nbsp;</CopyHelper>
         <SearchInputWrapper>
           <input
-            placeholder=""
+            placeholder="Enter token name/address..."
             value={addressSearch}
             onFocus={() => setShowDrop(true)}
             onKeyPress={handleKeyPress}
