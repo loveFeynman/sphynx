@@ -15,7 +15,6 @@ import { v4 as uuidv4 } from 'uuid'
 import CloseIcon from '@material-ui/icons/Close'
 import Web3 from 'web3'
 import ERC20ABI from 'assets/abis/erc20.json'
-import routerABI from 'assets/abis/pancakeRouter.json'
 import { isAddress } from 'utils'
 
 import { ReactComponent as MenuOpenIcon } from 'assets/svg/icon/MenuOpenIcon.svg'
@@ -38,8 +37,6 @@ import { links } from './config'
 import { Field, replaceSwapState } from '../../state/swap/actions'
 import { getBNBPrice } from 'utils/priceProvider'
 
-const routerAbi: any = routerABI
-const pancakeV2: any = '0x10ED43C718714eb63d5aA57B78B54704E256024E'
 const abi: any = ERC20ABI
 const providerURL = 'https://speedy-nodes-nyc.moralis.io/fbb4b2b82993bf507eaaab13/bsc/mainnet/archive'
 const web3 = new Web3(new Web3.providers.HttpProvider(providerURL))
@@ -420,10 +417,13 @@ const Menu = () => {
               if (queryResult1.data.data && queryResult1.data.data.ethereum.dexTrades) {
                 sphynxPrice = queryResult1.data.data.ethereum.dexTrades[0].quotePrice * bnbPrice
               }
+              elem.currency.price = sphynxPrice
+            }
+            else {
+              elem.currency.price = prices[i].data.price
             }
 
-            const dollerprice: any =
-              (elem.currency.symbol === 'SPHYNX' ? sphynxPrice : prices[i].data.price) * elem.value
+            const dollerprice: any = elem.currency.price * elem.value
             elem.dollarPrice = dollerprice
             i++
             if (removedTokens.indexOf(elem.currency.symbol) === -1) {
@@ -468,6 +468,53 @@ const Menu = () => {
     setSum(allsum)
   }
 
+  const updateData = async () => {
+    let allsum: any = 0
+    let balances = getAllToken
+
+    if (balances && balances.length > 0) {
+      // eslint-disable-next-line no-restricted-syntax
+      for (const elem of balances) {
+        const result = isAddress(elem.currency.address)
+        if (result) {
+          const contract = new web3.eth.Contract(abi, elem.currency.address)
+          const tokenBalance = await contract.methods.balanceOf(account).call()
+          elem.value = tokenBalance / Math.pow(10, elem.currency.decimals)
+        }
+        else if (elem.currency.symbol === 'BNB') {
+          const bnbBalance = await web3.eth.getBalance(account)
+          elem.value = web3.utils.fromWei(bnbBalance)
+        }
+
+        const dollerprice: any = elem.currency.price * elem.value
+        elem.dollarPrice = dollerprice
+        if (removedAssets.indexOf(elem.currency.symbol) === -1) {
+          allsum += dollerprice
+        }
+
+        if (elem.dollarPrice > 0) {
+          let flag = false
+          const token = { symbol: elem.currency.symbol, value: elem.value }
+          tokens.forEach((cell) => {
+            if (cell.symbol === token.symbol) {
+              dispatch(updateToken(token))
+              flag = true
+              return
+            }
+          })
+
+          if (!flag) dispatch(addToken(token))
+        }
+      }
+
+      balances = balances.filter((balance) => balance.dollarPrice !== 0)
+    } else {
+      dispatch(deleteTokens())
+    }
+    setSum(allsum)
+    setAllTokens(balances ? balances : [])
+  }
+
   const checkTokens = () => {
     setUpdateFlag(false)
     setUpdateFlag(true)
@@ -475,7 +522,7 @@ const Menu = () => {
 
   useEffect(() => {
     if (!updateFlag) return
-    fetchData()
+    updateData()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [updateFlag])
 
@@ -623,7 +670,7 @@ const Menu = () => {
         <div style={{ width: '100%', padding: `${menuToggled ? '0px 16px' : '0px 24px'}` }}>
           <TokenListWrapper>{showAllToken ? tokenData : tokenData.slice(0, 3)}</TokenListWrapper>
           <ButtonWrapper style={menuToggled ? { justifyContent: 'center' } : {}} onClick={handleShowAllToken}>
-            <img src={showAllToken ? ShowSomeIcon : ShowAllIcon } alt="refresh" style={{ height: '23px', width: '23px' }} />
+            <img src={showAllToken ? ShowSomeIcon : ShowAllIcon} alt="refresh" style={{ height: '23px', width: '23px' }} />
             {!menuToggled && (
               <p>
                 <b>{showAllToken ? t('Show Some Tokens') : t('Show All Tokens')}</b>
