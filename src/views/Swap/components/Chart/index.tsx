@@ -48,7 +48,7 @@ const TransactionNavWrapper = styled.div`
 const PcsChartContainer = React.lazy(() => import("./PcsChartContainer"))
 const SphynxChartContainer = React.lazy(() => import("./SphynxChartContainer"))
 
-const ChartContainer = ({tokenAddress, priceScale}) => {
+const ChartContainer = ({tokenAddress}) => {
   const input = tokenAddress
   const routerVersion = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.routerVersion)
 
@@ -80,7 +80,7 @@ const ChartContainer = ({tokenAddress, priceScale}) => {
 
   return (
     <Wrapper>
-      {isPancakeRouter ? <PcsChartContainer tokenAddress={input} height={chartHeight} priceScale={priceScale} /> : <SphynxChartContainer tokenAddress={input} height={chartHeight} priceScale={priceScale} />}
+      {isPancakeRouter ? <PcsChartContainer tokenAddress={input} height={chartHeight} /> : <SphynxChartContainer tokenAddress={input} height={chartHeight} />}
       <UpDownArrowBox>
         <ArrowWrapper
           ref={draggableArrow}

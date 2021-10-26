@@ -37,6 +37,157 @@ async function getTokenDetails(
   return { name, symbol, pair: `${symbol}/BNB`, version: version.version }
 }
 
+async function getPriceScaleValue(input: any, pair: any, routerVersion: any) {
+  let query
+  const minutes = 5
+  if(routerVersion === 'sphynx') {
+    if (pair === '0xc522CE70F8aeb1205223659156D6C398743E3e7a') {
+      const pairs = ['0xE4023ee4d957A5391007aE698B3A730B2dc2ba67', pair]
+      query = `{
+        ethereum(network: bsc) {
+          dexTrades(
+            options: {limit: 1, desc: "timeInterval.minute"}
+            smartContractAddress: {in: ["${pairs[0]}", "${pairs[1]}"]}
+            protocol: {is: "Uniswap v2"}
+            baseCurrency: {is: "${input}"}
+            quoteCurrency: {is: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"}
+          ) {
+            exchange {
+              name
+            }
+            timeInterval {
+              minute(count: ${minutes})
+            }
+            baseCurrency {
+              symbol
+              address
+            }
+            baseAmount
+            quoteCurrency {
+              symbol
+              address
+            }
+            quoteAmount
+            trades: count
+            maximum_price: quotePrice(calculate: maximum)
+            minimum_price: quotePrice(calculate: minimum)
+            open_price: minimum(of: time, get: quote_price)
+            close_price: maximum(of: time, get: quote_price)
+            tradeAmount(in: USD, calculate: sum)
+          }
+        }
+      }
+      `
+    } else {
+      query = `{
+        ethereum(network: bsc) {
+          dexTrades(
+            options: {limit: 1, desc: "timeInterval.minute"}
+            smartContractAddress: {is: "${pair}"}
+            protocol: {is: "Uniswap v2"}
+            baseCurrency: {is: "${input}"}
+            quoteCurrency: {is: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"}
+          ) {
+            exchange {
+              name
+            }
+            timeInterval {
+              minute(count: ${minutes})
+            }
+            baseCurrency {
+              symbol
+              address
+            }
+            baseAmount
+            quoteCurrency {
+              symbol
+              address
+            }
+            quoteAmount
+            trades: count
+            maximum_price: quotePrice(calculate: maximum)
+            minimum_price: quotePrice(calculate: minimum)
+            open_price: minimum(of: time, get: quote_price)
+            close_price: maximum(of: time, get: quote_price)
+            tradeAmount(in: USD, calculate: sum)
+          }
+        }
+      }
+      `
+    }
+  } else {
+    query = `{
+      ethereum(network: bsc) {
+        dexTrades(
+          options: {limit: 1, desc: "timeInterval.minute"}
+          protocol: {is: "Uniswap v2"}
+          exchangeName: {is: "Pancake ${routerVersion}"}
+          baseCurrency: {is: "${input}"}
+          quoteCurrency: {is: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"}
+        ) {
+          exchange {
+            name
+          }
+          timeInterval {
+            minute(count: ${minutes})
+          }
+          baseCurrency {
+            symbol
+            address
+          }
+          baseAmount
+          quoteCurrency {
+            symbol
+            address
+          }
+          quoteAmount
+          trades: count
+          maximum_price: quotePrice(calculate: maximum)
+          minimum_price: quotePrice(calculate: minimum)
+          open_price: minimum(of: time, get: quote_price)
+          close_price: maximum(of: time, get: quote_price)
+          tradeAmount(in: USD, calculate: sum)
+        }
+      }
+    }
+    `
+  }
+
+  const url = `https://graphql.bitquery.io/`
+  const {
+    data: {
+      data: {
+        ethereum: { dexTrades },
+      },
+    },
+  } = await axios.post(url, { query }, config)
+
+  const bnbPrice = await getBNBPrice()
+
+  return new Promise((resolve, reject) => {
+    try {
+      const price = dexTrades[0].open_price * bnbPrice
+      if(price > 1) {
+        resolve(100)
+      } else {
+        let scale = 1
+        let tempPrice = price
+        for(;;) {
+          scale *= 10
+          tempPrice *= 10
+          if(tempPrice > 100) {
+            break
+          }
+        }
+        resolve(scale)
+      }
+    } catch (error) {
+      console.log('error', error)
+      reject(error)
+    }
+  })
+}
+
 async function getChartData(input: any, pair: any, resolution: any, routerVersion: any) {
   const resolutionMap = {
     1: 1,
@@ -193,7 +344,7 @@ async function getChartData(input: any, pair: any, resolution: any, routerVersio
           close: trade.close_price * bnbPrice,
           low: trade.minimum_price * bnbPrice,
           high: trade.maximum_price * bnbPrice,
-          volume: trade.tradeAmount * bnbPrice,
+          volume: trade.tradeAmount,
           time: date.getTime(),
         }
       })
@@ -777,7 +928,7 @@ async function getChartDurationData(input: any, pair: any, resolution: any, from
           close: trade.close_price * bnbPrice,
           low: trade.minimum_price * bnbPrice,
           high: trade.maximum_price * bnbPrice,
-          volume: trade.tradeAmount * bnbPrice,
+          volume: trade.tradeAmount,
           time: date.getTime(),
         }
       })
@@ -868,7 +1019,7 @@ async function getChartDurationPanData(input: any, routerVersion: any, resolutio
           close: trade.close_price * bnbPrice,
           low: trade.minimum_price * bnbPrice,
           high: trade.maximum_price * bnbPrice,
-          volume: trade.tradeAmount * bnbPrice,
+          volume: trade.tradeAmount,
           time: date.getTime(),
         }
       })
@@ -880,5 +1031,5 @@ async function getChartDurationPanData(input: any, routerVersion: any, resolutio
   })
 }
 
-export { getTokenDetails, getChartStats, socialToken, topTrades, getPrice, getChartData, getMarksData, getChartDurationData, getChartDurationPanData }
+export { getTokenDetails, getChartStats, socialToken, topTrades, getPrice, getChartData, getMarksData, getChartDurationData, getChartDurationPanData, getPriceScaleValue }
 export default getTokenDetails

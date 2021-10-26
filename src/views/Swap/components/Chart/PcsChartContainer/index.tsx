@@ -12,7 +12,7 @@ import {
   Timezone,
   widget,
 } from 'charting_library/charting_library'
-import { makeApiRequest1, getAllTransactions, makeApiDurationRequest } from './helpers'
+import { makeApiRequest1, getAllTransactions, makeApiDurationRequest, getPriceScale } from './helpers'
 import { useSelector, useDispatch } from 'react-redux'
 import { AppState } from 'state'
 import { isAddress } from 'utils'
@@ -129,6 +129,7 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
           ? res.version.split(' ')[0] + ' ' + routerVersion
           : res.version
 
+      const priceScale = await getPriceScale(input, routerVersion)
       const symbolInfo = {
         ticker: res.pair,
         name: res.pair,
@@ -138,7 +139,7 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
         timezone: 'Etc/UTC',
         exchange: version,
         minmov: 1,
-        pricescale: props.priceScale,
+        pricescale: priceScale,
         has_intraday: true,
         has_no_volume: false,
         has_weekly_and_monthly: false,

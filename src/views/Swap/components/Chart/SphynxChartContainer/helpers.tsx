@@ -4,7 +4,7 @@ import factoryAbi from 'config/abi/factoryAbi.json'
 import Web3 from 'web3'
 import { web3Provider } from 'utils/providers'
 import { WBNB } from 'config/constants/tokens'
-import { getChartData, getMarksData, getChartDurationData } from 'utils/apiServices'
+import { getChartData, getMarksData, getChartDurationData, getPriceScaleValue } from 'utils/apiServices'
 
 const web3 = new Web3(web3Provider)
 const abi: any = factoryAbi
@@ -14,6 +14,18 @@ export async function makeApiRequest1(path: any, routerVersion: any, resolution:
   try {
     const pairAddress = await factoryContract.methods.getPair(path, WBNB.address).call()
     const data: any = await getChartData(path, pairAddress, resolution, routerVersion)
+    return data
+  } catch (error) {
+    console.log("error", error)
+    return []
+  }
+}
+
+// Make requests to CryptoCompare API
+export async function getPriceScale(path: any, routerVersion: any) {
+  try {
+    const pairAddress = await factoryContract.methods.getPair(path, WBNB.address).call()
+    const data: any = await getPriceScaleValue(path, pairAddress, routerVersion)
     return data
   } catch (error) {
     console.log("error", error)

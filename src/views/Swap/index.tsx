@@ -181,7 +181,6 @@ export default function Swap({ history }: RouteComponentProps) {
   const { isXl } = useMatchBreakpoints()
   const isMobile = !isXl
   const [symbol, setSymbol] = useState('')
-  const [priceScale, setPriceScale] = useState(null)
 
   if (tokenAddress === '' || tokenAddress.toLowerCase() === sphynxAddr.toLowerCase()) {
     if (routerVersion !== 'sphynx') {
@@ -350,7 +349,6 @@ export default function Swap({ history }: RouteComponentProps) {
 
           setTimeout(() => {
             setTransactions(newTransactions)
-            getPriceScaleFromTransactions(newTransactions);
             setBusy(false)
             setCurrentBlock(blockNumber)
             setBlockFlag(!blockFlag)
@@ -398,10 +396,11 @@ export default function Swap({ history }: RouteComponentProps) {
             oneData.amount = tokenAmt
             oneData.value = BNBAmt
             oneData.price = (BNBAmt / tokenAmt) * price
+            const estimatedDateValue = new Date(new Date().getTime() - (blockNumber - event.blockNumber) * 3000)
             oneData.transactionTime = formatTimeString(
-              `${new Date().getUTCFullYear()}-${
-                new Date().getUTCMonth() + 1
-              }-${new Date().getDate()} ${new Date().getUTCHours()}:${new Date().getUTCMinutes()}:${new Date().getUTCSeconds()}`,
+              `${estimatedDateValue.getUTCFullYear()}-${
+                estimatedDateValue.getUTCMonth() + 1
+              }-${estimatedDateValue.getDate()} ${estimatedDateValue.getUTCHours()}:${estimatedDateValue.getUTCMinutes()}:${estimatedDateValue.getUTCSeconds()}`,
             )
 
             oneData.tx = event.transactionHash
@@ -412,7 +411,7 @@ export default function Swap({ history }: RouteComponentProps) {
               newTransactions.pop()
             }
             curPrice = oneData.price
-            curAmount += oneData.amount
+            curAmount += oneData.usdValue
             setTokenPrice(curPrice)
           } catch (err) {
             console.log('error', err)
@@ -449,11 +448,16 @@ export default function Swap({ history }: RouteComponentProps) {
     }
   }
 
-  const startRealTimeData = () => {
-    web3.eth.getBlockNumber().then((blockNumber) => {
+  const startRealTimeData = (blockNumber) => {
+    if (blockNumber === null) {
+      web3.eth.getBlockNumber().then((blockNumber) => {
+        setCurrentBlock(blockNumber)
+        setBlockFlag(!blockFlag)
+      })
+    } else {
       setCurrentBlock(blockNumber)
       setBlockFlag(!blockFlag)
-    })
+    }
   }
 
   React.useEffect(() => {
@@ -472,28 +476,15 @@ export default function Swap({ history }: RouteComponentProps) {
     return date.toString().split('GMT')[0]
   }
 
-  const setDatas = (transactions) => {
+  const setDatas = (transactions, blockNumber) => {
     if (busyRef.current === false) {
       setTransactions(transactions)
-      getPriceScaleFromTransactions(transactions)
       setLoading(true)
-      startRealTimeData()
+      startRealTimeData(blockNumber)
     } else {
       setTimeout(() => {
-        setDatas(transactions)
+        setDatas(transactions, blockNumber)
       }, 1000)
-    }
-  }
-
-  const getPriceScaleFromTransactions = (data) => {
-    if (data?.length > 0) {
-      const lastTransactionPrice = data?.[0].price
-      if (lastTransactionPrice < 1) {
-        const log10 = Math.round(Math.abs(Math.log10(lastTransactionPrice)))
-        setPriceScale(Math.pow(10, log10+1))
-      } else {
-        setPriceScale(100)
-      }
     }
   }
 
@@ -540,19 +531,19 @@ export default function Swap({ history }: RouteComponentProps) {
             const sessionData = {
               input,
               price: curPrice,
-              amount: newTransactions[0].amount,
+              amount: 0,
               timestamp: new Date().getTime(),
             }
             sessionStorage.setItem(storages.SESSION_LIVE_PRICE, JSON.stringify(sessionData))
             setTokenPrice(curPrice)
           }
 
-          setDatas(newTransactions)
+          setDatas(newTransactions, queryResult.data.data.ethereum.dexTrades[0].block.height)
         }
       } catch (err) {
         // eslint-disable-next-line no-console
         console.log('err', err.message)
-        setDatas([])
+        setDatas([], null)
       }
     }
 
@@ -979,7 +970,7 @@ export default function Swap({ history }: RouteComponentProps) {
               <SwapCardNav />
             </Flex>
             <Flex alignItems="center" justifyContent="center">
-              <AutoCardNav swapRouter={swapRouter} setSwapRouter={setSwapRouter} connectedNetworkID={connectedNetworkID}/>
+              <AutoCardNav swapRouter={swapRouter} setSwapRouter={setSwapRouter} connectedNetworkID={connectedNetworkID} />
             </Flex>
           </div>
           <Card bgColor="rgba(0, 0, 0, 0.2)" borderRadius="8px" padding="0 10px 20px 10px">
@@ -1161,11 +1152,7 @@ export default function Swap({ history }: RouteComponentProps) {
               price={tokenPrice}
             />
             <CoinStatsBoard tokenData={tokenData} />
-            {
-              priceScale ? (
-                <ChartContainer tokenAddress={input} priceScale={priceScale} />
-              ) : <Spinner />
-            }
+            <ChartContainer tokenAddress={input} />
           </FullHeightColumn>
         </div>
         <TokenInfoWrapper>
