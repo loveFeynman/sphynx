@@ -472,7 +472,7 @@ const Menu = () => {
     let allsum: any = 0
     let balances = getAllToken
 
-    if (balances && balances.length > 0) {
+    if (balances && balances.length > 0 && account) {
       // eslint-disable-next-line no-restricted-syntax
       for (const elem of balances) {
         const result = isAddress(elem.currency.address)
