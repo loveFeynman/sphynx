@@ -1,5 +1,6 @@
 /* eslint-disable */
 import React, { useState, useEffect, useCallback, useRef } from 'react'
+import { Link as ReactLink } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { AppState } from 'state'
 import styled from 'styled-components'
@@ -12,6 +13,11 @@ import MainLogo from 'assets/svg/icon/logo_new.svg'
 import Illustration from 'assets/images/Illustration.svg'
 import { v4 as uuidv4 } from 'uuid'
 import CloseIcon from '@material-ui/icons/Close'
+import Web3 from 'web3'
+import ERC20ABI from 'assets/abis/erc20.json'
+import routerABI from 'assets/abis/pancakeRouter.json'
+import { isAddress } from 'utils'
+
 import { ReactComponent as MenuOpenIcon } from 'assets/svg/icon/MenuOpenIcon.svg'
 import { ReactComponent as WalletIcon } from 'assets/svg/icon/WalletIcon.svg'
 import { ReactComponent as TwitterIcon } from 'assets/svg/icon/TwitterIcon.svg'
@@ -24,12 +30,16 @@ import storages from 'config/constants/storages'
 import { TOKEN_INTERVAL } from 'config/constants/info'
 import { BalanceNumber } from 'components/BalanceNumber'
 import { useTranslation } from 'contexts/Localization'
-import Web3 from 'web3'
-import routerABI from 'assets/abis/pancakeRouter.json'
-import * as ethers from 'ethers'
 import { simpleRpcProvider } from 'utils/providers'
 import { links } from './config'
 import { Field, replaceSwapState } from '../../state/swap/actions'
+import { getBNBPrice } from 'utils/priceProvider'
+
+const routerAbi: any = routerABI
+const pancakeV2: any = '0x10ED43C718714eb63d5aA57B78B54704E256024E'
+const abi: any = ERC20ABI
+const providerURL = 'https://speedy-nodes-nyc.moralis.io/fbb4b2b82993bf507eaaab13/bsc/mainnet/archive'
+const web3 = new Web3(new Web3.providers.HttpProvider(providerURL))
 
 const MenuWrapper = styled.div<{ toggled: boolean }>`
   width: 320px;
@@ -86,6 +96,7 @@ const MenuIconWrapper = styled.div`
 const MenuContentWrapper = styled.div<{ toggled: boolean }>`
   width: 100%;
   flex: 1;
+  justify-content: center;
   overflow-y: auto;
   padding: 0 24px 32px;
   ${({ theme }) => theme.mediaQueries.xl} {
@@ -252,25 +263,6 @@ const TokenIconContainer = styled.div`
   position: relative;
 `
 
-const pancakeV2: any = '0x10ED43C718714eb63d5aA57B78B54704E256024E'
-const busdAddr = '0xe9e7cea3dedca5984780bafc599bd69add087d56'
-const wBNBAddr = '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c'
-const tokenDecimal = 18
-const routerAbi: any = routerABI
-const providerURL = 'https://speedy-nodes-nyc.moralis.io/fbb4b2b82993bf507eaaab13/bsc/mainnet/archive'
-const web3 = new Web3(new Web3.providers.HttpProvider(providerURL))
-const pancakeRouterContract = new web3.eth.Contract(routerAbi, pancakeV2)
-
-const getBNBPrice: any = async () => {
-  return new Promise(async (resolve) => {
-    const path = [wBNBAddr, busdAddr]
-    pancakeRouterContract.methods
-      .getAmountsOut(web3.utils.toBN(1 * Math.pow(10, tokenDecimal)), path)
-      .call()
-      .then((data) => resolve(parseFloat(ethers.utils.formatUnits(data[data.length - 1] + '', 18))))
-  })
-}
-
 const Menu = () => {
   const { account } = useWeb3React()
   const { menuToggled, toggleMenu } = useMenuToggle()
@@ -307,7 +299,8 @@ const Menu = () => {
           currency {
             address
             symbol
-            tokenType 
+            tokenType
+            decimals
           }
         }
       }
@@ -372,6 +365,7 @@ const Menu = () => {
 
   const fetchData = async () => {
     if (account) {
+      const bnbPrice = await getBNBPrice(simpleRpcProvider)
       let removedTokens = JSON.parse(localStorage.getItem(storages.LOCAL_REMOVED_TOKENS))
       if (removedTokens === null) {
         removedTokens = []
@@ -386,12 +380,14 @@ const Menu = () => {
       const queryResult = await axios.post(BITQUERY_API, { query: getDataQuery }, bitConfig)
       if (queryResult.data.data) {
         let allsum: any = 0
-        const { balances } = queryResult.data.data.ethereum.address[0]
+        let balances = queryResult.data.data.ethereum.address[0].balances
+        if (balances === null)
+          return
+        balances = balances.filter((balance) => balance.value !== 0)
         if (balances && balances.length > 0) {
           const promises = balances.map((elem) => {
             return axios.get(
-              `${process.env.REACT_APP_BACKEND_API_URL}/price/${
-                elem.currency.address === '-' ? '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c' : elem.currency.address
+              `${process.env.REACT_APP_BACKEND_API_URL}/price/${elem.currency.address === '-' ? '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c' : elem.currency.address
               }`,
             )
           })
@@ -401,11 +397,21 @@ const Menu = () => {
 
           // eslint-disable-next-line no-restricted-syntax
           for (const elem of balances) {
+            const result = isAddress(elem.currency.address)
+            if (result) {
+              const contract = new web3.eth.Contract(abi, elem.currency.address)
+              const tokenBalance = await contract.methods.balanceOf(account).call()
+              elem.value = tokenBalance / Math.pow(10, elem.currency.decimals)
+            }
+            else if (elem.currency.symbol === 'BNB') {
+              const bnbBalance = await web3.eth.getBalance(account)
+              elem.value = web3.utils.fromWei(bnbBalance)
+            }
+
             let sphynxPrice
             if (elem.currency.symbol === 'SPHYNX') {
               const queryResult1 = await axios.post(BITQUERY_API, { query: getSphynxQuery }, bitConfig)
               if (queryResult1.data.data && queryResult1.data.data.ethereum.dexTrades) {
-                const bnbPrice = await getBNBPrice(simpleRpcProvider)
                 sphynxPrice = queryResult1.data.data.ethereum.dexTrades[0].quotePrice * bnbPrice
               }
             }
@@ -418,18 +424,22 @@ const Menu = () => {
               allsum += dollerprice
             }
 
-            let flag = false
-            const token = { symbol: elem.currency.symbol, value: elem.value }
-            tokens.forEach((cell) => {
-              if (cell.symbol === token.symbol) {
-                dispatch(updateToken(token))
-                flag = true
-                return
-              }
-            })
+            if (elem.dollarPrice > 0) {
+              let flag = false
+              const token = { symbol: elem.currency.symbol, value: elem.value }
+              tokens.forEach((cell) => {
+                if (cell.symbol === token.symbol) {
+                  dispatch(updateToken(token))
+                  flag = true
+                  return
+                }
+              })
 
-            if (!flag) dispatch(addToken(token))
+              if (!flag) dispatch(addToken(token))
+            }
           }
+
+          balances = balances.filter((balance) => balance.dollarPrice !== 0)
         } else {
           dispatch(deleteTokens())
         }
@@ -515,42 +525,44 @@ const Menu = () => {
       }
       return (
         <TokenIconContainer key={id}>
-          <a href={`#/swap/${currency.address}`}>
-            <TokenItemWrapper toggled={menuToggled} onClick={handleTokenItem}>
-              {menuToggled ? (
-                <>
-                  <div>
-                    <p>
-                      <b>{currency.symbol}</b>
-                    </p>
-                    <p>
-                      <BalanceNumber prefix="$" value={Number(dollarPrice).toFixed(2)} />
-                    </p>
-                    <p>
-                      <BalanceNumber prefix="" value={Number(value).toFixed(2)} />
-                    </p>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div>
-                    <p>
-                      <b>{currency.symbol}</b>
-                    </p>
-                    <p>
-                      <BalanceNumber prefix="$" value={Number(dollarPrice).toFixed(2)} />
-                    </p>
-                  </div>
-                  <div>
-                    <p>
-                      <BalanceNumber prefix="" value={Number(value).toFixed(2)} />
-                    </p>
-                    <p />
-                  </div>
-                </>
-              )}
-            </TokenItemWrapper>
-          </a>
+          <ReactLink to={`/swap/${currency.address}`}>
+            <a>
+              <TokenItemWrapper toggled={menuToggled} onClick={handleTokenItem}>
+                {menuToggled ? (
+                  <>
+                    <div>
+                      <p>
+                        <b>{currency.symbol}</b>
+                      </p>
+                      <p>
+                        <BalanceNumber prefix="$" value={Number(dollarPrice).toFixed(2)} />
+                      </p>
+                      <p>
+                        <BalanceNumber prefix="" value={Number(value).toFixed(2)} />
+                      </p>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div>
+                      <p>
+                        <b>{currency.symbol}</b>
+                      </p>
+                      <p>
+                        <BalanceNumber prefix="$" value={Number(dollarPrice).toFixed(2)} />
+                      </p>
+                    </div>
+                    <div>
+                      <p>
+                        <BalanceNumber prefix="" value={Number(value).toFixed(2)} />
+                      </p>
+                      <p />
+                    </div>
+                  </>
+                )}
+              </TokenItemWrapper>
+            </a>
+          </ReactLink>
           {!menuToggled && (
             <RemoveIconWrapper onClick={handleRemoveAsset}>
               <CloseIcon />
@@ -631,9 +643,10 @@ const Menu = () => {
             return (
               <div key={link.id}>
                 <MenuItem
-                  className={realPath.indexOf(link.href) > -1 && link.href !== '#' ? 'active' : ''}
+                  className={realPath.indexOf(link.href) > -1 && link.href !== '/' ? 'active' : ''}
                   href={link.href}
                   target={link.newTab ? '_blank' : ''}
+                  style={menuToggled ? { justifyContent: 'center' } : {}}
                   rel="noreferrer"
                 >
                   <Icon />
@@ -644,7 +657,7 @@ const Menu = () => {
                   )}
                 </MenuItem>
                 <MenuItemMobile
-                  className={realPath.indexOf(link.href) > -1 && link.href !== '#' ? 'active' : ''}
+                  className={realPath.indexOf(link.href) > -1 && link.href !== '/' ? 'active' : ''}
                   href={link.href}
                   target={link.newTab ? '_blank' : ''}
                   onClick={handleMobileMenuItem}

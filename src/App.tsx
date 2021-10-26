@@ -1,5 +1,5 @@
 import React, { lazy, Suspense } from 'react'
-import { HashRouter as Router, Redirect, Route, Switch } from 'react-router-dom'
+import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom'
 import styled from 'styled-components'
 import { ResetCSS, Button, useMatchBreakpoints } from '@sphynxswap/uikit'
 import BigNumber from 'bignumber.js'

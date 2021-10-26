@@ -1,5 +1,5 @@
 import { Contract, utils } from 'ethers'
-import { PANCAKE_FACTORY_ADDRESS } from '@sphynxswap/sdk'
+import { PANCAKE_FACTORY_ADDRESS, SPHYNX_FACTORY_ADDRESS } from '@sphynxswap/sdk'
 import pancakeFactoryAbi from 'config/abi/pancakeSwapFactory.json'
 import bscTokenAbi from 'config/abi/erc20.json'
 import { ZERO_ADDRESS } from 'config/constants'
@@ -31,7 +31,7 @@ export const getMinTokenInfo = async (address, provider): Promise<TokenInfo> => 
 }
 
 export const getSphynxPairAddress = async (quoteToken, baseToken, provider) => {
-  const sphynxFactoryContract = new Contract("0x0C1Bf16f69B88955C177a223759d2B58681d84A3", pancakeFactoryAbi, provider)
+  const sphynxFactoryContract = new Contract(SPHYNX_FACTORY_ADDRESS, pancakeFactoryAbi, provider)
   const pairAddress = await sphynxFactoryContract.getPair(quoteToken, baseToken)
   if (pairAddress === ZERO_ADDRESS) {
     return null
