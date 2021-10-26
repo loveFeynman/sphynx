@@ -23,6 +23,9 @@ import { ReactComponent as WalletIcon } from 'assets/svg/icon/WalletIcon.svg'
 import { ReactComponent as TwitterIcon } from 'assets/svg/icon/TwitterIcon.svg'
 import { ReactComponent as SocialIcon2 } from 'assets/svg/icon/SocialIcon2.svg'
 import { ReactComponent as TelegramIcon } from 'assets/svg/icon/TelegramIcon.svg'
+import RefreshIcon from 'assets/images/refresh.png'
+import ShowSomeIcon from 'assets/images/show-some.png'
+import ShowAllIcon from 'assets/images/show-all.png'
 import DiscordIcon from 'assets/images/discord.png'
 import axios from 'axios'
 import { BITQUERY_API, BITQUERY_API_KEY } from 'config/constants/endpoints'
@@ -151,13 +154,16 @@ const TokenItemWrapper = styled.div<{ toggled: boolean }>`
 const ButtonWrapper = styled.div`
   background: #8b2a9b;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   text-align: center;
-  padding-top: 12px;
-  padding-bottom: 12px;
+  margin: 10px 0;
+  padding: 8px 16px;
   border-radius: 8px;
   cursor: pointer;
+  & p {
+    width: calc(100% - 32px);
+  }
 `
 
 const MenuItem = styled.a`
@@ -614,18 +620,24 @@ const Menu = () => {
         {!menuToggled && <p>{account ? <BalanceNumber prefix="$ " value={Number(sum).toFixed(2)} /> : ''}</p>}
       </WalletHeading>
       {account ? (
-        <div style={{ width: '100%', padding: '0px 24px' }}>
+        <div style={{ width: '100%', padding: `${menuToggled ? '0px 16px' : '0px 24px'}` }}>
           <TokenListWrapper>{showAllToken ? tokenData : tokenData.slice(0, 3)}</TokenListWrapper>
-          <ButtonWrapper style={{ margin: '10px 0' }} onClick={handleShowAllToken}>
-            <p>
-              <b>{showAllToken ? t('Show Some Tokens') : t('Show All Tokens')}</b>
-            </p>
+          <ButtonWrapper style={menuToggled ? { justifyContent: 'center' } : {}} onClick={handleShowAllToken}>
+            <img src={showAllToken ? ShowSomeIcon : ShowAllIcon } alt="refresh" style={{ height: '23px', width: '23px' }} />
+            {!menuToggled && (
+              <p>
+                <b>{showAllToken ? t('Show Some Tokens') : t('Show All Tokens')}</b>
+              </p>
+            )}
           </ButtonWrapper>
           {removedAssets.length === 0 ? null : (
-            <ButtonWrapper style={{ margin: '10px 0' }} onClick={showAllRemovedTokens}>
-              <p>
-                <b>{t('Show all removed Tokens')}</b>
-              </p>
+            <ButtonWrapper style={menuToggled ? { justifyContent: 'center' } : {}} onClick={showAllRemovedTokens}>
+              <img src={RefreshIcon} alt="refresh" style={{ height: '23px', width: '23px' }} />
+              {!menuToggled && (
+                <p>
+                  <b>{t('Refresh')}</b>
+                </p>
+              )}
             </ButtonWrapper>
           )}
         </div>
