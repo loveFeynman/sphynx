@@ -474,6 +474,7 @@ const Menu = () => {
 
     if (balances && balances.length > 0 && account) {
       // eslint-disable-next-line no-restricted-syntax
+      const sessionData = JSON.parse(sessionStorage.getItem(storages.SESSION_LIVE_PRICE))
       for (const elem of balances) {
         const result = isAddress(elem.currency.address)
         if (result) {
@@ -484,6 +485,10 @@ const Menu = () => {
         else if (elem.currency.symbol === 'BNB') {
           const bnbBalance = await web3.eth.getBalance(account)
           elem.value = web3.utils.fromWei(bnbBalance)
+        }
+
+        if( sessionData && elem.currency.address === sessionData.input) {
+          elem.currency.price = sessionData.price
         }
 
         const dollerprice: any = elem.currency.price * elem.value
