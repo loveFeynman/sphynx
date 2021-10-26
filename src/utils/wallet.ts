@@ -99,3 +99,22 @@ export const switchNetwork = async (selectedChainID: string) => {
     return false
   }
 }
+
+export const getNetworkID = async () => {
+  let networkID: any = 56;
+  const provider = window.ethereum
+  if (provider) {
+    try {
+      networkID = await window.ethereum.request({
+        method: 'eth_chainId'
+      })
+
+      return networkID;
+    } catch (error) {
+      console.error(error);
+    }
+  } else {
+    console.error("MetaMask is not installed. Please consider installing it: https://metamask.io/download.html")
+  }
+  return networkID;
+}

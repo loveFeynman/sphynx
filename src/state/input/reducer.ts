@@ -20,7 +20,7 @@ const initialState: InputState = {
   routerVersion: 'sphynx',
   marketCapacity: 0,
   customChartType: localStorage.getItem(CHART_TYPE) ?? 2,
-  connectedNetworkID: Number(localStorage.getItem(CONNECTED_NETWORKID)) ?? 0,
+  connectedNetworkID: Number(localStorage.getItem(CONNECTED_NETWORKID)) ?? 56,
 }
 
 

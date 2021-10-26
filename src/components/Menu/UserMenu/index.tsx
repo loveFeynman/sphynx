@@ -23,8 +23,11 @@ const UserMenu = () => {
     <div style={{ position: 'relative' }}>
       <UIKitUserMenu account={account} avatarSrc="/images/EmptyAvatar.svg">
         <UserMenuItem
-          as="button"
           onClick={() => {
+            logout()
+          }}
+
+          onTouchEnd={()=> {
             logout()
           }}
         >

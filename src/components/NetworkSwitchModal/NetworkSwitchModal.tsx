@@ -97,7 +97,7 @@ const NetworkItem = styled(Box)<{ selected?: boolean }>`
   const NETWORK_LIST = [
     {
       ChainID: 1,
-      btIcon: "/images/net/mainnet.png",
+      btIcon: "/images/net/ethereum.png",
       networkName: "Ethereum (coming soon)",
       selected: false,
     },
@@ -197,8 +197,8 @@ export default function NetworkSwitchModal({
   const { t } = useTranslation()
 
   const handleNetworkItemClick = (networkItem) => {
-    dispatch(setConnectedNetworkID({ connectedNetworkID: networkItem.ChainID }));
     switchNetwork(PREFIX + networkItem.ChainID.toString(16))
+    dispatch(setConnectedNetworkID({ connectedNetworkID: networkItem.ChainID }));
     onDismiss()
   }
 
