@@ -42,7 +42,8 @@ export interface ChartContainerProps {
   studiesOverrides: ChartingLibraryWidgetOptions['studies_overrides']
   container: ChartingLibraryWidgetOptions['container']
   height: number,
-  tokenAddress: string
+  tokenAddress: string,
+  priceScale: number
 }
 
 const ChartContainerProps = {
@@ -137,7 +138,7 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
         timezone: 'Etc/UTC',
         exchange: version,
         minmov: 1,
-        pricescale: 1000000000000,
+        pricescale: props.priceScale,
         has_intraday: true,
         has_no_volume: false,
         has_weekly_and_monthly: false,
@@ -392,6 +393,7 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
       symbol: tokendetails.pair,
       // BEWARE: no trailing slash is expected in feed URL
       datafeed: feed,
+
       interval: ChartContainerProps.interval as ChartingLibraryWidgetOptions['interval'],
       library_path: ChartContainerProps.libraryPath as string,
       container: ChartContainerProps.container as ChartingLibraryWidgetOptions['container'],
@@ -408,7 +410,7 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
       timezone: custom_timezone,
       overrides: {
         "mainSeriesProperties.style": Number(customChartType),
-      }
+      },
     }
 
     tvWidget = await new widget(widgetOptions)
@@ -428,7 +430,6 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
               dispatch(setCustomChartType({ customChartType: chartType }));
             })
         });
-
       })
   }, [input, dispatch])
 
