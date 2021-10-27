@@ -127,7 +127,11 @@ async function getTokenInfoForChart(input: any, pair: any, routerVersion: any) {
     try {
       const price = dexTrades[0].open_price * bnbPrice
       if(price > 1) {
-        resolve(100)
+        resolve({
+          priceScale: 100,
+          symbol: dexTrades[0].baseCurrency.symbol,
+          name: dexTrades[0].baseCurrency.name
+        })
       } else {
         let scale = 1
         let tempPrice = price
