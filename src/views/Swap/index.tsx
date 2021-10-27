@@ -173,7 +173,9 @@ export default function Swap({ history }: RouteComponentProps) {
   const inputTokenName = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
   const routerVersion = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.routerVersion)
   const tokens = useSelector<AppState, AppState['tokens']>((state) => state.tokens)
-  const connectedNetworkID = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.connectedNetworkID)
+  const connectedNetworkID = useSelector<AppState, AppState['inputReducer']>(
+    (state) => state.inputReducer.connectedNetworkID,
+  )
   const [inputBalance, setInputBalance] = useState(0)
   const [outputBalance, setOutputBalance] = useState(0)
   const [tokenAmount, setTokenAmount] = useState(0)
@@ -183,18 +185,10 @@ export default function Swap({ history }: RouteComponentProps) {
   const [symbol, setSymbol] = useState('')
 
   if (tokenAddress === '' || tokenAddress.toLowerCase() === sphynxAddr.toLowerCase()) {
-    if(swapRouter !== SwapRouter.SPHYNX_SWAP) {
-      setSwapRouter(SwapRouter.SPHYNX_SWAP)
-      setRouterType(RouterType.sphynx)
-    }
     if (routerVersion !== 'sphynx') {
       dispatch(typeRouterVersion({ routerVersion: 'sphynx' }))
     }
   } else {
-    if(swapRouter !== SwapRouter.PANCAKE_SWAP) {
-      setSwapRouter(SwapRouter.PANCAKE_SWAP)
-      setRouterType(RouterType.pancake)
-    }
     if (routerVersion !== 'v2') {
       dispatch(typeRouterVersion({ routerVersion: 'v2' }))
     }
@@ -689,7 +683,11 @@ export default function Swap({ history }: RouteComponentProps) {
   const noRoute = !route
 
   useEffect(() => {
-    if (tokenAddress === null || tokenAddress === '' || tokenAddress === undefined) {
+    if (tokenAddress === null || tokenAddress === '' || tokenAddress === undefined || tokenAddress.toLowerCase() === sphynxAddr.toLowerCase()) {
+      if (swapRouter !== SwapRouter.SPHYNX_SWAP) {
+        setSwapRouter(SwapRouter.SPHYNX_SWAP)
+        setRouterType(RouterType.sphynx)
+      }
       dispatch(
         replaceSwapState({
           outputCurrencyId: 'BNB',
@@ -700,6 +698,10 @@ export default function Swap({ history }: RouteComponentProps) {
         }),
       )
     } else {
+      if (swapRouter !== SwapRouter.PANCAKE_SWAP) {
+        setSwapRouter(SwapRouter.PANCAKE_SWAP)
+        setRouterType(RouterType.pancake)
+      }
       dispatch(
         replaceSwapState({
           outputCurrencyId: 'BNB',
@@ -978,7 +980,11 @@ export default function Swap({ history }: RouteComponentProps) {
               <SwapCardNav />
             </Flex>
             <Flex alignItems="center" justifyContent="center">
-              <AutoCardNav swapRouter={swapRouter} setSwapRouter={setSwapRouter} connectedNetworkID={connectedNetworkID} />
+              <AutoCardNav
+                swapRouter={swapRouter}
+                setSwapRouter={setSwapRouter}
+                connectedNetworkID={connectedNetworkID}
+              />
             </Flex>
           </div>
           <Card bgColor="rgba(0, 0, 0, 0.2)" borderRadius="8px" padding="0 10px 20px 10px">

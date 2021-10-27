@@ -33,13 +33,6 @@ const AutoNav = (props) => {
   const { setRouterType } = useSetRouterType()
   const { swapRouter, setSwapRouter, connectedNetworkID } = props
 
-  useEffect(() => {
-    setTimeout(() => {
-      setSwapRouter(SwapRouter.SPHYNX_SWAP)
-      setRouterType(RouterType.sphynx)
-    })
-  }, [])
-
   const { t } = useTranslation()
 
   return (
@@ -72,7 +65,7 @@ const AutoNav = (props) => {
           setSwapRouter(SwapRouter.PANCAKE_SWAP)
         }}
       >
-        {t(Number(connectedNetworkID) === ChainId.MAINNET? 'PCV2': 'UniSwap')}
+        {t(Number(connectedNetworkID) === ChainId.MAINNET? 'PCV2': 'PCV2')}
       </Button>
     </StyledNav>
   )
