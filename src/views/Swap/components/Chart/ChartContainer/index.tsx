@@ -184,6 +184,7 @@ const Chart: React.FC<Partial<ChartContainerProps>> = (props) => {
 
         bars[bars.length - 1].isBarClosed = false;
         bars[bars.length - 1].isLastBar = true;
+        lastBarsCache = bars[bars.length - 1]
         // eslint-disable-next-line no-console
         onHistoryCallback(bars, {
           noData: false,
@@ -321,7 +322,6 @@ const Chart: React.FC<Partial<ChartContainerProps>> = (props) => {
       subscribeUID: any,
       onResetCacheNeededCallback: any,
     ) => {
-
       currentResolutions = resolution
       setInterval(async function () {
         const resolutionMapping: any = {
@@ -344,7 +344,6 @@ const Chart: React.FC<Partial<ChartContainerProps>> = (props) => {
         if (lastBarsCache === undefined) return
         if (sessionData === null) return
         const isNew = new Date().getTime() - Number(lastBarsCache.time) >= resolutionMapping[currentResolutions]
-
         if (isNew) {
           lastBarsCache.time = new Date().getTime()
           lastBarsCache.open = lastBarsCache.close

@@ -6,7 +6,7 @@ import { AppState } from 'state'
 import { autoSwap } from 'state/flags/actions'
 import styled from 'styled-components'
 import { useLocation } from 'react-router'
-import { CurrencyAmount, JSBI, Token, Trade } from '@sphynxswap/sdk'
+import { CurrencyAmount, JSBI, Token, Trade, RouterType } from '@sphynxswap/sdk'
 import { Button, Text, ArrowDownIcon, Box, useModal, Flex } from '@sphynxswap/uikit'
 import { useIsTransactionUnsupported } from 'hooks/Trades'
 import { RouteComponentProps } from 'react-router-dom'
@@ -23,7 +23,7 @@ import { AppHeader } from 'components/App'
 import { BalanceNumber } from 'components/BalanceNumber'
 import { useMatchBreakpoints } from '@sphynxswap/uikit'
 
-import { useSwapTransCard, useSwapType } from 'state/application/hooks'
+import { useSwapTransCard, useSwapType, useSetRouterType } from 'state/application/hooks'
 import { ReactComponent as DownArrow } from 'assets/svg/icon/DownArrow.svg'
 import { typeInput, marketCap, typeRouterVersion } from 'state/input/actions'
 import { BITQUERY_API, BITQUERY_API_KEY } from 'config/constants/endpoints'
@@ -154,6 +154,7 @@ const SwapPage = styled(Page)`
 
 export default function Swap({ history }: RouteComponentProps) {
   const dispatch = useDispatch()
+  const { setRouterType } = useSetRouterType()
   const { pathname } = useLocation()
   const tokenAddress = pathname.substr(6)
   const [swapRouter, setSwapRouter] = useState(SwapRouter.SPHYNX_SWAP)
@@ -182,10 +183,18 @@ export default function Swap({ history }: RouteComponentProps) {
   const [symbol, setSymbol] = useState('')
 
   if (tokenAddress === '' || tokenAddress.toLowerCase() === sphynxAddr.toLowerCase()) {
+    if(swapRouter !== SwapRouter.SPHYNX_SWAP) {
+      setSwapRouter(SwapRouter.SPHYNX_SWAP)
+      setRouterType(RouterType.sphynx)
+    }
     if (routerVersion !== 'sphynx') {
       dispatch(typeRouterVersion({ routerVersion: 'sphynx' }))
     }
   } else {
+    if(swapRouter !== SwapRouter.PANCAKE_SWAP) {
+      setSwapRouter(SwapRouter.PANCAKE_SWAP)
+      setRouterType(RouterType.pancake)
+    }
     if (routerVersion !== 'v2') {
       dispatch(typeRouterVersion({ routerVersion: 'v2' }))
     }
