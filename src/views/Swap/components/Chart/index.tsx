@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import styled from 'styled-components'
 
-import { RouterTypeToggle } from 'config/constants/types'
 import TransactionNav from 'components/TransactionNav'
 import { AppState } from 'state'
 import { ReactComponent as UpDownArrow } from 'assets/svg/icon/UpDownArrow.svg'
@@ -45,8 +44,7 @@ const TransactionNavWrapper = styled.div`
   }
 `
 
-const PcsChartContainer = React.lazy(() => import("./PcsChartContainer"))
-const SphynxChartContainer = React.lazy(() => import("./SphynxChartContainer"))
+const Chart = React.lazy(() => import("./ChartContainer"))
 
 const ChartContainer = ({tokenAddress}) => {
   const input = tokenAddress
@@ -55,7 +53,6 @@ const ChartContainer = ({tokenAddress}) => {
   const draggableArrow = React.useRef<any>(null)
   const [chartHeight, setChartHeight] = React.useState(600)
   const [dragPos, setDragPos] = React.useState(0)
-  const [isPancakeRouter, setIsPancakeRouter] = useState(false)
 
   const handleDragStart = (e) => {
     setDragPos(e.pageY)
@@ -69,18 +66,9 @@ const ChartContainer = ({tokenAddress}) => {
     }
   }
 
-  useEffect(() => {
-    let isPancakeRouterNew = true
-    isPancakeRouterNew = routerVersion !== "sphynx"
-
-    setIsPancakeRouter(isPancakeRouterNew)
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [input, routerVersion])
-
   return (
     <Wrapper>
-      {isPancakeRouter ? <PcsChartContainer tokenAddress={input} height={chartHeight} /> : <SphynxChartContainer tokenAddress={input} height={chartHeight} />}
+      <Chart tokenAddress={input} height={chartHeight} />
       <UpDownArrowBox>
         <ArrowWrapper
           ref={draggableArrow}

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { Button, Text, Flex, useModal } from '@sphynxswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 import { ChainId } from '@sphynxswap/sdk'

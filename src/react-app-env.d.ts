@@ -10,4 +10,5 @@ interface Window {
   }
   TradingView?: any
   tvWidget?: any
+  web3?: any
 }

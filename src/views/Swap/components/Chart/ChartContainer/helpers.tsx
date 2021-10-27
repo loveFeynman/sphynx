@@ -1,17 +1,18 @@
-// Make requests to CryptoCompare API
-import { SPHYNX_FACTORY_ADDRESS } from '@sphynxswap/sdk'
+import { SPHYNX_FACTORY_ADDRESS, PANCAKE_FACTORY_ADDRESS } from '@sphynxswap/sdk'
 import factoryAbi from 'config/abi/factoryAbi.json'
 import Web3 from 'web3'
 import { web3Provider } from 'utils/providers'
 import { WBNB } from 'config/constants/tokens'
-import { getChartData, getMarksData, getChartDurationData, getPriceScaleValue } from 'utils/apiServices'
+import { getChartData, getMarksData, getChartDurationData, getChartDurationPanData, getTokenInfoForChart } from 'utils/apiServices'
 
 const web3 = new Web3(web3Provider)
 const abi: any = factoryAbi
-const factoryContract = new web3.eth.Contract(abi, SPHYNX_FACTORY_ADDRESS)
+const sphynxFactoryContract = new web3.eth.Contract(abi, SPHYNX_FACTORY_ADDRESS)
+const pancakeFactoryContract = new web3.eth.Contract(abi, PANCAKE_FACTORY_ADDRESS)
 
-export async function makeApiRequest1(path: any, routerVersion: any, resolution: any) {
+export async function getHistoricalData(path: any, routerVersion: any, resolution: any) {
   try {
+    const factoryContract = routerVersion === 'sphynx' ? sphynxFactoryContract : pancakeFactoryContract
     const pairAddress = await factoryContract.methods.getPair(path, WBNB.address).call()
     const data: any = await getChartData(path, pairAddress, resolution, routerVersion)
     return data
@@ -21,18 +22,18 @@ export async function makeApiRequest1(path: any, routerVersion: any, resolution:
   }
 }
 
-// Make requests to CryptoCompare API
-export async function getPriceScale(path: any, routerVersion: any) {
+export async function getTokenInfo(path: any, routerVersion: any) {
   try {
+    const factoryContract = routerVersion === 'sphynx' ? sphynxFactoryContract : pancakeFactoryContract
     const pairAddress = await factoryContract.methods.getPair(path, WBNB.address).call()
-    const data: any = await getPriceScaleValue(path, pairAddress, routerVersion)
+    const data: any = await getTokenInfoForChart(path, pairAddress, routerVersion)
     return data
   } catch (error) {
     console.log("error", error)
     return []
   }
 }
-// Generate a symbol ID from a pair of the coins
+
 export function generateSymbol(exchange: any, fromSymbol: any, toSymbol: any) {
   const short = `${fromSymbol}/${toSymbol}`
   return {
@@ -64,8 +65,9 @@ export async function getAllTransactions(account: any, path: any) {
 
 export async function makeApiDurationRequest(path: any, routerVersion: any, resolution: any, from: any, to: any) {
   try {
+    const factoryContract = routerVersion === 'sphynx' ? sphynxFactoryContract : pancakeFactoryContract
     const pairAddress = await factoryContract.methods.getPair(path, WBNB.address).call()
-    const data: any = await getChartDurationData(path, pairAddress, resolution, from, to)
+    const data: any = routerVersion === 'sphynx' ? await getChartDurationData(path, pairAddress, resolution, from, to) : await getChartDurationPanData(path, routerVersion, resolution, from, to)
     return data
   } catch (error) {
     console.log("error", error)

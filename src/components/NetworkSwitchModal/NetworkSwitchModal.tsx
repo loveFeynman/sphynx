@@ -1,5 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
-import { Currency, Token } from '@sphynxswap/sdk'
+import React, { useEffect } from 'react'
 import {
   ModalContainer,
   ModalHeader,
@@ -18,12 +17,6 @@ import { useSelector, useDispatch } from 'react-redux'
 import { AppState } from 'state'
 import { setConnectedNetworkID } from 'state/input/actions'
 import { switchNetwork } from 'utils/wallet'
-
-const Footer = styled.div`
-width: 100%;
-background-color: ${({ theme }) => theme.colors.backgroundAlt};
-text-align: center;
-`
 
 const StyledModalContainer = styled(ModalContainer)`
   ${({ theme }) => theme.mediaQueries.sm} {
