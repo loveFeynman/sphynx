@@ -78,7 +78,6 @@ import { getBNBPrice } from 'utils/priceProvider'
 import { simpleRpcProvider } from 'utils/providers'
 import { UNSET_PRICE } from 'config/constants/info'
 import storages from 'config/constants/storages'
-import Spinner from '../LotterySphx/components/Spinner'
 const wBNBAddr = '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c'
 const sphynxAddr = '0x2e121Ed64EEEB58788dDb204627cCB7C7c59884c'
 let tokenDecimal = 18
@@ -480,7 +479,7 @@ export default function Swap({ history }: RouteComponentProps) {
     if (busyRef.current === false) {
       setTransactions(transactions)
       setLoading(true)
-      startRealTimeData(blockNumber)
+      startRealTimeData(blockNumber + 1)
     } else {
       setTimeout(() => {
         setDatas(transactions, blockNumber)

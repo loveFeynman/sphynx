@@ -1,5 +1,4 @@
 import { createReducer } from '@reduxjs/toolkit'
-import { Tv } from 'react-feather'
 import { resetMintState, typeInput, setIsInput, typeRouterVersion, marketCap, setCustomChartType, setConnectedNetworkID } from './actions'
 
 interface InputState {

@@ -4,7 +4,6 @@ import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { AppState } from 'state'
 import styled from 'styled-components'
-import { Flex } from '@sphynxswap/uikit'
 import { v4 as uuidv4 } from 'uuid'
 import { useTranslation } from 'contexts/Localization'
 import { Spinner } from '../../LotterySphx/components/Spinner'
@@ -128,7 +127,7 @@ const BuyersCard = (props) => {
                       </a>
                     </td>
                     <td style={{ color: '#04ab1d', fontWeight: 'bold' }}>
-                      $ {td.usdAmount.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,')}
+                      $ {td.usdAmount.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$&,')}
                     </td>
                   </tr>
                 )

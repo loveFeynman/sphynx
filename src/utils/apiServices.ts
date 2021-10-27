@@ -5,7 +5,6 @@ import axios from 'axios'
 import { PANCAKE_FACTORY_ADDRESS, SPHYNX_FACTORY_ADDRESS, RouterType } from '@sphynxswap/sdk'
 import abi from '../config/abi/erc20ABI.json'
 import factoryAbi from '../config/abi/factoryAbi.json'
-import { getVersion } from './getVersion'
 import { BITQUERY_API_KEY } from '../config/constants/endpoints'
 import { web3Provider } from './providers'
 import { getBNBPrice } from './priceProvider'
@@ -33,11 +32,10 @@ async function getTokenDetails(
   const token = new web3.eth.Contract(abi as AbiItem[], address)
   const name = await token.methods.name().call()
   const symbol = await token.methods.symbol().call()
-  const version = await getVersion(address, routerVersion)
-  return { name, symbol, pair: `${symbol}/BNB`, version: version.version }
+  return { name, symbol, pair: `${symbol}/BNB`, version: routerVersion }
 }
 
-async function getPriceScaleValue(input: any, pair: any, routerVersion: any) {
+async function getTokenInfoForChart(input: any, pair: any, routerVersion: any) {
   let query
   const minutes = 5
   if(routerVersion === 'sphynx') {
@@ -52,28 +50,15 @@ async function getPriceScaleValue(input: any, pair: any, routerVersion: any) {
             baseCurrency: {is: "${input}"}
             quoteCurrency: {is: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"}
           ) {
-            exchange {
-              name
-            }
             timeInterval {
               minute(count: ${minutes})
             }
             baseCurrency {
               symbol
+              name
               address
             }
-            baseAmount
-            quoteCurrency {
-              symbol
-              address
-            }
-            quoteAmount
-            trades: count
-            maximum_price: quotePrice(calculate: maximum)
-            minimum_price: quotePrice(calculate: minimum)
             open_price: minimum(of: time, get: quote_price)
-            close_price: maximum(of: time, get: quote_price)
-            tradeAmount(in: USD, calculate: sum)
           }
         }
       }
@@ -88,28 +73,15 @@ async function getPriceScaleValue(input: any, pair: any, routerVersion: any) {
             baseCurrency: {is: "${input}"}
             quoteCurrency: {is: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"}
           ) {
-            exchange {
-              name
-            }
             timeInterval {
               minute(count: ${minutes})
             }
             baseCurrency {
               symbol
+              name
               address
             }
-            baseAmount
-            quoteCurrency {
-              symbol
-              address
-            }
-            quoteAmount
-            trades: count
-            maximum_price: quotePrice(calculate: maximum)
-            minimum_price: quotePrice(calculate: minimum)
             open_price: minimum(of: time, get: quote_price)
-            close_price: maximum(of: time, get: quote_price)
-            tradeAmount(in: USD, calculate: sum)
           }
         }
       }
@@ -125,28 +97,15 @@ async function getPriceScaleValue(input: any, pair: any, routerVersion: any) {
           baseCurrency: {is: "${input}"}
           quoteCurrency: {is: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"}
         ) {
-          exchange {
-            name
-          }
           timeInterval {
             minute(count: ${minutes})
           }
           baseCurrency {
             symbol
+            name
             address
           }
-          baseAmount
-          quoteCurrency {
-            symbol
-            address
-          }
-          quoteAmount
-          trades: count
-          maximum_price: quotePrice(calculate: maximum)
-          minimum_price: quotePrice(calculate: minimum)
           open_price: minimum(of: time, get: quote_price)
-          close_price: maximum(of: time, get: quote_price)
-          tradeAmount(in: USD, calculate: sum)
         }
       }
     }
@@ -179,7 +138,11 @@ async function getPriceScaleValue(input: any, pair: any, routerVersion: any) {
             break
           }
         }
-        resolve(scale)
+        resolve({
+          priceScale: scale,
+          symbol: dexTrades[0].baseCurrency.symbol,
+          name: dexTrades[0].baseCurrency.name
+        })
       }
     } catch (error) {
       console.log('error', error)
@@ -209,7 +172,7 @@ async function getChartData(input: any, pair: any, resolution: any, routerVersio
       query = `{
         ethereum(network: bsc) {
           dexTrades(
-            options: {limit: 500, desc: "timeInterval.minute"}
+            options: {limit: 320, desc: "timeInterval.minute"}
             smartContractAddress: {in: ["${pairs[0]}", "${pairs[1]}"]}
             protocol: {is: "Uniswap v2"}
             baseCurrency: {is: "${input}"}
@@ -245,7 +208,7 @@ async function getChartData(input: any, pair: any, resolution: any, routerVersio
       query = `{
         ethereum(network: bsc) {
           dexTrades(
-            options: {limit: 500, desc: "timeInterval.minute"}
+            options: {limit: 320, desc: "timeInterval.minute"}
             smartContractAddress: {is: "${pair}"}
             protocol: {is: "Uniswap v2"}
             baseCurrency: {is: "${input}"}
@@ -282,7 +245,7 @@ async function getChartData(input: any, pair: any, resolution: any, routerVersio
     query = `{
       ethereum(network: bsc) {
         dexTrades(
-          options: {limit: 500, desc: "timeInterval.minute"}
+          options: {limit: 320, desc: "timeInterval.minute"}
           protocol: {is: "Uniswap v2"}
           exchangeName: {is: "Pancake ${routerVersion}"}
           baseCurrency: {is: "${input}"}
@@ -824,7 +787,7 @@ async function getMarksData(account: any, input: any) {
   } = await axios.post(url, { query }, config)
 
   if(dexTrades.length === 0) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       resolve([])
     })
   }
@@ -863,42 +826,83 @@ async function getChartDurationData(input: any, pair: any, resolution: any, from
     '1M': 1440 * 30,
   }
   const minutes = resolutionMap[resolution]
-  const query = `{
-    ethereum(network: bsc) {
-      dexTrades(
-        options: {limit: 50, desc: "timeInterval.minute"}
-        smartContractAddress: {is: "${pair}"}
-        protocol: {is: "Uniswap v2"}
-        baseCurrency: {is: "${input}"}
-        quoteCurrency: {is: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"}
-        time: {before: "${to}"}
-      ) {
-        exchange {
-          name
+  let query
+  if (pair === '0xc522CE70F8aeb1205223659156D6C398743E3e7a') {
+    const pairs = ['0xE4023ee4d957A5391007aE698B3A730B2dc2ba67', pair]
+    query = `{
+      ethereum(network: bsc) {
+        dexTrades(
+          options: {limit: 50, desc: "timeInterval.minute"}
+          smartContractAddress: {in: ["${pairs[0]}", "${pairs[1]}"]}
+          protocol: {is: "Uniswap v2"}
+          baseCurrency: {is: "${input}"}
+          quoteCurrency: {is: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"}
+          time: {before: "${to}"}
+        ) {
+          exchange {
+            name
+          }
+          timeInterval {
+            minute(count: ${minutes})
+          }
+          baseCurrency {
+            symbol
+            address
+          }
+          baseAmount
+          quoteCurrency {
+            symbol
+            address
+          }
+          quoteAmount
+          trades: count
+          maximum_price: quotePrice(calculate: maximum)
+          minimum_price: quotePrice(calculate: minimum)
+          open_price: minimum(of: time, get: quote_price)
+          close_price: maximum(of: time, get: quote_price)
+          tradeAmount(in: USD, calculate: sum)
         }
-        timeInterval {
-          minute(count: ${minutes})
-        }
-        baseCurrency {
-          symbol
-          address
-        }
-        baseAmount
-        quoteCurrency {
-          symbol
-          address
-        }
-        quoteAmount
-        trades: count
-        maximum_price: quotePrice(calculate: maximum)
-        minimum_price: quotePrice(calculate: minimum)
-        open_price: minimum(of: time, get: quote_price)
-        close_price: maximum(of: time, get: quote_price)
-        tradeAmount(in: USD, calculate: sum)
       }
     }
+    `
+  } else {
+    query = `{
+      ethereum(network: bsc) {
+        dexTrades(
+          options: {limit: 50, desc: "timeInterval.minute"}
+          smartContractAddress: {is: "${pair}"}
+          protocol: {is: "Uniswap v2"}
+          baseCurrency: {is: "${input}"}
+          quoteCurrency: {is: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"}
+          time: {before: "${to}"}
+        ) {
+          exchange {
+            name
+          }
+          timeInterval {
+            minute(count: ${minutes})
+          }
+          baseCurrency {
+            symbol
+            address
+          }
+          baseAmount
+          quoteCurrency {
+            symbol
+            address
+          }
+          quoteAmount
+          trades: count
+          maximum_price: quotePrice(calculate: maximum)
+          minimum_price: quotePrice(calculate: minimum)
+          open_price: minimum(of: time, get: quote_price)
+          close_price: maximum(of: time, get: quote_price)
+          tradeAmount(in: USD, calculate: sum)
+        }
+      }
+    }
+    `
   }
-  `
 
   const url = `https://graphql.bitquery.io/`
   let {
@@ -1031,5 +1035,5 @@ async function getChartDurationPanData(input: any, routerVersion: any, resolutio
   })
 }
 
-export { getTokenDetails, getChartStats, socialToken, topTrades, getPrice, getChartData, getMarksData, getChartDurationData, getChartDurationPanData, getPriceScaleValue }
+export { getTokenDetails, getChartStats, socialToken, topTrades, getPrice, getChartData, getMarksData, getChartDurationData, getChartDurationPanData, getTokenInfoForChart }
 export default getTokenDetails

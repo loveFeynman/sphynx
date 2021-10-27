@@ -12,11 +12,10 @@ import {
   Timezone,
   widget,
 } from 'charting_library/charting_library'
-import { makeApiRequest1, getAllTransactions, makeApiDurationRequest, getPriceScale } from './helpers'
+import { getHistoricalData, getAllTransactions, makeApiDurationRequest, getTokenInfo } from './helpers'
 import { useSelector, useDispatch } from 'react-redux'
 import { AppState } from 'state'
 import { isAddress } from 'utils'
-import { getTokenDetails } from '../../../../../utils/apiServices'
 import storages from 'config/constants/storages'
 import { setCustomChartType } from 'state/input/actions'
 
@@ -68,22 +67,22 @@ function getLanguageFromURL(): LanguageCode | null {
   return results === null ? null : (decodeURIComponent(results[1].replace(/\+/g, ' ')) as LanguageCode)
 }
 
-let myInterval: any
 let currentResolutions: any
 
-const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
+const Chart: React.FC<Partial<ChartContainerProps>> = (props) => {
   const dispatch = useDispatch()
   const { account } = useWeb3React()
   const input = props.tokenAddress
   const routerVersion = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.routerVersion)
   const customChartType = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.customChartType)
   const result = isAddress(input)
+  const symbolRef = React.useRef(null)
 
   const [tokendetails, setTokenDetails] = React.useState({
-    name: 'PancakeSwap Token',
-    pair: 'Cake/BNB',
-    symbol: 'CAKE',
-    version: 'Pancake ' + routerVersion,
+    name: 'Sphynx Token',
+    pair: 'SPHYNX/BNB',
+    symbol: 'SPHYNX',
+    version: 'SPHYNX DEX',
   })
 
   let lastBarsCache: any
@@ -121,33 +120,36 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
       onResultReadyCallback(newSymbols)
     },
     resolveSymbol: async (symbolName: any, onSymbolResolvedCallback: any, onResolveErrorCallback: any) => {
-      const res = await getTokenDetails(input, routerVersion)
-      setTokenDetails(res)
-
-      const version =
-        res.version.indexOf(' ') > 0
-          ? res.version.split(' ')[0] + ' ' + routerVersion
-          : res.version
-
-      const priceScale = await getPriceScale(input, routerVersion)
-      const symbolInfo = {
-        ticker: res.pair,
-        name: res.pair,
-        description: res.symbol,
-        type: 'crypto',
-        session: '24x7',
-        timezone: 'Etc/UTC',
-        exchange: version,
-        minmov: 1,
-        pricescale: priceScale,
-        has_intraday: true,
-        has_no_volume: false,
-        has_weekly_and_monthly: false,
-        supported_resolutions: configurationData.supported_resolutions,
-        volume_precision: 2,
-        data_status: 'streaming',
-      }
-      onSymbolResolvedCallback(symbolInfo)
+      const exchange = routerVersion === 'sphynx' ? 'SPHYNX DEX' : 'Pancake ' + routerVersion
+      symbolRef.current = onSymbolResolvedCallback
+      getTokenInfo(input, routerVersion)
+      .then(tokenInfo => {
+        const res = {
+          name: tokenInfo.name,
+          pair: `${tokenInfo.symbol}/BNB`,
+          symbol: tokenInfo.symbol,
+          version: exchange
+        }
+        setTokenDetails(res)
+        const symbolInfo = {
+          ticker: res.pair,
+          name: res.pair,
+          description: res.symbol,
+          type: 'crypto',
+          session: '24x7',
+          timezone: 'Etc/UTC',
+          exchange: exchange,
+          minmov: 1,
+          pricescale: tokenInfo.priceScale,
+          has_intraday: true,
+          has_no_volume: false,
+          has_weekly_and_monthly: false,
+          supported_resolutions: configurationData.supported_resolutions,
+          volume_precision: 2,
+          data_status: 'streaming',
+        }
+        onSymbolResolvedCallback(symbolInfo)
+      })
     },
     getBars: async (
       symbolInfo: any,
@@ -156,6 +158,7 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
       onHistoryCallback: any,
       onErrorCallback: any,
     ) => {
+
       const { from, to, firstDataRequest } = periodParams
       try {
         if (result) {
@@ -170,27 +173,17 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
           }
         }
 
-        const data = await makeApiRequest1(input, routerVersion, resolution)
-        let bars: any = []
-        data.map((bar: any, i: any) => {
-          const obj: any = {
-            time: bar.time,
-            low: bar.low,
-            high: bar.high,
-            open: bar.open,
-            close: bar.close,
-            volume: bar.volume,
+        const data = await getHistoricalData(input, routerVersion, resolution)
+        let bars = data.map((bar: any, i: any) => {
+          return {
+            ...bar,
             isBarClosed: true,
             isLastBar: false,
           }
-          if (i === data.length - 1) {
-            obj.isLastBar = true
-            obj.isBarClosed = false
-            lastBarsCache = obj
-          }
-          bars = [...bars, obj]
-          return {}
         })
+
+        bars[bars.length - 1].isBarClosed = false;
+        bars[bars.length - 1].isLastBar = true;
         // eslint-disable-next-line no-console
         onHistoryCallback(bars, {
           noData: false,
@@ -330,7 +323,7 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
     ) => {
 
       currentResolutions = resolution
-      myInterval = setInterval(async function () {
+      setInterval(async function () {
         const resolutionMapping: any = {
           '1': 60000,
           '5': 300000,
@@ -350,7 +343,6 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
 
         if (lastBarsCache === undefined) return
         if (sessionData === null) return
-        if (sessionData.input != input) return
         const isNew = new Date().getTime() - Number(lastBarsCache.time) >= resolutionMapping[currentResolutions]
 
         if (isNew) {
@@ -377,7 +369,7 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
         lastBarsCache.volume = volume
         sessionStorage.setItem(storages.SESSION_LIVE_VOLUME, volume.toString())
         onRealtimeCallback(lastBarsCache)
-      }, 1000 * 2) // 4s update interval
+      }, 1000 * 2) // 2s update interval
     },
     unsubscribeBars: (subscriberUID) => {
       console.log('[unsubscribeBars]: Method call with subscriberUID:', subscriberUID)
@@ -394,7 +386,6 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
       symbol: tokendetails.pair,
       // BEWARE: no trailing slash is expected in feed URL
       datafeed: feed,
-
       interval: ChartContainerProps.interval as ChartingLibraryWidgetOptions['interval'],
       library_path: ChartContainerProps.libraryPath as string,
       container: ChartContainerProps.container as ChartingLibraryWidgetOptions['container'],
@@ -411,7 +402,7 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
       timezone: custom_timezone,
       overrides: {
         "mainSeriesProperties.style": Number(customChartType),
-      },
+      }
     }
 
     tvWidget = await new widget(widgetOptions)
@@ -431,6 +422,7 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
               dispatch(setCustomChartType({ customChartType: chartType }));
             })
         });
+
       })
   }, [input, dispatch])
 
@@ -441,4 +433,4 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
   )
 }
 
-export default PcsChartContainer
+export default Chart
