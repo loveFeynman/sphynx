@@ -67,11 +67,11 @@ export async function getAllTransactions(account: any, path: any) {
   }
 }
 
-export async function makeApiDurationRequest(path: any, routerVersion: any, resolution: any, from: any, to: any) {
+export async function makeApiDurationRequest(path: any, routerVersion: any, resolution: any, to: any, countBack: any) {
   try {
     const factoryContract = routerVersion === 'sphynx' ? sphynxFactoryContract : pancakeFactoryContract
     const pairAddress = await factoryContract.methods.getPair(path, WBNB.address).call()
-    const data: any = routerVersion === 'sphynx' ? await getChartDurationData(path, pairAddress, resolution, from, to) : await getChartDurationPanData(path, routerVersion, resolution, from, to)
+    const data: any = routerVersion === 'sphynx' ? await getChartDurationData(path, pairAddress, resolution, to, countBack) : await getChartDurationPanData(path, routerVersion, resolution, to, countBack)
     return data
   } catch (error) {
     console.log("error", error)
