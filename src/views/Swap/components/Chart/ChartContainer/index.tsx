@@ -159,11 +159,11 @@ const Chart: React.FC<Partial<ChartContainerProps>> = (props) => {
       onErrorCallback: any,
     ) => {
 
-      const { from, to, firstDataRequest } = periodParams
+      const { to, countBack, firstDataRequest } = periodParams
       try {
         if (result) {
           if (!firstDataRequest) {
-            const data1 = await makeApiDurationRequest(input, routerVersion, resolution, (new Date(from* 1000)).toISOString(), (new Date(to* 1000)).toISOString())
+            const data1 = await makeApiDurationRequest(input, routerVersion, resolution, (new Date(to* 1000)).toISOString(), countBack)
             const noDataFlag = data1.length === 0 ? true : false
             // "noData" should be set if there is no data in the requested period.
             onHistoryCallback(data1, {
