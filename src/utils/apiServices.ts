@@ -816,7 +816,7 @@ async function getMarksData(account: any, input: any) {
   })
 }
 
-async function getChartDurationData(input: any, pair: any, resolution: any, from: any, to: any) {
+async function getChartDurationData(input: any, pair: any, resolution: any, to: any, countBack: any) {
   const resolutionMap = {
     1: 1,
     5: 5,
@@ -836,7 +836,7 @@ async function getChartDurationData(input: any, pair: any, resolution: any, from
     query = `{
       ethereum(network: bsc) {
         dexTrades(
-          options: {limit: 50, desc: "timeInterval.minute"}
+          options: {limit: ${countBack}, desc: "timeInterval.minute"}
           smartContractAddress: {in: ["${pairs[0]}", "${pairs[1]}"]}
           protocol: {is: "Uniswap v2"}
           baseCurrency: {is: "${input}"}
@@ -873,7 +873,7 @@ async function getChartDurationData(input: any, pair: any, resolution: any, from
     query = `{
       ethereum(network: bsc) {
         dexTrades(
-          options: {limit: 50, desc: "timeInterval.minute"}
+          options: {limit: ${countBack}, desc: "timeInterval.minute"}
           smartContractAddress: {is: "${pair}"}
           protocol: {is: "Uniswap v2"}
           baseCurrency: {is: "${input}"}
@@ -948,7 +948,7 @@ async function getChartDurationData(input: any, pair: any, resolution: any, from
   })
 }
 
-async function getChartDurationPanData(input: any, routerVersion: any, resolution: any, from: any, to: any) {
+async function getChartDurationPanData(input: any, routerVersion: any, resolution: any, to: any, countBack: any) {
   const resolutionMap = {
     1: 1,
     5: 5,
@@ -966,7 +966,7 @@ async function getChartDurationPanData(input: any, routerVersion: any, resolutio
   const query = `{
     ethereum(network: bsc) {
       dexTrades(
-        options: {limit: 50, desc: "timeInterval.minute"}
+        options: {limit: ${countBack}, desc: "timeInterval.minute"}
         baseCurrency: {is: "${input}"}
         quoteCurrency: {is: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"}
         exchangeName: {is: "Pancake ${routerVersion}"}
