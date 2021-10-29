@@ -7,7 +7,7 @@ import { abi as ISphynxRouter02 } from '@sphynxswap/swap-periphery/build/ISphynx
 import { ChainId, JSBI, Percent, Token, CurrencyAmount, Currency, ETHER, RouterType } from '@sphynxswap/sdk'
 import { ROUTER_ADDRESS, PANCAKE_ROUTER_ADDRESS } from '../config/constants'
 import { BASE_BSC_SCAN_URLS } from '../config'
-import { TokenAddressMap } from '../state/lists/hooks'
+import { TokenAddressMap, UniTokenAddressMap } from '../state/lists/hooks'
 
 // returns the checksummed address if the address is valid, otherwise returns false
 export function isAddress(value: any): string | false {
@@ -107,7 +107,7 @@ export function escapeRegExp(string: string): string {
   return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') // $& means the whole matched string
 }
 
-export function isTokenOnList(defaultTokens: TokenAddressMap, currency?: Currency): boolean {
+export function isTokenOnList(defaultTokens: TokenAddressMap | UniTokenAddressMap, currency?: Currency): boolean {
   if (currency === ETHER) return true
   return Boolean(currency instanceof Token && defaultTokens[currency.chainId]?.[currency.address])
 }
