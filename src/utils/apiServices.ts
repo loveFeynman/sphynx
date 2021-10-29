@@ -38,7 +38,7 @@ async function getTokenDetails(
 async function getTokenInfoForChart(input: any, pair: any, routerVersion: any) {
   let query
   const minutes = 5
-  if(routerVersion === 'sphynx') {
+  if (routerVersion === 'sphynx') {
     if (pair === '0xc522CE70F8aeb1205223659156D6C398743E3e7a') {
       const pairs = ['0xE4023ee4d957A5391007aE698B3A730B2dc2ba67', pair]
       query = `{
@@ -126,26 +126,26 @@ async function getTokenInfoForChart(input: any, pair: any, routerVersion: any) {
   return new Promise((resolve, reject) => {
     try {
       const price = dexTrades[0].open_price * bnbPrice
-      if(price > 1) {
+      if (price > 1) {
         resolve({
           priceScale: 100,
           symbol: dexTrades[0].baseCurrency.symbol,
-          name: dexTrades[0].baseCurrency.name
+          name: dexTrades[0].baseCurrency.name,
         })
       } else {
         let scale = 1
         let tempPrice = price
-        for(;;) {
+        for (;;) {
           scale *= 10
           tempPrice *= 10
-          if(tempPrice > 100) {
+          if (tempPrice > 100) {
             break
           }
         }
         resolve({
           priceScale: scale,
           symbol: dexTrades[0].baseCurrency.symbol,
-          name: dexTrades[0].baseCurrency.name
+          name: dexTrades[0].baseCurrency.name,
         })
       }
     } catch (error) {
@@ -170,46 +170,8 @@ async function getChartData(input: any, pair: any, resolution: any, routerVersio
   }
   const minutes = resolutionMap[resolution]
   let query
-  if(routerVersion === 'sphynx') {
-    if (pair === '0xc522CE70F8aeb1205223659156D6C398743E3e7a') {
-      const pairs = ['0xE4023ee4d957A5391007aE698B3A730B2dc2ba67', pair]
-      query = `{
-        ethereum(network: bsc) {
-          dexTrades(
-            options: {limit: 320, desc: "timeInterval.minute"}
-            smartContractAddress: {in: ["${pairs[0]}", "${pairs[1]}"]}
-            protocol: {is: "Uniswap v2"}
-            baseCurrency: {is: "${input}"}
-            quoteCurrency: {is: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"}
-          ) {
-            exchange {
-              name
-            }
-            timeInterval {
-              minute(count: ${minutes})
-            }
-            baseCurrency {
-              symbol
-              address
-            }
-            baseAmount
-            quoteCurrency {
-              symbol
-              address
-            }
-            quoteAmount
-            trades: count
-            maximum_price: quotePrice(calculate: maximum)
-            minimum_price: quotePrice(calculate: minimum)
-            open_price: minimum(of: time, get: quote_price)
-            close_price: maximum(of: time, get: quote_price)
-            tradeAmount(in: USD, calculate: sum)
-          }
-        }
-      }
-      `
-    } else {
-      query = `{
+  if (routerVersion === 'sphynx') {
+    query = `{
         ethereum(network: bsc) {
           dexTrades(
             options: {limit: 320, desc: "timeInterval.minute"}
@@ -244,7 +206,6 @@ async function getChartData(input: any, pair: any, resolution: any, routerVersio
         }
       }
       `
-    }
   } else {
     query = `{
       ethereum(network: bsc) {
@@ -282,7 +243,7 @@ async function getChartData(input: any, pair: any, resolution: any, routerVersio
     }
     `
   }
-  
+
   const url = `https://graphql.bitquery.io/`
   let {
     data: {
@@ -467,7 +428,7 @@ async function getChartStats(address: string, routerVersion: string) {
       100 *
       Math.abs(
         (parseFloat(dexTrades[0].open_price) - parseFloat(dexTrades[0].close_price)) /
-        ((parseFloat(dexTrades[0].open_price) + parseFloat(dexTrades[0].close_price)) / 2),
+          ((parseFloat(dexTrades[0].open_price) + parseFloat(dexTrades[0].close_price)) / 2),
       )
     const sign = dexTrades[0].open_price > dexTrades[0].close_price ? '-' : '+'
 
@@ -790,7 +751,7 @@ async function getMarksData(account: any, input: any) {
     },
   } = await axios.post(url, { query }, config)
 
-  if(dexTrades.length === 0) {
+  if (dexTrades.length === 0) {
     return new Promise((resolve) => {
       resolve([])
     })
@@ -830,47 +791,7 @@ async function getChartDurationData(input: any, pair: any, resolution: any, to: 
     '1M': 1440 * 30,
   }
   const minutes = resolutionMap[resolution]
-  let query
-  if (pair === '0xc522CE70F8aeb1205223659156D6C398743E3e7a') {
-    const pairs = ['0xE4023ee4d957A5391007aE698B3A730B2dc2ba67', pair]
-    query = `{
-      ethereum(network: bsc) {
-        dexTrades(
-          options: {limit: ${countBack}, desc: "timeInterval.minute"}
-          smartContractAddress: {in: ["${pairs[0]}", "${pairs[1]}"]}
-          protocol: {is: "Uniswap v2"}
-          baseCurrency: {is: "${input}"}
-          quoteCurrency: {is: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"}
-          time: {before: "${to}"}
-        ) {
-          exchange {
-            name
-          }
-          timeInterval {
-            minute(count: ${minutes})
-          }
-          baseCurrency {
-            symbol
-            address
-          }
-          baseAmount
-          quoteCurrency {
-            symbol
-            address
-          }
-          quoteAmount
-          trades: count
-          maximum_price: quotePrice(calculate: maximum)
-          minimum_price: quotePrice(calculate: minimum)
-          open_price: minimum(of: time, get: quote_price)
-          close_price: maximum(of: time, get: quote_price)
-          tradeAmount(in: USD, calculate: sum)
-        }
-      }
-    }
-    `
-  } else {
-    query = `{
+  const query = `{
       ethereum(network: bsc) {
         dexTrades(
           options: {limit: ${countBack}, desc: "timeInterval.minute"}
@@ -906,7 +827,6 @@ async function getChartDurationData(input: any, pair: any, resolution: any, to: 
       }
     }
     `
-  }
 
   const url = `https://graphql.bitquery.io/`
   let {
@@ -1039,5 +959,16 @@ async function getChartDurationPanData(input: any, routerVersion: any, resolutio
   })
 }
 
-export { getTokenDetails, getChartStats, socialToken, topTrades, getPrice, getChartData, getMarksData, getChartDurationData, getChartDurationPanData, getTokenInfoForChart }
+export {
+  getTokenDetails,
+  getChartStats,
+  socialToken,
+  topTrades,
+  getPrice,
+  getChartData,
+  getMarksData,
+  getChartDurationData,
+  getChartDurationPanData,
+  getTokenInfoForChart,
+}
 export default getTokenDetails
