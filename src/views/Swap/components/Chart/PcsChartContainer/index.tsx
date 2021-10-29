@@ -1,6 +1,7 @@
 /* eslint-disable */
 import React from 'react'
 import styled from 'styled-components'
+import { useWeb3React } from '@web3-react/core'
 import './index.css'
 import {
   ChartingLibraryWidgetOptions,
@@ -11,7 +12,7 @@ import {
   Timezone,
   widget,
 } from 'charting_library/charting_library'
-import { makeApiRequest1 } from './helpers'
+import { makeApiRequest1, getAllTransactions, makeApiDurationRequest, getPriceScale } from './helpers'
 import { useSelector, useDispatch } from 'react-redux'
 import { AppState } from 'state'
 import { isAddress } from 'utils'
@@ -41,7 +42,8 @@ export interface ChartContainerProps {
   studiesOverrides: ChartingLibraryWidgetOptions['studies_overrides']
   container: ChartingLibraryWidgetOptions['container']
   height: number,
-  tokenAddress: string
+  tokenAddress: string,
+  priceScale: number
 }
 
 const ChartContainerProps = {
@@ -71,7 +73,7 @@ let currentResolutions: any
 
 const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
   const dispatch = useDispatch()
-  // const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
+  const { account } = useWeb3React()
   const input = props.tokenAddress
   const routerVersion = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.routerVersion)
   const customChartType = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.customChartType)
@@ -87,6 +89,8 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
   let lastBarsCache: any
 
   const configurationData = {
+    supports_marks: true,
+    supports_timescale_marks: true,
     supported_resolutions: ['1', '5', '10', '15', '30', '1H', '1D', '1W', '1M'],
     exchanges: [
       {
@@ -125,6 +129,7 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
           ? res.version.split(' ')[0] + ' ' + routerVersion
           : res.version
 
+      const priceScale = await getPriceScale(input, routerVersion)
       const symbolInfo = {
         ticker: res.pair,
         name: res.pair,
@@ -134,7 +139,7 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
         timezone: 'Etc/UTC',
         exchange: version,
         minmov: 1,
-        pricescale: 1000000,
+        pricescale: priceScale,
         has_intraday: true,
         has_no_volume: false,
         has_weekly_and_monthly: false,
@@ -152,27 +157,28 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
       onErrorCallback: any,
     ) => {
       const { from, to, firstDataRequest } = periodParams
-
       try {
-        const data = await makeApiRequest1(input, routerVersion, resolution)
         if (result) {
           if (!firstDataRequest) {
+            const data1 = await makeApiDurationRequest(input, routerVersion, resolution, (new Date(from* 1000)).toISOString(), (new Date(to* 1000)).toISOString())
+            const noDataFlag = data1.length === 0 ? true : false
             // "noData" should be set if there is no data in the requested period.
-            onHistoryCallback([], {
-              noData: true,
+            onHistoryCallback(data1, {
+              noData: noDataFlag,
             })
             return
           }
         }
 
+        const data = await makeApiRequest1(input, routerVersion, resolution)
         let bars: any = []
         data.map((bar: any, i: any) => {
           const obj: any = {
-            time: new Date(bar.time).getTime(),
-            low: bar.low * bar.baseLow,
-            high: bar.high * bar.baseHigh,
-            open: bar.open * bar.baseOpen,
-            close: bar.close * bar.baseClose,
+            time: bar.time,
+            low: bar.low,
+            high: bar.high,
+            open: bar.open,
+            close: bar.close,
             volume: bar.volume,
             isBarClosed: true,
             isLastBar: false,
@@ -191,6 +197,128 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
         })
       } catch (error) {
         onErrorCallback(error)
+      }
+    },
+    getMarks: async (
+      symbolInfo: any,
+      startDate: any,
+      endDate: any,
+      onDataCallback: any,
+      resolution: any
+    ) => {
+      try {
+        const data = await getAllTransactions(account, input)
+        const sessionData = JSON.parse(sessionStorage.getItem(storages.SESSION_LIVE_PRICE))
+        let bars: any = []
+        data.forEach((bar: any, i: any) => {
+          let labelText: any
+          let label: any
+          let amount: any
+          let price: any
+          let curValue: any
+          let color: any
+          let date = (new Date(bar.time * 1000)).toLocaleString()
+
+          if (bar.buyCurrency === symbolInfo.description) {
+            labelText = "Sell"
+            label = "S"
+            amount = bar.buyAmount
+            color = 'red'
+          }
+          else {
+            labelText = "Buy"
+            label = "B"
+            amount = bar.sellAmount
+            color = 'green'
+          }
+          price = bar.tradeAmount
+          curValue = amount * sessionData.price
+
+          const html = `
+            <div>
+              <br>${labelText} at ${date}</br>
+              <br>Amount: ${amount.toFixed(4)}</br>
+              <br>Price: $${price.toFixed(2)}</br>
+              <br>Current value: $${curValue.toFixed(2)}</br>
+            </div>
+          `
+          const obj: any = {
+            id: i,
+            time: bar.time,
+            color: color,
+            text: html,
+            label: label,
+            labelFontColor: '#444444',
+            minSize: 5,
+          }
+
+          bars = [...bars, obj]
+        })
+
+        onDataCallback(bars)
+      }
+      catch (error) {
+        console.error(error)
+      }
+    },
+    getTimescaleMarks: async (
+      symbolInfo: any,
+      startDate: any,
+      endDate: any,
+      onDataCallback: any,
+      resolution: any
+    ) => {
+      try {
+        const data = await getAllTransactions(account, input)
+        const sessionData = JSON.parse(sessionStorage.getItem(storages.SESSION_LIVE_PRICE))
+        let bars: any = []
+        data.forEach((bar: any, i: any) => {
+          let labelText: any
+          let label: any
+          let amount: any
+          let price: any
+          let curValue: any
+          let color: any
+          let date = (new Date(bar.time * 1000)).toLocaleString()
+
+          if (bar.buyCurrency === symbolInfo.description) {
+            labelText = "Sell"
+            label = "Sell"
+            amount = bar.buyAmount
+            color = 'red'
+          }
+          else {
+            labelText = "Buy"
+            label = "Buy"
+            amount = bar.sellAmount
+            color = 'green'
+          }
+          price = bar.tradeAmount
+          curValue = amount * sessionData.price
+
+          const html = `
+            <div>
+              <br>${labelText} at ${date}</br>
+              <br>Amount: ${amount.toFixed(4)}</br>
+              <br>Price: $${price.toFixed(2)}</br>
+              <br>Current value: $${curValue.toFixed(2)}</br>
+            </div>
+          `
+          const obj: any = {
+            id: i,
+            time: bar.time,
+            color: color,
+            label: label,
+            tooltip: html
+          }
+
+          bars = [...bars, obj]
+        })
+
+        onDataCallback(bars)
+      }
+      catch (error) {
+        console.error(error)
       }
     },
     subscribeBars: (
@@ -266,6 +394,7 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
       symbol: tokendetails.pair,
       // BEWARE: no trailing slash is expected in feed URL
       datafeed: feed,
+
       interval: ChartContainerProps.interval as ChartingLibraryWidgetOptions['interval'],
       library_path: ChartContainerProps.libraryPath as string,
       container: ChartContainerProps.container as ChartingLibraryWidgetOptions['container'],
@@ -282,7 +411,7 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
       timezone: custom_timezone,
       overrides: {
         "mainSeriesProperties.style": Number(customChartType),
-      }
+      },
     }
 
     tvWidget = await new widget(widgetOptions)
@@ -294,18 +423,17 @@ const PcsChartContainer: React.FC<Partial<ChartContainerProps>> = (props) => {
     sessionStorage.setItem(storages.SESSION_LATEST_TIME, curTime.toString())
     sessionStorage.setItem(storages.SESSION_LIVE_VOLUME, '0')
     getWidget()
-    .then(widget => {
-      widget.onChartReady(() => {
-        widget.activeChart()
-        .onChartTypeChanged()
-        .subscribe(null, (chartType: SeriesStyle) => {
-          dispatch(setCustomChartType({ customChartType: chartType }));
-        })
-      });
-      
-    })
+      .then(widget => {
+        widget.onChartReady(() => {
+          widget.activeChart()
+            .onChartTypeChanged()
+            .subscribe(null, (chartType: SeriesStyle) => {
+              dispatch(setCustomChartType({ customChartType: chartType }));
+            })
+        });
+      })
   }, [input, dispatch])
-  
+
   return (
     <ChartContainer height={props.height}>
       <div id={ChartContainerProps.container} style={{ height: '100%', paddingBottom: '10px' }} />

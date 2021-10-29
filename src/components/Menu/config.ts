@@ -15,27 +15,27 @@ export const links = [
   {
     label: 'Swap & charts (live)',
     icon: ChartIcon,
-    href: '/#/swap',
+    href: '/swap',
   },
   {
     label: 'Farms (coming soon)',
     icon: FarmIcon,
-    href: '/#/farms',
+    href: '/farms',
   },
   {
     label: 'Pools (coming soon)',
     icon: PoolIcon,
-    href: '/#/pools',
+    href: '/pools',
   },
   {
     label: 'Lottery (live)',
     icon: IFOIcon,
-    href: '/#/lottery',
+    href: '/lottery',
   },
   {
     label: 'Bridge (coming soon)',
     icon: BridgeIcon,
-    href: '/#/bridge', // 'https://farm.sphynxswap.finance/bridge'
+    href: '/bridge', // 'https://farm.sphynxswap.finance/bridge'
   },
   {
     label: 'CoinMarketCap',
@@ -58,17 +58,17 @@ export const links = [
   {
     label: 'NFT Marketplace (coming soon)',
     icon: PredictionIcon,
-    href: '#',
+    href: '/',
   },
   {
     label: 'Prediction (coming soon)',
     icon: PredictionIcon,
-    href: '#',
+    href: '/',
   },
   {
     label: 'FAQ',
     icon: FAQIcon,
-    href: '/#/faq',
+    href: '/faq',
   },
 ]
 

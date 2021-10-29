@@ -114,6 +114,7 @@ export default function CoinStatsBoard(props) {
 
   const { tokenData } = props
   const [price, setPrice] = useState<any>(null)
+  const [scale, setScale] = useState(2)
 
   const [linkIcon, setLinkIcon] = useState(
     'https://r.poocoin.app/smartchain/assets/0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82/logo.png',
@@ -126,11 +127,12 @@ export default function CoinStatsBoard(props) {
   const getTableData = useCallback(async () => {
     try {
       if (result) {
-        const chartStats: any = await getChartStats(input, routerVersion);
+        const chartStats: any = await getChartStats(input, routerVersion)
         setalldata(chartStats)
         setPrice(chartStats.price)
         setLinkIcon(
-          `https://r.poocoin.app/smartchain/assets/${input ? utils.getAddress(input) : '0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82'
+          `https://r.poocoin.app/smartchain/assets/${
+            input ? utils.getAddress(input) : '0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82'
           }/logo.png`,
         )
       }
@@ -140,7 +142,7 @@ export default function CoinStatsBoard(props) {
   }, [input, result, routerVersion])
 
   useEffect(() => {
-    const ac = new AbortController();
+    const ac = new AbortController()
     getTableData()
     interval.current = setInterval(() => {
       const sessionData = JSON.parse(sessionStorage.getItem(storages.SESSION_LIVE_PRICE))
@@ -150,20 +152,25 @@ export default function CoinStatsBoard(props) {
     }, 2000)
     return () => {
       clearInterval(interval.current)
-      ac.abort();
+      ac.abort()
     }
-    
   }, [input, getTableData])
 
   useEffect(() => {
-    if(tokenData)
-      dispatch(marketCap({ marketCapacity: Number(parseInt(tokenData.totalSupply) * parseFloat(price)) }))
+    if (tokenData) dispatch(marketCap({ marketCapacity: Number(parseInt(tokenData.totalSupply) * parseFloat(price)) }))
+    const realPrice = parseFloat(price)
+    if(realPrice > 1) {
+      setScale(2)
+    } else {
+      const lg10 = Math.round(Math.abs(Math.log10(realPrice)))
+      setScale(lg10 + 2)
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tokenData, price])
 
   const onImgLoadError = (event: any) => {
     const elem = event.target
-    elem.src = DefaultImg;
+    elem.src = DefaultImg
   }
 
   return (
@@ -184,7 +191,7 @@ export default function CoinStatsBoard(props) {
         </Column>
         <Column>
           <Text>{t('Price')}</Text>
-          <Text>${Number(price).toFixed(6).toLocaleString()}</Text>
+          <Text>${Number(price).toFixed(scale).toLocaleString()}</Text>
         </Column>
         <Column>
           <Text>{t('24h Change')}</Text>

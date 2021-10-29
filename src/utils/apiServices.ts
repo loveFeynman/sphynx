@@ -1,5 +1,6 @@
 import Web3 from 'web3'
 import { AbiItem } from 'web3-utils'
+import { ethers } from 'ethers'
 import axios from 'axios'
 import { PANCAKE_FACTORY_ADDRESS, SPHYNX_FACTORY_ADDRESS, RouterType } from '@sphynxswap/sdk'
 import abi from '../config/abi/erc20ABI.json'
@@ -36,7 +37,158 @@ async function getTokenDetails(
   return { name, symbol, pair: `${symbol}/BNB`, version: version.version }
 }
 
-async function getChartData(input: any, pair: any, resolution: any) {
+async function getPriceScaleValue(input: any, pair: any, routerVersion: any) {
+  let query
+  const minutes = 5
+  if(routerVersion === 'sphynx') {
+    if (pair === '0xc522CE70F8aeb1205223659156D6C398743E3e7a') {
+      const pairs = ['0xE4023ee4d957A5391007aE698B3A730B2dc2ba67', pair]
+      query = `{
+        ethereum(network: bsc) {
+          dexTrades(
+            options: {limit: 1, desc: "timeInterval.minute"}
+            smartContractAddress: {in: ["${pairs[0]}", "${pairs[1]}"]}
+            protocol: {is: "Uniswap v2"}
+            baseCurrency: {is: "${input}"}
+            quoteCurrency: {is: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"}
+          ) {
+            exchange {
+              name
+            }
+            timeInterval {
+              minute(count: ${minutes})
+            }
+            baseCurrency {
+              symbol
+              address
+            }
+            baseAmount
+            quoteCurrency {
+              symbol
+              address
+            }
+            quoteAmount
+            trades: count
+            maximum_price: quotePrice(calculate: maximum)
+            minimum_price: quotePrice(calculate: minimum)
+            open_price: minimum(of: time, get: quote_price)
+            close_price: maximum(of: time, get: quote_price)
+            tradeAmount(in: USD, calculate: sum)
+          }
+        }
+      }
+      `
+    } else {
+      query = `{
+        ethereum(network: bsc) {
+          dexTrades(
+            options: {limit: 1, desc: "timeInterval.minute"}
+            smartContractAddress: {is: "${pair}"}
+            protocol: {is: "Uniswap v2"}
+            baseCurrency: {is: "${input}"}
+            quoteCurrency: {is: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"}
+          ) {
+            exchange {
+              name
+            }
+            timeInterval {
+              minute(count: ${minutes})
+            }
+            baseCurrency {
+              symbol
+              address
+            }
+            baseAmount
+            quoteCurrency {
+              symbol
+              address
+            }
+            quoteAmount
+            trades: count
+            maximum_price: quotePrice(calculate: maximum)
+            minimum_price: quotePrice(calculate: minimum)
+            open_price: minimum(of: time, get: quote_price)
+            close_price: maximum(of: time, get: quote_price)
+            tradeAmount(in: USD, calculate: sum)
+          }
+        }
+      }
+      `
+    }
+  } else {
+    query = `{
+      ethereum(network: bsc) {
+        dexTrades(
+          options: {limit: 1, desc: "timeInterval.minute"}
+          protocol: {is: "Uniswap v2"}
+          exchangeName: {is: "Pancake ${routerVersion}"}
+          baseCurrency: {is: "${input}"}
+          quoteCurrency: {is: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"}
+        ) {
+          exchange {
+            name
+          }
+          timeInterval {
+            minute(count: ${minutes})
+          }
+          baseCurrency {
+            symbol
+            address
+          }
+          baseAmount
+          quoteCurrency {
+            symbol
+            address
+          }
+          quoteAmount
+          trades: count
+          maximum_price: quotePrice(calculate: maximum)
+          minimum_price: quotePrice(calculate: minimum)
+          open_price: minimum(of: time, get: quote_price)
+          close_price: maximum(of: time, get: quote_price)
+          tradeAmount(in: USD, calculate: sum)
+        }
+      }
+    }
+    `
+  }
+
+  const url = `https://graphql.bitquery.io/`
+  const {
+    data: {
+      data: {
+        ethereum: { dexTrades },
+      },
+    },
+  } = await axios.post(url, { query }, config)
+
+  const bnbPrice = await getBNBPrice()
+
+  return new Promise((resolve, reject) => {
+    try {
+      const price = dexTrades[0].open_price * bnbPrice
+      if(price > 1) {
+        resolve(100)
+      } else {
+        let scale = 1
+        let tempPrice = price
+        for(;;) {
+          scale *= 10
+          tempPrice *= 10
+          if(tempPrice > 100) {
+            break
+          }
+        }
+        resolve(scale)
+      }
+    } catch (error) {
+      console.log('error', error)
+      reject(error)
+    }
+  })
+}
+
+async function getChartData(input: any, pair: any, resolution: any, routerVersion: any) {
   const resolutionMap = {
     1: 1,
     5: 5,
@@ -50,42 +202,120 @@ async function getChartData(input: any, pair: any, resolution: any) {
     '1M': 1440 * 30,
   }
   const minutes = resolutionMap[resolution]
-  const query = `{
-    ethereum(network: bsc) {
-      dexTrades(
-        options: {limit: 500, desc: "timeInterval.minute"}
-        smartContractAddress: {is: "${pair}"}
-        protocol: {is: "Uniswap v2"}
-        baseCurrency: {is: "${input}"}
-        quoteCurrency: {is: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"}
-      ) {
-        exchange {
-          name
+  let query
+  if(routerVersion === 'sphynx') {
+    if (pair === '0xc522CE70F8aeb1205223659156D6C398743E3e7a') {
+      const pairs = ['0xE4023ee4d957A5391007aE698B3A730B2dc2ba67', pair]
+      query = `{
+        ethereum(network: bsc) {
+          dexTrades(
+            options: {limit: 500, desc: "timeInterval.minute"}
+            smartContractAddress: {in: ["${pairs[0]}", "${pairs[1]}"]}
+            protocol: {is: "Uniswap v2"}
+            baseCurrency: {is: "${input}"}
+            quoteCurrency: {is: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"}
+          ) {
+            exchange {
+              name
+            }
+            timeInterval {
+              minute(count: ${minutes})
+            }
+            baseCurrency {
+              symbol
+              address
+            }
+            baseAmount
+            quoteCurrency {
+              symbol
+              address
+            }
+            quoteAmount
+            trades: count
+            maximum_price: quotePrice(calculate: maximum)
+            minimum_price: quotePrice(calculate: minimum)
+            open_price: minimum(of: time, get: quote_price)
+            close_price: maximum(of: time, get: quote_price)
+            tradeAmount(in: USD, calculate: sum)
+          }
         }
-        timeInterval {
-          minute(count: ${minutes})
+      }
+      `
+    } else {
+      query = `{
+        ethereum(network: bsc) {
+          dexTrades(
+            options: {limit: 500, desc: "timeInterval.minute"}
+            smartContractAddress: {is: "${pair}"}
+            protocol: {is: "Uniswap v2"}
+            baseCurrency: {is: "${input}"}
+            quoteCurrency: {is: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"}
+          ) {
+            exchange {
+              name
+            }
+            timeInterval {
+              minute(count: ${minutes})
+            }
+            baseCurrency {
+              symbol
+              address
+            }
+            baseAmount
+            quoteCurrency {
+              symbol
+              address
+            }
+            quoteAmount
+            trades: count
+            maximum_price: quotePrice(calculate: maximum)
+            minimum_price: quotePrice(calculate: minimum)
+            open_price: minimum(of: time, get: quote_price)
+            close_price: maximum(of: time, get: quote_price)
+            tradeAmount(in: USD, calculate: sum)
+          }
         }
-        baseCurrency {
-          symbol
-          address
+      }
+      `
+    }
+  } else {
+    query = `{
+      ethereum(network: bsc) {
+        dexTrades(
+          options: {limit: 500, desc: "timeInterval.minute"}
+          protocol: {is: "Uniswap v2"}
+          exchangeName: {is: "Pancake ${routerVersion}"}
+          baseCurrency: {is: "${input}"}
+          quoteCurrency: {is: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"}
+        ) {
+          exchange {
+            name
+          }
+          timeInterval {
+            minute(count: ${minutes})
+          }
+          baseCurrency {
+            symbol
+            address
+          }
+          baseAmount
+          quoteCurrency {
+            symbol
+            address
+          }
+          quoteAmount
+          trades: count
+          maximum_price: quotePrice(calculate: maximum)
+          minimum_price: quotePrice(calculate: minimum)
+          open_price: minimum(of: time, get: quote_price)
+          close_price: maximum(of: time, get: quote_price)
+          tradeAmount(in: USD, calculate: sum)
         }
-        baseAmount
-        quoteCurrency {
-          symbol
-          address
-        }
-        quoteAmount
-        trades: count
-        maximum_price: quotePrice(calculate: maximum)
-        minimum_price: quotePrice(calculate: minimum)
-        open_price: minimum(of: time, get: quote_price)
-        close_price: maximum(of: time, get: quote_price)
-        tradeAmount(in: USD, calculate: sum)
       }
     }
+    `
   }
-  `
-
+  
   const url = `https://graphql.bitquery.io/`
   let {
     data: {
@@ -114,7 +344,7 @@ async function getChartData(input: any, pair: any, resolution: any) {
           close: trade.close_price * bnbPrice,
           low: trade.minimum_price * bnbPrice,
           high: trade.maximum_price * bnbPrice,
-          volume: trade.tradeAmount * bnbPrice,
+          volume: trade.tradeAmount,
           time: date.getTime(),
         }
       })
@@ -127,6 +357,7 @@ async function getChartData(input: any, pair: any, resolution: any) {
 }
 
 async function getChartStats(address: string, routerVersion: string) {
+  const wBNBContract = new web3.eth.Contract(abi as AbiItem[], '0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c')
   try {
     if (!address) {
       return {
@@ -152,7 +383,7 @@ async function getChartStats(address: string, routerVersion: string) {
       ethereum(network: bsc) {
         dexTrades(
           date: {since: "${since}", till: "${till}"}
-          smartContractAddress: {is: "${pairAddress}"}
+          smartContractAddress: {in: ["0xE4023ee4d957A5391007aE698B3A730B2dc2ba67", "${pairAddress}"]}
           baseCurrency: {is: "${baseAddress}"}
           quoteCurrency: {is: "${quoteAddress}"}
         ) {
@@ -269,10 +500,12 @@ async function getChartStats(address: string, routerVersion: string) {
       100 *
       Math.abs(
         (parseFloat(dexTrades[0].open_price) - parseFloat(dexTrades[0].close_price)) /
-          ((parseFloat(dexTrades[0].open_price) + parseFloat(dexTrades[0].close_price)) / 2),
+        ((parseFloat(dexTrades[0].open_price) + parseFloat(dexTrades[0].close_price)) / 2),
       )
     const sign = dexTrades[0].open_price > dexTrades[0].close_price ? '-' : '+'
 
+    liquidityV2BNB = await wBNBContract.methods.balanceOf(pairAddress).call()
+    liquidityV2BNB = ethers.utils.formatUnits(liquidityV2BNB, 18)
     return {
       volume: dexTrades[0].tradeAmount,
       change: sign + percDiff,
@@ -281,12 +514,24 @@ async function getChartStats(address: string, routerVersion: string) {
       liquidityV2BNB,
     }
   } catch (error) {
+    console.log('error', error)
+    const baseAddress = address
+    const quoteAddress =
+      baseAddress === '0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c'
+        ? '0xe9e7cea3dedca5984780bafc599bd69add087d56'
+        : '0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c'
+
+    const factoryAddress = routerVersion === RouterType.sphynx ? SPHYNX_FACTORY_ADDRESS : PANCAKE_FACTORY_ADDRESS
+    const factory = new web3.eth.Contract(factoryAbi as AbiItem[], factoryAddress)
+    const pairAddress = await factory.methods.getPair(baseAddress, quoteAddress).call()
+    let liquidityV2BNB = await wBNBContract.methods.balanceOf(pairAddress).call()
+    liquidityV2BNB = ethers.utils.formatUnits(liquidityV2BNB, 18)
     return {
       volume: '',
       change: '',
       price: '',
       liquidityV2: '',
-      liquidityV2BNB: '',
+      liquidityV2BNB,
     }
   }
 }
@@ -435,7 +680,7 @@ const getPrice = async (tokenAddr) => {
 }
 
 async function topTrades(address: string, type: 'buy' | 'sell', pairAddress) {
-  if(!pairAddress) return []
+  if (!pairAddress) return []
   const till = new Date().toISOString()
   const since = new Date(new Date().getTime() - 3600 * 24 * 1000 * 3).toISOString()
   const query = `{
@@ -517,5 +762,274 @@ async function topTrades(address: string, type: 'buy' | 'sell', pairAddress) {
   return returnData
 }
 
-export { getTokenDetails, getChartStats, socialToken, topTrades, getPrice, getChartData }
+async function getMarksData(account: any, input: any) {
+  const query = `{
+    ethereum(network: bsc) {
+      dexTrades(
+        options: {desc: "block.height"}
+        baseCurrency: {in: ["0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c", "0x55d398326f99059ff775485246999027b3197955", "0xe9e7cea3dedca5984780bafc599bd69add087d56", "0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d"]}
+        quoteCurrency: {is: "${input}"}
+        txSender: {is: "${account}"}
+      ) {
+        transaction {
+          hash
+        }
+        smartContract {
+          address {
+            address
+          }
+          contractType
+          currency {
+            name
+          }
+        }
+        tradeIndex
+        block {
+          timestamp {
+            unixtime
+          }
+          height
+        }
+        buyAmount
+        buyAmountInUsd: buyAmount(in: USD)
+        buyCurrency {
+          symbol
+          address
+        }
+        sellAmount
+        sellAmountInUsd: sellAmount(in: USD)
+        sellCurrency {
+          symbol
+          address
+        }
+        sellAmountInUsd: sellAmount(in: USD)
+        tradeAmount(in: USD)
+        transaction {
+          gasValue
+          gasPrice
+          gas
+        }
+      }
+    }
+  }
+  `
+
+  const url = `https://graphql.bitquery.io/`
+  const {
+    data: {
+      data: {
+        ethereum: { dexTrades },
+      },
+    },
+  } = await axios.post(url, { query }, config)
+
+  if(dexTrades.length === 0) {
+    return new Promise((resolve, reject) => {
+      resolve([])
+    })
+  }
+
+  return new Promise((resolve, reject) => {
+    try {
+      const data = dexTrades.map((trade) => {
+        return {
+          buyAmount: trade.buyAmount,
+          buyCurrency: trade.buyCurrency.symbol,
+          sellAmount: trade.sellAmount,
+          sellCurrency: trade.sellCurrency.symbol,
+          tradeAmount: trade.tradeAmount,
+          time: trade.block.timestamp.unixtime,
+        }
+      })
+      resolve(data)
+    } catch (error) {
+      console.log('error', error)
+      reject(error)
+    }
+  })
+}
+
+async function getChartDurationData(input: any, pair: any, resolution: any, from: any, to: any) {
+  const resolutionMap = {
+    1: 1,
+    5: 5,
+    10: 10,
+    15: 15,
+    30: 30,
+    60: 60,
+    '1H': 60,
+    '1D': 1440,
+    '1W': 1440 * 7,
+    '1M': 1440 * 30,
+  }
+  const minutes = resolutionMap[resolution]
+  const query = `{
+    ethereum(network: bsc) {
+      dexTrades(
+        options: {limit: 50, desc: "timeInterval.minute"}
+        smartContractAddress: {is: "${pair}"}
+        protocol: {is: "Uniswap v2"}
+        baseCurrency: {is: "${input}"}
+        quoteCurrency: {is: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"}
+        time: {before: "${to}"}
+      ) {
+        exchange {
+          name
+        }
+        timeInterval {
+          minute(count: ${minutes})
+        }
+        baseCurrency {
+          symbol
+          address
+        }
+        baseAmount
+        quoteCurrency {
+          symbol
+          address
+        }
+        quoteAmount
+        trades: count
+        maximum_price: quotePrice(calculate: maximum)
+        minimum_price: quotePrice(calculate: minimum)
+        open_price: minimum(of: time, get: quote_price)
+        close_price: maximum(of: time, get: quote_price)
+        tradeAmount(in: USD, calculate: sum)
+      }
+    }
+  }
+  `
+
+  const url = `https://graphql.bitquery.io/`
+  let {
+    data: {
+      data: {
+        ethereum: { dexTrades },
+      },
+    },
+  } = await axios.post(url, { query }, config)
+
+  dexTrades = dexTrades.reverse()
+
+  const bnbPrice = await getBNBPrice()
+
+  return new Promise((resolve, reject) => {
+    try {
+      const data = dexTrades.map((trade) => {
+        const dateTest = trade.timeInterval.minute
+        const year = dateTest.slice(0, 4)
+        const month = dateTest.slice(5, 7)
+        const day = dateTest.slice(8, 10)
+        const hour = dateTest.slice(11, 13)
+        const minute = dateTest.slice(14, 16)
+        const date = new Date(`${month}/${day}/${year} ${hour}:${minute}:00 UTC`)
+        return {
+          open: trade.open_price * bnbPrice,
+          close: trade.close_price * bnbPrice,
+          low: trade.minimum_price * bnbPrice,
+          high: trade.maximum_price * bnbPrice,
+          volume: trade.tradeAmount,
+          time: date.getTime(),
+        }
+      })
+      resolve(data)
+    } catch (error) {
+      console.log('error', error)
+      reject(error)
+    }
+  })
+}
+
+async function getChartDurationPanData(input: any, routerVersion: any, resolution: any, from: any, to: any) {
+  const resolutionMap = {
+    1: 1,
+    5: 5,
+    10: 10,
+    15: 15,
+    30: 30,
+    60: 60,
+    '1H': 60,
+    '1D': 1440,
+    '1W': 1440 * 7,
+    '1M': 1440 * 30,
+  }
+
+  const minutes = resolutionMap[resolution]
+  const query = `{
+    ethereum(network: bsc) {
+      dexTrades(
+        options: {limit: 50, desc: "timeInterval.minute"}
+        baseCurrency: {is: "${input}"}
+        quoteCurrency: {is: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"}
+        exchangeName: {is: "Pancake ${routerVersion}"}
+        time: {before: "${to}"}
+      ) {
+        exchange {
+          name
+        }
+        timeInterval {
+          minute(count: ${minutes})
+        }
+        baseCurrency {
+          symbol
+          address
+        }
+        baseAmount
+        quoteCurrency {
+          symbol
+          address
+        }
+        quoteAmount
+        trades: count
+        maximum_price: quotePrice(calculate: maximum)
+        minimum_price: quotePrice(calculate: minimum)
+        open_price: minimum(of: time, get: quote_price)
+        close_price: maximum(of: time, get: quote_price)
+        tradeAmount(in: USD, calculate: sum)
+      }
+    }
+  }
+  `
+
+  const url = `https://graphql.bitquery.io/`
+  let {
+    data: {
+      data: {
+        ethereum: { dexTrades },
+      },
+    },
+  } = await axios.post(url, { query }, config)
+
+  dexTrades = dexTrades.reverse()
+
+  const bnbPrice = await getBNBPrice()
+
+  return new Promise((resolve, reject) => {
+    try {
+      const data = dexTrades.map((trade) => {
+        const dateTest = trade.timeInterval.minute
+        const year = dateTest.slice(0, 4)
+        const month = dateTest.slice(5, 7)
+        const day = dateTest.slice(8, 10)
+        const hour = dateTest.slice(11, 13)
+        const minute = dateTest.slice(14, 16)
+        const date = new Date(`${month}/${day}/${year} ${hour}:${minute}:00 UTC`)
+        return {
+          open: trade.open_price * bnbPrice,
+          close: trade.close_price * bnbPrice,
+          low: trade.minimum_price * bnbPrice,
+          high: trade.maximum_price * bnbPrice,
+          volume: trade.tradeAmount,
+          time: date.getTime(),
+        }
+      })
+      resolve(data)
+    } catch (error) {
+      console.log('error', error)
+      reject(error)
+    }
+  })
+}
+
+export { getTokenDetails, getChartStats, socialToken, topTrades, getPrice, getChartData, getMarksData, getChartDurationData, getChartDurationPanData, getPriceScaleValue }
 export default getTokenDetails
