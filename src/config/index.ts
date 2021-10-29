@@ -37,3 +37,28 @@ export const DEFAULT_GAS_PRICE = 5
 export const AUCTION_BIDDERS_TO_FETCH = 500
 export const RECLAIM_AUCTIONS_TO_FETCH = 500
 export const AUCTION_WHITELISTED_BIDDERS_TO_FETCH = 500
+
+export const CHAIN_LIST = [
+  {
+    chainId: '0x38',
+    chainName: 'Binance Smart Chain Mainnet',
+    nativeCurrency: {
+      name: 'BNB',
+      symbol: 'bnb',
+      decimals: 18,
+    },
+    rpcUrls: ["https://speedy-nodes-nyc.moralis.io/fbb4b2b82993bf507eaaab13/bsc/mainnet", "https://speedy-nodes-nyc.moralis.io/fbb4b2b82993bf507eaaab13/bsc/mainnet", "https://speedy-nodes-nyc.moralis.io/fbb4b2b82993bf507eaaab13/bsc/mainnet"],
+    blockExplorerUrls: ['https://bscscan.com/'],
+  },
+  {
+    chainId: '0x1',
+    chainName: 'Ethereum Main Network',
+    nativeCurrency: {
+      name: 'ETH',
+      symbol: 'eth',
+      decimals: 18,
+    },
+    rpcUrls: ["https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161"],
+    blockExplorerUrls: ['https://etherscan.io'],
+  },
+]
