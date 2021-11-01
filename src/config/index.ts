@@ -54,11 +54,11 @@ export const CHAIN_LIST = [
     chainId: '0x1',
     chainName: 'Ethereum Mainnet',
     nativeCurrency: {
-      name: 'Ether',
+      name: 'Ethereum',
       symbol: 'ETH',
       decimals: 18,
     },
-    rpcUrls: ["https://eth-mainnet.alchemyapi.io/v2/es8DQEcFhTZBfG6jHRuw1fFQc862OuKj"],
+    rpcUrls: ["https://speedy-nodes-nyc.moralis.io/fbb4b2b82993bf507eaaab13/eth/mainnet"],
     blockExplorerUrls: ['https://etherscan.io'],
   },
 ]
