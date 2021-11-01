@@ -52,13 +52,13 @@ export const CHAIN_LIST = [
   },
   {
     chainId: '0x1',
-    chainName: 'Ethereum Main Network',
+    chainName: 'Ethereum Mainnet',
     nativeCurrency: {
-      name: 'ETH',
-      symbol: 'eth',
+      name: 'Ether',
+      symbol: 'ETH',
       decimals: 18,
     },
-    rpcUrls: ["https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161"],
+    rpcUrls: ["https://eth-mainnet.alchemyapi.io/v2/es8DQEcFhTZBfG6jHRuw1fFQc862OuKj"],
     blockExplorerUrls: ['https://etherscan.io'],
   },
 ]
