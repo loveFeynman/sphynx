@@ -4,7 +4,9 @@ import { splitSignature } from '@ethersproject/bytes'
 import { Contract } from '@ethersproject/contracts'
 import { TransactionResponse } from '@ethersproject/providers'
 import { Currency, currencyEquals, ETHER, Percent, WETH, RouterType } from '@sphynxswap/sdk'
-import { Button, Text, AddIcon, ArrowDownIcon, Slider, Box, Flex, useModal } from '@sphynxswap/uikit'
+import { Button, Text, AddIcon, ArrowDownIcon, Box, Flex, useModal } from '@sphynxswap/uikit'
+import Slider from 'react-rangeslider'
+import 'react-rangeslider/lib/index.css'
 import { BigNumber } from '@ethersproject/bignumber'
 import { useTranslation } from 'contexts/Localization'
 import { AutoColumn, ColumnCenter } from '../../components/Layout/Column'
@@ -521,7 +523,7 @@ export default function RemoveLiquidityWidget({
                   min={0}
                   max={100}
                   value={innerLiquidityPercentage}
-                  onValueChanged={(value) => setInnerLiquidityPercentage(Math.ceil(value))}
+                  onChange={(value) => setInnerLiquidityPercentage(Math.ceil(value))}
                   mb="16px"
                 />
                 <Flex flexWrap="wrap" justifyContent="space-evenly">

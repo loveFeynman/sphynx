@@ -1131,7 +1131,7 @@
   "Balance: %amount%": "余额：%amount%",
   "LP tokens in your wallet": "您的钱包中的 LP 代币",
   "Pooled %asset%": "已入池 %asset%",
-  "By adding liquidity you'll earn 0.17% of all trades on this pair proportional to your share of the pool. Fees are added to the pool, accrue in real time and can be claimed by withdrawing your liquidity.": "通过添加流动性，您将赚取该币对所有交易的 0.17%，与您在资金池中的份额成正比。费用会被添加到资金池中，实时累积，可以通过解除您的流动性来领取。",
+  "By adding liquidity you'll earn 0.17% of all trades on this pair proportional to your share of the pool. Fees are added to the pool, accrue in real time and can be claimed by withdrawing your liquidity.": "通过添加流动性，您将赚取该币对所有交易的 0.075%，与您在资金池中的份额成正比。费用会被添加到资金池中，实时累积，可以通过解除您的流动性来领取。",
   "Common bases": "一般基准",
   "These tokens are commonly paired with other tokens.": "这些代币通常与其他代币配对。",
   "Expanded results from inactive Token Lists": "来自停用代币列表的扩展结果",

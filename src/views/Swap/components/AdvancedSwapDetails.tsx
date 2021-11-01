@@ -60,8 +60,8 @@ function TradeSummary({ trade, allowedSlippage }: { trade: Trade; allowedSlippag
           <QuestionHelper
             text={
               <>
-                <Text mb="12px">{t('For each trade a .1% fee is paid')}</Text>
-                <Text>- {t('.1% to LP token holders')}</Text>
+                <Text mb="12px">{t('For each trade a .2% fee is paid')}</Text>
+                <Text>- {t('.075% to LP token holders')}</Text>
                 {/* <Text>- {t('0.03% to the Treasury')}</Text>
                 <Text>- {t('0.05% towards SPHYNX buyback and burn')}</Text> */}
               </>

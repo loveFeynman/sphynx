@@ -683,7 +683,12 @@ export default function Swap({ history }: RouteComponentProps) {
   const noRoute = !route
 
   useEffect(() => {
-    if (tokenAddress === null || tokenAddress === '' || tokenAddress === undefined || tokenAddress.toLowerCase() === sphynxAddr.toLowerCase()) {
+    if (
+      tokenAddress === null ||
+      tokenAddress === '' ||
+      tokenAddress === undefined ||
+      tokenAddress.toLowerCase() === sphynxAddr.toLowerCase()
+    ) {
       if (swapRouter !== SwapRouter.SPHYNX_SWAP) {
         setSwapRouter(SwapRouter.SPHYNX_SWAP)
         setRouterType(RouterType.sphynx)
@@ -1156,6 +1161,9 @@ export default function Swap({ history }: RouteComponentProps) {
             )}
           </Card>
           <AdvancedSwapDetailsDropdown trade={trade} />
+          <TokenInfoWrapper>
+            <TokenInfo tokenData={tokenData} />
+          </TokenInfoWrapper>
         </div>
         <div>
           <FullHeightColumn>
@@ -1167,22 +1175,21 @@ export default function Swap({ history }: RouteComponentProps) {
             />
             <CoinStatsBoard tokenData={tokenData} />
             <ChartContainer tokenAddress={input} />
+            <div
+              style={{
+                alignSelf: 'center',
+                textAlign: 'center',
+                width: "100%",
+                marginTop: "25px"
+              }}
+            >
+              {swapTransCard === 'tokenDX' && (
+                <TransactionCard transactionData={transactionData} isLoading={isLoading} symbol={symbol} />
+              )}
+              {swapTransCard === 'buyers' && <BuyersCard pairAddress={pairs[0]} />}
+              {swapTransCard === 'sellers' && <SellersCard pairAddress={pairs[0]} />}
+            </div>
           </FullHeightColumn>
-        </div>
-        <TokenInfoWrapper>
-          <TokenInfo tokenData={tokenData} />
-        </TokenInfoWrapper>
-        <div
-          style={{
-            alignSelf: 'center',
-            textAlign: 'center',
-          }}
-        >
-          {swapTransCard === 'tokenDX' && (
-            <TransactionCard transactionData={transactionData} isLoading={isLoading} symbol={symbol} />
-          )}
-          {swapTransCard === 'buyers' && <BuyersCard pairAddress={pairs[0]} />}
-          {swapTransCard === 'sellers' && <SellersCard pairAddress={pairs[0]} />}
         </div>
       </Cards>
     </SwapPage>

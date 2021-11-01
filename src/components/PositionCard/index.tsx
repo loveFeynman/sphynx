@@ -121,7 +121,7 @@ export function MinimalPositionCard({ pair, showUnwrapped = false }: PositionCar
           <Text fontSize="14px" style={{ textAlign: 'center' }}>
             <img src={MainLogo} alt="Main Logo" width="24" style={{ marginBottom: -6 }} />{' '}
             {t(
-              "By adding liquidity you'll earn 0.17% of all trades on this pair proportional to your share of the pool. Fees are added to the pool, accrue in real time and can be claimed by withdrawing your liquidity.",
+              "By adding liquidity you'll earn 0.075% of all trades on this pair proportional to your share of the pool. Fees are added to the pool, accrue in real time and can be claimed by withdrawing your liquidity.",
             )}
           </Text>
         </LightCard>
