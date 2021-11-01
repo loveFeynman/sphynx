@@ -26,7 +26,7 @@ const DividendModal: React.FC<DividendModalProps> = ({ onDismiss, balance }) => 
 
   useEffect(() => {
     const remainTime = () => {
-      const finishDate = new Date('11/01/2021 12:00:00 UTC').getTime()
+      const finishDate = new Date('11/08/2021 12:00:00 UTC').getTime()
       const remain = finishDate - new Date().getTime()
       setRemainTime(remain)
     }
