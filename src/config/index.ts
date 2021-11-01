@@ -62,3 +62,8 @@ export const CHAIN_LIST = [
     blockExplorerUrls: ['https://etherscan.io'],
   },
 ]
+
+export const BITQUERY_NETWORK_LIST = {
+  1: 'ethereum',
+  56: 'bsc',
+}

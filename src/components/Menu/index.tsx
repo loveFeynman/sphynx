@@ -16,6 +16,8 @@ import CloseIcon from '@material-ui/icons/Close'
 import Web3 from 'web3'
 import ERC20ABI from 'assets/abis/erc20.json'
 import { isAddress } from 'utils'
+import useActiveWeb3React from 'hooks/useActiveWeb3React'
+import { BITQUERY_NETWORK_LIST } from 'config/index'
 
 import { ReactComponent as MenuOpenIcon } from 'assets/svg/icon/MenuOpenIcon.svg'
 import { ReactComponent as WalletIcon } from 'assets/svg/icon/WalletIcon.svg'
@@ -271,6 +273,7 @@ const Menu = () => {
   const { menuToggled, toggleMenu } = useMenuToggle()
   const { removedAssets, setRemovedAssets } = useRemovedAssets()
   const [showAllToken, setShowAllToken] = useState(true)
+  const { chainId } = useActiveWeb3React()
 
   const dispatch = useDispatch()
   const { pathname } = useLocation()
@@ -295,7 +298,7 @@ const Menu = () => {
 
   const getDataQuery = `
   {
-    ethereum(network: bsc) {
+    ethereum(network: ${BITQUERY_NETWORK_LIST[chainId]}) {
       address(address: {is: "${account}" }){
         balances {
           value
@@ -312,7 +315,7 @@ const Menu = () => {
 
   const getSphynxQuery = `
   {
-  ethereum(network: bsc) {
+  ethereum(network: ${BITQUERY_NETWORK_LIST[chainId]}) {
       dexTrades(
       options: {desc: ["block.height", "tradeIndex"], limit: 1, offset: 0}
       date: {till: null}
@@ -542,7 +545,7 @@ const Menu = () => {
   useEffect(() => {
     fetchData()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [account])
+  }, [account, chainId])
 
   useEffect(() => {
     updateWallet()
