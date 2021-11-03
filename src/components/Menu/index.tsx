@@ -37,7 +37,6 @@ import chainIds from 'config/constants/chainIds'
 import { TOKEN_INTERVAL } from 'config/constants/info'
 import { BalanceNumber } from 'components/BalanceNumber'
 import { useTranslation } from 'contexts/Localization'
-import { simpleRpcProvider } from 'utils/providers'
 import { links } from './config'
 import { Field, replaceSwapState } from '../../state/swap/actions'
 import { getBNBPrice } from 'utils/priceProvider'
@@ -378,7 +377,8 @@ const Menu = () => {
 
   const fetchData = async () => {
     if (account) {
-      const bnbPrice = await getBNBPrice(simpleRpcProvider)
+      const bnbPrice = await getBNBPrice()
+
       let removedTokens = JSON.parse(localStorage.getItem(storages.LOCAL_REMOVED_TOKENS))
       if (removedTokens === null) {
         removedTokens = []
