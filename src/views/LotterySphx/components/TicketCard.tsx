@@ -7,6 +7,7 @@ import { useTranslation } from 'contexts/Localization'
 import MainLogo from 'assets/svg/icon/logo_new.svg'
 import LinkIcon from 'assets/svg/icon/LinkYellow.svg'
 import { useWeb3React } from '@web3-react/core'
+import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import TicketContentTable from './TicketContentTable'
 import moment from 'moment'
 import ViewTickets from './ViewTickets'
@@ -56,6 +57,8 @@ export default function TicketCard({ lastLoteryInfo, roundID }) {
 
   const [showDetail, setShowDetail] = React.useState(false)
   const { account } = useWeb3React()
+  const { chainId } = useActiveWeb3React()
+
   React.useEffect(() => {
     const ac = new AbortController();
     if (lastLoteryInfo !== null) {
@@ -64,7 +67,7 @@ export default function TicketCard({ lastLoteryInfo, roundID }) {
         arrayData.push(lastLoteryInfo.finalNumber.toString().charAt(i))
       }
       setWinningCard(arrayData.reverse())
-      axios.get(`${process.env.REACT_APP_BACKEND_API_URL}/price/0x2e121ed64eeeb58788ddb204627ccb7c7c59884c`).then((response) => {
+      axios.get(`${process.env.REACT_APP_BACKEND_API_URL}/price/0x2e121ed64eeeb58788ddb204627ccb7c7c59884c/${chainId}`).then((response) => {
         let price = response.data.price
         let _amountCollectedInSphynx = (lastLoteryInfo?.amountCollectedInSphynx / 10 ** 18).toString()
         let prizePot = (parseFloat(_amountCollectedInSphynx) * parseFloat(price)).toFixed(5)
