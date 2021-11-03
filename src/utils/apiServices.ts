@@ -3,11 +3,12 @@ import { AbiItem } from 'web3-utils'
 import { ethers } from 'ethers'
 import axios from 'axios'
 import { PANCAKE_FACTORY_ADDRESS, SPHYNX_FACTORY_ADDRESS, RouterType } from '@sphynxswap/sdk'
+import { WBNB_ADDRESS, WETH_ADDRESS } from 'config/constants/addresses'
 import abi from '../config/abi/erc20ABI.json'
 import factoryAbi from '../config/abi/factoryAbi.json'
 import { BITQUERY_API_KEY } from '../config/constants/endpoints'
 import { web3Provider } from './providers'
-import { getBNBPrice } from './priceProvider'
+import { getBNBPrice, getETHPrice } from './priceProvider'
 
 const web3 = new Web3(web3Provider)
 
@@ -35,43 +36,21 @@ async function getTokenDetails(
   return { name, symbol, pair: `${symbol}/BNB`, version: routerVersion }
 }
 
-async function getTokenInfoForChart(input: any, pair: any, routerVersion: any) {
+async function getTokenInfoForChart(input: any, pair: any, routerVersion: any, chainId = 56) {
   let query
   const minutes = 5
+  const network = chainId === 56 ? 'bsc' : 'ethereum'
+  const quoteAddress = chainId === 56 ? WBNB_ADDRESS : WETH_ADDRESS
+  const exchangeName = chainId === 56 ? `Pancake ${routerVersion}` : "Uniswap" 
   if (routerVersion === 'sphynx') {
-    if (pair === '0xc522CE70F8aeb1205223659156D6C398743E3e7a') {
-      const pairs = ['0xE4023ee4d957A5391007aE698B3A730B2dc2ba67', pair]
       query = `{
-        ethereum(network: bsc) {
-          dexTrades(
-            options: {limit: 1, desc: "timeInterval.minute"}
-            smartContractAddress: {in: ["${pairs[0]}", "${pairs[1]}"]}
-            protocol: {is: "Uniswap v2"}
-            baseCurrency: {is: "${input}"}
-            quoteCurrency: {is: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"}
-          ) {
-            timeInterval {
-              minute(count: ${minutes})
-            }
-            baseCurrency {
-              symbol
-              name
-              address
-            }
-            open_price: minimum(of: time, get: quote_price)
-          }
-        }
-      }
-      `
-    } else {
-      query = `{
-        ethereum(network: bsc) {
+        ethereum(network: ${network}) {
           dexTrades(
             options: {limit: 1, desc: "timeInterval.minute"}
             smartContractAddress: {is: "${pair}"}
             protocol: {is: "Uniswap v2"}
             baseCurrency: {is: "${input}"}
-            quoteCurrency: {is: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"}
+            quoteCurrency: {is: "${quoteAddress}"}
           ) {
             timeInterval {
               minute(count: ${minutes})
@@ -86,16 +65,15 @@ async function getTokenInfoForChart(input: any, pair: any, routerVersion: any) {
         }
       }
       `
-    }
   } else {
     query = `{
-      ethereum(network: bsc) {
+      ethereum(network: ${network}) {
         dexTrades(
           options: {limit: 1, desc: "timeInterval.minute"}
           protocol: {is: "Uniswap v2"}
-          exchangeName: {is: "Pancake ${routerVersion}"}
+          exchangeName: {is: "${exchangeName}"}
           baseCurrency: {is: "${input}"}
-          quoteCurrency: {is: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"}
+          quoteCurrency: {is: "${quoteAddress}"}
         ) {
           timeInterval {
             minute(count: ${minutes})
@@ -155,7 +133,7 @@ async function getTokenInfoForChart(input: any, pair: any, routerVersion: any) {
   })
 }
 
-async function getChartData(input: any, pair: any, resolution: any, routerVersion: any) {
+async function getChartData(input: any, pair: any, resolution: any, routerVersion: any, chainId = 56) {
   const resolutionMap = {
     1: 1,
     5: 5,
@@ -169,16 +147,19 @@ async function getChartData(input: any, pair: any, resolution: any, routerVersio
     '1M': 1440 * 30,
   }
   const minutes = resolutionMap[resolution]
+  const network = chainId === 56 ? 'bsc' : 'ethereum'
+  const quoteAddress = chainId === 56 ? WBNB_ADDRESS : WETH_ADDRESS
+  const exchangeName = chainId === 56 ? `Pancake ${routerVersion}` : "Uniswap" 
   let query
   if (routerVersion === 'sphynx') {
     query = `{
-        ethereum(network: bsc) {
+        ethereum(network: ${network}) {
           dexTrades(
             options: {limit: 320, desc: "timeInterval.minute"}
             smartContractAddress: {is: "${pair}"}
             protocol: {is: "Uniswap v2"}
             baseCurrency: {is: "${input}"}
-            quoteCurrency: {is: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"}
+            quoteCurrency: {is: "${quoteAddress}"}
           ) {
             exchange {
               name
@@ -208,13 +189,13 @@ async function getChartData(input: any, pair: any, resolution: any, routerVersio
       `
   } else {
     query = `{
-      ethereum(network: bsc) {
+      ethereum(network: ${network}) {
         dexTrades(
           options: {limit: 320, desc: "timeInterval.minute"}
           protocol: {is: "Uniswap v2"}
-          exchangeName: {is: "Pancake ${routerVersion}"}
+          exchangeName: {is: "${exchangeName}"}
           baseCurrency: {is: "${input}"}
-          quoteCurrency: {is: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"}
+          quoteCurrency: {is: "${quoteAddress}"}
         ) {
           exchange {
             name
@@ -255,7 +236,7 @@ async function getChartData(input: any, pair: any, resolution: any, routerVersio
 
   dexTrades = dexTrades.reverse()
 
-  const bnbPrice = await getBNBPrice()
+  const bnbPrice = chainId === 56 ? await getBNBPrice() : await getETHPrice()
 
   return new Promise((resolve, reject) => {
     try {

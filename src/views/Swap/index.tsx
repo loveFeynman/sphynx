@@ -74,12 +74,15 @@ import Web3 from 'web3'
 import ERC20ABI from 'assets/abis/erc20.json'
 import { getPancakePairAddress, getPancakePairAddressV1, getSphynxPairAddress } from 'state/info/ws/priceData'
 import * as ethers from 'ethers'
-import { getBNBPrice } from 'utils/priceProvider'
-import { simpleRpcProvider } from 'utils/providers'
+import { getBNBPrice, getETHPrice } from 'utils/priceProvider'
+import { simpleRpcProvider, simpleRpcETHProvider } from 'utils/providers'
 import { UNSET_PRICE } from 'config/constants/info'
 import storages from 'config/constants/storages'
-const wBNBAddr = '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c'
-const sphynxAddr = '0x2e121Ed64EEEB58788dDb204627cCB7C7c59884c'
+const wrappedAddr = {
+  56: '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
+  1: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
+}
+const sphynxAddr = { 56: '0x2e121Ed64EEEB58788dDb204627cCB7C7c59884c', 1: '0x1f9840a85d5af5bf1d1762f925bdaddc4201f984' }
 let tokenDecimal = 18
 
 const abi: any = ERC20ABI
@@ -184,7 +187,9 @@ export default function Swap({ history }: RouteComponentProps) {
   const isMobile = !isXl
   const [symbol, setSymbol] = useState('')
 
-  if (tokenAddress === '' || tokenAddress.toLowerCase() === sphynxAddr.toLowerCase()) {
+  const { account, chainId } = useActiveWeb3React()
+
+  if ((tokenAddress === '' || tokenAddress.toLowerCase() === sphynxAddr[chainId].toLowerCase()) && chainId == 56) {
     if (routerVersion !== 'sphynx') {
       dispatch(typeRouterVersion({ routerVersion: 'sphynx' }))
     }
@@ -199,77 +204,21 @@ export default function Swap({ history }: RouteComponentProps) {
   loadingRef.current = isLoading
   busyRef.current = isBusy
   let input = tokenAddress
-  if (input === '-' || input === '') input = sphynxAddr
+  if (input === '-' || input === '') input = sphynxAddr[chainId]
   const contract: any = new web3.eth.Contract(abi, input)
 
   const getDataQuery = useCallback(
     (pairAddress: any) => {
-      if (pairAddress === '0xc522ce70f8aeb1205223659156d6c398743e3e7a') {
-        return `
+      const network = chainId === 1 ? 'ethereum' : 'bsc'
+      return `
     {
-    ethereum(network: bsc) {
-        dexTrades(
-        options: {desc: ["block.height", "tradeIndex"], limit: 30, offset: 0}
-        date: {till: null}
-        smartContractAddress: {in: ["0xE4023ee4d957A5391007aE698B3A730B2dc2ba67", "${pairAddress}"]}
-        baseCurrency: {is: "${input}"}
-        quoteCurrency:{is : "${wBNBAddr}"}
-        ) {
-        block {
-          timestamp {
-          time(format: "%Y-%m-%d %H:%M:%S")
-          }
-          height
-        }
-        tradeIndex
-        protocol
-        exchange {
-          fullName
-        }
-        smartContract {
-          address {
-          address
-          annotation
-          }
-        }
-        baseAmount
-        baseCurrency {
-          address
-          symbol
-        }
-        quoteAmount
-        quoteCurrency {
-          address
-          symbol
-        }
-        transaction {
-          hash
-        }
-        buyCurrency {
-          symbol
-          address
-          name
-        }
-        sellCurrency {
-          symbol
-          address
-          name
-          }
-        price
-        quotePrice
-        }
-      }
-    }`
-      } else {
-        return `
-    {
-    ethereum(network: bsc) {
+    ethereum(network: ${network}) {
         dexTrades(
         options: {desc: ["block.height", "tradeIndex"], limit: 30, offset: 0}
         date: {till: null}
         smartContractAddress: {is: "${pairAddress}"}
         baseCurrency: {is: "${input}"}
-        quoteCurrency:{is : "${wBNBAddr}"}
+        quoteCurrency:{is : "${wrappedAddr[chainId]}"}
         ) {
         block {
           timestamp {
@@ -316,9 +265,8 @@ export default function Swap({ history }: RouteComponentProps) {
         }
       }
     }`
-      }
     },
-    [input],
+    [input, chainId],
   )
 
   const parseData: any = async (events: any, blockNumber: any) => {
@@ -326,7 +274,7 @@ export default function Swap({ history }: RouteComponentProps) {
 
     let newTransactions = stateRef.current
     return new Promise(async (resolve) => {
-      const price = await getBNBPrice()
+      const price = chainId === 56 ? getBNBPrice() : getETHPrice()
       let curPrice = UNSET_PRICE
       let curAmount = 0
 
@@ -371,25 +319,25 @@ export default function Swap({ history }: RouteComponentProps) {
 
             let tokenAmt, BNBAmt, isBuy
 
-            if (input < wBNBAddr) {
+            if (input < wrappedAddr[chainId]) {
               tokenAmt = Math.abs(
                 parseFloat(ethers.utils.formatUnits(datas.amount0In + '', tokenDecimal)) -
-                parseFloat(ethers.utils.formatUnits(datas.amount0Out + '', tokenDecimal)),
+                  parseFloat(ethers.utils.formatUnits(datas.amount0Out + '', tokenDecimal)),
               )
 
               isBuy = datas.amount1In === '0'
               BNBAmt = Math.abs(
                 parseFloat(ethers.utils.formatUnits(datas.amount1In + '', 18)) -
-                parseFloat(ethers.utils.formatUnits(datas.amount1Out + '', 18)),
+                  parseFloat(ethers.utils.formatUnits(datas.amount1Out + '', 18)),
               )
             } else {
               BNBAmt = Math.abs(
                 parseFloat(ethers.utils.formatUnits(datas.amount0In + '', 18)) -
-                parseFloat(ethers.utils.formatUnits(datas.amount0Out + '', 18)),
+                  parseFloat(ethers.utils.formatUnits(datas.amount0Out + '', 18)),
               )
               tokenAmt = Math.abs(
                 parseFloat(ethers.utils.formatUnits(datas.amount1In + '', tokenDecimal)) -
-                parseFloat(ethers.utils.formatUnits(datas.amount1Out + '', tokenDecimal)),
+                  parseFloat(ethers.utils.formatUnits(datas.amount1Out + '', tokenDecimal)),
               )
               isBuy = datas.amount0In === '0'
             }
@@ -400,7 +348,8 @@ export default function Swap({ history }: RouteComponentProps) {
             oneData.price = (BNBAmt / tokenAmt) * price
             const estimatedDateValue = new Date(new Date().getTime() - (blockNumber - event.blockNumber) * 3000)
             oneData.transactionTime = formatTimeString(
-              `${estimatedDateValue.getUTCFullYear()}-${estimatedDateValue.getUTCMonth() + 1
+              `${estimatedDateValue.getUTCFullYear()}-${
+                estimatedDateValue.getUTCMonth() + 1
               }-${estimatedDateValue.getDate()} ${estimatedDateValue.getUTCHours()}:${estimatedDateValue.getUTCMinutes()}:${estimatedDateValue.getUTCSeconds()}`,
             )
 
@@ -502,15 +451,22 @@ export default function Swap({ history }: RouteComponentProps) {
       try {
         let pairs = []
         if (routerVersion !== 'sphynx') {
-          let wBNBPair = await getPancakePairAddress(input, wBNBAddr, simpleRpcProvider)
-          if (wBNBPair !== null) pairs.push(wBNBPair.toLowerCase())
-          let wBNBPairV1 = await getPancakePairAddressV1(input, wBNBAddr, simpleRpcProvider)
-          if (wBNBPairV1 !== null) pairs.push(wBNBPairV1.toLowerCase())
+          if (chainId === 56) {
+            let wBNBPair = await getPancakePairAddress(input, wrappedAddr[chainId], simpleRpcProvider, chainId)
+            if (wBNBPair !== null) pairs.push(wBNBPair.toLowerCase())
+            let wBNBPairV1 = await getPancakePairAddressV1(input, wrappedAddr[chainId], simpleRpcProvider)
+            if (wBNBPairV1 !== null) pairs.push(wBNBPairV1.toLowerCase())
+          }
+
+          if (chainId === 1) {
+            let wBNBPair = await getPancakePairAddress(input, wrappedAddr[chainId], simpleRpcETHProvider, chainId)
+            if (wBNBPair !== null) pairs.push(wBNBPair.toLowerCase())
+          }
         }
-        let wBNBPairSphynx = await getSphynxPairAddress(input, wBNBAddr, simpleRpcProvider)
+        let wBNBPairSphynx = await getSphynxPairAddress(input, wrappedAddr[chainId], simpleRpcProvider)
         if (wBNBPairSphynx !== null) pairs.push(wBNBPairSphynx.toLowerCase())
         setPairs(pairs)
-        const bnbPrice = await getBNBPrice()
+        const bnbPrice = chainId === 56 ? await getBNBPrice() : await getETHPrice()
         // pull historical data
         const queryResult = await axios.post(BITQUERY_API, { query: getDataQuery(pairs[0]) }, config)
         if (queryResult.data.data && queryResult.data.data.ethereum.dexTrades) {
@@ -606,8 +562,6 @@ export default function Swap({ history }: RouteComponentProps) {
       return !(token.address in defaultTokens)
     })
 
-  const { account } = useActiveWeb3React()
-
   // for expert mode
   const [isExpertMode] = useExpertModeManager()
 
@@ -630,13 +584,13 @@ export default function Swap({ history }: RouteComponentProps) {
 
   const parsedAmounts = showWrap
     ? {
-      [Field.INPUT]: parsedAmount,
-      [Field.OUTPUT]: parsedAmount,
-    }
+        [Field.INPUT]: parsedAmount,
+        [Field.OUTPUT]: parsedAmount,
+      }
     : {
-      [Field.INPUT]: independentField === Field.INPUT ? parsedAmount : trade?.inputAmount,
-      [Field.OUTPUT]: independentField === Field.OUTPUT ? parsedAmount : trade?.outputAmount,
-    }
+        [Field.INPUT]: independentField === Field.INPUT ? parsedAmount : trade?.inputAmount,
+        [Field.OUTPUT]: independentField === Field.OUTPUT ? parsedAmount : trade?.outputAmount,
+      }
 
   const { onSwitchTokens, onCurrencySelection, onUserInput, onChangeRecipient } = useSwapActionHandlers()
   const isValid = !swapInputError
@@ -686,7 +640,7 @@ export default function Swap({ history }: RouteComponentProps) {
       tokenAddress === null ||
       tokenAddress === '' ||
       tokenAddress === undefined ||
-      tokenAddress.toLowerCase() === sphynxAddr.toLowerCase()
+      tokenAddress.toLowerCase() === sphynxAddr[chainId].toLowerCase()
     ) {
       if (swapRouter !== SwapRouter.SPHYNX_SWAP) {
         setSwapRouter(SwapRouter.SPHYNX_SWAP)
@@ -1124,8 +1078,8 @@ export default function Swap({ history }: RouteComponentProps) {
                         {priceImpactSeverity > 3 && !isExpertMode
                           ? t('Price Impact High')
                           : priceImpactSeverity > 2
-                            ? t('Swap Anyway')
-                            : t('Swap')}
+                          ? t('Swap Anyway')
+                          : t('Swap')}
                       </Button>
                     </RowBetween>
                   ) : (
@@ -1140,8 +1094,8 @@ export default function Swap({ history }: RouteComponentProps) {
                         (priceImpactSeverity > 3 && !isExpertMode
                           ? `Price Impact Too High`
                           : priceImpactSeverity > 2
-                            ? t('Swap Anyway')
-                            : t('Swap'))}
+                          ? t('Swap Anyway')
+                          : t('Swap'))}
                     </Button>
                   )}
                   {showApproveFlow && (
@@ -1178,8 +1132,8 @@ export default function Swap({ history }: RouteComponentProps) {
               style={{
                 alignSelf: 'center',
                 textAlign: 'center',
-                width: "100%",
-                marginTop: "25px"
+                width: '100%',
+                marginTop: '25px',
               }}
             >
               {swapTransCard === 'tokenDX' && (

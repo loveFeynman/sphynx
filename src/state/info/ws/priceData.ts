@@ -39,17 +39,31 @@ export const getSphynxPairAddress = async (quoteToken, baseToken, provider) => {
   return pairAddress
 }
 
-export const getPancakePairAddress = async (quoteToken, baseToken, provider) => {
-  const pancakeFactoryContract = new Contract(PANCAKE_FACTORY_ADDRESS, pancakeFactoryAbi, provider)
-  const pairAddress = await pancakeFactoryContract.getPair(quoteToken, baseToken)
-  if (pairAddress === ZERO_ADDRESS) {
-    return null
+export const getPancakePairAddress = async (quoteToken, baseToken, provider, chainId) => {
+  if (chainId === 56) {
+    const pancakeFactoryContract = new Contract(PANCAKE_FACTORY_ADDRESS, pancakeFactoryAbi, provider)
+    const pairAddress = await pancakeFactoryContract.getPair(quoteToken, baseToken)
+    if (pairAddress === ZERO_ADDRESS) {
+      return null
+    }
+    return pairAddress
   }
-  return pairAddress
+
+  if (chainId === 1) {
+    const UNISWAP_FACTORY_ADDRESS = '0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f'
+    const uniswapFactoryContract = new Contract(UNISWAP_FACTORY_ADDRESS, pancakeFactoryAbi, provider)
+    const pairAddress = await uniswapFactoryContract.getPair(quoteToken, baseToken)
+    if (pairAddress === ZERO_ADDRESS) {
+      return null
+    }
+    return pairAddress
+  }
+
+  return null
 }
 
 export const getPancakePairAddressV1 = async (quoteToken, baseToken, provider) => {
-  const pancakeFactoryContract = new Contract("0xbcfccbde45ce874adcb698cc183debcf17952812", pancakeFactoryAbi, provider)
+  const pancakeFactoryContract = new Contract('0xbcfccbde45ce874adcb698cc183debcf17952812', pancakeFactoryAbi, provider)
   const pairAddress = await pancakeFactoryContract.getPair(quoteToken, baseToken)
   if (pairAddress === ZERO_ADDRESS) {
     return null
