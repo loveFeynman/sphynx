@@ -1,8 +1,10 @@
-import { Currency, CurrencyAmount, ETHER, JSBI, Token, TokenAmount } from '@sphynxswap/sdk'
+import { Currency, CurrencyAmount, ETHER, JSBI, Token, TokenAmount, ChainId } from '@sphynxswap/sdk'
 import { useMemo } from 'react'
+import { useSelector } from 'react-redux'
+import { AppState } from 'state'
 import { useWeb3React } from '@web3-react/core'
 import ERC20_INTERFACE from 'config/abi/erc20'
-import { useAllTokens } from 'hooks/Tokens'
+import { useAllTokens, useAllUniTokens } from 'hooks/Tokens'
 import { useMulticallContract } from 'hooks/useContract'
 import { isAddress } from 'utils'
 import { useSingleContractMultipleData, useMultipleContractSingleData } from '../multicall/hooks'
@@ -126,7 +128,14 @@ export function useCurrencyBalance(account?: string, currency?: Currency): Curre
 // mimics useAllBalances
 export function useAllTokenBalances(): { [tokenAddress: string]: TokenAmount | undefined } {
   const { account } = useWeb3React()
-  const allTokens = useAllTokens()
+  const connectedNetworkID = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.connectedNetworkID)
+
+  let allTokens = useAllTokens();
+  const uniTokens = useAllUniTokens()
+  if (connectedNetworkID !== ChainId.MAINNET) {
+    allTokens = uniTokens;
+  }
+
   const allTokensArray = useMemo(() => Object.values(allTokens ?? {}), [allTokens])
   const balances = useTokenBalances(account ?? undefined, allTokensArray)
   return balances ?? {}

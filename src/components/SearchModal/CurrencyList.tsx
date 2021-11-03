@@ -8,7 +8,9 @@ import { LightGreyCard } from 'components/Card'
 import QuestionHelper from 'components/QuestionHelper'
 import { useTranslation } from 'contexts/Localization'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
-import { useCombinedActiveList } from '../../state/lists/hooks'
+import { useSelector } from 'react-redux'
+import { AppState } from 'state'
+import { UniChainId, useCombinedActiveList } from '../../state/lists/hooks'
 import { useCurrencyBalance } from '../../state/wallet/hooks'
 import { useIsUserAddedToken, useAllInactiveTokens } from '../../hooks/Tokens'
 import Column from '../Layout/Column'
@@ -121,19 +123,31 @@ export default function CurrencyList({
   setImportToken: (token: Token) => void
   breakIndex: number | undefined
 }) {
+  const connectedNetworkID = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.connectedNetworkID)
+
   const sphynxIndex = currencies.findIndex(currency => currency.symbol === 'SPHYNX')
   if(sphynxIndex !== -1) {
     const token = currencies[sphynxIndex]
     currencies.splice(sphynxIndex, 1);
     currencies.unshift(token)
   }
+
+  if ( connectedNetworkID === UniChainId.MAINNET ) {
+    const ethIndex = currencies.findIndex(currency => currency.symbol === 'ETH')
+    if(ethIndex !== -1) {
+      const token = currencies[ethIndex]
+      currencies.splice(ethIndex, 1);
+      currencies.unshift(token)
+    }
+  }
+
   const itemData: (Currency | undefined)[] = useMemo(() => {
-    let formatted: (Currency | undefined)[] = showETH ? [Currency.ETHER, ...currencies] : currencies
+    let formatted: (Currency | undefined)[] = showETH && connectedNetworkID !== UniChainId.MAINNET ? [Currency.ETHER, ...currencies] : currencies
     if (breakIndex !== undefined) {
       formatted = [...formatted.slice(0, breakIndex), undefined, ...formatted.slice(breakIndex, formatted.length)]
     }
     return formatted
-  }, [breakIndex, currencies, showETH])
+  }, [breakIndex, currencies, showETH, connectedNetworkID])
 
   const { chainId } = useActiveWeb3React()
 
