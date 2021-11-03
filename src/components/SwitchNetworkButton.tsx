@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { Button, Text, Flex, useModal } from '@sphynxswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 import { ChainId } from '@sphynxswap/sdk'
@@ -11,14 +11,24 @@ import NetworkSwitchModal from './NetworkSwitchModal/NetworkSwitchModal'
 const SwitchNetworkButton = (props) => {
   const { t } = useTranslation()
   const dispatch = useDispatch()
+  const ref = useRef(null);
   
   getNetworkID().then((networkID: string) => {
     dispatch(setConnectedNetworkID({ connectedNetworkID: Number(networkID) }));
   })
   
   const connectedNetworkID = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.connectedNetworkID)
-
   const disableNetworkSelect = false
+
+  useEffect(() => {
+    if( connectedNetworkID === ChainId.MAINNET ) {
+      ref.current.src = '/images/net/bsc.png'
+    }
+    else {
+      ref.current.src = '/images/net/ethereum.png'
+    }
+  }, [connectedNetworkID])
+
   const [onPresentNetworkModal] = useModal(
     <NetworkSwitchModal />
   )
@@ -33,7 +43,8 @@ const SwitchNetworkButton = (props) => {
     <Button onClick={handleSelectNetworkModal} {...props} variant="tertiary">
       <Flex alignItems="center">
         <img
-          src={`/images/net/${connectedNetworkID === ChainId.MAINNET ? "bsc" : "ethereum"}.png`}
+          ref={ref}
+          src="/images/net/bsc.png"
           style={{ width: '28px', height: '28px', borderRadius: '0.375rem' }}
           alt="network" />
         <Text color="white" bold ml={3} textAlign="center">

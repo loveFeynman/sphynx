@@ -1,0 +1,7 @@
+const addresses = {
+    ZERO_ADDRESS: "0x0000000000000000000000000000000000000000",
+    WBNB_ADDRESS: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c",
+    WETH_ADDRESS: "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+}
+
+export default addresses
