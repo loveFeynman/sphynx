@@ -1,1 +1,0 @@
-(this["webpackJsonppancake-frontend"]=this["webpackJsonppancake-frontend"]||[]).push([[12],{1715:function(n,e,t){"use strict";t.r(e);var c,a=t(9),i=(t(0),t(4)),p=t(1),r=i.default.div(c||(c=Object(a.a)(["\n  min-height: calc(100vh - 64px);\n"])));e.default=function(){return Object(p.jsx)(r,{children:"FAQ"})}}}]);

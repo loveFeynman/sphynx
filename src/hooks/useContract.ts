@@ -29,6 +29,7 @@ import {
 // Imports below migrated from Exchange useContract.ts
 import { Contract } from '@ethersproject/contracts'
 import { ChainId, WETH, RouterType } from '@sphynxswap/sdk'
+import { WETH as uniWETH } from "@uniswap/sdk"
 import { abi as ISphynxPair } from '@sphynxswap/swap-core/build/ISphynxPair.json'
 import ENS_PUBLIC_RESOLVER_ABI from '../config/abi/ens-public-resolver.json'
 import ENS_ABI from '../config/abi/ens-registrar.json'
@@ -207,6 +208,8 @@ export function useTokenContract(tokenAddress?: string, withSignerIfPossible?: b
 
 export function useWETHContract(withSignerIfPossible?: boolean): Contract | null {
   const { chainId } = useActiveWeb3React()
+  const wrappedCurrency = WETH
+  wrappedCurrency[1] = uniWETH[1]
   return useContract(chainId && WETH[chainId] ? WETH[chainId].address : undefined, WETH_ABI, withSignerIfPossible)
 }
 
