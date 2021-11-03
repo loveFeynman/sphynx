@@ -1,5 +1,6 @@
 import React, { CSSProperties, MutableRefObject, useCallback, useMemo } from 'react'
 import { Currency, CurrencyAmount, currencyEquals, ETHER, Token } from '@sphynxswap/sdk'
+import { ETHER as uniEther } from '@uniswap/sdk'
 import { Text } from '@sphynxswap/uikit'
 import styled from 'styled-components'
 import { FixedSizeList } from 'react-window'
@@ -132,17 +133,9 @@ export default function CurrencyList({
     currencies.unshift(token)
   }
 
-  if ( connectedNetworkID === UniChainId.MAINNET ) {
-    const ethIndex = currencies.findIndex(currency => currency.symbol === 'ETH')
-    if(ethIndex !== -1) {
-      const token = currencies[ethIndex]
-      currencies.splice(ethIndex, 1);
-      currencies.unshift(token)
-    }
-  }
-
   const itemData: (Currency | undefined)[] = useMemo(() => {
-    let formatted: (Currency | undefined)[] = showETH && connectedNetworkID !== UniChainId.MAINNET ? [Currency.ETHER, ...currencies] : currencies
+    const nativeToken = connectedNetworkID === UniChainId.MAINNET ? uniEther : Currency.ETHER
+    let formatted: (Currency | undefined)[] = showETH ? [nativeToken, ...currencies] : currencies
     if (breakIndex !== undefined) {
       formatted = [...formatted.slice(0, breakIndex), undefined, ...formatted.slice(breakIndex, formatted.length)]
     }

@@ -1,6 +1,7 @@
 /* eslint-disable no-param-reassign */
 import { parseBytes32String } from '@ethersproject/strings'
 import { Currency, ETHER, Token, currencyEquals, ChainId } from '@sphynxswap/sdk'
+import { ETHER as uniETHER } from '@uniswap/sdk'
 import { useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import { arrayify } from 'ethers/lib/utils'
@@ -267,6 +268,7 @@ export function useToken(tokenAddress?: string): Token | undefined | null {
 
 export function useCurrency(currencyId: string | undefined): Currency | null | undefined {
   const isBNB = currencyId?.toUpperCase() === 'BNB'
-  const token = useToken(isBNB ? undefined : currencyId)
-  return isBNB ? ETHER : token
+  const isETH = currencyId?.toUpperCase() === 'ETH'
+  const token = useToken(isBNB || isETH ? undefined : currencyId)
+  return isBNB ? ETHER : isETH ? uniETHER : token
 }

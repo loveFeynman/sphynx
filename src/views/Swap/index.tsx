@@ -95,6 +95,8 @@ let config = {
 
 const providerURL = 'https://speedy-nodes-nyc.moralis.io/fbb4b2b82993bf507eaaab13/bsc/mainnet/archive'
 const web3 = new Web3(new Web3.providers.HttpProvider(providerURL))
+const providerURLETH = 'https://speedy-nodes-nyc.moralis.io/fbb4b2b82993bf507eaaab13/eth/mainnet/archive'
+const web3ETH = new Web3(new Web3.providers.HttpProvider(providerURLETH))
 
 const ArrowContainer = styled(ArrowWrapper)`
   width: 32px;
@@ -205,7 +207,7 @@ export default function Swap({ history }: RouteComponentProps) {
   busyRef.current = isBusy
   let input = tokenAddress
   if (input === '-' || input === '') input = sphynxAddr[chainId]
-  const contract: any = new web3.eth.Contract(abi, input)
+  const contract: any = chainId === 56 ? new web3.eth.Contract(abi, input) : new web3ETH.eth.Contract(abi, input)
 
   const getDataQuery = useCallback(
     (pairAddress: any) => {
@@ -274,7 +276,7 @@ export default function Swap({ history }: RouteComponentProps) {
 
     let newTransactions = stateRef.current
     return new Promise(async (resolve) => {
-      const price = chainId === 56 ? getBNBPrice() : getETHPrice()
+      const price = chainId === 56 ? await getBNBPrice() : await getETHPrice()
       let curPrice = UNSET_PRICE
       let curAmount = 0
 
@@ -374,7 +376,8 @@ export default function Swap({ history }: RouteComponentProps) {
   const getTransactions = async (blockNumber) => {
     let cachedBlockNumber = blockNumber
     try {
-      web3.eth
+      const currentWeb3 = chainId === 56 ? web3 : web3ETH
+      currentWeb3.eth
         .getPastLogs({
           fromBlock: blockNumber,
           toBlock: 'latest',
@@ -400,7 +403,8 @@ export default function Swap({ history }: RouteComponentProps) {
 
   const startRealTimeData = (blockNumber) => {
     if (blockNumber === null) {
-      web3.eth.getBlockNumber().then((blockNumber) => {
+      const currentWeb3 = chainId === 56 ? web3 : web3ETH
+      currentWeb3.eth.getBlockNumber().then((blockNumber) => {
         setCurrentBlock(blockNumber)
         setBlockFlag(!blockFlag)
       })
@@ -522,23 +526,23 @@ export default function Swap({ history }: RouteComponentProps) {
     }
   }, [dispatch, tokenAddress])
 
-  const getTokenData = async (tokenAddress) => {
+  const getTokenData = async (tokenAddress, chainId) => {
     try {
-      axios.post(`${process.env.REACT_APP_BACKEND_API_URL}/tokenStats`, { address: tokenAddress }).then((response) => {
+      axios.post(`${process.env.REACT_APP_BACKEND_API_URL}/tokenStats`, { address: tokenAddress, chainId }).then((response) => {
         setTokenData(response.data)
         dispatch(marketCap({ marketCapacity: parseFloat(response.data.marketCap) }))
       })
     } catch (err) {
       // eslint-disable-next-line no-console
       console.log(err)
-      setTimeout(() => getTokenData(tokenAddress), 3000)
+      setTimeout(() => getTokenData(tokenAddress, chainId), 3000)
     }
   }
 
   React.useEffect(() => {
     sessionStorage.removeItem(storages.SESSION_LIVE_PRICE)
-    getTokenData(input)
-  }, [pairs])
+    getTokenData(input, chainId)
+  }, [pairs, chainId])
 
   const loadedUrlParams = useDefaultsFromURLSearch()
 
@@ -653,8 +657,8 @@ export default function Swap({ history }: RouteComponentProps) {
       }
       dispatch(
         replaceSwapState({
-          outputCurrencyId: 'BNB',
-          inputCurrencyId: '0x2e121Ed64EEEB58788dDb204627cCB7C7c59884c',
+          outputCurrencyId: chainId === 56 ? 'BNB' : 'ETH',
+          inputCurrencyId: sphynxAddr[chainId],
           typedValue: '',
           field: Field.OUTPUT,
           recipient: null,
@@ -667,7 +671,7 @@ export default function Swap({ history }: RouteComponentProps) {
       }
       dispatch(
         replaceSwapState({
-          outputCurrencyId: 'BNB',
+          outputCurrencyId: chainId === 56 ? 'BNB' : 'ETH',
           inputCurrencyId: tokenAddress,
           typedValue: '',
           field: Field.OUTPUT,
@@ -675,7 +679,7 @@ export default function Swap({ history }: RouteComponentProps) {
         }),
       )
     }
-  }, [dispatch, tokenAddress])
+  }, [dispatch, tokenAddress, chainId])
 
   // check whether the user has approved the router on the input token
   const [approval, approveCallback] = useApproveCallbackFromTrade(trade, allowedSlippage)
@@ -786,6 +790,7 @@ export default function Swap({ history }: RouteComponentProps) {
 
   const handleOutputSelect = useCallback(
     (outputCurrency) => {
+      console.log("outputCurrency", outputCurrency)
       onCurrencySelection(Field.OUTPUT, outputCurrency)
       const showSwapWarning = shouldShowSwapWarning(outputCurrency)
       if (showSwapWarning) {
@@ -1120,7 +1125,7 @@ export default function Swap({ history }: RouteComponentProps) {
           </Card>
           <AdvancedSwapDetailsDropdown trade={trade} />
           <TokenInfoWrapper>
-            <TokenInfo tokenData={tokenData} />
+            <TokenInfo tokenData={tokenData} token={input} />
           </TokenInfoWrapper>
         </div>
         <div>
@@ -1131,7 +1136,7 @@ export default function Swap({ history }: RouteComponentProps) {
               amount={tokenAmount}
               price={tokenPrice}
             />
-            <CoinStatsBoard tokenData={tokenData} />
+            <CoinStatsBoard tokenData={tokenData} token={input} />
             <ChartContainer tokenAddress={input} />
             <div
               style={{

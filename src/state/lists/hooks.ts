@@ -299,6 +299,7 @@ export function useInactiveListUrls(): string[] {
 export function useInactiveUniListUrls(): string[] {
   const lists = useUniAllLists()
   const allActiveListUrls = useActiveUniListUrls()
+  if (lists === null || lists === undefined) return []
   return Object.keys(lists).filter((url) => !allActiveListUrls?.includes(url) && !UNSUPPORTED_UNI_LIST_URLS.includes(url))
 }
 

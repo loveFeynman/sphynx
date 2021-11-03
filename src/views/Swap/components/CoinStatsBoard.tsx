@@ -10,6 +10,7 @@ import { marketCap } from 'state/input/actions'
 import DefaultImg from 'assets/images/MainLogo.png'
 import storages from 'config/constants/storages'
 import { getChartStats } from 'utils/apiServices'
+import useActiveWeb3React from '../../../hooks/useActiveWeb3React'
 import { AppState } from '../../../state'
 
 const IconWrapper = styled.div<{ size?: number }>`
@@ -94,7 +95,9 @@ const StyledWrapper = styled.div`
 
 export default function CoinStatsBoard(props) {
   const dispatch = useDispatch()
-  const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
+  const { token } = props
+  const input = token
+  const { chainId } = useActiveWeb3React()
   const routerVersion = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.routerVersion)
   const marketCapacity = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.marketCapacity)
   const result = isAddress(input)
@@ -124,10 +127,12 @@ export default function CoinStatsBoard(props) {
   const liquidityV2decimal = parseFloat(alldata.liquidityV2).toFixed(3)
   const liquidityV2BNBdecimal = parseFloat(alldata.liquidityV2BNB).toFixed(3)
 
+  const nativeSymbol = chainId === 56 ? "BNB" : "ETH"
+
   const getTableData = useCallback(async () => {
     try {
       if (result) {
-        const chartStats: any = await getChartStats(input, routerVersion)
+        const chartStats: any = await getChartStats(input, routerVersion, chainId)
         setalldata(chartStats)
         setPrice(chartStats.price)
         setLinkIcon(
@@ -139,7 +144,7 @@ export default function CoinStatsBoard(props) {
     } catch (err) {
       setTimeout(() => getTableData(), 3000)
     }
-  }, [input, result, routerVersion])
+  }, [input, result, routerVersion, chainId])
 
   useEffect(() => {
     const ac = new AbortController()
@@ -206,7 +211,7 @@ export default function CoinStatsBoard(props) {
         <Column style={{ margin: '0 0 8px 0' }}>
           <Text>{t('Liquidity')}</Text>
           <Text>
-            {Number(liquidityV2BNBdecimal).toLocaleString()} BNB
+            {Number(liquidityV2BNBdecimal).toLocaleString()} {nativeSymbol}
             <span className="success"> (${Number(liquidityV2decimal).toLocaleString()})</span>
           </Text>
         </Column>
