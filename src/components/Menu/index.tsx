@@ -398,8 +398,8 @@ const Menu = () => {
           balances = balances.filter((balance) => balance.value !== 0)
           const promises = balances.map((elem) => {
             let address = elem.currency.address
-            if ( address === '-') {
-              switch( chainId ) {
+            if (address === '-') {
+              switch (chainId) {
                 case chainIds.BNB_CHAIN_ID:
                   address = addresses.WBNB_ADDRESS
                   break
@@ -421,7 +421,7 @@ const Menu = () => {
             const result = isAddress(elem.currency.address)
             if (result) {
               let contract
-              switch( chainId ) {
+              switch (chainId) {
                 case chainIds.BNB_CHAIN_ID:
                   contract = new bnbWeb3.eth.Contract(abiBNB, elem.currency.address)
                   break
@@ -509,13 +509,27 @@ const Menu = () => {
       for (const elem of balances) {
         const result = isAddress(elem.currency.address)
         if (result) {
-          const contract = new bnbWeb3.eth.Contract(abiBNB, elem.currency.address)
+          let contract
+          switch (chainId) {
+            case chainIds.BNB_CHAIN_ID:
+              contract = new bnbWeb3.eth.Contract(abiBNB, elem.currency.address)
+              break
+            case chainIds.ETH_CHAIN_ID:
+              contract = new ethWeb3.eth.Contract(abiETH, elem.currency.address)
+              break
+            default:
+              contract = new bnbWeb3.eth.Contract(abiBNB, elem.currency.address)
+          }
           const tokenBalance = await contract.methods.balanceOf(account).call()
           elem.value = tokenBalance / Math.pow(10, elem.currency.decimals)
         }
         else if (elem.currency.symbol === 'BNB') {
           const bnbBalance = await bnbWeb3.eth.getBalance(account)
           elem.value = bnbWeb3.utils.fromWei(bnbBalance)
+        }
+        else if (elem.currency.symbol === 'ETH') {
+          const ethBalance = await ethWeb3.eth.getBalance(account)
+          elem.value = ethWeb3.utils.fromWei(ethBalance)
         }
 
         if (sessionData && elem.currency.address === sessionData.input) {

@@ -374,22 +374,22 @@ export default function Swap({ history }: RouteComponentProps) {
             if (input < wBNBAddr) {
               tokenAmt = Math.abs(
                 parseFloat(ethers.utils.formatUnits(datas.amount0In + '', tokenDecimal)) -
-                  parseFloat(ethers.utils.formatUnits(datas.amount0Out + '', tokenDecimal)),
+                parseFloat(ethers.utils.formatUnits(datas.amount0Out + '', tokenDecimal)),
               )
 
               isBuy = datas.amount1In === '0'
               BNBAmt = Math.abs(
                 parseFloat(ethers.utils.formatUnits(datas.amount1In + '', 18)) -
-                  parseFloat(ethers.utils.formatUnits(datas.amount1Out + '', 18)),
+                parseFloat(ethers.utils.formatUnits(datas.amount1Out + '', 18)),
               )
             } else {
               BNBAmt = Math.abs(
                 parseFloat(ethers.utils.formatUnits(datas.amount0In + '', 18)) -
-                  parseFloat(ethers.utils.formatUnits(datas.amount0Out + '', 18)),
+                parseFloat(ethers.utils.formatUnits(datas.amount0Out + '', 18)),
               )
               tokenAmt = Math.abs(
                 parseFloat(ethers.utils.formatUnits(datas.amount1In + '', tokenDecimal)) -
-                  parseFloat(ethers.utils.formatUnits(datas.amount1Out + '', tokenDecimal)),
+                parseFloat(ethers.utils.formatUnits(datas.amount1Out + '', tokenDecimal)),
               )
               isBuy = datas.amount0In === '0'
             }
@@ -400,8 +400,7 @@ export default function Swap({ history }: RouteComponentProps) {
             oneData.price = (BNBAmt / tokenAmt) * price
             const estimatedDateValue = new Date(new Date().getTime() - (blockNumber - event.blockNumber) * 3000)
             oneData.transactionTime = formatTimeString(
-              `${estimatedDateValue.getUTCFullYear()}-${
-                estimatedDateValue.getUTCMonth() + 1
+              `${estimatedDateValue.getUTCFullYear()}-${estimatedDateValue.getUTCMonth() + 1
               }-${estimatedDateValue.getDate()} ${estimatedDateValue.getUTCHours()}:${estimatedDateValue.getUTCMinutes()}:${estimatedDateValue.getUTCSeconds()}`,
             )
 
@@ -631,13 +630,13 @@ export default function Swap({ history }: RouteComponentProps) {
 
   const parsedAmounts = showWrap
     ? {
-        [Field.INPUT]: parsedAmount,
-        [Field.OUTPUT]: parsedAmount,
-      }
+      [Field.INPUT]: parsedAmount,
+      [Field.OUTPUT]: parsedAmount,
+    }
     : {
-        [Field.INPUT]: independentField === Field.INPUT ? parsedAmount : trade?.inputAmount,
-        [Field.OUTPUT]: independentField === Field.OUTPUT ? parsedAmount : trade?.outputAmount,
-      }
+      [Field.INPUT]: independentField === Field.INPUT ? parsedAmount : trade?.inputAmount,
+      [Field.OUTPUT]: independentField === Field.OUTPUT ? parsedAmount : trade?.outputAmount,
+    }
 
   const { onSwitchTokens, onCurrencySelection, onUserInput, onChangeRecipient } = useSwapActionHandlers()
   const isValid = !swapInputError
@@ -1120,8 +1119,8 @@ export default function Swap({ history }: RouteComponentProps) {
                         {priceImpactSeverity > 3 && !isExpertMode
                           ? t('Price Impact High')
                           : priceImpactSeverity > 2
-                          ? t('Swap Anyway')
-                          : t('Swap')}
+                            ? t('Swap Anyway')
+                            : t('Swap')}
                       </Button>
                     </RowBetween>
                   ) : (
@@ -1136,8 +1135,8 @@ export default function Swap({ history }: RouteComponentProps) {
                         (priceImpactSeverity > 3 && !isExpertMode
                           ? `Price Impact Too High`
                           : priceImpactSeverity > 2
-                          ? t('Swap Anyway')
-                          : t('Swap'))}
+                            ? t('Swap Anyway')
+                            : t('Swap'))}
                     </Button>
                   )}
                   {showApproveFlow && (
