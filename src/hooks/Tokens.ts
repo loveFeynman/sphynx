@@ -1,15 +1,21 @@
 /* eslint-disable no-param-reassign */
 import { parseBytes32String } from '@ethersproject/strings'
-import { Currency, ETHER, Token, currencyEquals } from '@sphynxswap/sdk'
+import { Currency, ETHER, Token, currencyEquals, ChainId } from '@sphynxswap/sdk'
 import { useMemo } from 'react'
+import { useSelector } from 'react-redux'
 import { arrayify } from 'ethers/lib/utils'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
+import { AppState } from 'state'
 import {
   TokenAddressMap,
   useDefaultTokenList,
   useUnsupportedTokenList,
   useCombinedActiveList,
   useCombinedInactiveList,
+  UniTokenAddressMap,
+  useCombinedUniActiveList,
+  useDefaultUniTokenList,
+  UniChainId,
 } from '../state/lists/hooks'
 
 import { NEVER_RELOAD, useSingleCallResult } from '../state/multicall/hooks'
@@ -56,9 +62,47 @@ function useTokensFromMap(tokenMap: TokenAddressMap, includeUserAdded: boolean):
   }, [chainId, userAddedTokens, tokenMap, includeUserAdded])
 }
 
+function useUniTokensFromMap(tokenMap: UniTokenAddressMap, includeUserAdded: boolean): { [address: string]: Token } {
+  // const { chainId } = useActiveWeb3React()
+  const chainId = UniChainId.MAINNET
+  const userAddedTokens = useUserAddedTokens()
+  return useMemo(() => {
+    if (!chainId) return {}
+
+    // reduce to just tokens
+    const mapWithoutUrls = Object.keys(tokenMap[chainId]).reduce<{ [address: string]: Token }>((newMap, address) => {
+      newMap[address] = tokenMap[chainId][address].token
+      return newMap
+    }, {})
+
+    if (includeUserAdded) {
+      return (
+        userAddedTokens
+          // reduce into all ALL_TOKENS filtered by the current chain
+          .reduce<{ [address: string]: Token }>(
+            (tokenMap_, token) => {
+              tokenMap_[token.address] = token
+              return tokenMap_
+            },
+            // must make a copy because reduce modifies the map, and we do not
+            // want to make a copy in every iteration
+            { ...mapWithoutUrls },
+          )
+      )
+    }
+
+    return mapWithoutUrls
+  }, [chainId, userAddedTokens, tokenMap, includeUserAdded])
+}
+
 export function useDefaultTokens(): { [address: string]: Token } {
   const defaultList = useDefaultTokenList()
   return useTokensFromMap(defaultList, false)
+}
+
+export function useDefaultUniTokens(): { [address: string]: Token } {
+  const defaultList = useDefaultUniTokenList()
+  return useUniTokensFromMap(defaultList, false)
 }
 
 export function useAllTokens(): { [address: string]: Token } {
@@ -66,13 +110,27 @@ export function useAllTokens(): { [address: string]: Token } {
   return useTokensFromMap(allTokens, true)
 }
 
+export function useAllUniTokens(): { [address: string]: Token } {
+  const allTokens = useCombinedUniActiveList()
+  return useUniTokensFromMap(allTokens, true)
+}
+
 export function useAllInactiveTokens(): { [address: string]: Token } {
+
+  const connectedNetworkID = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.connectedNetworkID)
+
   // get inactive tokens
   const inactiveTokensMap = useCombinedInactiveList()
   const inactiveTokens = useTokensFromMap(inactiveTokensMap, false)
 
   // filter out any token that are on active list
-  const activeTokensAddresses = Object.keys(useAllTokens())
+  let activeTokensAddresses = Object.keys(useAllTokens())
+
+  const activeUniTokensAddresses = Object.keys(useAllUniTokens())
+  if (connectedNetworkID !== ChainId.MAINNET) {
+    activeTokensAddresses = activeUniTokensAddresses
+  }
+
   const filteredInactive = activeTokensAddresses
     ? Object.keys(inactiveTokens).reduce<{ [address: string]: Token }>((newMap, address) => {
         if (!activeTokensAddresses.includes(address)) {
@@ -91,7 +149,14 @@ export function useUnsupportedTokens(): { [address: string]: Token } {
 }
 
 export function useIsTokenActive(token: Token | undefined | null): boolean {
-  const activeTokens = useAllTokens()
+
+  const connectedNetworkID = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.connectedNetworkID)
+  
+  let activeTokens = useAllTokens();
+  const uniTokens = useAllUniTokens()
+  if (connectedNetworkID !== ChainId.MAINNET) {
+    activeTokens = uniTokens;
+  }
 
   if (!activeTokens || !token) {
     return false
@@ -142,7 +207,13 @@ function parseStringOrBytes32(str: string | undefined, bytes32: string | undefin
 // otherwise returns the token
 export function useToken(tokenAddress?: string): Token | undefined | null {
   const { chainId } = useActiveWeb3React()
-  const tokens = useAllTokens()
+  const connectedNetworkID = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.connectedNetworkID)
+  
+  let tokens = useAllTokens();
+  const uniTokens = useAllUniTokens()
+  if (connectedNetworkID !== ChainId.MAINNET) {
+    tokens = uniTokens;
+  }
 
   const address = isAddress(tokenAddress)
 

@@ -6,7 +6,7 @@ import { AppState } from 'state'
 import { autoSwap } from 'state/flags/actions'
 import styled from 'styled-components'
 import { useLocation } from 'react-router'
-import { CurrencyAmount, JSBI, Token, Trade, RouterType } from '@sphynxswap/sdk'
+import { CurrencyAmount, JSBI, Token, Trade, RouterType, ChainId } from '@sphynxswap/sdk'
 import { Button, Text, ArrowDownIcon, Box, useModal, Flex } from '@sphynxswap/uikit'
 import { useIsTransactionUnsupported } from 'hooks/Trades'
 import { RouteComponentProps } from 'react-router-dom'
@@ -47,7 +47,7 @@ import LiquidityWidget from '../Pool/LiquidityWidget'
 import ChartContainer from './components/Chart'
 
 import useActiveWeb3React from '../../hooks/useActiveWeb3React'
-import { useAllTokens, useCurrency } from '../../hooks/Tokens'
+import { useAllTokens, useAllUniTokens, useCurrency } from '../../hooks/Tokens'
 import { ApprovalState, useApproveCallbackFromTrade } from '../../hooks/useApproveCallback'
 import { useSwapCallback } from '../../hooks/useSwapCallback'
 import useWrapCallback, { WrapType } from '../../hooks/useWrapCallback'
@@ -555,7 +555,12 @@ export default function Swap({ history }: RouteComponentProps) {
   )
 
   // dismiss warning if all imported tokens are in active lists
-  const defaultTokens = useAllTokens()
+  let defaultTokens = useAllTokens();
+  const uniTokens = useAllUniTokens()
+  if (connectedNetworkID !== ChainId.MAINNET) {
+    defaultTokens = uniTokens;
+  }
+
   const importTokensNotInDefault =
     urlLoadedTokens &&
     urlLoadedTokens.filter((token: Token) => {
