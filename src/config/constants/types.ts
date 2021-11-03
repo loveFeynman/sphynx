@@ -15,22 +15,31 @@ export interface Token {
 }
 
 export interface ToggleMenuItem {
+  chainID: number
   key: string
   value: string
 }
 
 export const RouterTypeToggle: ToggleMenuItem[] = [
   {
+    chainID: 0,
     key: "sphynx",
     value: 'SPHYNX DEX',
   },
   {
+    chainID: 56,
     key: 'v2',
     value: 'V2 PANCAKE',
   },
   {
+    chainID: 56,
     key: 'v1',
     value: 'V1 PANCAKE',
+  },
+  {
+    chainID: 1,
+    key: 'v2',
+    value: 'V2 UNI',
   },
 ]
 

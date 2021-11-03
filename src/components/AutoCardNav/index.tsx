@@ -75,7 +75,7 @@ const AutoNav = (props) => {
           setSwapRouter(SwapRouter.PANCAKE_SWAP)
         }}
       >
-        {t(Number(connectedNetworkID) === ChainId.MAINNET? 'PCV2': 'PCV2')}
+        {t(Number(connectedNetworkID) === ChainId.MAINNET? 'PCV2': 'UNV2')}
       </Button>
     </StyledNav>
   )
