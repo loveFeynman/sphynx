@@ -19,10 +19,20 @@ const SPHYNX =
     symbol: "SPHYNX",
   }
 
+const ETHER = 
+  {
+    address: "0x2170Ed0880ac9A755fd29B2688956BD959F933F8",
+    chainId: 1,
+    decimals: 18,
+    logoURI: "https://pancakeswap.finance/images/tokens/0x2170ed0880ac9a755fd29b2688956bd959f933f8.png",
+    name: "Ethereum Token",
+    symbol: "ETH",
+  }
+
 const DEFAULT_SPHYNX_UNI_TOKEN_LIST = (() => {
   const TOKEN_LIST = {...DEFAULT_UNI_TOKEN_LIST};
-  TOKEN_LIST.tokens = [SPHYNX, ...TOKEN_LIST.tokens]
-
+  TOKEN_LIST.tokens = [ETHER, SPHYNX, ...TOKEN_LIST.tokens]
+  .filter(token => [1,3,4,5,42].includes(token.chainId))
   return  TOKEN_LIST;
 })();
 
@@ -185,6 +195,17 @@ export function useAllLists(): {
   return useSelector<AppState, AppState['lists']['byUrl']>((state) => state.lists.byUrl)
 }
 
+export function useUniAllLists(): {
+  readonly [url: string]: {
+    readonly current: TokenList | null
+    readonly pendingUpdate: TokenList | null
+    readonly loadingRequestId: string | null
+    readonly error: string | null
+  }
+} {
+  return useSelector<AppState, AppState['lists']['byUniUrl']>((state) => state.lists.byUniUrl)
+}
+
 function combineMaps(map1: TokenAddressMap, map2: TokenAddressMap): TokenAddressMap {
   return {
     [ChainId.MAINNET]: { ...map1[ChainId.MAINNET], ...map2[ChainId.MAINNET] },
@@ -231,7 +252,7 @@ function useCombinedTokenMapFromUrls(urls: string[] | undefined): TokenAddressMa
 }
 
 function useCombinedUniTokenMapFromUrls(urls: string[] | undefined): UniTokenAddressMap {
-  const lists = useAllLists()
+  const lists = useUniAllLists()
 
   return useMemo(() => {
     if (!urls) return EMPTY_UNI_LIST
@@ -264,7 +285,7 @@ export function useActiveListUrls(): string[] | undefined {
 }
 
 export function useActiveUniListUrls(): string[] | undefined {
-  return useSelector<AppState, AppState['lists']['activeListUrls']>((state) => state.lists.activeListUrls)?.filter(
+  return useSelector<AppState, AppState['lists']['activeUniListUrls']>((state) => state.lists.activeUniListUrls)?.filter(
     (url) => !UNSUPPORTED_UNI_LIST_URLS.includes(url),
   )
 }
@@ -273,6 +294,12 @@ export function useInactiveListUrls(): string[] {
   const lists = useAllLists()
   const allActiveListUrls = useActiveListUrls()
   return Object.keys(lists).filter((url) => !allActiveListUrls?.includes(url) && !UNSUPPORTED_LIST_URLS.includes(url))
+}
+
+export function useInactiveUniListUrls(): string[] {
+  const lists = useUniAllLists()
+  const allActiveListUrls = useActiveUniListUrls()
+  return Object.keys(lists).filter((url) => !allActiveListUrls?.includes(url) && !UNSUPPORTED_UNI_LIST_URLS.includes(url))
 }
 
 // get all the tokens from active lists, combine with local default tokens
@@ -285,8 +312,8 @@ export function useCombinedActiveList(): TokenAddressMap {
 
 
 export function useCombinedUniActiveList(): UniTokenAddressMap {
-  const activeListUrls = useActiveUniListUrls()
-  const activeTokens = useCombinedUniTokenMapFromUrls(activeListUrls)
+  const activeUniListUrls = useActiveUniListUrls()
+  const activeTokens = useCombinedUniTokenMapFromUrls(activeUniListUrls)
   const defaultTokenMap = listToUniTokenMap(DEFAULT_SPHYNX_UNI_TOKEN_LIST)
   return combineUniMaps(activeTokens, defaultTokenMap)
 }
@@ -295,6 +322,11 @@ export function useCombinedUniActiveList(): UniTokenAddressMap {
 export function useCombinedInactiveList(): TokenAddressMap {
   const allInactiveListUrls: string[] = useInactiveListUrls()
   return useCombinedTokenMapFromUrls(allInactiveListUrls)
+}
+
+export function useCombinedUniInactiveList(): UniTokenAddressMap {
+  const allInactiveUniListUrls: string[] = useInactiveUniListUrls()
+  return useCombinedUniTokenMapFromUrls(allInactiveUniListUrls)
 }
 
 // used to hide warnings on import for default tokens
