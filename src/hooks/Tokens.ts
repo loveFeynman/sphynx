@@ -12,6 +12,7 @@ import {
   useUnsupportedTokenList,
   useCombinedActiveList,
   useCombinedInactiveList,
+  useCombinedUniInactiveList,
   UniTokenAddressMap,
   useCombinedUniActiveList,
   useDefaultUniTokenList,
@@ -118,14 +119,17 @@ export function useAllInactiveTokens(): { [address: string]: Token } {
 
   // get inactive tokens
   const inactiveTokensMap = useCombinedInactiveList()
-  const inactiveTokens = useTokensFromMap(inactiveTokensMap, false)
+  let inactiveTokens = useTokensFromMap(inactiveTokensMap, false)
 
   // filter out any token that are on active list
   let activeTokensAddresses = Object.keys(useAllTokens())
 
+  const inactiveUniTokensMap = useCombinedUniInactiveList()
+  const inactiveUniTokens = useUniTokensFromMap(inactiveUniTokensMap, false)
   const activeUniTokensAddresses = Object.keys(useAllUniTokens())
   if (connectedNetworkID !== ChainId.MAINNET) {
     activeTokensAddresses = activeUniTokensAddresses
+    inactiveTokens = inactiveUniTokens;
   }
 
   const filteredInactive = activeTokensAddresses
