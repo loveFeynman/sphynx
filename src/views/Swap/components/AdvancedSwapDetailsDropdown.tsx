@@ -6,6 +6,7 @@ import { AdvancedSwapDetails, AdvancedSwapDetailsProps } from './AdvancedSwapDet
 const AdvancedDetailsFooter = styled.div<{ show: boolean }>`
   padding-top: ${({ show }) => (show ? '16px' : 0)};
   padding-top: 16px;
+  height: ${({ show }) => (show ? 'auto' : '0px')};
   padding-bottom: 16px;
   width: 100%;
   max-width: 400px;

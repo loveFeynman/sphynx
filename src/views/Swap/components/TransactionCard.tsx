@@ -41,7 +41,6 @@ const TableWrapper = styled.div`
         & h2 {
           font-size: ${fontSize};
           line-height: 16px;
-          font-weight: bold;
           word-break: break-word;
           &.success {
             color: #00ac1c;

@@ -15,31 +15,39 @@ import { v4 as uuidv4 } from 'uuid'
 import CloseIcon from '@material-ui/icons/Close'
 import Web3 from 'web3'
 import ERC20ABI from 'assets/abis/erc20.json'
-import routerABI from 'assets/abis/pancakeRouter.json'
+import ERC20ABIETH from 'assets/abis/erc20ETH.json'
 import { isAddress } from 'utils'
+import useActiveWeb3React from 'hooks/useActiveWeb3React'
+import { BITQUERY_NETWORK_LIST } from 'config/index'
 
 import { ReactComponent as MenuOpenIcon } from 'assets/svg/icon/MenuOpenIcon.svg'
 import { ReactComponent as WalletIcon } from 'assets/svg/icon/WalletIcon.svg'
 import { ReactComponent as TwitterIcon } from 'assets/svg/icon/TwitterIcon.svg'
 import { ReactComponent as SocialIcon2 } from 'assets/svg/icon/SocialIcon2.svg'
 import { ReactComponent as TelegramIcon } from 'assets/svg/icon/TelegramIcon.svg'
+import RefreshIcon from 'assets/images/refresh.png'
+import ShowSomeIcon from 'assets/images/show-some.png'
+import ShowAllIcon from 'assets/images/show-all.png'
 import DiscordIcon from 'assets/images/discord.png'
 import axios from 'axios'
 import { BITQUERY_API, BITQUERY_API_KEY } from 'config/constants/endpoints'
 import storages from 'config/constants/storages'
+import addresses from 'config/constants/addresses'
+import chainIds from 'config/constants/chainIds'
 import { TOKEN_INTERVAL } from 'config/constants/info'
 import { BalanceNumber } from 'components/BalanceNumber'
 import { useTranslation } from 'contexts/Localization'
-import { simpleRpcProvider } from 'utils/providers'
 import { links } from './config'
 import { Field, replaceSwapState } from '../../state/swap/actions'
 import { getBNBPrice } from 'utils/priceProvider'
 
-const routerAbi: any = routerABI
-const pancakeV2: any = '0x10ED43C718714eb63d5aA57B78B54704E256024E'
-const abi: any = ERC20ABI
-const providerURL = 'https://speedy-nodes-nyc.moralis.io/fbb4b2b82993bf507eaaab13/bsc/mainnet/archive'
-const web3 = new Web3(new Web3.providers.HttpProvider(providerURL))
+const abiBNB: any = ERC20ABI
+const bnbProviderURL = 'https://speedy-nodes-nyc.moralis.io/fbb4b2b82993bf507eaaab13/bsc/mainnet/archive'
+const bnbWeb3 = new Web3(new Web3.providers.HttpProvider(bnbProviderURL))
+
+const abiETH: any = ERC20ABIETH
+const ethProviderURL = 'https://speedy-nodes-nyc.moralis.io/fbb4b2b82993bf507eaaab13/eth/mainnet/archive'
+const ethWeb3 = new Web3(new Web3.providers.HttpProvider(ethProviderURL))
 
 const MenuWrapper = styled.div<{ toggled: boolean }>`
   width: 320px;
@@ -151,13 +159,16 @@ const TokenItemWrapper = styled.div<{ toggled: boolean }>`
 const ButtonWrapper = styled.div`
   background: #8b2a9b;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   text-align: center;
-  padding-top: 12px;
-  padding-bottom: 12px;
+  margin: 10px 0;
+  padding: 8px 16px;
   border-radius: 8px;
   cursor: pointer;
+  & p {
+    width: calc(100% - 32px);
+  }
 `
 
 const MenuItem = styled.a`
@@ -268,6 +279,7 @@ const Menu = () => {
   const { menuToggled, toggleMenu } = useMenuToggle()
   const { removedAssets, setRemovedAssets } = useRemovedAssets()
   const [showAllToken, setShowAllToken] = useState(true)
+  const { chainId } = useActiveWeb3React()
 
   const dispatch = useDispatch()
   const { pathname } = useLocation()
@@ -292,7 +304,7 @@ const Menu = () => {
 
   const getDataQuery = `
   {
-    ethereum(network: bsc) {
+    ethereum(network: ${BITQUERY_NETWORK_LIST[chainId]}) {
       address(address: {is: "${account}" }){
         balances {
           value
@@ -309,7 +321,7 @@ const Menu = () => {
 
   const getSphynxQuery = `
   {
-  ethereum(network: bsc) {
+  ethereum(network: ${BITQUERY_NETWORK_LIST[chainId]}) {
       dexTrades(
       options: {desc: ["block.height", "tradeIndex"], limit: 1, offset: 0}
       date: {till: null}
@@ -365,7 +377,8 @@ const Menu = () => {
 
   const fetchData = async () => {
     if (account) {
-      const bnbPrice = await getBNBPrice(simpleRpcProvider)
+      const bnbPrice = await getBNBPrice()
+
       let removedTokens = JSON.parse(localStorage.getItem(storages.LOCAL_REMOVED_TOKENS))
       if (removedTokens === null) {
         removedTokens = []
@@ -381,15 +394,23 @@ const Menu = () => {
       if (queryResult.data.data) {
         let allsum: any = 0
         let balances = queryResult.data.data.ethereum.address[0].balances
-        if (balances === null)
-          return
-        balances = balances.filter((balance) => balance.value !== 0)
         if (balances && balances.length > 0) {
+          balances = balances.filter((balance) => balance.value !== 0)
           const promises = balances.map((elem) => {
-            return axios.get(
-              `${process.env.REACT_APP_BACKEND_API_URL}/price/${elem.currency.address === '-' ? '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c' : elem.currency.address
-              }`,
-            )
+            let address = elem.currency.address
+            if (address === '-') {
+              switch (chainId) {
+                case chainIds.BNB_CHAIN_ID:
+                  address = addresses.WBNB_ADDRESS
+                  break
+                case chainIds.ETH_CHAIN_ID:
+                  address = addresses.WETH_ADDRESS
+                  break
+                default:
+                  address = addresses.WBNB_ADDRESS
+              }
+            }
+            return axios.get(`${process.env.REACT_APP_BACKEND_API_URL}/price/${address}/${chainId}`,)
           })
 
           const prices: any = await Promise.all(promises)
@@ -399,13 +420,27 @@ const Menu = () => {
           for (const elem of balances) {
             const result = isAddress(elem.currency.address)
             if (result) {
-              const contract = new web3.eth.Contract(abi, elem.currency.address)
+              let contract
+              switch (chainId) {
+                case chainIds.BNB_CHAIN_ID:
+                  contract = new bnbWeb3.eth.Contract(abiBNB, elem.currency.address)
+                  break
+                case chainIds.ETH_CHAIN_ID:
+                  contract = new ethWeb3.eth.Contract(abiETH, elem.currency.address)
+                  break
+                default:
+                  contract = new bnbWeb3.eth.Contract(abiBNB, elem.currency.address)
+              }
               const tokenBalance = await contract.methods.balanceOf(account).call()
               elem.value = tokenBalance / Math.pow(10, elem.currency.decimals)
             }
             else if (elem.currency.symbol === 'BNB') {
-              const bnbBalance = await web3.eth.getBalance(account)
-              elem.value = web3.utils.fromWei(bnbBalance)
+              const bnbBalance = await bnbWeb3.eth.getBalance(account)
+              elem.value = bnbWeb3.utils.fromWei(bnbBalance)
+            }
+            else if (elem.currency.symbol === 'ETH') {
+              const ethBalance = await ethWeb3.eth.getBalance(account)
+              elem.value = ethWeb3.utils.fromWei(ethBalance)
             }
 
             let sphynxPrice
@@ -414,10 +449,13 @@ const Menu = () => {
               if (queryResult1.data.data && queryResult1.data.data.ethereum.dexTrades) {
                 sphynxPrice = queryResult1.data.data.ethereum.dexTrades[0].quotePrice * bnbPrice
               }
+              elem.currency.price = sphynxPrice
+            }
+            else {
+              elem.currency.price = prices[i].data.price
             }
 
-            const dollerprice: any =
-              (elem.currency.symbol === 'SPHYNX' ? sphynxPrice : prices[i].data.price) * elem.value
+            const dollerprice: any = elem.currency.price * elem.value
             elem.dollarPrice = dollerprice
             i++
             if (removedTokens.indexOf(elem.currency.symbol) === -1) {
@@ -438,7 +476,6 @@ const Menu = () => {
               if (!flag) dispatch(addToken(token))
             }
           }
-
           balances = balances.filter((balance) => balance.dollarPrice !== 0)
         } else {
           dispatch(deleteTokens())
@@ -462,6 +499,72 @@ const Menu = () => {
     setSum(allsum)
   }
 
+  const updateData = async () => {
+    let allsum: any = 0
+    let balances = getAllToken
+
+    if (balances && balances.length > 0 && account) {
+      // eslint-disable-next-line no-restricted-syntax
+      const sessionData = JSON.parse(sessionStorage.getItem(storages.SESSION_LIVE_PRICE))
+      for (const elem of balances) {
+        const result = isAddress(elem.currency.address)
+        if (result) {
+          let contract
+          switch (chainId) {
+            case chainIds.BNB_CHAIN_ID:
+              contract = new bnbWeb3.eth.Contract(abiBNB, elem.currency.address)
+              break
+            case chainIds.ETH_CHAIN_ID:
+              contract = new ethWeb3.eth.Contract(abiETH, elem.currency.address)
+              break
+            default:
+              contract = new bnbWeb3.eth.Contract(abiBNB, elem.currency.address)
+          }
+          const tokenBalance = await contract.methods.balanceOf(account).call()
+          elem.value = tokenBalance / Math.pow(10, elem.currency.decimals)
+        }
+        else if (elem.currency.symbol === 'BNB') {
+          const bnbBalance = await bnbWeb3.eth.getBalance(account)
+          elem.value = bnbWeb3.utils.fromWei(bnbBalance)
+        }
+        else if (elem.currency.symbol === 'ETH') {
+          const ethBalance = await ethWeb3.eth.getBalance(account)
+          elem.value = ethWeb3.utils.fromWei(ethBalance)
+        }
+
+        if (sessionData && elem.currency.address === sessionData.input) {
+          elem.currency.price = sessionData.price
+        }
+
+        const dollerprice: any = elem.currency.price * elem.value
+        elem.dollarPrice = dollerprice
+        if (removedAssets.indexOf(elem.currency.symbol) === -1) {
+          allsum += dollerprice
+        }
+
+        if (elem.dollarPrice > 0) {
+          let flag = false
+          const token = { symbol: elem.currency.symbol, value: elem.value }
+          tokens.forEach((cell) => {
+            if (cell.symbol === token.symbol) {
+              dispatch(updateToken(token))
+              flag = true
+              return
+            }
+          })
+
+          if (!flag) dispatch(addToken(token))
+        }
+      }
+
+      balances = balances.filter((balance) => balance.dollarPrice !== 0)
+    } else {
+      dispatch(deleteTokens())
+    }
+    setSum(allsum)
+    setAllTokens(balances ? balances : [])
+  }
+
   const checkTokens = () => {
     setUpdateFlag(false)
     setUpdateFlag(true)
@@ -469,7 +572,7 @@ const Menu = () => {
 
   useEffect(() => {
     if (!updateFlag) return
-    fetchData()
+    updateData()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [updateFlag])
 
@@ -484,7 +587,7 @@ const Menu = () => {
   useEffect(() => {
     fetchData()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [account])
+  }, [account, chainId])
 
   useEffect(() => {
     updateWallet()
@@ -614,18 +717,24 @@ const Menu = () => {
         {!menuToggled && <p>{account ? <BalanceNumber prefix="$ " value={Number(sum).toFixed(2)} /> : ''}</p>}
       </WalletHeading>
       {account ? (
-        <div style={{ width: '100%', padding: '0px 24px' }}>
+        <div style={{ width: '100%', padding: `${menuToggled ? '0px 16px' : '0px 24px'}` }}>
           <TokenListWrapper>{showAllToken ? tokenData : tokenData.slice(0, 3)}</TokenListWrapper>
-          <ButtonWrapper style={{ margin: '10px 0' }} onClick={handleShowAllToken}>
-            <p>
-              <b>{showAllToken ? t('Show Some Tokens') : t('Show All Tokens')}</b>
-            </p>
+          <ButtonWrapper style={menuToggled ? { justifyContent: 'center' } : {}} onClick={handleShowAllToken}>
+            <img src={showAllToken ? ShowSomeIcon : ShowAllIcon} alt="refresh" style={{ height: '23px', width: '23px' }} />
+            {!menuToggled && (
+              <p>
+                <b>{showAllToken ? t('Show Some Tokens') : t('Show All Tokens')}</b>
+              </p>
+            )}
           </ButtonWrapper>
           {removedAssets.length === 0 ? null : (
-            <ButtonWrapper style={{ margin: '10px 0' }} onClick={showAllRemovedTokens}>
-              <p>
-                <b>{t('Show all removed Tokens')}</b>
-              </p>
+            <ButtonWrapper style={menuToggled ? { justifyContent: 'center' } : {}} onClick={showAllRemovedTokens}>
+              <img src={RefreshIcon} alt="refresh" style={{ height: '23px', width: '23px' }} />
+              {!menuToggled && (
+                <p>
+                  <b>{t('Refresh')}</b>
+                </p>
+              )}
             </ButtonWrapper>
           )}
         </div>

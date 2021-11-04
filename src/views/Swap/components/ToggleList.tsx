@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import styled from 'styled-components'
-
+import { ChainId } from '@sphynxswap/sdk'
 import { PoolData } from 'state/info/types'
 import { ToggleMenuItem, RouterTypeToggle } from 'config/constants/types'
 import './dropdown.css'
@@ -72,7 +72,7 @@ const ToggleList = ({ poolDatas }: { poolDatas: PoolData[] }) => {
   const checksumAddress = isAddress(input)
 
   const routerVersion = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.routerVersion)
-
+  const connectedNetworkID = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.connectedNetworkID)
   const dispatch = useDispatch()
 
   const [menuItems, setMenuItems] = useState([])
@@ -92,7 +92,7 @@ const ToggleList = ({ poolDatas }: { poolDatas: PoolData[] }) => {
   useEffect(() => {
     
     let newMenuItems: ToggleMenuItem[] = []
-    newMenuItems = [...RouterTypeToggle]
+    newMenuItems = RouterTypeToggle.filter((cell) => cell.chainID === 0 || cell.chainID === connectedNetworkID)
     setMenuItems(newMenuItems)
 
     newMenuItems.forEach((item) => {
@@ -101,7 +101,7 @@ const ToggleList = ({ poolDatas }: { poolDatas: PoolData[] }) => {
       }
     })
     
-  }, [poolDatas, routerVersion, checksumAddress])
+  }, [poolDatas, routerVersion, checksumAddress, connectedNetworkID])
 
   return (
     <>

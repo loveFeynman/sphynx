@@ -130,7 +130,7 @@ const SellersCard = (props) => {
                       </a>
                     </td>
                     <td style={{ color: '#ea3843', fontWeight: 'bold' }}>
-                      $ {td.usdAmount.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,')}
+                      $ {td.usdAmount.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$&,')}
                     </td>
                   </tr>
                 )

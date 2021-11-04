@@ -6,7 +6,7 @@ import { AppState } from 'state'
 import { autoSwap } from 'state/flags/actions'
 import styled from 'styled-components'
 import { useLocation } from 'react-router'
-import { CurrencyAmount, JSBI, Token, Trade, ChainId } from '@sphynxswap/sdk'
+import { CurrencyAmount, JSBI, Token, Trade, RouterType, ChainId } from '@sphynxswap/sdk'
 import { Button, Text, ArrowDownIcon, Box, useModal, Flex } from '@sphynxswap/uikit'
 import { useIsTransactionUnsupported } from 'hooks/Trades'
 import { RouteComponentProps } from 'react-router-dom'
@@ -23,7 +23,7 @@ import { AppHeader } from 'components/App'
 import { BalanceNumber } from 'components/BalanceNumber'
 import { useMatchBreakpoints } from '@sphynxswap/uikit'
 
-import { useSwapTransCard, useSwapType } from 'state/application/hooks'
+import { useSwapTransCard, useSwapType, useSetRouterType } from 'state/application/hooks'
 import { ReactComponent as DownArrow } from 'assets/svg/icon/DownArrow.svg'
 import { typeInput, marketCap, typeRouterVersion } from 'state/input/actions'
 import { BITQUERY_API, BITQUERY_API_KEY } from 'config/constants/endpoints'
@@ -78,7 +78,6 @@ import { getBNBPrice } from 'utils/priceProvider'
 import { simpleRpcProvider } from 'utils/providers'
 import { UNSET_PRICE } from 'config/constants/info'
 import storages from 'config/constants/storages'
-import Spinner from '../LotterySphx/components/Spinner'
 const wBNBAddr = '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c'
 const sphynxAddr = '0x2e121Ed64EEEB58788dDb204627cCB7C7c59884c'
 let tokenDecimal = 18
@@ -155,6 +154,7 @@ const SwapPage = styled(Page)`
 
 export default function Swap({ history }: RouteComponentProps) {
   const dispatch = useDispatch()
+  const { setRouterType } = useSetRouterType()
   const { pathname } = useLocation()
   const tokenAddress = pathname.substr(6)
   const [swapRouter, setSwapRouter] = useState(SwapRouter.SPHYNX_SWAP)
@@ -173,7 +173,9 @@ export default function Swap({ history }: RouteComponentProps) {
   const inputTokenName = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
   const routerVersion = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.routerVersion)
   const tokens = useSelector<AppState, AppState['tokens']>((state) => state.tokens)
-  const connectedNetworkID = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.connectedNetworkID)
+  const connectedNetworkID = useSelector<AppState, AppState['inputReducer']>(
+    (state) => state.inputReducer.connectedNetworkID,
+  )
   const [inputBalance, setInputBalance] = useState(0)
   const [outputBalance, setOutputBalance] = useState(0)
   const [tokenAmount, setTokenAmount] = useState(0)
@@ -372,22 +374,22 @@ export default function Swap({ history }: RouteComponentProps) {
             if (input < wBNBAddr) {
               tokenAmt = Math.abs(
                 parseFloat(ethers.utils.formatUnits(datas.amount0In + '', tokenDecimal)) -
-                  parseFloat(ethers.utils.formatUnits(datas.amount0Out + '', tokenDecimal)),
+                parseFloat(ethers.utils.formatUnits(datas.amount0Out + '', tokenDecimal)),
               )
 
               isBuy = datas.amount1In === '0'
               BNBAmt = Math.abs(
                 parseFloat(ethers.utils.formatUnits(datas.amount1In + '', 18)) -
-                  parseFloat(ethers.utils.formatUnits(datas.amount1Out + '', 18)),
+                parseFloat(ethers.utils.formatUnits(datas.amount1Out + '', 18)),
               )
             } else {
               BNBAmt = Math.abs(
                 parseFloat(ethers.utils.formatUnits(datas.amount0In + '', 18)) -
-                  parseFloat(ethers.utils.formatUnits(datas.amount0Out + '', 18)),
+                parseFloat(ethers.utils.formatUnits(datas.amount0Out + '', 18)),
               )
               tokenAmt = Math.abs(
                 parseFloat(ethers.utils.formatUnits(datas.amount1In + '', tokenDecimal)) -
-                  parseFloat(ethers.utils.formatUnits(datas.amount1Out + '', tokenDecimal)),
+                parseFloat(ethers.utils.formatUnits(datas.amount1Out + '', tokenDecimal)),
               )
               isBuy = datas.amount0In === '0'
             }
@@ -398,8 +400,7 @@ export default function Swap({ history }: RouteComponentProps) {
             oneData.price = (BNBAmt / tokenAmt) * price
             const estimatedDateValue = new Date(new Date().getTime() - (blockNumber - event.blockNumber) * 3000)
             oneData.transactionTime = formatTimeString(
-              `${estimatedDateValue.getUTCFullYear()}-${
-                estimatedDateValue.getUTCMonth() + 1
+              `${estimatedDateValue.getUTCFullYear()}-${estimatedDateValue.getUTCMonth() + 1
               }-${estimatedDateValue.getDate()} ${estimatedDateValue.getUTCHours()}:${estimatedDateValue.getUTCMinutes()}:${estimatedDateValue.getUTCSeconds()}`,
             )
 
@@ -480,7 +481,7 @@ export default function Swap({ history }: RouteComponentProps) {
     if (busyRef.current === false) {
       setTransactions(transactions)
       setLoading(true)
-      startRealTimeData(blockNumber)
+      startRealTimeData(blockNumber + 1)
     } else {
       setTimeout(() => {
         setDatas(transactions, blockNumber)
@@ -634,13 +635,13 @@ export default function Swap({ history }: RouteComponentProps) {
 
   const parsedAmounts = showWrap
     ? {
-        [Field.INPUT]: parsedAmount,
-        [Field.OUTPUT]: parsedAmount,
-      }
+      [Field.INPUT]: parsedAmount,
+      [Field.OUTPUT]: parsedAmount,
+    }
     : {
-        [Field.INPUT]: independentField === Field.INPUT ? parsedAmount : trade?.inputAmount,
-        [Field.OUTPUT]: independentField === Field.OUTPUT ? parsedAmount : trade?.outputAmount,
-      }
+      [Field.INPUT]: independentField === Field.INPUT ? parsedAmount : trade?.inputAmount,
+      [Field.OUTPUT]: independentField === Field.OUTPUT ? parsedAmount : trade?.outputAmount,
+    }
 
   const { onSwitchTokens, onCurrencySelection, onUserInput, onChangeRecipient } = useSwapActionHandlers()
   const isValid = !swapInputError
@@ -686,7 +687,16 @@ export default function Swap({ history }: RouteComponentProps) {
   const noRoute = !route
 
   useEffect(() => {
-    if (tokenAddress === null || tokenAddress === '' || tokenAddress === undefined) {
+    if (
+      tokenAddress === null ||
+      tokenAddress === '' ||
+      tokenAddress === undefined ||
+      tokenAddress.toLowerCase() === sphynxAddr.toLowerCase()
+    ) {
+      if (swapRouter !== SwapRouter.SPHYNX_SWAP) {
+        setSwapRouter(SwapRouter.SPHYNX_SWAP)
+        setRouterType(RouterType.sphynx)
+      }
       dispatch(
         replaceSwapState({
           outputCurrencyId: 'BNB',
@@ -697,6 +707,10 @@ export default function Swap({ history }: RouteComponentProps) {
         }),
       )
     } else {
+      if (swapRouter !== SwapRouter.PANCAKE_SWAP) {
+        setSwapRouter(SwapRouter.PANCAKE_SWAP)
+        setRouterType(RouterType.pancake)
+      }
       dispatch(
         replaceSwapState({
           outputCurrencyId: 'BNB',
@@ -975,7 +989,11 @@ export default function Swap({ history }: RouteComponentProps) {
               <SwapCardNav />
             </Flex>
             <Flex alignItems="center" justifyContent="center">
-              <AutoCardNav swapRouter={swapRouter} setSwapRouter={setSwapRouter} connectedNetworkID={connectedNetworkID} />
+              <AutoCardNav
+                swapRouter={swapRouter}
+                setSwapRouter={setSwapRouter}
+                connectedNetworkID={connectedNetworkID}
+              />
             </Flex>
           </div>
           <Card bgColor="rgba(0, 0, 0, 0.2)" borderRadius="8px" padding="0 10px 20px 10px">
@@ -1111,8 +1129,8 @@ export default function Swap({ history }: RouteComponentProps) {
                         {priceImpactSeverity > 3 && !isExpertMode
                           ? t('Price Impact High')
                           : priceImpactSeverity > 2
-                          ? t('Swap Anyway')
-                          : t('Swap')}
+                            ? t('Swap Anyway')
+                            : t('Swap')}
                       </Button>
                     </RowBetween>
                   ) : (
@@ -1127,8 +1145,8 @@ export default function Swap({ history }: RouteComponentProps) {
                         (priceImpactSeverity > 3 && !isExpertMode
                           ? `Price Impact Too High`
                           : priceImpactSeverity > 2
-                          ? t('Swap Anyway')
-                          : t('Swap'))}
+                            ? t('Swap Anyway')
+                            : t('Swap'))}
                     </Button>
                   )}
                   {showApproveFlow && (
@@ -1147,6 +1165,9 @@ export default function Swap({ history }: RouteComponentProps) {
             )}
           </Card>
           <AdvancedSwapDetailsDropdown trade={trade} />
+          <TokenInfoWrapper>
+            <TokenInfo tokenData={tokenData} />
+          </TokenInfoWrapper>
         </div>
         <div>
           <FullHeightColumn>
@@ -1158,22 +1179,21 @@ export default function Swap({ history }: RouteComponentProps) {
             />
             <CoinStatsBoard tokenData={tokenData} />
             <ChartContainer tokenAddress={input} />
+            <div
+              style={{
+                alignSelf: 'center',
+                textAlign: 'center',
+                width: "100%",
+                marginTop: "25px"
+              }}
+            >
+              {swapTransCard === 'tokenDX' && (
+                <TransactionCard transactionData={transactionData} isLoading={isLoading} symbol={symbol} />
+              )}
+              {swapTransCard === 'buyers' && <BuyersCard pairAddress={pairs[0]} />}
+              {swapTransCard === 'sellers' && <SellersCard pairAddress={pairs[0]} />}
+            </div>
           </FullHeightColumn>
-        </div>
-        <TokenInfoWrapper>
-          <TokenInfo tokenData={tokenData} />
-        </TokenInfoWrapper>
-        <div
-          style={{
-            alignSelf: 'center',
-            textAlign: 'center',
-          }}
-        >
-          {swapTransCard === 'tokenDX' && (
-            <TransactionCard transactionData={transactionData} isLoading={isLoading} symbol={symbol} />
-          )}
-          {swapTransCard === 'buyers' && <BuyersCard pairAddress={pairs[0]} />}
-          {swapTransCard === 'sellers' && <SellersCard pairAddress={pairs[0]} />}
         </div>
       </Cards>
     </SwapPage>
