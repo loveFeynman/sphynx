@@ -136,7 +136,6 @@ export default function TokenInfo(props) {
     const fetchHolder = async () => {
       try {
         axios.post(`${process.env.REACT_APP_BACKEND_API_URL2}/holders`, { address: input }).then((response) => {
-          console.log("response", response.data)
           setHolderNum(Number(response.data.holders))
         })
       } catch (err) {

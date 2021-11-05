@@ -1174,7 +1174,7 @@ export default function Swap({ history }: RouteComponentProps) {
               price={tokenPrice}
             />
             <CoinStatsBoard tokenData={tokenData} />
-            <ChartContainer tokenAddress={input} />
+            <ChartContainer tokenAddress={input} tokenData={tokenData} />
             <div
               style={{
                 alignSelf: 'center',
