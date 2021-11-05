@@ -1162,7 +1162,7 @@ export default function Swap({ history }: RouteComponentProps) {
           </Card>
           <AdvancedSwapDetailsDropdown trade={trade} />
           <TokenInfoWrapper>
-            <TokenInfo tokenData={tokenData} />
+            <TokenInfo tokenData={tokenData} tokenAddress={input} />
           </TokenInfoWrapper>
         </div>
         <div>

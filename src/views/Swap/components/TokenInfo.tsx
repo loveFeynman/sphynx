@@ -67,7 +67,8 @@ const TokenInfoContainer = styled.div`
 `
 
 export default function TokenInfo(props) {
-  const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
+  const {tokenAddress} = props;
+  const input = tokenAddress;
   const isInput = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.isInput)
   const marketCapacity = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.marketCapacity)
   const [transactionNum, setTransactionNum] = useState(0)
@@ -134,12 +135,13 @@ export default function TokenInfo(props) {
 
     const fetchHolder = async () => {
       try {
-        axios.post(`${process.env.REACT_APP_BACKEND_API_URL}/holders`, { address: input }).then((response) => {
+        axios.post(`${process.env.REACT_APP_BACKEND_API_URL2}/holders`, { address: input }).then((response) => {
+          console.log("response", response.data)
           setHolderNum(Number(response.data.holders))
         })
       } catch (err) {
         // eslint-disable-next-line no-console
-        console.log(err)
+        console.log('err', err.message)
         setHolderNum(0)
       }
     }
