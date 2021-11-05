@@ -94,7 +94,7 @@ const TransactionNav = () => {
         >
           {t('Sellers')}
         </Button>
-        <Button
+        {/* <Button
           className={swapTransCard === 'info' ? 'active' : ''}
           id="transinfo-nav-link"
           onClick={() => {
@@ -103,7 +103,7 @@ const TransactionNav = () => {
           }}
         >
           {t('Info')}
-        </Button>
+        </Button> */}
       </StyledNav>
       <TokenInfoWrapper toggled={infoToggled}>
         <TokenInfo />
