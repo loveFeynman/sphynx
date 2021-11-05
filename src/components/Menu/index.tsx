@@ -685,6 +685,10 @@ const Menu = () => {
   }, [menuToggled, toggleMenu])
 
   const handleShowAllToken = useCallback(() => {
+    if(!showAllToken) {
+      localStorage.setItem(storages.LOCAL_REMOVED_TOKENS, null)
+      setRemovedAssets([])
+    }
     setShowAllToken(!showAllToken)
   }, [showAllToken])
 

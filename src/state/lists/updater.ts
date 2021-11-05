@@ -39,6 +39,7 @@ export default function Updater(): null {
 
   const fetchAllListsCallback = useCallback(() => {
     if (!isWindowVisible) return
+    if (lists === null || lists === undefined) return
     Object.keys(lists).forEach((url) =>
       fetchList(url).catch((error) => console.debug('interval list fetching error', error)),
     )

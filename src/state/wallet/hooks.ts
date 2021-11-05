@@ -15,6 +15,7 @@ import { useSingleContractMultipleData, useMultipleContractSingleData } from '..
 export function useBNBBalances(uncheckedAddresses?: (string | undefined)[]): {
   [address: string]: CurrencyAmount | undefined
 } {
+  const { chainId } = useWeb3React()
   const multicallContract = useMulticallContract()
 
   const addresses: string[] = useMemo(
@@ -38,10 +39,14 @@ export function useBNBBalances(uncheckedAddresses?: (string | undefined)[]): {
     () =>
       addresses.reduce<{ [address: string]: CurrencyAmount }>((memo, address, i) => {
         const value = results?.[i]?.result?.[0]
-        if (value) memo[address] = CurrencyAmount.ether(JSBI.BigInt(value.toString()))
+        if (value) {
+          const currencyAmount: any = CurrencyAmount.ether(JSBI.BigInt(value.toString()))
+          currencyAmount.currency = ETHER[chainId]
+          memo[address] = currencyAmount
+        }
         return memo
       }, {}),
-    [addresses, results],
+    [addresses, results, chainId],
   )
 }
 
@@ -106,7 +111,9 @@ export function useCurrencyBalances(
   )
 
   const tokenBalances = useTokenBalances(account, tokens)
-  const containsBNB: boolean = useMemo(() => currencies?.some((currency) => currency === ETHER) ?? false, [currencies])
+  const nativeKeys = Object.keys(ETHER)
+  const nativeCurrencies = nativeKeys.map(key => ETHER[key])
+  const containsBNB: boolean = useMemo(() => currencies?.some((currency) => nativeCurrencies.indexOf(currency) !== -1 ?? false), [currencies, nativeCurrencies])
   const ethBalance = useBNBBalances(containsBNB ? [account] : [])
 
   return useMemo(
@@ -114,10 +121,10 @@ export function useCurrencyBalances(
       currencies?.map((currency) => {
         if (!account || !currency) return undefined
         if (currency instanceof Token) return tokenBalances[currency.address]
-        if (currency === ETHER) return ethBalance[account]
+        if (nativeCurrencies.indexOf(currency) !== -1) return ethBalance[account]
         return undefined
       }) ?? [],
-    [account, currencies, ethBalance, tokenBalances],
+    [account, currencies, ethBalance, tokenBalances, nativeCurrencies],
   )
 }
 

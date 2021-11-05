@@ -180,6 +180,9 @@ export function toV2LiquidityToken([routerType, tokenA, tokenB]: [string, Token,
   if (routerType && routerType === RouterType.pancake) {
     return new Token(tokenA.chainId, Pair.getAddress(routerType, tokenA, tokenB), 18, 'Cake-LP', 'Pancake LPs')
   }
+  if (routerType && routerType === RouterType.uniswap) {
+    return new Token(tokenA.chainId, Pair.getAddress(routerType, tokenA, tokenB), 18, 'Uniswap-LP', 'Uniswap LPs')
+  }
   return new Token(tokenA.chainId, Pair.getAddress(routerType, tokenA, tokenB), 18, 'Sphynx-LP', 'Sphynx LPs')
 }
 
@@ -244,6 +247,9 @@ export function useTrackedTokenPairs(): [Token, Token][] {
   return useMemo(() => {
     // dedupes pairs of tokens in the combined list
     const keyed = combinedList.reduce<{ [key: string]: [Token, Token] }>((memo, [tokenA, tokenB]) => {
+      console.log("memo", memo)
+      console.log("tokenA", tokenA)
+      console.log("tokenB", tokenB)
       const sorted = tokenA.sortsBefore(tokenB)
       const key = sorted ? `${tokenA.address}:${tokenB.address}` : `${tokenB.address}:${tokenA.address}`
       if (memo[key]) return memo

@@ -107,8 +107,10 @@ function CurrencySearch({
     (e: KeyboardEvent<HTMLInputElement>) => {
       if (e.key === 'Enter') {
         const s = debouncedQuery.toLowerCase().trim()
-        if (s === 'bnb') {
-          handleCurrencySelect(ETHER)
+        if (s === 'bnb' && chainId === ChainId.MAINNET) {
+          handleCurrencySelect(ETHER[ChainId.MAINNET])
+        } else if (s === 'eth' && chainId === ChainId.ETHEREUM) {
+          handleCurrencySelect(ETHER[ChainId.ETHEREUM])
         } else if (filteredSortedTokens.length > 0) {
           if (
             filteredSortedTokens[0].symbol?.toLowerCase() === debouncedQuery.trim().toLowerCase() ||
@@ -119,7 +121,7 @@ function CurrencySearch({
         }
       }
     },
-    [filteredSortedTokens, handleCurrencySelect, debouncedQuery],
+    [filteredSortedTokens, handleCurrencySelect, debouncedQuery, chainId],
   )
 
   // if no results on main list, show option to expand into inactive

@@ -1,6 +1,5 @@
 import { parseUnits } from '@ethersproject/units'
 import { Currency, CurrencyAmount, ETHER, JSBI, Token, TokenAmount, Trade } from '@sphynxswap/sdk'
-import { ETHER as uniEther } from '@uniswap/sdk'
 import { ParsedQs } from 'qs'
 import { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -35,7 +34,7 @@ export function useSwapActionHandlers(): {
       dispatch(
         selectCurrency({
           field,
-          currencyId: currency instanceof Token ? currency.address : currency === ETHER ? 'BNB' : (chainId === 1 && currency === uniEther) ? 'ETH' : '',
+          currencyId: currency instanceof Token ? currency.address : currency === ETHER[chainId] ? chainId === 56 ? 'BNB' : 'ETH' : '',
         }),
       )
     },
@@ -76,9 +75,12 @@ export function tryParseAmount(value?: string, currency?: Currency): CurrencyAmo
   try {
     const typedValueParsed = parseUnits(value, currency.decimals).toString()
     if (typedValueParsed !== '0') {
-      return currency instanceof Token
-        ? new TokenAmount(currency, JSBI.BigInt(typedValueParsed))
-        : CurrencyAmount.ether(JSBI.BigInt(typedValueParsed))
+      if (currency instanceof Token) {
+        return new TokenAmount(currency, JSBI.BigInt(typedValueParsed))
+      }
+      const returnValue: any = CurrencyAmount.ether(JSBI.BigInt(typedValueParsed))
+      returnValue.currency = currency
+      return returnValue
     }
   } catch (error) {
     // should fail if the user specifies too many decimal places of precision (or maybe exceed max uint?)
@@ -205,6 +207,7 @@ function parseCurrencyFromURLParameter(urlParam: any): string {
     const valid = isAddress(urlParam)
     if (valid) return valid
     if (urlParam.toUpperCase() === 'BNB') return 'BNB'
+    if (urlParam.toUpperCase() === 'ETH') return 'ETH'
     if (valid === false) return 'BNB'
   }
   return 'BNB' ?? ''

@@ -207,7 +207,7 @@ export default function Swap({ history }: RouteComponentProps) {
   busyRef.current = isBusy
   let input = tokenAddress
   if (input === '-' || input === '') input = sphynxAddr[chainId]
-  const contract: any = chainId === 56 ? new web3.eth.Contract(abi, input) : new web3ETH.eth.Contract(abi, input)
+  const contract: any = chainId === ChainId.MAINNET ? new web3.eth.Contract(abi, input) : new web3ETH.eth.Contract(abi, input)
 
   const getDataQuery = useCallback(
     (pairAddress: any) => {
@@ -446,7 +446,9 @@ export default function Swap({ history }: RouteComponentProps) {
     const fetchDecimals = async () => {
       tokenDecimal = await contract.methods.decimals().call()
     }
-    fetchDecimals()
+    setTimeout(() => {
+      fetchDecimals()
+    })
 
     setLoading(false)
     const ac = new AbortController()
@@ -665,9 +667,14 @@ export default function Swap({ history }: RouteComponentProps) {
         }),
       )
     } else {
-      if (swapRouter !== SwapRouter.PANCAKE_SWAP) {
-        setSwapRouter(SwapRouter.PANCAKE_SWAP)
-        setRouterType(RouterType.pancake)
+      if ((swapRouter !== SwapRouter.PANCAKE_SWAP && chainId === ChainId.MAINNET) || ((swapRouter !== SwapRouter.UNI_SWAP && chainId === ChainId.ETHEREUM))) {
+        if(chainId === ChainId.MAINNET) {
+          setSwapRouter(SwapRouter.PANCAKE_SWAP)
+          setRouterType(RouterType.pancake)
+        } else {
+          setSwapRouter(SwapRouter.UNI_SWAP)
+          setRouterType(RouterType.uniswap)
+        }
       }
       dispatch(
         replaceSwapState({
@@ -790,7 +797,6 @@ export default function Swap({ history }: RouteComponentProps) {
 
   const handleOutputSelect = useCallback(
     (outputCurrency) => {
-      console.log("outputCurrency", outputCurrency)
       onCurrencySelection(Field.OUTPUT, outputCurrency)
       const showSwapWarning = shouldShowSwapWarning(outputCurrency)
       if (showSwapWarning) {

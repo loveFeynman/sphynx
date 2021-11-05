@@ -98,7 +98,6 @@ const MAX_HOPS = 3
  */
 export function useTradeExactIn(currencyAmountIn?: CurrencyAmount, currencyOut?: Currency): Trade | null {
   const allowedPairs = useAllCommonPairs(currencyAmountIn?.currency, currencyOut)
-
   const [singleHopOnly] = useUserSingleHopOnly()
 
   return useMemo(() => {

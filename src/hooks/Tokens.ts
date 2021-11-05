@@ -270,5 +270,5 @@ export function useCurrency(currencyId: string | undefined): Currency | null | u
   const isBNB = currencyId?.toUpperCase() === 'BNB'
   const isETH = currencyId?.toUpperCase() === 'ETH'
   const token = useToken(isBNB || isETH ? undefined : currencyId)
-  return isBNB ? ETHER : isETH ? uniETHER : token
+  return isBNB ? ETHER[ChainId.MAINNET] : isETH ? ETHER[ChainId.ETHEREUM] : token
 }

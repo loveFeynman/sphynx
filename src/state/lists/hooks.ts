@@ -19,19 +19,9 @@ const SPHYNX =
     symbol: "SPHYNX",
   }
 
-const ETHER = 
-  {
-    address: "0x2170Ed0880ac9A755fd29B2688956BD959F933F8",
-    chainId: 1,
-    decimals: 18,
-    logoURI: "https://pancakeswap.finance/images/tokens/0x2170ed0880ac9a755fd29b2688956bd959f933f8.png",
-    name: "Ethereum Token",
-    symbol: "ETH",
-  }
-
 const DEFAULT_SPHYNX_UNI_TOKEN_LIST = (() => {
   const TOKEN_LIST = {...DEFAULT_UNI_TOKEN_LIST};
-  TOKEN_LIST.tokens = [ETHER, SPHYNX, ...TOKEN_LIST.tokens]
+  TOKEN_LIST.tokens = [SPHYNX, ...TOKEN_LIST.tokens]
   .filter(token => [1,3,4,5,42].includes(token.chainId))
   return  TOKEN_LIST;
 })();
@@ -103,6 +93,7 @@ export type UniTokenAddressMap = Readonly<{
 const EMPTY_LIST: TokenAddressMap = {
   [ChainId.MAINNET]: {},
   [ChainId.TESTNET]: {},
+  [ChainId.ETHEREUM] : {}
 }
 
 const EMPTY_UNI_LIST: UniTokenAddressMap = {
@@ -208,6 +199,7 @@ export function useUniAllLists(): {
 
 function combineMaps(map1: TokenAddressMap, map2: TokenAddressMap): TokenAddressMap {
   return {
+    [ChainId.ETHEREUM]: { ...map1[ChainId.ETHEREUM], ...map2[ChainId.ETHEREUM] },
     [ChainId.MAINNET]: { ...map1[ChainId.MAINNET], ...map2[ChainId.MAINNET] },
     [ChainId.TESTNET]: { ...map1[ChainId.TESTNET], ...map2[ChainId.TESTNET] },
   }
