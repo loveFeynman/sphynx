@@ -117,7 +117,7 @@ export default function CoinStatsBoard(props) {
   const [scale, setScale] = useState(2)
 
   const [linkIcon, setLinkIcon] = useState(
-    'https://r.poocoin.app/smartchain/assets/0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82/logo.png',
+    DefaultImg,
   )
   const changedecimal: any = parseFloat(alldata.change).toFixed(3)
   const volumedecimal = parseFloat(alldata.volume).toFixed(3)
