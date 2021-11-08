@@ -25,6 +25,7 @@ import { useMatchBreakpoints } from '@sphynxswap/uikit'
 
 import { useSwapTransCard, useSwapType, useSetRouterType } from 'state/application/hooks'
 import { ReactComponent as DownArrow } from 'assets/svg/icon/DownArrow.svg'
+import SwapIcon from 'components/Icon/SwapIcon'
 import { typeInput, marketCap, typeRouterVersion } from 'state/input/actions'
 import { BITQUERY_API, BITQUERY_API_KEY } from 'config/constants/endpoints'
 import SwapRouter, { messages } from 'config/constants/swaps'
@@ -103,8 +104,8 @@ const ArrowContainer = styled(ArrowWrapper)`
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 3px solid rgb(255, 255, 255);
-  border-radius: 12px;
+  background-color: #710D89;
+  border-radius: 15px;
   margin: 0;
   cursor: pointer;
   &:hover {
@@ -120,20 +121,27 @@ const BalanceText = styled.p`
   font-size: 14px;
   font-weight: 500;
   line-height: 12px;
-  color: white;
-  margin: 0 8px;
+  color: #F2C94C;
   margin-left: auto;
 `
 
 const SlippageText = styled.p`
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 500;
   line-height: 12px;
-  color: white;
+  color: #A7A7CC;
   margin: 0 8px;
   & span {
     text-decoration: underline;
   }
+`
+
+const SlippageTextWrapper = styled(Flex)`
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+  flex-direction: column;
+  gap: 6px;
 `
 
 const BottomGrouping = styled(Box)`
@@ -1039,7 +1047,8 @@ export default function Swap({ history }: RouteComponentProps) {
                           onClick={handleArrowContainer}
                           color={currencies[Field.INPUT] && currencies[Field.OUTPUT] ? 'primary' : 'text'}
                         >
-                          <DownArrow />
+                          {/* <DownArrow /> */}
+                          <SwapIcon color="white" width="14px" height="18px"/>
                         </ArrowContainer>
                         {recipient === null && !showWrap && isExpertMode ? (
                           <Button variant="text" id="add-recipient-button" onClick={handleChangeRecipient}>
@@ -1074,7 +1083,7 @@ export default function Swap({ history }: RouteComponentProps) {
                         <AddressInputPanel id="recipient" value={recipient} onChange={onChangeRecipient} />
                       </>
                     ) : null}
-                    <Flex justifyContent="space-between" alignItems="center" marginTop="20px">
+                    <SlippageTextWrapper>
                       <Flex alignItems="center">
                         <SlippageText>
                           <span>{t('Slippage Tolerance')}</span>
@@ -1091,7 +1100,7 @@ export default function Swap({ history }: RouteComponentProps) {
                           </SlippageText>
                         </Flex>
                       )}
-                    </Flex>
+                    </SlippageTextWrapper>
                   </AutoColumn>
                   <BottomGrouping mt="1rem">
                     {swapIsUnsupported ? (

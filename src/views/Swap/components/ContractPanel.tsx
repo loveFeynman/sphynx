@@ -60,7 +60,7 @@ const ContractCard = styled(Text)`
   border-radius: 16px;
   display: flex;
   align-items: center;
-  border: 1px solid ${({ theme }) => theme.colors.cardBorder};
+  border: 1px solid ${({ theme }) => theme.isDark ? "#2E2E55" : "#4A5187"};
   border-radius: 5px;
   margin: 12px 0;
   & button:last-child {
@@ -69,7 +69,6 @@ const ContractCard = styled(Text)`
   ${({ theme }) => theme.mediaQueries.md} {
     flex: 1;
     margin: 0;
-    border: 1px solid ${({ theme }) => theme.colors.cardBorder};
     border-radius: 5px;
   }
 `
@@ -107,7 +106,7 @@ const SearchInputWrapper = styled.div`
     box-shadow: none;
     outline: none;
     color: #f7931a;
-    font-size: 16px;
+    font-size: 13px;
     &::placeholder {
       color: #8f80ba;
     }
@@ -130,7 +129,7 @@ const TransparentIconButton = styled(IconButton)`
 `
 
 const SearchInputDivider = styled.div`
-  border-left: 1px solid ${({ theme }) => theme.colors.cardBorder};
+  border-left: 1px solid ${({ theme }) => theme.isDark ? "#A7A7CC" : "#4A5187"};
   margin-left: 2px;
   margin-right: 8px;
   height: 20px;

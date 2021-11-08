@@ -189,7 +189,7 @@ const MenuItem = styled.a<{ toggled: boolean }>`
     text-decoration: none !important;
     & p {
       width: calc(100% - 32px);
-      font-size: 13px;
+      font-size: 14px;
       font-weight: 600;
       color: #a7a7cc;
     }
