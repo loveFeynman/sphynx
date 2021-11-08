@@ -78,9 +78,9 @@ const ChartContainer = ({tokenAddress, tokenData}) => {
         >
           <UpDownArrow />
         </ArrowWrapper>
-        <TransactionNavWrapper>
+        {/* <TransactionNavWrapper>
           <TransactionNav tokenAddress={tokenAddress} tokenData={tokenData}/>
-        </TransactionNavWrapper>
+        </TransactionNavWrapper> */}
       </UpDownArrowBox>
     </Wrapper>
   )
