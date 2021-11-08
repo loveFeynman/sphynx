@@ -8,7 +8,7 @@ import { formatPrice } from '../../../utils'
 const fontSize = window.screen.width > 768 ? "14px" : "12px"
 
 const TableWrapper = styled.div`
-  background: rgba(0, 0, 0, 0.4);
+  background: ${({ theme }) => theme.isDark ? "#0E0E26": "#2A2E60"};
   border-radius: 8px;
   height: 100%;
   max-height: 500px;

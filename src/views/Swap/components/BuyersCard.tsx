@@ -10,7 +10,7 @@ import { Spinner } from '../../LotterySphx/components/Spinner'
 import { topTrades } from '../../../utils/apiServices'
 
 const TableWrapper = styled.div`
-  background: rgba(0, 0, 0, 0.4);
+  background: ${({ theme }) => theme.isDark ? "#0E0E26": "#2A2E60"};
   border-radius: 8px;
   height: 100%;
   max-height: 500px;

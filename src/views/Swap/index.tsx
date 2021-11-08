@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useMemo, useState, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { AppState } from 'state'
 import { autoSwap } from 'state/flags/actions'
-import styled from 'styled-components'
+import styled, { useTheme } from 'styled-components'
 import { useLocation } from 'react-router'
 import { CurrencyAmount, JSBI, Token, Trade, RouterType } from '@sphynxswap/sdk'
 import { Button, Text, ArrowDownIcon, Box, useModal, Flex } from '@sphynxswap/uikit'
@@ -78,6 +78,8 @@ import { getBNBPrice } from 'utils/priceProvider'
 import { simpleRpcProvider } from 'utils/providers'
 import { UNSET_PRICE } from 'config/constants/info'
 import storages from 'config/constants/storages'
+import Row from 'components/Row'
+import RewardsPanel from './components/RewardsPanel'
 const wBNBAddr = '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c'
 const sphynxAddr = '0x2e121Ed64EEEB58788dDb204627cCB7C7c59884c'
 let tokenDecimal = 18
@@ -183,6 +185,7 @@ export default function Swap({ history }: RouteComponentProps) {
   const { isXl } = useMatchBreakpoints()
   const isMobile = !isXl
   const [symbol, setSymbol] = useState('')
+  const theme = useTheme()
 
   if (tokenAddress === '' || tokenAddress.toLowerCase() === sphynxAddr.toLowerCase()) {
     if (routerVersion !== 'sphynx') {
@@ -970,9 +973,9 @@ export default function Swap({ history }: RouteComponentProps) {
 
   return (
     <SwapPage>
+      <RewardsPanel />
       <Cards>
         <div>
-          <DividendPanel />
           {!isMobile ? (
             <LiveAmountPanel
               symbol={tokenData && tokenData.symbol ? tokenData.symbol : ''}
@@ -992,7 +995,7 @@ export default function Swap({ history }: RouteComponentProps) {
               />
             </Flex>
           </div>
-          <Card bgColor="rgba(0, 0, 0, 0.2)" borderRadius="8px" padding="0 10px 20px 10px">
+          <Card bgColor={theme.isDark ?  "#0E0E26": "#2A2E60"}  borderRadius="8px" padding="0 10px 20px 10px">
             {swapType === 'swap' && (
               <Wrapper id="swap-page">
                 <AppHeader title={t('Swap')} showAuto />
