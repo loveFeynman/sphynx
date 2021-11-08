@@ -2,12 +2,14 @@ import React, { useEffect, useState, useRef, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { utils } from 'ethers'
 import styled from 'styled-components'
-import { Flex, Text } from '@sphynxswap/uikit'
 import Column from 'components/Column'
 import { isAddress } from 'utils'
 import { useTranslation } from 'contexts/Localization'
 import { marketCap } from 'state/input/actions'
-import DefaultImg from 'assets/images/MainLogo.png'
+import { ReactComponent as PriceIcon } from 'assets/svg/icon/PriceIcon.svg'
+import { ReactComponent as ChangeIcon } from 'assets/svg/icon/ChangeIcon.svg'
+import { ReactComponent as VolumeIcon } from 'assets/svg/icon/VolumeIcon.svg'
+import { ReactComponent as LiquidityIcon } from 'assets/svg/icon/LiquidityIcon.svg'
 import storages from 'config/constants/storages'
 import { getChartStats } from 'utils/apiServices'
 import { AppState } from '../../../state'
@@ -225,11 +227,11 @@ export default function CoinStatsBoard(props) {
 
   return (
     <Container>
-      <TokenStateCard tokenImg={linkIcon} cardTitle={tokenData?.symbol?? ''} cardValue={marketCapacity.toLocaleString()} variantFill flexGrow={2}/>
-      <TokenStateCard cardTitle='Price' cardValue={price? `$ ${Number(price).toFixed(scale).toLocaleString()}` : ''} variantFill={false} flexGrow={1} />
-      <TokenStateCard cardTitle='24h Change' cardValue={changedecimal? `${changedecimal}%`:''} valueActive variantFill={false} flexGrow={1} />
-      <TokenStateCard cardTitle='24h Volume' cardValue={volumedecimal? `$ ${Number(volumedecimal).toLocaleString()}` : ''} variantFill={false} flexGrow={1.5} />
-      <TokenStateCard cardTitle='Liquidity' cardValue={`${Number(liquidityV2BNBdecimal).toLocaleString()} BNB`} subPriceValue={liquidityV2decimal? `(${Number(liquidityV2decimal).toLocaleString()})` : ''} variantFill={false} flexGrow={1.5} />
+      <TokenStateCard tokenImg={linkIcon} cardTitle={tokenData?.symbol?? ''} cardValue={`$ ${marketCapacity.toLocaleString()}`} variantFill flexGrow={2} fillColor='#F75183'/>
+      <TokenStateCard CardIcon={PriceIcon} cardTitle='Price' cardValue={price? `$ ${Number(price).toFixed(scale).toLocaleString()}` : ''} variantFill={false} flexGrow={1} fillColor='#9B51E0' />
+      <TokenStateCard CardIcon={ChangeIcon} cardTitle='24h Change' cardValue={changedecimal? `${changedecimal}%`:''} valueActive variantFill={false} flexGrow={1} fillColor='#77BF3E' />
+      <TokenStateCard CardIcon={VolumeIcon} cardTitle='24h Volume' cardValue={volumedecimal? `$ ${Number(volumedecimal).toLocaleString()}` : ''} variantFill={false} flexGrow={1.5} fillColor='#21C2CC' />
+      <TokenStateCard CardIcon={LiquidityIcon} cardTitle='Liquidity' cardValue={`${Number(liquidityV2BNBdecimal).toLocaleString()} BNB`} fillColor='#2F80ED' subPriceValue={liquidityV2decimal? `(${Number(liquidityV2decimal).toLocaleString()})` : ''} variantFill={false} flexGrow={1.5} />
     </Container>
   )
 }
