@@ -80,7 +80,6 @@ import { UNSET_PRICE } from 'config/constants/info'
 import storages from 'config/constants/storages'
 import Row from 'components/Row'
 import RewardsPanel from './components/RewardsPanel'
-// import { Tabs, TabList, Tab, TabPanel } from 'react-tabs';
 import { SwapTabs, SwapTabList, SwapTab, SwapTabPanel } from "../../components/Tab/tab";
 
 const wBNBAddr = '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c'
@@ -1377,7 +1376,7 @@ export default function Swap({ history }: RouteComponentProps) {
               price={tokenPrice}
             />
             <CoinStatsBoard tokenData={tokenData} />
-            <ChartContainer tokenAddress={input} />
+            <ChartContainer tokenAddress={input} tokenData={tokenData}/>
             <SwapTabs
               selectedTabClassName='is-selected'
               selectedTabPanelClassName='is-selected'
