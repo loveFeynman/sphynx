@@ -13,6 +13,8 @@ import store from 'state'
 
 const ThemeProviderWrapper = (props) => {
   const [isDark] = useThemeManager()
+  light.modal.background = "#191C41"
+  light.colors.text = "white";
   return <ThemeProvider theme={isDark ? dark : light} {...props} />
 }
 
