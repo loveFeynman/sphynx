@@ -1,14 +1,18 @@
 import React from 'react'
+import styled from 'styled-components'
 import { useWeb3React } from '@web3-react/core'
-import {
-  Flex,
-  LogoutIcon,
-  UserMenu as UIKitUserMenu,
-  UserMenuItem,
-} from '@sphynxswap/uikit'
+import { Text } from '@sphynxswap/uikit'
 import useAuth from 'hooks/useAuth'
 import ConnectWalletButton from 'components/ConnectWalletButton'
 import { useTranslation } from 'contexts/Localization'
+import { ReactComponent as UserIcon } from 'assets/svg/icon/UserIcon.svg'
+
+const AvatarWrapper = styled.div`
+  display: flex;
+  gap: 10px;
+  cursor: pointer;
+  align-items: center;
+`
 
 const UserMenu = () => {
   const { t } = useTranslation()
@@ -21,7 +25,7 @@ const UserMenu = () => {
 
   return (
     <div style={{ position: 'relative' }}>
-      <UIKitUserMenu account={account} avatarSrc="/images/EmptyAvatar.svg">
+      {/* <UIKitUserMenu account={account} avatarSrc="/images/EmptyAvatar.svg">
         <UserMenuItem
           onClick={() => {
             logout()
@@ -36,7 +40,17 @@ const UserMenu = () => {
             <LogoutIcon />
           </Flex>
         </UserMenuItem>
-      </UIKitUserMenu>
+      </UIKitUserMenu> */}
+      <AvatarWrapper
+        onClick={() => {
+          logout()
+        }}
+      >
+        <Text color="white" ml={3} textAlign="center" fontSize="13px">
+          {`${account.slice(0, 4)}...${account.slice(account.length-3, account.length)}`}
+        </Text>
+        <UserIcon />
+      </AvatarWrapper>
     </div>
   )
 }

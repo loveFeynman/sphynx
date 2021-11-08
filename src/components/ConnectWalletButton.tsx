@@ -1,7 +1,17 @@
 import React from 'react'
+import styled from 'styled-components'
 import { Button, useWalletModal } from '@sphynxswap/uikit'
 import useAuth from 'hooks/useAuth'
 import { useTranslation } from 'contexts/Localization'
+
+const ConnectButtonWrapper = styled.div`
+  button {
+    padding: 9px 18px;
+    color: white;
+    border-radius: 5px;
+    height: 34px;
+  }
+`
 
 const ConnectWalletButton = (props) => {
   const { t } = useTranslation()
@@ -9,9 +19,11 @@ const ConnectWalletButton = (props) => {
   const { onPresentConnectModal } = useWalletModal(login, logout)
 
   return (
-    <Button onClick={onPresentConnectModal} {...props}>
-      {t('Connect')}
-    </Button>
+    <ConnectButtonWrapper>
+      <Button onClick={onPresentConnectModal} {...props}>
+        {t('Connect')}
+      </Button>
+    </ConnectButtonWrapper>
   )
 }
 

@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
-import { Flex, Heading, Text } from '@sphynxswap/uikit'
+import { Flex, Text } from '@sphynxswap/uikit'
 import MainLogo from 'assets/svg/icon/logo_new.svg'
 import { useTranslation } from 'contexts/Localization'
-import Column from 'components/Column'
 
 const RewardsWrapper = styled.div`
   display: flex;
@@ -35,7 +34,6 @@ const LogoTitle = styled.div`
     font-size: 14px;
   }
   ${({ theme }) => theme.mediaQueries.md} {
-    margin-left: 10px;
     div:nth-child(1) {
       font-size: 16px;
     }

@@ -10,9 +10,6 @@ const Wrapper = styled.div`
   width: 100%;
   padding: 18px 0px;
   color: white;
-  div {
-    gap : 19px;
-  }
 `
 
 const RewardsPanel: React.FC = () => {

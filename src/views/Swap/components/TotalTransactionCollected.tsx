@@ -3,13 +3,10 @@ import styled from 'styled-components'
 import { Flex, Heading, Text } from '@sphynxswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 import Web3 from 'web3'
-import { Typography } from '@material-ui/core'
 import { web3Provider } from 'utils/providers'
 import { FEE_WALLET } from 'config/constants'
-import { RowFixed } from 'components/Layout/Row'
 import QuestionHelper from 'components/QuestionHelper'
 import { AutoRow } from 'components/Row'
-import Column from 'components/Column'
 
 const CollectedWrapper = styled.div`
   display: flex;

@@ -4,7 +4,7 @@ import { ArrowDropDownIcon, Text } from '@sphynxswap/uikit'
 
 const DropDownHeader = styled.div`
   width: 100%;
-  height: 40px;
+  height: 34px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -40,7 +40,7 @@ const DropDownContainer = styled.div<{ isOpen: boolean; width: number; height: n
   position: relative;
   background: ${({ theme }) => theme.colors.input};
   border-radius: 16px;
-  height: 40px;
+  height: 34px;
   min-width: 136px;
   user-select: none;
 

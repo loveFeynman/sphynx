@@ -14,7 +14,6 @@ import LanguageOptionButton from 'components/LanguageOptionButton'
 import SwitchNetworkButton from 'components/SwitchNetworkButton'
 import Loader from 'components/myLoader/Loader'
 import { useTranslation } from 'contexts/Localization'
-import UserAvatar from 'components/UserAvatar'
 import HotTokenBar from './views/Swap/components/HotTokenBar'
 import Menu from './components/Menu'
 import UserMenu from './components/Menu/UserMenu'
@@ -66,13 +65,14 @@ const BodyOverlay = styled.div<{ toggled: boolean }>`
   }
 `
 
-const TopBar = styled.div`
+const TopBar = styled.div<{ toggled: boolean }>`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 100%;position: fixed;
+  width: 100%;
+  position: fixed;
   z-index: 999;
-  width: calc(100% - 320px);
+  width: ${(props) => (props.toggled ? 'calc(100% - 52px)' : 'calc(100% - 320px)')};
   height: 57px;
   flex-wrap: wrap;
   padding: 0 20px;
@@ -83,12 +83,12 @@ const AccountWrapper = styled.div`
   display: flex;
   align-items: center;
   & > div:first-child {
-    padding: 12px;
+    padding: 9px;
     border-radius: 6px;
+    height: 34px;
     color: white;
-    background: #3861fb;
+    background: #610D89;
     font-size: 16px;
-    line-height: 20px;
     font-weight: 700;
     margin-right: 24px;
   }
@@ -170,7 +170,7 @@ const App: React.FC = () => {
           <Menu />
           <BodyWrapper toggled={menuToggled}>
             <BodyOverlay toggled={menuToggled} onClick={() => toggleMenu(false)} />
-            <TopBar>
+            <TopBar toggled={menuToggled}>
               <MenuOpenButton onClick={() => toggleMenu(!menuToggled)}>
                 <svg viewBox="0 0 24 24" width="24px">
                   <path d="M4 18H20C20.55 18 21 17.55 21 17C21 16.45 20.55 16 20 16H4C3.45 16 3 16.45 3 17C3 17.55 3.45 18 4 18ZM4 13H20C20.55 13 21 12.55 21 12C21 11.45 20.55 11 20 11H4C3.45 11 3 11.45 3 12C3 12.55 3.45 13 4 13ZM3 7C3 7.55 3.45 8 4 8H20C20.55 8 21 7.55 21 7C21 6.45 20.55 6 20 6H4C3.45 6 3 6.45 3 7Z" />
@@ -191,7 +191,6 @@ const App: React.FC = () => {
               ) : (
                 <ConnectWalletButton />
               )}
-              <UserAvatar />
             </TopBar>
             <TokenBarMobile style={{ width: '100%' }}>
               <HotTokenBar />
