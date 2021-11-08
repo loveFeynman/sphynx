@@ -116,10 +116,10 @@ const AccountWrapper = styled.div`
   }
 `
 
-const PageContent = styled.div`
+const PageContent = styled.div<{ isMobile: boolean }>`
   width: 100%;
   min-height: 100vh;
-  margin-top: 57px;
+  margin-top: ${(props) => (props.isMobile ? '160px' : '57px')};
 `
 
 const MenuOpenButton = styled(Button)`
@@ -236,10 +236,7 @@ const App: React.FC = () => {
                 </>
               )}
             </TopBar>
-            <TokenBarMobile style={{ width: '100%' }}>
-              <HotTokenBar />
-            </TokenBarMobile>
-            <PageContent>
+            <PageContent isMobile={isMobile}>
               <SuspenseWithChunkError fallback={<Loader />}>
                 <Switch>
                   <Route path="/" exact>
