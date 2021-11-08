@@ -4,6 +4,8 @@ import styled from 'styled-components'
 import { Spinner } from '../../LotterySphx/components/Spinner'
 import { useTranslation } from 'contexts/Localization'
 import { formatPrice } from '../../../utils'
+import { ReactComponent as ClockIcon } from 'assets/svg/icon/ClockIcon.svg'
+import { ReactComponent as CalenderIcon } from 'assets/svg/icon/CalenderIcon.svg'
 
 const fontSize = window.screen.width > 768 ? "14px" : "12px"
 
@@ -27,8 +29,11 @@ const TableWrapper = styled.div`
       & td {
         color: white;
         font-size: 16px;
-        border-bottom: 1px solid white;
+        text-align: left;
+        vertical-align: middle;
+        background: ${({ theme }) => theme.isDark ? "#219653": "#77BF3E"};
         padding: 16px 8px;
+        font-weight: 700;
         & > div > div {
           font-size: 16px;
           font-weight: 500;
@@ -42,11 +47,13 @@ const TableWrapper = styled.div`
           font-size: ${fontSize};
           line-height: 16px;
           word-break: break-word;
+          font-weight: 600;
+          text-align: left;
           &.success {
-            color: #00ac1c;
+            color: ${({ theme }) => theme.isDark ? "#219653": "#77BF3E"};
           }
           &.error {
-            color: #ea3943;
+            color: ${({ theme }) => theme.isDark ? "#EB5757": "#F84364"};
           }
         }
       }
@@ -70,7 +77,7 @@ const TransactionCard: React.FC<TransactionProps> = (props) => {
           <table>
             <thead>
               <tr>
-                <td style={{ width: '30%' }}>{t('Time')}</td>
+                <td style={{ width: '30%', paddingLeft: '12px' }}>{t('Time')}</td>
                 <td style={{ width: '26%' }}>{t('Traded Tokens')}</td>
                 <td style={{ width: '22%' }}>{t('Token Price')}</td>
                 <td style={{ width: '22%' }}>{t('$Value')}</td>
@@ -82,7 +89,8 @@ const TransactionCard: React.FC<TransactionProps> = (props) => {
                   <tr key={key}>
                     <td style={{ width: '30%' }}>
                       <a href={'https://bscscan.com/tx/' + data.tx} target="_blank" rel="noreferrer">
-                        <h2 className={!data.isBuy ? 'success' : 'error'}>{data.transactionTime}</h2>
+                        <h2 className={!data.isBuy ? 'success' : 'error'} style={{marginLeft: '8px', padding: '4px'}}><CalenderIcon />&nbsp;&nbsp;{data.transactionTime.slice(0, 15)}</h2>
+                        <h2 className={!data.isBuy ? 'success' : 'error'} style={{marginLeft: '8px', padding: '4px'}}><ClockIcon />&nbsp;&nbsp;{data.transactionTime.slice(16, 24)}</h2>
                       </a>
                     </td>
                     <td style={{ width: '19%' }}>
