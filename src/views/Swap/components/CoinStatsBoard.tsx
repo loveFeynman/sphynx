@@ -191,7 +191,7 @@ export default function CoinStatsBoard(props) {
         </Column>
         <Column>
           <Text>{t('Price')}</Text>
-          <Text>${Number(price).toFixed(scale).toLocaleString()}</Text>
+          <Text>${Number(price).toFixed(scale < 20 ? scale : 19).toLocaleString()}</Text>
         </Column>
         <Column>
           <Text>{t('24h Change')}</Text>

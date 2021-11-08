@@ -541,11 +541,17 @@ export default function Swap({ history }: RouteComponentProps) {
           }
 
           setDatas(newTransactions, queryResult.data.data.ethereum.dexTrades[0].block.height)
+        } else {
+          web3.eth.getBlockNumber().then((blockNumber) => {
+            setDatas([], blockNumber - 200)
+          })  
         }
       } catch (err) {
         // eslint-disable-next-line no-console
         console.log('err', err.message)
-        setDatas([], null)
+        web3.eth.getBlockNumber().then((blockNumber) => {
+          setDatas([], blockNumber - 200)
+        })
       }
     }
 
@@ -1179,8 +1185,8 @@ export default function Swap({ history }: RouteComponentProps) {
               style={{
                 alignSelf: 'center',
                 textAlign: 'center',
-                width: "100%",
-                marginTop: "25px"
+                width: '100%',
+                marginTop: '25px',
               }}
             >
               {swapTransCard === 'tokenDX' && (
