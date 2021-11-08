@@ -2,15 +2,18 @@ import React, { useEffect, useState, useRef, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { utils } from 'ethers'
 import styled from 'styled-components'
-import { Flex, Text } from '@sphynxswap/uikit'
 import Column from 'components/Column'
 import { isAddress } from 'utils'
 import { useTranslation } from 'contexts/Localization'
 import { marketCap } from 'state/input/actions'
-import DefaultImg from 'assets/images/MainLogo.png'
+import { ReactComponent as PriceIcon } from 'assets/svg/icon/PriceIcon.svg'
+import { ReactComponent as ChangeIcon } from 'assets/svg/icon/ChangeIcon.svg'
+import { ReactComponent as VolumeIcon } from 'assets/svg/icon/VolumeIcon.svg'
+import { ReactComponent as LiquidityIcon } from 'assets/svg/icon/LiquidityIcon.svg'
 import storages from 'config/constants/storages'
 import { getChartStats } from 'utils/apiServices'
 import { AppState } from '../../../state'
+import TokenStateCard from './TokenStateCard'
 
 const IconWrapper = styled.div<{ size?: number }>`
   display: flex;
@@ -31,13 +34,56 @@ const IconWrapper = styled.div<{ size?: number }>`
 `
 
 const Container = styled.div`
+  display: flex;
   width: 100%;
-  background-color: rgba(0, 0, 0, 0.4);
-  border-radius: 12px 12px 0px 0px;
-  overflow-x: auto;
-  ::-webkit-scrollbar {
-    height: 10px;
+  margin-bottom: 24px;
+  gap: 12px;
+  flex-wrap: wrap;
+
+  div:nth-child(2) {
+    width: 47%;
+    div {
+      width: 100%;
+    }
   }
+  div:nth-child(3) {
+    width: 47%;
+    div {
+      width: 100%;
+    }
+  }
+  div:nth-child(4) {
+    width: 13%;
+    div {
+      width: 100%;
+    }
+  }
+  div:nth-child(5) {
+    width: 13%;
+    div {
+      width: 100%;
+    }
+  }
+
+  ${({ theme }) => theme.mediaQueries.lg} {
+    flex-wrap: nowrap;
+    div:nth-child(1) {
+      width: unset;
+    }
+    div:nth-child(2) {
+      width: unset;
+    }
+    div:nth-child(3) {
+      width: unset;
+    }
+    div:nth-child(4) {
+      width: unset;
+    }
+    div:nth-child(5) {
+      width: unset;
+    }
+  }
+}
 `
 
 const StyledWrapper = styled.div`
@@ -90,6 +136,17 @@ const StyledWrapper = styled.div`
       }
     }
   }
+`
+
+const TokenTitleCard = styled(Column)<{variantFill}>`
+  background: ${({ variantFill }) => (variantFill ? 'linear-gradient(90deg, #610D89 0%, #C42BB4 100%)' : '')};
+  border: 1px solid ${({ theme }) => theme.colors.primary};
+  border-radius: 5px;
+  padding: 24px;
+`
+
+const TokenPriceCard = styled(Column)`
+
 `
 
 export default function CoinStatsBoard(props) {
@@ -168,49 +225,13 @@ export default function CoinStatsBoard(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tokenData, price])
 
-  const onImgLoadError = (event: any) => {
-    const elem = event.target
-    elem.src = DefaultImg
-  }
-
   return (
     <Container>
-      <StyledWrapper>
-        <Column>
-          <Flex>
-            <IconWrapper size={32}>
-              <img src={linkIcon} width="32" height="32" onError={onImgLoadError} alt="No icon yet" />
-            </IconWrapper>
-            {tokenData && (
-              <Flex flexDirection="column" justifyContent="center">
-                <Text>{t(`${tokenData.symbol}`)}</Text>
-                <Text>$ {marketCapacity.toLocaleString()}</Text>
-              </Flex>
-            )}
-          </Flex>
-        </Column>
-        <Column>
-          <Text>{t('Price')}</Text>
-          <Text>${Number(price).toFixed(scale < 20 ? scale : 19).toLocaleString()}</Text>
-        </Column>
-        <Column>
-          <Text>{t('24h Change')}</Text>
-          <Text>
-            <h2 className={Math.sign(changedecimal) === -1 ? 'error' : 'success'}> {changedecimal}%</h2>
-          </Text>
-        </Column>
-        <Column>
-          <Text>{t('24h Volume')}</Text>
-          <Text>$ {Number(volumedecimal).toLocaleString()}</Text>
-        </Column>
-        <Column style={{ margin: '0 0 8px 0' }}>
-          <Text>{t('Liquidity')}</Text>
-          <Text>
-            {Number(liquidityV2BNBdecimal).toLocaleString()} BNB
-            <span className="success"> (${Number(liquidityV2decimal).toLocaleString()})</span>
-          </Text>
-        </Column>
-      </StyledWrapper>
+      <TokenStateCard tokenImg={linkIcon} cardTitle={tokenData?.symbol?? ''} cardValue={`$ ${marketCapacity.toLocaleString()}`} variantFill flexGrow={2} fillColor='#F75183'/>
+      <TokenStateCard CardIcon={PriceIcon} cardTitle='Price' cardValue={price? `$ ${Number(price).toFixed(scale).toLocaleString()}` : ''} variantFill={false} flexGrow={1} fillColor='#9B51E0' />
+      <TokenStateCard CardIcon={ChangeIcon} cardTitle='24h Change' cardValue={changedecimal? `${changedecimal}%`:''} valueActive variantFill={false} flexGrow={1} fillColor='#77BF3E' />
+      <TokenStateCard CardIcon={VolumeIcon} cardTitle='24h Volume' cardValue={volumedecimal? `$ ${Number(volumedecimal).toLocaleString()}` : ''} variantFill={false} flexGrow={1.5} fillColor='#21C2CC' />
+      <TokenStateCard CardIcon={LiquidityIcon} cardTitle='Liquidity' cardValue={`${Number(liquidityV2BNBdecimal).toLocaleString()} BNB`} fillColor='#2F80ED' subPriceValue={liquidityV2decimal? `(${Number(liquidityV2decimal).toLocaleString()})` : ''} variantFill={false} flexGrow={1.5} />
     </Container>
   )
 }

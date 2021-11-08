@@ -18,13 +18,16 @@ const CopyIcon = styled(LinkStyledButton)`
     color: ${({ theme }) => theme.colors.textSubtle};
   }
 `
+
 const TransactionStatusText = styled.span`
   margin-left: 0.25rem;
   font-size: 0.825rem;
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
+  color: ${({ theme }) => theme.colors.primary};
 `
+
 interface CopyHelperProps {
   toCopy: string,
 }

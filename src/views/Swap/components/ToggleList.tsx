@@ -16,22 +16,20 @@ const ToggleWrapper = styled.div`
   position: relative;
   z-index: 2;
   height: 40px;
-  min-width: 200px;
-  flex: 1;
-  border-radius: 16px;
+  border-radius: 5px;
   padding: 0 4px;
-  background: rgba(0, 0, 0, 0.4);
   display: flex;
   align-items: center;
   ${({ theme }) => theme.mediaQueries.sm} {
-    min-width: 200px;
+    // min-width: 200px;
   }
   & button {
+    width: 100%;
     background: transparent !important;
     outline: none;
+    border: 1px solid ${({ theme }) => theme.colors.cardBorder};
     box-shadow: none !important;
     padding: 0 12px;
-    border: none;
   }
 `
 
@@ -106,7 +104,7 @@ const ToggleList = ({ poolDatas }: { poolDatas: PoolData[] }) => {
   return (
     <>
       <ToggleWrapper>
-        <Button onClick={handleClick} style={{ width: '100%' }} aria-label="token version">
+        <Button onClick={handleClick} aria-label="token version">
           <MenuTitle>
             <span>{selectedItem}</span>
           </MenuTitle>

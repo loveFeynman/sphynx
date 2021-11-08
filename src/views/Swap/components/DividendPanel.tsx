@@ -75,11 +75,11 @@ const DividendPanel: React.FC = () => {
         </RowFixed>
         <RowFixed>
         <QuestionHelper
-              text={t(
-                'Total fees will be redistributed to holders on a weekly basis. Holders must hold Sphynx Token for 7 days to be eligible for the reward. Amount distributed will be dependent on the amount of supply an investor holds.',
-              )}
-              mr="4px"
-            />
+          text={t(
+            'Total fees will be redistributed to holders on a weekly basis. Holders must hold Sphynx Token for 7 days to be eligible for the reward. Amount distributed will be dependent on the amount of supply an investor holds.',
+          )}
+          mr="4px"
+        />
         </RowFixed>
         <RowFixed>
           <Text fontSize="14px">{balance}BNB</Text>

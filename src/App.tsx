@@ -1,4 +1,4 @@
-import React, { lazy, Suspense } from 'react'
+import React, { lazy, Suspense, useState } from 'react'
 import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom'
 import styled from 'styled-components'
 import { ResetCSS, Button, useMatchBreakpoints } from '@sphynxswap/uikit'
@@ -14,6 +14,7 @@ import LanguageOptionButton from 'components/LanguageOptionButton'
 import SwitchNetworkButton from 'components/SwitchNetworkButton'
 import Loader from 'components/myLoader/Loader'
 import { useTranslation } from 'contexts/Localization'
+import MainLogo from 'assets/svg/icon/logo_new.svg'
 import HotTokenBar from './views/Swap/components/HotTokenBar'
 import Menu from './components/Menu'
 import UserMenu from './components/Menu/UserMenu'
@@ -21,7 +22,7 @@ import SuspenseWithChunkError from './components/SuspenseWithChunkError'
 import { ToastListener } from './contexts/ToastsContext'
 import EasterEgg from './components/EasterEgg'
 import GlobalStyle from './style/Global'
-import Swap from "./views/Swap"
+import Swap from './views/Swap'
 
 const NotFound = lazy(() => import('./views/NotFound'))
 const Farms = lazy(() => import('./views/Farms'))
@@ -41,11 +42,11 @@ const BodyWrapper = styled.div<{ toggled: boolean }>`
   overflow-y: auto;
   overflow-x: hidden;
   z-index: 1;
-  background: #1a1a27;
+  background: ${({ theme }) => (theme.isDark ? '#1A1A3A' : '#20234E')};
   position: relative;
   ${({ theme }) => theme.mediaQueries.xl} {
-    width: ${(props) => (props.toggled ? 'calc(100% - 100px)' : 'calc(100% - 320px)')};
-    margin-left: ${(props) => (props.toggled ? '100px' : '320px')};
+    width: ${(props) => (props.toggled ? 'calc(100% - 51px)' : 'calc(100% - 320px)')};
+    margin-left: ${(props) => (props.toggled ? '51px' : '320px')};
     padding: 0 32px;
   }
 `
@@ -65,26 +66,39 @@ const BodyOverlay = styled.div<{ toggled: boolean }>`
   }
 `
 
-const TopBar = styled.div`
+const FlexWrapper = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  margin-top: 32px;
-  margin-bottom: 20px;
+  padding: 6px;
+`
+
+const TopBar = styled.div<{ toggled: boolean; mobile: boolean }>`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  position: fixed;
+  z-index: 999;
+  width: ${(props) => (props.mobile ? '100%' : props.toggled ? 'calc(100% - 52px)' : 'calc(100% - 320px)')};
+  height: ${(props) => (props.mobile ? 'auto' : '57px')};
+  flex-flow: ${(props) => (props.mobile ? 'column' : 'row')};
   flex-wrap: wrap;
+  padding: 0 20px;
+  background-color: ${({ theme }) => (theme.isDark ? '#0E0E26' : '#191C41')};
 `
 
 const AccountWrapper = styled.div`
   display: flex;
   align-items: center;
   & > div:first-child {
-    padding: 12px;
+    padding: 9px;
     border-radius: 6px;
+    height: 34px;
     color: white;
-    background: #3861fb;
+    background: #610d89;
     font-size: 16px;
-    line-height: 20px;
     font-weight: 700;
     margin-right: 24px;
   }
@@ -105,12 +119,15 @@ const AccountWrapper = styled.div`
 const PageContent = styled.div`
   width: 100%;
   min-height: 100vh;
+  margin-top: 57px;
 `
 
 const MenuOpenButton = styled(Button)`
   background: transparent;
   outline: none;
   padding: 0;
+  width: 111px;
+  justify-content: left;
   & svg {
     fill: white;
     width: 32px;
@@ -147,11 +164,13 @@ const App: React.FC = () => {
   const { account } = useWeb3React()
   const { isSm, isXs, isMd } = useMatchBreakpoints()
   const { menuToggled, toggleMenu } = useMenuToggle()
+  const [isMobile, setMobile] = useState(false)
   const { t } = useTranslation()
 
   React.useEffect(() => {
     if (isMd || isSm || isXs) {
       toggleMenu(true)
+      setMobile(true)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -165,26 +184,56 @@ const App: React.FC = () => {
           <Menu />
           <BodyWrapper toggled={menuToggled}>
             <BodyOverlay toggled={menuToggled} onClick={() => toggleMenu(false)} />
-            <TopBar>
-              <MenuOpenButton onClick={() => toggleMenu(!menuToggled)}>
-                <svg viewBox="0 0 24 24" width="24px">
-                  <path d="M4 18H20C20.55 18 21 17.55 21 17C21 16.45 20.55 16 20 16H4C3.45 16 3 16.45 3 17C3 17.55 3.45 18 4 18ZM4 13H20C20.55 13 21 12.55 21 12C21 11.45 20.55 11 20 11H4C3.45 11 3 11.45 3 12C3 12.55 3.45 13 4 13ZM3 7C3 7.55 3.45 8 4 8H20C20.55 8 21 7.55 21 7C21 6.45 20.55 6 20 6H4C3.45 6 3 6.45 3 7Z" />
-                </svg>
-              </MenuOpenButton>
-              <TokenBarDesktop style={{ width: `calc(100% - ${account ? 620 : 440}px` }}>
-                <HotTokenBar />
-              </TokenBarDesktop>
-              <LanguageOptionButton />
-              <SwitchNetworkButton />
-              {account ? (
-                <AccountWrapper>
-                  <div>{t('Connected')}</div>
-                  <div>
-                    <UserMenu />
-                  </div>
-                </AccountWrapper>
+            <TopBar toggled={menuToggled} mobile={isMobile}>
+              {isMobile ? (
+                <>
+                  <FlexWrapper>
+                    <MenuOpenButton onClick={() => toggleMenu(!menuToggled)}>
+                      <svg viewBox="0 0 24 24" width="24px">
+                        <path d="M4 18H20C20.55 18 21 17.55 21 17C21 16.45 20.55 16 20 16H4C3.45 16 3 16.45 3 17C3 17.55 3.45 18 4 18ZM4 13H20C20.55 13 21 12.55 21 12C21 11.45 20.55 11 20 11H4C3.45 11 3 11.45 3 12C3 12.55 3.45 13 4 13ZM3 7C3 7.55 3.45 8 4 8H20C20.55 8 21 7.55 21 7C21 6.45 20.55 6 20 6H4C3.45 6 3 6.45 3 7Z" />
+                      </svg>
+                    </MenuOpenButton>
+                    <img alt="mainLogo" src={MainLogo} width="70px" height="70px" />
+                    <div>
+                      <UserMenu />
+                    </div>
+                  </FlexWrapper>
+                  <HotTokenBar />
+                  <FlexWrapper>
+                    <LanguageOptionButton />
+                    <SwitchNetworkButton />
+                    {account ? (
+                      <AccountWrapper>
+                        <div>{t('Connected')}</div>
+                      </AccountWrapper>
+                    ) : (
+                      ''
+                    )}
+                  </FlexWrapper>
+                </>
               ) : (
-                <ConnectWalletButton />
+                <>
+                  <MenuOpenButton onClick={() => toggleMenu(!menuToggled)}>
+                    <svg viewBox="0 0 24 24" width="24px">
+                      <path d="M4 18H20C20.55 18 21 17.55 21 17C21 16.45 20.55 16 20 16H4C3.45 16 3 16.45 3 17C3 17.55 3.45 18 4 18ZM4 13H20C20.55 13 21 12.55 21 12C21 11.45 20.55 11 20 11H4C3.45 11 3 11.45 3 12C3 12.55 3.45 13 4 13ZM3 7C3 7.55 3.45 8 4 8H20C20.55 8 21 7.55 21 7C21 6.45 20.55 6 20 6H4C3.45 6 3 6.45 3 7Z" />
+                    </svg>
+                  </MenuOpenButton>
+                  <TokenBarDesktop style={{ width: `calc(100% - ${account ? 620 : 540}px` }}>
+                    <HotTokenBar />
+                  </TokenBarDesktop>
+                  <LanguageOptionButton />
+                  <SwitchNetworkButton />
+                  {account ? (
+                    <AccountWrapper>
+                      <div>{t('Connected')}</div>
+                      <div>
+                        <UserMenu />
+                      </div>
+                    </AccountWrapper>
+                  ) : (
+                    <ConnectWalletButton />
+                  )}
+                </>
               )}
             </TopBar>
             <TokenBarMobile style={{ width: '100%' }}>
