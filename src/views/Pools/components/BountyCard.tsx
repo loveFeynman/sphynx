@@ -19,6 +19,7 @@ import { getBalanceNumber } from 'utils/formatBalance'
 import { usePriceCakeBusd } from 'state/farms/hooks'
 import { useCakeVault } from 'state/pools/hooks'
 import Balance from 'components/Balance'
+import StopwatchIcon from 'assets/svg/icon/StopwatchIcon.svg'
 import BountyModal from './BountyModal'
 
 const StyledCard = styled(Card)`
@@ -33,6 +34,23 @@ const StyledCard = styled(Card)`
   ${({ theme }) => theme.mediaQueries.sm} {
     min-width: 240px;
   }
+`
+
+const LogoContent = styled(Flex)`
+  align-items: center;
+  margin-right: 12px;
+  img {
+    width: 32px;
+  }
+  ${({ theme }) => theme.mediaQueries.md} {
+    img {
+      width: 67px;
+    }
+  }
+`
+
+const Line = styled(Flex)`
+
 `
 
 const BountyCard = () => {
@@ -54,13 +72,13 @@ const BountyCard = () => {
 
   const TooltipComponent = ({ fee }: { fee: number }) => (
     <>
-      <Text mb="16px">{t('This bounty is given as a reward for providing a service to other users.')}</Text>
-      <Text mb="16px">
+      <Text color="#452a7a" mb="16px">{t('This bounty is given as a reward for providing a service to other users.')}</Text>
+      <Text color="#452a7a" mb="16px">
         {t(
           'Whenever you successfully claim the bounty, you’re also helping out by activating the Auto SPHYNX Pool’s compounding function for everyone.',
         )}
       </Text>
-      <Text style={{ fontWeight: 'bold' }}>
+      <Text color="#452a7a" style={{ fontWeight: 'bold' }}>
         {t('Auto-Compound Bounty: %fee%% of all Auto SPHYNX pool users pending yield', { fee: fee / 100 })}
       </Text>
     </>
@@ -78,47 +96,43 @@ const BountyCard = () => {
       {tooltipVisible && tooltip}
       <StyledCard background="transparent">
         <CardBody>
-          <Flex flexDirection="column">
-            <Flex alignItems="center" mb="12px">
-              <Text fontSize="16px" bold color="textSubtle" mr="4px">
-                {t('Auto SPHYNX Bounty')}
-              </Text>
-              <Box ref={targetRef}>
-                <HelpIcon color="textSubtle" />
-              </Box>
+          <Flex flexDirection="row">
+            <Flex flexGrow={1} style={{ borderRight: '1px solid #21214A' }}>
+              <LogoContent>
+                <img src={StopwatchIcon} alt="Stopwatch Logo" width="100%" />
+                <Flex flexDirection="column" style={{ padding: '12px 0px' }}>
+                  <Flex alignItems="center" mb="2px">
+                    <Text fontSize="20px" bold color="white" mr="4px">
+                      {t('Auto SPHYNX Bounty')}
+                    </Text>
+                    <Box ref={targetRef}>
+                      <HelpIcon color="white" />
+                    </Box>
+                  </Flex>
+                  <Flex flexDirection="column" mr="12px">
+                    <Heading>
+                      {hasFetchedCakeBounty ? (
+                        <Balance fontSize="15px" color="#777777" value={cakeBountyToDisplay} decimals={3} />
+                      ) : (
+                        <Skeleton height={20} width={96} mb="2px" />
+                      )}
+                    </Heading>
+                  </Flex>
+                </Flex>
+              </LogoContent>
             </Flex>
-          </Flex>
-          <Flex alignItems="center" justifyContent="space-between">
-            <Flex flexDirection="column" mr="12px">
-              <Heading>
-                {hasFetchedCakeBounty ? (
-                  <Balance fontSize="20px" bold value={cakeBountyToDisplay} decimals={3} />
-                ) : (
-                  <Skeleton height={20} width={96} mb="2px" />
-                )}
-              </Heading>
-              {hasFetchedDollarBounty ? (
-                <Balance
-                  fontSize="12px"
-                  color="textSubtle"
-                  value={dollarBountyToDisplay}
-                  decimals={2}
-                  unit=" USD"
-                  prefix="~"
-                />
-              ) : (
-                <Skeleton height={16} width={62} />
-              )}
+            <Flex flexGrow={1} alignItems="center" justifyContent="end">
+              <Button
+                variant="primary"
+                disabled={!dollarBountyToDisplay || !cakeBountyToDisplay || !callFee}
+                onClick={onPresentBountyModal}
+                scale="sm"
+                id="clickClaimVaultBounty"
+                style={{ color: "white", backgroundColor: '#2E2E55', borderColor: '#2E2E55', borderRadius: '5px' }}
+              >
+                {t('Claim')}
+              </Button>
             </Flex>
-            <Button
-              variant="primary"
-              disabled={!dollarBountyToDisplay || !cakeBountyToDisplay || !callFee}
-              onClick={onPresentBountyModal}
-              scale="sm"
-              id="clickClaimVaultBounty"
-            >
-              {t('Claim')}
-            </Button>
           </Flex>
         </CardBody>
       </StyledCard>

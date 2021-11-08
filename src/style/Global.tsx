@@ -16,7 +16,7 @@ const GlobalStyle = createGlobalStyle`
     src: local('/fonts/Roboto Regular'), url('/fonts/Roboto-Regular.woff') format('woff');
   }
   * {
-    font-family: 'Montserrat', sans-serif;
+    font-family: Poppins;
     font-display: swap;
   }
   body {

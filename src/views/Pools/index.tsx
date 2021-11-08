@@ -18,6 +18,7 @@ import SearchInput from 'components/SearchInput'
 import Select, { OptionProps } from 'components/Select/Select'
 import { Pool } from 'state/types'
 import Loading from 'components/Loading'
+import PoolLogo from 'assets/png/icon/PoolIcon2.png'
 import PoolCard from './components/PoolCard'
 import CakeVaultCard from './components/CakeVaultCard'
 import PoolTabButtons from './components/PoolTabButtons'
@@ -28,6 +29,45 @@ import { getAprData, getCakeVaultEarnings } from './helpers'
 
 const CardLayout = styled(FlexLayout)`
   justify-content: center;
+  font-family: Poppins;
+`
+
+const LogoContent = styled(Flex)`
+  align-items: center;
+  img {
+    width: 32px;
+    margin-right: 11px;
+  }
+  ${({ theme }) => theme.mediaQueries.md} {
+    img {
+      width: 57px;
+      margin: 0px 11px 11px;
+    }
+  }
+`
+
+const LogoTitle = styled.div`
+  display: block;
+  width: 100%;
+  div:nth-child(1) {
+    font-size: 14px;
+  }
+  div:nth-child(2) {
+    font-size: 10px;
+  }
+  ${({ theme }) => theme.mediaQueries.md} {
+    div:nth-child(1) {
+      font-size: 24px;
+    }
+    div:nth-child(2) {
+      font-size: 16px;
+    }
+  }
+`
+
+const LogoTitleWrapper = styled.div`
+  display: flex;
+  align-items: center;
 `
 
 const PoolControls = styled.div`
@@ -182,12 +222,12 @@ const Pools: React.FC = () => {
             }
             return pool.isAutoVault
               ? getCakeVaultEarnings(
-                  account,
-                  cakeAtLastUserAction,
-                  userShares,
-                  pricePerFullShare,
-                  pool.earningTokenPrice,
-                ).autoUsdToDisplay
+                account,
+                cakeAtLastUserAction,
+                userShares,
+                pricePerFullShare,
+                pool.earningTokenPrice,
+              ).autoUsdToDisplay
               : pool.userData.pendingReward.times(pool.earningTokenPrice).toNumber()
           },
           'desc',
@@ -239,19 +279,27 @@ const Pools: React.FC = () => {
       <div style={{ height: 24 }} />
       <PageHeader>
         <Flex justifyContent="space-between" flexDirection={['column', null, null, 'row']}>
-          <Flex flex="1" flexDirection="column" mr={['8px', 0]}>
-            <Heading as="h1" scale="xxl" color="white" mb="24px">
-              {t('Sphynx Pools')}
-            </Heading>
-            <Heading scale="md" color="text">
-              {t('Just stake some tokens to earn.')}
-            </Heading>
-            <Heading scale="md" color="text">
-              {t('High APR, low risk.')}
-            </Heading>
+          <Flex flexGrow={5}>
+            <LogoContent>
+              <Flex>
+                <img src={PoolLogo} alt="Pool Logo" />
+              </Flex>
+              <LogoTitleWrapper>
+                <LogoTitle>
+                  <Text color="white" bold>
+                    {t('Sphynx Pools')}
+                  </Text>
+                  <Text color="#777777">
+                    {t('Just stake some tokens to earn.')}
+                  </Text>
+                  <Text color="#777777">
+                    {t('High APR, low risk.')}
+                  </Text>
+                </LogoTitle>
+              </LogoTitleWrapper>
+            </LogoContent>
           </Flex>
-          <Flex flex="1" height="fit-content" justifyContent="center" alignItems="center" mt={['24px', null, '0']}>
-            {/* <HelpButton /> */}
+          <Flex flexGrow={3} height="fit-content" justifyContent="center" alignItems="center" mt={['24px', null, '0']}>
             <BountyCard />
           </Flex>
         </Flex>
