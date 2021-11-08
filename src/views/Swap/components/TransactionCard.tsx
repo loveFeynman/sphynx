@@ -7,7 +7,7 @@ import { formatPrice } from '../../../utils'
 import { ReactComponent as ClockIcon } from 'assets/svg/icon/ClockIcon.svg'
 import { ReactComponent as CalenderIcon } from 'assets/svg/icon/CalenderIcon.svg'
 
-const fontSize = window.screen.width > 768 ? "14px" : "12px"
+const fontSize = window.screen.width > 768 ? "14px" : "10px"
 
 const TableWrapper = styled.div`
   background: ${({ theme }) => theme.isDark ? "#0E0E26": "#2A2E60"};
