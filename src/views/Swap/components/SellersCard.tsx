@@ -125,7 +125,7 @@ const SellersCard = (props) => {
                 return (
                   <tr key={td.id} style={{ fontSize: '14px', fontWeight: 'bold' }}>
                     <td style={{ color: '#fff', fontWeight: 'bold' }}>
-                      <a href={`https://bscscan.com/token/0x2e121ed64eeeb58788ddb204627ccb7c7c59884c?a=${td.wallet}`} target="_blank" rel="noreferrer">
+                      <a href={`https://bscscan.com/token/${input}?a=${td.wallet}`} target="_blank" rel="noreferrer">
                         {td.wallet}
                       </a>
                     </td>

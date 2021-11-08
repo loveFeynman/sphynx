@@ -157,58 +157,6 @@ const SwapPage = styled(Page)`
   padding: 0;
 `
 
-// const SwapTabs = styled(Tabs)`
-//   font-family: BlinkMacSystemFont, "Segoe UI", sans-serif;
-//   font-size: 12px;
-// `;
-
-// const SwapTabList = styled(TabList)`
-//   list-style-type: none;
-//   display: flex;
-//   margin: 0;
-// `;
-
-// SwapTabList.tabsRole = 'TabList';
-
-// const SwapTab = styled(Tab)`
-//   margin-top: 12px;
-//   padding: 10px;
-//   user-select: none;
-//   cursor: arrow;
-//   width: 50%;
-//   div {
-//     font-weight: 600;
-//     font-size: 14px;
-//     color: #A7A7CC;
-//     text-align: center;
-//   }
-
-//   &.is-selected {
-//     background: ${({ theme }) => theme.isDark ? "#0E0E26" : "#2A2E60"};  
-//     border-top: 1px solid #C32BB4;
-//     div {
-//       color: #C32BB4;
-//     }
-//   }
-
-//   &:focus {
-//     outline: none;
-//     box-shadow: 0 0 0 2px rgba(0, 0, 255, .5)
-//   }
-// `;
-// SwapTab.tabsRole = 'Tab';
-
-// const SwapTabPanel = styled(TabPanel)`
-//   display: none;
-//   width: 100%;
-
-//   &.is-selected {
-//     display: block;
-//   }
-// `;
-
-SwapTabPanel.tabsRole = 'TabPanel';
-
 export default function Swap({ history }: RouteComponentProps) {
   const dispatch = useDispatch()
   const { setRouterType } = useSetRouterType()
@@ -598,11 +546,17 @@ export default function Swap({ history }: RouteComponentProps) {
           }
 
           setDatas(newTransactions, queryResult.data.data.ethereum.dexTrades[0].block.height)
+        } else {
+          web3.eth.getBlockNumber().then((blockNumber) => {
+            setDatas([], blockNumber - 200)
+          })  
         }
       } catch (err) {
         // eslint-disable-next-line no-console
         console.log('err', err.message)
-        setDatas([], null)
+        web3.eth.getBlockNumber().then((blockNumber) => {
+          setDatas([], blockNumber - 200)
+        })
       }
     }
 
@@ -1411,7 +1365,7 @@ export default function Swap({ history }: RouteComponentProps) {
           </Card> */}
           <AdvancedSwapDetailsDropdown trade={trade} />
           <TokenInfoWrapper>
-            <TokenInfo tokenData={tokenData} />
+            <TokenInfo tokenData={tokenData} tokenAddress={input} />
           </TokenInfoWrapper>
         </div>
         <div>
@@ -1461,8 +1415,8 @@ export default function Swap({ history }: RouteComponentProps) {
               style={{
                 alignSelf: 'center',
                 textAlign: 'center',
-                width: "100%",
-                marginTop: "25px"
+                width: '100%',
+                marginTop: '25px',
               }}
             >
               {swapTransCard === 'tokenDX' && (

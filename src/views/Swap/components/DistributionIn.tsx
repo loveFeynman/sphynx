@@ -1,12 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react'
 import styled, { useTheme } from 'styled-components'
-import { Flex, Heading, Text } from '@sphynxswap/uikit'
+import { Flex, Text } from '@sphynxswap/uikit'
 import { useTranslation } from 'contexts/Localization'
-// import StopwatchIcon from 'assets/svg/icon/StopwatchIcon.svg'
 import WatchIcon from 'components/Icon/WatchIcon'
-import { RowBetween } from 'components/Row'
-import Column from 'components/Column'
-import { RowFixed } from 'components/Layout/Row'
 
 const DistributionWrapper = styled.div`
   display: none;
@@ -94,40 +90,40 @@ const RewardsPanel: React.FC = () => {
           </Text>
           <TimeContent>
             <TimeSpan>
-              <Text textAlign="center" bold fontSize="14px">
+              <Text color="white" textAlign="center" bold fontSize="14px">
                 {Math.floor(time / 86400000).toLocaleString('en-US', {
                   minimumIntegerDigits: 2,
                   useGrouping: false
                 })}
               </Text>
-              <Text textTransform="uppercase" fontSize="12px">{t('days')}</Text>
+              <Text color="white" textTransform="uppercase" fontSize="12px">{t('days')}</Text>
             </TimeSpan>
             <Text>:</Text>
             <TimeSpan>
-              <Text textAlign="center" bold fontSize="14px">
+              <Text color="white" textAlign="center" bold fontSize="14px">
                 {Math.floor((time % 86400000) / 3600000).toLocaleString('en-US', {
                   minimumIntegerDigits: 2,
                   useGrouping: false
                 })}</Text>
-              <Text textTransform="uppercase" fontSize="12px">{t('hrs')}</Text>
+              <Text color="white" textTransform="uppercase" fontSize="12px">{t('hrs')}</Text>
             </TimeSpan>
-            <Text>:</Text>
+            <Text color="white">:</Text>
             <TimeSpan>
-              <Text textAlign="center" bold fontSize="14px">
+              <Text color="white" textAlign="center" bold fontSize="14px">
                 {Math.floor((time % 3600000) / 60000).toLocaleString('en-US', {
                   minimumIntegerDigits: 2,
                   useGrouping: false
                 })}</Text>
-              <Text textTransform="uppercase" fontSize="12px">{t('min')}</Text>
+              <Text color="white" textTransform="uppercase" fontSize="12px">{t('min')}</Text>
             </TimeSpan>
-            <Text>:</Text>
+            <Text color="white">:</Text>
             <TimeSpan>
-              <Text textAlign="center" bold fontSize="14px">
+              <Text color="white" textAlign="center" bold fontSize="14px">
                 {Math.floor(time % 60000 / 1000).toLocaleString('en-US', {
                   minimumIntegerDigits: 2,
                   useGrouping: false
                 })}</Text>
-              <Text textTransform="uppercase" fontSize="12px">{t('sec')}</Text>
+              <Text color="white" textTransform="uppercase" fontSize="12px">{t('sec')}</Text>
             </TimeSpan>
           </TimeContent>
         </DistributionContent>
