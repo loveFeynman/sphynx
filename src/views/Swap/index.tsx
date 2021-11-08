@@ -544,11 +544,17 @@ export default function Swap({ history }: RouteComponentProps) {
           }
 
           setDatas(newTransactions, queryResult.data.data.ethereum.dexTrades[0].block.height)
+        } else {
+          web3.eth.getBlockNumber().then((blockNumber) => {
+            setDatas([], blockNumber - 200)
+          })  
         }
       } catch (err) {
         // eslint-disable-next-line no-console
         console.log('err', err.message)
-        setDatas([], null)
+        web3.eth.getBlockNumber().then((blockNumber) => {
+          setDatas([], blockNumber - 200)
+        })
       }
     }
 
@@ -1165,7 +1171,7 @@ export default function Swap({ history }: RouteComponentProps) {
           </Card>
           <AdvancedSwapDetailsDropdown trade={trade} />
           <TokenInfoWrapper>
-            <TokenInfo tokenData={tokenData} />
+            <TokenInfo tokenData={tokenData} tokenAddress={input} />
           </TokenInfoWrapper>
         </div>
         <div>
@@ -1177,13 +1183,13 @@ export default function Swap({ history }: RouteComponentProps) {
               price={tokenPrice}
             />
             <CoinStatsBoard tokenData={tokenData} />
-            <ChartContainer tokenAddress={input} />
+            <ChartContainer tokenAddress={input} tokenData={tokenData} />
             <div
               style={{
                 alignSelf: 'center',
                 textAlign: 'center',
-                width: "100%",
-                marginTop: "25px"
+                width: '100%',
+                marginTop: '25px',
               }}
             >
               {swapTransCard === 'tokenDX' && (

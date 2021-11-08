@@ -150,7 +150,13 @@ async function getTokenInfoForChart(input: any, pair: any, routerVersion: any) {
       }
     } catch (error) {
       console.log('error', error)
-      reject(error)
+      getTokenDetails(input, routerVersion)
+      .then(data => {
+        resolve(data)
+      })
+      .catch( err => {
+        reject(err)
+      })
     }
   })
 }

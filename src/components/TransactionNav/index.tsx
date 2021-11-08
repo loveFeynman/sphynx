@@ -58,7 +58,7 @@ const TokenInfoWrapper = styled.div<{ toggled: boolean }>`
   transition: left 0.5s;
 `
 
-const TransactionNav = () => {
+const TransactionNav = ({tokenAddress, tokenData}) => {
   const { swapTransCard, setSwapTransCard } = useSwapTransCard()
   const [infoToggled, toggleInfoBar] = useState(false)
 
@@ -106,7 +106,7 @@ const TransactionNav = () => {
         </Button>
       </StyledNav>
       <TokenInfoWrapper toggled={infoToggled}>
-        <TokenInfo />
+        <TokenInfo tokenData={tokenData} tokenAddress={tokenAddress} />
       </TokenInfoWrapper>
       <BodyOverlay toggled={infoToggled} onClick={() => toggleInfoBar(false)} />
     </>

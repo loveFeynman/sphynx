@@ -46,7 +46,7 @@ const TransactionNavWrapper = styled.div`
 
 const Chart = React.lazy(() => import("./ChartContainer"))
 
-const ChartContainer = ({tokenAddress}) => {
+const ChartContainer = ({tokenAddress, tokenData}) => {
   const input = tokenAddress
   const routerVersion = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.routerVersion)
 
@@ -79,7 +79,7 @@ const ChartContainer = ({tokenAddress}) => {
           <UpDownArrow />
         </ArrowWrapper>
         <TransactionNavWrapper>
-          <TransactionNav />
+          <TransactionNav tokenAddress={tokenAddress} tokenData={tokenData}/>
         </TransactionNavWrapper>
       </UpDownArrowBox>
     </Wrapper>
