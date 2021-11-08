@@ -72,7 +72,7 @@ const TopBar = styled.div`
   align-items: center;
   width: 100%;position: fixed;
   z-index: 999;
-  width: calc(100vw- 320px);
+  width: calc(100% - 320px);
   height: 57px;
   flex-wrap: wrap;
   padding: 0 20px;
