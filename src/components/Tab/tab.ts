@@ -21,7 +21,7 @@ export const SwapTab = styled(Tab)`
   user-select: none;
   cursor: arrow;
   width: 100%;
-  max-width: 195px
+  max-width: 195px;
   div {
     font-weight: 600;
     font-size: 14px;
