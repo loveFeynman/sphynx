@@ -9,20 +9,18 @@ import { v4 as uuidv4 } from 'uuid'
 import { Spinner } from '../../LotterySphx/components/Spinner'
 import { topTrades } from '../../../utils/apiServices'
 
+const fontSize = window.screen.width > 768 ? "14px" : "10px"
+
 const TableWrapper = styled.div`
   background: ${({ theme }) => theme.isDark ? "#0E0E26": "#2A2E60"};
   border-radius: 8px;
   height: 100%;
   max-height: 500px;
   overflow: auto;
-  position: relative;
-  width: 100%;
+  overflow-x: hidden;
   & table {
     background: transparent;
-    min-width: 280px;
     width: 100%;
-    max-width: 100%;
-    word-break: break-all;
     & tr {
       background: transparent;
     }
@@ -33,9 +31,10 @@ const TableWrapper = styled.div`
       & td {
         color: white;
         font-size: 16px;
-        border-bottom: 1px solid white;
+        vertical-align: middle;
+        background: ${({ theme }) => theme.isDark ? "#219653": "#77BF3E"};
         padding: 16px 8px;
-        word-break: break-word;
+        font-weight: 700;
         & > div > div {
           font-size: 16px;
           font-weight: 500;
@@ -46,23 +45,15 @@ const TableWrapper = styled.div`
       & tr {
         border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         & h2 {
-          font-size: 14px;
+          font-size: ${fontSize};
           line-height: 16px;
-          font-weight: bold;
+          word-break: break-word;
+          font-weight: 600;
           &.success {
-            color: #00ac1c;
+            color: ${({ theme }) => theme.isDark ? "#219653": "#77BF3E"};
           }
           &.error {
-            color: #ea3943;
-          }
-        }
-
-        & td {
-          a:hover {
-            color: white;
-            text-decoration: underline;
-            text-decoration-color: #007bff;
-            -webkit-text-decoration-color: #007bff;
+            color: ${({ theme }) => theme.isDark ? "#EB5757": "#F84364"};
           }
         }
       }
@@ -123,13 +114,13 @@ const SellersCard = (props) => {
                 id: uuidv4()
               })).map((td) => {
                 return (
-                  <tr key={td.id} style={{ fontSize: '14px', fontWeight: 'bold' }}>
-                    <td style={{ color: '#fff', fontWeight: 'bold' }}>
+                  <tr key={td.id}>
+                    <td style={{ color: '#fff', width: '80%' }}>
                       <a href={`https://bscscan.com/token/${input}?a=${td.wallet}`} target="_blank" rel="noreferrer">
                         {td.wallet}
                       </a>
                     </td>
-                    <td style={{ color: '#ea3843', fontWeight: 'bold' }}>
+                    <td style={{ color: '#ea3843', width: '20%' }}>
                       $ {td.usdAmount.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$&,')}
                     </td>
                   </tr>
