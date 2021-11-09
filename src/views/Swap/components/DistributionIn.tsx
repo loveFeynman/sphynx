@@ -5,9 +5,22 @@ import { useTranslation } from 'contexts/Localization'
 import WatchIcon from 'components/Icon/WatchIcon'
 
 const DistributionWrapper = styled.div`
-  display: none;
+  display: flex;
+  padding: 6px 12px;
+  svg {
+    width: 36px;
+    height: 36px;
+  }
+  .dateString {
+    font-size: 10px;
+  }
+  .titleString {
+    font-size: 12px;
+  }
+  .timeString {
+    fontSize: 11px;
+  }
   ${({ theme }) => theme.mediaQueries.md} {
-    display: flex;
     flex-direction: column;
     justify-content: center;
     color: white;
@@ -17,6 +30,15 @@ const DistributionWrapper = styled.div`
     height: 104px;
     background-color: ${({ theme }) => theme.isDark ? "transparent" : "#2A2E60"};
     border-radius: 10px;
+    .dateString {
+      font-size: 12px;
+    }
+    .titleString {
+      font-size: 16px;
+    }
+    .timeString {
+      fontSize: 14px;
+    }
   }
 `
 
@@ -39,17 +61,6 @@ const TimeContent = styled.div`
   justify-content: space-between;
   max-width: 232px;
 `
-
-// const TimeSpan = (time?: number, timeUnit?: string) => {
-
-//   return (
-//     <TimeSpan>
-//       <Text>{time}</Text>
-//       <Text>{timeUnit}</Text>
-//     </TimeSpan>
-//   )
-
-// }
 
 const RewardsPanel: React.FC = () => {
   const { t } = useTranslation()
@@ -82,49 +93,49 @@ const RewardsPanel: React.FC = () => {
 
   return (
     <DistributionWrapper>
-      <Flex justifyContent="flex-end">
+      <Flex justifyContent="flex-end" alignItems="center">
         {/* <img src={StopwatchIcon} alt="stopwatch icon" width="90" height="90" /> */}
         <WatchIcon width="61px" height="72px" color={theme.isDark ? "#A7A7CC":"#F2C94C"}/>
         <DistributionContent>
-          <Text color={theme.isDark ? "#C32BB4" : "#F2C94C"} bold>
+          <Text color={theme.isDark ? "#C32BB4" : "#F2C94C"} bold className="titleString">
             {t('Distribution In:')}
           </Text>
           <TimeContent>
             <TimeSpan>
-              <Text color="white" textAlign="center" bold fontSize="14px">
+              <Text color="white" textAlign="center" bold className="timeString">
                 {Math.floor(time / 86400000).toLocaleString('en-US', {
                   minimumIntegerDigits: 2,
                   useGrouping: false
                 })}
               </Text>
-              <Text color="#A7A7CC" textTransform="uppercase" fontSize="12px">{t('days')}</Text>
+              <Text color="#A7A7CC" textTransform="uppercase" className="dateString">{t('days')}</Text>
             </TimeSpan>
             <Text>:</Text>
             <TimeSpan>
-              <Text color="white" textAlign="center" bold fontSize="14px">
+              <Text color="white" textAlign="center" bold className="timeString">
                 {Math.floor((time % 86400000) / 3600000).toLocaleString('en-US', {
                   minimumIntegerDigits: 2,
                   useGrouping: false
                 })}</Text>
-              <Text color="#A7A7CC" textTransform="uppercase" fontSize="12px">{t('hrs')}</Text>
+              <Text color="#A7A7CC" textTransform="uppercase" className="dateString">{t('hrs')}</Text>
             </TimeSpan>
             <Text color="white">:</Text>
             <TimeSpan>
-              <Text color="white" textAlign="center" bold fontSize="14px">
+              <Text color="white" textAlign="center" bold className="timeString">
                 {Math.floor((time % 3600000) / 60000).toLocaleString('en-US', {
                   minimumIntegerDigits: 2,
                   useGrouping: false
                 })}</Text>
-              <Text color="#A7A7CC" textTransform="uppercase" fontSize="12px">{t('min')}</Text>
+              <Text color="#A7A7CC" textTransform="uppercase" className="dateString">{t('min')}</Text>
             </TimeSpan>
             <Text color="white">:</Text>
             <TimeSpan>
-              <Text color="white" textAlign="center" bold fontSize="14px">
+              <Text color="white" textAlign="center" bold className="timeString">
                 {Math.floor(time % 60000 / 1000).toLocaleString('en-US', {
                   minimumIntegerDigits: 2,
                   useGrouping: false
                 })}</Text>
-              <Text color="#A7A7CC" textTransform="uppercase" fontSize="12px">{t('sec')}</Text>
+              <Text color="#A7A7CC" textTransform="uppercase" className="dateString">{t('sec')}</Text>
             </TimeSpan>
           </TimeContent>
         </DistributionContent>

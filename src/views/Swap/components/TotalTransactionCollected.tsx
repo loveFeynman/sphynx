@@ -13,22 +13,27 @@ const CollectedWrapper = styled.div`
   flex-direction: column;
   justify-content: center;
   color: white;
-  margin: 16px;
+  margin: 4px;
   border: 1px solid #5E2B60;
   border-radius: 5px;
   padding: 12px 8px 10px;
-  div:nth-child(1) {
+  height: 74px;
+  & > div:nth-child(1) {
     font-size: 11px;
     text-align: start;
   }
   ${({ theme }) => theme.mediaQueries.md} {
+    white-space: nowrap;
     width: 100%;
+    height: 104px;
     max-width: 410px;
     div:nth-child(1) {
       font-size: 18px;
       text-align: center;
+      padding: 12px;
     }
     padding: 22px 0px 20px;
+    margin: 16px;
   }
 `
 
