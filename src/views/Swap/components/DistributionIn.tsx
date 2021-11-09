@@ -96,7 +96,7 @@ const RewardsPanel: React.FC = () => {
                   useGrouping: false
                 })}
               </Text>
-              <Text color="white" textTransform="uppercase" fontSize="12px">{t('days')}</Text>
+              <Text color="#A7A7CC" textTransform="uppercase" fontSize="12px">{t('days')}</Text>
             </TimeSpan>
             <Text>:</Text>
             <TimeSpan>
@@ -105,7 +105,7 @@ const RewardsPanel: React.FC = () => {
                   minimumIntegerDigits: 2,
                   useGrouping: false
                 })}</Text>
-              <Text color="white" textTransform="uppercase" fontSize="12px">{t('hrs')}</Text>
+              <Text color="#A7A7CC" textTransform="uppercase" fontSize="12px">{t('hrs')}</Text>
             </TimeSpan>
             <Text color="white">:</Text>
             <TimeSpan>
@@ -114,7 +114,7 @@ const RewardsPanel: React.FC = () => {
                   minimumIntegerDigits: 2,
                   useGrouping: false
                 })}</Text>
-              <Text color="white" textTransform="uppercase" fontSize="12px">{t('min')}</Text>
+              <Text color="#A7A7CC" textTransform="uppercase" fontSize="12px">{t('min')}</Text>
             </TimeSpan>
             <Text color="white">:</Text>
             <TimeSpan>
@@ -123,7 +123,7 @@ const RewardsPanel: React.FC = () => {
                   minimumIntegerDigits: 2,
                   useGrouping: false
                 })}</Text>
-              <Text color="white" textTransform="uppercase" fontSize="12px">{t('sec')}</Text>
+              <Text color="#A7A7CC" textTransform="uppercase" fontSize="12px">{t('sec')}</Text>
             </TimeSpan>
           </TimeContent>
         </DistributionContent>
