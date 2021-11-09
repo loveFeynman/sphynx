@@ -189,7 +189,7 @@ const MenuItem = styled.a<{ toggled: boolean }>`
     text-decoration: none !important;
     & p {
       width: calc(100% - 32px);
-      font-size: 13px;
+      font-size: 14px;
       font-weight: 600;
       color: #a7a7cc;
     }
@@ -208,16 +208,22 @@ const MenuItemMobile = styled.a`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1px;
-  margin: 5px 16px;
-  border-radius: 10px;
+  padding: 5px 16px;
+  margin: 5px 0;
+  border-radius: 5px;
   text-decoration: none !important;
   & p {
     width: calc(100% - 32px);
+    font-size: 14px;
+    font-weight: 600;
+    color: #a7a7cc;
   }
   &:hover,
   &.active {
     background: #710d89;
+    p {
+      color: white;
+    }
   }
   ${({ theme }) => theme.mediaQueries.xl} {
     display: none;
@@ -736,7 +742,7 @@ const Menu = () => {
                 >
                   <Icon />
                   <p>
-                    <b>{t(`${link.label}`)}</b>
+                    {t(`${link.label}`)}
                   </p>
                 </MenuItemMobile>
               </div>
@@ -745,18 +751,26 @@ const Menu = () => {
         <SocialWrapper>
           {!menuToggled && <p>{t('Socials')}</p>}
           <SocialIconsWrapper toggled={menuToggled}>
-            <IconBox color="#33AAED">
-              <TwitterIcon width="15px" height="15px" />
-            </IconBox>
-            <IconBox color="#710D89">
-              <SocialIcon2 width="15px" height="15px" />
-            </IconBox>
-            <IconBox color="#3E70D1">
-              <TelegramIcon width="15px" height="15px" />
-            </IconBox>
-            <IconBox color="#2260DA">
-              <DiscordIcon width="15px" height="15px" />
-            </IconBox>
+            <Link external href="https://twitter.com/sphynxswap?s=21" aria-label="twitter">
+              <IconBox color="#33AAED">
+                <TwitterIcon width="15px" height="15px" />
+              </IconBox>
+            </Link>
+            <Link external href="https://sphynxtoken.co" aria-label="social2">
+              <IconBox color="#710D89">
+                <SocialIcon2 width="15px" height="15px" />
+              </IconBox>
+            </Link>
+            <Link external href="https://t.me/sphynxswap" aria-label="telegram">
+              <IconBox color="#3E70D1">
+                <TelegramIcon width="15px" height="15px" />
+              </IconBox>
+            </Link>
+            <Link external href="https://discord.gg/ZEuDaFk4qz" aria-label="discord">
+              <IconBox color="#2260DA">
+                <DiscordIcon width="15px" height="15px" />
+              </IconBox>
+            </Link>
             {/* <Link external href="https://instagram.com/sphynxswap?utm_medium=copy_link">
                 <img src={InstaIcon} alt="insta" style={{height: "45px", width: "45px", padding: "8px"}} />
               </Link> */}

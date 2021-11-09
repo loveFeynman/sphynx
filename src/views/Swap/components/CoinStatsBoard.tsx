@@ -16,59 +16,47 @@ import { getChartStats } from 'utils/apiServices'
 import { AppState } from '../../../state'
 import TokenStateCard from './TokenStateCard'
 
-const IconWrapper = styled.div<{ size?: number }>`
-  display: flex;
-  flex-flow: column nowrap;
-  align-items: center;
-  justify-content: center;
-  margin-right: 8px;
-  & > img,
-  height: ${({ size }) => (size ? `${size}px` : '32px')};
-  width: ${({ size }) => (size ? `${size}px` : '32px')};
-  span {
-    height: ${({ size }) => (size ? `${size}px` : '32px')};
-    width: ${({ size }) => (size ? `${size}px` : '32px')};
-  }
-  ${({ theme }) => theme.mediaQueries.lg} {
-    align-items: flex-end;
-  }
-`
-
 const Container = styled.div`
   display: flex;
   width: 100%;
   margin-bottom: 24px;
   gap: 12px;
   flex-wrap: wrap;
-
+  &>div:first-child {
+    width: 100%;
+  }
   div:nth-child(2) {
     width: 47%;
     div {
-      width: 100%;
+      white-space: nowrap;
+      width: 90%;
     }
   }
   div:nth-child(3) {
     width: 47%;
     div {
-      width: 100%;
+      white-space: nowrap;
+      width: 90%;
     }
   }
   div:nth-child(4) {
     width: 13%;
     div {
-      width: 100%;
+      white-space: nowrap;
+      width: 90%;
     }
   }
   div:nth-child(5) {
     width: 13%;
     div {
-      width: 100%;
+      white-space: nowrap;
+      width: 90%;
     }
   }
 
   ${({ theme }) => theme.mediaQueries.lg} {
     flex-wrap: nowrap;
-    div:nth-child(1) {
+    div:first-child {
       width: unset;
     }
     div:nth-child(2) {
@@ -85,69 +73,6 @@ const Container = styled.div`
     }
   }
 }
-`
-
-const StyledWrapper = styled.div`
-  padding: 8px 16px 0;
-  display: flex;
-  flex-wrap: wrap;
-  & > div {
-    margin: 0 12px 8px 0;
-    width: calc(50% - 12px);
-    &:first-child {
-      width: 100%;
-    }
-    & > div,
-    & > div > div > div {
-      &:first-child {
-        color: white;
-        font-size: 14px;
-        line-height: 16px;
-        font-weight: 500;
-        margin-bottom: 2px;
-      }
-      &:last-child {
-        color: #adb5bd;
-        font-weight: bold;
-        font-size: 14px;
-        line-height: 16px;
-      }
-    }
-    & .success {
-      color: #00ac1c;
-    }
-    & .error {
-      color: #ea3943;
-    }
-    & h2 {
-      font-size: 14px;
-      line-height: 16px;
-      font-weight: bold;
-    }
-  }
-  ${({ theme }) => theme.mediaQueries.md} {
-    flex-wrap: nowrap;
-    align-items: center;
-    justify-content: space-between;
-    margin: 0;
-    min-width: 500px;
-    & > div {
-      &:first-child {
-        min-width: 192px;
-      }
-    }
-  }
-`
-
-const TokenTitleCard = styled(Column)<{variantFill}>`
-  background: ${({ variantFill }) => (variantFill ? 'linear-gradient(90deg, #610D89 0%, #C42BB4 100%)' : '')};
-  border: 1px solid ${({ theme }) => theme.colors.primary};
-  border-radius: 5px;
-  padding: 24px;
-`
-
-const TokenPriceCard = styled(Column)`
-
 `
 
 export default function CoinStatsBoard(props) {
