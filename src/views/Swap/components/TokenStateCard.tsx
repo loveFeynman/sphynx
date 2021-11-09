@@ -62,6 +62,7 @@ const TokenDescription = styled(Flex)`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  text-align: center;
   div:nth-child(2) {
     width: 100%;
   }
