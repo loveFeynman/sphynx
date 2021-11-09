@@ -104,6 +104,7 @@ const MenuContentWrapper = styled.div<{ toggled: boolean }>`
   justify-content: center;
   overflow-y: auto;
   padding: 0 24px 32px;
+  margin-bottom: 32px;
   ${({ theme }) => theme.mediaQueries.xl} {
     padding: ${(props) => (props.toggled ? '0 8px' : '0 24px')};
   }
