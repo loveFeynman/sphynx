@@ -777,11 +777,6 @@ const Menu = () => {
           </SocialIconsWrapper>
         </SocialWrapper>
         <Toggle checked={isDark} onChange={toggleTheme} scale="sm" />
-        {!menuToggled && (
-          <IllustrationWrapper>
-            <img src={Illustration} width="321" height="501" alt="Illustration" />
-          </IllustrationWrapper>
-        )}
       </MenuContentWrapper>
     </MenuWrapper>
   )

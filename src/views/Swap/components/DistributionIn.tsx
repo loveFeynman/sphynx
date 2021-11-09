@@ -11,6 +11,8 @@ const DistributionWrapper = styled.div`
     flex-direction: column;
     justify-content: center;
     color: white;
+    width: 100%;
+    max-width: 360px;
     padding: 42px 60px;
     height: 104px;
     background-color: ${({ theme }) => theme.isDark ? "transparent" : "#2A2E60"};
