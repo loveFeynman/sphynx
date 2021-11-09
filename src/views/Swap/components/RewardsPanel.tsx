@@ -7,16 +7,18 @@ import TotalTransactionCollected from './TotalTransactionCollected'
 import DistributionIn from './DistributionIn'
 
 const Wrapper = styled.div`
-  width: 100%;
   padding: 18px 0px;
   color: white;
+  display: flex;
+  justify-content: center;
+  width: max-content;
 `
 
 const RewardsPanel: React.FC = () => {
 
   return (
-    <Wrapper>
-      <Flex justifyContent="space-between">
+    <Wrapper style={{width: '100%'}}>
+      <Flex justifyContent="space-between" alignItems="center" style={{maxWidth: '1400px', width: '100%'}}>
         <SwapFeeRewards />
         <TotalTransactionCollected />
         <DistributionIn />

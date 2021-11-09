@@ -10,10 +10,9 @@ const DistributionWrapper = styled.div`
     display: flex;
     flex-direction: column;
     justify-content: center;
-    width: 100%;
     color: white;
-    max-width: 410px;
-    padding-left: 38px;
+    padding: 42px 60px;
+    height: 104px;
     background-color: ${({ theme }) => theme.isDark ? "transparent" : "#2A2E60"};
     border-radius: 10px;
   }

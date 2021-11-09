@@ -13,7 +13,7 @@ const CollectedWrapper = styled.div`
   flex-direction: column;
   justify-content: center;
   color: white;
-  width: 468px;
+  margin: 16px;
   border: 1px solid #5E2B60;
   border-radius: 5px;
   padding: 12px 8px 10px;

@@ -31,7 +31,7 @@ const CurrencySelectButton = styled(Button).attrs({ variant: 'text', scale: 'xs'
   font-weight: 500;
   background-color: transparent;
   color: ${({ selected, theme }) => (selected ? theme.colors.text : '#FFFFFF')};
-  border: 1px solid ${({ theme }) => theme.isDark ? "#2E2E55" : "transparent"};
+  border: 1px solid ${({ theme }) => theme.isDark ? "#2E2E55" : "#4A5187"};
   border-radius: 5px;
   outline: none;
   cursor: pointer;

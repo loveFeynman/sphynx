@@ -8,12 +8,12 @@ const RewardsWrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  width: 100%;
-  max-width: 410px;
 `
 
 const RewardsContent = styled(Flex)`
   align-items: center;
+  display: flex;
+  justify-content: flex-end;
   img {
     width: 38px;
   }
@@ -58,9 +58,7 @@ const RewardsPanel: React.FC = () => {
         <img src={MainLogo} alt="Main Logo" width="75" height="72" />
         <LogoTitleWrapper>
           <LogoTitle>
-            <Text color="white">
-              {t('Sphynx Swap')}
-            </Text>
+            <Text color="white">{t('Sphynx Swap')}</Text>
             <Text color="white" bold>
               {t('Fee Rewards')}
             </Text>
