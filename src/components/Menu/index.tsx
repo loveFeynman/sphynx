@@ -136,7 +136,7 @@ const WalletHeading = styled.div<{ toggled: boolean }>`
 `
 const TokenItemWrapper = styled.div<{ toggled: boolean }>`
   background: transparent;
-  border: 1px solid #21214A;
+  border: 1px solid #21214a;
   border-radius: 8px;
   margin-top: 2px;
   display: flex;
@@ -690,6 +690,12 @@ const Menu = () => {
           )}
         </Button>
       </MenuIconWrapper>
+      {isMobile && (
+        <MenuIconWrapper toggled={menuToggled} style={{marginBottom: "12px"}}>
+          {!menuToggled && <span>{t('Toggle Theme')}</span>}
+          <Toggle checked={isDark} onChange={toggleTheme} scale="sm" />
+        </MenuIconWrapper>
+      )}
       <WalletHeading toggled={menuToggled}>
         <div>
           <WalletIcon />
@@ -697,7 +703,7 @@ const Menu = () => {
         </div>
         {!menuToggled && <p>{account ? <BalanceNumber prefix="$ " value={Number(sum).toFixed(2)} /> : ''}</p>}
       </WalletHeading>
-      {account && !menuToggled? (
+      {account && !menuToggled ? (
         <div style={{ width: '100%', padding: `${menuToggled ? '0px 16px' : '0px 24px'}` }}>
           <TokenListWrapper>{showAllToken ? tokenData : tokenData.slice(0, 3)}</TokenListWrapper>
           <ButtonWrapper style={menuToggled ? { justifyContent: 'center' } : {}} onClick={handleShowAllToken}>
@@ -742,9 +748,7 @@ const Menu = () => {
                   // onClick={handleMobileMenuItem}
                 >
                   <Icon />
-                  <p>
-                    {t(`${link.label}`)}
-                  </p>
+                  <p>{t(`${link.label}`)}</p>
                 </MenuItemMobile>
               </div>
             )
@@ -777,7 +781,7 @@ const Menu = () => {
               </Link> */}
           </SocialIconsWrapper>
         </SocialWrapper>
-        <Toggle checked={isDark} onChange={toggleTheme} scale="sm" />
+        {!isMobile && <Toggle checked={isDark} onChange={toggleTheme} scale="sm" />}
       </MenuContentWrapper>
     </MenuWrapper>
   )
