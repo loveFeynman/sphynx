@@ -751,18 +751,26 @@ const Menu = () => {
         <SocialWrapper>
           {!menuToggled && <p>{t('Socials')}</p>}
           <SocialIconsWrapper toggled={menuToggled}>
-            <IconBox color="#33AAED">
-              <TwitterIcon width="15px" height="15px" />
-            </IconBox>
-            <IconBox color="#710D89">
-              <SocialIcon2 width="15px" height="15px" />
-            </IconBox>
-            <IconBox color="#3E70D1">
-              <TelegramIcon width="15px" height="15px" />
-            </IconBox>
-            <IconBox color="#2260DA">
-              <DiscordIcon width="15px" height="15px" />
-            </IconBox>
+            <Link external href="https://twitter.com/sphynxswap?s=21" aria-label="twitter">
+              <IconBox color="#33AAED">
+                <TwitterIcon width="15px" height="15px" />
+              </IconBox>
+            </Link>
+            <Link external href="https://sphynxtoken.co" aria-label="social2">
+              <IconBox color="#710D89">
+                <SocialIcon2 width="15px" height="15px" />
+              </IconBox>
+            </Link>
+            <Link external href="https://t.me/sphynxswap" aria-label="telegram">
+              <IconBox color="#3E70D1">
+                <TelegramIcon width="15px" height="15px" />
+              </IconBox>
+            </Link>
+            <Link external href="https://discord.gg/ZEuDaFk4qz" aria-label="discord">
+              <IconBox color="#2260DA">
+                <DiscordIcon width="15px" height="15px" />
+              </IconBox>
+            </Link>
             {/* <Link external href="https://instagram.com/sphynxswap?utm_medium=copy_link">
                 <img src={InstaIcon} alt="insta" style={{height: "45px", width: "45px", padding: "8px"}} />
               </Link> */}
