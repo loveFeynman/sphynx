@@ -1,9 +1,9 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useLocation } from 'react-router-dom'
-import styled from 'styled-components'
+import styled, { useTheme } from 'styled-components'
 import BigNumber from 'bignumber.js'
 import { useWeb3React } from '@web3-react/core'
-import { Heading, Flex, Text } from '@sphynxswap/uikit'
+import { Flex, Text } from '@sphynxswap/uikit'
 import orderBy from 'lodash/orderBy'
 import partition from 'lodash/partition'
 import { useTranslation } from 'contexts/Localization'
@@ -27,6 +27,8 @@ import BountyCard from './components/BountyCard'
 import PoolsTable from './components/PoolsTable/PoolsTable'
 import { ViewMode } from './components/ToggleView/ToggleView'
 import { getAprData, getCakeVaultEarnings } from './helpers'
+import { SwapTabs, SwapTabList, SwapTab, SwapTabPanel } from "../../components/Tab/tab";
+import Card, { GreyCard } from '../../components/Card'
 
 const CardLayout = styled(FlexLayout)`
   justify-content: center;
@@ -121,6 +123,7 @@ const NUMBER_OF_POOLS_VISIBLE = 12
 const Pools: React.FC = () => {
   const location = useLocation()
   const { t } = useTranslation()
+  const theme = useTheme()
   const { account } = useWeb3React()
   const { pools: poolsWithoutAutoVault, userDataLoaded } = usePools(account)
   const [stakedOnly, setStakedOnly] = usePersistState(false, { localStorageKey: 'pancake_pool_staked' })
@@ -205,6 +208,15 @@ const Pools: React.FC = () => {
     setSortOption(option.value)
   }
 
+  const selectedTab = (tabIndex: number): void => {
+    if (tabIndex === 0) {
+      location.pathname = "/pools"
+    }
+    else {
+      location.pathname = "/pools/history"
+    }
+  }
+
   const sortPools = (poolsToSort: Pool[]) => {
     switch (sortOption) {
       case 'apr':
@@ -277,7 +289,7 @@ const Pools: React.FC = () => {
 
   return (
     <>
-      <Flex flexDirection='column' justifyContent="center" alignItems="center" style={{padding: '0 50px'}}>
+      <Flex flexDirection='column' justifyContent="center" alignItems="center" style={{ padding: '0 50px' }}>
         <div style={{ height: 24 }} />
         <PageHeader>
           <Flex justifyContent="space-between" flexDirection={['column', null, null, 'row']}>
@@ -312,8 +324,10 @@ const Pools: React.FC = () => {
             setStakedOnly={setStakedOnly}
             viewMode={viewMode}
             setViewMode={setViewMode}
+            setSortOption={setSortOption}
+            setSearchQuery={setSearchQuery}
           />
-          <PoolControls>
+          {/* <PoolControls>
             <PoolTabButtons
               stakedOnly={stakedOnly}
               setStakedOnly={setStakedOnly}
@@ -369,7 +383,48 @@ const Pools: React.FC = () => {
             </Flex>
           )}
           {viewMode === ViewMode.CARD ? cardLayout : tableLayout}
-          <div ref={loadMoreRef} />
+          <div ref={loadMoreRef} /> */}
+          <SwapTabs
+            selectedTabClassName='is-selected'
+            selectedTabPanelClassName='is-selected'
+            onSelect={(tabIndex) => selectedTab(tabIndex)}
+          >
+            <SwapTabList>
+              <SwapTab>
+                <Text>
+                  {t('Live')}
+                </Text>
+              </SwapTab>
+              <SwapTab>
+                <Text>
+                  {t('Finished')}
+                </Text>
+              </SwapTab>
+            </SwapTabList>
+            <Card bgColor={theme.isDark ? "#0E0E26" : "#2A2E60"} borderRadius="0 0 3px 3px" padding="20px 10px">
+              <SwapTabPanel>
+                {account && !userDataLoaded && stakedOnly && (
+                  <Flex justifyContent="center" mb="4px">
+                    <Loading />
+                  </Flex>
+                )}
+                {viewMode === ViewMode.CARD ? cardLayout : tableLayout}
+                <div ref={loadMoreRef} />
+              </SwapTabPanel>
+              <SwapTabPanel>
+                <Text fontSize="20px" color="failure" pb="32px">
+                  {t('These pools are no longer distributing rewards. Please unstake your tokens.')}
+                </Text>
+                {account && !userDataLoaded && stakedOnly && (
+                  <Flex justifyContent="center" mb="4px">
+                    <Loading />
+                  </Flex>
+                )}
+                {viewMode === ViewMode.CARD ? cardLayout : tableLayout}
+                <div ref={loadMoreRef} />
+              </SwapTabPanel>
+            </Card>
+          </SwapTabs>
         </Page>
       </Flex>
     </>

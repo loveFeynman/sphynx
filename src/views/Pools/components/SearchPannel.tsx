@@ -24,6 +24,7 @@ const ViewControls = styled.div`
   width: 100%;
   background: ${({ theme }) => theme.isDark ? "#0E0E26" : "#2A2E60"};
   padding: 15px;
+  margin: 21px 0px;
   border-radius: 3px;
   > div {
     padding: 8px 0px;
@@ -128,38 +129,21 @@ const TransparentIconButton = styled(IconButton)`
   outline: none !important;
 `
 
-const SearchPannel = ({ stakedOnly, setStakedOnly, viewMode, setViewMode }) => {
+const SearchPannel = ({ stakedOnly, setStakedOnly, viewMode, setViewMode, setSortOption, setSearchQuery }) => {
     const { t } = useTranslation()
-    const [sortOption, setSortOption] = useState('hot')
     const [showDrop, setShowDrop] = useState(false)
     const [data, setdata] = useState([])
-    const [addressSearch, setAddressSearch] = useState('')
 
     const handleSortOptionChange = (option: OptionProps): void => {
         setSortOption(option.value)
     }
 
-
-    const handleKeyPress = (event) => {
-        if (event.key === 'Enter') {
-            console.log('')
-        }
-    }
-
-    const onSearchKeyDown = (event) => {
-        if (event.key === 'ArrowDown') {
-            console.log('')
-        } else if (event.key === 'ArrowUp') {
-            console.log('')
-        }
-    }
-
     const handlerChange = (e: any) => {
-        console.log('')
+        setSearchQuery(e.target.value)
     }
 
     const submitFuntioncall = () => {
-        console.log('')
+        console.log('search')
     }
 
     const viewModeToggle = <ToggleView viewMode={viewMode} onToggle={(mode: ViewMode) => setViewMode(mode)} />
@@ -199,10 +183,6 @@ const SearchPannel = ({ stakedOnly, setStakedOnly, viewMode, setViewMode }) => {
                 <SearchInputWrapper>
                     <input
                         placeholder="Search pools"
-                        value={addressSearch}
-                        onFocus={() => setShowDrop(true)}
-                        onKeyPress={handleKeyPress}
-                        onKeyUp={onSearchKeyDown}
                         onChange={handlerChange}
                     />
                     {showDrop && (
