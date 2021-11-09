@@ -8,6 +8,8 @@ import { usePriceCakeBusd } from 'state/farms/hooks'
 import Container from './Container'
 
 const StyledPage = styled(Container)`
+  width: 100%;
+  max-width: none;
   min-height: calc(100vh - 64px);
   padding-bottom: 16px;
 

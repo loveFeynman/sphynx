@@ -277,99 +277,101 @@ const Pools: React.FC = () => {
 
   return (
     <>
-      <div style={{ height: 24 }} />
-      <PageHeader>
-        <Flex justifyContent="space-between" flexDirection={['column', null, null, 'row']}>
-          <Flex flexGrow={5}>
-            <LogoContent>
-              <Flex>
-                <img src={PoolLogo} alt="Pool Logo" />
-              </Flex>
-              <LogoTitleWrapper>
-                <LogoTitle>
-                  <Text color="white" bold>
-                    {t('Sphynx Pools')}
-                  </Text>
-                  <Text color="#777777">
-                    {t('Just stake some tokens to earn.')}
-                  </Text>
-                  <Text color="#777777">
-                    {t('High APR, low risk.')}
-                  </Text>
-                </LogoTitle>
-              </LogoTitleWrapper>
-            </LogoContent>
+      <Flex flexDirection='column' justifyContent="center" alignItems="center" style={{padding: '0 50px'}}>
+        <div style={{ height: 24 }} />
+        <PageHeader>
+          <Flex justifyContent="space-between" flexDirection={['column', null, null, 'row']}>
+            <Flex flexGrow={5}>
+              <LogoContent>
+                <Flex>
+                  <img src={PoolLogo} alt="Pool Logo" />
+                </Flex>
+                <LogoTitleWrapper>
+                  <LogoTitle>
+                    <Text color="white" bold>
+                      {t('Sphynx Pools')}
+                    </Text>
+                    <Text color="#777777">
+                      {t('Just stake some tokens to earn.')}
+                    </Text>
+                    <Text color="#777777">
+                      {t('High APR, low risk.')}
+                    </Text>
+                  </LogoTitle>
+                </LogoTitleWrapper>
+              </LogoContent>
+            </Flex>
+            <Flex flexGrow={3} height="fit-content" justifyContent="center" alignItems="center" mt={['24px', null, '0']}>
+              <BountyCard />
+            </Flex>
           </Flex>
-          <Flex flexGrow={3} height="fit-content" justifyContent="center" alignItems="center" mt={['24px', null, '0']}>
-            <BountyCard />
-          </Flex>
-        </Flex>
-      </PageHeader>
-      <Page>
-        <SearchPannel
-          stakedOnly={stakedOnly}
-          setStakedOnly={setStakedOnly}
-          viewMode={viewMode}
-          setViewMode={setViewMode}
-        />
-        <PoolControls>
-          <PoolTabButtons
+        </PageHeader>
+        <Page>
+          <SearchPannel
             stakedOnly={stakedOnly}
             setStakedOnly={setStakedOnly}
-            hasStakeInFinishedPools={hasStakeInFinishedPools}
             viewMode={viewMode}
             setViewMode={setViewMode}
           />
-          <FilterContainer>
-            <LabelWrapper>
-              <Text fontSize="12px" bold color="textSubtle" textTransform="uppercase">
-                {t('Sort by')}
-              </Text>
-              <ControlStretch>
-                <Select
-                  options={[
-                    {
-                      label: t('Hot'),
-                      value: 'hot',
-                    },
-                    {
-                      label: t('APR'),
-                      value: 'apr',
-                    },
-                    {
-                      label: t('Earned'),
-                      value: 'earned',
-                    },
-                    {
-                      label: t('Total staked'),
-                      value: 'totalStaked',
-                    },
-                  ]}
-                  onChange={handleSortOptionChange}
-                />
-              </ControlStretch>
-            </LabelWrapper>
-            <LabelWrapper style={{ marginLeft: 16 }}>
-              <Text fontSize="12px" bold color="textSubtle" textTransform="uppercase">
-                {t('Search')}
-              </Text>
-              <SearchInput onChange={handleChangeSearchQuery} placeholder="Search Pools" />
-            </LabelWrapper>
-          </FilterContainer>
-        </PoolControls>
-        {showFinishedPools && (
-          <Text fontSize="20px" color="failure" pb="32px">
-            {t('These pools are no longer distributing rewards. Please unstake your tokens.')}
-          </Text>
-        )}
-        {account && !userDataLoaded && stakedOnly && (
-          <Flex justifyContent="center" mb="4px">
-            <Loading />
-          </Flex>
-        )}
-        {viewMode === ViewMode.CARD ? cardLayout : tableLayout}
-        <div ref={loadMoreRef} />
-      </Page>
+          <PoolControls>
+            <PoolTabButtons
+              stakedOnly={stakedOnly}
+              setStakedOnly={setStakedOnly}
+              hasStakeInFinishedPools={hasStakeInFinishedPools}
+              viewMode={viewMode}
+              setViewMode={setViewMode}
+            />
+            <FilterContainer>
+              <LabelWrapper>
+                <Text fontSize="12px" bold color="textSubtle" textTransform="uppercase">
+                  {t('Sort by')}
+                </Text>
+                <ControlStretch>
+                  <Select
+                    options={[
+                      {
+                        label: t('Hot'),
+                        value: 'hot',
+                      },
+                      {
+                        label: t('APR'),
+                        value: 'apr',
+                      },
+                      {
+                        label: t('Earned'),
+                        value: 'earned',
+                      },
+                      {
+                        label: t('Total staked'),
+                        value: 'totalStaked',
+                      },
+                    ]}
+                    onChange={handleSortOptionChange}
+                  />
+                </ControlStretch>
+              </LabelWrapper>
+              <LabelWrapper style={{ marginLeft: 16 }}>
+                <Text fontSize="12px" bold color="textSubtle" textTransform="uppercase">
+                  {t('Search')}
+                </Text>
+                <SearchInput onChange={handleChangeSearchQuery} placeholder="Search Pools" />
+              </LabelWrapper>
+            </FilterContainer>
+          </PoolControls>
+          {showFinishedPools && (
+            <Text fontSize="20px" color="failure" pb="32px">
+              {t('These pools are no longer distributing rewards. Please unstake your tokens.')}
+            </Text>
+          )}
+          {account && !userDataLoaded && stakedOnly && (
+            <Flex justifyContent="center" mb="4px">
+              <Loading />
+            </Flex>
+          )}
+          {viewMode === ViewMode.CARD ? cardLayout : tableLayout}
+          <div ref={loadMoreRef} />
+        </Page>
+      </Flex>
     </>
   )
 }

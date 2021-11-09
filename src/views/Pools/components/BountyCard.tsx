@@ -100,7 +100,7 @@ const BountyCard = () => {
             <Flex flexGrow={1} style={{ borderRight: '1px solid #21214A' }}>
               <LogoContent>
                 <img src={StopwatchIcon} alt="Stopwatch Logo" width="100%" />
-                <Flex flexDirection="column" style={{ padding: '12px 0px' }}>
+                <Flex flexDirection="column">
                   <Flex alignItems="center" mb="2px">
                     <Text fontSize="20px" bold color="white" mr="4px">
                       {t('Auto SPHYNX Bounty')}

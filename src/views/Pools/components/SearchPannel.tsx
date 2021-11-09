@@ -53,6 +53,9 @@ const ControlStretch = styled(Flex)`
             border: 1px solid ${({ theme }) => theme.isDark ? "#2E2E55" : "#4A5187"};
             height: 40px;
             background: ${({ theme }) => theme.isDark ? "#0E0E26" : "#2A2E60"};
+            > div {
+                color: #A7A7CC;
+            }
         }
   }
 `
@@ -71,10 +74,10 @@ const SearchInputWrapper = styled.div`
     width: 100%;
     box-shadow: none;
     outline: none;
-    color: #f7931a;
+    color: #A7A7CC;
     font-size: 16px;
     &::placeholder {
-      color: #8f80ba;
+      color: #A7A7CC;
     }
   }
 `
@@ -209,7 +212,8 @@ const SearchPannel = ({ stakedOnly, setStakedOnly, viewMode, setViewMode }) => {
                                     ddd
                                 </span>
                             ) : (
-                                <span style={{ padding: '0 16px' }}>no pool</span>
+                                null
+                                // <span style={{ padding: '0 16px' }}>no pool</span>
                             )}
                         </MenuWrapper>
                     )}
