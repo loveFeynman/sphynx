@@ -82,9 +82,10 @@ import storages from 'config/constants/storages'
 import Row from 'components/Row'
 import RewardsPanel from './components/RewardsPanel'
 import { SwapTabs, SwapTabList, SwapTab, SwapTabPanel } from '../../components/Tab/tab'
+import { SPHYNX_TOKEN_ADDRESS } from 'config/constants'
 
 const wBNBAddr = '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c'
-const sphynxAddr = '0x2e121Ed64EEEB58788dDb204627cCB7C7c59884c'
+const sphynxAddr = `${SPHYNX_TOKEN_ADDRESS}`
 let tokenDecimal = 18
 
 const abi: any = ERC20ABI

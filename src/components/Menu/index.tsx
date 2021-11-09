@@ -10,23 +10,18 @@ import { addToken, updateToken, deleteTokens } from 'state/wallet/tokenSlice'
 import { useMenuToggle, useRemovedAssets } from 'state/application/hooks'
 import { useWeb3React } from '@web3-react/core'
 import MainLogo from 'assets/svg/icon/logo_new.svg'
-import Illustration from 'assets/images/Illustration.svg'
 import { v4 as uuidv4 } from 'uuid'
 import CloseIcon from '@material-ui/icons/Close'
 import Web3 from 'web3'
 import ERC20ABI from 'assets/abis/erc20.json'
 import { isAddress } from 'utils'
-
+import { SPHYNX_PAIR_ADDRESS, SPHYNX_TOKEN_ADDRESS } from 'config/constants'
 import { ReactComponent as MenuOpenIcon } from 'assets/svg/icon/MenuOpenIcon.svg'
 import { ReactComponent as WalletIcon } from 'assets/svg/icon/WalletIcon.svg'
 import { ReactComponent as TwitterIcon } from 'assets/svg/icon/TwitterIcon.svg'
 import { ReactComponent as SocialIcon2 } from 'assets/svg/icon/SocialIcon2.svg'
 import { ReactComponent as TelegramIcon } from 'assets/svg/icon/TelegramIcon.svg'
 import { ReactComponent as DiscordIcon } from 'assets/svg/icon/DiscordIcon.svg'
-import RefreshIcon from 'assets/images/refresh.png'
-import ShowSomeIcon from 'assets/images/show-some.png'
-import ShowAllIcon from 'assets/images/show-all.png'
-// import DiscordIcon from 'assets/images/discord.png'
 import axios from 'axios'
 import { BITQUERY_API, BITQUERY_API_KEY } from 'config/constants/endpoints'
 import storages from 'config/constants/storages'
@@ -345,8 +340,8 @@ const Menu = () => {
       dexTrades(
       options: {desc: ["block.height", "tradeIndex"], limit: 1, offset: 0}
       date: {till: null}
-      smartContractAddress: {is: "0xe4023ee4d957a5391007ae698b3a730b2dc2ba67"}
-      baseCurrency: {is: "0x2e121ed64eeeb58788ddb204627ccb7c7c59884c"}
+      smartContractAddress: {is: "${SPHYNX_PAIR_ADDRESS}"}
+      baseCurrency: {is: "${SPHYNX_TOKEN_ADDRESS}"}
       quoteCurrency:{is : "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"}
       ) {
       block {
