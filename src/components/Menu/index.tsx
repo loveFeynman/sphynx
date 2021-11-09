@@ -312,7 +312,7 @@ const Menu = () => {
 
   const { t } = useTranslation()
 
-  const isMobile = window.screen.width < 768
+  const isMobile = document.body.clientWidth < 768
 
   useEffect(() => {
     if (isMobile && !menuToggled) {

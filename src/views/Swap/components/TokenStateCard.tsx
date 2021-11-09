@@ -17,7 +17,7 @@ interface TokenStateProps {
   fillColor?: string
 }
 
-const TokenTitleCard = styled(Column) <{ variantFill; flexGrow; fillColor }>`
+const TokenTitleCard = styled(Column)<{ variantFill; flexGrow; fillColor }>`
   background: ${({ variantFill, fillColor }) =>
     fillColor ? `${fillColor}` : variantFill ? 'linear-gradient(90deg, #610D89 0%, #C42BB4 100%)' : ''};
   border: 1px solid ${({ theme, fillColor }) => (fillColor ? 'transparent' : theme.colors.primary)};
@@ -74,15 +74,8 @@ export default function TokenStateCard(props: TokenStateProps) {
   const { t } = useTranslation()
   const theme = useTheme()
 
-  const { isSm, isXs, isMd } = useMatchBreakpoints()
-  const [isMobile, setMobile] = useState(false)
-
-  React.useEffect(() => {
-    if (isMd || isSm || isXs) {
-      setMobile(true)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  const { isSm, isXs, isMd, isLg } = useMatchBreakpoints()
+  const isMobile = document.body.clientWidth < 1500
 
   const onImgLoadError = (event: any) => {
     const elem = event.target
@@ -103,20 +96,25 @@ export default function TokenStateCard(props: TokenStateProps) {
           <Text
             textAlign={tokenImg === undefined ? 'center' : 'unset'}
             color={tokenImg === undefined ? '#A7A7CC' : 'white'}
-            fontSize={isMobile? "12px" : "13px"}
+            fontSize={isMobile ? '12px' : '13px'}
             bold
           >
             {t(`${cardTitle}`)}
           </Text>
           <Text
             textAlign={tokenImg === undefined ? 'center' : 'unset'}
-            fontSize={isMobile? "14px" : "16px"}
+            fontSize={isXs ? '14px' : isSm ? '15px' : '16px'}
             bold
             color={valueActive ? 'limegreen' : 'white'}
           >
             {cardValue}
           </Text>
-          <Text textAlign={tokenImg === undefined ? 'center' : 'unset'} fontSize={isMobile? "14px" : "16px"} bold color="limegreen">
+          <Text
+            textAlign={tokenImg === undefined ? 'center' : 'unset'}
+            fontSize={isMobile ? '14px' : '16px'}
+            bold
+            color="limegreen"
+          >
             {subPriceValue}
           </Text>
         </TokenDescription>
@@ -160,13 +158,28 @@ export default function TokenStateCard(props: TokenStateProps) {
           ) : (
             ''
           )}
-          <Text textAlign={tokenImg === undefined ? 'center' : 'unset'} color="white" fontSize={isMobile? "12px" : "14px"} bold>
+          <Text
+            textAlign={tokenImg === undefined ? 'center' : 'unset'}
+            color="white"
+            fontSize={isMobile ? '12px' : '14px'}
+            bold
+          >
             {t(`${cardTitle}`)}
           </Text>
-          <Text textAlign={tokenImg === undefined ? 'center' : 'unset'} fontSize={isMobile? "14px" : "18px"} bold color="white">
+          <Text
+            textAlign={tokenImg === undefined ? 'center' : 'unset'}
+            fontSize={isMobile ? '14px' : '18px'}
+            bold
+            color="white"
+          >
             {cardValue}
           </Text>
-          <Text textAlign={tokenImg === undefined ? 'center' : 'unset'} fontSize={isMobile? "14px" : "18px"} bold color="white">
+          <Text
+            textAlign={tokenImg === undefined ? 'center' : 'unset'}
+            fontSize={isMobile ? '14px' : '18px'}
+            bold
+            color="white"
+          >
             {subPriceValue}
           </Text>
         </TokenDescription>

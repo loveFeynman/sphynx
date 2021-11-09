@@ -18,6 +18,7 @@ const TableWrapper = styled.div`
   max-height: 500px;
   overflow: auto;
   overflow-x: hidden;
+  text-align: center;
   & table {
     background: transparent;
     width: 100%;
@@ -112,12 +113,12 @@ const BuyersCard = (props) => {
               })).map((td) => {
                 return (
                   <tr key={td.id}>
-                    <td style={{ color: '#fff', width: '80%' }}>
+                    <td style={{ color: '#fff', width: '60%' }}>
                       <a href={`https://bscscan.com/token/${input}?a=${td.wallet}`} target="_blank" rel="noreferrer">
                         <h2>{td.wallet}</h2>
                       </a>
                     </td>
-                    <td style={{ color: '#04ab1d', width: '20%' }}>
+                    <td style={{ color: '#04ab1d', width: '40%' }}>
                       <h2>$ {td.usdAmount.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$&,')}</h2>
                     </td>
                   </tr>

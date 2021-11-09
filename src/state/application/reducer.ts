@@ -24,7 +24,7 @@ export interface ApplicationState {
 
 const initialState: ApplicationState = {
   blockNumber: {},
-  menuToggled: false,
+  menuToggled: true,
   routerType: RouterType.sphynx,
   swapType: 'swap',
   swapTransCard: 'tokenDX',

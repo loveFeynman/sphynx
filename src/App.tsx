@@ -66,24 +66,24 @@ const BodyOverlay = styled.div<{ toggled: boolean }>`
   }
 `
 
-const FlexWrapper = styled.div<{ gap?: string; mobile?: boolean  }>`
+const FlexWrapper = styled.div<{ gap?: string; mobile?: boolean }>`
   display: flex;
-  justify-content: ${(props) => props.mobile ? '' : 'space-between'};
+  justify-content: ${(props) => (props.mobile ? '' : 'space-between')};
   align-items: center;
   width: 100%;
   padding: 6px 0;
   gap: ${(props) => props.gap};
   div:nth-child(1) {
-    flex: ${(props) => props.mobile ? '1' : ''};
+    flex: ${(props) => (props.mobile ? '1' : '')};
   }
   div:nth-child(2) {
-    flex: ${(props) => props.mobile ? '1' : ''};
+    flex: ${(props) => (props.mobile ? '1' : '')};
     button {
-      width: ${(props) => props.mobile ? '100%' : ''};
+      width: ${(props) => (props.mobile ? '100%' : '')};
     }
   }
   div:nth-child(3) {
-    flex: ${(props) => props.mobile ? '1' : ''};
+    flex: ${(props) => (props.mobile ? '1' : '')};
   }
 `
 
@@ -110,7 +110,7 @@ const AccountWrapper = styled.div<{ mobile?: boolean }>`
     border-radius: 6px;
     height: 34px;
     color: white;
-    background: linear-gradient(90deg, #610D89 0%, #C42BB4 100%);
+    background: linear-gradient(90deg, #610d89 0%, #c42bb4 100%);
     font-size: 16px;
     font-weight: 700;
     margin-right: ${(props) => (props.mobile ? '0px' : '24px')};
@@ -175,18 +175,9 @@ const App: React.FC = () => {
   useEagerConnect()
   usePollCoreFarmData()
   const { account } = useWeb3React()
-  const { isSm, isXs, isMd } = useMatchBreakpoints()
   const { menuToggled, toggleMenu } = useMenuToggle()
-  const [isMobile, setMobile] = useState(false)
+  const isMobile = document.body.clientWidth < 768
   const { t } = useTranslation()
-
-  React.useEffect(() => {
-    if (isMd || isSm || isXs) {
-      toggleMenu(true)
-      setMobile(true)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
 
   return (
     <>
