@@ -1,6 +1,6 @@
 import React from 'react'
 import styled, { useTheme } from 'styled-components'
-import { Flex, Text, useMatchBreakpoints } from '@sphynxswap/uikit'
+import { Flex, Text } from '@sphynxswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 import { BalanceNumber } from 'components/BalanceNumber'
 import Card from 'components/Card'
@@ -18,8 +18,6 @@ interface LiveAmountPanelProps {
 
 const LiveAmountPanel: React.FC<LiveAmountPanelProps> = ({ symbol, amount, price }: LiveAmountPanelProps) => {
     const { t } = useTranslation()
-    const { isXl } = useMatchBreakpoints()
-    const isMobile = !isXl
     const theme = useTheme()
 
     return (

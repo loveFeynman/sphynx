@@ -1,12 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import styled, { useTheme } from 'styled-components'
-import { Button, IconButton, Link, Text, useMatchBreakpoints } from '@sphynxswap/uikit'
-import { ReactComponent as TwitterIcon } from 'assets/svg/icon/TwitterIcon.svg'
-import { ReactComponent as SocialIcon2 } from 'assets/svg/icon/SocialIcon2.svg'
-import { ReactComponent as TelegramIcon } from 'assets/svg/icon/TelegramIcon.svg'
-import { ReactComponent as BscscanIcon } from 'assets/svg/icon/Bscscan.svg'
-// import { ReactComponent as SearchIcon } from 'assets/svg/icon/SearchIcon.svg'
+import { IconButton, Link, Text, useMatchBreakpoints } from '@sphynxswap/uikit'
 import SearchIcon from "components/Icon/SearchIcon";
 import { PoolData } from 'state/info/types'
 import fetchPoolsForToken from 'state/info/queries/tokens/poolsForToken'
@@ -21,7 +16,7 @@ import ToggleList from './ToggleList'
 import LiveAmountPanel from './LiveAmountPanel'
 import { AppState } from '../../../state'
 import { setIsInput, typeInput } from '../../../state/input/actions'
-import { getBscScanLink, isAddress } from '../../../utils'
+import { isAddress } from '../../../utils'
 import { useTranslation } from '../../../contexts/Localization'
 
 export interface ContractPanelProps {

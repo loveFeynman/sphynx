@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
-import { Flex, Heading, Text } from '@sphynxswap/uikit'
+import { Text } from '@sphynxswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 import Web3 from 'web3'
 import { web3Provider } from 'utils/providers'

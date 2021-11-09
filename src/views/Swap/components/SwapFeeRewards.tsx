@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import styled from 'styled-components'
 import { Flex, Text } from '@sphynxswap/uikit'
 import MainLogo from 'assets/svg/icon/logo_new.svg'
