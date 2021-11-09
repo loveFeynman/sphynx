@@ -126,6 +126,7 @@ const TransparentIconButton = styled(IconButton)`
   background-color: transparent !important;
   margin: 0px 3px;
   border: none;
+  box-shadow: unset;
 `
 
 const SearchInputDivider = styled.div`
