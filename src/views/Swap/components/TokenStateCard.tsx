@@ -1,4 +1,5 @@
-import React, { useEffect, useState, useRef, useCallback } from 'react'
+import React from 'react'
+import { ReactComponent as BscscanIcon } from 'assets/svg/icon/Bscscan.svg'
 import Column from 'components/Column'
 import styled, { useTheme } from 'styled-components'
 import { Flex, Text, useMatchBreakpoints } from '@sphynxswap/uikit'
@@ -15,6 +16,7 @@ interface TokenStateProps {
   flexGrow?: number
   CardIcon?: any
   fillColor?: string
+  tokenAddress?: string
 }
 
 const TokenTitleCard = styled(Column)<{ variantFill; flexGrow; fillColor }>`
@@ -69,12 +71,12 @@ const TokenDescription = styled(Flex)`
 `
 
 export default function TokenStateCard(props: TokenStateProps) {
-  const { tokenImg, cardTitle, cardValue, subPriceValue, variantFill, valueActive, flexGrow, CardIcon, fillColor } =
+  const { tokenImg, cardTitle, cardValue, subPriceValue, variantFill, valueActive, flexGrow, CardIcon, fillColor, tokenAddress } =
     props
   const { t } = useTranslation()
   const theme = useTheme()
 
-  const { isSm, isXs, isMd, isLg } = useMatchBreakpoints()
+  const { isSm, isXs } = useMatchBreakpoints()
   const isMobile = document.body.clientWidth < 1500
 
   const onImgLoadError = (event: any) => {
@@ -118,6 +120,15 @@ export default function TokenStateCard(props: TokenStateProps) {
             {subPriceValue}
           </Text>
         </TokenDescription>
+        {tokenAddress !== undefined && isMobile ? (
+          <IconWrapper size={60}>
+            <a href={`https://bscscan.com/token/${tokenAddress}`} target="_blank" rel="noreferrer">
+              <BscscanIcon />
+            </a>
+          </IconWrapper>
+        ) : (
+          ''
+        )}
       </Flex>
     </TokenTitleCard>
   ) : (
@@ -183,6 +194,15 @@ export default function TokenStateCard(props: TokenStateProps) {
             {subPriceValue}
           </Text>
         </TokenDescription>
+        {tokenAddress !== undefined && isMobile ? (
+          <IconWrapper size={60}>
+            <a href={`https://bscscan.com/token/${tokenAddress}`} target="_blank" rel="noreferrer">
+              <BscscanIcon />
+            </a>
+          </IconWrapper>
+        ) : (
+          ''
+        )}
       </Flex>
     </TokenTitleCard>
   )

@@ -18,7 +18,7 @@ const RewardsPanel: React.FC = () => {
 
   return (
     <Wrapper style={{width: '100%'}}>
-      <Flex justifyContent="space-between" alignItems="center" style={{maxWidth: '1400px', width: '100%'}}>
+      <Flex justifyContent="space-between" alignItems="center" style={{maxWidth: '1100px', width: '100%'}}>
         <SwapFeeRewards />
         <TotalTransactionCollected />
         <DistributionIn />

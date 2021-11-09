@@ -179,6 +179,7 @@ export default function CoinStatsBoard(props) {
         variantFill
         flexGrow={2}
         fillColor="#F75183"
+        tokenAddress = {tokenAddress.current}
       />
       <TokenStateCard
         CardIcon={PriceIcon}

@@ -9,7 +9,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { Spinner } from '../../LotterySphx/components/Spinner'
 import { topTrades } from '../../../utils/apiServices'
 
-const fontSize = window.screen.width > 768 ? '14px' : '10px'
+const fontSize = window.screen.width > 768 ? '14px' : '12px'
 
 const TableWrapper = styled.div`
   background: ${({ theme }) => (theme.isDark ? '#0E0E26' : '#2A2E60')};
@@ -31,11 +31,11 @@ const TableWrapper = styled.div`
     & thead {
       & td {
         color: white;
-        font-size: 16px;
+        font-size: 14px;
         vertical-align: middle;
-        background: ${({ theme }) => (theme.isDark ? '#219653' : '#77BF3E')};
+        background: transparent;
         padding: 16px 8px;
-        font-weight: 700;
+        font-weight: 600;
         & > div > div {
           font-size: 16px;
           font-weight: 500;

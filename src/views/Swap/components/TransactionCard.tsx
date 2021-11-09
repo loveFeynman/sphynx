@@ -4,10 +4,8 @@ import styled from 'styled-components'
 import { Spinner } from '../../LotterySphx/components/Spinner'
 import { useTranslation } from 'contexts/Localization'
 import { formatPrice } from '../../../utils'
-import { ReactComponent as ClockIcon } from 'assets/svg/icon/ClockIcon.svg'
-import { ReactComponent as CalenderIcon } from 'assets/svg/icon/CalenderIcon.svg'
 
-const fontSize = window.screen.width > 768 ? "14px" : "10px"
+const fontSize = window.screen.width > 768 ? "14px" : "12px"
 
 const TableWrapper = styled.div`
   background: ${({ theme }) => theme.isDark ? "#0E0E26": "#2A2E60"};
@@ -28,12 +26,12 @@ const TableWrapper = styled.div`
     & thead {
       & td {
         color: white;
-        font-size: 16px;
+        font-size: 14px;
         text-align: left;
         vertical-align: middle;
-        background: ${({ theme }) => theme.isDark ? "#219653": "#77BF3E"};
+        background: transparent;
         padding: 16px 8px;
-        font-weight: 700;
+        font-weight: 600;
         & > div > div {
           font-size: 16px;
           font-weight: 500;
@@ -89,8 +87,7 @@ const TransactionCard: React.FC<TransactionProps> = (props) => {
                   <tr key={key}>
                     <td style={{ width: '30%' }}>
                       <a href={'https://bscscan.com/tx/' + data.tx} target="_blank" rel="noreferrer">
-                        <h2 className={!data.isBuy ? 'success' : 'error'} style={{marginLeft: '8px', padding: '4px'}}><CalenderIcon />&nbsp;&nbsp;{data.transactionTime.slice(0, 15)}</h2>
-                        <h2 className={!data.isBuy ? 'success' : 'error'} style={{marginLeft: '8px', padding: '4px'}}><ClockIcon />&nbsp;&nbsp;{data.transactionTime.slice(16, 24)}</h2>
+                        <h2 className={!data.isBuy ? 'success' : 'error'} style={{marginLeft: '8px', padding: '4px'}}>{data.transactionTime}</h2>
                       </a>
                     </td>
                     <td style={{ width: '19%' }}>

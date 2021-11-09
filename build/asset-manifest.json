@@ -2,7 +2,7 @@
   "files": {
     "static/js/0.406b4e43.chunk.js": "/static/js/0.406b4e43.chunk.js",
     "main.css": "/static/css/main.caea2ffe.chunk.css",
-    "main.js": "/static/js/main.c41414b7.chunk.js",
+    "main.js": "/static/js/main.1a4d58ef.chunk.js",
     "runtime-main.js": "/static/js/runtime-main.2893282e.js",
     "static/css/3.6bf97410.chunk.css": "/static/css/3.6bf97410.chunk.css",
     "static/js/3.cfc836ad.chunk.js": "/static/js/3.cfc836ad.chunk.js",
@@ -26,9 +26,7 @@
     "static/media/BSCTokenIcon.93320995.svg": "/static/media/BSCTokenIcon.93320995.svg",
     "static/media/Bridge.002a5e5f.svg": "/static/media/Bridge.002a5e5f.svg",
     "static/media/Bscscan.f7af135c.svg": "/static/media/Bscscan.f7af135c.svg",
-    "static/media/CalenderIcon.e311b383.svg": "/static/media/CalenderIcon.e311b383.svg",
     "static/media/ChangeIcon.5499ad47.svg": "/static/media/ChangeIcon.5499ad47.svg",
-    "static/media/ClockIcon.0de08769.svg": "/static/media/ClockIcon.0de08769.svg",
     "static/media/CoinMarketCaps.536b0d9e.svg": "/static/media/CoinMarketCaps.536b0d9e.svg",
     "static/media/Coingecko.1c75db97.svg": "/static/media/Coingecko.1c75db97.svg",
     "static/media/DiscordIcon.3d8233be.svg": "/static/media/DiscordIcon.3d8233be.svg",
@@ -59,6 +57,6 @@
     "static/css/3.6bf97410.chunk.css",
     "static/js/3.cfc836ad.chunk.js",
     "static/css/main.caea2ffe.chunk.css",
-    "static/js/main.c41414b7.chunk.js"
+    "static/js/main.1a4d58ef.chunk.js"
   ]
 }
