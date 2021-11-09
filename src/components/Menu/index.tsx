@@ -743,9 +743,9 @@ const Menu = () => {
                 </MenuItem>
                 <MenuItemMobile
                   className={realPath.indexOf(link.href) > -1 && link.href !== '/' ? 'active' : ''}
-                  // href={link.href}
-                  // target={link.newTab ? '_blank' : ''}
-                  // onClick={handleMobileMenuItem}
+                  href={link.href}
+                  target={link.newTab ? '_blank' : ''}
+                  onClick={handleMobileMenuItem}
                 >
                   <Icon />
                   <p>{t(`${link.label}`)}</p>
