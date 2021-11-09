@@ -140,19 +140,12 @@ const MenuOpenButton = styled(Button)`
   outline: none;
   padding: 0;
   width: 111px;
+  box-shadow: none;
   justify-content: left;
   & svg {
     fill: white;
     width: 32px;
   }
-  ${({ theme }) => theme.mediaQueries.xl} {
-    display: none;
-  }
-`
-
-const TokenBarMobile = styled.div`
-  width: 100%;
-  margin-bottom: 20px;
   ${({ theme }) => theme.mediaQueries.xl} {
     display: none;
   }
@@ -176,7 +169,7 @@ const App: React.FC = () => {
   usePollCoreFarmData()
   const { account } = useWeb3React()
   const { menuToggled, toggleMenu } = useMenuToggle()
-  const isMobile = document.body.clientWidth < 768
+  const isMobile = document.body.clientWidth <= 1024
   const { t } = useTranslation()
 
   return (

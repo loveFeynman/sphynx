@@ -22,6 +22,7 @@ const RewardsContent = styled(Flex)`
   ${({ theme }) => theme.mediaQueries.md} {
     margin-bottom: 0px;
     justify-content: flex-end;
+    width: max-content;
     img {
       width: 75px;
     }
