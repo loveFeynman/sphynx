@@ -21,6 +21,7 @@ import Loading from 'components/Loading'
 import PoolLogo from 'assets/png/icon/PoolIcon2.png'
 import PoolCard from './components/PoolCard'
 import CakeVaultCard from './components/CakeVaultCard'
+import SearchPannel from './components/SearchPannel'
 import PoolTabButtons from './components/PoolTabButtons'
 import BountyCard from './components/BountyCard'
 import PoolsTable from './components/PoolsTable/PoolsTable'
@@ -305,6 +306,12 @@ const Pools: React.FC = () => {
         </Flex>
       </PageHeader>
       <Page>
+        <SearchPannel
+          stakedOnly={stakedOnly}
+          setStakedOnly={setStakedOnly}
+          viewMode={viewMode}
+          setViewMode={setViewMode}
+        />
         <PoolControls>
           <PoolTabButtons
             stakedOnly={stakedOnly}
