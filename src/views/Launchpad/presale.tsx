@@ -97,7 +97,14 @@ const FlexWrapper = styled.div`
 `
 
 const MarginWrapper = styled.div`
-  margin-left: 32px;
+  margin-top: 32px;
+  margin-left: 0px;
+  width: 100%;
+  ${({ theme }) => theme.mediaQueries.xl} {
+    margin-left: 32px;
+    margin-top: 0px;
+    width: 0%;
+  }
 `
 
 const InlineWrapper = styled.div`
@@ -333,7 +340,6 @@ const Presale: React.FC = () => {
                 <p className="description w80">Soft Cap</p>
                 <MyInput className="ml16" onChange={(e) => setSoftCap(e.target.value)} value={softCap} />
               </InlineWrapper>
-              <Sperate />
               <MarginWrapper />
               <InlineWrapper>
                 <p className="description w80">Hard Cap</p>
@@ -356,7 +362,6 @@ const Presale: React.FC = () => {
                 <p className="description w80">Min Buy</p>
                 <MyInput className="ml16" onChange={(e) => setMinBuy(e.target.value)} value={minBuy} />
               </InlineWrapper>
-              <Sperate />
               <MarginWrapper />
               <InlineWrapper>
                 <p className="description w80">Max Buy</p>
