@@ -10,7 +10,7 @@ const Grid = styled.div`
   padding-top: 55px;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: base-line;
   padding-bottom: 20px;
   margin-bottom: 12px;
   ${({ theme }) => theme.mediaQueries.md} {
@@ -21,7 +21,7 @@ const Grid = styled.div`
 `
 
 export default function Bridge() {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   return (
     <>
       <PageHeader>
@@ -33,8 +33,8 @@ export default function Bridge() {
         </Heading>
       </PageHeader>
       <Grid>
-        <BridgeCard label="Sphynx To Bridge" isSpynx />
-        <BridgeCard label="Other Tokens To Bridge" isSpynx={false} />
+        <BridgeCard label="Sphynx To Bridge" isSphynx />
+        <BridgeCard label="Other Tokens To Bridge" isSphynx={false} />
       </Grid>
     </>
   )

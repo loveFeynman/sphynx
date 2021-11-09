@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react'
 import styled, { css } from 'styled-components'
-import { ArrowDropDownIcon, Text } from '@sphynxswap/uikit'
+import { Flex, Text } from '@sphynxswap/uikit'
+import { ReactComponent as  ArrowDropDownIcon} from 'assets/svg/icon/DropDownIcon.svg'
 
 const DropDownHeader = styled.div`
   margin-top: 20px;
@@ -81,15 +82,17 @@ const DropDownList = styled.ul`
 
 const ListItem = styled.li`
   list-style: none;
-  padding: 8px 16px;
+  padding: 8px 8px;
   &:hover {
-    background: rgba(0, 0, 0, 0.4);
+    background: rgba(160, 160, 255, 0.8);
   }
 `
 
 export interface SelectProps {
   options: OptionProps[]
   onChange?: (option: OptionProps) => void
+  network: string
+  chainId: number
 }
 
 export interface OptionProps {
@@ -97,19 +100,32 @@ export interface OptionProps {
   value: any
 }
 
-const Select: React.FunctionComponent<SelectProps> = ({ options, onChange }) => {
+const Select: React.FunctionComponent<SelectProps> = ({ options, onChange, network, chainId }) => {
   const containerRef = useRef(null)
   const dropdownRef = useRef(null)
   const [isOpen, setIsOpen] = useState(false)
   const [selectedOptionIndex, setSelectedOptionIndex] = useState(0)
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 })
 
+  React.useEffect(()=>{
+    if (network === 'bsc') {
+      setSelectedOptionIndex(0);
+    } else {
+      setSelectedOptionIndex(1);
+    }
+  }, [network])
   const toggling = (event: React.MouseEvent<HTMLDivElement>) => {
     setIsOpen(!isOpen)
     event.stopPropagation()
   }
 
   const onOptionClicked = (selectedIndex: number) => () => {
+    if (chainId === 56 && options[selectedIndex].value === 'bsc') {
+      return
+    }
+    if (chainId === 1 && options[selectedIndex].value === 'eth') {
+      return
+    }
     setSelectedOptionIndex(selectedIndex)
     setIsOpen(false)
 
@@ -141,7 +157,9 @@ const Select: React.FunctionComponent<SelectProps> = ({ options, onChange }) => 
           <Text>{options[selectedOptionIndex].label}</Text>
         </DropDownHeader>
       )}
-      <ArrowDropDownIcon color="text" onClick={toggling} />
+      <Flex onClick={toggling}>
+        <ArrowDropDownIcon />
+      </Flex>
       <DropDownListContainer>
         <DropDownList ref={dropdownRef}>
           {options.map((option, index) =>

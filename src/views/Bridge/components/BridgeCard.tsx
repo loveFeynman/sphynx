@@ -1,24 +1,44 @@
 import React, { useCallback, useState } from 'react'
-import styled from 'styled-components'
-import { Button } from '@sphynxswap/uikit'
-import { Currency, TokenAmount } from '@sphynxswap/sdk'
+import styled, { css } from 'styled-components'
+import { ethers } from 'ethers'
+import { useSelector, useDispatch } from 'react-redux'
+import { useWeb3React } from '@web3-react/core'
+import { Button, useWalletModal } from '@sphynxswap/uikit'
+import { Currency, TokenAmount, ChainId } from '@sphynxswap/sdk'
 import { ReactComponent as ArrowRightIcon } from 'assets/svg/icon/ArrowRight.svg'
-import { Field } from '../../../state/mint/actions'
+import Web3 from 'web3'
+import getRpcUrl from 'utils/getRpcUrl'
+import useAuth from 'hooks/useAuth'
+import { AutoRow } from 'components/Layout/Row'
+import { setConnectedNetworkID } from 'state/input/actions'
+import { switchNetwork } from 'utils/wallet'
+import { AppState } from 'state'
+import useActiveWeb3React from 'hooks/useActiveWeb3React'
 
-import CurrencyInputPanel from '../../../components/CurrencyInputPanel'
 import { useCurrency } from '../../../hooks/Tokens'
-import { useDerivedMintInfo, useMintActionHandlers, useMintState } from '../../../state/mint/hooks'
-import { useLiquidityPairA, useLiquidityPairB } from '../../../state/application/hooks'
+import { useBridgeActionHandlers, useBridgeState, useDerivedBridgeInfo } from '../../../state/bridge/hooks'
 import { maxAmountSpend } from '../../../utils/maxAmountSpend'
 import { currencyId } from '../../../utils/currencyId'
-
+import { Field } from '../../../state/bridge/actions'
 import Tokencard from './TokenCard'
+import CurrencyInputPanel from '../../../components/CurrencyInputPanel'
+
+import {
+  onUseRegister, 
+  onUseBSCApprove, 
+  onUseEthApprove, 
+  onUseSwapBSC2ETH, 
+  onUseSwapETH2BSC,
+  onUseSwapFee,
+  onUseBscSwapFee,
+} from '../../../hooks/useBridge' 
+
 
 const Container = styled.div`
   color: white;
   background: rgba(0, 0, 0, 0.4);
   width: 340px;
-  height: 624px;
+  height: fit-content;
   margin: 0px 60px 20px;
   border-radius: 16px;
 `
@@ -90,35 +110,110 @@ const ErrorArea = styled.div`
 const ConnectWalletButton = styled.div`
   text-align: -webkit-center;
 `
-export default function BridgeCard({ label, isSpynx = false }) {
-  const { liquidityPairA } = useLiquidityPairA()
-  const { liquidityPairB } = useLiquidityPairB()
+const ArrowWrapper = styled.div<{ clickable: boolean }>`
+  padding: 2px;
+  border: 3px solid rgb(255, 255, 255);
+  border-radius: 12px;
 
-  const [currencyA1, setCurrencyA1] = useState(liquidityPairA || 'ETH')
-  const [currencyB1, setCurrencyB1] = useState(liquidityPairB || 'ETH')
+  ${({ clickable }) =>
+    clickable
+      ? css`
+          :hover {
+            cursor: pointer;
+            opacity: 0.8;
+          }
+        `
+      : null}
+`
 
-  const currencyA = useCurrency(currencyA1)
-  const currencyB = useCurrency(currencyB1)
+export default function BridgeCard({ label, isSphynx = false }) {
 
-  const { independentField, typedValue, otherTypedValue } = useMintState()
+  const { account, library} = useActiveWeb3React()
+  const signer = library.getSigner();
+  const dispatch = useDispatch()
+
+  const { login, logout } = useAuth();
+  const [currencyA1, setCurrencyA1] = useState('USDT')
+  const { independentField, typedValue } = useBridgeState();
+  const { onPresentConnectModal } = useWalletModal(login, logout)
+
+  const [networkFromName, setNetworkFromName] = React.useState('bsc');
+  const [networkToName, setNetworkToName] = React.useState('eth');
+  const [chainId, setChainId] = React.useState(56);
+  const [minAmount, setMinAmount] = React.useState(10000);
+  const [maxAmount, setMaxAmount] = React.useState(1000000);
+  const web3 = new Web3(Web3.givenProvider || 'ws://some.local-or-remote.node:8546');
+
+  React.useEffect(() => {
+    web3.eth.getChainId().then((response) => setChainId(response));
+  }, [web3.eth])
+
+  const isNetworkError = React.useMemo(() =>
+    !((networkFromName === 'bsc' && chainId === ChainId.MAINNET) ||
+      (networkFromName === 'eth' && chainId === 1))
+    , [networkFromName, chainId])
+
+  const handleFromChange = useCallback((value) => {
+    setNetworkFromName(value.value);
+  }, []);
+
+  const handleToChange = useCallback((value) => {
+    setNetworkToName(value.value);
+  }, []);
+
+  const exchangeNetwork = () => {
+    setNetworkFromName(networkToName);
+    setNetworkToName(networkFromName);
+  }
+
+  const handleSwitch = () => {
+    if (chainId !== ChainId.MAINNET) {
+      switchNetwork('0x'.concat(ChainId.MAINNET.toString(16)));
+      dispatch(setConnectedNetworkID({ connectedNetworkID: ChainId.MAINNET }));
+    } else {
+      switchNetwork('0x'.concat(Number(1).toString(16)));
+      dispatch(setConnectedNetworkID({ connectedNetworkID: 1 }));
+    }
+  }
+
+  const handleNext = async () =>{
+    // onUseRegister(testSigner);
+    // await onUseSwapFee(testSigner);
+    // await onUseEthApprove(signer, '1000')
+    // await onUseSwapETH2BSC(signer, '1000');
+
+    // await onUseBscSwapFee(signer);
+    await onUseBSCApprove(signer, '1000')
+    await onUseSwapBSC2ETH(signer, '1000');
+    // onUseSwapETH2BSC(testSigner);
+    console.log();
+  }
+
+  const currency = useCurrency(currencyA1);
+  const sphynxCurrency = useCurrency('0x2e121Ed64EEEB58788dDb204627cCB7C7c59884c');
+
+  const handleCurrencyASelect = (currencyA_: Currency) => {
+    const newCurrencyIdA = currencyId(currencyA_)
+    setCurrencyA1(newCurrencyIdA)
+  }
+
+  const { onFieldSpxInput, onFieldOthInput } = useBridgeActionHandlers()
 
   const {
     dependentField,
     currencies,
+    pair,
+    pairState,
     currencyBalances,
     parsedAmounts,
+    price,
     noLiquidity,
-  } = useDerivedMintInfo(currencyA ?? undefined, currencyB ?? undefined)
+    liquidityMinted,
+    poolTokenPercentage,
+    error,
+  } = useDerivedBridgeInfo(sphynxCurrency ?? undefined, currency ?? undefined)
 
-  const formattedAmounts = {
-    [independentField]: typedValue,
-    [dependentField]: noLiquidity ? otherTypedValue : parsedAmounts[dependentField]?.toSignificant(6) ?? '',
-  }
-
-  const { onFieldAInput } = useMintActionHandlers(noLiquidity)
-
-  // get the max amounts user can add
-  const maxAmounts: { [field in Field]?: TokenAmount } = [Field.CURRENCY_A, Field.CURRENCY_B].reduce(
+  const maxAmounts: { [field in Field]?: TokenAmount } = [Field.BRIDGE_TOKENSPX].reduce(
     (accumulator, field) => {
       return {
         ...accumulator,
@@ -128,40 +223,51 @@ export default function BridgeCard({ label, isSpynx = false }) {
     {},
   )
 
-  const atMaxAmounts: { [field in Field]?: TokenAmount } = [Field.CURRENCY_A, Field.CURRENCY_B].reduce(
+  const maxOthAmounts: { [field in Field]?: TokenAmount } = [Field.BRIDGE_TOKENOTH].reduce(
     (accumulator, field) => {
       return {
         ...accumulator,
-        [field]: maxAmounts[field]?.equalTo(parsedAmounts[field] ?? '0'),
+        [field]: maxAmountSpend(currencyBalances[field]),
       }
     },
     {},
   )
+  const handleMax = () => {
+    if (isSphynx)
+      onFieldSpxInput(maxAmounts[Field.BRIDGE_TOKENSPX]?.toFixed(4) ?? '')
+    else
+      onFieldOthInput(maxOthAmounts[Field.BRIDGE_TOKENOTH]?.toFixed(4) ?? '')
+  }
 
-  const handleCurrencyASelect = useCallback(
-    (currencyA_: Currency) => {
-      const newCurrencyIdA = currencyId(currencyA_)
-      if (newCurrencyIdA === currencyB1) {
-        setCurrencyA1(currencyB1)
-        setCurrencyB1(currencyA1 || 'ETH')
-      } else {
-        setCurrencyA1(newCurrencyIdA)
-        setCurrencyB1(currencyB1 || 'ETH')
-      }
-    },
-    [currencyB1, currencyA1],
-  )
+  const formattedAmounts = {
+    [independentField]: typedValue,
+    [dependentField]: parsedAmounts[dependentField]?.toSignificant(6) ?? '',
+  }
+
+  const isNextClickable = React.useMemo(() => {
+    const formattedAmount = {
+      [independentField]: typedValue,
+      [dependentField]: parsedAmounts[dependentField]?.toSignificant(6) ?? '',
+    }
+    const amount = isSphynx ? formattedAmount[Field.BRIDGE_TOKENSPX] : formattedAmount[Field.BRIDGE_TOKENOTH];
+    console.log(amount);
+  }, [ dependentField, independentField, isSphynx, parsedAmounts, typedValue])
+
 
   return (
     <Container>
       <CardHeader>{label}</CardHeader>
       <Grid>
-        <Tokencard isFrom />
-        <ArrowRightIcon style={{ alignSelf: 'center' }} />
-        <Tokencard isFrom={false} />
+        <Tokencard isFrom networkName={networkFromName} chainId={chainId} handleChange={handleFromChange} />
+        <AutoRow justify="space-between">
+          <ArrowWrapper clickable onClick={exchangeNetwork}>
+            <ArrowRightIcon style={{ alignSelf: 'center' }} />
+          </ArrowWrapper>
+        </AutoRow>
+        <Tokencard isFrom={false} networkName={networkToName} chainId={chainId} handleChange={handleToChange} />
       </Grid>
       <AmountContainer>
-        <Label>Sphynx to Bridge</Label>
+        <Label> {isSphynx ? 'Sphynx' : 'Token'} to Bridge</Label>
         <Button
           variant="tertiary"
           style={{
@@ -178,60 +284,64 @@ export default function BridgeCard({ label, isSpynx = false }) {
             color: 'white',
             borderRadius: '4px',
           }}
+          onClick={handleMax}
         >
           Max
         </Button>
         <CurrencyContainer>
           <CurrencyInputPanel
-            value={formattedAmounts[Field.CURRENCY_A]}
-            onUserInput={onFieldAInput}
-            onMax={() => {
-              onFieldAInput(maxAmounts[Field.CURRENCY_A]?.toExact() ?? '')
-            }}
+            value={isSphynx ? formattedAmounts[Field.BRIDGE_TOKENSPX] : formattedAmounts[Field.BRIDGE_TOKENOTH]}
+            onUserInput={isSphynx ? onFieldSpxInput : onFieldOthInput}
+            onMax={null}
             onCurrencySelect={handleCurrencyASelect}
-            showMaxButton={!atMaxAmounts[Field.CURRENCY_A]}
-            currency={currencies[Field.CURRENCY_A]}
-            id="add-liquidity-input-tokena"
+            showMaxButton={false}
+            currency={isSphynx ? sphynxCurrency : currency}
+            id="bridge-asset-token"
             showCommonBases
-            disableCurrencySelect={isSpynx}
+            disableCurrencySelect={isSphynx}
             isBridge
           />
         </CurrencyContainer>
-        <BottomLabel>Balance on Sphynx</BottomLabel>
+        <BottomLabel>Balance on {isSphynx ? 'Sphynx' : currency !== undefined && currency !== null ? currency.symbol : 'Token'}</BottomLabel>
       </AmountContainer>
       <MinMaxContainger isMin={false}>
         <div>Max Bridge Amount</div>
-        <div>11000SPX</div>
+        <div>{maxAmount} {isSphynx ? 'SPX' : currency !== undefined && currency !== null ? currency.symbol : 'Token'}</div>
       </MinMaxContainger>
       <MinMaxContainger isMin>
         <div>Min Bridge Amount</div>
-        <div>65SPX</div>
+        <div>{minAmount} {isSphynx ? 'SPX' : currency !== undefined && currency !== null ? currency.symbol : 'Token'}</div>
       </MinMaxContainger>
-      <ErrorArea>
-        <div style={{ textAlign: 'left' }}>Please connect your wallet to the chain you wish to bridge from!</div>
-        <Button
-          variant="tertiary"
-          style={{
-            marginTop: '11px',
-            fontStyle: 'normal',
-            fontSize: '12px',
-            lineHeight: '14px',
-            backgroundColor: '#ED79D8',
-            width: '148px',
-            height: '32px',
-            color: 'white',
-            borderRadius: '8px',
-            padding: '8px',
-          }}
-        >
-          Click Here to Switch
-        </Button>
-      </ErrorArea>
+      {isNetworkError && (
+        <ErrorArea>
+          <div style={{ textAlign: 'left' }}>Please connect your wallet to the chain you wish to bridge from!</div>
+          <Button
+            variant="tertiary"
+            style={{
+              marginTop: '11px',
+              fontStyle: 'normal',
+              fontSize: '12px',
+              lineHeight: '14px',
+              backgroundColor: '#ED79D8',
+              width: '148px',
+              height: '32px',
+              color: 'white',
+              borderRadius: '8px',
+              padding: '8px',
+            }}
+            onClick={handleSwitch}
+          >
+            Click Here to Switch
+          </Button>
+        </ErrorArea>
+      )}
+
       <ConnectWalletButton>
         <Button
           variant="tertiary"
           style={{
             marginTop: '20px',
+            marginBottom: '32px',
             fontStyle: 'normal',
             fontSize: '14px',
             lineHeight: '14px',
@@ -246,8 +356,10 @@ export default function BridgeCard({ label, isSpynx = false }) {
             alignItems: 'center',
             padding: '8px',
           }}
+          // onClick={!account? onPresentConnectModal: handleNext}
+          onClick={handleNext}
         >
-          Connect Wallet
+          {!account ? 'Connect Wallet' : 'Next'}
         </Button>
       </ConnectWalletButton>
     </Container>
