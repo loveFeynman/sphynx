@@ -16,11 +16,10 @@ interface NameCellProps {
 
 const StyledCell = styled(BaseCell)`
   flex: 5;
+  align-items: center;
   flex-direction: row;
-  padding-left: 12px;
   ${({ theme }) => theme.mediaQueries.sm} {
-    flex: 1 0 150px;
-    padding-left: 32px;
+    flex: 2 0 200px;
   }
 `
 
@@ -56,22 +55,22 @@ const NameCell: React.FC<NameCellProps> = ({ pool }) => {
 
   return (
     <StyledCell role="cell">
-      {isAutoVault ? (
-        <CakeVaultTokenPairImage mr="8px" width={40} height={40} />
-      ) : (
-        <TokenPairImage primaryToken={earningToken} secondaryToken={stakingToken} mr="8px" width={40} height={40} />
-      )}
+        {isAutoVault ? (
+          <CakeVaultTokenPairImage mr="8px" width={70} height={70} />
+        ) : (
+          <TokenPairImage primaryToken={earningToken} secondaryToken={stakingToken} mr="8px" width={70} height={70} />
+        )}
       <CellContent>
         {showStakedTag && (
           <Text fontSize="12px" bold color={isFinished ? 'failure' : 'secondary'} textTransform="uppercase">
             {t('Staked')}
           </Text>
         )}
-        <Text bold={!isXs && !isSm} small={isXs || isSm}>
+        <Text fontSize="20px" bold={!isXs && !isSm} small={isXs || isSm} mb='5px'>
           {title}
         </Text>
         {showSubtitle && (
-          <Text fontSize="12px" color="textSubtle">
+          <Text fontSize="15px" color="#777777">
             {subtitle}
           </Text>
         )}

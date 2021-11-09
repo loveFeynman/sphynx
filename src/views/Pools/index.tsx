@@ -60,10 +60,10 @@ const LogoTitle = styled.div`
   }
   ${({ theme }) => theme.mediaQueries.md} {
     div:nth-child(1) {
-      font-size: 24px;
+      font-size: 26px;
     }
     div:nth-child(2) {
-      font-size: 16px;
+      font-size: 15px;
     }
   }
 `
@@ -272,7 +272,7 @@ const Pools: React.FC = () => {
 
   chosenPools = sortPools(chosenPools).slice(0, numberOfPoolsVisible)
   chosenPoolsLength.current = chosenPools.length
-
+  console.log(">>>>chosen", chosenPools, numberOfPoolsVisible)
   const cardLayout = (
     <CardLayout>
       {chosenPools.map((pool) =>

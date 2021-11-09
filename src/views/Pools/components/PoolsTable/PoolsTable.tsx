@@ -12,19 +12,15 @@ interface PoolsTableProps {
 }
 
 const StyledTable = styled.div`
-  border-radius: ${({ theme }) => theme.radii.card};
-
-  background-color: ${({ theme }) => theme.colors.input};
+  background-color: transparent;
   > div:not(:last-child) {
     border-bottom: 2px solid ${({ theme }) => theme.colors.disabled};
   }
 `
 
 const StyledTableBorder = styled.div`
-  border-radius: ${({ theme }) => theme.radii.card};
-  background-color: ${({ theme }) => theme.colors.input};
-  padding: 1px 1px 3px 1px;
-  background-size: 400% 400%;
+  padding: 5px 80px 20px 40px;
+  background-color: transparent;
 `
 
 const ScrollButtonContainer = styled.div`
