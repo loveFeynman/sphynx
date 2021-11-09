@@ -132,7 +132,7 @@ const SlippageText = styled.p`
   color: #A7A7CC;
   margin: 0 8px;
   & span {
-    text-decoration: underline;
+    // text-decoration: underline;
   }
 `
 
@@ -1004,12 +1004,12 @@ export default function Swap({ history }: RouteComponentProps) {
           >
             <SwapTabList>
               <SwapTab>
-                <Text>
+                <Text textAlign="center" fontSize="14px" bold color="#A7A7CC">
                   {t('Swap')}
                 </Text>
               </SwapTab>
               <SwapTab>
-                <Text>
+                <Text textAlign="center" fontSize="14px" bold color="#A7A7CC">
                   {t('Liquidity')}
                 </Text>
               </SwapTab>
@@ -1392,17 +1392,17 @@ export default function Swap({ history }: RouteComponentProps) {
             >
               <SwapTabList>
                 <SwapTab>
-                  <Text>
+                  <Text textAlign="center" fontSize="14px" bold textTransform="capitalize" color="#A7A7CC">
                     {t('tokenDX')}
                   </Text>
                 </SwapTab>
                 <SwapTab>
-                  <Text>
+                  <Text textAlign="center" fontSize="14px" bold textTransform="capitalize" color="#A7A7CC">
                     {t('buyers')}
                   </Text>
                 </SwapTab>
                 <SwapTab>
-                  <Text>
+                  <Text textAlign="center" fontSize="14px" bold textTransform="capitalize" color="#A7A7CC">
                     {t('sellers')}
                   </Text>
                 </SwapTab>

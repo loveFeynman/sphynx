@@ -22,35 +22,41 @@ const Container = styled.div`
   margin-bottom: 24px;
   gap: 12px;
   flex-wrap: wrap;
-
+  &>div:first-child {
+    width: 100%;
+  }
   div:nth-child(2) {
     width: 47%;
     div {
-      width: 100%;
+      white-space: nowrap;
+      width: 90%;
     }
   }
   div:nth-child(3) {
     width: 47%;
     div {
-      width: 100%;
+      white-space: nowrap;
+      width: 90%;
     }
   }
   div:nth-child(4) {
     width: 13%;
     div {
-      width: 100%;
+      white-space: nowrap;
+      width: 90%;
     }
   }
   div:nth-child(5) {
     width: 13%;
     div {
-      width: 100%;
+      white-space: nowrap;
+      width: 90%;
     }
   }
 
   ${({ theme }) => theme.mediaQueries.lg} {
     flex-wrap: nowrap;
-    div:nth-child(1) {
+    div:first-child {
       width: unset;
     }
     div:nth-child(2) {

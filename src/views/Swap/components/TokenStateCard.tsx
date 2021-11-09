@@ -103,20 +103,20 @@ export default function TokenStateCard(props: TokenStateProps) {
           <Text
             textAlign={tokenImg === undefined ? 'center' : 'unset'}
             color={tokenImg === undefined ? '#A7A7CC' : 'white'}
-            fontSize="13px"
+            fontSize={isMobile? "12px" : "13px"}
             bold
           >
             {t(`${cardTitle}`)}
           </Text>
           <Text
             textAlign={tokenImg === undefined ? 'center' : 'unset'}
-            fontSize="16px"
+            fontSize={isMobile? "14px" : "16px"}
             bold
             color={valueActive ? 'limegreen' : 'white'}
           >
             {cardValue}
           </Text>
-          <Text textAlign={tokenImg === undefined ? 'center' : 'unset'} fontSize="16px" bold color="limegreen">
+          <Text textAlign={tokenImg === undefined ? 'center' : 'unset'} fontSize={isMobile? "14px" : "16px"} bold color="limegreen">
             {subPriceValue}
           </Text>
         </TokenDescription>
@@ -160,13 +160,13 @@ export default function TokenStateCard(props: TokenStateProps) {
           ) : (
             ''
           )}
-          <Text textAlign={tokenImg === undefined ? 'center' : 'unset'} color="white" fontSize="14px" bold>
+          <Text textAlign={tokenImg === undefined ? 'center' : 'unset'} color="white" fontSize={isMobile? "12px" : "14px"} bold>
             {t(`${cardTitle}`)}
           </Text>
-          <Text textAlign={tokenImg === undefined ? 'center' : 'unset'} fontSize="18px" bold color="white">
+          <Text textAlign={tokenImg === undefined ? 'center' : 'unset'} fontSize={isMobile? "14px" : "18px"} bold color="white">
             {cardValue}
           </Text>
-          <Text textAlign={tokenImg === undefined ? 'center' : 'unset'} fontSize="18px" bold color="white">
+          <Text textAlign={tokenImg === undefined ? 'center' : 'unset'} fontSize={isMobile? "14px" : "18px"} bold color="white">
             {subPriceValue}
           </Text>
         </TokenDescription>

@@ -208,16 +208,22 @@ const MenuItemMobile = styled.a`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1px;
-  margin: 5px 16px;
-  border-radius: 10px;
+  padding: 5px 16px;
+  margin: 5px 0;
+  border-radius: 5px;
   text-decoration: none !important;
   & p {
     width: calc(100% - 32px);
+    font-size: 14px;
+    font-weight: 600;
+    color: #a7a7cc;
   }
   &:hover,
   &.active {
     background: #710d89;
+    p {
+      color: white;
+    }
   }
   ${({ theme }) => theme.mediaQueries.xl} {
     display: none;
@@ -736,7 +742,7 @@ const Menu = () => {
                 >
                   <Icon />
                   <p>
-                    <b>{t(`${link.label}`)}</b>
+                    {t(`${link.label}`)}
                   </p>
                 </MenuItemMobile>
               </div>
