@@ -13,9 +13,6 @@ interface PoolsTableProps {
 
 const StyledTable = styled.div`
   background-color: transparent;
-  > div:not(:last-child) {
-    border-bottom: 2px solid ${({ theme }) => theme.colors.disabled};
-  }
 `
 
 const StyledTableBorder = styled.div`
@@ -49,12 +46,12 @@ const PoolsTable: React.FC<PoolsTableProps> = ({ pools, userDataLoaded, account 
             userDataLoaded={userDataLoaded}
           />
         ))}
-        <ScrollButtonContainer>
+        {/* <ScrollButtonContainer>
           <Button variant="text" onClick={scrollToTop} style={{ color: 'white' }}>
             {t('To Top')}
             <ChevronUpIcon color="white" />
           </Button>
-        </ScrollButtonContainer>
+        </ScrollButtonContainer> */}
       </StyledTable>
     </StyledTableBorder>
   )

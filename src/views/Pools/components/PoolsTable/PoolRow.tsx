@@ -18,10 +18,11 @@ interface PoolRowProps {
   userDataLoaded: boolean
 }
 
-const StyledRow = styled.div`
+const StyledRow = styled.div<{expanded}>`
   background-color: transparent;
   display: flex;
   cursor: pointer;
+  border-bottom: ${({expanded}) => expanded ? '0px' : '1px'} solid #21214A;
 `
 
 const PoolRow: React.FC<PoolRowProps> = ({ pool, account, userDataLoaded }) => {
@@ -40,7 +41,7 @@ const PoolRow: React.FC<PoolRowProps> = ({ pool, account, userDataLoaded }) => {
 
   return (
     <>
-      <StyledRow role="row" onClick={toggleExpanded}>
+      <StyledRow role="row" expanded={expanded} onClick={toggleExpanded}>
         <NameCell pool={pool} />
         <EarningsCell pool={pool} account={account} userDataLoaded={userDataLoaded} />
         <AprCell pool={pool} performanceFee={performanceFeeAsDecimal} />

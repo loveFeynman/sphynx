@@ -58,7 +58,9 @@ const StyledActionPanel = styled.div<{ expanded: boolean }>`
           ${collapseAnimation} 300ms linear forwards
         `};
   overflow: hidden;
-  background: ${({ theme }) => theme.colors.input};
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  background: ${({ theme }) => theme.isDark ? "#1A1A3A" : "#20234E"};
   display: flex;
   flex-direction: column-reverse;
   justify-content: center;
@@ -99,13 +101,25 @@ interface ActionPanelProps {
 }
 
 const InfoSection = styled(Box)`
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
   flex-grow: 0;
   flex-shrink: 0;
   flex-basis: auto;
   padding: 8px 8px;
   ${({ theme }) => theme.mediaQueries.lg} {
     padding: 0;
-    flex-basis: 230px;
+    flex-basis: 2 0 330px;
+  }
+`
+
+const SmallLinkExternal = styled(LinkExternal)`
+  flex-flow: row-reverse;
+  > svg {
+    width: 15px;
+    margin-right: 3px;
+    margin-left: 0px;
   }
 `
 
@@ -232,31 +246,51 @@ const ActionPanel: React.FC<ActionPanelProps> = ({ account, pool, userDataLoaded
   return (
     <StyledActionPanel expanded={expanded}>
       <InfoSection>
+        <Flex flexDirection='row' alignItems='center' >
+          {isAutoVault ? <CompoundingPoolTag /> : <ManualPoolTag />}
+          {tagTooltipVisible && tagTooltip}
+          <span ref={tagTargetRef}>
+            <HelpIcon ml="4px" width="12px" height="12px" color="#F9B043" />
+          </span>
+        </Flex>
         {maxStakeRow}
         {(isXs || isSm) && aprRow}
         {(isXs || isSm || isMd) && totalStakedRow}
         {shouldShowBlockCountdown && blocksRow}
         <Flex mb="8px" justifyContent={['flex-end', 'flex-end', 'flex-start']}>
-          <LinkExternal href={`https://pancakeswap.info/token/${getAddress(earningToken.address)}`} bold={false}>
+          <LinkExternal href={`https://pancakeswap.info/token/${getAddress(earningToken.address)}`} fontSize='20px' bold={false}>
             {t('See Token Info')}
           </LinkExternal>
         </Flex>
-        <Flex mb="8px" justifyContent={['flex-end', 'flex-end', 'flex-start']}>
-          <LinkExternal href={earningToken.projectLink} bold={false}>
-            {t('View Project Site')}
-          </LinkExternal>
-        </Flex>
-        {poolContractAddress && (
-          <Flex mb="8px" justifyContent={['flex-end', 'flex-end', 'flex-start']}>
-            <LinkExternal
-              href={`${BASE_BSC_SCAN_URL}/address/${isAutoVault ? cakeVaultContractAddress : poolContractAddress}`}
+        <Flex flexDirection='row' mb="8px">
+          <Flex
+            color='#A7A7CC'
+            justifyContent={['flex-end', 'flex-end', 'flex-start']}
+            mr='10px'
+            style={{ borderRadius: '5px', border: '1px solid #2E2E55', padding: '8px' }}>
+            <SmallLinkExternal
+              href={earningToken.projectLink}
               bold={false}
-            >
-              {t('View Contract')}
-            </LinkExternal>
+              fontSize='10px'>
+              {t('View Project Site')}
+            </SmallLinkExternal>
           </Flex>
-        )}
-        {account && isMetaMaskInScope && tokenAddress && (
+          {poolContractAddress && (
+            <Flex
+              color='#A7A7CC'
+              justifyContent={['flex-end', 'flex-end', 'flex-start']}
+              style={{ borderRadius: '5px', border: '1px solid #2E2E55', padding: '8px' }}>
+              <SmallLinkExternal
+                href={`${BASE_BSC_SCAN_URL}/address/${isAutoVault ? cakeVaultContractAddress : poolContractAddress}`}
+                bold={false}
+                fontSize='10px'
+              >
+                {t('View Contract')}
+              </SmallLinkExternal>
+            </Flex>
+          )}
+        </Flex>
+        {/* {account && isMetaMaskInScope && tokenAddress && (
           <Flex mb="8px" justifyContent={['flex-end', 'flex-end', 'flex-start']}>
             <Button
               variant="text"
@@ -268,12 +302,7 @@ const ActionPanel: React.FC<ActionPanelProps> = ({ account, pool, userDataLoaded
               <MetamaskIcon ml="4px" />
             </Button>
           </Flex>
-        )}
-        {isAutoVault ? <CompoundingPoolTag /> : <ManualPoolTag />}
-        {tagTooltipVisible && tagTooltip}
-        <span ref={tagTargetRef}>
-          <HelpIcon ml="4px" width="20px" height="20px" color="textSubtle" />
-        </span>
+        )} */}
       </InfoSection>
       <ActionContainer>
         {showSubtitle && (

@@ -14,7 +14,7 @@ import { BIG_ZERO } from 'utils/bigNumber'
 import { getAddress } from 'utils/addressHelpers'
 import { useERC20 } from 'hooks/useContract'
 import { convertSharesToCake } from 'views/Pools/helpers'
-import { ActionContainer, ActionTitles, ActionContent } from './styles'
+import { ActionContainer, StakeActionTitles, ActionContent } from './styles'
 import NotEnoughTokensModal from '../../PoolCard/Modals/NotEnoughTokensModal'
 import StakeModal from '../../PoolCard/Modals/StakeModal'
 import VaultStakeModal from '../../CakeVaultCard/VaultStakeModal'
@@ -131,16 +131,25 @@ const Staked: React.FunctionComponent<StackedActionProps> = ({ pool, userDataLoa
 
   const reachStakingLimit = stakingLimit.gt(0) && userData.stakedBalance.gte(stakingLimit)
 
+  const buttonStyle = {
+    borderRadius: '5px',
+    border: 'none',
+    width: '200px',
+    height: '34px',
+    fontSize: '13px',
+    background: 'linear-gradient(90deg, #610D89 0%, #C42BB4 100%)'
+  }
+
   if (!account) {
     return (
       <ActionContainer>
-        <ActionTitles>
-          <Text fontSize="12px" bold color="textSubtle" as="span" textTransform="uppercase">
+        <StakeActionTitles>
+          <Text fontSize="12px" bold color="#A7A7CC" as="span" textTransform="uppercase">
             {t('Start staking')}
           </Text>
-        </ActionTitles>
+        </StakeActionTitles>
         <ActionContent>
-          <ConnectWalletButton width="100%" />
+          <ConnectWalletButton style={buttonStyle} width="100%" />
         </ActionContent>
       </ActionContainer>
     )
@@ -149,11 +158,11 @@ const Staked: React.FunctionComponent<StackedActionProps> = ({ pool, userDataLoa
   if (!userDataLoaded) {
     return (
       <ActionContainer>
-        <ActionTitles>
-          <Text fontSize="12px" bold color="textSubtle" as="span" textTransform="uppercase">
+        <StakeActionTitles>
+          <Text fontSize="12px" bold color="#A7A7CC" as="span" textTransform="uppercase">
             {t('Start staking')}
           </Text>
-        </ActionTitles>
+        </StakeActionTitles>
         <ActionContent>
           <Skeleton width={180} height="32px" marginTop={14} />
         </ActionContent>
@@ -164,13 +173,15 @@ const Staked: React.FunctionComponent<StackedActionProps> = ({ pool, userDataLoa
   if (needsApproval) {
     return (
       <ActionContainer>
-        <ActionTitles>
-          <Text fontSize="12px" bold color="textSubtle" as="span" textTransform="uppercase">
+        <StakeActionTitles>
+          <Text fontSize="12px" bold color="#A7A7CC" as="span" textTransform="uppercase">
             {t('Enable pool')}
           </Text>
-        </ActionTitles>
+        </StakeActionTitles>
         <ActionContent>
-          <Button width="100%" disabled onClick={handleApprove} variant="secondary">
+          <Button width="100%" disabled onClick={handleApprove} variant="secondary"
+            style={buttonStyle}
+          >
             {t('Enable')}
           </Button>
         </ActionContent>
@@ -182,14 +193,14 @@ const Staked: React.FunctionComponent<StackedActionProps> = ({ pool, userDataLoa
   if (isNotVaultAndHasStake || isVaultWithShares) {
     return (
       <ActionContainer>
-        <ActionTitles>
-          <Text fontSize="12px" bold color="secondary" as="span" textTransform="uppercase">
+        <StakeActionTitles>
+          <Text fontSize="12px" bold color="#A7A7CC" as="span" textTransform="uppercase">
             {stakingToken.symbol}{' '}
           </Text>
-          <Text fontSize="12px" bold color="textSubtle" as="span" textTransform="uppercase">
+          <Text fontSize="12px" bold color="#A7A7CC" as="span" textTransform="uppercase">
             {isAutoVault ? t('Staked (compounding)') : t('Staked')}
           </Text>
-        </ActionTitles>
+        </StakeActionTitles>
         <ActionContent>
           <Flex flex="1" pt="16px" flexDirection="column" alignSelf="flex-start">
             <Balance
@@ -237,20 +248,21 @@ const Staked: React.FunctionComponent<StackedActionProps> = ({ pool, userDataLoa
 
   return (
     <ActionContainer>
-      <ActionTitles>
-        <Text fontSize="12px" bold color="secondary" as="span" textTransform="uppercase">
+      <StakeActionTitles>
+        <Text fontSize="12px" bold color="#A7A7CC" as="span" textTransform="uppercase">
           {t('Stake')}{' '}
         </Text>
-        <Text fontSize="12px" bold color="textSubtle" as="span" textTransform="uppercase">
+        <Text fontSize="12px" bold color="#A7A7CC" as="span" textTransform="uppercase">
           {stakingToken.symbol}
         </Text>
-      </ActionTitles>
+      </StakeActionTitles>
       <ActionContent>
         <Button
           width="100%"
           onClick={stakingTokenBalance.gt(0) ? onStake : onPresentTokenRequired}
           variant="secondary"
           disabled={isFinished}
+          style={buttonStyle}
         >
           {t('Stake')}
         </Button>

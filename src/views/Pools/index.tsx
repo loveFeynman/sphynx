@@ -200,14 +200,6 @@ const Pools: React.FC = () => {
 
   const showFinishedPools = location.pathname.includes('history')
 
-  const handleChangeSearchQuery = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(event.target.value)
-  }
-
-  const handleSortOptionChange = (option: OptionProps): void => {
-    setSortOption(option.value)
-  }
-
   const selectedTab = (tabIndex: number): void => {
     if (tabIndex === 0) {
       location.pathname = "/pools"
@@ -272,7 +264,6 @@ const Pools: React.FC = () => {
 
   chosenPools = sortPools(chosenPools).slice(0, numberOfPoolsVisible)
   chosenPoolsLength.current = chosenPools.length
-  console.log(">>>>chosen", chosenPools, numberOfPoolsVisible)
   const cardLayout = (
     <CardLayout>
       {chosenPools.map((pool) =>
