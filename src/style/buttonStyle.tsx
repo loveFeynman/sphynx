@@ -4,7 +4,7 @@ export const DarkButtonStyle = {
     width: '230px',
     height: '34px',
     fontSize: '13px',
-    background: `${({ theme }) => (theme.isDark ? '#0E0E26' : '#A2E60')}`
+    background: '#0E0E26'
 }
 
 export const ColorButtonStyle = {
