@@ -250,7 +250,7 @@ const ActionPanel: React.FC<ActionPanelProps> = ({ account, pool, userDataLoaded
           {isAutoVault ? <CompoundingPoolTag /> : <ManualPoolTag />}
           {tagTooltipVisible && tagTooltip}
           <span ref={tagTargetRef}>
-            <HelpIcon ml="4px" width="12px" height="12px" color="#F9B043" />
+            <HelpIcon ml="4px" width="14px" height="14px" color="#F9B043" />
           </span>
         </Flex>
         {maxStakeRow}

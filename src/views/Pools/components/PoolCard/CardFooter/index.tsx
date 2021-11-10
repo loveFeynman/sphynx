@@ -20,7 +20,8 @@ const ExpandableButtonWrapper = styled(Flex)`
 `
 
 const CardFooterWrapper = styled(CardFooter)`
-  background-color: ${({ theme }) => theme.colors.input};
+  background-color: transparent;
+  border: 0px;
 `
 
 const Footer: React.FC<FooterProps> = ({ pool, account }) => {
@@ -48,7 +49,7 @@ const Footer: React.FC<FooterProps> = ({ pool, account }) => {
           {isAutoVault ? <CompoundingPoolTag /> : <ManualPoolTag />}
           {tooltipVisible && tooltip}
           <Flex ref={targetRef}>
-            <HelpIcon ml="4px" width="20px" height="20px" color="textSubtle" />
+            <HelpIcon ml="4px" width="14px" height="14px" color="#F9B043" />
           </Flex>
         </Flex>
         <ExpandableLabel expanded={isExpanded} onClick={handleExpand}>

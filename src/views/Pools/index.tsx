@@ -32,7 +32,7 @@ import Card, { GreyCard } from '../../components/Card'
 
 const CardLayout = styled(FlexLayout)`
   justify-content: center;
-  font-family: Poppins;
+  padding: 47px 69px 0;
 `
 
 const LogoContent = styled(Flex)`

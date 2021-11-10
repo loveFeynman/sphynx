@@ -13,7 +13,7 @@ import StyledCardHeader from './StyledCardHeader'
 import CardActions from './CardActions'
 
 const StyledCardBody = styled(CardBody)`
-  background-color: ${({ theme }) => theme.colors.input};
+  background-color: transparent;
 `
 
 const PoolCard: React.FC<{ pool: Pool; account: string }> = ({ pool, account }) => {
@@ -21,6 +21,14 @@ const PoolCard: React.FC<{ pool: Pool; account: string }> = ({ pool, account }) 
   const { t } = useTranslation()
   const stakedBalance = userData?.stakedBalance ? new BigNumber(userData.stakedBalance) : BIG_ZERO
   const accountHasStakedBalance = stakedBalance.gt(0)
+  const buttonStyle = {
+    borderRadius: '5px',
+    border: 'none',
+    width: '230px',
+    height: '34px',
+    fontSize: '13px',
+    background: 'linear-gradient(90deg, #610D89 0%, #C42BB4 100%)'
+  }
 
   return (
     <StyledCard
@@ -35,15 +43,15 @@ const PoolCard: React.FC<{ pool: Pool; account: string }> = ({ pool, account }) 
       />
       <StyledCardBody>
         <AprRow pool={pool} />
-        <Flex mt="24px" flexDirection="column">
+        <Flex mt="24px" flexDirection="column" alignItems='center' style={{}}>
           {account ? (
             <CardActions pool={pool} stakedBalance={stakedBalance} />
           ) : (
             <>
-              <Text mb="10px" textTransform="uppercase" fontSize="12px" color="textSubtle" bold>
+              <Text mb="10px" textTransform="uppercase" fontSize="14px" color="#A7A7CC">
                 {t('Start earning')}
               </Text>
-              <ConnectWalletButton />
+              <ConnectWalletButton style={buttonStyle}/>
             </>
           )}
         </Flex>

@@ -46,40 +46,48 @@ const HarvestActions: React.FC<HarvestActionsProps> = ({
     />,
   )
 
+  const buttonStyle = {
+    borderRadius: '5px',
+    border: 'none',
+    width: '230px',
+    height: '34px',
+    fontSize: '13px',
+    background: '#0E0E26'
+  }
+
   return (
-    <Flex justifyContent="space-between" alignItems="center" mb="16px">
-      <Flex flexDirection="column">
+    <Flex justifyContent="space-between" alignItems="center" mb="16px" flexDirection="column">
+      <Flex flexDirection="row">
         {isLoading ? (
           <Skeleton width="80px" height="48px" />
         ) : (
           <>
             {hasEarnings ? (
               <>
-                <Balance bold fontSize="20px" decimals={5} value={earningTokenBalance} />
+                {/* <Balance bold fontSize="20px" decimals={5} value={earningTokenBalance} /> */}
                 {earningTokenPrice > 0 && (
                   <Balance
                     display="inline"
-                    fontSize="12px"
+                    fontSize="20px"
                     color="textSubtle"
                     decimals={2}
-                    prefix="~"
+                    prefix="$"
                     value={earningTokenDollarBalance}
-                    unit=" USD"
                   />
                 )}
               </>
             ) : (
               <>
-                <Heading color="textDisabled">0</Heading>
-                <Text fontSize="12px" color="textDisabled">
-                  0 USD
+                {/* <Heading color="textDisabled">0</Heading> */}
+                <Text fontSize="20px" color="textDisabled">
+                  $0
                 </Text>
               </>
             )}
           </>
         )}
       </Flex>
-      <Button disabled={!hasEarnings} onClick={onPresentCollect}>
+      <Button disabled={!hasEarnings} onClick={onPresentCollect} style={buttonStyle}>
         {isCompoundPool ? t('Collect') : t('Harvest')}
       </Button>
     </Flex>

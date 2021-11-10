@@ -60,6 +60,14 @@ const StakeAction: React.FC<StakeActionsProps> = ({
   )
 
   const reachStakingLimit = stakingLimit.gt(0) && userData.stakedBalance.gte(stakingLimit)
+  const buttonStyle = {
+    borderRadius: '5px',
+    border: 'none',
+    width: '230px',
+    height: '34px',
+    fontSize: '13px',
+    background: 'linear-gradient(90deg, #610D89 0%, #C42BB4 100%)'
+  }
 
   const renderStakeAction = () => {
     return isStaked ? (
@@ -104,7 +112,7 @@ const StakeAction: React.FC<StakeActionsProps> = ({
         {tooltipVisible && tooltip}
       </Flex>
     ) : (
-      <Button disabled={isFinished} onClick={stakingTokenBalance.gt(0) ? onPresentStake : onPresentTokenRequired}>
+      <Button disabled={isFinished} onClick={stakingTokenBalance.gt(0) ? onPresentStake : onPresentTokenRequired} style={buttonStyle}>
         {t('Stake')}
       </Button>
     )
