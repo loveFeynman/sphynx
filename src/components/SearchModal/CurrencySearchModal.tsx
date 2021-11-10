@@ -23,13 +23,17 @@ import { CurrencyModalView } from './types'
 
 const Footer = styled.div`
   width: 100%;
-  background-color: ${({ theme }) => theme.colors.backgroundAlt};
   text-align: center;
+  border-radius: 5px;
+  button {
+    background-color: linear-gradient(90deg, #610D89 0%, #C42BB4 100%);
+  }
 `
 
 const StyledModalContainer = styled(ModalContainer)`
   max-width: 420px;
   width: 100%;
+  background-color: ${({ theme }) => theme.isDark ? "#0E0E26" : "#2A2E60"};
 `
 
 const StyledModalBody = styled(ModalBody)`
@@ -127,6 +131,7 @@ export default function CurrencySearchModal({
               variant="text"
               onClick={handleCurrencyModal}
               className="list-token-manage-button"
+              style={{background: 'linear-gradient(90deg, #610D89 0%, #C42BB4 100%)', color: 'white', borderRadius: '5px'}}
             >
               {t('Manage Tokens')}
             </Button>

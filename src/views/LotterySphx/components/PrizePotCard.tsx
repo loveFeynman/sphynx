@@ -15,6 +15,7 @@ import { Spinner } from './Spinner'
 import ViewTickets from './ViewTickets'
 import useToast from 'hooks/useToast'
 import {FormattedNumber} from './FormattedNumber'
+import { SPHYNX_TOKEN_ADDRESS } from 'config/constants'
 
 
 const Container = styled.div<{ isDetail: boolean }>`
@@ -188,7 +189,7 @@ export default function PrizePotCard({
         setEnabled(true)
       }
 
-      axios.get(`${process.env.REACT_APP_BACKEND_API_URL}/price/0x2e121ed64eeeb58788ddb204627ccb7c7c59884c`).then((response) => {
+      axios.get(`${process.env.REACT_APP_BACKEND_API_URL}/price/${SPHYNX_TOKEN_ADDRESS}`).then((response) => {
         let price = response.data.price
         let _amountCollectedInSphynx = (lotteryInfo?.amountCollectedInSphynx / 10 ** 18).toString()
         let prizePot = (parseFloat(_amountCollectedInSphynx) * parseFloat(price)).toFixed(5)

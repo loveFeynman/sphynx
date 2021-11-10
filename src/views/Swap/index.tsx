@@ -25,6 +25,7 @@ import { useMatchBreakpoints } from '@sphynxswap/uikit'
 
 import { useSwapTransCard, useSwapType, useSetRouterType } from 'state/application/hooks'
 import { ReactComponent as DownArrow } from 'assets/svg/icon/DownArrow.svg'
+import SwapIcon from 'components/Icon/SwapIcon'
 import { typeInput, marketCap, typeRouterVersion } from 'state/input/actions'
 import { BITQUERY_API, BITQUERY_API_KEY } from 'config/constants/endpoints'
 import SwapRouter, { messages } from 'config/constants/swaps'
@@ -80,10 +81,11 @@ import { UNSET_PRICE } from 'config/constants/info'
 import storages from 'config/constants/storages'
 import Row from 'components/Row'
 import RewardsPanel from './components/RewardsPanel'
-import { SwapTabs, SwapTabList, SwapTab, SwapTabPanel } from "../../components/Tab/tab";
+import { SwapTabs, SwapTabList, SwapTab, SwapTabPanel } from '../../components/Tab/tab'
+import { SPHYNX_TOKEN_ADDRESS } from 'config/constants'
 
 const wBNBAddr = '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c'
-const sphynxAddr = '0x2e121Ed64EEEB58788dDb204627cCB7C7c59884c'
+const sphynxAddr = `${SPHYNX_TOKEN_ADDRESS}`
 let tokenDecimal = 18
 
 const abi: any = ERC20ABI
@@ -103,8 +105,8 @@ const ArrowContainer = styled(ArrowWrapper)`
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 3px solid rgb(255, 255, 255);
-  border-radius: 12px;
+  background-color: #710d89;
+  border-radius: 15px;
   margin: 0;
   cursor: pointer;
   &:hover {
@@ -120,20 +122,27 @@ const BalanceText = styled.p`
   font-size: 14px;
   font-weight: 500;
   line-height: 12px;
-  color: white;
-  margin: 0 8px;
+  color: #f2c94c;
   margin-left: auto;
 `
 
 const SlippageText = styled.p`
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 500;
   line-height: 12px;
-  color: white;
+  color: #a7a7cc;
   margin: 0 8px;
   & span {
-    text-decoration: underline;
+    // text-decoration: underline;
   }
+`
+
+const SlippageTextWrapper = styled(Flex)`
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+  flex-direction: column;
+  gap: 6px;
 `
 
 const BottomGrouping = styled(Box)`
@@ -379,22 +388,22 @@ export default function Swap({ history }: RouteComponentProps) {
             if (input < wBNBAddr) {
               tokenAmt = Math.abs(
                 parseFloat(ethers.utils.formatUnits(datas.amount0In + '', tokenDecimal)) -
-                parseFloat(ethers.utils.formatUnits(datas.amount0Out + '', tokenDecimal)),
+                  parseFloat(ethers.utils.formatUnits(datas.amount0Out + '', tokenDecimal)),
               )
 
               isBuy = datas.amount1In === '0'
               BNBAmt = Math.abs(
                 parseFloat(ethers.utils.formatUnits(datas.amount1In + '', 18)) -
-                parseFloat(ethers.utils.formatUnits(datas.amount1Out + '', 18)),
+                  parseFloat(ethers.utils.formatUnits(datas.amount1Out + '', 18)),
               )
             } else {
               BNBAmt = Math.abs(
                 parseFloat(ethers.utils.formatUnits(datas.amount0In + '', 18)) -
-                parseFloat(ethers.utils.formatUnits(datas.amount0Out + '', 18)),
+                  parseFloat(ethers.utils.formatUnits(datas.amount0Out + '', 18)),
               )
               tokenAmt = Math.abs(
                 parseFloat(ethers.utils.formatUnits(datas.amount1In + '', tokenDecimal)) -
-                parseFloat(ethers.utils.formatUnits(datas.amount1Out + '', tokenDecimal)),
+                  parseFloat(ethers.utils.formatUnits(datas.amount1Out + '', tokenDecimal)),
               )
               isBuy = datas.amount0In === '0'
             }
@@ -405,7 +414,8 @@ export default function Swap({ history }: RouteComponentProps) {
             oneData.price = (BNBAmt / tokenAmt) * price
             const estimatedDateValue = new Date(new Date().getTime() - (blockNumber - event.blockNumber) * 3000)
             oneData.transactionTime = formatTimeString(
-              `${estimatedDateValue.getUTCFullYear()}-${estimatedDateValue.getUTCMonth() + 1
+              `${estimatedDateValue.getUTCFullYear()}-${
+                estimatedDateValue.getUTCMonth() + 1
               }-${estimatedDateValue.getDate()} ${estimatedDateValue.getUTCHours()}:${estimatedDateValue.getUTCMinutes()}:${estimatedDateValue.getUTCSeconds()}`,
             )
 
@@ -548,7 +558,7 @@ export default function Swap({ history }: RouteComponentProps) {
         } else {
           web3.eth.getBlockNumber().then((blockNumber) => {
             setDatas([], blockNumber - 200)
-          })  
+          })
         }
       } catch (err) {
         // eslint-disable-next-line no-console
@@ -641,13 +651,13 @@ export default function Swap({ history }: RouteComponentProps) {
 
   const parsedAmounts = showWrap
     ? {
-      [Field.INPUT]: parsedAmount,
-      [Field.OUTPUT]: parsedAmount,
-    }
+        [Field.INPUT]: parsedAmount,
+        [Field.OUTPUT]: parsedAmount,
+      }
     : {
-      [Field.INPUT]: independentField === Field.INPUT ? parsedAmount : trade?.inputAmount,
-      [Field.OUTPUT]: independentField === Field.OUTPUT ? parsedAmount : trade?.outputAmount,
-    }
+        [Field.INPUT]: independentField === Field.INPUT ? parsedAmount : trade?.inputAmount,
+        [Field.OUTPUT]: independentField === Field.OUTPUT ? parsedAmount : trade?.outputAmount,
+      }
 
   const { onSwitchTokens, onCurrencySelection, onUserInput, onChangeRecipient } = useSwapActionHandlers()
   const isValid = !swapInputError
@@ -990,23 +1000,20 @@ export default function Swap({ history }: RouteComponentProps) {
               price={tokenPrice}
             />
           ) : null}
-          <SwapTabs
-            selectedTabClassName='is-selected'
-            selectedTabPanelClassName='is-selected'
-          >
+          <SwapTabs selectedTabClassName="is-selected" selectedTabPanelClassName="is-selected">
             <SwapTabList>
               <SwapTab>
-                <Text>
+                <Text textAlign="center" fontSize="14px" bold color="#A7A7CC">
                   {t('Swap')}
                 </Text>
               </SwapTab>
               <SwapTab>
-                <Text>
+                <Text textAlign="center" fontSize="14px" bold color="#A7A7CC">
                   {t('Liquidity')}
                 </Text>
               </SwapTab>
             </SwapTabList>
-            <Card bgColor={theme.isDark ? "#0E0E26" : "#2A2E60"} borderRadius="0 0 3px 3px" padding="20px 10px">
+            <Card bgColor={theme.isDark ? '#0E0E26' : '#2A2E60'} borderRadius="0 0 3px 3px" padding="20px 10px">
               <SwapTabPanel>
                 <Wrapper id="swap-page">
                   <Flex alignItems="center" justifyContent="center">
@@ -1019,7 +1026,9 @@ export default function Swap({ history }: RouteComponentProps) {
                   <AppHeader title={t('Swap')} showAuto />
                   <AutoColumn gap="md">
                     <CurrencyInputPanel
-                      label={independentField === Field.OUTPUT && !showWrap && trade ? t('From (estimated)') : t('From')}
+                      label={
+                        independentField === Field.OUTPUT && !showWrap && trade ? t('From (estimated)') : t('From')
+                      }
                       value={formattedAmounts[Field.INPUT]}
                       showMaxButton={!atMaxAmountInput}
                       currency={currencies[Field.INPUT]}
@@ -1039,7 +1048,8 @@ export default function Swap({ history }: RouteComponentProps) {
                           onClick={handleArrowContainer}
                           color={currencies[Field.INPUT] && currencies[Field.OUTPUT] ? 'primary' : 'text'}
                         >
-                          <DownArrow />
+                          {/* <DownArrow /> */}
+                          <SwapIcon color="white" width="14px" height="18px" />
                         </ArrowContainer>
                         {recipient === null && !showWrap && isExpertMode ? (
                           <Button variant="text" id="add-recipient-button" onClick={handleChangeRecipient}>
@@ -1074,7 +1084,7 @@ export default function Swap({ history }: RouteComponentProps) {
                         <AddressInputPanel id="recipient" value={recipient} onChange={onChangeRecipient} />
                       </>
                     ) : null}
-                    <Flex justifyContent="space-between" alignItems="center" marginTop="20px">
+                    <SlippageTextWrapper>
                       <Flex alignItems="center">
                         <SlippageText>
                           <span>{t('Slippage Tolerance')}</span>
@@ -1091,7 +1101,7 @@ export default function Swap({ history }: RouteComponentProps) {
                           </SlippageText>
                         </Flex>
                       )}
-                    </Flex>
+                    </SlippageTextWrapper>
                   </AutoColumn>
                   <BottomGrouping mt="1rem">
                     {swapIsUnsupported ? (
@@ -1140,14 +1150,16 @@ export default function Swap({ history }: RouteComponentProps) {
                           width="48%"
                           id="swap-button"
                           disabled={
-                            !isValid || approval !== ApprovalState.APPROVED || (priceImpactSeverity > 3 && !isExpertMode)
+                            !isValid ||
+                            approval !== ApprovalState.APPROVED ||
+                            (priceImpactSeverity > 3 && !isExpertMode)
                           }
                         >
                           {priceImpactSeverity > 3 && !isExpertMode
                             ? t('Price Impact High')
                             : priceImpactSeverity > 2
-                              ? t('Swap Anyway')
-                              : t('Swap')}
+                            ? t('Swap Anyway')
+                            : t('Swap')}
                         </Button>
                       </RowBetween>
                     ) : (
@@ -1162,8 +1174,8 @@ export default function Swap({ history }: RouteComponentProps) {
                           (priceImpactSeverity > 3 && !isExpertMode
                             ? `Price Impact Too High`
                             : priceImpactSeverity > 2
-                              ? t('Swap Anyway')
-                              : t('Swap'))}
+                            ? t('Swap Anyway')
+                            : t('Swap'))}
                       </Button>
                     )}
                     {showApproveFlow && (
@@ -1182,186 +1194,6 @@ export default function Swap({ history }: RouteComponentProps) {
               </SwapTabPanel>
             </Card>
           </SwapTabs>
-          {/* <div style={{ height: 48, marginTop: 16, marginBottom: 25 }}>
-            <Flex alignItems="center" justifyContent="center" style={{ marginBottom: 8 }}>
-              <SwapCardNav />
-            </Flex>
-            <Flex alignItems="center" justifyContent="center">
-              <AutoCardNav
-                swapRouter={swapRouter}
-                setSwapRouter={setSwapRouter}
-                connectedNetworkID={connectedNetworkID}
-              />
-            </Flex>
-          </div> */}
-          {/* <Card bgColor={theme.isDark ? "#0E0E26" : "#2A2E60"} borderRadius="8px" padding="0 10px 20px 10px">
-            {swapType === 'swap' && (
-              <Wrapper id="swap-page">
-                <AppHeader title={t('Swap')} showAuto />
-                <AutoColumn gap="md">
-                  <CurrencyInputPanel
-                    label={independentField === Field.OUTPUT && !showWrap && trade ? t('From (estimated)') : t('From')}
-                    value={formattedAmounts[Field.INPUT]}
-                    showMaxButton={!atMaxAmountInput}
-                    currency={currencies[Field.INPUT]}
-                    onUserInput={handleTypeInput}
-                    onMax={handleMaxInput}
-                    onCurrencySelect={handleInputSelect}
-                    otherCurrency={currencies[Field.OUTPUT]}
-                    id="swap-currency-input"
-                  />
-                  <AutoColumn justify="space-between">
-                    <BalanceText>
-                      <BalanceNumber prefix="" value={Number(inputBalance).toFixed(2)} />
-                    </BalanceText>
-                    <AutoRow justify={isExpertMode ? 'space-between' : 'center'} style={{ padding: '0 1rem' }}>
-                      <ArrowContainer
-                        clickable
-                        onClick={handleArrowContainer}
-                        color={currencies[Field.INPUT] && currencies[Field.OUTPUT] ? 'primary' : 'text'}
-                      >
-                        <DownArrow />
-                      </ArrowContainer>
-                      {recipient === null && !showWrap && isExpertMode ? (
-                        <Button variant="text" id="add-recipient-button" onClick={handleChangeRecipient}>
-                          {t('+ Add a send (optional)')}
-                        </Button>
-                      ) : null}
-                    </AutoRow>
-                  </AutoColumn>
-                  <CurrencyInputPanel
-                    value={formattedAmounts[Field.OUTPUT]}
-                    onUserInput={handleTypeOutput}
-                    label={independentField === Field.INPUT && !showWrap && trade ? t('To (estimated)') : t('To')}
-                    showMaxButton={false}
-                    currency={currencies[Field.OUTPUT]}
-                    onCurrencySelect={handleOutputSelect}
-                    otherCurrency={currencies[Field.INPUT]}
-                    id="swap-currency-output"
-                  />
-                  <BalanceText>
-                    <BalanceNumber prefix="" value={Number(outputBalance).toFixed(2)} />
-                  </BalanceText>
-                  {isExpertMode && recipient !== null && !showWrap ? (
-                    <>
-                      <AutoRow justify="space-between" style={{ padding: '0 1rem' }}>
-                        <ArrowWrapper clickable={false}>
-                          <ArrowDownIcon width="16px" />
-                        </ArrowWrapper>
-                        <Button variant="text" id="remove-recipient-button" onClick={handleRemoveRecipient}>
-                          {t('- Remove send')}
-                        </Button>
-                      </AutoRow>
-                      <AddressInputPanel id="recipient" value={recipient} onChange={onChangeRecipient} />
-                    </>
-                  ) : null}
-                  <Flex justifyContent="space-between" alignItems="center" marginTop="20px">
-                    <Flex alignItems="center">
-                      <SlippageText>
-                        <span>{t('Slippage Tolerance')}</span>
-                        <b>: {allowedSlippage / 100}%</b>
-                      </SlippageText>
-                    </Flex>
-                    {currencies[Field.INPUT] && currencies[Field.OUTPUT] && (
-                      <Flex alignItems="center">
-                        <SlippageText>
-                          <b>
-                            1 {currencies[Field.INPUT]?.symbol} = {trade?.executionPrice.toSignificant(6)}{' '}
-                            {currencies[Field.OUTPUT]?.symbol}
-                          </b>
-                        </SlippageText>
-                      </Flex>
-                    )}
-                  </Flex>
-                </AutoColumn>
-                <BottomGrouping mt="1rem">
-                  {swapIsUnsupported ? (
-                    <Button width="100%" disabled mb="4px">
-                      {t('Unsupported Asset')}
-                    </Button>
-                  ) : !account ? (
-                    <ConnectWalletButton width="100%" />
-                  ) : showWrap ? (
-                    <Button width="100%" disabled={Boolean(wrapInputError)} onClick={onWrap}>
-                      {wrapInputError ??
-                        (wrapType === WrapType.WRAP ? 'Wrap' : wrapType === WrapType.UNWRAP ? 'Unwrap' : null)}
-                    </Button>
-                  ) : noRoute && userHasSpecifiedInputOutput ? (
-                    <GreyCard style={{ textAlign: 'center' }}>
-                      <Text color="textSubtle" mb="4px">
-                        {t('Insufficient liquidity for this trade.')}
-                      </Text>
-                      {singleHopOnly && (
-                        <Text color="textSubtle" mb="4px">
-                          {t('Try enabling multi-hop trades.')}
-                        </Text>
-                      )}
-                    </GreyCard>
-                  ) : showApproveFlow ? (
-                    <RowBetween>
-                      <Button
-                        variant={approval === ApprovalState.APPROVED ? 'success' : 'primary'}
-                        onClick={approveCallback}
-                        disabled={approval !== ApprovalState.NOT_APPROVED || approvalSubmitted}
-                        width="48%"
-                      >
-                        {approval === ApprovalState.PENDING ? (
-                          <AutoRow gap="6px" justify="center">
-                            {t('Enabling')} <CircleLoader stroke="white" />
-                          </AutoRow>
-                        ) : approvalSubmitted && approval === ApprovalState.APPROVED ? (
-                          t('Enabled')
-                        ) : (
-                          t('Enable %asset%', { asset: currencies[Field.INPUT]?.symbol ?? '' })
-                        )}
-                      </Button>
-                      <Button
-                        variant={isValid && priceImpactSeverity > 2 ? 'danger' : 'primary'}
-                        onClick={handleSwapState}
-                        width="48%"
-                        id="swap-button"
-                        disabled={
-                          !isValid || approval !== ApprovalState.APPROVED || (priceImpactSeverity > 3 && !isExpertMode)
-                        }
-                      >
-                        {priceImpactSeverity > 3 && !isExpertMode
-                          ? t('Price Impact High')
-                          : priceImpactSeverity > 2
-                            ? t('Swap Anyway')
-                            : t('Swap')}
-                      </Button>
-                    </RowBetween>
-                  ) : (
-                    <Button
-                      variant={isValid && priceImpactSeverity > 2 && !swapCallbackError ? 'danger' : 'primary'}
-                      onClick={handleSwapState}
-                      id="swap-button"
-                      width="100%"
-                      disabled={!isValid || (priceImpactSeverity > 3 && !isExpertMode) || !!swapCallbackError}
-                    >
-                      {swapInputError ||
-                        (priceImpactSeverity > 3 && !isExpertMode
-                          ? `Price Impact Too High`
-                          : priceImpactSeverity > 2
-                            ? t('Swap Anyway')
-                            : t('Swap'))}
-                    </Button>
-                  )}
-                  {showApproveFlow && (
-                    <Column style={{ marginTop: '1rem' }}>
-                      <ProgressSteps steps={[approval === ApprovalState.APPROVED]} />
-                    </Column>
-                  )}
-                  {isExpertMode && swapErrorMessage ? <SwapCallbackError error={swapErrorMessage} /> : null}
-                </BottomGrouping>
-              </Wrapper>
-            )}
-            {(swapType === 'liquidity' || swapType === 'addLiquidity' || swapType === 'removeLiquidity') && (
-              <Wrapper id="pool-page">
-                <LiquidityWidget />
-              </Wrapper>
-            )}
-          </Card> */}
           <AdvancedSwapDetailsDropdown trade={trade} />
           <TokenInfoWrapper>
             <TokenInfo tokenData={tokenData} tokenAddress={input} />
@@ -1376,29 +1208,33 @@ export default function Swap({ history }: RouteComponentProps) {
               price={tokenPrice}
             />
             <CoinStatsBoard tokenData={tokenData} />
-            <ChartContainer tokenAddress={input} tokenData={tokenData}/>
-            <SwapTabs
-              selectedTabClassName='is-selected'
-              selectedTabPanelClassName='is-selected'
-            >
+            <ChartContainer tokenAddress={input} tokenData={tokenData} />
+            <SwapTabs selectedTabClassName="is-selected" selectedTabPanelClassName="is-selected">
               <SwapTabList>
                 <SwapTab>
-                  <Text>
+                  <Text textAlign="center" fontSize="14px" bold textTransform="capitalize" color="#A7A7CC">
                     {t('tokenDX')}
                   </Text>
                 </SwapTab>
                 <SwapTab>
-                  <Text>
+                  <Text textAlign="center" fontSize="14px" bold textTransform="capitalize" color="#A7A7CC">
                     {t('buyers')}
                   </Text>
                 </SwapTab>
                 <SwapTab>
-                  <Text>
+                  <Text textAlign="center" fontSize="14px" bold textTransform="capitalize" color="#A7A7CC">
                     {t('sellers')}
                   </Text>
                 </SwapTab>
+                {isMobile && (
+                  <SwapTab>
+                    <Text textAlign="center" fontSize="14px" bold textTransform="capitalize" color="#A7A7CC">
+                      {t('info')}
+                    </Text>
+                  </SwapTab>
+                )}
               </SwapTabList>
-              <Card bgColor={theme.isDark ? "#0E0E26" : "#2A2E60"} borderRadius="0 0 3px 3px" padding="20px 10px">
+              <Card bgColor={theme.isDark ? '#0E0E26' : '#2A2E60'} borderRadius="0 0 3px 3px" padding="20px 10px">
                 <SwapTabPanel>
                   <TransactionCard transactionData={transactionData} isLoading={isLoading} symbol={symbol} />
                 </SwapTabPanel>
@@ -1408,22 +1244,11 @@ export default function Swap({ history }: RouteComponentProps) {
                 <SwapTabPanel>
                   <SellersCard pairAddress={pairs[0]} />
                 </SwapTabPanel>
+                <SwapTabPanel>
+                  <TokenInfo tokenData={tokenData} tokenAddress={input} />
+                </SwapTabPanel>
               </Card>
             </SwapTabs>
-            {/* <div
-              style={{
-                alignSelf: 'center',
-                textAlign: 'center',
-                width: '100%',
-                marginTop: '25px',
-              }}
-            >
-              {swapTransCard === 'tokenDX' && (
-                <TransactionCard transactionData={transactionData} isLoading={isLoading} symbol={symbol} />
-              )}
-              {swapTransCard === 'buyers' && <BuyersCard pairAddress={pairs[0]} />}
-              {swapTransCard === 'sellers' && <SellersCard pairAddress={pairs[0]} />}
-            </div> */}
           </FullHeightColumn>
         </div>
       </Cards>

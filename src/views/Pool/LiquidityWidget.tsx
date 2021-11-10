@@ -5,6 +5,7 @@ import { useTranslation } from 'contexts/Localization'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import AddLiquidityWidget from 'views/AddLiquidity/AddLiquidityWidget'
 import RemoveLiquidityWidget from 'views/RemoveLiquidity/RemoveLiquidityWidget'
+import { useTheme } from 'styled-components'
 import FullPositionCard from '../../components/PositionCard'
 import { useTokenBalancesWithLoadingIndicator } from '../../state/wallet/hooks'
 import { usePairs } from '../../hooks/usePairs'
@@ -16,6 +17,7 @@ import { AppHeader } from '../../components/App'
 export default function LiquidityWidget() {
   const { account } = useActiveWeb3React()
   const { routerType } = useSetRouterType()
+  const theme = useTheme()
 
   const { t } = useTranslation()
 
@@ -98,7 +100,7 @@ export default function LiquidityWidget() {
           <CardBody style={{ padding: '24px 0px' }}>
             {renderBody()}
           </CardBody>
-          <CardFooter style={{ textAlign: 'center', padding: '24px 0px 0px' }}>
+          <CardFooter style={{ textAlign: 'center', padding: '24px 0px 0px', borderTop: `1px solid ${theme.isDark ? "#21214A" : "#4A5187"}`}}>
             <Button
               id="join-pool-button"
               onClick={handleSwapType}
