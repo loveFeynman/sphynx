@@ -2,6 +2,7 @@ import React, { useMemo } from 'react'
 import BigNumber from 'bignumber.js'
 import styled from 'styled-components'
 import {
+  useMatchBreakpoints,
   Card,
   CardBody,
   Text,
@@ -36,17 +37,9 @@ const StyledCard = styled(Card)`
   }
 `
 
-const LogoContent = styled(Flex)`
+const LogoContent = styled(Flex)<{isMobile?: boolean}>`
   align-items: center;
-  margin-right: 12px;
-  img {
-    width: 32px;
-  }
-  ${({ theme }) => theme.mediaQueries.md} {
-    img {
-      width: 67px;
-    }
-  }
+  flex-direction: ${({ isMobile }) => isMobile? 'column' : 'row'};
 `
 
 const Line = styled(Flex)`
@@ -55,6 +48,8 @@ const Line = styled(Flex)`
 
 const BountyCard = () => {
   const { t } = useTranslation()
+  const { isXl } = useMatchBreakpoints()
+  const isMobile = !isXl
   const {
     estimatedCakeBountyReward,
     fees: { callFee },
@@ -96,23 +91,23 @@ const BountyCard = () => {
       {tooltipVisible && tooltip}
       <StyledCard background="transparent">
         <CardBody>
-          <Flex flexDirection="row">
-            <Flex flexGrow={1} style={{ borderRight: '1px solid #21214A' }}>
-              <LogoContent>
-                <img src={StopwatchIcon} alt="Stopwatch Logo" width="100%" />
+          <Flex flexDirection={isMobile? 'column' : 'row'} alignItems='center'>
+            <Flex flexGrow={1} style={{ borderRight: `${isMobile? '0px' : '1px'} solid #21214A` }}>
+              <LogoContent isMobile={isMobile}>
+                <img src={StopwatchIcon} alt="Stopwatch Logo" width={isMobile? '50' : '100'} />
                 <Flex flexDirection="column">
                   <Flex alignItems="center" mb="2px">
-                    <Text fontSize="20px" bold color="white" mr="4px">
+                    <Text fontSize={isMobile? '13px' : '20px'} bold color="white" mr="4px">
                       {t('Auto SPHYNX Bounty')}
                     </Text>
                     <Box ref={targetRef}>
                       <HelpIcon color="white" />
                     </Box>
                   </Flex>
-                  <Flex flexDirection="column" mr="12px">
+                  <Flex flexDirection="column" alignItems={isMobile? 'center' : 'star-flex'}>
                     <Heading>
                       {hasFetchedCakeBounty ? (
-                        <Balance fontSize="15px" color="#777777" value={cakeBountyToDisplay} decimals={3} />
+                        <Balance fontSize={isMobile ? '13px' : '15px'} color="#777777" value={cakeBountyToDisplay} decimals={3} />
                       ) : (
                         <Skeleton height={20} width={96} mb="2px" />
                       )}

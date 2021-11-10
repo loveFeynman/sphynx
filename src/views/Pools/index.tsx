@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom'
 import styled, { useTheme } from 'styled-components'
 import BigNumber from 'bignumber.js'
 import { useWeb3React } from '@web3-react/core'
-import { Flex, Text } from '@sphynxswap/uikit'
+import { Flex, Text, useMatchBreakpoints } from '@sphynxswap/uikit'
 import orderBy from 'lodash/orderBy'
 import partition from 'lodash/partition'
 import { useTranslation } from 'contexts/Localization'
@@ -35,36 +35,19 @@ const CardLayout = styled(FlexLayout)`
   padding: 47px 69px 0;
 `
 
-const LogoContent = styled(Flex)`
-  align-items: center;
-  img {
-    width: 32px;
-    margin-right: 11px;
-  }
+const LogoContent = styled(Flex) <{ isMobile?: boolean }>`
+  align-items: ${({ isMobile }) => isMobile ? 'start-flex' : 'center'};
+  flex-direction: ${({ isMobile }) => isMobile ? 'column' : 'row'};
   ${({ theme }) => theme.mediaQueries.md} {
-    img {
-      width: 57px;
-      margin: 0px 11px 11px;
-    }
+
   }
 `
 
 const LogoTitle = styled.div`
   display: block;
   width: 100%;
-  div:nth-child(1) {
-    font-size: 14px;
-  }
-  div:nth-child(2) {
-    font-size: 10px;
-  }
   ${({ theme }) => theme.mediaQueries.md} {
-    div:nth-child(1) {
-      font-size: 26px;
-    }
-    div:nth-child(2) {
-      font-size: 15px;
-    }
+
   }
 `
 
@@ -123,6 +106,8 @@ const NUMBER_OF_POOLS_VISIBLE = 12
 const Pools: React.FC = () => {
   const location = useLocation()
   const { t } = useTranslation()
+  const { isXl } = useMatchBreakpoints()
+  const isMobile = !isXl
   const theme = useTheme()
   const { account } = useWeb3React()
   const { pools: poolsWithoutAutoVault, userDataLoaded } = usePools(account)
@@ -280,31 +265,29 @@ const Pools: React.FC = () => {
 
   return (
     <>
-      <Flex flexDirection='column' justifyContent="center" alignItems="center" style={{ padding: '0 50px' }}>
+      <Flex flexDirection='column' justifyContent="center" alignItems="center" style={{ padding: `0px ${isMobile ? '10px' : '50px'}` }}>
         <div style={{ height: 24 }} />
         <PageHeader>
-          <Flex justifyContent="space-between" flexDirection={['column', null, null, 'row']}>
-            <Flex flexGrow={5}>
-              <LogoContent>
-                <Flex>
-                  <img src={PoolLogo} alt="Pool Logo" />
-                </Flex>
+          <Flex justifyContent="space-between" flexDirection='row'>
+            <Flex flexGrow={5} alignItems='center'>
+              <LogoContent isMobile={isMobile}>
+                <img src={PoolLogo} alt="Pool Logo" width={isMobile ? '50' : '100'}  style={{ padding: `${isMobile ? '0px' : '0 10px 10px 10px'}` }} />
                 <LogoTitleWrapper>
                   <LogoTitle>
-                    <Text color="white" bold>
+                    <Text color="white" bold fontSize={isMobile ? '20px' : '26px'}>
                       {t('Sphynx Pools')}
                     </Text>
-                    <Text color="#777777">
+                    <Text color="#777777" fontSize={isMobile ? '13px' : '15px'}>
                       {t('Just stake some tokens to earn.')}
                     </Text>
-                    <Text color="#777777">
+                    <Text color="#777777" fontSize={isMobile ? '13px' : '15px'}>
                       {t('High APR, low risk.')}
                     </Text>
                   </LogoTitle>
                 </LogoTitleWrapper>
               </LogoContent>
             </Flex>
-            <Flex flexGrow={3} height="fit-content" justifyContent="center" alignItems="center" mt={['24px', null, '0']}>
+            <Flex flexGrow={3} height="fit-content" justifyContent="center" alignItems="center">
               <BountyCard />
             </Flex>
           </Flex>
