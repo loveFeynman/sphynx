@@ -39,7 +39,7 @@ const AprRow: React.FC<AprRowProps> = ({ pool, performanceFee = 0 }) => {
   )
 
   return (
-    <Flex alignItems="center" justifyContent="space-between">
+    <Flex alignItems="center" justifyContent="space-between" style={{borderBottom: '1px solid #21214A', paddingBottom: '10px'}}>
       {tooltipVisible && tooltip}
       <TooltipText fontSize="14px" color='#A7A7CC' ref={targetRef}>{isAutoVault ? `${t('APY')}:` : `${t('APR')}:`}</TooltipText>
       {isFinished || !apr ? (

@@ -25,6 +25,7 @@ import { registerToken } from 'utils/wallet'
 import { getBscScanLink } from 'utils'
 import Balance from 'components/Balance'
 import { getPoolBlockInfo } from 'views/Pools/helpers'
+import SphynxTokenLogo from 'assets/images/MainLogo.png'
 
 interface ExpandedFooterProps {
   pool: Pool
@@ -36,6 +37,22 @@ const ExpandedWrapper = styled(Flex)`
     height: 14px;
     width: 14px;
   }
+`
+
+const LinkContainer = styled(Flex)`
+  padding: 0 20px;
+  flex-direction: column;
+  align-items: center;
+`
+
+const ItemLink = styled(Flex)`
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  padding: 9px;
+  border: 1px solid #2E2E55;
+  box-sizing: border-box;
+  border-radius: 5px;
 `
 
 const ExpandedFooter: React.FC<ExpandedFooterProps> = ({ pool, account }) => {
@@ -93,20 +110,24 @@ const ExpandedFooter: React.FC<ExpandedFooterProps> = ({ pool, account }) => {
 
   return (
     <ExpandedWrapper flexDirection="column">
-      <Flex mb="2px" justifyContent="space-between" alignItems="center">
-        <Text small>{t('Total staked')}:</Text>
-        <Flex alignItems="flex-start">
-          {totalStaked && totalStaked.gte(0) ? (
-            <>
-              <Balance small value={getTotalStakedBalance()} decimals={0} unit={` ${stakingToken.symbol}`} />
-              <span ref={totalStakedTargetRef}>
-                <HelpIcon color="textSubtle" width="20px" ml="6px" mt="4px" />
-              </span>
-            </>
-          ) : (
-            <Skeleton width="90px" height="21px" />
-          )}
-          {totalStakedTooltipVisible && totalStakedTooltip}
+      <Flex mb="2px" justifyContent="space-between" alignItems="center" style={{borderBottom: '1px solid #21214A', paddingBottom: '10px'}}>
+        <Text fontSize='10px' color='#A7A7CC'>{t('Total staked')}:</Text>
+        <Flex>
+          <img src={SphynxTokenLogo} style={{ height: '40px', marginLeft: '4px' }} alt="token" />
+          <Flex alignItems="flex-start" flexDirection='column'>
+            {totalStaked && totalStaked.gte(0) ? (
+              <>
+                <Text fontSize='14px' color='white'>{t(stakingToken.symbol)}</Text>
+                <Balance small value={getTotalStakedBalance()} decimals={0} />
+                {/* <span ref={totalStakedTargetRef}>
+                  <HelpIcon color="textSubtle" width="20px" ml="6px" mt="4px" />
+                </span> */}
+              </>
+            ) : (
+              <Skeleton width="90px" height="21px" />
+            )}
+            {/* {totalStakedTooltipVisible && totalStakedTooltip} */}
+          </Flex>
         </Flex>
       </Flex>
       {stakingLimit && stakingLimit.gt(0) && (
@@ -146,42 +167,45 @@ const ExpandedFooter: React.FC<ExpandedFooterProps> = ({ pool, account }) => {
           </Flex>
         </Flex>
       )}
-      <Flex mb="2px" justifyContent="flex-end">
-        <LinkExternal href={`https://pancakeswap.info/token/${getAddress(earningToken.address)}`} bold={false} small>
-          {t('See Token Info')}
-        </LinkExternal>
-      </Flex>
-      <Flex mb="2px" justifyContent="flex-end">
-        <LinkExternal href={earningToken.projectLink} bold={false} small>
-          {t('View Project Site')}
-        </LinkExternal>
-      </Flex>
-      {poolContractAddress && (
-        <Flex mb="2px" justifyContent="flex-end">
-          <LinkExternal
-            href={`${BASE_BSC_SCAN_URL}/address/${isAutoVault ? cakeVaultContractAddress : poolContractAddress}`}
-            bold={false}
-            small
-          >
-            {t('View Contract')}
+      <LinkContainer  mt='17px'>
+        <ItemLink mb="6px" justifyContent="flex-end">
+          <LinkExternal href={`https://pancakeswap.info/token/${getAddress(earningToken.address)}`} color='#A7A7CC' fontSize='10px'>
+            {t('See Token Info')}
           </LinkExternal>
+        </ItemLink>
+        <Flex width='100%'>
+          <ItemLink mr="6px" mb="2px" justifyContent="flex-end">
+            <LinkExternal href={earningToken.projectLink} color='#A7A7CC' fontSize='10px'>
+              {t('View Project Site')}
+            </LinkExternal>
+          </ItemLink>
+          {poolContractAddress && (
+            <ItemLink mb="2px" justifyContent="flex-end">
+              <LinkExternal
+                href={`${BASE_BSC_SCAN_URL}/address/${isAutoVault ? cakeVaultContractAddress : poolContractAddress}`}
+                color='#A7A7CC' fontSize='10px'
+              >
+                {t('View Contract')}
+              </LinkExternal>
+            </ItemLink>
+          )}
         </Flex>
-      )}
-      {account && isMetaMaskInScope && tokenAddress && (
-        <Flex justifyContent="flex-end">
-          <Button
-            variant="text"
-            p="0"
-            height="auto"
-            onClick={() => registerToken(tokenAddress, earningToken.symbol, earningToken.decimals)}
-          >
-            <Text color="primary" fontSize="14px">
-              {t('Add to Metamask')}
-            </Text>
-            <MetamaskIcon ml="4px" />
-          </Button>
-        </Flex>
-      )}
+        {account && isMetaMaskInScope && tokenAddress && (
+          <Flex justifyContent="flex-end">
+            <Button
+              variant="text"
+              p="0"
+              height="auto"
+              onClick={() => registerToken(tokenAddress, earningToken.symbol, earningToken.decimals)}
+            >
+              <Text color="primary" fontSize="14px">
+                {t('Add to Metamask')}
+              </Text>
+              <MetamaskIcon ml="4px" />
+            </Button>
+          </Flex>
+        )}
+      </LinkContainer>
     </ExpandedWrapper>
   )
 }

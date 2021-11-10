@@ -15,7 +15,14 @@ const ExpandableButtonWrapper = styled(Flex)`
   align-items: center;
   justify-content: space-between;
   button {
+    outline: none;
+    color: #A7A7CC!important;
+    flex-flow: column;
+    font-size: 12px;
     padding: 0;
+    svg {
+      margin: 0;
+    }
   }
 `
 

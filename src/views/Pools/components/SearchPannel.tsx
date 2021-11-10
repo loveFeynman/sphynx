@@ -150,7 +150,7 @@ const SearchPannel = ({ stakedOnly, setStakedOnly, viewMode, setViewMode, setSor
     const stakedOnlySwitch = (
         <ToggleWrapper>
             <Toggle checked={stakedOnly} onChange={() => setStakedOnly(!stakedOnly)} scale="sm" />
-            <Text color='#A7A7CC'> {t('Stacked only')}</Text>
+            <Text color='#A7A7CC'> {t('Staked only')}</Text>
         </ToggleWrapper>
     )
 
