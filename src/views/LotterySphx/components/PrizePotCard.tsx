@@ -1,7 +1,7 @@
 /* eslint-disable */
 import React, { useCallback } from 'react'
-import styled from 'styled-components'
-import { useModal, Flex } from '@sphynxswap/uikit'
+import styled, { ThemeConsumer, useTheme } from 'styled-components'
+import { useModal, Flex, Box } from '@sphynxswap/uikit'
 import axios from 'axios'
 import { useSelector } from 'react-redux'
 import { AppState } from '../../../state'
@@ -14,15 +14,15 @@ import { claimTickets } from '../../../hooks/useLottery'
 import { Spinner } from './Spinner'
 import ViewTickets from './ViewTickets'
 import useToast from 'hooks/useToast'
-import {FormattedNumber} from './FormattedNumber'
+import { FormattedNumber } from './FormattedNumber'
 import { SPHYNX_TOKEN_ADDRESS } from 'config/constants'
-
 
 const Container = styled.div<{ isDetail: boolean }>`
   width: 340px;
-  // height:${(props) => (!props.isDetail ? '420px' : '750px')} ;
-  background-color: rgba(0, 0, 0, 0.4);
-  border-radius: 16px;
+  background: ${({ theme }) => (theme.isDark ? '#1A1A3A' : '#20234E')};
+  border-radius: 10px;
+  min-height: 500px;
+  position: relative;
   ${({ theme }) => theme.mediaQueries.md} {
     min-width: 340px;
   }
@@ -37,15 +37,15 @@ const HeaderLabel = styled.div`
   margin: 0px 0px 5px 9px;
 `
 
-const ButtonWrapper = styled.div<{ isEnable: boolean }>`
-  background: ${(props) => (!props.isEnable ? 'rgb(233, 234, 235)' : '#8B2A9B')};
+const ButtonWrapper = styled.div<{ isEnable: boolean, theme }>`
+  background: ${(props) => (!props.isEnable ? props.theme.isDark ? '#0E0E26' : '#2A2E60' : 'linear-gradient(90deg, #610D89 0%, #C42BB4 100%)')};
   display: flex;
   justify-content: center;
   align-items: center;
   text-align: center;
   padding-top: 12px;
   padding-bottom: 12px;
-  border-radius: 8px;
+  border-radius: 5px;
   cursor: pointer;
   font-style: normal;
   font-weight: bold;
@@ -65,15 +65,16 @@ const SeperateLine = styled.div`
 `
 const Footer = styled.div`
   display: flex;
+  flex-direction: column;
+  align-items: center;
   color: white;
-  padding: 17.5px 0px;
   justify-content: center;
 `
 
 const Grid = styled.div`
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(2, auto);
+  grid-template-columns: repeat(2, 1fr);
   grid-template-rows: repeat(4, auto);
   padding: 20px 20px 0px 20px;
 `
@@ -179,7 +180,7 @@ export default function PrizePotCard({
         setEnabled(false)
       } else {
         const date = new Date(lotteryInfo.endTime * 1000 - now.getTime())
-        let day = Math.floor((lotteryInfo.endTime * 1000 - now.getTime())/24/3600000);
+        let day = Math.floor((lotteryInfo.endTime * 1000 - now.getTime()) / 24 / 3600000);
         const hours = '0'.toString().concat(date.getUTCHours().toString()).slice(-2)
         const minutes = '0'.toString().concat(date.getUTCMinutes().toString()).slice(-2)
         if (day > 0)
@@ -207,47 +208,48 @@ export default function PrizePotCard({
   const handleBuyModal = useCallback(() => {
     if (enabled) setModal()
   }, [enabled])
+  const theme = useTheme();
 
   return (
     <Container isDetail={showDetail}>
-      <div style={{ display: 'flex', paddingTop: '25px', paddingLeft: '25px' }}>
+      <Flex flexDirection="column" alignItems="center" >
         <img width="60px" height="57px" src={MainLogo} alt="Logo" />
         <div style={{ paddingTop: '8px' }}>
           <HeaderLabel>{isNext ? t('Next Draw in:') : t('Prize Pot')}</HeaderLabel>
-          <HeaderLabel style={{ color: isNext && !enabled ? 'rgb(233, 234, 235)' : 'white' }}>
+          <HeaderLabel style={{ color: isNext && !enabled ? '#F2C94C' : '#F2C94C' }}>
             {isNext
               ? enabled
                 ? remainningTime
                 : t('On sale soon')
               : totalCount === 'NaN' || totalCount === ''
-              ? t('Calculating')
-              : <FormattedNumber prefix="$" value={totalCount} suffix=''/>}
+                ? t('Calculating')
+                : <FormattedNumber prefix="$" value={totalCount} suffix='' />}
           </HeaderLabel>
         </div>
-      </div>
+      </Flex>
       {!isNext && (
-        <>
+        <Box mt="10px">
           <PotContentTable isDetail={false} lotteryInfo={lastLoteryInfo} />
-          <ButtonWrapper isEnable style={{ margin: '10px 0' }} onClick={handleClaimTickets}>
+          <ButtonWrapper isEnable style={{ margin: '30px 51px 14px' }} onClick={handleClaimTickets}>
             {t(`Claim Tickets`)}
           </ButtonWrapper>
-          <SeperateLine />
           <Footer onClick={handleShowDetail}>
             {showDetail ? t('Hide') : t('Details')}
-            <img style={{ marginLeft: '10px' }} src={DownArrow} alt="Logo" />
+            <img style={{ margin: '4px 0px 14px' }} width="11px" height="14px" src={DownArrow} alt="Logo" />
           </Footer>
-        </>
+        </Box>
       )}
       {isNext && (
-        <div style={{ marginBottom: '30px' }}>
+        <div style={{ margin: ' 10x 0ox 30px' }}>
           <Flex style={{ flexDirection: 'column' }}>
+            <Box style={{borderBottom: "1px solid #21214A", margin: "20px 20px 0px"}}></Box>
             <Grid>
-              <GridHeaderItem isLeft>{t('Ticket ID')}</GridHeaderItem>
-              <GridHeaderItem isLeft={false}>{t('Ticket Number')}</GridHeaderItem>
+              <GridHeaderItem isLeft style={{borderRight: "1px solid #21214A"}} >{t('Ticket ID')}</GridHeaderItem>
+              <GridHeaderItem isLeft={false} style={{borderLeft: "1px solid #21214A"}} >{t('Ticket Number')}</GridHeaderItem>
             </Grid>
             <Flex
               style={{
-                overflowY: 'scroll',
+                overflowY: 'auto',
                 maxHeight: '255px',
               }}
             >
@@ -261,16 +263,7 @@ export default function PrizePotCard({
               </Grid>
             </Flex>
           </Flex>
-          <ButtonWrapper
-            isEnable={enabled}
-            style={{ marginTop: '30px' }}
-            onClick={handleBuyModal}
-          >
-            {t(`Buy Now`)}
-          </ButtonWrapper>
-          <ButtonWrapper isEnable={userTicketInfos.length > 0}style={{ marginTop: '20px' }} onClick={onPresentViewTicketModal}>
-            {t('View your ticket')}
-          </ButtonWrapper>
+
           {isClaimable && (
             <ButtonWrapper isEnable style={{ marginTop: '10px' }} onClick={handleClaimTickets}>
               {isLoading ? <Spinner /> : t(`Check Tickets`)}
@@ -279,6 +272,24 @@ export default function PrizePotCard({
         </div>
       )}
       {showDetail && <PotContentTable isDetail lotteryInfo={lastLoteryInfo} />}
+      {isNext && (
+        <Box style={{ position: 'absolute' , bottom: "0", width : '100%'}}>
+          <ButtonWrapper
+            isEnable={enabled}
+            style={{ margin: '10px 20px 0px ' }}
+            onClick={handleBuyModal}
+          >
+            {t(`Buy Now`)}
+          </ButtonWrapper>
+          <ButtonWrapper
+            isEnable={userTicketInfos.length > 0}
+            style={{ margin: '10px 20px 24px' }}
+            onClick={onPresentViewTicketModal}
+          >
+            {t('View your ticket')}
+          </ButtonWrapper>
+        </Box>
+      )}
     </Container>
   )
 }

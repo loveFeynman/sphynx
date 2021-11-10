@@ -2,23 +2,29 @@
 
 import React, { useState, useCallback } from 'react'
 import { useDispatch } from 'react-redux'
-import styled from 'styled-components'
+import styled, {useTheme} from 'styled-components'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import Nav from 'components/LotteryCardNav'
-import { Button, Flex, Heading, Link, Text, useModal } from '@sphynxswap/uikit'
+import { Button, Flex, Heading, Link, Text, Box, useModal } from '@sphynxswap/uikit'
 import { MenuItem } from '@material-ui/core'
 import PageHeader from 'components/PageHeader'
 import WebFont from 'webfontloader'
 import { useTranslation } from 'contexts/Localization'
 import SearchIcon from 'assets/images/search.png'
+import { ReactComponent as LotteryMarkIcon } from 'assets/svg/icon/LotteryMark.svg'
+import { ReactComponent as LotteryLatestIcon } from 'assets/svg/icon/LotteryWinningMark.svg'
 import { setIsInput, typeInput } from '../../state/input/actions'
 import PrizePotCard from './components/PrizePotCard'
 import TicketCard from './components/TicketCard'
 import History from './components/LotteryHistory'
 import HowToPlay from './components/HowToPlay'
+import LatestWinningNumbers from './components/LatestWinningNumbers'
 import { isAddress, reverseString } from '../../utils'
 import BuyTicketModal from './components/BuyTicketModal'
+import { SwapTabs, SwapTabList, SwapTab, SwapTabPanel } from '../../components/Tab/tab'
 import { useLotteryBalance, viewLotterys, viewUserInfoForLotteryId } from '../../hooks/useLottery'
+import Card, { GreyCard } from '../../components/Card'
+
 import axios from 'axios'
 
 const size = {
@@ -31,29 +37,6 @@ const device = {
   sm: `(max-width: ${size.sm})`,
   lg: `(max-width: ${size.lg})`,
 }
-
-const WinningCard = styled.div`
-  width: 94px;
-  height: 94px;
-  background: #8b2a9b;
-  border-radius: 24px;
-  margin: 12px 36px;
-  @media only screen and ${device.lg} {
-    margin: 0px 24px;
-  }
-`
-const WinningCardTop = styled.div`
-  width: 48px;
-  height: 48px;
-  background: #8b2a9b;
-  border-radius: 12px;
-  margin: 12px 12px;
-  opacity: 0;
-  ${({ theme }) => theme.mediaQueries.xl} {
-    margin: 0px 12px;
-    opacity: 1;
-  }
-`
 
 const ContractCard = styled(Text)`
   padding: 0 4px;
@@ -120,6 +103,7 @@ const PrizePotCardContainer = styled.div`
   jusitfy-content: center;
   flex-direction: column-reverse;
   align-items: center;
+  
   ${({ theme }) => theme.mediaQueries.md} {
     flex-direction: row;
     align-items: baseline;
@@ -136,17 +120,6 @@ const WinningCardContainer = styled.div`
     flex-direction: row;
   }
 `
-const WinningCardContainerTop = styled.div`
-  visibility: hidden;
-  ${({ theme }) => theme.mediaQueries.md} {
-    display: flex;
-    margin-top: 12px;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    visibility: visible;
-  }
-`
 const PastDrawCardContainer = styled.div`
   display: flex;
   margin: 20px 0px 200px;
@@ -159,7 +132,6 @@ const PastDrawCardContainer = styled.div`
   }
 `
 const RightContainer = styled.div`
-  visibility: hidden;
   height: 0;
   width: 0;
   ${({ theme }) => theme.mediaQueries.xl} {
@@ -172,8 +144,11 @@ const RightContainer = styled.div`
 const Grid = styled.div`
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(2, auto);
+  grid-template-columns: repeat(2, 382px);
+  justify-content: space-between;
+  align-items: center;
 `
+
 export default function Lottery() {
   const { account, library } = useActiveWeb3React()
   const signer = library.getSigner()
@@ -191,6 +166,7 @@ export default function Lottery() {
   const [userTicketInfos, setUserInfoTickets] = React.useState([])
   const { roundID, lotteryInfo, setRefetch } = useLotteryBalance()
   const [userUpdateTicket, setUserUpdateTicket] = React.useState(0)
+  const theme = useTheme();
   const setUpdateUserTicket = () => {
     setUserUpdateTicket(userUpdateTicket + 1)
   }
@@ -224,7 +200,7 @@ export default function Lottery() {
   }, [])
   //getting lottery status
   React.useEffect(() => {
-    const ac= new AbortController();
+    const ac = new AbortController();
     if (lotteryInfo !== null) {
       if (new Date().getTime() / 1000 > lotteryInfo?.endTime) {
         viewLotterys(roundID, lastLoteryInfo, setLastLotteryInfo)
@@ -317,113 +293,97 @@ export default function Lottery() {
   }
 
   return (
-    <div style={{ fontFamily: 'Raleway' }}>
-      <PageHeader>
-        <Grid>
-          <div>
-            <Heading as="h4" scale="xl" color="white">
+    <Flex flexDirection="column" mt="35px" mx="30px" style={{ fontFamily: 'Raleway' }}>
+      <Grid>
+        <Flex>
+          <Flex marginRight="14px">
+            <LotteryMarkIcon />
+          </Flex>
+          <Flex flexDirection="column">
+            <Text fontSize="26px" fontWeight="600" color="white" lineHeight="110%">
               {t('Lottery')}
-            </Heading>
-            <Heading as="h6" scale="md" color="text" mt="20px">
-              {t('Win Lottery if 2, 3, 4, 5 or 6 of your ticket numbers matched')}
-            </Heading>
-          </div>
-          <RightContainer>
-            <div
-              style={{
-                textAlign: 'center',
-                marginLeft: '40px',
-                background: 'rgba(0, 0, 0, 0.0)',
-                borderRadius: '24px',
-              }}
-            >
-              <Text fontSize="24px" color="white" style={{ fontWeight: 700 }}>
-                {t(`Latest Winning Numbers`)}
-              </Text>
-              <WinningCardContainerTop>
-                {winningCards.map((item, key) => (
-                  <WinningCardTop key={key}>
-                    <Text fontSize="18px" color="white" style={{ fontWeight: 700, padding: '12px' }}>
-                      {' '}
-                      {item === '' ? '?' : item}
-                    </Text>
-                  </WinningCardTop>
-                ))}
-              </WinningCardContainerTop>
-            </div>
-          </RightContainer>
-        </Grid>
-      </PageHeader>
-      <div>
-        <Nav activeIndex={activeIndex} handleClick={handleItemClick} />
-      </div>
-      {activeIndex === 0 && (
-        <>
-          <PrizePotCardContainer>
-            <div style={{ margin: '10px' }}>
-              {forceValue > 0 && (
-                <PrizePotCard
-                  isNext={false}
-                  setModal={null}
-                  roundID={roundID}
-                  lotteryInfo={lotteryInfo}
-                  lastLoteryInfo={lastLoteryInfo}
-                  userTicketInfos={userTicketInfos}
-                  winningCards={winningCards}
-                />
-              )}
-            </div>
-            <div style={{ margin: '10px' }}>
-              {forceValue > 0 && (
-                <PrizePotCard
-                  isNext
-                  setModal={onPresentSettingsModal}
-                  roundID={roundID}
-                  lotteryInfo={lotteryInfo}
-                  lastLoteryInfo={lastLoteryInfo}
-                  userTicketInfos={userTicketInfos}
-                  winningCards={winningCards}
-                />
-              )}
-            </div>
-          </PrizePotCardContainer>
-          {/* <div style={{ textAlign: 'center', margin: '88px 0px 76px 0px' }}>
-            <Text bold fontSize="48px" color="white" style={{ fontWeight: 700 }}>
-              How it works
             </Text>
-            <div style={{ display: 'flex', justifyContent: 'center' }}>
-              <Text bold fontSize="16px" color="#ddd" style={{ maxWidth: '440px', textAlign: 'left' }}>
-                {t(
-                  `Spend Sphynx to buy tickets, contributing to the lottery pot. Win prizes if 2, 3, 4, 5 or 6 of your ticket numbers match the winning numbers and their exact order!`,
+            <Text fontSize="15px" fontWeight="600" color="#777777" lineHeight="130%" mt="12px">
+              {t('Win Lottery if 2, 3, 4, 5 or 6 of your ticket')}
+            </Text>
+            <Text fontSize="15px" fontWeight="600" color="#777777" lineHeight="130%" >
+              {t('numbers matched')}
+            </Text>
+          </Flex>
+        </Flex>
+        <RightContainer>
+          <Flex alignItems="center" justifyContent="right" border="1px solid #5E2B60" px="18px" py="20px">
+            <Flex marginRight="14px">
+              <LotteryLatestIcon />
+            </Flex>
+            <Flex flexDirection="column">
+              <Text fontSize="20px" fontWeight="600" color="white" lineHeight="130%">
+                {t('Latest Winning Numbers')}
+              </Text>
+              <LatestWinningNumbers winningCardNumbers={winningCards} size="33" numberWidth="15px" numberHeight="11px" />
+            </Flex>
+          </Flex>
+        </RightContainer>
+      </Grid>
+      <SwapTabs selectedTabClassName="is-selected" selectedTabPanelClassName="is-selected">
+        <SwapTabList>
+          <SwapTab>
+            <Text textAlign="center" fontSize="14px" bold textTransform="capitalize" color="#A7A7CC">
+              {t('Next Draw')}
+            </Text>
+          </SwapTab>
+          <SwapTab>
+            <Text textAlign="center" fontSize="14px" bold textTransform="capitalize" color="#A7A7CC">
+              {t('Past Draw')}
+            </Text>
+          </SwapTab>
+        </SwapTabList>
+        <Card bgColor={theme.isDark ? '#0E0E26' : '#2A2E60'} borderRadius="0 0 3px 3px" padding="20px 10px">
+          <SwapTabPanel>
+            <PrizePotCardContainer>
+              <div style={{ margin: '10px' }}>
+                {forceValue > 0 && (
+                  <PrizePotCard
+                    isNext={false}
+                    setModal={null}
+                    roundID={roundID}
+                    lotteryInfo={lotteryInfo}
+                    lastLoteryInfo={lastLoteryInfo}
+                    userTicketInfos={userTicketInfos}
+                    winningCards={winningCards}
+                  />
                 )}
-              </Text>
-            </div>
-          </div> */}
-          <div
-            style={{
-              textAlign: 'center',
-              background: 'rgba(0, 0, 0, 0.4)',
-              borderRadius: '24px',
-              paddingTop: '32px',
-              paddingBottom: '42px',
-            }}
-          >
-            <Text fontSize="36px" color="white" style={{ fontWeight: 700 }}>
-              {t(`Latest Winning Numbers`)}
-            </Text>
-            <WinningCardContainer>
-              {winningCards.map((item, key) => (
-                <WinningCard key={key}>
-                  <Text fontSize="36px" color="white" style={{ fontWeight: 700, padding: '26px' }}>
-                    {' '}
-                    {item === '' ? '?' : item}
-                  </Text>
-                </WinningCard>
-              ))}
-            </WinningCardContainer>
-          </div>
-        </>
-      )}
+              </div>
+              <div style={{ margin: '10px' }}>
+                {forceValue > 0 && (
+                  <PrizePotCard
+                    isNext
+                    setModal={onPresentSettingsModal}
+                    roundID={roundID}
+                    lotteryInfo={lotteryInfo}
+                    lastLoteryInfo={lastLoteryInfo}
+                    userTicketInfos={userTicketInfos}
+                    winningCards={winningCards}
+                  />
+                )}
+              </div>
+              <div style={{ margin: '10px' }}>
+                {forceValue > 0 && (
+                  <PrizePotCard
+                    isNext
+                    setModal={onPresentSettingsModal}
+                    roundID={roundID}
+                    lotteryInfo={lotteryInfo}
+                    lastLoteryInfo={lastLoteryInfo}
+                    userTicketInfos={userTicketInfos}
+                    winningCards={winningCards}
+                  />
+                )}
+              </div>
+            </PrizePotCardContainer>
+          </SwapTabPanel>
+        </Card>
+      </SwapTabs>
       {activeIndex === 1 && (
         <>
           <div style={{ display: 'flex', justifyContent: 'center' }}>
@@ -469,7 +429,7 @@ export default function Lottery() {
           </div>
           <PastDrawCardContainer>
             <div style={{ margin: '10px' }}>
-              <TicketCard lastLoteryInfo={lastLoteryInfo} roundID={roundID-1} />
+              <TicketCard lastLoteryInfo={lastLoteryInfo} roundID={roundID - 1} />
             </div>
             <div style={{ margin: '10px' }}>
               <History />
@@ -481,6 +441,6 @@ export default function Lottery() {
       <Flex mt='24px'>
         <HowToPlay />
       </Flex>
-    </div>
+    </Flex>
   )
 }
