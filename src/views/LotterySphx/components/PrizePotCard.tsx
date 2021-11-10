@@ -18,13 +18,13 @@ import { FormattedNumber } from './FormattedNumber'
 import { SPHYNX_TOKEN_ADDRESS } from 'config/constants'
 
 const Container = styled.div<{ isDetail: boolean }>`
-  width: 340px;
+  width: 332px;
   background: ${({ theme }) => (theme.isDark ? '#1A1A3A' : '#20234E')};
   border-radius: 10px;
   min-height: 500px;
   position: relative;
   ${({ theme }) => theme.mediaQueries.md} {
-    min-width: 340px;
+    min-width: 332px;
   }
 `
 const HeaderLabel = styled.div`
@@ -48,8 +48,8 @@ const ButtonWrapper = styled.div<{ isEnable: boolean, theme }>`
   border-radius: 5px;
   cursor: pointer;
   font-style: normal;
-  font-weight: bold;
-  font-size: 16px;
+  font-weight: 600;
+  font-size: 13px;
   line-height: 19px;
   color: ${(props) => (!props.isEnable ? '#aaaaaa' : 'white')};
   &:hover {
@@ -81,8 +81,8 @@ const Grid = styled.div`
 const GridHeaderItem = styled.div<{ isLeft: boolean }>`
   max-width: 180px;
   font-style: normal;
-  font-weight: bold;
-  font-size: 16px;
+  font-weight: 600;
+  font-size: 14px;
   line-height: 19px;
   text-align: ${(props) => (props.isLeft ? 'left' : 'right')};
   color: white;
@@ -212,7 +212,7 @@ export default function PrizePotCard({
 
   return (
     <Container isDetail={showDetail}>
-      <Flex flexDirection="column" alignItems="center" >
+      <Flex flexDirection="column" alignItems="center" pt={isNext ? '15px' : '8px'} >
         <img width="60px" height="57px" src={MainLogo} alt="Logo" />
         <div style={{ paddingTop: '8px' }}>
           <HeaderLabel>{isNext ? t('Next Draw in:') : t('Prize Pot')}</HeaderLabel>
@@ -228,24 +228,28 @@ export default function PrizePotCard({
         </div>
       </Flex>
       {!isNext && (
-        <Box mt="10px">
-          <PotContentTable isDetail={false} lotteryInfo={lastLoteryInfo} />
-          <ButtonWrapper isEnable style={{ margin: '30px 51px 14px' }} onClick={handleClaimTickets}>
-            {t(`Claim Tickets`)}
-          </ButtonWrapper>
-          <Footer onClick={handleShowDetail}>
-            {showDetail ? t('Hide') : t('Details')}
-            <img style={{ margin: '4px 0px 14px' }} width="11px" height="14px" src={DownArrow} alt="Logo" />
-          </Footer>
-        </Box>
+        <>
+          <Box mt="10px" >
+            <PotContentTable isDetail={false} lotteryInfo={lastLoteryInfo} />
+          </Box>
+          <Box position="absolute" bottom="0" width="100%">
+            <ButtonWrapper isEnable style={{ margin: '30px 51px 14px' }} onClick={handleClaimTickets}>
+              {t(`Claim Tickets`)}
+            </ButtonWrapper>
+            <Footer onClick={handleShowDetail}>
+              {showDetail ? t('Hide') : t('Details')}
+              <img style={{ margin: '4px 0px 14px' }} width="11px" height="14px" src={DownArrow} alt="Logo" />
+            </Footer>
+          </Box>
+        </>
       )}
       {isNext && (
         <div style={{ margin: ' 10x 0ox 30px' }}>
           <Flex style={{ flexDirection: 'column' }}>
-            <Box style={{borderBottom: "1px solid #21214A", margin: "20px 20px 0px"}}></Box>
+            <Box style={{ borderBottom: "1px solid #21214A", margin: "20px 20px 0px" }}></Box>
             <Grid>
-              <GridHeaderItem isLeft style={{borderRight: "1px solid #21214A"}} >{t('Ticket ID')}</GridHeaderItem>
-              <GridHeaderItem isLeft={false} style={{borderLeft: "1px solid #21214A"}} >{t('Ticket Number')}</GridHeaderItem>
+              <GridHeaderItem isLeft style={{ borderRight: "1px solid #21214A" }} >{t('Ticket ID')}</GridHeaderItem>
+              <GridHeaderItem isLeft={false} style={{ borderLeft: "1px solid #21214A" }} >{t('Ticket Number')}</GridHeaderItem>
             </Grid>
             <Flex
               style={{
@@ -273,7 +277,7 @@ export default function PrizePotCard({
       )}
       {showDetail && <PotContentTable isDetail lotteryInfo={lastLoteryInfo} />}
       {isNext && (
-        <Box style={{ position: 'absolute' , bottom: "0", width : '100%'}}>
+        <Box style={{ position: 'absolute', bottom: "0", width: '100%' }}>
           <ButtonWrapper
             isEnable={enabled}
             style={{ margin: '10px 20px 0px ' }}

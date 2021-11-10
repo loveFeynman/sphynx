@@ -18,8 +18,8 @@ const Grid = styled.div`
 const GridHeaderItem = styled.div<{ isLeft: boolean }>`
   max-width: 180px;
   font-style: normal;
-  font-weight: bold;
-  font-size: 16px;
+  font-weight: 600;
+  font-size: 14px;
   line-height: 19px;
   text-align: ${(props) => (props.isLeft ? 'left' : 'right')};
   color: white;

@@ -15,6 +15,7 @@ import { ReactComponent as LotteryMarkIcon } from 'assets/svg/icon/LotteryMark.s
 import { ReactComponent as LotteryLatestIcon } from 'assets/svg/icon/LotteryWinningMark.svg'
 import { setIsInput, typeInput } from '../../state/input/actions'
 import PrizePotCard from './components/PrizePotCard'
+import LatestWinningCard from './components/LatestWinningCard'
 import TicketCard from './components/TicketCard'
 import History from './components/LotteryHistory'
 import HowToPlay from './components/HowToPlay'
@@ -106,7 +107,7 @@ const PrizePotCardContainer = styled.div`
   
   ${({ theme }) => theme.mediaQueries.md} {
     flex-direction: row;
-    align-items: baseline;
+    align-items: flex-start;
     justify-content: center;
   }
 `
@@ -338,10 +339,10 @@ export default function Lottery() {
             </Text>
           </SwapTab>
         </SwapTabList>
-        <Card bgColor={theme.isDark ? '#0E0E26' : '#2A2E60'} borderRadius="0 0 3px 3px" padding="20px 10px">
+        <Card bgColor={theme.isDark ? '#0E0E26' : '#2A2E60'} borderRadius="0 0 3px 3px" padding="40px">
           <SwapTabPanel>
             <PrizePotCardContainer>
-              <div style={{ margin: '10px' }}>
+              <div style={{ margin: '16px' }}>
                 {forceValue > 0 && (
                   <PrizePotCard
                     isNext={false}
@@ -354,7 +355,7 @@ export default function Lottery() {
                   />
                 )}
               </div>
-              <div style={{ margin: '10px' }}>
+              <div style={{ margin: '16px' }}>
                 {forceValue > 0 && (
                   <PrizePotCard
                     isNext
@@ -367,15 +368,9 @@ export default function Lottery() {
                   />
                 )}
               </div>
-              <div style={{ margin: '10px' }}>
+              <div style={{ margin: '16px' }}>
                 {forceValue > 0 && (
-                  <PrizePotCard
-                    isNext
-                    setModal={onPresentSettingsModal}
-                    roundID={roundID}
-                    lotteryInfo={lotteryInfo}
-                    lastLoteryInfo={lastLoteryInfo}
-                    userTicketInfos={userTicketInfos}
+                  <LatestWinningCard
                     winningCards={winningCards}
                   />
                 )}

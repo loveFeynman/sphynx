@@ -4,8 +4,16 @@ import { Box, Flex, Text, Heading, useMatchBreakpoints, Link } from '@sphynxswap
 import { useTranslation } from 'contexts/Localization'
 import useTheme from 'hooks/useTheme'
 import WebFont from 'webfontloader'
+import LotteryStep1 from 'assets/svg/icon/LotteryStep1.svg'
+import LotteryStep2 from 'assets/svg/icon/LotteryStep2.svg'
+import LotteryStep3 from 'assets/svg/icon/LotteryStep3.svg'
+
 import { BallWithNumber, MatchExampleA, MatchExampleB, PoolAllocationChart } from '../svgs'
 
+const Container = styled.div`
+  background: ${({ theme }) => (theme.isDark ? '#0E0E26' : '#2A2E60')};
+  position: relative;
+`
 const Divider = styled.div`
   background-color: ${({ theme }) => theme.colors.cardBorder};
   height: 1px;
@@ -31,9 +39,14 @@ const BulletList = styled.ul`
   }
 `
 
-const StepContainer = styled(Flex)`
+const StepContainer = styled.div`
   width: 100%;
+  display: grid;
   flex-direction: column;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 20px;
+  min-height: 305px;
+  padding: 76px 36px 67px;
   ${({ theme }) => theme.mediaQueries.md} {
     flex-direction: row;
   }
@@ -44,7 +57,25 @@ const StyledStepCard = styled(Box)`
   align-self: baseline;
   position: relative;
   padding: 1px 1px 3px 1px;
-  border-radius: 24px;
+  min-height: 305px;
+  border-radius: 10px;
+  background: ${({ theme }) => (theme.isDark ? '#1A1A3A' : '#20234E')};
+  border: 1px solid rgba(255, 255, 255, 0.1);
+`
+
+const StyledStepCardTop = styled(Box)`
+  display: flex;
+  align-self: baseline;
+  justify-content: center;
+  position: relative;
+  width: 128px;
+  border-radius: 64px;
+  align-self: center;
+  margin-top: -30px;
+  height: 128px;
+  padding: 1px 1px 3px 1px;
+  background: ${({ theme }) => (theme.isDark ? '#1A1A3A' : '#20234E')};
+  border: ${({ theme }) => (theme.isDark ? '6px solid #0E0E26' : '6px solid #2A2E60')};
 `
 
 const StepCardInner = styled(Box)`
@@ -52,14 +83,12 @@ const StepCardInner = styled(Box)`
   height: auto;
   min-height: 200px;
   padding: 24px;
-  background: rgba(0, 0, 0, 0.4);
-  border-radius: 24px;
 `
 
-type Step = { title: string; subtitle: string; label: string }
+type Step = { title: string; subtitle: string; label: string; img: any}
 
 const StepCard: React.FC<{ step: Step }> = ({ step }) => {
-  
+
   React.useEffect(() => {
     WebFont.load({
       google: {
@@ -70,23 +99,18 @@ const StepCard: React.FC<{ step: Step }> = ({ step }) => {
 
   return (
     <StyledStepCard width="100%">
-      <StepCardInner height={['200px', '180px', null, '200px']}>
-        <Text mb="16px" fontSize="12px" color="white" bold textAlign="right" textTransform="uppercase">
+      <Flex flexDirection="column" width="100%">
+        <StyledStepCardTop>
+          <img src={step.img} alt=""/>
+        </StyledStepCardTop>
+        <Text mt="16px" fontSize="18px" color="#F2C94C" bold textAlign="center">
           {step.label}
         </Text>
-        <Heading mb="16px" scale="lg" color="white">
+        <Text mb="8px" mt="11px" fontSize="20px" bold color="white" textAlign="center">
           {step.title}
-        </Heading>
-        <Text color="white">{step.subtitle}</Text>
-        {step.label.includes('Step 2') ? (
-          <Text bold fontSize="14px" color="white">
-            {' '}
-            First draw will be drawn on Monday, 4th of October 3AM UTC.
-          </Text>
-        ) : (
-          ''
-        )}
-      </StepCardInner>
+        </Text>
+        <Text color="white" px="25%" textAlign="center">{step.subtitle}</Text>
+      </Flex>
     </StyledStepCard>
   )
 }
@@ -239,36 +263,41 @@ const HowToPlay: React.FC = () => {
       label: t('Step %number%', { number: 1 }),
       title: t('Buy Tickets'),
       subtitle: t('Prices are set when the round starts, equal to 5 USD in Sphynx per ticket.'),
+      img: LotteryStep1,
     },
     {
       label: t('Step %number%', { number: 2 }),
       title: t('Wait for the Draw'),
-      subtitle: t('There is one draw every day: one every 24 hours.'),
+      subtitle: t('There is one draw every day: one every 24 hours. First draw will be drawn on Monday, 4th of October 3AM UTC.'),
+      img: LotteryStep2,
     },
     {
       label: t('Step %number%', { number: 3 }),
       title: t('Check for Prizes'),
       subtitle: t('Once the round’s over, come back to the page and check to see if you’ve won!'),
+      img: LotteryStep3,
     },
   ]
   return (
     <Box width="100%">
-      <Flex mb="40px" alignItems="center" flexDirection="column">
-        <Heading mb="24px" scale="xl" color="secondary">
-          {t('How to Play')}
-        </Heading>
-        <Text fontSize="22px" bold textAlign="center" color="white">
-          {t(
-            'If the digits on your tickets match the winning numbers in the correct order, you win a portion of the prize pool.',
-          )}
-        </Text>
-        <Text fontSize="22px" bold mt="10px">{t('Simple!')}</Text>
-      </Flex>
-      <StepContainer>
-        {steps.map((step) => (
-          <StepCard key={step.label} step={step} />
-        ))}
-      </StepContainer>
+      <Container>
+        <Flex pt="35px" alignItems="center" flexDirection="column">
+          <Heading scale="xl" color="white">
+            {t('How to Play')}
+          </Heading>
+          <Text fontSize="15px" fontWeight="500" textAlign="center" color="#A7A7CC" mt="12px" lineHeight="146%" px="33%">
+            {t(
+              'If the digits on your tickets match the winning numbers in the correct order, you win a portion of the prize pool.',
+            )}
+          </Text>
+        </Flex>
+        <StepContainer>
+          {steps.map((step) => (
+            <StepCard key={step.label} step={step} />
+          ))}
+        </StepContainer>
+      </Container>
+
       <Divider />
       <GappedFlex flexDirection={['column', 'column', 'column', 'row']}>
         <Flex flex="2" flexDirection="column">
@@ -282,14 +311,14 @@ const HowToPlay: React.FC = () => {
             {t('Here’s an example lottery draw, with two tickets, A and B.')}
           </Text>
           <BulletList >
-            <li style={{marginLeft: '8px'}}>
-              <Text display="inline" color="white" style={{textIndent: '-1em'}}>
+            <li style={{ marginLeft: '8px' }}>
+              <Text display="inline" color="white" style={{ textIndent: '-1em' }}>
                 {t(
                   'Ticket A: The first 3 digits and the last 2 digits match, but the 4th digit is wrong, so this ticket only wins a “Match first 3” prize.',
                 )}
               </Text>
             </li>
-            <li style={{marginLeft: '8px'}}>
+            <li style={{ marginLeft: '8px' }}>
               <Text display="inline" color="white">
                 {t(
                   'Ticket B: Even though the last 5 digits match, the first digit is wrong, so this ticket doesn’t win a prize.',
