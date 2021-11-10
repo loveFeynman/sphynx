@@ -14,6 +14,7 @@ import { BIG_ZERO } from 'utils/bigNumber'
 import { getAddress } from 'utils/addressHelpers'
 import { useERC20 } from 'hooks/useContract'
 import { convertSharesToCake } from 'views/Pools/helpers'
+import { ColorButtonStyle } from 'style/buttonStyle'
 import { ActionContainer, StakeActionTitles, ActionContent } from './styles'
 import NotEnoughTokensModal from '../../PoolCard/Modals/NotEnoughTokensModal'
 import StakeModal from '../../PoolCard/Modals/StakeModal'
@@ -131,15 +132,6 @@ const Staked: React.FunctionComponent<StackedActionProps> = ({ pool, userDataLoa
 
   const reachStakingLimit = stakingLimit.gt(0) && userData.stakedBalance.gte(stakingLimit)
 
-  const buttonStyle = {
-    borderRadius: '5px',
-    border: 'none',
-    width: '200px',
-    height: '34px',
-    fontSize: '13px',
-    background: 'linear-gradient(90deg, #610D89 0%, #C42BB4 100%)'
-  }
-
   if (!account) {
     return (
       <ActionContainer>
@@ -149,7 +141,7 @@ const Staked: React.FunctionComponent<StackedActionProps> = ({ pool, userDataLoa
           </Text>
         </StakeActionTitles>
         <ActionContent>
-          <ConnectWalletButton style={buttonStyle} width="100%" />
+          <ConnectWalletButton style={ColorButtonStyle} width="100%" />
         </ActionContent>
       </ActionContainer>
     )
@@ -180,7 +172,7 @@ const Staked: React.FunctionComponent<StackedActionProps> = ({ pool, userDataLoa
         </StakeActionTitles>
         <ActionContent>
           <Button width="100%" disabled onClick={handleApprove} variant="secondary"
-            style={buttonStyle}
+            style={ColorButtonStyle}
           >
             {t('Enable')}
           </Button>
@@ -262,7 +254,7 @@ const Staked: React.FunctionComponent<StackedActionProps> = ({ pool, userDataLoa
           onClick={stakingTokenBalance.gt(0) ? onStake : onPresentTokenRequired}
           variant="secondary"
           disabled={isFinished}
-          style={buttonStyle}
+          style={ColorButtonStyle}
         >
           {t('Stake')}
         </Button>

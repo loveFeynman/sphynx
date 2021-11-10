@@ -11,6 +11,7 @@ import { useCakeVault } from 'state/pools/hooks'
 import { BIG_ZERO } from 'utils/bigNumber'
 import { Pool } from 'state/types'
 import SphynxTokenLogo from 'assets/images/MainLogo.png'
+import { DarkButtonStyle } from 'style/buttonStyle'
 
 import { HarvestActionContainer, ActionTitles, ActionContent } from './styles'
 import CollectModal from '../../PoolCard/Modals/CollectModal'
@@ -92,15 +93,6 @@ const HarvestAction: React.FunctionComponent<HarvestActionProps> = ({
     </>
   )
 
-  const buttonStyle = {
-    borderRadius: '5px',
-    border: 'none',
-    width: '200px',
-    height: '34px',
-    fontSize: '13px',
-    background: '#0E0E26'
-  }
-
   if (!account) {
     return (
       <HarvestActionContainer>
@@ -114,7 +106,7 @@ const HarvestAction: React.FunctionComponent<HarvestActionProps> = ({
           </Flex>
         </Flex>
         <ActionContent>
-          <Button style={buttonStyle} disabled>{isCompoundPool ? t('Collect') : t('Harvest')}</Button>
+          <Button style={DarkButtonStyle} disabled>{isCompoundPool ? t('Collect') : t('Harvest')}</Button>
         </ActionContent>
       </HarvestActionContainer>
     )
@@ -187,7 +179,7 @@ const HarvestAction: React.FunctionComponent<HarvestActionProps> = ({
           </Flex>
         ) : (
           <Button
-            style={buttonStyle}
+            style={DarkButtonStyle}
             disabled={!hasEarnings}
             onClick={onPresentCollect}
           >

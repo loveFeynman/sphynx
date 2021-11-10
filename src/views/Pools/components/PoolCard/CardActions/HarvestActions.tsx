@@ -5,6 +5,7 @@ import { Token } from 'config/constants/types'
 import { useTranslation } from 'contexts/Localization'
 import { getFullDisplayBalance, getBalanceNumber, formatNumber } from 'utils/formatBalance'
 import Balance from 'components/Balance'
+import { DarkButtonStyle } from 'style/buttonStyle'
 import CollectModal from '../Modals/CollectModal'
 
 interface HarvestActionsProps {
@@ -46,15 +47,6 @@ const HarvestActions: React.FC<HarvestActionsProps> = ({
     />,
   )
 
-  const buttonStyle = {
-    borderRadius: '5px',
-    border: 'none',
-    width: '230px',
-    height: '34px',
-    fontSize: '13px',
-    background: '#0E0E26'
-  }
-
   return (
     <Flex justifyContent="space-between" alignItems="center" mb="16px" flexDirection="column">
       <Flex flexDirection="row">
@@ -87,7 +79,7 @@ const HarvestActions: React.FC<HarvestActionsProps> = ({
           </>
         )}
       </Flex>
-      <Button disabled={!hasEarnings} onClick={onPresentCollect} style={buttonStyle}>
+      <Button disabled={!hasEarnings} onClick={onPresentCollect} style={DarkButtonStyle}>
         {isCompoundPool ? t('Collect') : t('Harvest')}
       </Button>
     </Flex>

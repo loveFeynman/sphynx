@@ -6,6 +6,7 @@ import ConnectWalletButton from 'components/ConnectWalletButton'
 import { useTranslation } from 'contexts/Localization'
 import { BIG_ZERO } from 'utils/bigNumber'
 import { Pool } from 'state/types'
+import { ColorButtonStyle } from 'style/buttonStyle'
 import AprRow from './AprRow'
 import { StyledCard } from './StyledCard'
 import CardFooter from './CardFooter'
@@ -21,14 +22,6 @@ const PoolCard: React.FC<{ pool: Pool; account: string }> = ({ pool, account }) 
   const { t } = useTranslation()
   const stakedBalance = userData?.stakedBalance ? new BigNumber(userData.stakedBalance) : BIG_ZERO
   const accountHasStakedBalance = stakedBalance.gt(0)
-  const buttonStyle = {
-    borderRadius: '5px',
-    border: 'none',
-    width: '230px',
-    height: '34px',
-    fontSize: '13px',
-    background: 'linear-gradient(90deg, #610D89 0%, #C42BB4 100%)'
-  }
 
   return (
     <StyledCard
@@ -51,7 +44,7 @@ const PoolCard: React.FC<{ pool: Pool; account: string }> = ({ pool, account }) 
               <Text mb="10px" textTransform="uppercase" fontSize="14px" color="#A7A7CC">
                 {t('Start earning')}
               </Text>
-              <ConnectWalletButton style={buttonStyle}/>
+              <ConnectWalletButton style={ColorButtonStyle}/>
             </>
           )}
         </Flex>

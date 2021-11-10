@@ -4,6 +4,7 @@ import { useTranslation } from 'contexts/Localization'
 import { useERC20 } from 'hooks/useContract'
 import { getAddress } from 'utils/addressHelpers'
 import { Pool } from 'state/types'
+import { ColorButtonStyle } from 'style/buttonStyle'
 import { useApprovePool } from '../../../hooks/useApprove'
 
 interface ApprovalActionProps {
@@ -17,15 +18,6 @@ const ApprovalAction: React.FC<ApprovalActionProps> = ({ pool, isLoading = false
   const stakingTokenContract = useERC20(stakingToken.address ? getAddress(stakingToken.address) : '')
   const { handleApprove, requestedApproval } = useApprovePool(stakingTokenContract, sousId, earningToken.symbol)
 
-  const buttonStyle = {
-    borderRadius: '5px',
-    border: 'none',
-    width: '230px',
-    height: '34px',
-    fontSize: '13px',
-    background: 'linear-gradient(90deg, #610D89 0%, #C42BB4 100%)'
-  }
-
   return (
     <>
       {isLoading ? (
@@ -36,7 +28,7 @@ const ApprovalAction: React.FC<ApprovalActionProps> = ({ pool, isLoading = false
           endIcon={requestedApproval ? <AutoRenewIcon spin color="currentColor" /> : null}
           disabled={requestedApproval}
           onClick={handleApprove}
-          style={buttonStyle}
+          style={ColorButtonStyle}
         >
           {t('Enable')}
         </Button>
