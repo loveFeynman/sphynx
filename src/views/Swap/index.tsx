@@ -199,7 +199,7 @@ export default function Swap({ history }: RouteComponentProps) {
   if (
     tokenAddress === '' ||
     tokenAddress.toLowerCase() === sphynxAddr.toLowerCase() ||
-    tokenAddress.toLowerCase() === '0x2e121Ed64EEEB58788dDb204627cCB7C7c59884c'.toLowerCase()
+    tokenAddress.toLowerCase() === SPHYNX_TOKEN_ADDRESS.toLowerCase()
   ) {
     if (routerVersion !== 'sphynx') {
       dispatch(typeRouterVersion({ routerVersion: 'sphynx' }))
@@ -708,7 +708,7 @@ export default function Swap({ history }: RouteComponentProps) {
       tokenAddress === '' ||
       tokenAddress === undefined ||
       tokenAddress.toLowerCase() === sphynxAddr.toLowerCase() ||
-      tokenAddress.toLowerCase() === '0x2e121Ed64EEEB58788dDb204627cCB7C7c59884c'.toLowerCase()
+      tokenAddress.toLowerCase() === SPHYNX_TOKEN_ADDRESS.toLowerCase()
     ) {
       console.log('HEEEEEEEELLLO')
       if (swapRouter !== SwapRouter.SPHYNX_SWAP) {
