@@ -96,7 +96,7 @@ const HarvestAction: React.FunctionComponent<HarvestActionProps> = ({
   if (!account) {
     return (
       <HarvestActionContainer>
-        <Flex flexDirection='row' alignItems='center'>
+        {/* <Flex flexDirection='row' alignItems='center'>
           <img src={SphynxTokenLogo} style={{ height: '70%', marginLeft: '4px' }} alt="token" />
           <Flex flexDirection="column">
             <ActionTitles>{actionTitle}</ActionTitles>
@@ -104,7 +104,7 @@ const HarvestAction: React.FunctionComponent<HarvestActionProps> = ({
               $0
             </Text>
           </Flex>
-        </Flex>
+        </Flex> */}
         <ActionContent>
           <Button style={DarkButtonStyle} disabled>{isCompoundPool ? t('Collect') : t('Harvest')}</Button>
         </ActionContent>
@@ -115,12 +115,12 @@ const HarvestAction: React.FunctionComponent<HarvestActionProps> = ({
   if (!userDataLoaded) {
     return (
       <HarvestActionContainer>
-        <Flex flexDirection='row' alignItems='center'>
+        {/* <Flex flexDirection='row' alignItems='center'>
           <img src={SphynxTokenLogo} style={{ height: '70%', marginLeft: '4px' }} alt="token" />
           <Flex flexDirection="column">
             <ActionTitles>{actionTitle}</ActionTitles>
           </Flex>
-        </Flex>
+        </Flex> */}
         <ActionContent>
           <Skeleton width={180} height="32px" marginTop={14} />
         </ActionContent>
@@ -129,7 +129,7 @@ const HarvestAction: React.FunctionComponent<HarvestActionProps> = ({
   }
   return (
     <HarvestActionContainer>
-      <Flex flexDirection='row' alignItems='center'>
+      {/* <Flex flexDirection='row' alignItems='center'>
         <img src={SphynxTokenLogo} style={{ height: '70%', marginLeft: '4px' }} alt="token" />
         <Flex flexDirection="column">
           <ActionTitles>{actionTitle}</ActionTitles>
@@ -137,7 +137,7 @@ const HarvestAction: React.FunctionComponent<HarvestActionProps> = ({
             <>
               {hasEarnings ? (
                 <>
-                  {/* <Balance lineHeight="1" bold fontSize="20px" decimals={5} value={earningTokenBalance} /> */}
+                  <Balance lineHeight="1" bold fontSize="20px" decimals={5} value={earningTokenBalance} />
                   {earningTokenPrice > 0 && (
                     <Balance
                       display="inline"
@@ -151,7 +151,7 @@ const HarvestAction: React.FunctionComponent<HarvestActionProps> = ({
                 </>
               ) : (
                 <>
-                  {/* <Heading color="textDisabled">0</Heading> */}
+                  <Heading color="textDisabled">0</Heading>
                   <Text fontSize="24px" color="textDisabled">
                     $0
                   </Text>
@@ -160,7 +160,7 @@ const HarvestAction: React.FunctionComponent<HarvestActionProps> = ({
             </>
           </Flex>
         </Flex>
-      </Flex>
+      </Flex> */}
       <ActionContent>
         {isAutoVault ? (
           <Flex flex="1.3" flexDirection="column" alignSelf="flex-start" alignItems="flex-start">

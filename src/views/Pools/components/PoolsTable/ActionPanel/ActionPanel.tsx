@@ -12,6 +12,7 @@ import {
   Text,
   TimerIcon,
   useTooltip,
+  useMatchBreakpoints,
 } from '@sphynxswap/uikit'
 import { BASE_BSC_SCAN_URL } from 'config'
 import { getBscScanLink } from 'utils'
@@ -26,6 +27,7 @@ import { getAddress, getCakeVaultAddress } from 'utils/addressHelpers'
 import { registerToken } from 'utils/wallet'
 import { getBalanceNumber, getFullDisplayBalance } from 'utils/formatBalance'
 import { getPoolBlockInfo } from 'views/Pools/helpers'
+import TokenLogo from './TokenLogo'
 import Harvest from './Harvest'
 import Stake from './Stake'
 import Apr from '../Apr'
@@ -48,7 +50,7 @@ const collapseAnimation = keyframes`
   }
 `
 
-const StyledActionPanel = styled.div<{ expanded: boolean }>`
+const StyledActionPanel = styled.div<{ expanded: boolean, isMobile: boolean }>`
   animation: ${({ expanded }) =>
     expanded
       ? css`
@@ -62,13 +64,23 @@ const StyledActionPanel = styled.div<{ expanded: boolean }>`
   border-radius: 10px;
   background: ${({ theme }) => theme.isDark ? "#1A1A3A" : "#20234E"};
   display: flex;
-  flex-direction: column-reverse;
+  flex-direction: ${({ isMobile }) => isMobile ? "column" : "row"};
   justify-content: center;
   padding: 12px;
 
   ${({ theme }) => theme.mediaQueries.lg} {
-    flex-direction: row;
     padding: 16px 32px;
+  }
+`
+const DetailContainer = styled(Flex)`
+  display: flex;
+  flex-direction: row;
+
+  ${({ theme }) => theme.mediaQueries.sm} {
+    flex-direction: row;
+    align-items: center;
+    flex-grow: 2;
+    flex-basis: 0;
   }
 `
 
@@ -104,14 +116,20 @@ const InfoSection = styled(Box)`
   justify-content: center;
   display: flex;
   flex-direction: column;
-  flex-grow: 0;
+  flex-grow: 1;
   flex-shrink: 0;
   flex-basis: auto;
   padding: 8px 8px;
   ${({ theme }) => theme.mediaQueries.lg} {
     padding: 0;
-    flex-basis: 2 0 330px;
   }
+`
+
+const TokenLogoSection = styled(Flex)`
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  flex-grow: 1;
 `
 
 const SmallLinkExternal = styled(LinkExternal)`
@@ -136,6 +154,8 @@ const ActionPanel: React.FC<ActionPanelProps> = ({ account, pool, userDataLoaded
     isAutoVault,
   } = pool
   const { t } = useTranslation()
+  const { isXl } = useMatchBreakpoints()
+  const isMobile = !isXl
   const poolContractAddress = getAddress(contractAddress)
   const cakeVaultContractAddress = getCakeVaultAddress()
   const { currentBlock } = useBlock()
@@ -244,66 +264,71 @@ const ActionPanel: React.FC<ActionPanelProps> = ({ account, pool, userDataLoaded
   }, [earningToken, tokenAddress])
 
   return (
-    <StyledActionPanel expanded={expanded}>
-      <InfoSection>
-        <Flex flexDirection='row' alignItems='center' >
-          {isAutoVault ? <CompoundingPoolTag /> : <ManualPoolTag />}
-          {tagTooltipVisible && tagTooltip}
-          <span ref={tagTargetRef}>
-            <HelpIcon ml="4px" width="14px" height="14px" color="#F9B043" />
-          </span>
-        </Flex>
-        {maxStakeRow}
-        {(isXs || isSm) && aprRow}
-        {(isXs || isSm || isMd) && totalStakedRow}
-        {shouldShowBlockCountdown && blocksRow}
-        <Flex mb="8px" justifyContent={['flex-end', 'flex-end', 'flex-start']}>
-          <LinkExternal href={`https://pancakeswap.info/token/${getAddress(earningToken.address)}`} fontSize='20px' bold={false}>
-            {t('See Token Info')}
-          </LinkExternal>
-        </Flex>
-        <Flex flexDirection='row' mb="8px">
-          <Flex
-            color='#A7A7CC'
-            justifyContent={['flex-end', 'flex-end', 'flex-start']}
-            mr='10px'
-            style={{ borderRadius: '5px', border: '1px solid #2E2E55', padding: '8px' }}>
-            <SmallLinkExternal
-              href={earningToken.projectLink}
-              bold={false}
-              fontSize='10px'>
-              {t('View Project Site')}
-            </SmallLinkExternal>
+    <StyledActionPanel expanded={expanded} isMobile={isMobile}>
+      <DetailContainer>
+        <InfoSection>
+          <Flex flexDirection='row' alignItems='center' >
+            {isAutoVault ? <CompoundingPoolTag /> : <ManualPoolTag />}
+            {tagTooltipVisible && tagTooltip}
+            <span ref={tagTargetRef}>
+              <HelpIcon ml="4px" width="14px" height="14px" color="#F9B043" />
+            </span>
           </Flex>
-          {poolContractAddress && (
+          {maxStakeRow}
+          {/* {(isXs || isSm) && aprRow}
+          {(isXs || isSm || isMd) && totalStakedRow}
+          {shouldShowBlockCountdown && blocksRow} */}
+          <Flex mb="8px" justifyContent={['flex-end', 'flex-end', 'flex-start']}>
+            <LinkExternal href={`https://pancakeswap.info/token/${getAddress(earningToken.address)}`} fontSize='20px' bold={false}>
+              {t('See Token Info')}
+            </LinkExternal>
+          </Flex>
+          <Flex flexDirection='row' mb="8px">
             <Flex
               color='#A7A7CC'
               justifyContent={['flex-end', 'flex-end', 'flex-start']}
+              mr='10px'
               style={{ borderRadius: '5px', border: '1px solid #2E2E55', padding: '8px' }}>
               <SmallLinkExternal
-                href={`${BASE_BSC_SCAN_URL}/address/${isAutoVault ? cakeVaultContractAddress : poolContractAddress}`}
+                href={earningToken.projectLink}
                 bold={false}
-                fontSize='10px'
-              >
-                {t('View Contract')}
+                fontSize='10px'>
+                {t('View Project Site')}
               </SmallLinkExternal>
             </Flex>
-          )}
-        </Flex>
-        {/* {account && isMetaMaskInScope && tokenAddress && (
-          <Flex mb="8px" justifyContent={['flex-end', 'flex-end', 'flex-start']}>
-            <Button
-              variant="text"
-              p="0"
-              height="auto"
-              onClick={handleRegisterToken}
-            >
-              <Text color="primary">{t('Add to Metamask')}</Text>
-              <MetamaskIcon ml="4px" />
-            </Button>
+            {poolContractAddress && (
+              <Flex
+                color='#A7A7CC'
+                justifyContent={['flex-end', 'flex-end', 'flex-start']}
+                style={{ borderRadius: '5px', border: '1px solid #2E2E55', padding: '8px' }}>
+                <SmallLinkExternal
+                  href={`${BASE_BSC_SCAN_URL}/address/${isAutoVault ? cakeVaultContractAddress : poolContractAddress}`}
+                  bold={false}
+                  fontSize='10px'
+                >
+                  {t('View Contract')}
+                </SmallLinkExternal>
+              </Flex>
+            )}
           </Flex>
-        )} */}
-      </InfoSection>
+          {account && isMetaMaskInScope && tokenAddress && (
+            <Flex mb="8px" justifyContent={['flex-end', 'flex-end', 'flex-start']}>
+              <Button
+                variant="text"
+                p="0"
+                height="auto"
+                onClick={handleRegisterToken}
+              >
+                <Text color="primary">{t('Add to Metamask')}</Text>
+                <MetamaskIcon ml="4px" />
+              </Button>
+            </Flex>
+          )}
+        </InfoSection>
+        <TokenLogoSection>
+          <TokenLogo {...pool} userDataLoaded={userDataLoaded} />
+        </TokenLogoSection>
+      </DetailContainer>
       <ActionContainer>
         {showSubtitle && (
           <Text mt="4px" mb="16px" color="textSubtle">

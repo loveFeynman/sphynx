@@ -1,7 +1,8 @@
 export const DarkButtonStyle = {
     borderRadius: '5px',
     border: 'none',
-    width: '230px',
+    width: '100%',
+    padding: '0 5em',
     height: '34px',
     fontSize: '13px',
     background: '#0E0E26'
@@ -10,8 +11,9 @@ export const DarkButtonStyle = {
 export const ColorButtonStyle = {
     borderRadius: '5px',
     border: 'none',
-    width: '230px',
+    width: '100%',
     height: '34px',
+    padding: '0 5em',
     fontSize: '13px',
     background: 'linear-gradient(90deg, #610D89 0%, #C42BB4 100%)'
 }
