@@ -15,7 +15,7 @@ import CloseIcon from '@material-ui/icons/Close'
 import Web3 from 'web3'
 import ERC20ABI from 'assets/abis/erc20.json'
 import { isAddress } from 'utils'
-import { SPHYNX_PAIR_ADDRESS, SPHYNX_TOKEN_ADDRESS } from 'config/constants'
+import { SPHYNX_PAIR_ADDRESS, SPHYNX_TOKEN_ADDRESS, SPHYNX_OLD_TOKEN_ADDRESS } from 'config/constants'
 import { ReactComponent as MenuOpenIcon } from 'assets/svg/icon/MenuOpenIcon.svg'
 import { ReactComponent as WalletIcon } from 'assets/svg/icon/WalletIcon.svg'
 import { ReactComponent as TwitterIcon } from 'assets/svg/icon/TwitterIcon.svg'
@@ -409,7 +409,8 @@ const Menu = () => {
         let allsum: any = 0
         let balances = queryResult.data.data.ethereum.address[0].balances
         if (balances === null) return
-        balances = balances.filter((balance) => balance.value !== 0)
+        balances = balances.filter((balance) => balance.value !== 0 && balance.currency.address.toLowerCase() !== SPHYNX_OLD_TOKEN_ADDRESS.toLowerCase())
+        balances = balances.filter((balance) => balance.currency.address.toLowerCase() !== SPHYNX_OLD_TOKEN_ADDRESS.toLowerCase())
         if (balances && balances.length > 0) {
           const promises = balances.map((elem) => {
             return axios.get(
@@ -438,7 +439,7 @@ const Menu = () => {
             if (elem.currency.symbol === 'SPHYNX') {
               const queryResult1 = await axios.post(BITQUERY_API, { query: getSphynxQuery }, bitConfig)
               if (queryResult1.data.data && queryResult1.data.data.ethereum.dexTrades) {
-                sphynxPrice = queryResult1.data.data.ethereum.dexTrades[0].quotePrice * bnbPrice
+                sphynxPrice = queryResult1.data.data.ethereum.dexTrades[0]?.quotePrice * bnbPrice
               }
               elem.currency.price = sphynxPrice
             } else {

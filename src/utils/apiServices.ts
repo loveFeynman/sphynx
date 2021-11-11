@@ -317,7 +317,7 @@ async function getChartStats(address: string, routerVersion: string) {
       ethereum(network: bsc) {
         dexTrades(
           date: {since: "${since}", till: "${till}"}
-          smartContractAddress: {in: ["0xE4023ee4d957A5391007aE698B3A730B2dc2ba67", "${pairAddress}"]}
+          smartContractAddress: {is: "${pairAddress}"}
           baseCurrency: {is: "${baseAddress}"}
           quoteCurrency: {is: "${quoteAddress}"}
         ) {

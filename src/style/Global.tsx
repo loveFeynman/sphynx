@@ -42,6 +42,15 @@ const GlobalStyle = createGlobalStyle`
   .sc-gInthZ {
     background: ${({ theme }) => theme.isDark ? '#27262c !important' : '#191c41 !important'};
   }
+  .eTJGWm {
+    background: ${({ theme }) => theme.isDark ? '#27262c !important' : '#191c41 !important'};
+    border: ${({ theme }) => theme.isDark ? '' : '1px solid #2E2E55 !important'}; 
+  }
+  div.kGLpkw {
+    div {
+      background: ${({ theme }) => theme.isDark ? '#27262c !important' : '#191c41 !important'};
+    }
+  }
 
   .gJyxrV {
     border: ${({ theme }) => theme.isDark ? '' : '1px solid #2E2E55 !important'}; 
