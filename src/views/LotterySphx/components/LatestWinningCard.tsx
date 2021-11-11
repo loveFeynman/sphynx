@@ -1,30 +1,17 @@
 /* eslint-disable */
 import styled, { ThemeConsumer, useTheme } from 'styled-components'
 import { Text, Flex, Box } from '@sphynxswap/uikit'
-import axios from 'axios'
-import { useSelector } from 'react-redux'
-import { AppState } from '../../../state'
-import useActiveWeb3React from 'hooks/useActiveWeb3React'
-import { useTranslation } from 'contexts/Localization'
-import MainLogo from 'assets/svg/icon/logo_new.svg'
-import DownArrow from 'assets/svg/icon/LotteryDownIcon.svg'
-import PotContentTable from './PotContentTable'
-import { claimTickets } from '../../../hooks/useLottery'
-import { Spinner } from './Spinner'
-import ViewTickets from './ViewTickets'
-import useToast from 'hooks/useToast'
-import { FormattedNumber } from './FormattedNumber'
-import { SPHYNX_TOKEN_ADDRESS } from 'config/constants'
 import LotteryLatestMark from 'assets/svg/icon/LotteryLatestMark.svg'
 
 const Container = styled.div`
-  width: 332px;
+  width: 300px;
   background: ${({ theme }) => (theme.isDark ? '#1A1A3A' : '#20234E')};
   border-radius: 10px;
-  min-height: 500px;
+  min-height: 400px;
   position: relative;
   ${({ theme }) => theme.mediaQueries.md} {
     min-width: 332px;
+    min-height: 500px;
   }
 `
 
@@ -59,6 +46,12 @@ const WinningNumber = styled(Flex)`
   padding: 6px 0px;
 `
 
+const WinningNumberContainer = styled(Box)`
+  margin-top: 37px
+  ${({ theme }) => theme.mediaQueries.lg} {
+    min-width: 87px;
+  }
+`
 
 export default function LatestWinningCard({
   winningCards,
@@ -72,7 +65,7 @@ export default function LatestWinningCard({
           <img src={LotteryLatestMark} alt="Logo" />
         </Box>
         <Text fontSize="20px" fontWeight="600" mt="1rem">Latest Winning Numbers</Text>
-        <Box mt="87px">
+        <WinningNumberContainer>
           <Grid>
           {winningCards.map((item) => (
             <GridItem>
@@ -83,7 +76,7 @@ export default function LatestWinningCard({
             ))
           }
           </Grid>
-        </Box>
+        </WinningNumberContainer>
       </Flex>
     </Container>
   )

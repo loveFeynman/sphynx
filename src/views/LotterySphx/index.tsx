@@ -39,6 +39,15 @@ const device = {
   lg: `(max-width: ${size.lg})`,
 }
 
+const Container = styled(Flex)`
+  flex-direction: column;
+  margin: 35px 10px 0px;
+  font-family: Raleway;
+  ${({ theme }) => theme.mediaQueries.xl} {
+    margin: 35px 30px 0px;
+    font-family: Raleway;
+  }
+`
 const ContractCard = styled(Text)`
   padding: 0 4px;
   max-width: 505px;
@@ -295,7 +304,7 @@ export default function Lottery() {
   }
 
   return (
-    <Flex flexDirection="column" mt="35px" mx="30px" style={{ fontFamily: 'Raleway' }}>
+    <Container >
       <Grid>
         <Flex>
           <Flex marginRight="14px">
@@ -437,6 +446,6 @@ export default function Lottery() {
       <Flex mt='24px'>
         <HowToPlay />
       </Flex>
-    </Flex>
+    </Container>
   )
 }

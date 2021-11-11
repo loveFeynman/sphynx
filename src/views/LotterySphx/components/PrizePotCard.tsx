@@ -18,13 +18,15 @@ import { FormattedNumber } from './FormattedNumber'
 import { SPHYNX_TOKEN_ADDRESS } from 'config/constants'
 
 const Container = styled.div<{ isDetail: boolean }>`
-  width: 332px;
+  width: 300px;
   background: ${({ theme }) => (theme.isDark ? '#1A1A3A' : '#20234E')};
   border-radius: 10px;
-  min-height: 500px;
+  min-height: 400px;
   position: relative;
   ${({ theme }) => theme.mediaQueries.md} {
     min-width: 332px;
+    min-height: 500px;
+
   }
 `
 const HeaderLabel = styled.div`
@@ -59,9 +61,6 @@ const ButtonWrapper = styled.div<{ isEnable: boolean, theme }>`
     opacity: 0.6;
     border-radius: 10px;
   }
-`
-const SeperateLine = styled.div`
-  border-bottom: 1px solid #ffffff;
 `
 const Footer = styled.div`
   display: flex;
@@ -98,6 +97,14 @@ const GridItem = styled.div<{ isLeft: boolean }>`
   padding: 6px 0px;
 `
 
+const TicketIdContainer = styled(Flex)`
+  overflow-y: 'auto';
+  max-height: 155px;
+  ${({ theme }) => theme.mediaQueries.md} {
+    overflow-y: 'auto';
+    max-height: 255px;
+  }
+`
 export default function PrizePotCard({
   isNext,
   setModal,
@@ -232,7 +239,7 @@ export default function PrizePotCard({
           <Box mt="10px" >
             <PotContentTable isDetail={false} lotteryInfo={lastLoteryInfo} />
           </Box>
-          <Box position="absolute" bottom="0" width="100%">
+          <Box width="100%">
             <ButtonWrapper isEnable style={{ margin: '30px 51px 14px' }} onClick={handleClaimTickets}>
               {t(`Claim Tickets`)}
             </ButtonWrapper>
@@ -244,19 +251,14 @@ export default function PrizePotCard({
         </>
       )}
       {isNext && (
-        <div style={{ margin: ' 10x 0ox 30px' }}>
+        <div style={{ margin: ' 10x 0px 30px' }}>
           <Flex style={{ flexDirection: 'column' }}>
             <Box style={{ borderBottom: "1px solid #21214A", margin: "20px 20px 0px" }}></Box>
             <Grid>
               <GridHeaderItem isLeft style={{ borderRight: "1px solid #21214A" }} >{t('Ticket ID')}</GridHeaderItem>
               <GridHeaderItem isLeft={false} style={{ borderLeft: "1px solid #21214A" }} >{t('Ticket Number')}</GridHeaderItem>
             </Grid>
-            <Flex
-              style={{
-                overflowY: 'auto',
-                maxHeight: '255px',
-              }}
-            >
+            <TicketIdContainer>
               <Grid>
                 {userTicketInfos?.map((it, index) => (
                   <React.Fragment key={index}>
@@ -265,7 +267,7 @@ export default function PrizePotCard({
                   </React.Fragment>
                 ))}
               </Grid>
-            </Flex>
+            </TicketIdContainer>
           </Flex>
 
           {isClaimable && (
