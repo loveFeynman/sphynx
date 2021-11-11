@@ -66,8 +66,11 @@ const StyledActionPanel = styled.div<{ expanded: boolean, isMobile: boolean }>`
   display: flex;
   flex-direction: ${({ isMobile }) => isMobile ? "column" : "row"};
   justify-content: center;
-  padding: 12px;
+  padding: 5px;
 
+  ${({ theme }) => theme.mediaQueries.xs} {
+    padding: 12px;
+  }
   ${({ theme }) => theme.mediaQueries.lg} {
     padding: 16px 32px;
   }
@@ -86,7 +89,7 @@ const DetailContainer = styled(Flex)`
 
 const ActionContainer = styled.div`
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
 
   ${({ theme }) => theme.mediaQueries.sm} {
     flex-direction: row;
@@ -132,12 +135,36 @@ const TokenLogoSection = styled(Flex)`
   flex-grow: 1;
 `
 
+const LargeLinkExternal = styled(LinkExternal)`
+  font-size: 18px;
+  font-weight: 600;
+  ${({ theme }) => theme.mediaQueries.sm} {
+    font-size: 20px;
+  }
+`
+
 const SmallLinkExternal = styled(LinkExternal)`
+  font-size: 8px;
+  font-weight: 600;
   flex-flow: row-reverse;
   > svg {
     width: 15px;
     margin-right: 3px;
     margin-left: 0px;
+  }
+
+  ${({ theme }) => theme.mediaQueries.sm} {
+    font-size: 10px;
+  }
+`
+
+const BorderFlex = styled(Flex)`
+  color: #A7A7CC;
+  border-radius: 5px;
+  border: 1px solid #2E2E55;
+  padding: 3px;
+  ${({ theme }) => theme.mediaQueries.xs} {
+    padding: 8px;
   }
 `
 
@@ -278,41 +305,31 @@ const ActionPanel: React.FC<ActionPanelProps> = ({ account, pool, userDataLoaded
           {/* {(isXs || isSm) && aprRow}
           {(isXs || isSm || isMd) && totalStakedRow}
           {shouldShowBlockCountdown && blocksRow} */}
-          <Flex mb="8px" justifyContent={['flex-end', 'flex-end', 'flex-start']}>
-            <LinkExternal href={`https://pancakeswap.info/token/${getAddress(earningToken.address)}`} fontSize='20px' bold={false}>
+          <Flex mb="8px">
+            <LargeLinkExternal href={`https://pancakeswap.info/token/${getAddress(earningToken.address)}`}>
               {t('See Token Info')}
-            </LinkExternal>
+            </LargeLinkExternal>
           </Flex>
           <Flex flexDirection='row' mb="8px">
-            <Flex
-              color='#A7A7CC'
-              justifyContent={['flex-end', 'flex-end', 'flex-start']}
-              mr='10px'
-              style={{ borderRadius: '5px', border: '1px solid #2E2E55', padding: '8px' }}>
+            <BorderFlex mr='5px'>
               <SmallLinkExternal
                 href={earningToken.projectLink}
-                bold={false}
-                fontSize='10px'>
+              >
                 {t('View Project Site')}
               </SmallLinkExternal>
-            </Flex>
+            </BorderFlex>
             {poolContractAddress && (
-              <Flex
-                color='#A7A7CC'
-                justifyContent={['flex-end', 'flex-end', 'flex-start']}
-                style={{ borderRadius: '5px', border: '1px solid #2E2E55', padding: '8px' }}>
+              <BorderFlex>
                 <SmallLinkExternal
                   href={`${BASE_BSC_SCAN_URL}/address/${isAutoVault ? cakeVaultContractAddress : poolContractAddress}`}
-                  bold={false}
-                  fontSize='10px'
                 >
                   {t('View Contract')}
                 </SmallLinkExternal>
-              </Flex>
+              </BorderFlex>
             )}
           </Flex>
-          {account && isMetaMaskInScope && tokenAddress && (
-            <Flex mb="8px" justifyContent={['flex-end', 'flex-end', 'flex-start']}>
+          {/* {account && isMetaMaskInScope && tokenAddress && (
+            <Flex mb="8px">
               <Button
                 variant="text"
                 p="0"
@@ -323,18 +340,18 @@ const ActionPanel: React.FC<ActionPanelProps> = ({ account, pool, userDataLoaded
                 <MetamaskIcon ml="4px" />
               </Button>
             </Flex>
-          )}
+          )} */}
         </InfoSection>
         <TokenLogoSection>
           <TokenLogo {...pool} userDataLoaded={userDataLoaded} />
         </TokenLogoSection>
       </DetailContainer>
       <ActionContainer>
-        {showSubtitle && (
+        {/* {showSubtitle && (
           <Text mt="4px" mb="16px" color="textSubtle">
             {isAutoVault ? t('Automatic restaking') : `${t('Earn')} SPHYNX ${t('Stake').toLocaleLowerCase()} SPHYNX`}
           </Text>
-        )}
+        )} */}
         <Harvest {...pool} userDataLoaded={userDataLoaded} />
         <Stake pool={pool} userDataLoaded={userDataLoaded} />
       </ActionContainer>

@@ -51,6 +51,7 @@ export const HarvestActionContainer = styled.div`
 `
 
 export const ActionTitles = styled.div`
+  text-align: center;
   font-weight: 600;
   font-size: 12px;
 `

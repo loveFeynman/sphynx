@@ -6,16 +6,26 @@ import { getCakeVaultEarnings } from 'views/Pools/helpers'
 import { PoolCategory } from 'config/constants/types'
 import { formatNumber, getBalanceNumber, getFullDisplayBalance } from 'utils/formatBalance'
 import { useTranslation } from 'contexts/Localization'
-import Balance from 'components/Balance'
+import Balance from 'components/Balance'    
 import { useCakeVault } from 'state/pools/hooks'
 import { BIG_ZERO } from 'utils/bigNumber'
 import { Pool } from 'state/types'
 import SphynxTokenLogo from 'assets/images/MainLogo.png'
-import { DarkButtonStyle } from 'style/buttonStyle'
+import styled from 'styled-components'
 
 import { HarvestActionContainer, ActionTitles, ActionContent } from './styles'
 import CollectModal from '../../PoolCard/Modals/CollectModal'
 import UnstakingFeeCountdownRow from '../../CakeVaultCard/UnstakingFeeCountdownRow'
+
+const TokenImage = styled.img`
+    height: 40px;
+    ${({ theme }) => theme.mediaQueries.xs} {
+        height: 50px;
+    }
+    ${({ theme }) => theme.mediaQueries.sm} {
+        height: 70px;
+    }
+`
 
 interface HarvestActionProps extends Pool {
     userDataLoaded: boolean
@@ -97,11 +107,11 @@ const TokenLogo: React.FunctionComponent<HarvestActionProps> = ({
 
     if (!account) {
         return (
-            <Flex flexDirection={isMobile? 'column' : 'row'} alignItems='center'>
-                <img src={SphynxTokenLogo} style={{ height: 70, marginLeft: '4px' }} alt="token" />
-                <Flex flexDirection="column" alignItems={isMobile? 'center' : 'flex-start'}>
+            <Flex flexDirection={isMobile ? 'column' : 'row'} alignItems='center'>
+                <TokenImage src={SphynxTokenLogo} alt="token" />
+                <Flex flexDirection="column" alignItems={isMobile ? 'center' : 'flex-start'}>
                     <ActionTitles>{actionTitle}</ActionTitles>
-                    <Text fontSize="24px" color="textDisabled">
+                    <Text fontSize={isMobile? '15px': '24px'} color="textDisabled">
                         $0
                     </Text>
                 </Flex>
@@ -111,8 +121,8 @@ const TokenLogo: React.FunctionComponent<HarvestActionProps> = ({
 
     if (!userDataLoaded) {
         return (
-            <Flex flexDirection={isMobile? 'column' : 'row'} alignItems='center'>
-                <img src={SphynxTokenLogo} style={{ height: 70, marginLeft: '4px' }} alt="token" />
+            <Flex flexDirection={isMobile ? 'column' : 'row'} alignItems='center'>
+                <TokenImage src={SphynxTokenLogo} alt="token" />
                 <Flex flexDirection="column">
                     <ActionTitles>{actionTitle}</ActionTitles>
                 </Flex>
@@ -120,9 +130,9 @@ const TokenLogo: React.FunctionComponent<HarvestActionProps> = ({
         )
     }
     return (
-        <Flex flexDirection={isMobile? 'column' : 'row'} alignItems='center'>
-            <img src={SphynxTokenLogo} style={{ height: 70, marginLeft: '4px' }} alt="token" />
-            <Flex flexDirection="column" alignItems={isMobile? 'center' : 'flex-start'}>
+        <Flex flexDirection={isMobile ? 'column' : 'row'} alignItems='center'>
+            <TokenImage src={SphynxTokenLogo} alt="token" />
+            <Flex flexDirection="column" alignItems={isMobile ? 'center' : 'flex-start'}>
                 <ActionTitles>{actionTitle}</ActionTitles>
                 <Flex>
                     <>
@@ -132,7 +142,7 @@ const TokenLogo: React.FunctionComponent<HarvestActionProps> = ({
                                 {earningTokenPrice > 0 && (
                                     <Balance
                                         display="inline"
-                                        fontSize="24px"
+                                        fontSize={isMobile? '15px': '24px'}
                                         color="white"
                                         decimals={2}
                                         prefix="$"
@@ -143,7 +153,7 @@ const TokenLogo: React.FunctionComponent<HarvestActionProps> = ({
                         ) : (
                             <>
                                 {/* <Heading color="textDisabled">0</Heading> */}
-                                <Text fontSize="24px" color="textDisabled">
+                                <Text fontSize={isMobile? '15px': '24px'} color="textDisabled">
                                     $0
                                 </Text>
                             </>
