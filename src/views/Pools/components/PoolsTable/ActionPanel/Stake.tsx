@@ -14,7 +14,6 @@ import { BIG_ZERO } from 'utils/bigNumber'
 import { getAddress } from 'utils/addressHelpers'
 import { useERC20 } from 'hooks/useContract'
 import { convertSharesToCake } from 'views/Pools/helpers'
-import { ColorButtonStyle } from 'style/buttonStyle'
 import { ActionContainer, StakeActionTitles, ActionContent } from './styles'
 import NotEnoughTokensModal from '../../PoolCard/Modals/NotEnoughTokensModal'
 import StakeModal from '../../PoolCard/Modals/StakeModal'
@@ -23,6 +22,20 @@ import { useCheckVaultApprovalStatus, useApprovePool, useVaultApprove } from '..
 
 const IconButtonWrapper = styled.div`
   display: flex;
+`
+
+const ColorButton = styled(Button)`
+  border-radius: 5px;
+  border: none;
+  width: 100%;
+  height: 34px;
+  font-size: 13px;
+  background: linear-gradient(90deg,#610D89 0%,#C42BB4 100%);
+  padding: 0 2em;
+
+  ${({ theme }) => theme.mediaQueries.sm} {
+    padding: 0 5em;
+  }
 `
 
 interface StackedActionProps {
@@ -141,7 +154,7 @@ const Staked: React.FunctionComponent<StackedActionProps> = ({ pool, userDataLoa
           </Text>
         </StakeActionTitles>
         <ActionContent>
-          <ConnectWalletButton style={ColorButtonStyle} width="100%" />
+          <ConnectWalletButton/>
         </ActionContent>
       </ActionContainer>
     )
@@ -171,11 +184,10 @@ const Staked: React.FunctionComponent<StackedActionProps> = ({ pool, userDataLoa
           </Text>
         </StakeActionTitles>
         <ActionContent>
-          <Button width="100%" disabled onClick={handleApprove} variant="secondary"
-            style={ColorButtonStyle}
+          <ColorButton disabled onClick={handleApprove} variant="secondary"
           >
             {t('Enable')}
-          </Button>
+          </ColorButton>
         </ActionContent>
       </ActionContainer>
     )
@@ -249,15 +261,13 @@ const Staked: React.FunctionComponent<StackedActionProps> = ({ pool, userDataLoa
         </Text>
       </StakeActionTitles>
       <ActionContent>
-        <Button
-          width="100%"
+        <ColorButton
           onClick={stakingTokenBalance.gt(0) ? onStake : onPresentTokenRequired}
           variant="secondary"
           disabled={isFinished}
-          style={ColorButtonStyle}
         >
           {t('Stake')}
-        </Button>
+        </ColorButton>
       </ActionContent>
     </ActionContainer>
   )

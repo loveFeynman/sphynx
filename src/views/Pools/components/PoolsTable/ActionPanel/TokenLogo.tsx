@@ -13,7 +13,7 @@ import { Pool } from 'state/types'
 import SphynxTokenLogo from 'assets/images/MainLogo.png'
 import styled from 'styled-components'
 
-import { HarvestActionContainer, ActionTitles, ActionContent } from './styles'
+import { ActionTitles, ActionContent } from './styles'
 import CollectModal from '../../PoolCard/Modals/CollectModal'
 import UnstakingFeeCountdownRow from '../../CakeVaultCard/UnstakingFeeCountdownRow'
 

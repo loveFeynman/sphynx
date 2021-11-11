@@ -10,12 +10,25 @@ import Balance from 'components/Balance'
 import { useCakeVault } from 'state/pools/hooks'
 import { BIG_ZERO } from 'utils/bigNumber'
 import { Pool } from 'state/types'
-import SphynxTokenLogo from 'assets/images/MainLogo.png'
+import styled from 'styled-components'
 import { DarkButtonStyle } from 'style/buttonStyle'
-
-import { HarvestActionContainer, ActionTitles, ActionContent } from './styles'
+import { ActionContainer, ActionTitles, ActionContent } from './styles'
 import CollectModal from '../../PoolCard/Modals/CollectModal'
 import UnstakingFeeCountdownRow from '../../CakeVaultCard/UnstakingFeeCountdownRow'
+
+const DarkButton = styled(Button)`
+  border-radius: 5px;
+  border: none;
+  width: 100%;
+  height: 34px;
+  font-size: 13px;
+  background: ${({ theme }) => theme.isDark? '#0E0E26' : '#2A2E60'};
+  padding: 0 2em;
+
+  ${({ theme }) => theme.mediaQueries.sm} {
+    padding: 0 5em;
+  }
+`
 
 interface HarvestActionProps extends Pool {
   userDataLoaded: boolean
@@ -95,7 +108,7 @@ const HarvestAction: React.FunctionComponent<HarvestActionProps> = ({
 
   if (!account) {
     return (
-      <HarvestActionContainer>
+      <ActionContainer>
         {/* <Flex flexDirection='row' alignItems='center'>
           <img src={SphynxTokenLogo} style={{ height: '70%', marginLeft: '4px' }} alt="token" />
           <Flex flexDirection="column">
@@ -106,15 +119,17 @@ const HarvestAction: React.FunctionComponent<HarvestActionProps> = ({
           </Flex>
         </Flex> */}
         <ActionContent>
-          <Button style={DarkButtonStyle} disabled>{isCompoundPool ? t('Collect') : t('Harvest')}</Button>
+          <DarkButton disabled>
+            {isCompoundPool ? t('Collect') : t('Harvest')}
+          </DarkButton>
         </ActionContent>
-      </HarvestActionContainer>
+      </ActionContainer>
     )
   }
 
   if (!userDataLoaded) {
     return (
-      <HarvestActionContainer>
+      <ActionContainer>
         {/* <Flex flexDirection='row' alignItems='center'>
           <img src={SphynxTokenLogo} style={{ height: '70%', marginLeft: '4px' }} alt="token" />
           <Flex flexDirection="column">
@@ -124,11 +139,11 @@ const HarvestAction: React.FunctionComponent<HarvestActionProps> = ({
         <ActionContent>
           <Skeleton width={180} height="32px" marginTop={14} />
         </ActionContent>
-      </HarvestActionContainer>
+      </ActionContainer>
     )
   }
   return (
-    <HarvestActionContainer>
+    <ActionContainer>
       {/* <Flex flexDirection='row' alignItems='center'>
         <img src={SphynxTokenLogo} style={{ height: '70%', marginLeft: '4px' }} alt="token" />
         <Flex flexDirection="column">
@@ -178,16 +193,15 @@ const HarvestAction: React.FunctionComponent<HarvestActionProps> = ({
             </Flex>
           </Flex>
         ) : (
-          <Button
-            style={DarkButtonStyle}
+          <DarkButton
             disabled={!hasEarnings}
             onClick={onPresentCollect}
           >
             {isCompoundPool ? t('Collect') : t('Harvest')}
-          </Button>
+          </DarkButton>
         )}
       </ActionContent>
-    </HarvestActionContainer>
+    </ActionContainer>
   )
 }
 
