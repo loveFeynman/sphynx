@@ -39,6 +39,25 @@ const GlobalStyle = createGlobalStyle`
     overflow: hidden !important;
   }
 
+  .MuiPickersBasePicker-pickerView {
+    max-width: unset !important;
+  }
+  div.MuiDialog-paper {
+    position: unset !important;
+  }
+  div.MuiPickersBasePicker-container {
+    div.MuiPaper-root {
+      top: unset !important;
+      left: unset !important;
+      width: unset !important;
+      button {
+        outline: none;
+      }
+    }
+  }
+  button {
+    outline: none !important;
+  }
   .sc-gInthZ {
     background: ${({ theme }) => theme.isDark ? '#27262c !important' : '#191c41 !important'};
   }
