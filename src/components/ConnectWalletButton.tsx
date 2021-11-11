@@ -12,10 +12,10 @@ const ConnectButtonWrapper = styled.div`
     background: linear-gradient(90deg, #610D89 0%, #C42BB4 100%);
     font-weight: 600;
     font-size: 13px;
-    padding: 0 1.5em;
+    width: 102px;
 
     ${({ theme }) => theme.mediaQueries.sm} {
-      padding: 0 5em;
+      width: 176px;
     }
   }
 `

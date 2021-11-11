@@ -27,14 +27,19 @@ const IconButtonWrapper = styled.div`
 const ColorButton = styled(Button)`
   border-radius: 5px;
   border: none;
-  width: 100%;
   height: 34px;
   font-size: 13px;
   background: linear-gradient(90deg,#610D89 0%,#C42BB4 100%);
-  padding: 0 2em;
+  width: 102px;
 
   ${({ theme }) => theme.mediaQueries.sm} {
-    padding: 0 5em;
+    width: 176px;
+  }
+`
+const ButtonSkeleton = styled(Skeleton)`
+  width: 102px;
+  ${({ theme }) => theme.mediaQueries.sm} {
+    width: 176px;
   }
 `
 
@@ -169,7 +174,7 @@ const Staked: React.FunctionComponent<StackedActionProps> = ({ pool, userDataLoa
           </Text>
         </StakeActionTitles>
         <ActionContent>
-          <Skeleton width={180} height="32px" marginTop={14} />
+          <ButtonSkeleton height="32px" marginTop={14} />
         </ActionContent>
       </ActionContainer>
     )

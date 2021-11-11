@@ -19,14 +19,20 @@ import UnstakingFeeCountdownRow from '../../CakeVaultCard/UnstakingFeeCountdownR
 const DarkButton = styled(Button)`
   border-radius: 5px;
   border: none;
-  width: 100%;
   height: 34px;
   font-size: 13px;
   background: ${({ theme }) => theme.isDark? '#0E0E26' : '#2A2E60'};
-  padding: 0 2em;
+  width: 102px;
 
   ${({ theme }) => theme.mediaQueries.sm} {
-    padding: 0 5em;
+    width: 176px;
+  }
+`
+
+const ButtonSkeleton = styled(Skeleton)`
+  width: 102px;
+  ${({ theme }) => theme.mediaQueries.sm} {
+    width: 176px;
   }
 `
 
@@ -137,7 +143,7 @@ const HarvestAction: React.FunctionComponent<HarvestActionProps> = ({
           </Flex>
         </Flex> */}
         <ActionContent>
-          <Skeleton width={180} height="32px" marginTop={14} />
+          <ButtonSkeleton height="32px" marginTop={14} />
         </ActionContent>
       </ActionContainer>
     )

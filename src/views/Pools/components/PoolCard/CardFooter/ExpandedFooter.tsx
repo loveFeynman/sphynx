@@ -40,7 +40,6 @@ const ExpandedWrapper = styled(Flex)`
 `
 
 const LinkContainer = styled(Flex)`
-  padding: 0 20px;
   flex-direction: column;
   align-items: center;
 `
@@ -49,10 +48,13 @@ const ItemLink = styled(Flex)`
   width: 100%;
   align-items: center;
   justify-content: center;
-  padding: 9px;
   border: 1px solid #2E2E55;
   box-sizing: border-box;
   border-radius: 5px;
+  padding: 9px 2px;
+  ${({ theme }) => theme.mediaQueries.xs} {
+    padding: 9px;
+}
 `
 
 const ExpandedFooter: React.FC<ExpandedFooterProps> = ({ pool, account }) => {
