@@ -56,36 +56,26 @@ const LogoTitleWrapper = styled.div`
   align-items: center;
 `
 
-const PoolControls = styled.div`
-  display: flex;
-  width: 100%;
-  align-items: center;
-  position: relative;
-
-  justify-content: space-between;
-  flex-direction: column;
-
-  & > div {
-    margin-bottom: 16px;
+const PoolText = styled(Text)`
+  color: white;
+  font-size: 13px;
+  font-weight: bold;
+  ${({ theme }) => theme.mediaQueries.xs} {
+    font-size: 20px;
   }
-
   ${({ theme }) => theme.mediaQueries.sm} {
-    flex-direction: row;
-    flex-wrap: wrap;
-    padding: 16px 32px;
-    margin-bottom: 0;
+    font-size: 26px;
   }
 `
 
-const FilterContainer = styled.div`
-  display: flex;
-  align-items: center;
-  width: 100%;
-  padding: 8px 0px;
-
+const PoolDetailText = styled(Text)`
+  color: #777777;
+  font-size: 12px;
+  ${({ theme }) => theme.mediaQueries.xs} {
+    font-size: 13px;
+  }
   ${({ theme }) => theme.mediaQueries.sm} {
-    width: auto;
-    padding: 0;
+    font-size: 15px;
   }
 `
 
@@ -271,18 +261,18 @@ const Pools: React.FC = () => {
           <Flex justifyContent="space-between" flexDirection='row'>
             <Flex flexGrow={5} alignItems='center'>
               <LogoContent isMobile={isMobile}>
-                <img src={PoolLogo} alt="Pool Logo" width={isMobile ? '50' : '100'}  style={{ padding: `${isMobile ? '0px' : '0 10px 10px 10px'}` }} />
+                <img src={PoolLogo} alt="Pool Logo" width={isMobile ? '50' : '100'} style={{ padding: `${isMobile ? '0px' : '0 10px 10px 10px'}` }} />
                 <LogoTitleWrapper>
                   <LogoTitle>
-                    <Text color="white" bold fontSize={isMobile ? '20px' : '26px'}>
+                    <PoolText>
                       {t('Sphynx Pools')}
-                    </Text>
-                    <Text color="#777777" fontSize={isMobile ? '13px' : '15px'}>
+                    </PoolText>
+                    <PoolDetailText>
                       {t('Just stake some tokens to earn.')}
-                    </Text>
-                    <Text color="#777777" fontSize={isMobile ? '13px' : '15px'}>
+                    </PoolDetailText>
+                    <PoolDetailText>
                       {t('High APR, low risk.')}
-                    </Text>
+                    </PoolDetailText>
                   </LogoTitle>
                 </LogoTitleWrapper>
               </LogoContent>
