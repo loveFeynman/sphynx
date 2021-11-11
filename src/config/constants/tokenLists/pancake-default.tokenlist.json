@@ -11,9 +11,9 @@
   "keywords": ["pancake", "default"],
   "tokens": [
     {
-      "name": "Sphynx Token",
+      "name": "Sphynx BSC",
       "symbol": "SPHYNX",
-      "address": "0x2e121ed64eeeb58788ddb204627ccb7c7c59884c",
+      "address": "0xd38Ec16cAf3464ca04929E847E4550Dcff25b27a",
       "chainId": 56,
       "decimals": 18,
       "logoURI": "https://thesphynx.co/MainLogo.png"

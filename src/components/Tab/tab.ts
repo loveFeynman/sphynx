@@ -15,13 +15,13 @@ export const SwapTabList = styled(TabList)`
 
 SwapTabList.tabsRole = 'TabList';
 
-export const SwapTab = styled(Tab)`
+export const SwapTab = styled(Tab)<{borderBottom?: boolean}>`
   margin-top: 12px;
   padding: 10px;
   user-select: none;
   cursor: arrow;
   width: 100%;
-  max-width: 160px;
+  max-width: 195px;
   div {
     font-weight: 600;
     font-size: 14px;
@@ -32,7 +32,8 @@ export const SwapTab = styled(Tab)`
 
   &.is-selected {
     background: ${({ theme }) => theme.isDark ? "#0E0E26" : "#2A2E60"};  
-    border-top: 3px solid #C32BB4;
+    border-top: ${(props) => (props.borderBottom ? "unset" : "3px solid #C32BB4")};
+    border-bottom: ${(props) => (props.borderBottom ? "3px solid #C32BB4" : "unset")};
     div {
       color: #C32BB4;
     }

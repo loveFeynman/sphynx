@@ -20,6 +20,9 @@ const ToggleWrapper = styled.div`
   padding: 0 4px;
   display: flex;
   align-items: center;
+  & button {
+    border: 1px solid ${({ theme }) => theme.isDark ? "#2E2E55" : "#4A5187"};
+  }
   ${({ theme }) => theme.mediaQueries.sm} {
     // min-width: 200px;
   }
@@ -27,7 +30,6 @@ const ToggleWrapper = styled.div`
     width: 100%;
     background: transparent !important;
     outline: none;
-    border: 1px solid ${({ theme }) => theme.colors.cardBorder};
     box-shadow: none !important;
     padding: 0 12px;
   }
@@ -50,10 +52,14 @@ const MenuTitle = styled.div`
   width: 100%;
   height: 35px;
   background: transparent;
-  color: white;
   display: flex;
   align-items: center;
   padding: 0px 12px;
+  span {
+    font-weight: 600;
+    font-size: 13px;
+    color: #A7A7CC;
+  }
 `
 
 const PanelOverlay = styled.div`

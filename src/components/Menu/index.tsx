@@ -10,23 +10,18 @@ import { addToken, updateToken, deleteTokens } from 'state/wallet/tokenSlice'
 import { useMenuToggle, useRemovedAssets } from 'state/application/hooks'
 import { useWeb3React } from '@web3-react/core'
 import MainLogo from 'assets/svg/icon/logo_new.svg'
-import Illustration from 'assets/images/Illustration.svg'
 import { v4 as uuidv4 } from 'uuid'
 import CloseIcon from '@material-ui/icons/Close'
 import Web3 from 'web3'
 import ERC20ABI from 'assets/abis/erc20.json'
 import { isAddress } from 'utils'
-
+import { SPHYNX_PAIR_ADDRESS, SPHYNX_TOKEN_ADDRESS, SPHYNX_OLD_TOKEN_ADDRESS } from 'config/constants'
 import { ReactComponent as MenuOpenIcon } from 'assets/svg/icon/MenuOpenIcon.svg'
 import { ReactComponent as WalletIcon } from 'assets/svg/icon/WalletIcon.svg'
 import { ReactComponent as TwitterIcon } from 'assets/svg/icon/TwitterIcon.svg'
 import { ReactComponent as SocialIcon2 } from 'assets/svg/icon/SocialIcon2.svg'
 import { ReactComponent as TelegramIcon } from 'assets/svg/icon/TelegramIcon.svg'
 import { ReactComponent as DiscordIcon } from 'assets/svg/icon/DiscordIcon.svg'
-import RefreshIcon from 'assets/images/refresh.png'
-import ShowSomeIcon from 'assets/images/show-some.png'
-import ShowAllIcon from 'assets/images/show-all.png'
-// import DiscordIcon from 'assets/images/discord.png'
 import axios from 'axios'
 import { BITQUERY_API, BITQUERY_API_KEY } from 'config/constants/endpoints'
 import storages from 'config/constants/storages'
@@ -104,6 +99,7 @@ const MenuContentWrapper = styled.div<{ toggled: boolean }>`
   justify-content: center;
   overflow-y: auto;
   padding: 0 24px 32px;
+  padding-bottom: 100px;
   ${({ theme }) => theme.mediaQueries.xl} {
     padding: ${(props) => (props.toggled ? '0 8px' : '0 24px')};
   }
@@ -135,7 +131,7 @@ const WalletHeading = styled.div<{ toggled: boolean }>`
 `
 const TokenItemWrapper = styled.div<{ toggled: boolean }>`
   background: transparent;
-  border: 1px solid #21214A;
+  border: 1px solid #21214a;
   border-radius: 8px;
   margin-top: 2px;
   display: flex;
@@ -189,7 +185,7 @@ const MenuItem = styled.a<{ toggled: boolean }>`
     text-decoration: none !important;
     & p {
       width: calc(100% - 32px);
-      font-size: 13px;
+      font-size: 14px;
       font-weight: 600;
       color: #a7a7cc;
     }
@@ -208,16 +204,22 @@ const MenuItemMobile = styled.a`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1px;
-  margin: 5px 16px;
-  border-radius: 10px;
+  padding: 5px 16px;
+  margin: 5px 0;
+  border-radius: 5px;
   text-decoration: none !important;
   & p {
     width: calc(100% - 32px);
+    font-size: 14px;
+    font-weight: 600;
+    color: #a7a7cc;
   }
   &:hover,
   &.active {
     background: #710d89;
+    p {
+      color: white;
+    }
   }
   ${({ theme }) => theme.mediaQueries.xl} {
     display: none;
@@ -305,7 +307,7 @@ const Menu = () => {
 
   const { t } = useTranslation()
 
-  const isMobile = window.screen.width < 768
+  const isMobile = document.body.clientWidth < 768
 
   useEffect(() => {
     if (isMobile && !menuToggled) {
@@ -338,8 +340,8 @@ const Menu = () => {
       dexTrades(
       options: {desc: ["block.height", "tradeIndex"], limit: 1, offset: 0}
       date: {till: null}
-      smartContractAddress: {is: "0xe4023ee4d957a5391007ae698b3a730b2dc2ba67"}
-      baseCurrency: {is: "0x2e121ed64eeeb58788ddb204627ccb7c7c59884c"}
+      smartContractAddress: {is: "${SPHYNX_PAIR_ADDRESS}"}
+      baseCurrency: {is: "${SPHYNX_TOKEN_ADDRESS}"}
       quoteCurrency:{is : "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"}
       ) {
       block {
@@ -407,7 +409,8 @@ const Menu = () => {
         let allsum: any = 0
         let balances = queryResult.data.data.ethereum.address[0].balances
         if (balances === null) return
-        balances = balances.filter((balance) => balance.value !== 0)
+        balances = balances.filter((balance) => balance.value !== 0 && balance.currency.address.toLowerCase() !== SPHYNX_OLD_TOKEN_ADDRESS.toLowerCase())
+        balances = balances.filter((balance) => balance.currency.address.toLowerCase() !== SPHYNX_OLD_TOKEN_ADDRESS.toLowerCase())
         if (balances && balances.length > 0) {
           const promises = balances.map((elem) => {
             return axios.get(
@@ -436,7 +439,7 @@ const Menu = () => {
             if (elem.currency.symbol === 'SPHYNX') {
               const queryResult1 = await axios.post(BITQUERY_API, { query: getSphynxQuery }, bitConfig)
               if (queryResult1.data.data && queryResult1.data.data.ethereum.dexTrades) {
-                sphynxPrice = queryResult1.data.data.ethereum.dexTrades[0].quotePrice * bnbPrice
+                sphynxPrice = queryResult1.data.data.ethereum.dexTrades[0]?.quotePrice * bnbPrice
               }
               elem.currency.price = sphynxPrice
             } else {
@@ -683,6 +686,12 @@ const Menu = () => {
           )}
         </Button>
       </MenuIconWrapper>
+      {isMobile && (
+        <MenuIconWrapper toggled={menuToggled} style={{marginBottom: "12px"}}>
+          {!menuToggled && <span>{t('Toggle Theme')}</span>}
+          <Toggle checked={isDark} onChange={toggleTheme} scale="sm" />
+        </MenuIconWrapper>
+      )}
       <WalletHeading toggled={menuToggled}>
         <div>
           <WalletIcon />
@@ -690,7 +699,7 @@ const Menu = () => {
         </div>
         {!menuToggled && <p>{account ? <BalanceNumber prefix="$ " value={Number(sum).toFixed(2)} /> : ''}</p>}
       </WalletHeading>
-      {account && !menuToggled? (
+      {account && !menuToggled ? (
         <div style={{ width: '100%', padding: `${menuToggled ? '0px 16px' : '0px 24px'}` }}>
           <TokenListWrapper>{showAllToken ? tokenData : tokenData.slice(0, 3)}</TokenListWrapper>
           <ButtonWrapper style={menuToggled ? { justifyContent: 'center' } : {}} onClick={handleShowAllToken}>
@@ -730,14 +739,12 @@ const Menu = () => {
                 </MenuItem>
                 <MenuItemMobile
                   className={realPath.indexOf(link.href) > -1 && link.href !== '/' ? 'active' : ''}
-                  // href={link.href}
-                  // target={link.newTab ? '_blank' : ''}
-                  // onClick={handleMobileMenuItem}
+                  href={link.href}
+                  target={link.newTab ? '_blank' : ''}
+                  onClick={handleMobileMenuItem}
                 >
                   <Icon />
-                  <p>
-                    <b>{t(`${link.label}`)}</b>
-                  </p>
+                  <p>{t(`${link.label}`)}</p>
                 </MenuItemMobile>
               </div>
             )
@@ -745,29 +752,32 @@ const Menu = () => {
         <SocialWrapper>
           {!menuToggled && <p>{t('Socials')}</p>}
           <SocialIconsWrapper toggled={menuToggled}>
-            <IconBox color="#33AAED">
-              <TwitterIcon width="15px" height="15px" />
-            </IconBox>
-            <IconBox color="#710D89">
-              <SocialIcon2 width="15px" height="15px" />
-            </IconBox>
-            <IconBox color="#3E70D1">
-              <TelegramIcon width="15px" height="15px" />
-            </IconBox>
-            <IconBox color="#2260DA">
-              <DiscordIcon width="15px" height="15px" />
-            </IconBox>
+            <Link external href="https://twitter.com/sphynxswap?s=21" aria-label="twitter">
+              <IconBox color="#33AAED">
+                <TwitterIcon width="15px" height="15px" />
+              </IconBox>
+            </Link>
+            <Link external href="https://sphynxtoken.co" aria-label="social2">
+              <IconBox color="#710D89">
+                <SocialIcon2 width="15px" height="15px" />
+              </IconBox>
+            </Link>
+            <Link external href="https://t.me/sphynxswap" aria-label="telegram">
+              <IconBox color="#3E70D1">
+                <TelegramIcon width="15px" height="15px" />
+              </IconBox>
+            </Link>
+            <Link external href="https://discord.gg/ZEuDaFk4qz" aria-label="discord">
+              <IconBox color="#2260DA">
+                <DiscordIcon width="15px" height="15px" />
+              </IconBox>
+            </Link>
             {/* <Link external href="https://instagram.com/sphynxswap?utm_medium=copy_link">
                 <img src={InstaIcon} alt="insta" style={{height: "45px", width: "45px", padding: "8px"}} />
               </Link> */}
           </SocialIconsWrapper>
         </SocialWrapper>
-        <Toggle checked={isDark} onChange={toggleTheme} scale="sm" />
-        {!menuToggled && (
-          <IllustrationWrapper>
-            <img src={Illustration} width="321" height="501" alt="Illustration" />
-          </IllustrationWrapper>
-        )}
+        {!isMobile && <Toggle checked={isDark} onChange={toggleTheme} scale="sm" />}
       </MenuContentWrapper>
     </MenuWrapper>
   )

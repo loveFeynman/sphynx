@@ -11,6 +11,7 @@ import TicketContentTable from './TicketContentTable'
 import moment from 'moment'
 import ViewTickets from './ViewTickets'
 import {FormattedNumber} from './FormattedNumber'
+import { SPHYNX_TOKEN_ADDRESS } from 'config/constants'
 
 const Container = styled.div<{ isDetail: boolean }>`
   min-width: 340px;
@@ -64,7 +65,7 @@ export default function TicketCard({ lastLoteryInfo, roundID }) {
         arrayData.push(lastLoteryInfo.finalNumber.toString().charAt(i))
       }
       setWinningCard(arrayData.reverse())
-      axios.get(`${process.env.REACT_APP_BACKEND_API_URL}/price/0x2e121ed64eeeb58788ddb204627ccb7c7c59884c`).then((response) => {
+      axios.get(`${process.env.REACT_APP_BACKEND_API_URL}/price/${SPHYNX_TOKEN_ADDRESS}`).then((response) => {
         let price = response.data.price
         let _amountCollectedInSphynx = (lastLoteryInfo?.amountCollectedInSphynx / 10 ** 18).toString()
         let prizePot = (parseFloat(_amountCollectedInSphynx) * parseFloat(price)).toFixed(5)
