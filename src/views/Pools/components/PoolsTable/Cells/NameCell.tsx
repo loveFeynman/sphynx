@@ -17,7 +17,7 @@ interface NameCellProps {
 const StyledCell = styled(BaseCell)<{ isMobile?: boolean }>`
   align-items:  ${({ isMobile }) => isMobile? 'flex-start' : 'center'};
   flex-direction: ${({ isMobile }) => isMobile? 'column' : 'row'};
-  flex: 2 0 200px;
+  flex: 2;
   ${({ theme }) => theme.mediaQueries.sm} {
   }
 `
@@ -66,7 +66,7 @@ const NameCell: React.FC<NameCellProps> = ({ pool }) => {
             {t('Staked')}
           </Text>
         )}
-        <Text fontSize={isMobile? "15px": "20px"} bold={!isXs && !isSm} small={isXs || isSm} mb='5px'>
+        <Text bold={!isXs && !isSm} small={isXs || isSm} mb='5px'>
           {title}
         </Text>
         {showSubtitle && (

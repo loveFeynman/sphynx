@@ -11,14 +11,14 @@ const StyledPage = styled(Container)`
   width: 100%;
   max-width: none;
   min-height: calc(100vh - 64px);
-  padding-bottom: 16px;
+  padding: 0px 0px 16px 0px;
 
   ${({ theme }) => theme.mediaQueries.sm} {
-    padding-bottom: 24px;
+    padding: 10px 10px 24px 10px;
   }
 
   ${({ theme }) => theme.mediaQueries.lg} {
-    padding-bottom: 32px;
+    padding: 15px 15px 32px 15px;
   }
 `
 

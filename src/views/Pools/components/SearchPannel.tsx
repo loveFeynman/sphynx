@@ -6,10 +6,10 @@ import { useTranslation } from 'contexts/Localization'
 import SearchIcon from "components/Icon/SearchIcon";
 import ToggleView, { ViewMode } from './ToggleView/ToggleView'
 
-const ToggleWrapper = styled.div`
+const ToggleWrapper = styled.div<{isMobile?: boolean}>`
   display: flex;
   align-items: center;
-  margin: 0 25px;
+  margin: ${({ isMobile }) => isMobile ? '0px 25px 0px 0px' : '0px 25px 0px 25px'};
 
   ${Text} {
     margin-left: 8px;
@@ -153,7 +153,7 @@ const SearchPannel = ({ stakedOnly, setStakedOnly, viewMode, setViewMode, setSor
 
   const viewModeToggle = <ToggleView viewMode={viewMode} onToggle={(mode: ViewMode) => setViewMode(mode)} />
   const stakedOnlySwitch = (
-    <ToggleWrapper>
+    <ToggleWrapper isMobile={isMobile}>
       <Toggle checked={stakedOnly} onChange={() => setStakedOnly(!stakedOnly)} scale="sm" />
       <Text color='#A7A7CC'> {t('Staked only')}</Text>
     </ToggleWrapper>

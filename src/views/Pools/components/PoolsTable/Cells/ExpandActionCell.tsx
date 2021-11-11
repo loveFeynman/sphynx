@@ -13,7 +13,7 @@ const StyledCell = styled(BaseCell)`
   flex-direction: column;
   justify-content: flex-end;
   align-items: center;
-  flex: 0 0 100px;
+  flex: 1;
   ${({ theme }) => theme.mediaQueries.md} {
   }
 `
