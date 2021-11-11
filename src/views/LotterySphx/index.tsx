@@ -102,23 +102,13 @@ const ContractPanelOverlay = styled.div`
 const PrizePotCardContainer = styled.div`
   display: flex;
   jusitfy-content: center;
-  flex-direction: column-reverse;
+  flex-direction: column;
   align-items: center;
   
   ${({ theme }) => theme.mediaQueries.md} {
     flex-direction: row;
     align-items: flex-start;
     justify-content: center;
-  }
-`
-const WinningCardContainer = styled.div`
-  display: flex;
-  margin-top: 21px;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  ${({ theme }) => theme.mediaQueries.md} {
-    flex-direction: row;
   }
 `
 const PastDrawCardContainer = styled.div`
@@ -133,8 +123,8 @@ const PastDrawCardContainer = styled.div`
   }
 `
 const RightContainer = styled.div`
-  height: 0;
-  width: 0;
+  display: flex;
+  flex-direction: column;
   ${({ theme }) => theme.mediaQueries.xl} {
     right: 0px;
     height: auto;
@@ -143,11 +133,22 @@ const RightContainer = styled.div`
   }
 `
 const Grid = styled.div`
-  width: 100%;
-  display: grid;
-  grid-template-columns: repeat(2, 382px);
-  justify-content: space-between;
-  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  ${({ theme }) => theme.mediaQueries.xl} {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, 382px);
+    justify-content: space-between;
+    align-items: center;
+  }
+`
+const CustomTabs = styled(SwapTabs)`
+  padding-top: 50px;
+  ${({ theme }) => theme.mediaQueries.xl} {
+    padding-top:0px;
+  }
 `
 
 export default function Lottery() {
@@ -326,7 +327,7 @@ export default function Lottery() {
           </Flex>
         </RightContainer>
       </Grid>
-      <SwapTabs selectedTabClassName="is-selected" selectedTabPanelClassName="is-selected">
+      <CustomTabs selectedTabClassName="is-selected" selectedTabPanelClassName="is-selected">
         <SwapTabList>
           <SwapTab>
             <Text textAlign="center" fontSize="14px" bold textTransform="capitalize" color="#A7A7CC">
@@ -378,7 +379,7 @@ export default function Lottery() {
             </PrizePotCardContainer>
           </SwapTabPanel>
         </Card>
-      </SwapTabs>
+      </CustomTabs>
       {activeIndex === 1 && (
         <>
           <div style={{ display: 'flex', justifyContent: 'center' }}>

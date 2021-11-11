@@ -46,12 +46,16 @@ const StepContainer = styled.div`
   width: 100%;
   display: grid;
   flex-direction: column;
-  grid-template-columns: repeat(3, 1fr);
-  grid-gap: 20px;
+  grid-template-columns: repeat(1, 1fr);
+  grid-row-gap: 63px;
   min-height: 305px;
-  padding: 76px 36px 67px;
-  ${({ theme }) => theme.mediaQueries.md} {
+  padding: 63px 28px 67px;
+  ${({ theme }) => theme.mediaQueries.lg} {
+    display: flex;
     flex-direction: row;
+    padding-top: 63px;
+    grid-column-gap: 20px;
+
   }
 `
 
@@ -67,10 +71,19 @@ const StyledStepCard = styled(Box)`
 `
 
 const GappedFlex = styled(Flex)`
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  background: ${({ theme }) => (theme.isDark ? '#0E0E26' : '#2A2E60')};
-  gap: 52px;
+  display: flex;
+  flex-direction: column;
+  margin: 0 20px;
+  padding: 28px 0;
+  row-gap: 30px;
+  ${({ theme }) => theme.mediaQueries.lg} {
+    margin: 0 10%;
+    display: grid;
+    padding: 45px 0;
+    grid-template-columns: repeat(2, 1fr);
+    background: ${({ theme }) => (theme.isDark ? '#0E0E26' : '#2A2E60')};
+    gap: 52px;
+  }
 `
 
 const StyledStepCardTop = styled(Box)`
@@ -124,6 +137,46 @@ const InlineLink = styled(Link)`
   color: #B928AF;
   font-size: 14px;
 `
+const HowtoplayText = styled(Text)`
+  padding: 0 12px;
+  text-align: center;
+  margin-top: 10px;
+  ${({ theme }) => theme.mediaQueries.lg} {
+    padding: 0 23%;
+    font-size: 15px;
+    font-weight: 500;
+    color: #A7A7CC;
+    line-height: 146%;
+    margin-top: 12px;
+    text-align: center;
+  }
+`
+
+const FundsFlex = styled(Flex)`
+  min-width: 42px;
+  max-height: 48px;
+  ${({ theme }) => theme.mediaQueries.lg} {
+    min-width: 60px;
+    max-height: 70px;
+  }
+`
+
+const WinningFlex = styled(Flex)`
+  min-width: 58px;
+  max-height: 51px;
+  ${({ theme }) => theme.mediaQueries.lg} {
+    min-width: 78px;
+    max-height: 70px;
+  }
+`
+const TicketFlex = styled(Flex)`
+  margin: 12px 0px 0px -44px;
+  column-gap: 26px;
+  ${({ theme }) => theme.mediaQueries.lg} {
+    margin: 12px 0px 0px -28px;
+    column-gap: 10px;
+  }
+`
 
 const PoolAllocations = () => {
   const { t } = useTranslation()
@@ -166,11 +219,11 @@ const HowToPlay: React.FC = () => {
           <Heading scale="xl" color="white">
             {t('How to Play')}
           </Heading>
-          <Text fontSize="15px" fontWeight="500" textAlign="center" color="#A7A7CC" mt="12px" lineHeight="146%" px="33%">
+          <HowtoplayText >
             {t(
               'If the digits on your tickets match the winning numbers in the correct order, you win a portion of the prize pool.',
             )}
-          </Text>
+          </HowtoplayText>
         </Flex>
         <StepContainer>
           {steps.map((step) => (
@@ -179,11 +232,11 @@ const HowToPlay: React.FC = () => {
         </StepContainer>
       </Container>
       <Container style={{ marginTop: "20px" }}>
-        <GappedFlex mx="10%" py="45px" >
+        <GappedFlex  >
           <Flex flex="2" flexDirection="row" maxWidth="fit-content">
-            <Box minWidth="79px">
+            <WinningFlex>
               <img src={LotteryLatestIcon} alt="" />
-            </Box>
+            </WinningFlex>
             <Box pl="5px" maxWidth="400px">
               <Text fontSize="26px" color="white" fontWeight="600">
                 {t('Winning Criteria')}
@@ -196,7 +249,7 @@ const HowToPlay: React.FC = () => {
               </Text>
               <BulletList >
                 <li >
-                  <Flex mt="12px" ml="-28px" style={{columnGap: '10px'}}>
+                  <TicketFlex>
                     <Box maxWidth="18px" >
                       <ListMaker />
                     </Box>
@@ -205,10 +258,10 @@ const HowToPlay: React.FC = () => {
                         'Ticket A: The first 3 digits and the last 2 digits match, but the 4th digit is wrong, so this ticket only wins a “Match first 3” prize.',
                       )}
                     </Text>
-                  </Flex>
+                  </TicketFlex>
                 </li>
                 <li>
-                  <Flex mt="12px" ml="-28px" style={{columnGap: '10px'}}>
+                  <TicketFlex>
                     <Box maxWidth="18px">
                       <ListMaker />
                     </Box>
@@ -217,7 +270,7 @@ const HowToPlay: React.FC = () => {
                         'Ticket B: Even though the last 5 digits match, the first digit is wrong, so this ticket doesn’t win a prize.',
                       )}
                     </Text>
-                  </Flex>
+                  </TicketFlex>
                 </li>
               </BulletList>
               <Text mt="16px" fontSize="14px" color="#A7A7CC">
@@ -232,15 +285,15 @@ const HowToPlay: React.FC = () => {
           </Flex>
         </GappedFlex>
         <Divider style={{margin: "0px 48px"}} />
-        <GappedFlex mx="10%" py="65px">
+        <GappedFlex >
           <Flex flex="1" justifyContent="center">
             <PoolAllocations />
           </Flex>
           <Flex flex="2" flexDirection="column">
             <Flex maxWidth="fit-content">
-              <Flex maxWidth="61px" maxHeight="70px">
+              <FundsFlex>
                 <img src={LotteryFundsIcon} width="69px" height="78px" alt="funds" />
-              </Flex>
+              </FundsFlex>
               <Box pl="5px" maxWidth="400px">
                 <Heading  mb="13px" scale="lg" color="white">
                   {t('Prize Funds')}
