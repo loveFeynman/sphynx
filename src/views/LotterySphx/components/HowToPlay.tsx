@@ -76,6 +76,7 @@ const GappedFlex = styled(Flex)`
   margin: 0 20px;
   padding: 28px 0;
   row-gap: 30px;
+  width: 80%;
   ${({ theme }) => theme.mediaQueries.lg} {
     margin: 0 10%;
     display: grid;
@@ -83,6 +84,7 @@ const GappedFlex = styled(Flex)`
     grid-template-columns: repeat(2, 1fr);
     background: ${({ theme }) => (theme.isDark ? '#0E0E26' : '#2A2E60')};
     gap: 52px;
+    width: 80%;
   }
 `
 
