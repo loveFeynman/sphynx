@@ -28,7 +28,7 @@ import PoolsTable from './components/PoolsTable/PoolsTable'
 import { ViewMode } from './components/ToggleView/ToggleView'
 import { getAprData, getCakeVaultEarnings } from './helpers'
 import { SwapTabs, SwapTabList, SwapTab, SwapTabPanel } from "../../components/Tab/tab";
-import Card, { GreyCard } from '../../components/Card'
+import Card from '../../components/Card'
 
 const CardLayout = styled(FlexLayout)`
   justify-content: center;
