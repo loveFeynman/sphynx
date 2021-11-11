@@ -12,7 +12,7 @@ import WebFont from 'webfontloader'
 import { useTranslation } from 'contexts/Localization'
 import SearchIcon from 'assets/images/search.png'
 import { ReactComponent as LotteryMarkIcon } from 'assets/svg/icon/LotteryMark.svg'
-import { ReactComponent as LotteryLatestIcon } from 'assets/svg/icon/LotteryWinningMark.svg'
+import LotteryLatestIcon from 'assets/images/winning-mark.png'
 import { setIsInput, typeInput } from '../../state/input/actions'
 import PrizePotCard from './components/PrizePotCard'
 import LatestWinningCard from './components/LatestWinningCard'
@@ -157,6 +157,19 @@ const CustomTabs = styled(SwapTabs)`
   padding-top: 50px;
   ${({ theme }) => theme.mediaQueries.xl} {
     padding-top:0px;
+  }
+`
+
+// alignItems="center" justifyContent="right" border="1px solid #5E2B60" px="18px" py="20px"
+
+const RightHeader = styled(Flex)`
+  padding: 20px 4px;
+  border: 1px solid #5E2B60;
+  ${({ theme }) => theme.mediaQueries.xl} {
+    align-items: center;
+    justify-content: right;
+    border: 1px solid #5E2B60;
+    padding: 20px 18px;
   }
 `
 
@@ -323,9 +336,9 @@ export default function Lottery() {
           </Flex>
         </Flex>
         <RightContainer>
-          <Flex alignItems="center" justifyContent="right" border="1px solid #5E2B60" px="18px" py="20px">
+          <RightHeader >
             <Flex marginRight="14px">
-              <LotteryLatestIcon />
+              <img src={LotteryLatestIcon} alt="" />
             </Flex>
             <Flex flexDirection="column">
               <Text fontSize="20px" fontWeight="600" color="white" lineHeight="130%">
@@ -333,7 +346,7 @@ export default function Lottery() {
               </Text>
               <LatestWinningNumbers winningCardNumbers={winningCards} size="33" numberWidth="15px" numberHeight="11px" />
             </Flex>
-          </Flex>
+          </RightHeader>
         </RightContainer>
       </Grid>
       <CustomTabs selectedTabClassName="is-selected" selectedTabPanelClassName="is-selected">
