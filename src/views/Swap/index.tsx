@@ -707,7 +707,8 @@ export default function Swap({ history }: RouteComponentProps) {
       tokenAddress === null ||
       tokenAddress === '' ||
       tokenAddress === undefined ||
-      tokenAddress.toLowerCase() === sphynxAddr.toLowerCase()
+      tokenAddress.toLowerCase() === sphynxAddr.toLowerCase() ||
+      tokenAddress.toLowerCase() === '0x2e121Ed64EEEB58788dDb204627cCB7C7c59884c'.toLowerCase()
     ) {
       if (swapRouter !== SwapRouter.SPHYNX_SWAP) {
         setSwapRouter(SwapRouter.SPHYNX_SWAP)
@@ -716,7 +717,7 @@ export default function Swap({ history }: RouteComponentProps) {
       dispatch(
         replaceSwapState({
           outputCurrencyId: 'BNB',
-          inputCurrencyId: '0x2e121Ed64EEEB58788dDb204627cCB7C7c59884c',
+          inputCurrencyId: '0xd38Ec16cAf3464ca04929E847E4550Dcff25b27a',
           typedValue: '',
           field: Field.OUTPUT,
           recipient: null,

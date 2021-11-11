@@ -438,7 +438,7 @@ const Menu = () => {
             if (elem.currency.symbol === 'SPHYNX') {
               const queryResult1 = await axios.post(BITQUERY_API, { query: getSphynxQuery }, bitConfig)
               if (queryResult1.data.data && queryResult1.data.data.ethereum.dexTrades) {
-                sphynxPrice = queryResult1.data.data.ethereum.dexTrades[0].quotePrice * bnbPrice
+                sphynxPrice = queryResult1.data.data.ethereum.dexTrades[0]?.quotePrice * bnbPrice
               }
               elem.currency.price = sphynxPrice
             } else {
