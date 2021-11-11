@@ -14,18 +14,18 @@ interface NameCellProps {
   pool: Pool
 }
 
-const StyledCell = styled(BaseCell)`
-  flex: 5;
-  align-items: center;
-  flex-direction: row;
+const StyledCell = styled(BaseCell)<{ isMobile?: boolean }>`
+  align-items:  ${({ isMobile }) => isMobile? 'flex-start' : 'center'};
+  flex-direction: ${({ isMobile }) => isMobile? 'column' : 'row'};
+  flex: 2 0 200px;
   ${({ theme }) => theme.mediaQueries.sm} {
-    flex: 2 0 200px;
   }
 `
 
 const NameCell: React.FC<NameCellProps> = ({ pool }) => {
   const { t } = useTranslation()
-  const { isXs, isSm } = useMatchBreakpoints()
+  const { isXs, isXl, isSm } = useMatchBreakpoints()
+  const isMobile = !isXl
   const { sousId, stakingToken, earningToken, userData, isFinished, isAutoVault } = pool
   const {
     userData: { userShares },
@@ -54,11 +54,11 @@ const NameCell: React.FC<NameCellProps> = ({ pool }) => {
   }
 
   return (
-    <StyledCell role="cell">
+    <StyledCell role="cell" isMobile={isMobile}>
         {isAutoVault ? (
-          <CakeVaultTokenPairImage mr="8px" width={70} height={70} />
+          <CakeVaultTokenPairImage mr="8px" width={isMobile? 50: 70} height={isMobile? 50: 70} />
         ) : (
-          <TokenPairImage primaryToken={earningToken} secondaryToken={stakingToken} mr="8px" width={70} height={70} />
+          <TokenPairImage primaryToken={earningToken} secondaryToken={stakingToken} mr="8px" width={isMobile? 50: 70} height={isMobile? 50: 70} />
         )}
       <CellContent>
         {showStakedTag && (
@@ -66,11 +66,11 @@ const NameCell: React.FC<NameCellProps> = ({ pool }) => {
             {t('Staked')}
           </Text>
         )}
-        <Text fontSize="20px" bold={!isXs && !isSm} small={isXs || isSm} mb='5px'>
+        <Text fontSize={isMobile? "15px": "20px"} bold={!isXs && !isSm} small={isXs || isSm} mb='5px'>
           {title}
         </Text>
         {showSubtitle && (
-          <Text fontSize="15px" color="#777777">
+          <Text fontSize={isMobile? "12px": "15px"} color="#777777">
             {subtitle}
           </Text>
         )}

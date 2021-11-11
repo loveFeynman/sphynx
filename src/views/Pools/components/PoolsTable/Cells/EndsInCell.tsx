@@ -14,7 +14,7 @@ interface FinishCellProps {
 }
 
 const StyledCell = styled(BaseCell)`
-  flex: 1 0 100px;
+  flex: 1 0 120px;
 `
 
 const EndsInCell: React.FC<FinishCellProps> = ({ pool }) => {

@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
-import { useMatchBreakpoints } from '@sphynxswap/uikit'
+import { useMatchBreakpoints, Flex } from '@sphynxswap/uikit'
 import { Pool } from 'state/types'
 import { useCakeVault } from 'state/pools/hooks'
 import useDelayedUnmount from 'hooks/useDelayedUnmount'
@@ -18,15 +18,17 @@ interface PoolRowProps {
   userDataLoaded: boolean
 }
 
-const StyledRow = styled.div<{expanded}>`
+const StyledRow = styled.div<{ expanded, isMobile }>`
   background-color: transparent;
   display: flex;
+  flex-direction: ${({ isMobile }) => isMobile ? 'column' : 'row'}; 
   cursor: pointer;
-  border-bottom: ${({expanded}) => expanded ? '0px' : '1px'} solid #21214A;
+  border-bottom: ${({ expanded }) => expanded ? '0px' : '1px'} solid #21214A;
 `
 
 const PoolRow: React.FC<PoolRowProps> = ({ pool, account, userDataLoaded }) => {
   const { isXs, isSm, isMd, isLg, isXl } = useMatchBreakpoints()
+  const isMobile = !isXl
   const [expanded, setExpanded] = useState(false)
   const shouldRenderActionPanel = useDelayedUnmount(expanded, 300)
 
@@ -41,13 +43,19 @@ const PoolRow: React.FC<PoolRowProps> = ({ pool, account, userDataLoaded }) => {
 
   return (
     <>
-      <StyledRow role="row" expanded={expanded} onClick={toggleExpanded}>
-        <NameCell pool={pool} />
-        <EarningsCell pool={pool} account={account} userDataLoaded={userDataLoaded} />
-        <AprCell pool={pool} performanceFee={performanceFeeAsDecimal} />
-        {(isLg || isXl) && <TotalStakedCell pool={pool} />}
-        {isXl && <EndsInCell pool={pool} />}
-        <ExpandActionCell expanded={expanded} isFullLayout={isMd || isLg || isXl} />
+      <StyledRow role="row" expanded={expanded} isMobile={isMobile} onClick={toggleExpanded}>
+        <Flex width={isMobile ? '100%' : '60%'}>
+          <NameCell pool={pool} />
+          <EarningsCell pool={pool} account={account} userDataLoaded={userDataLoaded} />
+          <AprCell pool={pool} performanceFee={performanceFeeAsDecimal} />
+        </Flex>
+        <Flex width={isMobile ? '100%' : '40%'}>
+          {/* {(isLg || isXl) && <TotalStakedCell pool={pool} />}
+          {isXl && <EndsInCell pool={pool} />} */}
+          <TotalStakedCell pool={pool} />
+          <EndsInCell pool={pool} />
+          <ExpandActionCell expanded={expanded} isFullLayout={isMd || isLg || isXl} />
+        </Flex>
       </StyledRow>
       {shouldRenderActionPanel && (
         <ActionPanel

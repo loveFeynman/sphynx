@@ -13,9 +13,8 @@ const StyledCell = styled(BaseCell)`
   flex-direction: column;
   justify-content: flex-end;
   align-items: center;
-  flex: 1;
+  flex: 0 0 100px;
   ${({ theme }) => theme.mediaQueries.md} {
-    flex: 0 0 100px;
   }
 `
 

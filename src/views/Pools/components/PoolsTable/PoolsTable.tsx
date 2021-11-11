@@ -1,6 +1,6 @@
 import React, { useRef } from 'react'
 import styled from 'styled-components'
-import { Button, ChevronUpIcon } from '@sphynxswap/uikit'
+import { Button, ChevronUpIcon, useMatchBreakpoints } from '@sphynxswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 import { Pool } from 'state/types'
 import PoolRow from './PoolRow'
@@ -15,8 +15,8 @@ const StyledTable = styled.div`
   background-color: transparent;
 `
 
-const StyledTableBorder = styled.div`
-  padding: 5px 80px 20px 40px;
+const StyledTableBorder = styled.div<{isMobile?: boolean}>`
+  padding: ${({ isMobile }) => isMobile? '10px' : '5px 40px 20px 40px'};
   background-color: transparent;
 `
 
@@ -30,13 +30,16 @@ const ScrollButtonContainer = styled.div`
 const PoolsTable: React.FC<PoolsTableProps> = ({ pools, userDataLoaded, account }) => {
   const { t } = useTranslation()
   const tableWrapperEl = useRef<HTMLDivElement>(null)
+  const { isXl } = useMatchBreakpoints()
+  const isMobile = !isXl
+
   const scrollToTop = (): void => {
     tableWrapperEl.current.scrollIntoView({
       behavior: 'smooth',
     })
   }
   return (
-    <StyledTableBorder>
+    <StyledTableBorder isMobile={isMobile}>
       <StyledTable role="table" ref={tableWrapperEl}>
         {pools.map((pool) => (
           <PoolRow
