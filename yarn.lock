@@ -1639,7 +1639,7 @@
   dependencies:
     regenerator-runtime "^0.13.4"
 
-"@babel/runtime@^7.6.0":
+"@babel/runtime@^7.10.1", "@babel/runtime@^7.6.0":
   version "7.16.3"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.16.3.tgz#b86f0db02a04187a3c17caa77de69840165d42d5"
   integrity sha512-WBwekcqacdY2e9AF/Q7WLFUWmdJGJTkbjqTjoMDgXkVZ3ZRUvOPsLb5KdwISoQVsbP+DQzVZW4Zhci0DvpbNTQ==
@@ -1937,6 +1937,11 @@
   integrity sha512-QSL+83qezQ9Ty0dtFgAkk6eC0GMl/lgYfDajeVUDB3zVA2A038hzczRLBg29ifnBGhQMPABxuOafgWwhDjlarg==
   dependencies:
     "@date-io/core" "^2.11.0"
+
+"@delowar/react-circle-progressbar@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@delowar/react-circle-progressbar/-/react-circle-progressbar-1.0.0.tgz#38612e6cd2cdd0d948406ea5cf5616281d3446f8"
+  integrity sha512-oiZROHDFBd8AfjBM2lKtp8ykpKx0S6QReS9mf+p2hplJ8TXKV2+dqK2WpRurqJCnkOAcs6oMOVLJM93fawbbtw==
 
 "@emotion/cache@^10.0.27":
   version "10.0.29"
@@ -19748,6 +19753,14 @@ raw-body@2.4.0:
     http-errors "1.7.2"
     iconv-lite "0.4.24"
     unpipe "1.0.0"
+
+rc-progress@^3.1.4:
+  version "3.1.4"
+  resolved "https://registry.yarnpkg.com/rc-progress/-/rc-progress-3.1.4.tgz#66040d0fae7d8ced2b38588378eccb2864bad615"
+  integrity sha512-XBAif08eunHssGeIdxMXOmRQRULdHaDdIFENQ578CMb4dyewahmmfJRyab+hw4KH4XssEzzYOkAInTLS7JJG+Q==
+  dependencies:
+    "@babel/runtime" "^7.10.1"
+    classnames "^2.2.6"
 
 rc@^1.2.7:
   version "1.2.8"

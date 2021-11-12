@@ -17,96 +17,96 @@ import Pagenation from './components/Pagenation'
 
 const SORTBY_OPTIONS = [
   {
-    label: "All",
-    value: "all",
+    label: 'All',
+    value: 'all',
   },
   {
-    label: "First",
-    value: "first",
+    label: 'First',
+    value: 'first',
   },
   {
-    label: "Second",
-    value: "second",
+    label: 'Second',
+    value: 'second',
   },
 ]
 
 const TOKEN_DATA = [
   {
-    tokenName: "sphynx token",
-    tokenSymbole: "sphynx",
+    tokenName: 'sphynx token',
+    tokenSymbole: 'sphynx',
     tokenLogo: MainLogo,
     activeSale: 19,
     softCap: 150,
     hardCap: 300,
     minContribution: 0.1,
     maxContribution: 3,
-    tokenState: "active",
+    tokenState: 'active',
   },
   {
-    tokenName: "sphynx token",
-    tokenSymbole: "sphynx",
+    tokenName: 'sphynx token',
+    tokenSymbole: 'sphynx',
     tokenLogo: ShivaLogo,
     activeSale: 4,
     softCap: 150,
     hardCap: 300,
     minContribution: 0.1,
     maxContribution: 3,
-    tokenState: "active",
+    tokenState: 'active',
   },
   {
-    tokenName: "sphynx token",
-    tokenSymbole: "sphynx",
+    tokenName: 'sphynx token',
+    tokenSymbole: 'sphynx',
     tokenLogo: SnifferIcon,
     activeSale: 88,
     softCap: 150,
     hardCap: 300,
     minContribution: 0.1,
     maxContribution: 3,
-    tokenState: "active",
+    tokenState: 'active',
   },
   {
-    tokenName: "sphynx token",
-    tokenSymbole: "sphynx",
+    tokenName: 'sphynx token',
+    tokenSymbole: 'sphynx',
     tokenLogo: LamboIcon,
     activeSale: 65,
     softCap: 150,
     hardCap: 300,
     minContribution: 0.1,
     maxContribution: 3,
-    tokenState: "active",
+    tokenState: 'active',
   },
   {
-    tokenName: "sphynx token",
-    tokenSymbole: "sphynx",
+    tokenName: 'sphynx token',
+    tokenSymbole: 'sphynx',
     tokenLogo: AfiIcon,
     activeSale: 36,
     softCap: 150,
     hardCap: 300,
     minContribution: 0.1,
     maxContribution: 3,
-    tokenState: "pending",
+    tokenState: 'pending',
   },
   {
-    tokenName: "sphynx token",
-    tokenSymbole: "sphynx",
+    tokenName: 'sphynx token',
+    tokenSymbole: 'sphynx',
     tokenLogo: GalabetIcon,
     activeSale: 64,
     softCap: 150,
     hardCap: 300,
     minContribution: 0.1,
     maxContribution: 3,
-    tokenState: "failed",
+    tokenState: 'failed',
   },
   {
-    tokenName: "sphynx token",
-    tokenSymbole: "sphynx",
+    tokenName: 'sphynx token',
+    tokenSymbole: 'sphynx',
     tokenLogo: MainLogo,
     activeSale: 78,
     softCap: 150,
     hardCap: 300,
     minContribution: 0.1,
     maxContribution: 3,
-    tokenState: "active",
+    tokenState: 'active',
   },
 ]
 
@@ -159,7 +159,7 @@ const InputWrapper = styled.div`
       height: 34px;
       max-width: 192px;
       width: 100%;
-      background: ${({ theme }) => (theme.isDark ? "#0E0E26" : "#2A2E60")};
+      background: ${({ theme }) => (theme.isDark ? '#040413' : '#2A2E60')};
     }
   }
 `
@@ -169,12 +169,12 @@ const SelectWrapper = styled.div`
     font-size: 12px;
   }
   div: last-child {
-    background: ${({ theme }) => (theme.isDark ? "#0E0E26" : "#2A2E60")};
+    background: ${({ theme }) => (theme.isDark ? '#040413' : '#2A2E60')};
     border-radius: 8px;
     div {
       border-radius: 8px;
       border: unset;
-      background: ${({ theme }) => (theme.isDark ? "#0E0E26" : "#2A2E60")};
+      background: ${({ theme }) => (theme.isDark ? '#040413' : '#2A2E60')};
     }
   }
 `
@@ -184,7 +184,6 @@ const FilterContainer = styled.div`
   width: 100%;
   gap: 16px;
   padding: 8px 0px;
-  margin-top: 38px;
   justify-content: flex-end;
   ${({ theme }) => theme.mediaQueries.xs} {
     flex-direction: column;
@@ -238,29 +237,11 @@ const LogoTitleWrapper = styled.div`
     flex-direction: column-reverse;
     gap: 40px;
     align-items: center;
-
   }
   ${({ theme }) => theme.mediaQueries.md} {
     flex-direction: unset;
     gap: unset;
     align-items: unset;
-  }
-`
-
-const MobileButtonWrapper = styled.div`
-  display: flex;
-  button {
-    height: 40px;
-    width: 100%;
-    max-width: 164px;
-  }
-  ${({ theme }) => theme.mediaQueries.xs} {
-    width: 100%;
-    justify-content: flex-end;
-  }
-  ${({ theme }) => theme.mediaQueries.md} {
-    width: unset;
-    justify-content: unset;
   }
 `
 
@@ -279,21 +260,11 @@ const Presale: React.FC = () => {
 
   return (
     <Wrapper>
-      <LogoTitleWrapper>
-        <LogoTitle>LaunchPad Listings</LogoTitle>
-        <MobileButtonWrapper>
-          <Button style={{ borderRadius: "32px", padding: "12px" }}>
-            <img src={BinanceLogo} width="24" height="24" alt="network icon" />
-            <Text ml="10px" fontWeight="500">BSC Network</Text>
-          </Button>
-        </MobileButtonWrapper>
-      </LogoTitleWrapper>
+      <LogoTitle>LaunchPad Listings</LogoTitle>
       <FilterContainer>
         <SelectWrapper>
           <Text textTransform="uppercase">{t('Sort by')}</Text>
-          <Select
-            options={SORTBY_OPTIONS}
-          />
+          <Select options={SORTBY_OPTIONS} />
         </SelectWrapper>
         <InputWrapper>
           <Text textTransform="uppercase">{t('Search')}</Text>
@@ -302,7 +273,17 @@ const Presale: React.FC = () => {
       </FilterContainer>
       <TokenListContainder toggled={menuToggled}>
         {TOKEN_DATA.map((item) => (
-          <TokenCard tokenName={item.tokenName} tokenSymbole={item.tokenSymbole} tokenLogo={item.tokenLogo} activeSale={item.activeSale} softCap={item.softCap} hardCap={item.hardCap} minContribution={item.minContribution} maxContribution={item.maxContribution} tokenState={item.tokenState}>
+          <TokenCard
+            tokenName={item.tokenName}
+            tokenSymbole={item.tokenSymbole}
+            tokenLogo={item.tokenLogo}
+            activeSale={item.activeSale}
+            softCap={item.softCap}
+            hardCap={item.hardCap}
+            minContribution={item.minContribution}
+            maxContribution={item.maxContribution}
+            tokenState={item.tokenState}
+          >
             <img src={item.tokenLogo} alt="token icon" />
           </TokenCard>
         ))}

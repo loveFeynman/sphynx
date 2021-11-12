@@ -5,7 +5,7 @@ import Progress from '@delowar/react-circle-progressbar';
 import ContractHelper from './ContractHelper';
 
 const CardWrapper = styled.div`
-    background: ${({ theme }) => (theme.isDark ? "#0E0E26" : "#2A2E60")};
+    background: ${({ theme }) => (theme.isDark ? "#040413" : "#2A2E60")};
     border-radius: 8px;
 `
 

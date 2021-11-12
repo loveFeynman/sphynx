@@ -128,7 +128,7 @@ const InputWrapper = styled.div`
       height: 34px;
       max-width: 192px;
       width: 100%;
-      background: ${({ theme }) => (theme.isDark ? "#0E0E26" : "#2A2E60")};
+      background: ${({ theme }) => (theme.isDark ? "#040413" : "#2A2E60")};
     }
   }
 `
@@ -138,12 +138,12 @@ const SelectWrapper = styled.div`
     font-size: 12px;
   }
   div: last-child {
-    background: ${({ theme }) => (theme.isDark ? "#0E0E26" : "#2A2E60")};
+    background: ${({ theme }) => (theme.isDark ? "#040413" : "#2A2E60")};
     border-radius: 8px;
     div {
       border-radius: 8px;
       border: unset;
-      background: ${({ theme }) => (theme.isDark ? "#0E0E26" : "#2A2E60")};
+      background: ${({ theme }) => (theme.isDark ? "#040413" : "#2A2E60")};
     }
   }
 `
@@ -153,7 +153,6 @@ const FilterContainer = styled.div`
   align-items: center;
   width: 100%;
   padding: 8px 0px;
-  margin-top: 38px;
   justify-content: flex-end;
   @media screen and (min-width: 918px) {
     display: flex;
@@ -174,7 +173,7 @@ const TokenPresaleContainder = styled.div<{ toggled: boolean }>`
 `
 
 const CardWrapper = styled.div<{ wrapperFlex?: string }>`
-  background: ${({ theme }) => (theme.isDark ? "#0E0E26" : "#2A2E60")};
+  background: ${({ theme }) => (theme.isDark ? "#040413" : "#2A2E60")};
   border-radius: 8px;
   min-width: 237px;
   flex: ${(props) => (props.wrapperFlex ?? 'unset')};
@@ -464,12 +463,6 @@ const PresaleLive: React.FC = () => {
 
   return (
     <Wrapper>
-      <LogoTitleWrapper>
-        <Button style={{ borderRadius: "32px", padding: "12px" }}>
-          <img src={BinanceLogo} width="24" height="24" alt="network icon"/>
-          <Text ml="10px" fontWeight="500">BSC Network</Text>
-        </Button>
-      </LogoTitleWrapper>
       <FilterWrapper>
         <FilterContainer>
           <SelectWrapper>

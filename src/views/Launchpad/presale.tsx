@@ -86,7 +86,7 @@ const Title = styled.p`
 `
 
 const NoteWrapper = styled.div`
-  background: black;
+  background: ${({ theme }) => (theme.isDark ? "#040413" : "#2A2E60")};
   border-radius: 10px;
   width: 100%;
   padding: 24px;
@@ -144,8 +144,8 @@ const InlineWrapper = styled.div`
 `
 
 const CardWrapper = styled.div`
-  background: black;
-  border: 1px solid #8b2a9b;
+  background: ${({ theme }) => (theme.isDark ? "#040413" : "#2A2E60")};
+  border: 1px solid #21214a;
   padding: 40px;
   display: flex;
   flex-flow: column;
@@ -185,13 +185,16 @@ const FeeCard = () => {
 }
 
 const MyInput = styled.input`
-  background: black;
+  background: ${({ theme }) => (theme.isDark ? '#040413' : '#2A2E60')};
   border-radius: 8px;
   padding: 10px 14px;
   height: 44px;
   color: white;
   border: none;
   outline: none;
+  &:focus {
+    outline: 2px solid #8B2A9B99;
+  }
 `
 
 const LineBtn = styled.button`
@@ -231,13 +234,17 @@ const FillBtn = styled.button`
   }
 `
 
+const StepContainer = styled.div`
+  max-width: 1000px;
+`
+
 const NumberMark = ({ number }) => {
   return <NumberWrapper>{number}</NumberWrapper>
 }
 
 const StepWrapper = ({ number, stepName, children, step, onClick }) => {
   return (
-    <>
+    <StepContainer>
       <InlineWrapper style={{ cursor: 'pointer' }} onClick={onClick}>
         <NumberMark number={number} />
         <Title style={{ color: 'white', marginLeft: '8px' }}>{stepName}</Title>
@@ -250,7 +257,7 @@ const StepWrapper = ({ number, stepName, children, step, onClick }) => {
       ) : (
         ''
       )}
-    </>
+    </StepContainer>
   )
 }
 
