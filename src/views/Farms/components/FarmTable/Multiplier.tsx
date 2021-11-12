@@ -11,6 +11,7 @@ const Container = styled.div`
   flex: 1;
   flex-direction: column;
   align-items: flex-start;
+  padding: 24px 8px;
 `
 
 const TitleText = styled(Text)`
@@ -37,7 +38,7 @@ export interface MultiplierProps {
 }
 
 const Multiplier: React.FunctionComponent<MultiplierProps> = ({ multiplier }) => {
-  const displayMultiplier = multiplier ? multiplier.toLowerCase() : <Skeleton width={30} />
+  const displayMultiplier = multiplier ? multiplier.toLowerCase() : <Skeleton width={60} />
   const { t } = useTranslation()
   const tooltipContent = (
     <>

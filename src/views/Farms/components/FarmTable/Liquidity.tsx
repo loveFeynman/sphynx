@@ -16,6 +16,7 @@ const Container = styled.div`
   flex: 1;
   flex-direction: column;
   align-items: flex-start;
+  padding: 24px 8px;
 `
 
 const TitleText = styled(Text)`
@@ -26,7 +27,6 @@ const TitleText = styled(Text)`
 `
 
 const LiquidityWrapper = styled.div`
-  min-width: 110px;
   font-weight: 600;
   text-align: right;
   margin-right: 14px;

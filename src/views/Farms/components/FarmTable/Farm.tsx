@@ -20,8 +20,6 @@ const Container = styled.div<{ isMobile?: boolean }>`
   flex-direction: ${({ isMobile }) => isMobile? 'column' : 'row'};
   flex: 2;
   width: 100%;
-  > div {
-  }
   ${({ theme }) => theme.mediaQueries.sm} {
   }
 `

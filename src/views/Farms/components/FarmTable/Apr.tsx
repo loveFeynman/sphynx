@@ -11,6 +11,7 @@ const Container = styled.div`
   flex: 1;
   flex-direction: column;
   align-items: flex-start;
+  padding: 24px 8px;
 `
 
 const TitleText = styled(Text)`

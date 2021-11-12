@@ -57,13 +57,13 @@ const Row: React.FunctionComponent<RowPropsWithLoading> = (props) => {
   return (
     <>
       <StyledRow role="row" expanded={actionPanelExpanded} isMobile={isMobile} onClick={toggleActionPanel}>
-        <Flex width={isMobile ? '100%' : '60%'}>
+        <Flex width={isMobile ? '100%' : '75%'}>
           <Farm {...farm} />
           <Earned {...earned} userDataReady={userDataReady} />
           <Apr {...apr} hideButton />
-        </Flex>
-        <Flex width={isMobile ? '100%' : '40%'}>
           <Liquidity {...liquidity} />
+        </Flex>
+        <Flex width={isMobile ? '100%' : '25%'}>
           <Multiplier {...multiplier} />
           <Details actionPanelToggled={actionPanelExpanded} />
         </Flex>
