@@ -400,14 +400,16 @@ const Farms: React.FC = () => {
     <>
       <div style={{ height: 24 }} />
       <PageHeader>
-        <FarmLogo width="80" height="60" />
-        <Flex flexDirection="column" ml="10px">
-          <Text fontSize="26px" color="white" bold>
-            {t('Farms')}
-          </Text>
-          <Text fontSize="15px" color="#777777">
-            {t('Stake LP tokens to earn.')}
-          </Text>
+        <Flex>
+          <FarmLogo width="80" height="60" />
+          <Flex flexDirection="column" ml="10px">
+            <Text fontSize="26px" color="white" bold>
+              {t('Farms')}
+            </Text>
+            <Text fontSize="15px" color="#777777">
+              {t('Stake LP tokens to earn.')}
+            </Text>
+          </Flex>
         </Flex>
       </PageHeader>
       <Page>

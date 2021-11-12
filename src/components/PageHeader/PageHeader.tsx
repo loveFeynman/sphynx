@@ -10,9 +10,9 @@ const Outer = styled(Box)<{ background?: string }>`
   margin: 0px;
   max-width: none;
   > div {
-    display: flex;
-    flex-direction: row;
-    width: 100%;
+    // display: flex;
+    // flex-direction: row;
+    // width: 100%;
     max-width: none;
   }
 `
