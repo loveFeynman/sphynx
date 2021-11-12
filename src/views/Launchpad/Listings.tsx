@@ -289,7 +289,6 @@ const Presale: React.FC = () => {
           <Text textTransform="uppercase">{t('Sort by')}</Text>
           <Select
             options={SORTBY_OPTIONS}
-            onChange={handleSortOptionChange}
           />
         </SelectWrapper>
         <InputWrapper>

@@ -440,7 +440,7 @@ const LogoTitleWrapper = styled.div`
 `
 
 const PresaleLive: React.FC = () => {
-  const [sortyBy, setSortBy] = useState('')
+  const [sortyBy, setSortBy] = useState()
   const { t } = useTranslation()
   const { menuToggled } = useMenuToggle()
   const [claimToken, setClaimToken] = useState(true)
@@ -472,7 +472,6 @@ const PresaleLive: React.FC = () => {
             <Text textTransform="uppercase">{t('Sort by')}</Text>
             <Select
               options={SORTBY_OPTIONS}
-              onChange={handleSortOptionChange}
             />
           </SelectWrapper>
           <InputWrapper style={{ marginLeft: 16 }}>
