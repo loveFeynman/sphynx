@@ -8,8 +8,7 @@ interface DetailsProps {
 }
 
 const Container = styled.div`
-  display: flex;
-  width: 100%;
+  flex: 0.5;
   justify-content: flex-end;
   padding-right: 8px;
   color: ${({ theme }) => theme.colors.text};

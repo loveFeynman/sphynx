@@ -1,6 +1,6 @@
 import React, { useRef } from 'react'
 import styled from 'styled-components'
-import { useTable, Button, ChevronUpIcon, ColumnType } from '@sphynxswap/uikit'
+import { useTable, Button, ChevronUpIcon, ColumnType, useMatchBreakpoints } from '@sphynxswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 
 import Row, { RowProps } from './Row'
@@ -12,12 +12,9 @@ export interface ITableProps {
   sortColumn?: string
 }
 
-const Container = styled.div`
-  filter: ${({ theme }) => theme.card.dropShadow};
-  width: 100%;
-  background: ${({ theme }) => theme.colors.input};
-  border-radius: 16px;
-  margin: 16px 0px;
+const Container = styled.div<{isMobile?: boolean}>`
+  padding: ${({ isMobile }) => isMobile? '10px' : '5px 40px 20px 40px'};
+  background-color: transparent;
 `
 
 const TableWrapper = styled.div`
@@ -60,6 +57,8 @@ const ScrollButtonContainer = styled.div`
 const FarmTable: React.FC<ITableProps> = (props) => {
   const tableWrapperEl = useRef<HTMLDivElement>(null)
   const { t } = useTranslation()
+  const { isXl } = useMatchBreakpoints()
+  const isMobile = !isXl
   const { data, columns, userDataReady } = props
 
   const { rows } = useTable(columns, data, { sortable: true, sortColumn: 'farm' })
@@ -71,7 +70,7 @@ const FarmTable: React.FC<ITableProps> = (props) => {
   }
 
   return (
-    <Container>
+    <Container isMobile={isMobile}>
       <TableContainer>
         <TableWrapper ref={tableWrapperEl}>
           <StyledTable>
@@ -82,12 +81,12 @@ const FarmTable: React.FC<ITableProps> = (props) => {
             </TableBody>
           </StyledTable>
         </TableWrapper>
-        <ScrollButtonContainer>
+        {/* <ScrollButtonContainer>
           <Button variant="text" color="white" onClick={scrollToTop} style={{ color: 'white' }}>
             {t('To Top')}
             <ChevronUpIcon color="white" />
           </Button>
-        </ScrollButtonContainer>
+        </ScrollButtonContainer> */}
       </TableContainer>
     </Container>
   )

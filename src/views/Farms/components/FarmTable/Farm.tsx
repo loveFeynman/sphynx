@@ -2,7 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 import { useFarmUser } from 'state/farms/hooks'
 import { useTranslation } from 'contexts/Localization'
-import { Text } from '@sphynxswap/uikit'
+import { Text, useMatchBreakpoints } from '@sphynxswap/uikit'
 import { getBalanceNumber } from 'utils/formatBalance'
 import { Token } from 'config/constants/types'
 import { TokenPairImage } from 'components/TokenImage'
@@ -14,28 +14,32 @@ export interface FarmProps {
   quoteToken: Token
 }
 
-const Container = styled.div`
-  padding-left: 16px;
+const Container = styled.div<{ isMobile?: boolean }>`
   display: flex;
-  align-items: center;
-
+  align-items:  ${({ isMobile }) => isMobile? 'flex-start' : 'center'};
+  flex-direction: ${({ isMobile }) => isMobile? 'column' : 'row'};
+  flex: 2;
+  width: 100%;
+  > div {
+  }
   ${({ theme }) => theme.mediaQueries.sm} {
-    padding-left: 32px;
   }
 `
 
 const TokenWrapper = styled.div`
   padding-right: 8px;
-  width: 24px;
+  width: 50px;
 
   ${({ theme }) => theme.mediaQueries.sm} {
-    width: 40px;
+    width: 70px; 
   }
 `
 
 const Farm: React.FunctionComponent<FarmProps> = ({ token, quoteToken, label, pid }) => {
   const { stakedBalance } = useFarmUser(pid)
   const { t } = useTranslation()
+  const { isXl } = useMatchBreakpoints()
+  const isMobile = !isXl
   const rawStakedBalance = getBalanceNumber(stakedBalance)
 
   const handleRenderFarming = (): JSX.Element => {
@@ -51,9 +55,9 @@ const Farm: React.FunctionComponent<FarmProps> = ({ token, quoteToken, label, pi
   }
 
   return (
-    <Container>
+    <Container isMobile={isMobile}>
       <TokenWrapper>
-        <TokenPairImage variant="inverted" primaryToken={token} secondaryToken={quoteToken} width={40} height={40} />
+        <TokenPairImage variant="inverted" primaryToken={token} secondaryToken={quoteToken}  width={isMobile? 50: 70} height={isMobile? 50: 70} />
       </TokenWrapper>
       <div>
         {handleRenderFarming()}

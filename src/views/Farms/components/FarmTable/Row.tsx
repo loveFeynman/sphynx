@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { FarmWithStakedValue } from 'views/Farms/components/FarmCard/FarmCard'
-import { useMatchBreakpoints } from '@sphynxswap/uikit'
+import { useMatchBreakpoints, Flex } from '@sphynxswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 import useDelayedUnmount from 'hooks/useDelayedUnmount'
 import { useFarmUser } from 'state/farms/hooks'
@@ -14,7 +14,14 @@ import Multiplier, { MultiplierProps } from './Multiplier'
 import Liquidity, { LiquidityProps } from './Liquidity'
 import ActionPanel from './Actions/ActionPanel'
 import CellLayout from './CellLayout'
-import { DesktopColumnSchema, MobileColumnSchema } from '../types'
+
+const StyledRow = styled.div<{ expanded, isMobile }>`
+  background-color: transparent;
+  display: flex;
+  flex-direction: ${({ isMobile }) => isMobile ? 'column' : 'row'}; 
+  cursor: pointer;
+  border-bottom: ${({ expanded }) => expanded ? '0px' : '1px'} solid #21214A;
+`
 
 export interface RowProps {
   apr: AprProps
@@ -29,47 +36,8 @@ interface RowPropsWithLoading extends RowProps {
   userDataReady: boolean
 }
 
-const cells = {
-  apr: Apr,
-  farm: Farm,
-  earned: Earned,
-  details: Details,
-  multiplier: Multiplier,
-  liquidity: Liquidity,
-}
-
-const CellInner = styled.div`
-  padding: 24px 0px;
-  display: flex;
-  width: 100%;
-  align-items: center;
-  padding-right: 8px;
-
-  ${({ theme }) => theme.mediaQueries.xl} {
-    padding-right: 32px;
-  }
-`
-
-const StyledTr = styled.tr`
-  cursor: pointer;
-  border-bottom: 2px solid ${({ theme }) => theme.colors.cardBorder};
-`
-
-const EarnedMobileCell = styled.td`
-  padding: 16px 0 24px 16px;
-`
-
-const AprMobileCell = styled.td`
-  padding-top: 16px;
-  padding-bottom: 24px;
-`
-
-const FarmMobileCell = styled.td`
-  padding-top: 24px;
-`
-
 const Row: React.FunctionComponent<RowPropsWithLoading> = (props) => {
-  const { details, userDataReady } = props
+  const { details, userDataReady, farm, earned, apr, multiplier, liquidity } = props
   const hasStakedAmount = !!useFarmUser(details.pid).stakedBalance.toNumber()
   const [actionPanelExpanded, setActionPanelExpanded] = useState(hasStakedAmount)
   const shouldRenderChild = useDelayedUnmount(actionPanelExpanded, 300)
@@ -83,102 +51,25 @@ const Row: React.FunctionComponent<RowPropsWithLoading> = (props) => {
     setActionPanelExpanded(hasStakedAmount)
   }, [hasStakedAmount])
 
-  const { isXl, isXs } = useMatchBreakpoints()
-
+  const { isXl } = useMatchBreakpoints()
   const isMobile = !isXl
-  const tableSchema = isMobile ? MobileColumnSchema : DesktopColumnSchema
-  const columnNames = tableSchema.map((column) => column.name)
-
-  const handleRenderRow = () => {
-    if (!isXs) {
-      return (
-        <StyledTr onClick={toggleActionPanel}>
-          {Object.keys(props).map((key) => {
-            const columnIndex = columnNames.indexOf(key)
-            if (columnIndex === -1) {
-              return null
-            }
-
-            switch (key) {
-              case 'details':
-                return (
-                  <td key={key}>
-                    <CellInner>
-                      <CellLayout>
-                        <Details actionPanelToggled={actionPanelExpanded} />
-                      </CellLayout>
-                    </CellInner>
-                  </td>
-                )
-              case 'apr':
-                return (
-                  <td key={key}>
-                    <CellInner>
-                      <CellLayout label={t('APR')}>
-                        <Apr {...props.apr} hideButton={isMobile} />
-                      </CellLayout>
-                    </CellInner>
-                  </td>
-                )
-              default:
-                return (
-                  <td key={key}>
-                    <CellInner>
-                      <CellLayout label={t(tableSchema[columnIndex].label)}>
-                        {React.createElement(cells[key], { ...props[key], userDataReady })}
-                      </CellLayout>
-                    </CellInner>
-                  </td>
-                )
-            }
-          })}
-        </StyledTr>
-      )
-    }
-
-    return (
-      <StyledTr onClick={toggleActionPanel}>
-        <td>
-          <tr>
-            <FarmMobileCell>
-              <CellLayout>
-                <Farm {...props.farm} />
-              </CellLayout>
-            </FarmMobileCell>
-          </tr>
-          <tr>
-            <EarnedMobileCell>
-              <CellLayout label={t('Earned')}>
-                <Earned {...props.earned} userDataReady={userDataReady} />
-              </CellLayout>
-            </EarnedMobileCell>
-            <AprMobileCell>
-              <CellLayout label={t('APR')}>
-                <Apr {...props.apr} hideButton />
-              </CellLayout>
-            </AprMobileCell>
-          </tr>
-        </td>
-        <td>
-          <CellInner>
-            <CellLayout>
-              <Details actionPanelToggled={actionPanelExpanded} />
-            </CellLayout>
-          </CellInner>
-        </td>
-      </StyledTr>
-    )
-  }
 
   return (
     <>
-      {handleRenderRow()}
+      <StyledRow role="row" expanded={actionPanelExpanded} isMobile={isMobile} onClick={toggleActionPanel}>
+        <Flex width={isMobile ? '100%' : '60%'}>
+          <Farm {...farm} />
+          <Earned {...earned} userDataReady={userDataReady} />
+          <Apr {...apr} hideButton />
+        </Flex>
+        <Flex width={isMobile ? '100%' : '40%'}>
+          <Liquidity {...liquidity} />
+          <Multiplier {...multiplier} />
+          <Details actionPanelToggled={actionPanelExpanded} />
+        </Flex>
+      </StyledRow>
       {shouldRenderChild && (
-        <tr>
-          <td colSpan={6}>
-            <ActionPanel {...props} expanded={actionPanelExpanded} />
-          </td>
-        </tr>
+        <ActionPanel {...props} expanded={actionPanelExpanded} />
       )}
     </>
   )
