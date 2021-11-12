@@ -16,8 +16,9 @@ import ActionPanel from './Actions/ActionPanel'
 import CellLayout from './CellLayout'
 
 const StyledRow = styled.div<{ expanded, isMobile }>`
-  background-color: transparent;
   display: flex;
+  padding-top: 10px;
+  background-color: transparent;
   flex-direction: ${({ isMobile }) => isMobile ? 'column' : 'row'}; 
   cursor: pointer;
   border-bottom: ${({ expanded }) => expanded ? '0px' : '1px'} solid #21214A;
