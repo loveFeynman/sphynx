@@ -2,6 +2,7 @@ import React, { useMemo } from 'react'
 import BigNumber from 'bignumber.js'
 import styled from 'styled-components'
 import {
+  useMatchBreakpoints,
   Card,
   CardBody,
   Text,
@@ -19,6 +20,7 @@ import { getBalanceNumber } from 'utils/formatBalance'
 import { usePriceCakeBusd } from 'state/farms/hooks'
 import { useCakeVault } from 'state/pools/hooks'
 import Balance from 'components/Balance'
+import StopwatchIcon from 'assets/svg/icon/StopwatchIcon.svg'
 import BountyModal from './BountyModal'
 
 const StyledCard = styled(Card)`
@@ -35,8 +37,29 @@ const StyledCard = styled(Card)`
   }
 `
 
+const LogoContent = styled(Flex) <{ isMobile?: boolean }>`
+  align-items: center;
+  flex-direction: ${({ isMobile }) => isMobile ? 'column' : 'row'};
+`
+
+const BountyText = styled(Text)`
+    font-size: 12px;
+    font-weight: bold;
+    color: white;
+    margin-right: 4px;
+    text-align: center;
+  ${({ theme }) => theme.mediaQueries.xs} {
+    font-size: 15px;
+  }
+  ${({ theme }) => theme.mediaQueries.sm} {
+    font-size: 20px;
+  }
+`
+
 const BountyCard = () => {
   const { t } = useTranslation()
+  const { isXl } = useMatchBreakpoints()
+  const isMobile = !isXl
   const {
     estimatedCakeBountyReward,
     fees: { callFee },
@@ -54,13 +77,13 @@ const BountyCard = () => {
 
   const TooltipComponent = ({ fee }: { fee: number }) => (
     <>
-      <Text mb="16px">{t('This bounty is given as a reward for providing a service to other users.')}</Text>
-      <Text mb="16px">
+      <Text color="#452a7a" mb="16px">{t('This bounty is given as a reward for providing a service to other users.')}</Text>
+      <Text color="#452a7a" mb="16px">
         {t(
           'Whenever you successfully claim the bounty, you’re also helping out by activating the Auto SPHYNX Pool’s compounding function for everyone.',
         )}
       </Text>
-      <Text style={{ fontWeight: 'bold' }}>
+      <Text color="#452a7a" style={{ fontWeight: 'bold' }}>
         {t('Auto-Compound Bounty: %fee%% of all Auto SPHYNX pool users pending yield', { fee: fee / 100 })}
       </Text>
     </>
@@ -78,47 +101,43 @@ const BountyCard = () => {
       {tooltipVisible && tooltip}
       <StyledCard background="transparent">
         <CardBody>
-          <Flex flexDirection="column">
-            <Flex alignItems="center" mb="12px">
-              <Text fontSize="16px" bold color="textSubtle" mr="4px">
-                {t('Auto SPHYNX Bounty')}
-              </Text>
-              <Box ref={targetRef}>
-                <HelpIcon color="textSubtle" />
-              </Box>
+          <Flex flexDirection={isMobile ? 'column' : 'row'} alignItems='center'>
+            <Flex flexGrow={1} style={{ borderRight: `${isMobile ? '0px' : '1px'} solid #21214A` }}>
+              <LogoContent isMobile={isMobile}>
+                <img src={StopwatchIcon} alt="Stopwatch Logo" width={isMobile ? '50' : '100'} />
+                <Flex flexDirection="column">
+                  <Flex alignItems="center" mb="2px">
+                    <BountyText>
+                      {t('Auto SPHYNX Bounty')}
+                    </BountyText>
+                    <Box ref={targetRef}>
+                      <HelpIcon color="white" />
+                    </Box>
+                  </Flex>
+                  <Flex flexDirection="column" alignItems={isMobile ? 'center' : 'star-flex'}>
+                    <Heading>
+                      {hasFetchedCakeBounty ? (
+                        <Balance fontSize={isMobile ? '13px' : '15px'} color="#777777" value={cakeBountyToDisplay} decimals={3} />
+                      ) : (
+                        <Skeleton height={20} width={96} mb="2px" />
+                      )}
+                    </Heading>
+                  </Flex>
+                </Flex>
+              </LogoContent>
             </Flex>
-          </Flex>
-          <Flex alignItems="center" justifyContent="space-between">
-            <Flex flexDirection="column" mr="12px">
-              <Heading>
-                {hasFetchedCakeBounty ? (
-                  <Balance fontSize="20px" bold value={cakeBountyToDisplay} decimals={3} />
-                ) : (
-                  <Skeleton height={20} width={96} mb="2px" />
-                )}
-              </Heading>
-              {hasFetchedDollarBounty ? (
-                <Balance
-                  fontSize="12px"
-                  color="textSubtle"
-                  value={dollarBountyToDisplay}
-                  decimals={2}
-                  unit=" USD"
-                  prefix="~"
-                />
-              ) : (
-                <Skeleton height={16} width={62} />
-              )}
+            <Flex flexGrow={1} alignItems="center" justifyContent="end">
+              <Button
+                variant="primary"
+                disabled={!dollarBountyToDisplay || !cakeBountyToDisplay || !callFee}
+                onClick={onPresentBountyModal}
+                scale="sm"
+                id="clickClaimVaultBounty"
+                style={{ fontSize: '13px', color: "white", backgroundColor: '#2E2E55', borderColor: '#2E2E55', borderRadius: '5px' }}
+              >
+                {t('Claim')}
+              </Button>
             </Flex>
-            <Button
-              variant="primary"
-              disabled={!dollarBountyToDisplay || !cakeBountyToDisplay || !callFee}
-              onClick={onPresentBountyModal}
-              scale="sm"
-              id="clickClaimVaultBounty"
-            >
-              {t('Claim')}
-            </Button>
           </Flex>
         </CardBody>
       </StyledCard>

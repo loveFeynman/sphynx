@@ -8,7 +8,7 @@ import { formatPrice } from '../../../utils'
 const fontSize = window.screen.width > 768 ? "14px" : "12px"
 
 const TableWrapper = styled.div`
-  background: rgba(0, 0, 0, 0.4);
+  background: ${({ theme }) => theme.isDark ? "#0E0E26": "#2A2E60"};
   border-radius: 8px;
   height: 100%;
   max-height: 500px;
@@ -26,9 +26,12 @@ const TableWrapper = styled.div`
     & thead {
       & td {
         color: white;
-        font-size: 16px;
-        border-bottom: 1px solid white;
+        font-size: 14px;
+        text-align: left;
+        vertical-align: middle;
+        background: transparent;
         padding: 16px 8px;
+        font-weight: 600;
         & > div > div {
           font-size: 16px;
           font-weight: 500;
@@ -42,11 +45,13 @@ const TableWrapper = styled.div`
           font-size: ${fontSize};
           line-height: 16px;
           word-break: break-word;
+          font-weight: 600;
+          text-align: left;
           &.success {
-            color: #00ac1c;
+            color: ${({ theme }) => theme.isDark ? "#219653": "#77BF3E"};
           }
           &.error {
-            color: #ea3943;
+            color: ${({ theme }) => theme.isDark ? "#EB5757": "#F84364"};
           }
         }
       }
@@ -70,7 +75,7 @@ const TransactionCard: React.FC<TransactionProps> = (props) => {
           <table>
             <thead>
               <tr>
-                <td style={{ width: '30%' }}>{t('Time')}</td>
+                <td style={{ width: '30%', paddingLeft: '12px' }}>{t('Time')}</td>
                 <td style={{ width: '26%' }}>{t('Traded Tokens')}</td>
                 <td style={{ width: '22%' }}>{t('Token Price')}</td>
                 <td style={{ width: '22%' }}>{t('$Value')}</td>
@@ -82,7 +87,7 @@ const TransactionCard: React.FC<TransactionProps> = (props) => {
                   <tr key={key}>
                     <td style={{ width: '30%' }}>
                       <a href={'https://bscscan.com/tx/' + data.tx} target="_blank" rel="noreferrer">
-                        <h2 className={!data.isBuy ? 'success' : 'error'}>{data.transactionTime}</h2>
+                        <h2 className={!data.isBuy ? 'success' : 'error'} style={{marginLeft: '8px', padding: '4px'}}>{data.transactionTime}</h2>
                       </a>
                     </td>
                     <td style={{ width: '19%' }}>

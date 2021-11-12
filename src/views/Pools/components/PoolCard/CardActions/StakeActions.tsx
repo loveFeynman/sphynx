@@ -5,6 +5,7 @@ import { useTranslation } from 'contexts/Localization'
 import { getBalanceNumber } from 'utils/formatBalance'
 import { Pool } from 'state/types'
 import Balance from 'components/Balance'
+import { ColorButtonStyle } from 'style/buttonStyle'
 import NotEnoughTokensModal from '../Modals/NotEnoughTokensModal'
 import StakeModal from '../Modals/StakeModal'
 
@@ -104,7 +105,7 @@ const StakeAction: React.FC<StakeActionsProps> = ({
         {tooltipVisible && tooltip}
       </Flex>
     ) : (
-      <Button disabled={isFinished} onClick={stakingTokenBalance.gt(0) ? onPresentStake : onPresentTokenRequired}>
+      <Button disabled={isFinished} onClick={stakingTokenBalance.gt(0) ? onPresentStake : onPresentTokenRequired} style={ColorButtonStyle}>
         {t('Stake')}
       </Button>
     )

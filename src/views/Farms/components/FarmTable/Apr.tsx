@@ -4,20 +4,24 @@ import ApyButton from 'views/Farms/components/FarmCard/ApyButton'
 import { Address } from 'config/constants/types'
 import BigNumber from 'bignumber.js'
 import { BASE_SWAP_URL } from 'config'
-import { Skeleton } from '@sphynxswap/uikit'
-
-export interface AprProps {
-  value: string
-  multiplier: string
-  lpLabel: string
-  tokenAddress?: Address
-  quoteTokenAddress?: Address
-  cakePrice: BigNumber
-  originalValue: number
-  hideButton?: boolean
-}
+import { Skeleton, Flex, Text } from '@sphynxswap/uikit'
+import { useTranslation } from 'contexts/Localization'
 
 const Container = styled.div`
+  flex: 1;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 24px 8px;
+`
+
+const TitleText = styled(Text)`
+  font-size: 12px;
+  color: #A7A7CC;
+  text-align: left;
+  margin-right: 5px;
+`
+
+const APRContainer = styled.div`
   display: flex;
   align-items: center;
   color: ${({ theme }) => theme.colors.text};
@@ -39,6 +43,17 @@ const AprWrapper = styled.div`
   text-align: left;
 `
 
+export interface AprProps {
+  value: string
+  multiplier: string
+  lpLabel: string
+  tokenAddress?: Address
+  quoteTokenAddress?: Address
+  cakePrice: BigNumber
+  originalValue: number
+  hideButton?: boolean
+}
+
 const Apr: React.FC<AprProps> = ({
   value,
   lpLabel,
@@ -46,32 +61,40 @@ const Apr: React.FC<AprProps> = ({
   originalValue,
   hideButton = false,
 }) => {
+  const { t } = useTranslation()
   const addLiquidityUrl = `${BASE_SWAP_URL}`
 
-  return originalValue !== 0 ? (
+  return (
     <Container>
-      {originalValue ? (
-        <>
-          <AprWrapper>{value}%</AprWrapper>
-          {!hideButton && (
-            <ApyButton
-              lpLabel={lpLabel}
-              cakePrice={cakePrice}
-              apr={originalValue}
-              displayApr={value}
-              addLiquidityUrl={addLiquidityUrl}
-            />
-          )}
-        </>
-      ) : (
-        <AprWrapper>
-          <Skeleton width={60} />
-        </AprWrapper>
-      )}
-    </Container>
-  ) : (
-    <Container>
-      <AprWrapper>{originalValue}%</AprWrapper>
+      <Flex mb='5px'>
+        <TitleText>{t('APR')}</TitleText>
+      </Flex>
+      {originalValue !== 0 ?
+        <APRContainer>
+          {originalValue ?
+            <>
+              <AprWrapper>{value}%</AprWrapper>
+              {!hideButton && (
+                <ApyButton
+                  lpLabel={lpLabel}
+                  cakePrice={cakePrice}
+                  apr={originalValue}
+                  displayApr={value}
+                  addLiquidityUrl={addLiquidityUrl}
+                />
+              )}
+            </>
+            :
+            <AprWrapper>
+              <Skeleton width={60} />
+            </AprWrapper>
+          }
+        </APRContainer>
+        :
+        <APRContainer>
+          <AprWrapper>{originalValue}%</AprWrapper>
+        </APRContainer>
+      }
     </Container>
   )
 }

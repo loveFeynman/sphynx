@@ -2,9 +2,9 @@ import React, { useEffect, useCallback, useState, useMemo, useRef } from 'react'
 import { Route, useRouteMatch, useLocation } from 'react-router-dom'
 import BigNumber from 'bignumber.js'
 import { useWeb3React } from '@web3-react/core'
-import { Heading, RowType, Toggle, Text, Flex } from '@sphynxswap/uikit'
+import { useMatchBreakpoints, Heading, RowType, Toggle, Text, Flex } from '@sphynxswap/uikit'
 import { ChainId } from '@sphynxswap/sdk'
-import styled from 'styled-components'
+import styled, { useTheme } from 'styled-components'
 import FlexLayout from 'components/Layout/Flex'
 import Page from 'components/Layout/Page'
 import { useFarms, usePollFarmsData, usePriceCakeBusd } from 'state/farms/hooks'
@@ -21,12 +21,16 @@ import PageHeader from 'components/PageHeader'
 import SearchInput from 'components/SearchInput'
 import Select, { OptionProps } from 'components/Select/Select'
 import Loading from 'components/Loading'
+import { ReactComponent as FarmLogo } from 'assets/svg/icon/FarmIcon2.svg'
 import FarmCard, { FarmWithStakedValue } from './components/FarmCard/FarmCard'
+import { SwapTabs, SwapTabList, SwapTab, SwapTabPanel } from "../../components/Tab/tab";
+import SearchPannel from './components/SearchPannel'
 import Table from './components/FarmTable/FarmTable'
 import FarmTabButtons from './components/FarmTabButtons'
 import { RowProps } from './components/FarmTable/Row'
 import ToggleView from './components/ToggleView/ToggleView'
 import { DesktopColumnSchema, ViewMode } from './components/types'
+import Card from '../../components/Card'
 
 const ControlContainer = styled.div`
   display: flex;
@@ -112,8 +116,12 @@ const getDisplayApr = (cakeRewardsApr?: number, lpRewardsApr?: number) => {
 
 const Farms: React.FC = () => {
   const { path } = useRouteMatch()
+  const location = useLocation()
   const { pathname } = useLocation()
   const { t } = useTranslation()
+  const { isXl } = useMatchBreakpoints()
+  const isMobile = !isXl
+  const theme = useTheme()
   const { data: farmsLP, userDataLoaded } = useFarms()
   const cakePrice = usePriceCakeBusd()
   const [query, setQuery] = useState('')
@@ -379,19 +387,41 @@ const Farms: React.FC = () => {
     setSortOption(option.value)
   }
 
+  const selectedTab = (tabIndex: number): void => {
+    if (tabIndex === 0) {
+      location.pathname = "/farms"
+    }
+    else {
+      location.pathname = "/farms/history"
+    }
+  }
+
   return (
     <>
       <div style={{ height: 24 }} />
       <PageHeader>
-        <Heading as="h1" scale="xxl" color="white" mb="24px">
-          {t('Farms')}
-        </Heading>
-        <Heading scale="lg" color="text">
-          {t('Stake LP tokens to earn.')}
-        </Heading>
+        <Flex>
+          <FarmLogo width="80" height="60" />
+          <Flex flexDirection="column" ml="10px">
+            <Text fontSize="26px" color="white" bold>
+              {t('Farms')}
+            </Text>
+            <Text fontSize="15px" color="#777777">
+              {t('Stake LP tokens to earn.')}
+            </Text>
+          </Flex>
+        </Flex>
       </PageHeader>
       <Page>
-        <ControlContainer>
+        <SearchPannel
+          stakedOnly={stakedOnly}
+          setStakedOnly={setStakedOnly}
+          viewMode={viewMode}
+          setViewMode={setViewMode}
+          setSortOption={setSortOption}
+          setQuery={setQuery}
+        />
+        {/* <ControlContainer>
           <ViewControls>
             <ToggleView viewMode={viewMode} onToggle={(mode: ViewMode) => setViewMode(mode)} />
             <ToggleWrapper>
@@ -434,14 +464,45 @@ const Farms: React.FC = () => {
               <SearchInput onChange={handleChangeQuery} placeholder="Search Farms" />
             </LabelWrapper>
           </FilterContainer>
-        </ControlContainer>
-        {renderContent()}
-        {account && !userDataLoaded && stakedOnly && (
-          <Flex justifyContent="center">
-            <Loading />
-          </Flex>
-        )}
-        <div ref={loadMoreRef} />
+        </ControlContainer> */}
+        <SwapTabs
+          selectedTabClassName='is-selected'
+          selectedTabPanelClassName='is-selected'
+          onSelect={(tabIndex) => selectedTab(tabIndex)}
+        >
+          <SwapTabList>
+            <SwapTab>
+              <Text>
+                {t('Live')}
+              </Text>
+            </SwapTab>
+            <SwapTab>
+              <Text>
+                {t('Finished')}
+              </Text>
+            </SwapTab>
+          </SwapTabList>
+          <Card bgColor={theme.isDark ? "#0E0E26" : "#2A2E60"} borderRadius="0 0 3px 3px" padding="20px 10px">
+            <SwapTabPanel>
+              {renderContent()}
+              {account && !userDataLoaded && stakedOnly && (
+                <Flex justifyContent="center">
+                  <Loading />
+                </Flex>
+              )}
+              <div ref={loadMoreRef} />
+            </SwapTabPanel>
+            <SwapTabPanel>
+              {renderContent()}
+              {account && !userDataLoaded && stakedOnly && (
+                <Flex justifyContent="center">
+                  <Loading />
+                </Flex>
+              )}
+              <div ref={loadMoreRef} />
+            </SwapTabPanel>
+          </Card>
+        </SwapTabs>
       </Page>
     </>
   )

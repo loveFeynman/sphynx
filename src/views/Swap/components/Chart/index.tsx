@@ -1,9 +1,7 @@
 /* eslint-disable */
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { useSelector } from 'react-redux'
 import styled from 'styled-components'
-
-import TransactionNav from 'components/TransactionNav'
 import { AppState } from 'state'
 import { ReactComponent as UpDownArrow } from 'assets/svg/icon/UpDownArrow.svg'
 
@@ -29,18 +27,6 @@ const ArrowWrapper = styled.div`
   }
   ${({ theme }) => theme.mediaQueries.sm} {
     margin-top: 4px;
-  }
-`
-
-const TransactionNavWrapper = styled.div`
-  display: flex;
-  justify-content: center;
-  margin: 8px 0 0;
-  ${({ theme }) => theme.mediaQueries.md} {
-    position: absolute;
-    left: 0;
-    top: 0;
-    margin: 0;
   }
 `
 
@@ -78,9 +64,6 @@ const ChartContainer = ({tokenAddress, tokenData}) => {
         >
           <UpDownArrow />
         </ArrowWrapper>
-        <TransactionNavWrapper>
-          <TransactionNav tokenAddress={tokenAddress} tokenData={tokenData}/>
-        </TransactionNavWrapper>
       </UpDownArrowBox>
     </Wrapper>
   )

@@ -1,6 +1,6 @@
 import React, { useRef } from 'react'
 import styled from 'styled-components'
-import { Button, ChevronUpIcon } from '@sphynxswap/uikit'
+import { Button, ChevronUpIcon, useMatchBreakpoints } from '@sphynxswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 import { Pool } from 'state/types'
 import PoolRow from './PoolRow'
@@ -12,19 +12,12 @@ interface PoolsTableProps {
 }
 
 const StyledTable = styled.div`
-  border-radius: ${({ theme }) => theme.radii.card};
-
-  background-color: ${({ theme }) => theme.colors.input};
-  > div:not(:last-child) {
-    border-bottom: 2px solid ${({ theme }) => theme.colors.disabled};
-  }
+  background-color: transparent;
 `
 
-const StyledTableBorder = styled.div`
-  border-radius: ${({ theme }) => theme.radii.card};
-  background-color: ${({ theme }) => theme.colors.input};
-  padding: 1px 1px 3px 1px;
-  background-size: 400% 400%;
+const StyledTableBorder = styled.div<{isMobile?: boolean}>`
+  padding: ${({ isMobile }) => isMobile? '10px' : '5px 40px 20px 40px'};
+  background-color: transparent;
 `
 
 const ScrollButtonContainer = styled.div`
@@ -37,13 +30,16 @@ const ScrollButtonContainer = styled.div`
 const PoolsTable: React.FC<PoolsTableProps> = ({ pools, userDataLoaded, account }) => {
   const { t } = useTranslation()
   const tableWrapperEl = useRef<HTMLDivElement>(null)
+  const { isXl } = useMatchBreakpoints()
+  const isMobile = !isXl
+
   const scrollToTop = (): void => {
     tableWrapperEl.current.scrollIntoView({
       behavior: 'smooth',
     })
   }
   return (
-    <StyledTableBorder>
+    <StyledTableBorder isMobile={isMobile}>
       <StyledTable role="table" ref={tableWrapperEl}>
         {pools.map((pool) => (
           <PoolRow
@@ -53,12 +49,12 @@ const PoolsTable: React.FC<PoolsTableProps> = ({ pools, userDataLoaded, account 
             userDataLoaded={userDataLoaded}
           />
         ))}
-        <ScrollButtonContainer>
+        {/* <ScrollButtonContainer>
           <Button variant="text" onClick={scrollToTop} style={{ color: 'white' }}>
             {t('To Top')}
             <ChevronUpIcon color="white" />
           </Button>
-        </ScrollButtonContainer>
+        </ScrollButtonContainer> */}
       </StyledTable>
     </StyledTableBorder>
   )

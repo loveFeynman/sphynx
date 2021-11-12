@@ -19,6 +19,11 @@ import { setConnectedNetworkID } from 'state/input/actions'
 import { switchNetwork } from 'utils/wallet'
 
 const StyledModalContainer = styled(ModalContainer)`
+  background-color: ${({ theme }) => theme.isDark ? "#191C41" : "#2A2E60"};
+  div:first-child {
+    border-bottom: none;
+  }
+
   ${({ theme }) => theme.mediaQueries.sm} {
     width: 420px
   }
@@ -48,7 +53,7 @@ const NetworkList = styled.div`
 
 const NetworkItem = styled(Box)<{ selected?: boolean }>`
   display: flex;
-  background: ${({ selected }) => !selected? '#202231' : 'linear-gradient(to right, #0f92ec, #f039c3)'};
+  background: ${({ selected }) => !selected? `${({ theme }) => theme.isDark ? "#191C41" : "#2A2E60"}` : 'linear-gradient(90deg, #610D89 0%, #C42BB4 100%)'};
   color: white;
   border-radius: 0.625rem;
   padding: 2px;
@@ -56,7 +61,7 @@ const NetworkItem = styled(Box)<{ selected?: boolean }>`
   text-decoration: 'none';
 
   div {
-    background: ${({ selected }) => !selected? '#202231' : '#0d0415'};
+    background: ${({ theme }) => theme.isDark ? "#2A2E60" : "#191C41"};
     display: flex;
     padding: 0.4rem 0.8rem;
     border-radius: 0.625rem;
@@ -67,9 +72,9 @@ const NetworkItem = styled(Box)<{ selected?: boolean }>`
   
   &: ${({ selected }) => !selected && 
   `hover {
-    background: #2e3348;
+    background: linear-gradient(90deg, #610D89 0%, #C42BB4 100%);
     div { 
-      background: #2e3348;
+      background: ${({ theme }) => theme.isDark ? "#2A2E60" : "#191C41"};
     }
   }`};
 `
@@ -210,7 +215,7 @@ export default function NetworkSwitchModal({
               <NetworkItem onClick={() => handleNetworkItemClick(item)} selected={item.ChainID === connectedNetworkID}>
                 <AutoRow>
                   <img src={item.btIcon} width="32" height="32" alt="icon" />
-                  <Text bold>{item.networkName}</Text>
+                  <Text bold fontSize="14px">{item.networkName}</Text>
                 </AutoRow>
               </NetworkItem>
             </>

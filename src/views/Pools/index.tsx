@@ -1,9 +1,9 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useLocation } from 'react-router-dom'
-import styled from 'styled-components'
+import styled, { useTheme } from 'styled-components'
 import BigNumber from 'bignumber.js'
 import { useWeb3React } from '@web3-react/core'
-import { Heading, Flex, Text } from '@sphynxswap/uikit'
+import { Flex, Text, useMatchBreakpoints } from '@sphynxswap/uikit'
 import orderBy from 'lodash/orderBy'
 import partition from 'lodash/partition'
 import { useTranslation } from 'contexts/Localization'
@@ -18,48 +18,64 @@ import SearchInput from 'components/SearchInput'
 import Select, { OptionProps } from 'components/Select/Select'
 import { Pool } from 'state/types'
 import Loading from 'components/Loading'
+import PoolLogo from 'assets/png/icon/PoolIcon2.png'
 import PoolCard from './components/PoolCard'
 import CakeVaultCard from './components/CakeVaultCard'
+import SearchPannel from './components/SearchPannel'
 import PoolTabButtons from './components/PoolTabButtons'
 import BountyCard from './components/BountyCard'
 import PoolsTable from './components/PoolsTable/PoolsTable'
 import { ViewMode } from './components/ToggleView/ToggleView'
 import { getAprData, getCakeVaultEarnings } from './helpers'
+import { SwapTabs, SwapTabList, SwapTab, SwapTabPanel } from "../../components/Tab/tab";
+import Card from '../../components/Card'
 
 const CardLayout = styled(FlexLayout)`
   justify-content: center;
+  padding: 47px 69px 0;
 `
 
-const PoolControls = styled.div`
-  display: flex;
-  width: 100%;
-  align-items: center;
-  position: relative;
+const LogoContent = styled(Flex) <{ isMobile?: boolean }>`
+  align-items: ${({ isMobile }) => isMobile ? 'start-flex' : 'center'};
+  flex-direction: ${({ isMobile }) => isMobile ? 'column' : 'row'};
+  ${({ theme }) => theme.mediaQueries.md} {
 
-  justify-content: space-between;
-  flex-direction: column;
-
-  & > div {
-    margin-bottom: 16px;
-  }
-
-  ${({ theme }) => theme.mediaQueries.sm} {
-    flex-direction: row;
-    flex-wrap: wrap;
-    padding: 16px 32px;
-    margin-bottom: 0;
   }
 `
 
-const FilterContainer = styled.div`
+const LogoTitle = styled.div`
+  display: block;
+  width: 100%;
+  ${({ theme }) => theme.mediaQueries.md} {
+
+  }
+`
+
+const LogoTitleWrapper = styled.div`
   display: flex;
   align-items: center;
-  width: 100%;
-  padding: 8px 0px;
+`
 
+const PoolText = styled(Text)`
+  color: white;
+  font-size: 13px;
+  font-weight: bold;
+  ${({ theme }) => theme.mediaQueries.xs} {
+    font-size: 20px;
+  }
   ${({ theme }) => theme.mediaQueries.sm} {
-    width: auto;
-    padding: 0;
+    font-size: 26px;
+  }
+`
+
+const PoolDetailText = styled(Text)`
+  color: #777777;
+  font-size: 12px;
+  ${({ theme }) => theme.mediaQueries.xs} {
+    font-size: 13px;
+  }
+  ${({ theme }) => theme.mediaQueries.sm} {
+    font-size: 15px;
   }
 `
 
@@ -80,6 +96,9 @@ const NUMBER_OF_POOLS_VISIBLE = 12
 const Pools: React.FC = () => {
   const location = useLocation()
   const { t } = useTranslation()
+  const { isXl } = useMatchBreakpoints()
+  const isMobile = !isXl
+  const theme = useTheme()
   const { account } = useWeb3React()
   const { pools: poolsWithoutAutoVault, userDataLoaded } = usePools(account)
   const [stakedOnly, setStakedOnly] = usePersistState(false, { localStorageKey: 'pancake_pool_staked' })
@@ -156,12 +175,13 @@ const Pools: React.FC = () => {
 
   const showFinishedPools = location.pathname.includes('history')
 
-  const handleChangeSearchQuery = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(event.target.value)
-  }
-
-  const handleSortOptionChange = (option: OptionProps): void => {
-    setSortOption(option.value)
+  const selectedTab = (tabIndex: number): void => {
+    if (tabIndex === 0) {
+      location.pathname = "/pools"
+    }
+    else {
+      location.pathname = "/pools/history"
+    }
   }
 
   const sortPools = (poolsToSort: Pool[]) => {
@@ -182,12 +202,12 @@ const Pools: React.FC = () => {
             }
             return pool.isAutoVault
               ? getCakeVaultEarnings(
-                  account,
-                  cakeAtLastUserAction,
-                  userShares,
-                  pricePerFullShare,
-                  pool.earningTokenPrice,
-                ).autoUsdToDisplay
+                account,
+                cakeAtLastUserAction,
+                userShares,
+                pricePerFullShare,
+                pool.earningTokenPrice,
+              ).autoUsdToDisplay
               : pool.userData.pendingReward.times(pool.earningTokenPrice).toNumber()
           },
           'desc',
@@ -219,7 +239,6 @@ const Pools: React.FC = () => {
 
   chosenPools = sortPools(chosenPools).slice(0, numberOfPoolsVisible)
   chosenPoolsLength.current = chosenPools.length
-
   const cardLayout = (
     <CardLayout>
       {chosenPools.map((pool) =>
@@ -236,85 +255,142 @@ const Pools: React.FC = () => {
 
   return (
     <>
-      <div style={{ height: 24 }} />
-      <PageHeader>
-        <Flex justifyContent="space-between" flexDirection={['column', null, null, 'row']}>
-          <Flex flex="1" flexDirection="column" mr={['8px', 0]}>
-            <Heading as="h1" scale="xxl" color="white" mb="24px">
-              {t('Sphynx Pools')}
-            </Heading>
-            <Heading scale="md" color="text">
-              {t('Just stake some tokens to earn.')}
-            </Heading>
-            <Heading scale="md" color="text">
-              {t('High APR, low risk.')}
-            </Heading>
+      <Flex flexDirection='column' justifyContent="center" alignItems="center" style={{ padding: `0px ${isMobile ? '10px' : '50px'}` }}>
+        <div style={{ height: 24 }} />
+        <PageHeader>
+          <Flex justifyContent="space-between" flexDirection='row'>
+            <Flex flexGrow={5} alignItems='center'>
+              <LogoContent isMobile={isMobile}>
+                <img src={PoolLogo} alt="Pool Logo" width={isMobile ? '50' : '100'} style={{ padding: `${isMobile ? '0px' : '0 10px 10px 10px'}` }} />
+                <LogoTitleWrapper>
+                  <LogoTitle>
+                    <PoolText>
+                      {t('Sphynx Pools')}
+                    </PoolText>
+                    <PoolDetailText>
+                      {t('Just stake some tokens to earn.')}
+                    </PoolDetailText>
+                    <PoolDetailText>
+                      {t('High APR, low risk.')}
+                    </PoolDetailText>
+                  </LogoTitle>
+                </LogoTitleWrapper>
+              </LogoContent>
+            </Flex>
+            <Flex flexGrow={3} height="fit-content" justifyContent="center" alignItems="center">
+              <BountyCard />
+            </Flex>
           </Flex>
-          <Flex flex="1" height="fit-content" justifyContent="center" alignItems="center" mt={['24px', null, '0']}>
-            {/* <HelpButton /> */}
-            <BountyCard />
-          </Flex>
-        </Flex>
-      </PageHeader>
-      <Page>
-        <PoolControls>
-          <PoolTabButtons
+        </PageHeader>
+        <Page>
+          <SearchPannel
             stakedOnly={stakedOnly}
             setStakedOnly={setStakedOnly}
-            hasStakeInFinishedPools={hasStakeInFinishedPools}
             viewMode={viewMode}
             setViewMode={setViewMode}
+            setSortOption={setSortOption}
+            setSearchQuery={setSearchQuery}
           />
-          <FilterContainer>
-            <LabelWrapper>
-              <Text fontSize="12px" bold color="textSubtle" textTransform="uppercase">
-                {t('Sort by')}
-              </Text>
-              <ControlStretch>
-                <Select
-                  options={[
-                    {
-                      label: t('Hot'),
-                      value: 'hot',
-                    },
-                    {
-                      label: t('APR'),
-                      value: 'apr',
-                    },
-                    {
-                      label: t('Earned'),
-                      value: 'earned',
-                    },
-                    {
-                      label: t('Total staked'),
-                      value: 'totalStaked',
-                    },
-                  ]}
-                  onChange={handleSortOptionChange}
-                />
-              </ControlStretch>
-            </LabelWrapper>
-            <LabelWrapper style={{ marginLeft: 16 }}>
-              <Text fontSize="12px" bold color="textSubtle" textTransform="uppercase">
-                {t('Search')}
-              </Text>
-              <SearchInput onChange={handleChangeSearchQuery} placeholder="Search Pools" />
-            </LabelWrapper>
-          </FilterContainer>
-        </PoolControls>
-        {showFinishedPools && (
-          <Text fontSize="20px" color="failure" pb="32px">
-            {t('These pools are no longer distributing rewards. Please unstake your tokens.')}
-          </Text>
-        )}
-        {account && !userDataLoaded && stakedOnly && (
-          <Flex justifyContent="center" mb="4px">
-            <Loading />
-          </Flex>
-        )}
-        {viewMode === ViewMode.CARD ? cardLayout : tableLayout}
-        <div ref={loadMoreRef} />
-      </Page>
+          {/* <PoolControls>
+            <PoolTabButtons
+              stakedOnly={stakedOnly}
+              setStakedOnly={setStakedOnly}
+              hasStakeInFinishedPools={hasStakeInFinishedPools}
+              viewMode={viewMode}
+              setViewMode={setViewMode}
+            />
+            <FilterContainer>
+              <LabelWrapper>
+                <Text fontSize="12px" bold color="textSubtle" textTransform="uppercase">
+                  {t('Sort by')}
+                </Text>
+                <ControlStretch>
+                  <Select
+                    options={[
+                      {
+                        label: t('Hot'),
+                        value: 'hot',
+                      },
+                      {
+                        label: t('APR'),
+                        value: 'apr',
+                      },
+                      {
+                        label: t('Earned'),
+                        value: 'earned',
+                      },
+                      {
+                        label: t('Total staked'),
+                        value: 'totalStaked',
+                      },
+                    ]}
+                    onChange={handleSortOptionChange}
+                  />
+                </ControlStretch>
+              </LabelWrapper>
+              <LabelWrapper style={{ marginLeft: 16 }}>
+                <Text fontSize="12px" bold color="textSubtle" textTransform="uppercase">
+                  {t('Search')}
+                </Text>
+                <SearchInput onChange={handleChangeSearchQuery} placeholder="Search Pools" />
+              </LabelWrapper>
+            </FilterContainer>
+          </PoolControls>
+          {showFinishedPools && (
+            <Text fontSize="20px" color="failure" pb="32px">
+              {t('These pools are no longer distributing rewards. Please unstake your tokens.')}
+            </Text>
+          )}
+          {account && !userDataLoaded && stakedOnly && (
+            <Flex justifyContent="center" mb="4px">
+              <Loading />
+            </Flex>
+          )}
+          {viewMode === ViewMode.CARD ? cardLayout : tableLayout}
+          <div ref={loadMoreRef} /> */}
+          <SwapTabs
+            selectedTabClassName='is-selected'
+            selectedTabPanelClassName='is-selected'
+            onSelect={(tabIndex) => selectedTab(tabIndex)}
+          >
+            <SwapTabList>
+              <SwapTab>
+                <Text>
+                  {t('Live')}
+                </Text>
+              </SwapTab>
+              <SwapTab>
+                <Text>
+                  {t('Finished')}
+                </Text>
+              </SwapTab>
+            </SwapTabList>
+            <Card bgColor={theme.isDark ? "#0E0E26" : "#2A2E60"} borderRadius="0 0 3px 3px" padding="20px 10px">
+              <SwapTabPanel>
+                {account && !userDataLoaded && stakedOnly && (
+                  <Flex justifyContent="center" mb="4px">
+                    <Loading />
+                  </Flex>
+                )}
+                {viewMode === ViewMode.CARD ? cardLayout : tableLayout}
+                <div ref={loadMoreRef} />
+              </SwapTabPanel>
+              <SwapTabPanel>
+                <Text fontSize="20px" color="failure" pb="32px">
+                  {t('These pools are no longer distributing rewards. Please unstake your tokens.')}
+                </Text>
+                {account && !userDataLoaded && stakedOnly && (
+                  <Flex justifyContent="center" mb="4px">
+                    <Loading />
+                  </Flex>
+                )}
+                {viewMode === ViewMode.CARD ? cardLayout : tableLayout}
+                <div ref={loadMoreRef} />
+              </SwapTabPanel>
+            </Card>
+          </SwapTabs>
+        </Page>
+      </Flex>
     </>
   )
 }

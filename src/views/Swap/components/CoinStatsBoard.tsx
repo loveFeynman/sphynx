@@ -2,95 +2,96 @@ import React, { useEffect, useState, useRef, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { utils } from 'ethers'
 import styled from 'styled-components'
-import { Flex, Text } from '@sphynxswap/uikit'
-import Column from 'components/Column'
 import { isAddress } from 'utils'
 import { useTranslation } from 'contexts/Localization'
 import { marketCap } from 'state/input/actions'
+import { ReactComponent as PriceIcon } from 'assets/svg/icon/PriceIcon.svg'
+import { ReactComponent as ChangeIcon } from 'assets/svg/icon/ChangeIcon.svg'
+import { ReactComponent as VolumeIcon } from 'assets/svg/icon/VolumeIcon.svg'
+import { ReactComponent as LiquidityIcon } from 'assets/svg/icon/LiquidityIcon.svg'
 import DefaultImg from 'assets/images/MainLogo.png'
 import storages from 'config/constants/storages'
 import { getChartStats } from 'utils/apiServices'
 import { AppState } from '../../../state'
+import TokenStateCard from './TokenStateCard'
 
-const IconWrapper = styled.div<{ size?: number }>`
+const ContainerExtra = styled.div`
   display: flex;
-  flex-flow: column nowrap;
-  align-items: center;
-  justify-content: center;
-  margin-right: 8px;
-  & > img,
-  height: ${({ size }) => (size ? `${size}px` : '32px')};
-  width: ${({ size }) => (size ? `${size}px` : '32px')};
-  span {
-    height: ${({ size }) => (size ? `${size}px` : '32px')};
-    width: ${({ size }) => (size ? `${size}px` : '32px')};
+  width: 100%;
+  margin-bottom: 24px;
+  gap: 12px;
+  flex-wrap: nowrap;
+  & > div:first-child {
+    width: unset;
   }
-  ${({ theme }) => theme.mediaQueries.lg} {
-    align-items: flex-end;
+  & > div:nth-child(2) {
+    width: unset;
+    div {
+      white-space: nowrap;
+      width: 90%;
+    }
+  }
+  & > div:nth-child(3) {
+    width: unset;
+    div {
+      white-space: nowrap;
+      width: 90%;
+    }
+  }
+  & > div:nth-child(4) {
+    width: unset;
+    div {
+      white-space: nowrap;
+      width: 90%;
+    }
+  }
+  & > div:nth-child(5) {
+    width: unset;
+    div {
+      white-space: nowrap;
+      width: 90%;
+    }
   }
 `
 
 const Container = styled.div`
-  width: 100%;
-  background-color: rgba(0, 0, 0, 0.4);
-  border-radius: 12px 12px 0px 0px;
-  overflow-x: auto;
-  ::-webkit-scrollbar {
-    height: 10px;
-  }
-`
-
-const StyledWrapper = styled.div`
-  padding: 8px 16px 0;
   display: flex;
+  width: 100%;
+  margin-bottom: 24px;
+  gap: 12px;
   flex-wrap: wrap;
-  & > div {
-    margin: 0 12px 8px 0;
-    width: calc(50% - 12px);
-    &:first-child {
-      width: 100%;
-    }
-    & > div,
-    & > div > div > div {
-      &:first-child {
-        color: white;
-        font-size: 14px;
-        line-height: 16px;
-        font-weight: 500;
-        margin-bottom: 2px;
-      }
-      &:last-child {
-        color: #adb5bd;
-        font-weight: bold;
-        font-size: 14px;
-        line-height: 16px;
-      }
-    }
-    & .success {
-      color: #00ac1c;
-    }
-    & .error {
-      color: #ea3943;
-    }
-    & h2 {
-      font-size: 14px;
-      line-height: 16px;
-      font-weight: bold;
+  &>div:first-child {
+    width: 100%;
+  }
+  &>div:nth-child(2) {
+    width: 47%;
+    div {
+      white-space: nowrap;
+      width: 90%;
     }
   }
-  ${({ theme }) => theme.mediaQueries.md} {
-    flex-wrap: nowrap;
-    align-items: center;
-    justify-content: space-between;
-    margin: 0;
-    min-width: 500px;
-    & > div {
-      &:first-child {
-        min-width: 192px;
-      }
+  &>div:nth-child(3) {
+    width: 47%;
+    div {
+      white-space: nowrap;
+      width: 90%;
     }
   }
-`
+  &>div:nth-child(4) {
+    width: 13%;
+    div {
+      white-space: nowrap;
+      width: 90%;
+    }
+  }
+  &>div:nth-child(5) {
+    width: 13%;
+    div {
+      white-space: nowrap;
+      width: 90%;
+    }
+  }
+}`
 
 export default function CoinStatsBoard(props) {
   const dispatch = useDispatch()
@@ -116,13 +117,14 @@ export default function CoinStatsBoard(props) {
   const [price, setPrice] = useState<any>(null)
   const [scale, setScale] = useState(2)
 
-  const [linkIcon, setLinkIcon] = useState(
-    DefaultImg,
-  )
+  const [linkIcon, setLinkIcon] = useState(DefaultImg)
   const changedecimal: any = parseFloat(alldata.change).toFixed(3)
   const volumedecimal = parseFloat(alldata.volume).toFixed(3)
   const liquidityV2decimal = parseFloat(alldata.liquidityV2).toFixed(3)
   const liquidityV2BNBdecimal = parseFloat(alldata.liquidityV2BNB).toFixed(3)
+  const isExtra = document.body.clientWidth > 1500
+
+  const RealContainer = isExtra ? ContainerExtra : Container
 
   const getTableData = useCallback(async () => {
     try {
@@ -159,7 +161,7 @@ export default function CoinStatsBoard(props) {
   useEffect(() => {
     if (tokenData) dispatch(marketCap({ marketCapacity: Number(parseInt(tokenData.totalSupply) * parseFloat(price)) }))
     const realPrice = parseFloat(price)
-    if(realPrice > 1) {
+    if (realPrice > 1) {
       setScale(2)
     } else {
       const lg10 = Math.round(Math.abs(Math.log10(realPrice)))
@@ -168,49 +170,51 @@ export default function CoinStatsBoard(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tokenData, price])
 
-  const onImgLoadError = (event: any) => {
-    const elem = event.target
-    elem.src = DefaultImg
-  }
-
   return (
-    <Container>
-      <StyledWrapper>
-        <Column>
-          <Flex>
-            <IconWrapper size={32}>
-              <img src={linkIcon} width="32" height="32" onError={onImgLoadError} alt="No icon yet" />
-            </IconWrapper>
-            {tokenData && (
-              <Flex flexDirection="column" justifyContent="center">
-                <Text>{t(`${tokenData.symbol}`)}</Text>
-                <Text>$ {marketCapacity.toLocaleString()}</Text>
-              </Flex>
-            )}
-          </Flex>
-        </Column>
-        <Column>
-          <Text>{t('Price')}</Text>
-          <Text>${Number(price).toFixed(scale).toLocaleString()}</Text>
-        </Column>
-        <Column>
-          <Text>{t('24h Change')}</Text>
-          <Text>
-            <h2 className={Math.sign(changedecimal) === -1 ? 'error' : 'success'}> {changedecimal}%</h2>
-          </Text>
-        </Column>
-        <Column>
-          <Text>{t('24h Volume')}</Text>
-          <Text>$ {Number(volumedecimal).toLocaleString()}</Text>
-        </Column>
-        <Column style={{ margin: '0 0 8px 0' }}>
-          <Text>{t('Liquidity')}</Text>
-          <Text>
-            {Number(liquidityV2BNBdecimal).toLocaleString()} BNB
-            <span className="success"> (${Number(liquidityV2decimal).toLocaleString()})</span>
-          </Text>
-        </Column>
-      </StyledWrapper>
-    </Container>
+    <RealContainer>
+      <TokenStateCard
+        tokenImg={linkIcon}
+        cardTitle={tokenData?.symbol ?? ''}
+        cardValue={`$ ${marketCapacity.toLocaleString()}`}
+        variantFill
+        flexGrow={2}
+        fillColor="#F75183"
+        tokenAddress = {tokenAddress.current}
+      />
+      <TokenStateCard
+        CardIcon={PriceIcon}
+        cardTitle="Price"
+        cardValue={price ? `$ ${Number(price).toFixed(scale).toLocaleString()}` : ''}
+        variantFill={false}
+        flexGrow={1}
+        fillColor="#9B51E0"
+      />
+      <TokenStateCard
+        CardIcon={ChangeIcon}
+        cardTitle="24h Change"
+        cardValue={changedecimal ? `${changedecimal}%` : ''}
+        valueActive
+        variantFill={false}
+        flexGrow={1}
+        fillColor="#77BF3E"
+      />
+      <TokenStateCard
+        CardIcon={VolumeIcon}
+        cardTitle="24h Volume"
+        cardValue={volumedecimal ? `$ ${Number(volumedecimal).toLocaleString()}` : ''}
+        variantFill={false}
+        flexGrow={1.5}
+        fillColor="#21C2CC"
+      />
+      <TokenStateCard
+        CardIcon={LiquidityIcon}
+        cardTitle="Liquidity"
+        cardValue={`${Number(liquidityV2BNBdecimal).toLocaleString()} BNB`}
+        fillColor="#2F80ED"
+        subPriceValue={liquidityV2decimal ? `($ ${Number(liquidityV2decimal).toLocaleString()})` : ''}
+        variantFill={false}
+        flexGrow={1.5}
+      />
+    </RealContainer>
   )
 }

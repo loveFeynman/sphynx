@@ -58,8 +58,8 @@ const IconWrapper = styled.div<{ size?: number }>`
 `
 
 const TokenInfoContainer = styled.div`
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 12px;
+  background: ${({ theme }) => theme.isDark ? "#0E0E26": "#2A2E60"};
+  border-radius: 5px;
   margin: 12px 0;
   ${({ theme }) => theme.mediaQueries.md} {
     margin: 0;

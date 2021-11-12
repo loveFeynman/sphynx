@@ -4,14 +4,14 @@ import { ArrowDropDownIcon, Text } from '@sphynxswap/uikit'
 
 const DropDownHeader = styled.div`
   width: 100%;
-  height: 40px;
+  height: 34px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0px 16px;
   box-shadow: ${({ theme }) => theme.shadows.inset};
-  border: 1px solid ${({ theme }) => theme.colors.inputSecondary};
-  border-radius: 16px;
+  border: 1px solid #2E2E55;
+  border-radius: 5px;
   background: ${({ theme }) => theme.colors.input};
   transition: border-radius 0.15s;
 `
@@ -40,7 +40,7 @@ const DropDownContainer = styled.div<{ isOpen: boolean; width: number; height: n
   position: relative;
   background: ${({ theme }) => theme.colors.input};
   border-radius: 16px;
-  height: 40px;
+  height: 34px;
   min-width: 136px;
   user-select: none;
 
@@ -143,7 +143,7 @@ const Select: React.FunctionComponent<SelectProps> = ({ options, defaultValue, o
     <DropDownContainer isOpen={isOpen} ref={containerRef} {...containerSize}>
       {containerSize.width !== 0 && (
         <DropDownHeader onClick={toggling}>
-          <Text>{options[selectedOptionIndex].label}</Text>
+          <Text color="white">{options[selectedOptionIndex].label}</Text>
         </DropDownHeader>
       )}
       <ArrowDropDownIcon color="text" onClick={toggling} />
@@ -152,7 +152,7 @@ const Select: React.FunctionComponent<SelectProps> = ({ options, defaultValue, o
           {options.map((option, index) =>
             index !== selectedOptionIndex ? (
               <ListItem onClick={onOptionClicked(index)} key={option.label}>
-                <Text>{option.label}</Text>
+                <Text color="white">{option.label}</Text>
               </ListItem>
             ) : null,
           )}
