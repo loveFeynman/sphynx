@@ -113,7 +113,7 @@ const TagsContainer = styled.div`
 
 const ActionContainer = styled.div`
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
 
   ${({ theme }) => theme.mediaQueries.sm} {
     flex-direction: row;
@@ -145,10 +145,10 @@ const ValueWrapper = styled.div`
 const DetailContainer = styled(Flex)`
   display: flex;
   flex-direction: row;
+  align-items: center;
 
   ${({ theme }) => theme.mediaQueries.sm} {
     flex-direction: row;
-    align-items: center;
     flex-grow: 2;
     flex-basis: 0;
   }

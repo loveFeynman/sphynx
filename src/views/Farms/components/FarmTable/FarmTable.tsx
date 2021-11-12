@@ -12,8 +12,8 @@ export interface ITableProps {
   sortColumn?: string
 }
 
-const Container = styled.div<{isMobile?: boolean}>`
-  padding: ${({ isMobile }) => isMobile? '10px' : '5px 40px 20px 40px'};
+const Container = styled.div<{ isMobile?: boolean }>`
+  padding: ${({ isMobile }) => isMobile ? '10px' : '5px 40px 20px 40px'};
   background-color: transparent;
 `
 
@@ -71,23 +71,23 @@ const FarmTable: React.FC<ITableProps> = (props) => {
 
   return (
     <Container isMobile={isMobile}>
-      <TableContainer>
-        <TableWrapper ref={tableWrapperEl}>
-          <StyledTable>
-            <TableBody>
-              {rows.map((row) => {
-                return <Row {...row.original} userDataReady={userDataReady} key={`table-row-${row.id}`} />
-              })}
-            </TableBody>
-          </StyledTable>
-        </TableWrapper>
-        {/* <ScrollButtonContainer>
+      {/* <TableContainer> */}
+      <TableWrapper role="table" ref={tableWrapperEl}>
+        {/* <StyledTable> */}
+        {/* <TableBody> */}
+        {rows.map((row) => {
+          return <Row {...row.original} userDataReady={userDataReady} key={`table-row-${row.id}`} />
+        })}
+        {/* </TableBody> */}
+        {/* </StyledTable> */}
+      </TableWrapper>
+      {/* <ScrollButtonContainer>
           <Button variant="text" color="white" onClick={scrollToTop} style={{ color: 'white' }}>
             {t('To Top')}
             <ChevronUpIcon color="white" />
           </Button>
         </ScrollButtonContainer> */}
-      </TableContainer>
+      {/* </TableContainer> */}
     </Container>
   )
 }

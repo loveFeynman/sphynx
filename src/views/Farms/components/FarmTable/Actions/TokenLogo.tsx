@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Button, Heading, Skeleton, Text } from '@sphynxswap/uikit'
+import { useMatchBreakpoints, Flex, Heading, Skeleton, Text } from '@sphynxswap/uikit'
 import BigNumber from 'bignumber.js'
 import { useWeb3React } from '@web3-react/core'
 import { FarmWithStakedValue } from 'views/Farms/components/FarmCard/FarmCard'
@@ -11,75 +11,71 @@ import { fetchFarmUserDataAsync } from 'state/farms'
 import { usePriceCakeBusd } from 'state/farms/hooks'
 import useToast from 'hooks/useToast'
 import { useTranslation } from 'contexts/Localization'
+import SphynxTokenLogo from 'assets/images/MainLogo.png'
+import styled from 'styled-components'
 import useHarvestFarm from '../../../hooks/useHarvestFarm'
 
 import { ActionContainer, ActionTitles, ActionContent } from './styles'
 
+const TokenImage = styled.img`
+    height: 40px;
+    ${({ theme }) => theme.mediaQueries.xs} {
+        height: 50px;
+    }
+    ${({ theme }) => theme.mediaQueries.sm} {
+        height: 70px;
+    }
+`
+
 interface HarvestActionProps extends FarmWithStakedValue {
-  userDataReady: boolean
+    userDataReady: boolean
 }
 
 const TokenLogo: React.FunctionComponent<HarvestActionProps> = ({ pid, userData, userDataReady }) => {
-  const { toastSuccess, toastError } = useToast()
-  const earningsBigNumber = new BigNumber(userData.earnings)
-  const cakePrice = usePriceCakeBusd()
-  let earnings = BIG_ZERO
-  let earningsBusd = 0
-  let displayBalance = userDataReady ? earnings.toLocaleString() : <Skeleton width={60} />
+    const { isXl } = useMatchBreakpoints()
+    const isMobile = !isXl
+    const { t } = useTranslation()
+    const { toastSuccess, toastError } = useToast()
+    const earningsBigNumber = new BigNumber(userData.earnings)
+    const cakePrice = usePriceCakeBusd()
+    let earnings = BIG_ZERO
+    let earningsBusd = 0
+    let displayBalance = userDataReady ? earnings.toLocaleString() : <Skeleton width={60} />
 
-  // If user didn't connect wallet default balance will be 0
-  if (!earningsBigNumber.isZero()) {
-    earnings = getBalanceAmount(earningsBigNumber)
-    earningsBusd = earnings.multipliedBy(cakePrice).toNumber()
-    displayBalance = earnings.toFixed(3, BigNumber.ROUND_DOWN)
-  }
-
-  const [pendingTx, setPendingTx] = useState(false)
-  const { onReward } = useHarvestFarm(pid)
-  const { t } = useTranslation()
-  const dispatch = useAppDispatch()
-  const { account } = useWeb3React()
-
-  const handleHarvest = async () => {
-    setPendingTx(true)
-    try {
-      await onReward()
-      toastSuccess(
-        `${t('Harvested')}!`,
-        t('Your %symbol% earnings have been sent to your wallet!', { symbol: 'CAKE' }),
-      )
-    } catch (e) {
-      toastError(
-        t('Error'),
-        t('Please try again. Confirm the transaction and make sure you are paying enough gas!'),
-      )
-      console.error(e)
-    } finally {
-      setPendingTx(false)
+    // If user didn't connect wallet default balance will be 0
+    if (!earningsBigNumber.isZero()) {
+        earnings = getBalanceAmount(earningsBigNumber)
+        earningsBusd = earnings.multipliedBy(cakePrice).toNumber()
+        displayBalance = earnings.toFixed(3, BigNumber.ROUND_DOWN)
     }
-    dispatch(fetchFarmUserDataAsync({ account, pids: [pid] }))
-  }
 
-  return (
-    <ActionContainer>
-      <ActionTitles>
-        <Text bold textTransform="uppercase" color="secondary" fontSize="12px" pr="4px">
-          SPHYNX
-        </Text>
-        <Text bold textTransform="uppercase" color="textSubtle" fontSize="12px">
-          {t('Earned')}
-        </Text>
-      </ActionTitles>
-      <ActionContent>
-        <div>
-          <Heading>{displayBalance}</Heading>
-          {earningsBusd > 0 && (
-            <Balance fontSize="12px" color="textSubtle" decimals={2} value={earningsBusd} unit=" USD" prefix="~" />
-          )}
-        </div>
-      </ActionContent>
-    </ActionContainer>
-  )
+    // const [pendingTx, setPendingTx] = useState(false)
+    // const { onReward } = useHarvestFarm(pid)
+    // const { t } = useTranslation()
+    // const dispatch = useAppDispatch()
+    // const { account } = useWeb3React()
+
+    return (
+        <Flex flexDirection={isMobile ? 'column' : 'row'} alignItems='center'>
+            <TokenImage src={SphynxTokenLogo} alt="token" />
+            <Flex flexDirection="column" alignItems={isMobile ? 'center' : 'flex-start'}>
+                <ActionTitles>
+                    <Text bold textTransform="uppercase" color="white" fontSize="12px" pr="4px">
+                        SPHYNX
+                    </Text>
+                    <Text bold textTransform="uppercase" color="white" fontSize="12px">
+                        {t('Earned')}
+                    </Text>
+                </ActionTitles>
+                <ActionContent>
+                    {/* <Heading>{displayBalance}</Heading> */}
+                    {earningsBusd >= 0 && (
+                        <Balance fontSize={isMobile? '15px': '24px'} color="white" decimals={2} value={earningsBusd} prefix="$" />
+                    )}
+                </ActionContent>
+            </Flex>
+        </Flex >
+    )
 }
 
 export default TokenLogo
