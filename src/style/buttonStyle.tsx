@@ -11,7 +11,6 @@ export const ColorButtonStyle = {
     borderRadius: '5px',
     border: 'none',
     height: '34px',
-    padding: '0 5em',
     fontSize: '13px',
     background: 'linear-gradient(90deg, #610D89 0%, #C42BB4 100%)',
     width: '176px'
