@@ -29,6 +29,8 @@ const Farms = lazy(() => import('./views/Farms'))
 const Pools = lazy(() => import('./views/Pools'))
 const Launchpad = lazy(() => import('./views/Launchpad'))
 const Presale = lazy(() => import('./views/Launchpad/presale'))
+const Listings = lazy(() => import('./views/Launchpad/Listings'))
+const PresaleLive = lazy(() => import('./views/Launchpad/PresaleLive'))
 const Lottery = lazy(() => import('./views/LotterySphx'))
 const Bridge = lazy(() => import('./views/Bridge'))
 const FAQ = lazy(() => import('./views/FAQ'))
@@ -37,7 +39,7 @@ const BodyWrapper = styled.div<{ toggled: boolean }>`
   display: flex;
   flex-direction: column;
   width: 100%;
-  padding: 0 12px;
+  padding: 0 20px;
   min-height: calc(100vh - 152px);
   align-items: center;
   flex: 1;
@@ -251,6 +253,8 @@ const App: React.FC = () => {
                   <Route exact strict path="/pools/history" component={Pools} />
                   <Route exact strict path="/launchpad" component={Launchpad} />
                   <Route exact strict path="/launchpad/presale" component={Presale} />
+                  <Route exact strict path="/launchpad/listing" component={Listings} />
+                  <Route exact strict path="/launchpad/live" component={PresaleLive} />
                   <Route exact strict path="/lottery" component={Lottery} />
                   <Route exact strict path="/bridge" component={Bridge} />
                   <Route exact strict path="/faq" component={FAQ} />
