@@ -19,7 +19,7 @@ interface HarvestActionProps extends FarmWithStakedValue {
   userDataReady: boolean
 }
 
-const HarvestAction: React.FunctionComponent<HarvestActionProps> = ({ pid, userData, userDataReady }) => {
+const TokenLogo: React.FunctionComponent<HarvestActionProps> = ({ pid, userData, userDataReady }) => {
   const { toastSuccess, toastError } = useToast()
   const earningsBigNumber = new BigNumber(userData.earnings)
   const cakePrice = usePriceCakeBusd()
@@ -62,7 +62,7 @@ const HarvestAction: React.FunctionComponent<HarvestActionProps> = ({ pid, userD
 
   return (
     <ActionContainer>
-      {/* <ActionTitles>
+      <ActionTitles>
         <Text bold textTransform="uppercase" color="secondary" fontSize="12px" pr="4px">
           SPHYNX
         </Text>
@@ -76,17 +76,10 @@ const HarvestAction: React.FunctionComponent<HarvestActionProps> = ({ pid, userD
           {earningsBusd > 0 && (
             <Balance fontSize="12px" color="textSubtle" decimals={2} value={earningsBusd} unit=" USD" prefix="~" />
           )}
-        </div> */}
-        <Button
-          disabled={earnings.eq(0) || pendingTx || !userDataReady}
-          onClick={handleHarvest}
-          ml="4px"
-        >
-          {t('Harvest')}
-        </Button>
-      {/* </ActionContent> */}
+        </div>
+      </ActionContent>
     </ActionContainer>
   )
 }
 
-export default HarvestAction
+export default TokenLogo

@@ -145,7 +145,7 @@ const LargeLinkExternal = styled(LinkExternal)`
 
 const SmallLinkExternal = styled(LinkExternal)`
   font-size: 8px;
-  font-weight: 600;
+  font-weight: 400;
   flex-flow: row-reverse;
   > svg {
     width: 15px;
@@ -311,7 +311,7 @@ const ActionPanel: React.FC<ActionPanelProps> = ({ account, pool, userDataLoaded
             </LargeLinkExternal>
           </Flex>
           <Flex flexDirection='row' mb="8px">
-            <BorderFlex mr='5px'>
+            <BorderFlex mr='2px'>
               <SmallLinkExternal
                 href={earningToken.projectLink}
               >
@@ -319,7 +319,7 @@ const ActionPanel: React.FC<ActionPanelProps> = ({ account, pool, userDataLoaded
               </SmallLinkExternal>
             </BorderFlex>
             {poolContractAddress && (
-              <BorderFlex>
+              <BorderFlex ml='2px'>
                 <SmallLinkExternal
                   href={`${BASE_BSC_SCAN_URL}/address/${isAutoVault ? cakeVaultContractAddress : poolContractAddress}`}
                 >
