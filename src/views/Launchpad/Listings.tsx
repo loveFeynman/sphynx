@@ -159,6 +159,7 @@ const InputWrapper = styled.div`
       height: 34px;
       max-width: 192px;
       width: 100%;
+      background: ${({ theme }) => (theme.isDark ? "#0E0E26" : "#2A2E60")};
     }
   }
 `
@@ -168,9 +169,12 @@ const SelectWrapper = styled.div`
     font-size: 12px;
   }
   div: last-child {
+    background: ${({ theme }) => (theme.isDark ? "#0E0E26" : "#2A2E60")};
+    border-radius: 8px;
     div {
       border-radius: 8px;
       border: unset;
+      background: ${({ theme }) => (theme.isDark ? "#0E0E26" : "#2A2E60")};
     }
   }
 `
