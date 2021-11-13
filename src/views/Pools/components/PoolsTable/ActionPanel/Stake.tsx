@@ -28,6 +28,7 @@ const ColorButton = styled(Button)`
   border-radius: 5px;
   border: none;
   height: 34px;
+  color: white;
   font-size: 13px;
   background: linear-gradient(90deg,#610D89 0%,#C42BB4 100%);
   width: 102px;
@@ -189,7 +190,7 @@ const Staked: React.FunctionComponent<StackedActionProps> = ({ pool, userDataLoa
           </Text>
         </StakeActionTitles>
         <ActionContent>
-          <ColorButton disabled onClick={handleApprove} variant="secondary">
+          <ColorButton onClick={handleApprove} variant="secondary">
             {t('Enable')}
           </ColorButton>
         </ActionContent>
