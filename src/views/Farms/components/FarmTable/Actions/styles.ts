@@ -40,6 +40,7 @@ export const StakeActionTitles = styled.div`
   font-size: 12px;
   position: absolute;
   top: 20px;
+  display: flex;
 `
 
 export const ActionContent = styled.div`
