@@ -131,6 +131,8 @@ const TransparentIconButton = styled(IconButton)`
   margin: 0px 3px;
   border: none;
   outline: none !important;
+  box-shadow: none;
+}
 `
 
 const SearchPannel = ({ stakedOnly, setStakedOnly, viewMode, setViewMode, setSortOption, setQuery }) => {

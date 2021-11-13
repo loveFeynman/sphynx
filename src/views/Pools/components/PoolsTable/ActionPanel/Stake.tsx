@@ -256,7 +256,7 @@ const Staked: React.FunctionComponent<StackedActionProps> = ({ pool, userDataLoa
               decimals={5}
               value={isAutoVault ? cakeAsNumberBalance : stakedTokenBalance}
             />
-            <Balance
+            {/* <Balance
               fontSize={isMobile? "12px": "16px"}
               display="inline"
               color="textSubtle"
@@ -264,7 +264,7 @@ const Staked: React.FunctionComponent<StackedActionProps> = ({ pool, userDataLoa
               value={isAutoVault ? stakedAutoDollarValue : stakedTokenDollarBalance}
               unit=" USD"
               prefix="~"
-            />
+            /> */}
           </StackedFlex>
           <IconButtonWrapper>
             <AddIconButton variant="secondary" onClick={onUnstake} mr="6px">
