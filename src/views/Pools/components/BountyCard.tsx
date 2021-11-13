@@ -56,6 +56,10 @@ const BountyText = styled(Text)`
   }
 `
 
+const TooltipText = styled(Text)`
+  color: ${({ theme }) => theme.isDark? 'white' : 'black'}
+`
+
 const BountyCard = () => {
   const { t } = useTranslation()
   const { isXl } = useMatchBreakpoints()
@@ -77,15 +81,15 @@ const BountyCard = () => {
 
   const TooltipComponent = ({ fee }: { fee: number }) => (
     <>
-      <Text color="#452a7a" mb="16px">{t('This bounty is given as a reward for providing a service to other users.')}</Text>
-      <Text color="#452a7a" mb="16px">
+      <TooltipText color="red" mb="16px">{t('This bounty is given as a reward for providing a service to other users.')}</TooltipText>
+      <TooltipText color="red" mb="16px">
         {t(
           'Whenever you successfully claim the bounty, you’re also helping out by activating the Auto SPHYNX Pool’s compounding function for everyone.',
         )}
-      </Text>
-      <Text color="#452a7a" style={{ fontWeight: 'bold' }}>
+      </TooltipText>
+      <TooltipText color="red" style={{ fontWeight: 'bold' }}>
         {t('Auto-Compound Bounty: %fee%% of all Auto SPHYNX pool users pending yield', { fee: fee / 100 })}
-      </Text>
+      </TooltipText>
     </>
   )
 
