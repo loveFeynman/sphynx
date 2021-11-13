@@ -68,7 +68,11 @@ const StackedFlex = styled(Flex)`
   flex-direction: row;
   margin-bottom: 10px;
   margin-right: 0px;
-  align-items: self-end;
+  -webkit-box-align: end;
+  -webkit-flex-align: end;
+  -ms-flex-align: end;
+  -webkit-align-items: end;
+  align-items: end;
   ${({ theme }) => theme.mediaQueries.sm} {
     margin-bottom: 0px;
     margin-right: 10px;
