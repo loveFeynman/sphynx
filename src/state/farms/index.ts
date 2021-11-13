@@ -2,8 +2,8 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import farmsConfig from 'config/constants/farms'
 import isArchivedPid from 'utils/farmHelpers'
 import priceHelperLpsConfig from 'config/constants/priceHelperLps'
-import fetchFarms from './fetchFarms'
 import fetchFarmsPrices from './fetchFarmsPrices'
+import fetchFarms from './fetchFarms'
 import {
   fetchFarmUserEarnings,
   fetchFarmUserAllowances,
@@ -36,8 +36,7 @@ export const fetchFarmsPublicDataAsync = createAsyncThunk<Farm[], number[]>(
     const farmsWithPriceHelpers = farmsToFetch.concat(priceHelperLpsConfig)
 
     const farms = await fetchFarms(farmsWithPriceHelpers)
-    const farmsWithPrices = farms;
-    // const farmsWithPrices = await fetchFarmsPrices(farms)
+    const farmsWithPrices = await fetchFarmsPrices(farms)
 
     // Filter out price helper LP config farms
     const farmsWithoutHelperLps = farmsWithPrices.filter((farm: Farm) => {
