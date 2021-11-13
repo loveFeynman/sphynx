@@ -81,13 +81,13 @@ const BountyCard = () => {
 
   const TooltipComponent = ({ fee }: { fee: number }) => (
     <>
-      <TooltipText color="red" mb="16px">{t('This bounty is given as a reward for providing a service to other users.')}</TooltipText>
-      <TooltipText color="red" mb="16px">
+      <TooltipText mb="16px">{t('This bounty is given as a reward for providing a service to other users.')}</TooltipText>
+      <TooltipText mb="16px">
         {t(
           'Whenever you successfully claim the bounty, you’re also helping out by activating the Auto SPHYNX Pool’s compounding function for everyone.',
         )}
       </TooltipText>
-      <TooltipText color="red" style={{ fontWeight: 'bold' }}>
+      <TooltipText style={{ fontWeight: 'bold' }}>
         {t('Auto-Compound Bounty: %fee%% of all Auto SPHYNX pool users pending yield', { fee: fee / 100 })}
       </TooltipText>
     </>
