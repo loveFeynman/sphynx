@@ -25,15 +25,16 @@ const TotalStakedCell: React.FC<TotalStakedCellProps> = ({ pool }) => {
   const isManualCakePool = sousId === 0
 
   const totalStakedBalance = useMemo(() => {
-    if (isAutoVault) {
-      return getBalanceNumber(totalCakeInVault, stakingToken.decimals)
-    }
-    if (isManualCakePool) {
-      const manualCakeTotalMinusAutoVault = new BigNumber(totalStaked).minus(totalCakeInVault)
-      return getBalanceNumber(manualCakeTotalMinusAutoVault, stakingToken.decimals)
-    }
+    // if (isAutoVault) {
+    //   return getBalanceNumber(totalCakeInVault, stakingToken.decimals)
+    // }
+    // if (isManualCakePool) {
+    //   const manualCakeTotalMinusAutoVault = new BigNumber(totalStaked).minus(totalCakeInVault)
+    //   return getBalanceNumber(manualCakeTotalMinusAutoVault, stakingToken.decimals)
+    // }
     return getBalanceNumber(totalStaked, stakingToken.decimals)
-  }, [isAutoVault, totalCakeInVault, isManualCakePool, totalStaked, stakingToken.decimals])
+  // }, [isAutoVault, totalCakeInVault, isManualCakePool, totalStaked, stakingToken.decimals])
+  }, [totalStaked, stakingToken.decimals])
 
   return (
     <StyledCell role="cell">
