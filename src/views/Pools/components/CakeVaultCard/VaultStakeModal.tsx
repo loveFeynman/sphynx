@@ -179,7 +179,7 @@ const VaultStakeModal: React.FC<VaultStakeModalProps> = ({ pool, stakingMax, isR
       </Text>
       <Slider
         min={0}
-        max={100}
+        max={99}
         value={percent}
         onChange={(value) => handleChangePercent(Math.ceil(value))}
         name="stake"
