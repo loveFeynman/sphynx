@@ -20,10 +20,31 @@ import DepositModal from '../../DepositModal'
 import WithdrawModal from '../../WithdrawModal'
 import useStakeFarms from '../../../hooks/useStakeFarms'
 import useApproveFarm from '../../../hooks/useApproveFarm'
-import { ActionContainer, ActionTitles, ActionContent } from './styles'
+import { ActionContainer, StakeActionTitles, ActionTitles, ActionContent } from './styles'
 
 const IconButtonWrapper = styled.div`
   display: flex;
+`
+
+const ColorButton = styled(Button)`
+  border-radius: 5px;
+  border: none;
+  height: 34px;
+  font-size: 13px;
+  background: linear-gradient(90deg,#610D89 0%,#C42BB4 100%);
+  width: 102px;
+  outline: 'none';
+  color: white;
+
+  ${({ theme }) => theme.mediaQueries.sm} {
+    width: 176px;
+  }
+`
+const ButtonSkeleton = styled(Skeleton)`
+  width: 102px;
+  ${({ theme }) => theme.mediaQueries.sm} {
+    width: 176px;
+  }
 `
 
 interface StackedActionProps extends FarmWithStakedValue {
@@ -96,11 +117,11 @@ const Staked: React.FunctionComponent<StackedActionProps> = ({
   if (!account) {
     return (
       <ActionContainer>
-        <ActionTitles>
+        <StakeActionTitles>
           <Text bold textTransform="uppercase" color="textSubtle" fontSize="12px">
             {t('Start Farming')}
           </Text>
-        </ActionTitles>
+        </StakeActionTitles>
         <ActionContent>
           <ConnectWalletButton width="100%" />
         </ActionContent>
@@ -112,14 +133,14 @@ const Staked: React.FunctionComponent<StackedActionProps> = ({
     if (stakedBalance.gt(0)) {
       return (
         <ActionContainer>
-          <ActionTitles>
+          <StakeActionTitles>
             <Text bold textTransform="uppercase" color="secondary" fontSize="12px" pr="4px">
               {lpSymbol}
             </Text>
             <Text bold textTransform="uppercase" color="textSubtle" fontSize="12px">
               {t('Staked')}
             </Text>
-          </ActionTitles>
+          </StakeActionTitles>
           <ActionContent>
             <div>
               <Heading>{displayBalance()}</Heading>
@@ -153,23 +174,23 @@ const Staked: React.FunctionComponent<StackedActionProps> = ({
 
     return (
       <ActionContainer>
-        <ActionTitles>
+        <StakeActionTitles>
           <Text bold textTransform="uppercase" color="textSubtle" fontSize="12px" pr="4px">
             {t('Stake').toUpperCase()}
           </Text>
           <Text bold textTransform="uppercase" color="secondary" fontSize="12px">
             {lpSymbol}
           </Text>
-        </ActionTitles>
+        </StakeActionTitles>
         <ActionContent>
-          <Button
+          <ColorButton
             width="100%"
             onClick={onPresentDeposit}
             variant="secondary"
             disabled={['history', 'archived'].some((item) => location.pathname.includes(item))}
           >
             {t('Stake LP')}
-          </Button>
+          </ColorButton>
         </ActionContent>
       </ActionContainer>
     )
@@ -178,13 +199,13 @@ const Staked: React.FunctionComponent<StackedActionProps> = ({
   if (!userDataReady) {
     return (
       <ActionContainer>
-        <ActionTitles>
+        <StakeActionTitles>
           <Text bold textTransform="uppercase" color="textSubtle" fontSize="12px">
             {t('Start Farming')}
           </Text>
-        </ActionTitles>
+        </StakeActionTitles>
         <ActionContent>
-          <Skeleton width={180} marginBottom={28} marginTop={14} />
+          <ButtonSkeleton height="32px" />
         </ActionContent>
       </ActionContainer>
     )
@@ -192,15 +213,15 @@ const Staked: React.FunctionComponent<StackedActionProps> = ({
 
   return (
     <ActionContainer>
-      <ActionTitles>
+      <StakeActionTitles>
         <Text bold textTransform="uppercase" color="textSubtle" fontSize="12px">
           {t('Enable Farm')}
         </Text>
-      </ActionTitles>
+      </StakeActionTitles>
       <ActionContent>
-        <Button width="100%" disabled={requestedApproval} onClick={handleApprove} variant="secondary">
+        <ColorButton width="100%" disabled={requestedApproval} onClick={handleApprove} variant="secondary">
           {t('Enable')}
-        </Button>
+        </ColorButton>
       </ActionContent>
     </ActionContainer>
   )

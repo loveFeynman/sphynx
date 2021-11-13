@@ -2,11 +2,13 @@ import styled from 'styled-components'
 
 export const ActionContainer = styled.div`
   padding: 16px;
-  border: 2px solid ${({ theme }) => theme.colors.input};
-  border-radius: 16px;
   flex-grow: 1;
   flex-basis: 0;
   margin-bottom: 16px;
+  flex-direction: row;
+  display: flex;
+  justify-content: center;
+  height: 110px;
 
   ${({ theme }) => theme.mediaQueries.sm} {
     margin-left: 12px;
@@ -26,8 +28,15 @@ export const ActionContainer = styled.div`
 `
 
 export const ActionTitles = styled.div`
+  text-align: center;
   font-weight: 600;
   font-size: 12px;
+`
+
+export const StakeActionTitles = styled.div`
+  font-weight: 600;
+  font-size: 12px;
+  position: absolute;
 `
 
 export const ActionContent = styled.div`

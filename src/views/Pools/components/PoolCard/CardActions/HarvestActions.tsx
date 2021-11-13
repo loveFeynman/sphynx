@@ -5,6 +5,7 @@ import { Token } from 'config/constants/types'
 import { useTranslation } from 'contexts/Localization'
 import { getFullDisplayBalance, getBalanceNumber, formatNumber } from 'utils/formatBalance'
 import Balance from 'components/Balance'
+import { DarkButtonStyle } from 'style/buttonStyle'
 import CollectModal from '../Modals/CollectModal'
 
 interface HarvestActionsProps {
@@ -47,39 +48,38 @@ const HarvestActions: React.FC<HarvestActionsProps> = ({
   )
 
   return (
-    <Flex justifyContent="space-between" alignItems="center" mb="16px">
-      <Flex flexDirection="column">
+    <Flex justifyContent="space-between" alignItems="center" mb="16px" flexDirection="column">
+      <Flex flexDirection="row">
         {isLoading ? (
           <Skeleton width="80px" height="48px" />
         ) : (
           <>
             {hasEarnings ? (
               <>
-                <Balance bold fontSize="20px" decimals={5} value={earningTokenBalance} />
+                {/* <Balance bold fontSize="20px" decimals={5} value={earningTokenBalance} /> */}
                 {earningTokenPrice > 0 && (
                   <Balance
                     display="inline"
-                    fontSize="12px"
+                    fontSize="20px"
                     color="textSubtle"
                     decimals={2}
-                    prefix="~"
+                    prefix="$"
                     value={earningTokenDollarBalance}
-                    unit=" USD"
                   />
                 )}
               </>
             ) : (
               <>
-                <Heading color="textDisabled">0</Heading>
-                <Text fontSize="12px" color="textDisabled">
-                  0 USD
+                {/* <Heading color="textDisabled">0</Heading> */}
+                <Text fontSize="20px" color="textDisabled">
+                  $0
                 </Text>
               </>
             )}
           </>
         )}
       </Flex>
-      <Button disabled={!hasEarnings} onClick={onPresentCollect}>
+      <Button disabled={!hasEarnings} onClick={onPresentCollect} style={DarkButtonStyle}>
         {isCompoundPool ? t('Collect') : t('Harvest')}
       </Button>
     </Flex>

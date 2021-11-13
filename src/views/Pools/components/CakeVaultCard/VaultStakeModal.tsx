@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
-import { Modal, Text, Flex, Image, Button, Slider, BalanceInput, AutoRenewIcon } from '@sphynxswap/uikit'
+import { Modal, Text, Flex, Image, Button, BalanceInput, AutoRenewIcon } from '@sphynxswap/uikit'
+import Slider from 'react-rangeslider'
 import { useTranslation } from 'contexts/Localization'
 import { useWeb3React } from '@web3-react/core'
 import { useAppDispatch } from 'state'
@@ -180,7 +181,7 @@ const VaultStakeModal: React.FC<VaultStakeModalProps> = ({ pool, stakingMax, isR
         min={0}
         max={100}
         value={percent}
-        onValueChanged={handleChangePercent}
+        onChange={(value) => handleChangePercent(Math.ceil(value))}
         name="stake"
         valueLabel={`${percent}%`}
         step={1}

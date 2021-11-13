@@ -10,10 +10,25 @@ import { useAppDispatch } from 'state'
 import { fetchFarmUserDataAsync } from 'state/farms'
 import { usePriceCakeBusd } from 'state/farms/hooks'
 import useToast from 'hooks/useToast'
+import styled from 'styled-components'
 import { useTranslation } from 'contexts/Localization'
 import useHarvestFarm from '../../../hooks/useHarvestFarm'
 
 import { ActionContainer, ActionTitles, ActionContent } from './styles'
+
+const DarkButton = styled(Button)`
+  border-radius: 5px;
+  border: none;
+  height: 34px;
+  font-size: 13px;
+  background: ${({ theme }) => theme.isDark? '#0E0E26' : '#2A2E60'};
+  width: 102px;
+  outline: 'none'
+
+  ${({ theme }) => theme.mediaQueries.sm} {
+    width: 176px;
+  }
+`
 
 interface HarvestActionProps extends FarmWithStakedValue {
   userDataReady: boolean
@@ -62,7 +77,7 @@ const HarvestAction: React.FunctionComponent<HarvestActionProps> = ({ pid, userD
 
   return (
     <ActionContainer>
-      <ActionTitles>
+      {/* <ActionTitles>
         <Text bold textTransform="uppercase" color="secondary" fontSize="12px" pr="4px">
           SPHYNX
         </Text>
@@ -76,15 +91,15 @@ const HarvestAction: React.FunctionComponent<HarvestActionProps> = ({ pid, userD
           {earningsBusd > 0 && (
             <Balance fontSize="12px" color="textSubtle" decimals={2} value={earningsBusd} unit=" USD" prefix="~" />
           )}
-        </div>
-        <Button
+        </div> */}
+        <DarkButton
           disabled={earnings.eq(0) || pendingTx || !userDataReady}
           onClick={handleHarvest}
           ml="4px"
         >
           {t('Harvest')}
-        </Button>
-      </ActionContent>
+        </DarkButton>
+      {/* </ActionContent> */}
     </ActionContainer>
   )
 }

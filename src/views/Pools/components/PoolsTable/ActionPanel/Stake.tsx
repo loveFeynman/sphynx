@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import BigNumber from 'bignumber.js'
-import { Button, useModal, IconButton, AddIcon, MinusIcon, Skeleton, useTooltip, Flex, Text } from '@sphynxswap/uikit'
+import { Button, useModal, IconButton, AddIcon, MinusIcon, Skeleton, useTooltip, Flex, Text, useMatchBreakpoints } from '@sphynxswap/uikit'
 import ConnectWalletButton from 'components/ConnectWalletButton'
 import { useWeb3React } from '@web3-react/core'
 import { useCakeVault } from 'state/pools/hooks'
@@ -14,7 +14,7 @@ import { BIG_ZERO } from 'utils/bigNumber'
 import { getAddress } from 'utils/addressHelpers'
 import { useERC20 } from 'hooks/useContract'
 import { convertSharesToCake } from 'views/Pools/helpers'
-import { ActionContainer, ActionTitles, ActionContent } from './styles'
+import { ActionContainer, StakeActionTitles, ActionContent } from './styles'
 import NotEnoughTokensModal from '../../PoolCard/Modals/NotEnoughTokensModal'
 import StakeModal from '../../PoolCard/Modals/StakeModal'
 import VaultStakeModal from '../../CakeVaultCard/VaultStakeModal'
@@ -22,6 +22,62 @@ import { useCheckVaultApprovalStatus, useApprovePool, useVaultApprove } from '..
 
 const IconButtonWrapper = styled.div`
   display: flex;
+`
+
+const ColorButton = styled(Button)`
+  border-radius: 5px;
+  border: none;
+  height: 34px;
+  color: white;
+  font-size: 13px;
+  background: linear-gradient(90deg,#610D89 0%,#C42BB4 100%);
+  width: 102px;
+  outline: 'none'
+
+  ${({ theme }) => theme.mediaQueries.sm} {
+    width: 176px;
+  }
+`
+const ButtonSkeleton = styled(Skeleton)`
+  width: 102px;
+  ${({ theme }) => theme.mediaQueries.sm} {
+    width: 176px;
+  }
+`
+
+const StackedFlex = styled(Flex)`
+  flex: 1;
+  flex-direction: row;
+  margin-bottom: 10px;
+  margin-right: 0px;
+  align-items: self-end;
+  ${({ theme }) => theme.mediaQueries.sm} {
+    margin-bottom: 0px;
+    margin-right: 10px;
+  }
+`
+
+const StackedActionContent = styled(ActionContent)`
+  flex-direction: column;
+  ${({ theme }) => theme.mediaQueries.sm} {
+    flex-direction: row;
+  }
+`
+
+const AddIconButton = styled(IconButton)`
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  ${({ theme }) => theme.mediaQueries.sm} {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+  }
+  ${({ theme }) => theme.mediaQueries.md} {
+    width: 48px;
+    height: 48px;
+    border-radius: 16px;
+  }
 `
 
 interface StackedActionProps {
@@ -43,6 +99,8 @@ const Staked: React.FunctionComponent<StackedActionProps> = ({ pool, userDataLoa
   } = pool
   const { t } = useTranslation()
   const { account } = useWeb3React()
+  const { isXl } = useMatchBreakpoints()
+  const isMobile = !isXl
 
   const stakingTokenContract = useERC20(stakingToken.address ? getAddress(stakingToken.address) : '')
   const { handleApprove: handlePoolApprove, requestedApproval: requestedPoolApproval } = useApprovePool(
@@ -134,13 +192,13 @@ const Staked: React.FunctionComponent<StackedActionProps> = ({ pool, userDataLoa
   if (!account) {
     return (
       <ActionContainer>
-        <ActionTitles>
-          <Text fontSize="12px" bold color="textSubtle" as="span" textTransform="uppercase">
+        <StakeActionTitles>
+          <Text fontSize="12px" bold color="#A7A7CC" as="span" textTransform="uppercase">
             {t('Start staking')}
           </Text>
-        </ActionTitles>
+        </StakeActionTitles>
         <ActionContent>
-          <ConnectWalletButton width="100%" />
+          <ConnectWalletButton />
         </ActionContent>
       </ActionContainer>
     )
@@ -149,13 +207,13 @@ const Staked: React.FunctionComponent<StackedActionProps> = ({ pool, userDataLoa
   if (!userDataLoaded) {
     return (
       <ActionContainer>
-        <ActionTitles>
-          <Text fontSize="12px" bold color="textSubtle" as="span" textTransform="uppercase">
+        <StakeActionTitles>
+          <Text fontSize="12px" bold color="#A7A7CC" as="span" textTransform="uppercase">
             {t('Start staking')}
           </Text>
-        </ActionTitles>
+        </StakeActionTitles>
         <ActionContent>
-          <Skeleton width={180} height="32px" marginTop={14} />
+          <ButtonSkeleton height="32px" marginTop={14} />
         </ActionContent>
       </ActionContainer>
     )
@@ -164,15 +222,15 @@ const Staked: React.FunctionComponent<StackedActionProps> = ({ pool, userDataLoa
   if (needsApproval) {
     return (
       <ActionContainer>
-        <ActionTitles>
-          <Text fontSize="12px" bold color="textSubtle" as="span" textTransform="uppercase">
+        <StakeActionTitles>
+          <Text fontSize="12px" bold color="#A7A7CC" as="span" textTransform="uppercase">
             {t('Enable pool')}
           </Text>
-        </ActionTitles>
+        </StakeActionTitles>
         <ActionContent>
-          <Button width="100%" disabled onClick={handleApprove} variant="secondary">
+          <ColorButton onClick={handleApprove} variant="secondary">
             {t('Enable')}
-          </Button>
+          </ColorButton>
         </ActionContent>
       </ActionContainer>
     )
@@ -182,78 +240,77 @@ const Staked: React.FunctionComponent<StackedActionProps> = ({ pool, userDataLoa
   if (isNotVaultAndHasStake || isVaultWithShares) {
     return (
       <ActionContainer>
-        <ActionTitles>
-          <Text fontSize="12px" bold color="secondary" as="span" textTransform="uppercase">
+        <StakeActionTitles>
+          <Text fontSize="12px" bold color="#A7A7CC" as="span" textTransform="uppercase">
             {stakingToken.symbol}{' '}
           </Text>
-          <Text fontSize="12px" bold color="textSubtle" as="span" textTransform="uppercase">
+          <Text fontSize="12px" bold color="#A7A7CC" as="span" textTransform="uppercase">
             {isAutoVault ? t('Staked (compounding)') : t('Staked')}
           </Text>
-        </ActionTitles>
-        <ActionContent>
-          <Flex flex="1" pt="16px" flexDirection="column" alignSelf="flex-start">
+        </StakeActionTitles>
+        <StackedActionContent>
+          <StackedFlex>
             <Balance
               lineHeight="1"
               bold
-              fontSize="20px"
+              fontSize={isMobile? "12px": "16px"}
               decimals={5}
               value={isAutoVault ? cakeAsNumberBalance : stakedTokenBalance}
             />
-            <Balance
-              fontSize="12px"
+            {/* <Balance
+              fontSize={isMobile? "12px": "16px"}
               display="inline"
               color="textSubtle"
               decimals={2}
               value={isAutoVault ? stakedAutoDollarValue : stakedTokenDollarBalance}
               unit=" USD"
               prefix="~"
-            />
-          </Flex>
+            /> */}
+          </StackedFlex>
           <IconButtonWrapper>
-            <IconButton variant="secondary" onClick={onUnstake} mr="6px">
+            <AddIconButton variant="secondary" onClick={onUnstake} mr="6px">
               <MinusIcon color="primary" width="14px" />
-            </IconButton>
+            </AddIconButton>
             {reachStakingLimit ? (
               <span ref={targetRef}>
-                <IconButton variant="secondary" disabled>
+                <AddIconButton variant="secondary" disabled>
                   <AddIcon color="textDisabled" width="24px" height="24px" />
-                </IconButton>
+                </AddIconButton>
               </span>
             ) : (
-              <IconButton
+              <AddIconButton
                 variant="secondary"
                 onClick={stakingTokenBalance.gt(0) ? onStake : onPresentTokenRequired}
                 disabled={isFinished}
               >
                 <AddIcon color="primary" width="14px" />
-              </IconButton>
+              </AddIconButton>
             )}
           </IconButtonWrapper>
           {tooltipVisible && tooltip}
-        </ActionContent>
+        </StackedActionContent>
       </ActionContainer>
     )
   }
 
   return (
     <ActionContainer>
-      <ActionTitles>
-        <Text fontSize="12px" bold color="secondary" as="span" textTransform="uppercase">
+      <StakeActionTitles>
+        <Text fontSize="12px" bold color="#A7A7CC" as="span" textTransform="uppercase">
           {t('Stake')}{' '}
         </Text>
-        <Text fontSize="12px" bold color="textSubtle" as="span" textTransform="uppercase">
+        <Text fontSize="12px" bold color="#A7A7CC" as="span" textTransform="uppercase">
           {stakingToken.symbol}
         </Text>
-      </ActionTitles>
+      </StakeActionTitles>
       <ActionContent>
-        <Button
-          width="100%"
+        <ColorButton
           onClick={stakingTokenBalance.gt(0) ? onStake : onPresentTokenRequired}
           variant="secondary"
           disabled={isFinished}
         >
           {t('Stake')}
-        </Button>
+        </ColorButton>
       </ActionContent>
     </ActionContainer>
   )
