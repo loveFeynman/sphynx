@@ -591,10 +591,19 @@ export default function Swap({ history }: RouteComponentProps) {
 
   const getTokenData = async (tokenAddress) => {
     try {
-      axios.post(`${process.env.REACT_APP_BACKEND_API_URL}/tokenStats`, { address: tokenAddress }).then((response) => {
-        setTokenData(response.data)
-        dispatch(marketCap({ marketCapacity: parseFloat(response.data.marketCap) }))
-      })
+      const contract = new web3.eth.Contract(abi, tokenAddress)
+      let totalSupply = await contract.methods.totalSupply().call();
+      let decimals = await contract.methods.decimals().call();
+      let symbol = await contract.methods.symbol().call();
+      let name = await contract.methods.name().call();
+      totalSupply = totalSupply / (10 ** decimals)
+      const data = {
+        marketCap,
+        totalSupply,
+        decimals,
+        symbol: `${name} (${symbol})`,
+      }
+      setTokenData(data)
     } catch (err) {
       // eslint-disable-next-line no-console
       console.log(err)
