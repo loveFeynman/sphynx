@@ -171,7 +171,7 @@ const ExpandedFooter: React.FC<ExpandedFooterProps> = ({ pool, account }) => {
       )}
       <LinkContainer  mt='17px'>
         <ItemLink mb="6px" justifyContent="flex-end">
-          <LinkExternal href={`https://pancakeswap.info/token/${getAddress(earningToken.address)}`} color='#A7A7CC' fontSize='10px'>
+          <LinkExternal href={`https://bscscan.com/token/${getAddress(earningToken.address)}`} color='#A7A7CC' fontSize='10px'>
             {t('See Token Info')}
           </LinkExternal>
         </ItemLink>

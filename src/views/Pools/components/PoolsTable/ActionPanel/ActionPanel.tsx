@@ -306,7 +306,7 @@ const ActionPanel: React.FC<ActionPanelProps> = ({ account, pool, userDataLoaded
           {(isXs || isSm || isMd) && totalStakedRow}
           {shouldShowBlockCountdown && blocksRow} */}
           <Flex mb="8px">
-            <LargeLinkExternal href={`https://pancakeswap.info/token/${getAddress(earningToken.address)}`}>
+            <LargeLinkExternal href={`https://bscscan.com/token/${getAddress(earningToken.address)}`}>
               {t('See Token Info')}
             </LargeLinkExternal>
           </Flex>
