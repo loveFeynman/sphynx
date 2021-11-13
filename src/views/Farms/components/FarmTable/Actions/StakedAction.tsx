@@ -33,7 +33,7 @@ const ColorButton = styled(Button)`
   font-size: 13px;
   background: linear-gradient(90deg,#610D89 0%,#C42BB4 100%);
   width: 102px;
-  outline: 'none';
+  outline: none;
   color: white;
 
   ${({ theme }) => theme.mediaQueries.sm} {
