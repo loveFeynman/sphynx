@@ -6,6 +6,7 @@ import { PoolsState, Pool, CakeVault, VaultFees, VaultUser, AppThunk } from 'sta
 import { getPoolApr } from 'utils/apr'
 import { getBalanceNumber } from 'utils/formatBalance'
 import { getAddress } from 'utils/addressHelpers'
+import { getBNBPrice } from 'utils/priceProvider'
 import { fetchPoolsBlockLimits, fetchPoolsStakingLimits, fetchPoolsTotalStaking } from './fetchPools'
 import {
   fetchPoolsAllowance,
@@ -161,8 +162,13 @@ export const fetchPoolsUserDataAsync =
 export const fetchPoolsPublicDataAsync = (currentBlock: number) => async (dispatch, getState) => {
   const blockLimits = await fetchPoolsBlockLimits()
   const totalStakings = await fetchPoolsTotalStaking()
+  const bnbPrice = await getBNBPrice()
 
-  const prices = getTokenPricesFromFarm(getState().farms.data)
+  // const prices = getTokenPricesFromFarm(getState().farms.data)
+  const prices = {
+    '0xd38ec16caf3464ca04929e847e4550dcff25b27a': 0.02,
+    '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c': bnbPrice
+  }
 
   const liveData = poolsConfig.map((pool) => {
     const blockLimit = blockLimits.find((entry) => entry.sousId === pool.sousId)
@@ -171,12 +177,10 @@ export const fetchPoolsPublicDataAsync = (currentBlock: number) => async (dispat
     const isPoolFinished = pool.isFinished || isPoolEndBlockExceeded
 
     const stakingTokenAddress = pool.stakingToken.address ? getAddress(pool.stakingToken.address).toLowerCase() : null
-    // const stakingTokenPrice = stakingTokenAddress ? prices[stakingTokenAddress] : 0
-    const stakingTokenPrice = 0.021
+    const stakingTokenPrice = stakingTokenAddress ? prices[stakingTokenAddress] : 0
 
     const earningTokenAddress = pool.earningToken.address ? getAddress(pool.earningToken.address).toLowerCase() : null
-    // const earningTokenPrice = earningTokenAddress ? prices[earningTokenAddress] : 0
-    const earningTokenPrice = 0.021
+    const earningTokenPrice = earningTokenAddress ? prices[earningTokenAddress] : 0
     const apr = !isPoolFinished
       ? getPoolApr(
           stakingTokenPrice,
