@@ -6,7 +6,11 @@ export const DarkButtonStyle = {
     height: '34px',
     fontSize: '13px',
     background: '#0E0E26',
-    outline: 'none'
+    outline: 'none',
+
+    '&:disabled': {
+        background: '#2A2E60',
+    }
 }
 
 export const ColorButtonStyle = {

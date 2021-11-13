@@ -28,6 +28,10 @@ const DarkButton = styled(Button)`
   ${({ theme }) => theme.mediaQueries.sm} {
     width: 176px;
   }
+
+  &:disabled {
+    background: ${({ theme }) => theme.isDark? '#0E0E26' : '#2A2E60'};
+  }
 `
 
 interface HarvestActionProps extends FarmWithStakedValue {
