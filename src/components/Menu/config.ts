@@ -18,17 +18,17 @@ export const links = [
     href: '/swap',
   },
   {
-    label: 'Farms',
+    label: 'Farms (live)',
     icon: FarmIcon,
     href: '/farms',
   },
   {
-    label: 'Pools',
+    label: 'Pools (live)',
     icon: PoolIcon,
     href: '/pools',
   },
   {
-    label: 'Lottery (live)',
+    label: 'Lottery (coming soon)',
     icon: IFOIcon,
     href: '/lottery',
   },
