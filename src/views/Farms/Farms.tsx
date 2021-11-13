@@ -7,6 +7,10 @@ import { ChainId } from '@sphynxswap/sdk'
 import styled, { useTheme } from 'styled-components'
 import FlexLayout from 'components/Layout/Flex'
 import Page from 'components/Layout/Page'
+import { ethers } from 'ethers'
+import {simpleRpcProvider} from 'utils/providers'
+import { ERC20_ABI } from 'config/abi/erc20'
+import { getBNBPrice, getTokenPrice } from 'utils/priceProvider'
 import { useFarms, usePollFarmsData, usePriceCakeBusd } from 'state/farms/hooks'
 import usePersistState from 'hooks/usePersistState'
 import { Farm } from 'state/types'
@@ -115,6 +119,30 @@ const getDisplayApr = (cakeRewardsApr?: number, lpRewardsApr?: number) => {
 }
 
 const Farms: React.FC = () => {
+  const [totalLiquidityUSD, setTotalLiquidity] = useState('')
+  const [farmApr, setFarmApr] = useState(null)
+  const lpAddress = '0x93561354a5a4687c54a64cf0aba56a0a392ae882'
+  const masterChef = '0x39dDE712D0B08C3Ce11AF7bd5b6E2ef9A495D3Be'
+  const wBNBAddr = '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c'
+  const sphynxToken = '0xd38Ec16cAf3464ca04929E847E4550Dcff25b27a'
+  useEffect(() => {
+    const parseData = async () => {
+      const lpToken = new ethers.Contract(lpAddress, ERC20_ABI, simpleRpcProvider)
+      const wBNB = new ethers.Contract(wBNBAddr, ERC20_ABI, simpleRpcProvider)
+      const bnbBalance = await wBNB.balanceOf(lpAddress)
+      const bnbPrice = await getBNBPrice()
+      const totalSupply = await lpToken.totalSupply()
+      const masterChefBalance = await lpToken.balanceOf(masterChef)
+      const tokenPrice = await getTokenPrice(sphynxToken)
+      const totalLiquidity = bnbBalance * 2 / (10 ** 18) * bnbPrice * masterChefBalance / totalSupply
+      const apr = tokenPrice * 200 / totalLiquidity * 1000 * 365 * 100
+      setTotalLiquidity(totalLiquidity.toFixed(2))
+      setFarmApr(apr.toFixed(2))
+    }
+
+    parseData()
+  }, [])
+
   const { path } = useRouteMatch()
   const location = useLocation()
   const { pathname } = useLocation()
@@ -169,7 +197,7 @@ const Farms: React.FC = () => {
           ? getFarmApr(new BigNumber(farm.poolWeight), cakePrice, totalLiquidity, farm.lpAddresses[ChainId.MAINNET])
           : { cakeRewardsApr: 0, lpRewardsApr: 0 }
 
-        return { ...farm, apr: cakeRewardsApr, lpRewardsApr, liquidity: totalLiquidity }
+        return { ...farm, apr: cakeRewardsApr, lpRewardsApr, liquidity: new BigNumber(totalLiquidityUSD) }
       })
 
       if (query) {
@@ -180,7 +208,7 @@ const Farms: React.FC = () => {
       }
       return farmsToDisplayWithAPR
     },
-    [cakePrice, query, isActive],
+    [cakePrice, query, isActive, totalLiquidityUSD],
   )
 
   const handleChangeQuery = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -281,13 +309,15 @@ const Farms: React.FC = () => {
 
     const row: RowProps = {
       apr: {
-        value: getDisplayApr(farm.apr, farm.lpRewardsApr),
+        // value: getDisplayApr(farm.apr, farm.lpRewardsApr),
+        value: farmApr,
         multiplier: farm.multiplier,
         lpLabel,
         tokenAddress,
         quoteTokenAddress,
         cakePrice,
-        originalValue: farm.apr,
+        // originalValue: farm.apr,
+        originalValue: farmApr
       },
       farm: {
         label: lpLabel,
@@ -300,10 +330,11 @@ const Farms: React.FC = () => {
         pid: farm.pid,
       },
       liquidity: {
-        liquidity: farm.liquidity,
+        liquidity: new BigNumber(totalLiquidityUSD),
       },
       multiplier: {
-        multiplier: farm.multiplier,
+        // multiplier: farm.multiplier,
+        multiplier: '200x',
       },
       details: farm,
     }

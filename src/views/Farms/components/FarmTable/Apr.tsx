@@ -41,6 +41,9 @@ const APRContainer = styled.div`
 const AprWrapper = styled.div`
   min-width: 60px;
   text-align: left;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
 `
 
 export interface AprProps {
