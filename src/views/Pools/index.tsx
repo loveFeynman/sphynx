@@ -376,9 +376,13 @@ const Pools: React.FC = () => {
                 <div ref={loadMoreRef} />
               </SwapTabPanel>
               <SwapTabPanel>
-                <Text fontSize="20px" color="failure" pb="32px">
-                  {t('These pools are no longer distributing rewards. Please unstake your tokens.')}
-                </Text>
+                {showFinishedPools && (
+                  <Flex justifyContent="center">
+                    <Text fontSize="20px" color="failure" pb="32px" pt="32px">
+                      {t('These pools are no longer distributing rewards. Please unstake your tokens.')}
+                    </Text>
+                  </Flex>
+                )}
                 {account && !userDataLoaded && stakedOnly && (
                   <Flex justifyContent="center" mb="4px">
                     <Loading />
