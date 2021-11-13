@@ -23,6 +23,7 @@ const DarkButton = styled(Button)`
   font-size: 13px;
   background: ${({ theme }) => theme.isDark? '#0E0E26' : '#2A2E60'};
   width: 102px;
+  outline: 'none'
 
   ${({ theme }) => theme.mediaQueries.sm} {
     width: 176px;

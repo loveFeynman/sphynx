@@ -13,6 +13,7 @@ const ConnectButtonWrapper = styled.div`
     font-weight: 600;
     font-size: 13px;
     width: 102px;
+    outline: 'none'
 
     ${({ theme }) => theme.mediaQueries.sm} {
       width: 176px;
