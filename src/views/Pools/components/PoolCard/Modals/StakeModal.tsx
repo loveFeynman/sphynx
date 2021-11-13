@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
-import { Modal, Text, Flex, Image, Button, Slider, BalanceInput, AutoRenewIcon, Link } from '@sphynxswap/uikit'
+import { Modal, Text, Flex, Image, Button, BalanceInput, AutoRenewIcon, Link } from '@sphynxswap/uikit'
+import Slider from 'react-rangeslider'
 import { useTranslation } from 'contexts/Localization'
 import useTheme from 'hooks/useTheme'
 import useToast from 'hooks/useToast'
@@ -171,7 +172,7 @@ const StakeModal: React.FC<StakeModalProps> = ({
         min={0}
         max={100}
         value={percent}
-        onValueChanged={handleChangePercent}
+        onChange={(value) => handleChangePercent(Math.ceil(value))}
         name="stake"
         valueLabel={`${percent}%`}
         step={1}
