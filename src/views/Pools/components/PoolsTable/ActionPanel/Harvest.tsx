@@ -127,7 +127,7 @@ const HarvestAction: React.FunctionComponent<HarvestActionProps> = ({
         </Flex> */}
         <ActionContent>
           <DarkButton disabled>
-            {isCompoundPool ? t('Collect') : t('Harvest')}
+            {isCompoundPool ? t('Harvest') : t('Harvest')}
           </DarkButton>
         </ActionContent>
       </ActionContainer>
@@ -204,7 +204,7 @@ const HarvestAction: React.FunctionComponent<HarvestActionProps> = ({
             disabled={!hasEarnings}
             onClick={onPresentCollect}
           >
-            {isCompoundPool ? t('Collect') : t('Harvest')}
+            {isCompoundPool ? t('Harvest') : t('Harvest')}
           </DarkButton>
         )}
       </ActionContent>
