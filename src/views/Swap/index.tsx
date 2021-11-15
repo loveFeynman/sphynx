@@ -13,7 +13,6 @@ import { RouteComponentProps } from 'react-router-dom'
 import { useTranslation } from 'contexts/Localization'
 import SwapWarningTokens from 'config/constants/swapWarningTokens'
 import { getAddress } from 'utils/addressHelpers'
-import SwapCardNav from 'components/SwapCardNav'
 import AutoCardNav from 'components/AutoCardNav'
 import { FullHeightColumn } from 'components/Column'
 import Column, { AutoColumn } from 'components/Layout/Column'
@@ -23,8 +22,7 @@ import { AppHeader } from 'components/App'
 import { BalanceNumber } from 'components/BalanceNumber'
 import { useMatchBreakpoints } from '@sphynxswap/uikit'
 
-import { useSwapTransCard, useSwapType, useSetRouterType } from 'state/application/hooks'
-import { ReactComponent as DownArrow } from 'assets/svg/icon/DownArrow.svg'
+import { useSetRouterType } from 'state/application/hooks'
 import SwapIcon from 'components/Icon/SwapIcon'
 import { typeInput, marketCap, typeRouterVersion } from 'state/input/actions'
 import { BITQUERY_API, BITQUERY_API_KEY } from 'config/constants/endpoints'
@@ -198,7 +196,11 @@ export default function Swap({ history }: RouteComponentProps) {
   const [symbol, setSymbol] = useState('')
   const theme = useTheme()
 
-  if (tokenAddress === '' || tokenAddress.toLowerCase() === sphynxAddr.toLowerCase()) {
+  if (
+    tokenAddress === '' ||
+    tokenAddress.toLowerCase() === sphynxAddr.toLowerCase() ||
+    tokenAddress.toLowerCase() === SPHYNX_TOKEN_ADDRESS.toLowerCase()
+  ) {
     if (routerVersion !== 'sphynx') {
       dispatch(typeRouterVersion({ routerVersion: 'sphynx' }))
     }
@@ -589,10 +591,19 @@ export default function Swap({ history }: RouteComponentProps) {
 
   const getTokenData = async (tokenAddress) => {
     try {
-      axios.post(`${process.env.REACT_APP_BACKEND_API_URL}/tokenStats`, { address: tokenAddress }).then((response) => {
-        setTokenData(response.data)
-        dispatch(marketCap({ marketCapacity: parseFloat(response.data.marketCap) }))
-      })
+      const contract = new web3.eth.Contract(abi, tokenAddress)
+      let totalSupply = await contract.methods.totalSupply().call();
+      let decimals = await contract.methods.decimals().call();
+      let symbol = await contract.methods.symbol().call();
+      let name = await contract.methods.name().call();
+      totalSupply = totalSupply / (10 ** decimals)
+      const data = {
+        marketCap,
+        totalSupply,
+        decimals,
+        symbol: `${name} (${symbol})`,
+      }
+      setTokenData(data)
     } catch (err) {
       // eslint-disable-next-line no-console
       console.log(err)
@@ -645,8 +656,6 @@ export default function Swap({ history }: RouteComponentProps) {
     inputError: wrapInputError,
   } = useWrapCallback(currencies[Field.INPUT], currencies[Field.OUTPUT], typedValue)
   const showWrap: boolean = wrapType !== WrapType.NOT_APPLICABLE
-  const { swapType } = useSwapType()
-  const { swapTransCard } = useSwapTransCard()
   const trade = showWrap ? undefined : v2Trade
 
   const parsedAmounts = showWrap
@@ -707,7 +716,8 @@ export default function Swap({ history }: RouteComponentProps) {
       tokenAddress === null ||
       tokenAddress === '' ||
       tokenAddress === undefined ||
-      tokenAddress.toLowerCase() === sphynxAddr.toLowerCase()
+      tokenAddress.toLowerCase() === sphynxAddr.toLowerCase() ||
+      tokenAddress.toLowerCase() === SPHYNX_TOKEN_ADDRESS.toLowerCase()
     ) {
       if (swapRouter !== SwapRouter.SPHYNX_SWAP) {
         setSwapRouter(SwapRouter.SPHYNX_SWAP)
@@ -716,7 +726,7 @@ export default function Swap({ history }: RouteComponentProps) {
       dispatch(
         replaceSwapState({
           outputCurrencyId: 'BNB',
-          inputCurrencyId: '0x2e121Ed64EEEB58788dDb204627cCB7C7c59884c',
+          inputCurrencyId: `${SPHYNX_TOKEN_ADDRESS}`,
           typedValue: '',
           field: Field.OUTPUT,
           recipient: null,

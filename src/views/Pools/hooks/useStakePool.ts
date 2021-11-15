@@ -13,13 +13,13 @@ const options = {
 }
 
 const sousStake = async (sousChefContract, amount, decimals = 18) => {
-  const tx = await sousChefContract.deposit(new BigNumber(amount).times(BIG_TEN.pow(decimals)).toString(), options)
+  const tx = await sousChefContract.deposit(new BigNumber(amount).times(BIG_TEN.pow(decimals)).toString())
   const receipt = await tx.wait()
   return receipt.status
 }
 
 const sousStakeBnb = async (sousChefContract, amount) => {
-  const tx = await sousChefContract.deposit(new BigNumber(amount).times(DEFAULT_TOKEN_DECIMAL).toString(), options)
+  const tx = await sousChefContract.deposit(new BigNumber(amount).times(DEFAULT_TOKEN_DECIMAL).toString())
   const receipt = await tx.wait()
   return receipt.status
 }

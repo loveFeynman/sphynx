@@ -3,6 +3,7 @@ import { Flex, Button, useModal, Skeleton } from '@sphynxswap/uikit'
 import BigNumber from 'bignumber.js'
 import { useTranslation } from 'contexts/Localization'
 import { Pool } from 'state/types'
+import { ColorButtonStyle } from 'style/buttonStyle'
 import NotEnoughTokensModal from '../../PoolCard/Modals/NotEnoughTokensModal'
 import VaultStakeModal from '../VaultStakeModal'
 import HasSharesActions from './HasSharesActions'
@@ -29,7 +30,7 @@ const VaultStakeActions: React.FC<VaultStakeActionsProps> = ({
     return accountHasSharesStaked ? (
       <HasSharesActions pool={pool} stakingTokenBalance={stakingTokenBalance} />
     ) : (
-      <Button onClick={stakingTokenBalance.gt(0) ? onPresentStake : onPresentTokenRequired}>{t('Stake')}</Button>
+      <Button style={ColorButtonStyle} onClick={stakingTokenBalance.gt(0) ? onPresentStake : onPresentTokenRequired}>{t('Stake')}</Button>
     )
   }
 

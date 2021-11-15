@@ -1,11 +1,11 @@
 import { useEffect } from 'react'
-import { useCakeBusdPrice } from 'hooks/useBUSDPrice'
+import { useSphynxBusdPrice } from 'hooks/useBUSDPrice'
 
 const useGetDocumentTitlePrice = () => {
-  const cakePriceBusd = useCakeBusdPrice()
+  const sphynxPriceBusd = useSphynxBusdPrice()
   useEffect(() => {
-    const cakePriceBusdString = cakePriceBusd ? cakePriceBusd.toFixed(2) : ''
-    document.title = `Sphynx Swap - ${cakePriceBusdString}`
-  }, [cakePriceBusd])
+    const sphynxPriceBusdString = sphynxPriceBusd ? sphynxPriceBusd.toFixed(2) : ''
+    document.title = `Sphynx Swap - ${sphynxPriceBusdString}`
+  }, [sphynxPriceBusd])
 }
 export default useGetDocumentTitlePrice

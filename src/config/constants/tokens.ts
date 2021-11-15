@@ -3,17 +3,17 @@ import { ChainId, Token } from '@sphynxswap/sdk'
 export const SPHYNX: { [chainId: number]: Token } = {
   [ChainId.MAINNET]: new Token(
     ChainId.MAINNET,
-    '0x2e121Ed64EEEB58788dDb204627cCB7C7c59884c',
+    '0xd38Ec16cAf3464ca04929E847E4550Dcff25b27a',
     18,
     'SPHYNX',
-    'Sphynx Token',
+    'Sphynx BSC',
   ),
   [ChainId.TESTNET]: new Token(
     ChainId.TESTNET,
-    '0x58c27851490415250fdea7CE1872C0c798Ba014b',
+    '0xEE0C0E647d6E78d74C42E3747e0c38Cef41d6C88',
     18,
     'SPHYNX',
-    'Sphynx Token',
+    'Sphynx BSC',
   ),
 }
 export const CAKE: { [chainId: number]: Token } = {
@@ -83,8 +83,8 @@ const tokens = {
   sphynx: {
     symbol: 'SPHYNX',
     address: {
-      56: '0x2e121Ed64EEEB58788dDb204627cCB7C7c59884c',
-      97: '0x58c27851490415250fdea7CE1872C0c798Ba014b',
+      56: '0xd38Ec16cAf3464ca04929E847E4550Dcff25b27a',
+      97: '0xEE0C0E647d6E78d74C42E3747e0c38Cef41d6C88',
     },
     decimals: 18,
     projectLink: 'https://thesphynx.co/',

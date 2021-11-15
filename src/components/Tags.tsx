@@ -1,6 +1,7 @@
 import React from 'react'
 import {
   Tag,
+  Text,
   VerifiedIcon,
   CommunityIcon,
   RefreshIcon,
@@ -15,7 +16,7 @@ import { useTranslation } from 'contexts/Localization'
 const CoreTag: React.FC<TagProps> = (props) => {
   const { t } = useTranslation()
   return (
-    <Tag variant="secondary" outline startIcon={<VerifiedIcon width="18px" color="secondary" mr="4px" />} {...props}>
+    <Tag variant="secondary" outline startIcon={<VerifiedIcon width="18px" color="#F9B043" mr="4px" />} {...props}>
       {t('Core')}
     </Tag>
   )
@@ -24,7 +25,7 @@ const CoreTag: React.FC<TagProps> = (props) => {
 const CommunityTag: React.FC<TagProps> = (props) => {
   const { t } = useTranslation()
   return (
-    <Tag variant="failure" outline startIcon={<CommunityIcon width="18px" color="failure" mr="4px" />} {...props}>
+    <Tag variant="failure" outline startIcon={<CommunityIcon width="18px" color="#F9B043" mr="4px" />} {...props}>
       {t('Community')}
     </Tag>
   )
@@ -42,18 +43,18 @@ const DualTag: React.FC<TagProps> = (props) => {
 const ManualPoolTag: React.FC<TagProps> = (props) => {
   const { t } = useTranslation()
   return (
-    <Tag variant="secondary" outline startIcon={<RefreshIcon width="18px" color="secondary" mr="4px" />} {...props}>
+    <Text {...props} color='#F9B043' fontSize='12px'>
       {t('Manual')}
-    </Tag>
+    </Text>
   )
 }
 
 const CompoundingPoolTag: React.FC<TagProps> = (props) => {
   const { t } = useTranslation()
   return (
-    <Tag variant="success" outline startIcon={<AutoRenewIcon width="18px" color="success" mr="4px" />} {...props}>
+    <Text {...props} color='#F9B043' fontSize='12px'>
       {t('Auto')}
-    </Tag>
+    </Text>
   )
 }
 

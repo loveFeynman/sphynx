@@ -108,7 +108,7 @@ export default function TokenStateCard(props: TokenStateProps) {
             textAlign={tokenImg === undefined ? 'center' : 'unset'}
             fontSize={isXs ? '14px' : isSm ? '15px' : '16px'}
             bold
-            color={valueActive ? 'limegreen' : 'white'}
+            color={valueActive ? parseFloat(cardValue) > 0 ? 'limegreen' : 'red' : 'white'}
           >
             {cardValue}
           </Text>

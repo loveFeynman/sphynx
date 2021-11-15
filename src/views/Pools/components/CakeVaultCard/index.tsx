@@ -7,6 +7,7 @@ import ConnectWalletButton from 'components/ConnectWalletButton'
 import tokens from 'config/constants/tokens'
 import { useCakeVault } from 'state/pools/hooks'
 import { Pool } from 'state/types'
+import { ColorButtonStyle } from 'style/buttonStyle'
 import AprRow from '../PoolCard/AprRow'
 import { StyledCard } from '../PoolCard/StyledCard'
 import CardFooter from '../PoolCard/CardFooter'
@@ -17,7 +18,6 @@ import RecentCakeProfitRow from './RecentCakeProfitRow'
 
 const StyledCardBody = styled(CardBody)<{ isLoading: boolean }>`
   min-height: ${({ isLoading }) => (isLoading ? '0' : '254px')};
-  background-color: ${({ theme }) => theme.colors.input};
 `
 
 interface CakeVaultProps {
@@ -57,15 +57,15 @@ const CakeVaultCard: React.FC<CakeVaultProps> = ({ pool, showStakedOnly }) => {
         <Box mt="8px">
           <UnstakingFeeCountdownRow />
         </Box>
-        <Flex mt="32px" flexDirection="column">
+        <Flex mt="32px" flexDirection="column" alignItems='center'>
           {account ? (
             <VaultCardActions pool={pool} accountHasSharesStaked={accountHasSharesStaked} isLoading={isLoading} />
           ) : (
             <>
-              <Text mb="10px" textTransform="uppercase" fontSize="12px" color="textSubtle" bold>
+              <Text mb="10px" textTransform="uppercase" fontSize="14px" color="#A7A7CC">
                 {t('Start earning')}
               </Text>
-              <ConnectWalletButton />
+              <ConnectWalletButton style={ColorButtonStyle}/>
             </>
           )}
         </Flex>

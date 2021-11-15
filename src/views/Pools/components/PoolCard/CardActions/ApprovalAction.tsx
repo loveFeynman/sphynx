@@ -4,6 +4,7 @@ import { useTranslation } from 'contexts/Localization'
 import { useERC20 } from 'hooks/useContract'
 import { getAddress } from 'utils/addressHelpers'
 import { Pool } from 'state/types'
+import { ColorButtonStyle } from 'style/buttonStyle'
 import { useApprovePool } from '../../../hooks/useApprove'
 
 interface ApprovalActionProps {
@@ -27,7 +28,7 @@ const ApprovalAction: React.FC<ApprovalActionProps> = ({ pool, isLoading = false
           endIcon={requestedApproval ? <AutoRenewIcon spin color="currentColor" /> : null}
           disabled={requestedApproval}
           onClick={handleApprove}
-          width="100%"
+          style={ColorButtonStyle}
         >
           {t('Enable')}
         </Button>
