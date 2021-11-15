@@ -1,23 +1,19 @@
 import React, { useState, useRef, useEffect } from 'react'
 import styled, { css } from 'styled-components'
 import { Flex, Text } from '@sphynxswap/uikit'
-import { ReactComponent as  ArrowDropDownIcon} from 'assets/svg/icon/DropDownIcon.svg'
+import { ReactComponent as  ArrowDropDownIcon} from 'assets/svg/icon/DropDownIconSmall.svg'
 
 const DropDownHeader = styled.div`
-  margin-top: 20px;
   width: 100%;
   height: 32px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0px 16px;
-  box-shadow: ${({ theme }) => theme.shadows.inset};
-  border: 1px solid ${({ theme }) => theme.colors.inputSecondary};
-  background: rgba(0, 0, 0, 0.4);
+  padding: 0px 8px;
 `
 
 const DropDownListContainer = styled.div`
-  min-width: 110px;
+  min-width: 73px;
   height: 0;
   position: absolute;
   overflow: hidden;
@@ -27,10 +23,10 @@ const DropDownListContainer = styled.div`
   transform: scaleY(0);
   transform-origin: top;
   opacity: 0;
-  width: 100%;
+  width: 73px;
 
   ${({ theme }) => theme.mediaQueries.sm} {
-    min-width: 110px;
+    min-width: 73px;
   }
 `
 
@@ -42,9 +38,10 @@ const DropDownContainer = styled.div<{ isOpen: boolean; width: number; height: n
   height: 32px;
   min-width: 110px;
   user-select: none;
-
+  border: 1px solid #2E2E55;
+  border-radius:5px;
   ${({ theme }) => theme.mediaQueries.sm} {
-    min-width: 110px;
+    min-width: 73px;
   }
 
   ${(props) =>
@@ -152,20 +149,22 @@ const Select: React.FunctionComponent<SelectProps> = ({ options, onChange, netwo
 
   return (
     <DropDownContainer isOpen={isOpen} ref={containerRef} {...containerSize}>
-      {containerSize.width !== 0 && (
-        <DropDownHeader onClick={toggling}>
-          <Text>{options[selectedOptionIndex].label}</Text>
-        </DropDownHeader>
-      )}
-      <Flex onClick={toggling}>
-        <ArrowDropDownIcon />
+      <Flex>
+        {containerSize.width !== 0 && (
+          <DropDownHeader onClick={toggling}>
+            <Text fontSize="13px" fontWeight="600">{options[selectedOptionIndex].label}</Text>
+          </DropDownHeader>
+        )}
+        <Flex onClick={toggling}>
+          <ArrowDropDownIcon />
+        </Flex>
       </Flex>
       <DropDownListContainer>
         <DropDownList ref={dropdownRef}>
           {options.map((option, index) =>
             index !== selectedOptionIndex ? (
               <ListItem onClick={onOptionClicked(index)} key={option.label}>
-                <Text>{option.label}</Text>
+                <Text fontSize="13px" fontWeight="600">{option.label}</Text>
               </ListItem>
             ) : null,
           )}

@@ -3,9 +3,9 @@ import styled, { css } from 'styled-components'
 import { ethers } from 'ethers'
 import { useSelector, useDispatch } from 'react-redux'
 import { useWeb3React } from '@web3-react/core'
-import { Button, useWalletModal } from '@sphynxswap/uikit'
+import { Button, useWalletModal, Flex, Text } from '@sphynxswap/uikit'
 import { Currency, TokenAmount, ChainId } from '@sphynxswap/sdk'
-import { ReactComponent as ArrowRightIcon } from 'assets/svg/icon/ArrowRight.svg'
+import { ReactComponent as ArrowRightIcon } from 'assets/svg/icon/ArrowRightBridge.svg'
 import Web3 from 'web3'
 import getRpcUrl from 'utils/getRpcUrl'
 import useAuth from 'hooks/useAuth'
@@ -14,6 +14,8 @@ import { setConnectedNetworkID } from 'state/input/actions'
 import { switchNetwork } from 'utils/wallet'
 import { AppState } from 'state'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
+import MainLogo from 'assets/svg/icon/logo_new.svg'
+import BridgeOtherToken from 'assets/svg/icon/BridgeOtherToken.svg'
 
 import { useCurrency } from '../../../hooks/Tokens'
 import { useBridgeActionHandlers, useBridgeState, useDerivedBridgeInfo } from '../../../state/bridge/hooks'
@@ -23,32 +25,35 @@ import { Field } from '../../../state/bridge/actions'
 import Tokencard from './TokenCard'
 import CurrencyInputPanel from '../../../components/CurrencyInputPanel'
 
+
 import {
-  onUseRegister, 
-  onUseBSCApprove, 
-  onUseEthApprove, 
-  onUseSwapBSC2ETH, 
+  onUseRegister,
+  onUseBSCApprove,
+  onUseEthApprove,
+  onUseSwapBSC2ETH,
   onUseSwapETH2BSC,
   onUseSwapFee,
   onUseBscSwapFee,
-} from '../../../hooks/useBridge' 
+} from '../../../hooks/useBridge'
 
 
 const Container = styled.div`
   color: white;
   background: rgba(0, 0, 0, 0.4);
-  width: 340px;
+  width: 372px;
   height: fit-content;
   margin: 0px 60px 20px;
   border-radius: 16px;
+  padding: 0px 20px;
 `
 const CardHeader = styled.div`
   text-align: center;
   font-style: normal;
-  font-weight: bold;
-  font-size: 16px;
+  font-weight: 600;
+  font-size: 20px;
   line-height: 19px;
-  margin: 20px;
+  
+  margin: 8px;
 `
 const Grid = styled.div`
   display: grid;
@@ -56,79 +61,70 @@ const Grid = styled.div`
   margin-bottom: 12px;
 `
 const AmountContainer = styled.div`
-  margin: 24px 16px 24px 24px;
+  margin-top: 12px;
+  padding-right: 10px;
   position: relative;
-  height: 120px;
-`
-const Label = styled.div`
-  display: flex;
-  position: absolute;
-  left: 20px;
-  top: 20px;
-  font-style: normal;
-  font-weight: 600;
-  font-size: 16px;
-  line-height: 19px;
+  height: 84px;
+  border-bottom: 1px solid ${({ theme }) => theme.isDark ? "#21214A" : "#4A5187"};
 `
 const BottomLabel = styled.div`
   position: absolute;
-  left: 16px;
-  bottom: 20px;
+  bottom: 7px;
   font-style: normal;
   font-weight: 600;
-  font-size: 16px;
+  font-size: 14px;
   line-height: 19px;
-`
-const CurrencyContainer = styled.div`
-  position: absolute;
-  top: 40px;
-  left: 12px;
-  width: 90%;
+  color: #A7A7CC;
 `
 
 const MinMaxContainger = styled.div<{ isMin: boolean }>`
   display: flex;
   justify-content: space-between;
-  margin: ${(props) => (props.isMin ? '8px 16px 16px 24px' : '24px 16px 8px 24px')};
+  padding: 15px 0;
   font-style: normal;
   font-weight: 600;
-  font-size: 16px;
+  font-size: 14px;
   line-height: 19px;
+  color: #A7A7CC;
+  border-bottom: 1px solid ${({ theme }) => theme.isDark ? "#21214A" : "#4A5187"};
 `
 
 const ErrorArea = styled.div`
-  margin: 16px 14px 11px 26px;
   font-weight: 400;
   font-style: normal;
   font-weight: 500;
   font-size: 14px;
   line-height: 16px;
-  color: #ea3943;
+  color: #A7A7CC;
   text-align: -webkit-center;
 `
 
-const ConnectWalletButton = styled.div`
-  text-align: -webkit-center;
-`
 const ArrowWrapper = styled.div<{ clickable: boolean }>`
-  padding: 2px;
-  border: 3px solid rgb(255, 255, 255);
   border-radius: 12px;
-
+  padding: 2px;
   ${({ clickable }) =>
     clickable
       ? css`
           :hover {
             cursor: pointer;
             opacity: 0.8;
+            padding: 3px;
+
           }
         `
       : null}
 `
 
+const Divider = styled.div`
+  background-color: #21214A;
+  height: 1px;
+  margin: 24px 0px 10px;
+  width: 100%;
+`
+
 export default function BridgeCard({ label, isSphynx = false }) {
 
-  const { account, library} = useActiveWeb3React()
+  const { account, library } = useActiveWeb3React()
   const signer = library.getSigner();
   const dispatch = useDispatch()
 
@@ -176,7 +172,7 @@ export default function BridgeCard({ label, isSphynx = false }) {
     }
   }
 
-  const handleNext = async () =>{
+  const handleNext = async () => {
     // onUseRegister(testSigner);
     // await onUseSwapFee(testSigner);
     // await onUseEthApprove(signer, '1000')
@@ -251,23 +247,30 @@ export default function BridgeCard({ label, isSphynx = false }) {
     }
     const amount = isSphynx ? formattedAmount[Field.BRIDGE_TOKENSPX] : formattedAmount[Field.BRIDGE_TOKENOTH];
     console.log(amount);
-  }, [ dependentField, independentField, isSphynx, parsedAmounts, typedValue])
+  }, [dependentField, independentField, isSphynx, parsedAmounts, typedValue])
 
 
   return (
     <Container>
+      <Flex justifyContent='center' pt="22px">
+        <img width="60px" height="57px" src={isSphynx? MainLogo: BridgeOtherToken} alt="Logo" />
+      </Flex>
       <CardHeader>{label}</CardHeader>
-      <Grid>
+      <Divider />
+      <Flex justifyContent="space-between" mt="20px">
         <Tokencard isFrom networkName={networkFromName} chainId={chainId} handleChange={handleFromChange} />
-        <AutoRow justify="space-between">
-          <ArrowWrapper clickable onClick={exchangeNetwork}>
+        <Flex pt="6px" height="fit-content">
+          <ArrowWrapper clickable onClick={exchangeNetwork} >
             <ArrowRightIcon style={{ alignSelf: 'center' }} />
           </ArrowWrapper>
-        </AutoRow>
+        </Flex>
         <Tokencard isFrom={false} networkName={networkToName} chainId={chainId} handleChange={handleToChange} />
-      </Grid>
-      <AmountContainer>
-        <Label> {isSphynx ? 'Sphynx' : 'Token'} to Bridge</Label>
+      </Flex>
+      <Flex justifyContent="space-between" alignItems="center" mt="12px" mr="10px">
+        <Flex alignItems="center">
+          <img width="35px" height="31px" src={isSphynx? MainLogo: BridgeOtherToken} alt="Logo" />
+          <Text fontSize="14px" fontWeight="600" color="#A7A7CC"> {isSphynx ? 'Sphynx' : 'Token'} to Bridge</Text>
+        </Flex>
         <Button
           variant="tertiary"
           style={{
@@ -275,11 +278,8 @@ export default function BridgeCard({ label, isSphynx = false }) {
             fontWeight: 'bold',
             fontSize: '12px',
             lineHeight: '14px',
-            position: 'absolute',
-            top: '8px',
-            right: '16px',
-            backgroundColor: '#ED79D8',
-            width: '40px',
+            backgroundColor: '#1A1A3A',
+            width: '73px',
             height: '30px',
             color: 'white',
             borderRadius: '4px',
@@ -288,80 +288,103 @@ export default function BridgeCard({ label, isSphynx = false }) {
         >
           Max
         </Button>
-        <CurrencyContainer>
-          <CurrencyInputPanel
-            value={isSphynx ? formattedAmounts[Field.BRIDGE_TOKENSPX] : formattedAmounts[Field.BRIDGE_TOKENOTH]}
-            onUserInput={isSphynx ? onFieldSpxInput : onFieldOthInput}
-            onMax={null}
-            onCurrencySelect={handleCurrencyASelect}
-            showMaxButton={false}
-            currency={isSphynx ? sphynxCurrency : currency}
-            id="bridge-asset-token"
-            showCommonBases
-            disableCurrencySelect={isSphynx}
-            isBridge
-          />
-        </CurrencyContainer>
+      </Flex>
+      <AmountContainer>
+        <CurrencyInputPanel
+          value={isSphynx ? formattedAmounts[Field.BRIDGE_TOKENSPX] : formattedAmounts[Field.BRIDGE_TOKENOTH]}
+          onUserInput={isSphynx ? onFieldSpxInput : onFieldOthInput}
+          onMax={null}
+          onCurrencySelect={handleCurrencyASelect}
+          showMaxButton={false}
+          currency={isSphynx ? sphynxCurrency : currency}
+          id="bridge-asset-token"
+          showCommonBases
+          disableCurrencySelect={isSphynx}
+          isBridge
+        />
         <BottomLabel>Balance on {isSphynx ? 'Sphynx' : currency !== undefined && currency !== null ? currency.symbol : 'Token'}</BottomLabel>
       </AmountContainer>
       <MinMaxContainger isMin={false}>
         <div>Max Bridge Amount</div>
-        <div>{maxAmount} {isSphynx ? 'SPX' : currency !== undefined && currency !== null ? currency.symbol : 'Token'}</div>
+        <Text fontSize="14px" color="#F2C94C" fontWeight="600">{maxAmount} {isSphynx ? 'SPX' : currency !== undefined && currency !== null ? currency.symbol : 'Token'}</Text>
       </MinMaxContainger>
       <MinMaxContainger isMin>
         <div>Min Bridge Amount</div>
-        <div>{minAmount} {isSphynx ? 'SPX' : currency !== undefined && currency !== null ? currency.symbol : 'Token'}</div>
+        <Text fontSize="14px" color="#F2C94C" fontWeight="600">{minAmount} {isSphynx ? 'SPX' : currency !== undefined && currency !== null ? currency.symbol : 'Token'}</Text>
       </MinMaxContainger>
-      {isNetworkError && (
-        <ErrorArea>
-          <div style={{ textAlign: 'left' }}>Please connect your wallet to the chain you wish to bridge from!</div>
-          <Button
-            variant="tertiary"
-            style={{
-              marginTop: '11px',
-              fontStyle: 'normal',
-              fontSize: '12px',
-              lineHeight: '14px',
-              backgroundColor: '#ED79D8',
-              width: '148px',
-              height: '32px',
-              color: 'white',
-              borderRadius: '8px',
-              padding: '8px',
-            }}
-            onClick={handleSwitch}
-          >
-            Click Here to Switch
-          </Button>
-        </ErrorArea>
-      )}
-
-      <ConnectWalletButton>
-        <Button
-          variant="tertiary"
-          style={{
-            marginTop: '20px',
-            marginBottom: '32px',
-            fontStyle: 'normal',
-            fontSize: '14px',
-            lineHeight: '14px',
-            backgroundColor: '#8B2A9B',
-            width: '300px',
-            height: '40px',
-            color: 'white',
-            borderRadius: '8px',
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'center',
-            alignItems: 'center',
-            padding: '8px',
-          }}
-          // onClick={!account? onPresentConnectModal: handleNext}
-          onClick={handleNext}
-        >
-          {!account ? 'Connect Wallet' : 'Next'}
-        </Button>
-      </ConnectWalletButton>
+      <ErrorArea>
+        {!account ? (
+          <>
+            <Text fontSize="14px" color="#A7A7CC" style={{ textAlign: 'center', margin: '24px 0px' }}>Please connect your wallet to the chain you wish to bridge from!</Text>
+            <Flex style={{ columnGap: '10px' }} mb="34px" mx="-8px">
+              <Button
+                variant="tertiary"
+                style={{
+                  fontStyle: 'normal',
+                  fontSize: '12px',
+                  lineHeight: '14px',
+                  background: 'linear-gradient(90deg, #610D89 0%, #C42BB4 100%)',
+                  height: '34px',
+                  color: 'white',
+                  width: '166px',
+                  borderRadius: '8px',
+                }}
+                onClick={handleSwitch}
+              >
+                Click Here to Switch
+              </Button>
+              <Button
+                variant="tertiary"
+                height="40px"
+                style={{
+                  background: 'linear-gradient(90deg, #610D89 0%, #C42BB4 100%)',
+                  fontSize: '13px',
+                  color: 'white',
+                  borderRadius: '8px',
+                  height: '34px',
+                  width: '166px',
+                }}
+                onClick={!account ? onPresentConnectModal : handleNext}
+              >
+                {!account ? 'Connect Wallet' : 'Next'}
+              </Button>
+            </Flex>
+          </>
+        ) :
+          <Flex my="34px" mx="-8px" style={{columnGap: '10px'}}>
+            <Button
+              variant="tertiary"
+              height="40px"
+              style={{
+                background: 'linear-gradient(90deg, #610D89 0%, #C42BB4 100%)',
+                fontSize: '13px',
+                color: 'white',
+                borderRadius: '8px',
+                height: '34px',
+                width: '166px',
+              }}
+              onClick={!account ? onPresentConnectModal : handleNext}
+            >
+              Approve
+            </Button>
+            <Button
+              variant="tertiary"
+              height="40px"
+              style={{
+                background: 'linear-gradient(90deg, #610D89 0%, #C42BB4 100%)',
+                fontSize: '13px',
+                color: 'white',
+                borderRadius: '8px',
+                height: '34px',
+                width: '166px',
+              }}
+              onClick={!account ? onPresentConnectModal : handleNext}
+            >
+              {!account ? 'Connect Wallet' : 'Next'}
+            </Button>
+          </Flex>
+        }
+      </ErrorArea>
     </Container>
   )
 }

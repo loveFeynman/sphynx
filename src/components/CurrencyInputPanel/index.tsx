@@ -77,7 +77,7 @@ const InputPanel = styled.div<{ hideInput?: boolean; isBridge?: boolean }>`
   position: relative;
   // border-radius: ${({ hideInput }) => (hideInput ? '8px' : '20px')};
   border-top: 1px solid ${({ theme }) => theme.isDark ? "#21214A" : "#4A5187"};
-  border-bottom: 1px solid ${({ theme }) => theme.isDark ? "#21214A" : "#4A5187"};
+  border-bottom: ${({ isBridge }) => (isBridge ? 'none' : `1px solid ${({ theme }) => theme.isDark ? "#21214A" : "#4A5187"}`)};
   background-color: transparent;
 `
 
