@@ -1,9 +1,7 @@
 /* eslint-disable */
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { useSelector } from 'react-redux'
 import styled from 'styled-components'
-
-import TransactionNav from 'components/TransactionNav'
 import { AppState } from 'state'
 import { ReactComponent as UpDownArrow } from 'assets/svg/icon/UpDownArrow.svg'
 
@@ -32,21 +30,9 @@ const ArrowWrapper = styled.div`
   }
 `
 
-const TransactionNavWrapper = styled.div`
-  display: flex;
-  justify-content: center;
-  margin: 8px 0 0;
-  ${({ theme }) => theme.mediaQueries.md} {
-    position: absolute;
-    left: 0;
-    top: 0;
-    margin: 0;
-  }
-`
-
 const Chart = React.lazy(() => import("./ChartContainer"))
 
-const ChartContainer = ({tokenAddress}) => {
+const ChartContainer = ({tokenAddress, tokenData}) => {
   const input = tokenAddress
   const routerVersion = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.routerVersion)
 
@@ -78,9 +64,6 @@ const ChartContainer = ({tokenAddress}) => {
         >
           <UpDownArrow />
         </ArrowWrapper>
-        <TransactionNavWrapper>
-          <TransactionNav />
-        </TransactionNavWrapper>
       </UpDownArrowBox>
     </Wrapper>
   )

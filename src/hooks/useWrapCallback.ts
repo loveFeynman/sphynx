@@ -1,5 +1,4 @@
 import { Currency, currencyEquals, ETHER, WETH } from '@sphynxswap/sdk'
-import { ETHER as uniEther, WETH as uniWETH } from '@uniswap/sdk'
 import { useMemo } from 'react'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import { tryParseAmount } from '../state/swap/hooks'

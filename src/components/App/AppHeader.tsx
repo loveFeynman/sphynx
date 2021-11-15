@@ -43,15 +43,18 @@ const TransparentIconButton = styled(IconButton)`
 
 const AutoButton = styled(Button)`
   color: white;
-  background: transparent !important;
-  padding: 4px 6px;
+  background: ${({ theme }) => theme.isDark ? "transparent !important" : "#20234E"};
+  padding: 4px 12px;
   margin-right: 8px;
-  height: 36px;
+  height: 25px;
   outline: none;
-  border: none;
+  font-weight: 600;
+  font-size: 12px;
   box-shadow: none !important;
+  border: 1px solid #B314DA;
+  border-radius: 12px;
   &.focused {
-    box-shadow: 0 0 0 2px #8b2a9b !important;
+    // box-shadow: 0 0 0 2px #8b2a9b !important;
   }
 `
 
@@ -120,7 +123,6 @@ const AppHeader: React.FC<Props> = ({ title, subtitle, helper, backTo, showAuto,
                 onClick={handleSettingsModal}
                 variant="text"
                 scale="sm"
-                mr="8px"
                 aria-label="setting modal"
               >
                 <CogIcon height={22} width={22} color="white" />

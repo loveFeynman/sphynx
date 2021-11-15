@@ -11,11 +11,11 @@ import UNSUPPORTED_TOKEN_LIST from '../../config/constants/tokenLists/pancake-un
 
 const SPHYNX = 
   {
-    address: "0x2e121ed64eeeb58788ddb204627ccb7c7c59884c",
+    address: "0xd38ec16caf3464ca04929e847e4550dcff25b27a",
     chainId: 1,
     decimals: 18,
     logoURI: "https://thesphynx.co/MainLogo.png",
-    name: "Sphynx Token",
+    name: "Sphynx BSC",
     symbol: "SPHYNX",
   }
 

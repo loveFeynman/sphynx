@@ -16,25 +16,25 @@ const farms: FarmConfig[] = [
     quoteToken: tokens.wbnb,
   },
   {
-    pid: 251,
+    pid: 1,
     lpSymbol: 'SPHYNX-BNB LP',
     lpAddresses: {
       97: '0x3ed8936cAFDF85cfDBa29Fbe5940A5b0524824F4',
-      56: '0x0eD7e52944161450477ee417DE9Cd3a859b14fD0',
+      56: '0x93561354a5a4687c54a64cf0aba56a0a392ae882',
     },
     token: tokens.sphynx,
     quoteToken: tokens.wbnb,
   },
-  {
-    pid: 252,
-    lpSymbol: 'BUSD-BNB LP',
-    lpAddresses: {
-      97: '',
-      56: '0x58F876857a02D6762E0101bb5C46A8c1ED44Dc16',
-    },
-    token: tokens.busd,
-    quoteToken: tokens.wbnb,
-  },
+  // {
+  //   pid: 252,
+  //   lpSymbol: 'BUSD-BNB LP',
+  //   lpAddresses: {
+  //     97: '',
+  //     56: '0x58F876857a02D6762E0101bb5C46A8c1ED44Dc16',
+  //   },
+  //   token: tokens.busd,
+  //   quoteToken: tokens.wbnb,
+  // },
 ]
 
 export default farms

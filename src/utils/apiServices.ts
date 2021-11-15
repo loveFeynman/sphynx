@@ -129,7 +129,13 @@ async function getTokenInfoForChart(input: any, pair: any, routerVersion: any, c
       }
     } catch (error) {
       console.log('error', error)
-      reject(error)
+      getTokenDetails(input, routerVersion)
+      .then(data => {
+        resolve(data)
+      })
+      .catch( err => {
+        reject(err)
+      })
     }
   })
 }
@@ -472,7 +478,7 @@ async function getChartStats(address: string, routerVersion: string, chainId = 5
       ethereum(network: bsc) {
         dexTrades(
           date: {since: "${since}", till: "${till}"}
-          smartContractAddress: {in: ["0xE4023ee4d957A5391007aE698B3A730B2dc2ba67", "${pairAddress}"]}
+          smartContractAddress: {is: "${pairAddress}"}
           baseCurrency: {is: "${baseAddress}"}
           quoteCurrency: {is: "${quoteAddress}"}
         ) {

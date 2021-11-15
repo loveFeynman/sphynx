@@ -2,11 +2,15 @@ import React, { useEffect, useCallback, useState, useMemo, useRef } from 'react'
 import { Route, useRouteMatch, useLocation } from 'react-router-dom'
 import BigNumber from 'bignumber.js'
 import { useWeb3React } from '@web3-react/core'
-import { Heading, RowType, Toggle, Text, Flex } from '@sphynxswap/uikit'
+import { useMatchBreakpoints, Heading, RowType, Toggle, Text, Flex } from '@sphynxswap/uikit'
 import { ChainId } from '@sphynxswap/sdk'
-import styled from 'styled-components'
+import styled, { useTheme } from 'styled-components'
 import FlexLayout from 'components/Layout/Flex'
 import Page from 'components/Layout/Page'
+import { ethers } from 'ethers'
+import {simpleRpcProvider} from 'utils/providers'
+import { ERC20_ABI } from 'config/abi/erc20'
+import { getBNBPrice, getTokenPrice } from 'utils/priceProvider'
 import { useFarms, usePollFarmsData, usePriceCakeBusd } from 'state/farms/hooks'
 import usePersistState from 'hooks/usePersistState'
 import { Farm } from 'state/types'
@@ -21,12 +25,16 @@ import PageHeader from 'components/PageHeader'
 import SearchInput from 'components/SearchInput'
 import Select, { OptionProps } from 'components/Select/Select'
 import Loading from 'components/Loading'
+import { ReactComponent as FarmLogo } from 'assets/svg/icon/FarmIcon2.svg'
 import FarmCard, { FarmWithStakedValue } from './components/FarmCard/FarmCard'
+import { SwapTabs, SwapTabList, SwapTab, SwapTabPanel } from "../../components/Tab/tab";
+import SearchPannel from './components/SearchPannel'
 import Table from './components/FarmTable/FarmTable'
 import FarmTabButtons from './components/FarmTabButtons'
 import { RowProps } from './components/FarmTable/Row'
 import ToggleView from './components/ToggleView/ToggleView'
 import { DesktopColumnSchema, ViewMode } from './components/types'
+import Card from '../../components/Card'
 
 const ControlContainer = styled.div`
   display: flex;
@@ -111,9 +119,37 @@ const getDisplayApr = (cakeRewardsApr?: number, lpRewardsApr?: number) => {
 }
 
 const Farms: React.FC = () => {
+  const [totalLiquidityUSD, setTotalLiquidity] = useState('')
+  const [farmApr, setFarmApr] = useState(null)
+  const lpAddress = '0x93561354a5a4687c54a64cf0aba56a0a392ae882'
+  const masterChef = '0x39dDE712D0B08C3Ce11AF7bd5b6E2ef9A495D3Be'
+  const wBNBAddr = '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c'
+  const sphynxToken = '0xd38Ec16cAf3464ca04929E847E4550Dcff25b27a'
+  useEffect(() => {
+    const parseData = async () => {
+      const lpToken = new ethers.Contract(lpAddress, ERC20_ABI, simpleRpcProvider)
+      const wBNB = new ethers.Contract(wBNBAddr, ERC20_ABI, simpleRpcProvider)
+      const bnbBalance = await wBNB.balanceOf(lpAddress)
+      const bnbPrice = await getBNBPrice()
+      const totalSupply = await lpToken.totalSupply()
+      const masterChefBalance = await lpToken.balanceOf(masterChef)
+      const tokenPrice = await getTokenPrice(sphynxToken)
+      const totalLiquidity = bnbBalance * 2 / (10 ** 18) * bnbPrice * masterChefBalance / totalSupply
+      const apr = tokenPrice * 100 / totalLiquidity * 1000 * 365 * 100
+      setTotalLiquidity(totalLiquidity.toFixed(2))
+      setFarmApr(apr.toFixed(2))
+    }
+
+    parseData()
+  }, [])
+
   const { path } = useRouteMatch()
+  const location = useLocation()
   const { pathname } = useLocation()
   const { t } = useTranslation()
+  const { isXl } = useMatchBreakpoints()
+  const isMobile = !isXl
+  const theme = useTheme()
   const { data: farmsLP, userDataLoaded } = useFarms()
   const cakePrice = usePriceCakeBusd()
   const [query, setQuery] = useState('')
@@ -161,7 +197,7 @@ const Farms: React.FC = () => {
           ? getFarmApr(new BigNumber(farm.poolWeight), cakePrice, totalLiquidity, farm.lpAddresses[ChainId.MAINNET])
           : { cakeRewardsApr: 0, lpRewardsApr: 0 }
 
-        return { ...farm, apr: cakeRewardsApr, lpRewardsApr, liquidity: totalLiquidity }
+        return { ...farm, apr: cakeRewardsApr, lpRewardsApr, liquidity: new BigNumber(totalLiquidityUSD) }
       })
 
       if (query) {
@@ -172,7 +208,7 @@ const Farms: React.FC = () => {
       }
       return farmsToDisplayWithAPR
     },
-    [cakePrice, query, isActive],
+    [cakePrice, query, isActive, totalLiquidityUSD],
   )
 
   const handleChangeQuery = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -273,13 +309,15 @@ const Farms: React.FC = () => {
 
     const row: RowProps = {
       apr: {
-        value: getDisplayApr(farm.apr, farm.lpRewardsApr),
+        // value: getDisplayApr(farm.apr, farm.lpRewardsApr),
+        value: farmApr,
         multiplier: farm.multiplier,
         lpLabel,
         tokenAddress,
         quoteTokenAddress,
         cakePrice,
-        originalValue: farm.apr,
+        // originalValue: farm.apr,
+        originalValue: farmApr
       },
       farm: {
         label: lpLabel,
@@ -292,10 +330,11 @@ const Farms: React.FC = () => {
         pid: farm.pid,
       },
       liquidity: {
-        liquidity: farm.liquidity,
+        liquidity: new BigNumber(totalLiquidityUSD),
       },
       multiplier: {
-        multiplier: farm.multiplier,
+        // multiplier: farm.multiplier,
+        multiplier: '100x',
       },
       details: farm,
     }
@@ -379,19 +418,41 @@ const Farms: React.FC = () => {
     setSortOption(option.value)
   }
 
+  const selectedTab = (tabIndex: number): void => {
+    if (tabIndex === 0) {
+      location.pathname = "/farms"
+    }
+    else {
+      location.pathname = "/farms/history"
+    }
+  }
+
   return (
     <>
       <div style={{ height: 24 }} />
       <PageHeader>
-        <Heading as="h1" scale="xxl" color="white" mb="24px">
-          {t('Farms')}
-        </Heading>
-        <Heading scale="lg" color="text">
-          {t('Stake LP tokens to earn.')}
-        </Heading>
+        <Flex>
+          <FarmLogo width="80" height="60" />
+          <Flex flexDirection="column" ml="10px">
+            <Text fontSize="26px" color="white" bold>
+              {t('Farms')}
+            </Text>
+            <Text fontSize="15px" color="#777777">
+              {t('Stake LP tokens to earn.')}
+            </Text>
+          </Flex>
+        </Flex>
       </PageHeader>
       <Page>
-        <ControlContainer>
+        <SearchPannel
+          stakedOnly={stakedOnly}
+          setStakedOnly={setStakedOnly}
+          viewMode={viewMode}
+          setViewMode={setViewMode}
+          setSortOption={setSortOption}
+          setQuery={setQuery}
+        />
+        {/* <ControlContainer>
           <ViewControls>
             <ToggleView viewMode={viewMode} onToggle={(mode: ViewMode) => setViewMode(mode)} />
             <ToggleWrapper>
@@ -434,14 +495,45 @@ const Farms: React.FC = () => {
               <SearchInput onChange={handleChangeQuery} placeholder="Search Farms" />
             </LabelWrapper>
           </FilterContainer>
-        </ControlContainer>
-        {renderContent()}
-        {account && !userDataLoaded && stakedOnly && (
-          <Flex justifyContent="center">
-            <Loading />
-          </Flex>
-        )}
-        <div ref={loadMoreRef} />
+        </ControlContainer> */}
+        <SwapTabs
+          selectedTabClassName='is-selected'
+          selectedTabPanelClassName='is-selected'
+          onSelect={(tabIndex) => selectedTab(tabIndex)}
+        >
+          <SwapTabList>
+            <SwapTab>
+              <Text>
+                {t('Live')}
+              </Text>
+            </SwapTab>
+            <SwapTab>
+              <Text>
+                {t('Finished')}
+              </Text>
+            </SwapTab>
+          </SwapTabList>
+          <Card bgColor={theme.isDark ? "#0E0E26" : "#2A2E60"} borderRadius="0 0 3px 3px" padding="20px 10px">
+            <SwapTabPanel>
+              {renderContent()}
+              {account && !userDataLoaded && stakedOnly && (
+                <Flex justifyContent="center">
+                  <Loading />
+                </Flex>
+              )}
+              <div ref={loadMoreRef} />
+            </SwapTabPanel>
+            <SwapTabPanel>
+              {renderContent()}
+              {account && !userDataLoaded && stakedOnly && (
+                <Flex justifyContent="center">
+                  <Loading />
+                </Flex>
+              )}
+              <div ref={loadMoreRef} />
+            </SwapTabPanel>
+          </Card>
+        </SwapTabs>
       </Page>
     </>
   )

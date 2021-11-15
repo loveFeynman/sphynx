@@ -1,6 +1,5 @@
 import React, { CSSProperties, MutableRefObject, useCallback, useMemo } from 'react'
 import { Currency, CurrencyAmount, currencyEquals, ETHER, Token, ChainId } from '@sphynxswap/sdk'
-import { ETHER as uniEther } from '@uniswap/sdk'
 import { Text } from '@sphynxswap/uikit'
 import styled from 'styled-components'
 import { FixedSizeList } from 'react-window'

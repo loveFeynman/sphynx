@@ -1,7 +1,6 @@
 /* eslint-disable no-param-reassign */
 import { parseBytes32String } from '@ethersproject/strings'
 import { Currency, ETHER, Token, currencyEquals, ChainId } from '@sphynxswap/sdk'
-import { ETHER as uniETHER } from '@uniswap/sdk'
 import { useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import { arrayify } from 'ethers/lib/utils'

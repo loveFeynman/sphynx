@@ -521,7 +521,7 @@ export default function RemoveLiquidityWidget({
                 <Slider
                   name="lp-amount"
                   min={0}
-                  max={100}
+                  max={99}
                   value={innerLiquidityPercentage}
                   onChange={(value) => setInnerLiquidityPercentage(Math.ceil(value))}
                   mb="16px"

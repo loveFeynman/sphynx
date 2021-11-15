@@ -1,6 +1,21 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Skeleton } from '@sphynxswap/uikit'
+import { Skeleton, Flex, Text } from '@sphynxswap/uikit'
+import { useTranslation } from 'contexts/Localization'
+
+const Container = styled.div`
+  flex: 1;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 24px 8px;
+`
+
+const TitleText = styled(Text)`
+  font-size: 12px;
+  color: #A7A7CC;
+  text-align: left;
+  margin-right: 5px;
+`
 
 export interface EarnedProps {
   earnings: number
@@ -15,16 +30,26 @@ const Amount = styled.span<{ earned: number }>`
   color: ${({ earned, theme }) => (earned ? theme.colors.text : theme.colors.textDisabled)};
   display: flex;
   align-items: center;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
 `
 
 const Earned: React.FunctionComponent<EarnedPropsWithLoading> = ({ earnings, userDataReady }) => {
-  if (userDataReady) {
-    return <Amount earned={earnings}>{earnings.toLocaleString()}</Amount>
-  }
+  const { t } = useTranslation()
   return (
-    <Amount earned={0}>
-      <Skeleton width={60} />
-    </Amount>
+    <Container>
+      <Flex mb='5px'>
+        <TitleText>{t('Earned')}</TitleText>
+      </Flex>
+      {userDataReady ?
+        <Amount earned={earnings}>{earnings.toLocaleString()}</Amount>
+        :
+        <Amount earned={0}>
+          <Skeleton width={60} />
+        </Amount>
+      }
+    </Container>
   )
 }
 

@@ -38,6 +38,43 @@ const GlobalStyle = createGlobalStyle`
   .marquee-container {
     overflow: hidden !important;
   }
+
+  .MuiPickersBasePicker-pickerView {
+    max-width: unset !important;
+  }
+  div.MuiDialog-paper {
+    position: unset !important;
+  }
+  div.MuiPickersBasePicker-container {
+    div.MuiPaper-root {
+      top: unset !important;
+      left: unset !important;
+      width: unset !important;
+      button {
+        outline: none;
+      }
+    }
+  }
+  button {
+    outline: none !important;
+  }
+  .sc-gInthZ {
+    background: ${({ theme }) => (theme.isDark ? '#27262c !important' : '#191c41 !important')};
+  }
+  .eTJGWm {
+    background: ${({ theme }) => (theme.isDark ? '#27262c !important' : '#191c41 !important')};
+    border: ${({ theme }) => (theme.isDark ? '' : '1px solid #2E2E55 !important')}; 
+  }
+  div.gcFUcx, div.ePwqSE, div.gGntUw {
+    background: ${({ theme }) => (theme.isDark ? '#27262c !important' : '#191c41 !important')};
+  }
+
+  .gJyxrV {
+    border: ${({ theme }) => (theme.isDark ? '' : '1px solid #2E2E55 !important')}; 
+  }
+  .gruiCo, .sc-gInthZ {
+    border-bottom: ${({ theme }) => (theme.isDark ? '' : '1px solid #2E2E55 !important')}; 
+  }
 `
 
 export default GlobalStyle

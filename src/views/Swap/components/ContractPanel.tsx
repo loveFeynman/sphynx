@@ -1,11 +1,8 @@
 import React, { useEffect, useState, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import styled from 'styled-components'
-import { Button, Link, Text, useMatchBreakpoints } from '@sphynxswap/uikit'
-import { ReactComponent as TwitterIcon } from 'assets/svg/icon/TwitterIcon.svg'
-import { ReactComponent as SocialIcon2 } from 'assets/svg/icon/SocialIcon2.svg'
-import { ReactComponent as TelegramIcon } from 'assets/svg/icon/TelegramIcon.svg'
-import { ReactComponent as BscscanIcon } from 'assets/svg/icon/Bscscan.svg'
+import styled, { useTheme } from 'styled-components'
+import { IconButton, Link, Text, useMatchBreakpoints } from '@sphynxswap/uikit'
+import SearchIcon from "components/Icon/SearchIcon";
 import { PoolData } from 'state/info/types'
 import fetchPoolsForToken from 'state/info/queries/tokens/poolsForToken'
 import { fetchPoolData } from 'state/info/queries/pools/poolData'
@@ -19,7 +16,7 @@ import ToggleList from './ToggleList'
 import LiveAmountPanel from './LiveAmountPanel'
 import { AppState } from '../../../state'
 import { setIsInput, typeInput } from '../../../state/input/actions'
-import { getBscScanLink, isAddress } from '../../../utils'
+import { isAddress } from '../../../utils'
 import { useTranslation } from '../../../contexts/Localization'
 
 export interface ContractPanelProps {
@@ -31,15 +28,16 @@ export interface ContractPanelProps {
 
 const ContractPanelWrapper = styled.div`
   display: flex;
+  background: ${({ theme }) => theme.isDark ?  "#0E0E26": "#2A2E60"};
+  padding: 15px 12px;
   flex-direction: column;
-  // margin-bottom: 28px;
-  & > div {
-    margin-bottom: 12px;
-  }
+  margin-bottom: 12px;
   ${({ theme }) => theme.mediaQueries.sm} {
+    padding: 15px 12px;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+    margin-bottom: 12px;
     flex-wrap: wrap;
     & > div {
       margin-right: 12px;
@@ -54,18 +52,22 @@ const ContractCard = styled(Text)`
   padding: 0 4px;
   height: 40px;
   text-overflow: ellipsis;
-  background: rgba(0, 0, 0, 0.4);
   border-radius: 16px;
   display: flex;
   align-items: center;
+  border: 1px solid ${({ theme }) => theme.isDark ? "#2E2E55" : "#4A5187"};
+  border-radius: 5px;
   margin: 12px 0;
   & button:last-child {
     background: #8b2a9b;
   }
   ${({ theme }) => theme.mediaQueries.md} {
+    flex: 1;
     margin: 0;
+    border-radius: 5px;
   }
 `
+
 const MenuWrapper = styled.div`
   position: absolute;
   width: 100%;
@@ -84,6 +86,7 @@ const MenuWrapper = styled.div`
     max-height: 600px;
   }
 `
+
 const SearchInputWrapper = styled.div`
   flex: 1;
   position: relative;
@@ -98,22 +101,10 @@ const SearchInputWrapper = styled.div`
     box-shadow: none;
     outline: none;
     color: #f7931a;
-    font-size: 16px;
+    font-size: 13px;
     &::placeholder {
       color: #8f80ba;
     }
-  }
-`
-
-const SocialIconsWrapper = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 40px;
-  background: rgba(0, 0, 0, 0.4);
-  border-radius: 20px;
-  & svg {
-    margin: 0 11px;
   }
 `
 
@@ -124,6 +115,20 @@ const ContractPanelOverlay = styled.div`
   z-index: 1;
   left: 0;
   top: 0;
+`
+
+const TransparentIconButton = styled(IconButton)`
+  background-color: transparent !important;
+  margin: 0px 3px;
+  border: none;
+  box-shadow: unset;
+`
+
+const SearchInputDivider = styled.div`
+  border-left: 1px solid ${({ theme }) => theme.isDark ? "#A7A7CC" : "#4A5187"};
+  margin-left: 2px;
+  margin-right: 8px;
+  height: 20px;
 `
 
 // {token} : ContractPanelProps)
@@ -250,8 +255,10 @@ export default function ContractPanel({ value, symbol, amount, price }: Contract
 
   return (
     <ContractPanelWrapper>
+      <ToggleList poolDatas={poolDatas} />
       <ContractCard>
         <CopyHelper toCopy={value ? value.contractAddress : addressSearch}>&nbsp;</CopyHelper>
+        <SearchInputDivider />
         <SearchInputWrapper>
           <input
             placeholder="Enter token name/address..."
@@ -294,29 +301,14 @@ export default function ContractPanel({ value, symbol, amount, price }: Contract
             </MenuWrapper>
           )}
         </SearchInputWrapper>
-        <Button scale="sm" onClick={submitFuntioncall} disabled={show}>
-          {t('Submit')}
-        </Button>
+        <TransparentIconButton onClick={submitFuntioncall}>
+          <SearchIcon width="22px" height="22px" color={useTheme().colors.primary}/>
+        </TransparentIconButton>
       </ContractCard>
-      <ToggleList poolDatas={poolDatas} />
       {isMobile ?
         < LiveAmountPanel symbol={symbol} amount={amount} price={price} />
         : null
       }
-      <SocialIconsWrapper>
-        <Link href={getBscScanLink(checksumAddress === false ? '' : checksumAddress, 'token')} aria-label="Bscscan" external>
-          <BscscanIcon />
-        </Link>
-        <Link external href={twitterUrl} aria-label="twitter">
-          <TwitterIcon />
-        </Link>
-        <Link external href={social.website}>
-          <SocialIcon2 />
-        </Link>
-        <Link external href={telegramUrl} aria-label="telegram">
-          <TelegramIcon />
-        </Link>
-      </SocialIconsWrapper>
       {showDrop && <ContractPanelOverlay onClick={() => setShowDrop(false)} />}
     </ContractPanelWrapper>
   )

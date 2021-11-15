@@ -16,22 +16,22 @@ const ToggleWrapper = styled.div`
   position: relative;
   z-index: 2;
   height: 40px;
-  min-width: 200px;
-  flex: 1;
-  border-radius: 16px;
+  border-radius: 5px;
   padding: 0 4px;
-  background: rgba(0, 0, 0, 0.4);
   display: flex;
   align-items: center;
+  & button {
+    border: 1px solid ${({ theme }) => theme.isDark ? "#2E2E55" : "#4A5187"};
+  }
   ${({ theme }) => theme.mediaQueries.sm} {
-    min-width: 200px;
+    // min-width: 200px;
   }
   & button {
+    width: 100%;
     background: transparent !important;
     outline: none;
     box-shadow: none !important;
     padding: 0 12px;
-    border: none;
   }
 `
 
@@ -52,10 +52,14 @@ const MenuTitle = styled.div`
   width: 100%;
   height: 35px;
   background: transparent;
-  color: white;
   display: flex;
   align-items: center;
   padding: 0px 12px;
+  span {
+    font-weight: 600;
+    font-size: 13px;
+    color: #A7A7CC;
+  }
 `
 
 const PanelOverlay = styled.div`
@@ -106,7 +110,7 @@ const ToggleList = ({ poolDatas }: { poolDatas: PoolData[] }) => {
   return (
     <>
       <ToggleWrapper>
-        <Button onClick={handleClick} style={{ width: '100%' }} aria-label="token version">
+        <Button onClick={handleClick} aria-label="token version">
           <MenuTitle>
             <span>{selectedItem}</span>
           </MenuTitle>
