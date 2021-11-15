@@ -47,14 +47,10 @@ const ButtonSkeleton = styled(Skeleton)`
 
 const StackedFlex = styled(Flex)`
   flex: 1;
-  flex-direction: row;
+  flex-direction: column;
   margin-bottom: 10px;
   margin-right: 0px;
-  -webkit-box-align: end;
-  -webkit-flex-align: end;
-  -ms-flex-align: end;
-  -webkit-align-items: end;
-  align-items: end;
+  align-items: center;
   ${({ theme }) => theme.mediaQueries.sm} {
     margin-bottom: 0px;
     margin-right: 10px;
@@ -244,20 +240,20 @@ const Staked: React.FunctionComponent<StackedActionProps> = ({ pool, userDataLoa
   if (isNotVaultAndHasStake || isVaultWithShares) {
     return (
       <ActionContainer>
-        <StakeActionTitles>
+        <Flex mb='5px'>
           <Text fontSize="12px" bold color="#A7A7CC" as="span" textTransform="uppercase">
             {stakingToken.symbol}{' '}
           </Text>
           <Text fontSize="12px" bold color="#A7A7CC" as="span" textTransform="uppercase">
             {isAutoVault ? t('Staked (compounding)') : t('Staked')}
           </Text>
-        </StakeActionTitles>
+        </Flex>
         <StackedActionContent>
           <StackedFlex>
             <Balance
               lineHeight="1"
               bold
-              fontSize={isMobile? "12px": "16px"}
+              fontSize={isMobile ? "12px" : "16px"}
               decimals={5}
               value={isAutoVault ? cakeAsNumberBalance : stakedTokenBalance}
             />
