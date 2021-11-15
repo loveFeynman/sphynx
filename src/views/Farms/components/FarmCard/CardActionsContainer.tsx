@@ -9,13 +9,20 @@ import { Farm } from 'state/types'
 import { useTranslation } from 'contexts/Localization'
 import { useERC20 } from 'hooks/useContract'
 import ConnectWalletButton from 'components/ConnectWalletButton'
+import { ColorButtonStyle } from 'style/buttonStyle'
 import StakeAction from './StakeAction'
 import HarvestAction from './HarvestAction'
 import useApproveFarm from '../../hooks/useApproveFarm'
 
 const Action = styled.div`
-  padding-top: 16px;
+
 `
+
+const UnderLineFlex = styled(Flex)`
+  border-bottom: 1px solid #21214A;
+  padding: 9px 0;
+`
+
 export interface FarmWithStakedValue extends Farm {
   apr?: number
 }
@@ -69,7 +76,7 @@ const CardActions: React.FC<FarmCardActionsProps> = ({ farm, account, addLiquidi
         addLiquidityUrl={addLiquidityUrl}
       />
     ) : (
-      <Button mt="8px" width="100%" disabled={requestedApproval} onClick={handleApprove}>
+      <Button mt="8px" width="100%" disabled={requestedApproval} onClick={handleApprove} style={ColorButtonStyle}>
         {t('Enable Contract')}
       </Button>
     )
@@ -77,24 +84,26 @@ const CardActions: React.FC<FarmCardActionsProps> = ({ farm, account, addLiquidi
 
   return (
     <Action>
-      <Flex>
-        <Text bold textTransform="uppercase" color="secondary" fontSize="12px" pr="4px">
+      <UnderLineFlex>
+        <Text bold textTransform="uppercase" color="#A7A7CC" fontSize="14px" pr="4px">
           Sphynx
         </Text>
-        <Text bold textTransform="uppercase" color="textSubtle" fontSize="12px">
+        <Text bold textTransform="uppercase" color="#A7A7CC" fontSize="14px">
           {t('Earned')}
         </Text>
-      </Flex>
+      </UnderLineFlex>
       <HarvestAction earnings={earnings} pid={pid} />
-      <Flex>
-        <Text bold textTransform="uppercase" color="secondary" fontSize="12px" pr="4px">
+      <Flex justifyContent='center'>
+        <Text bold textTransform="uppercase" color="#A7A7CC" fontSize="14px" pr="4px">
           {farm.lpSymbol}
         </Text>
-        <Text bold textTransform="uppercase" color="textSubtle" fontSize="12px">
+        <Text bold textTransform="uppercase" color="#A7A7CC" fontSize="14px">
           {t('Staked')}
         </Text>
       </Flex>
-      {!account ? <ConnectWalletButton mt="8px" width="100%" /> : renderApprovalOrStakeButton()}
+      <Flex justifyContent='center'>
+        {!account ? <ConnectWalletButton mt="8px" width="100%" /> : renderApprovalOrStakeButton()}
+      </Flex>
     </Action>
   )
 }

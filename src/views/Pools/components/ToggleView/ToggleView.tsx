@@ -18,7 +18,6 @@ const Container = styled.div`
 
   ${({ theme }) => theme.mediaQueries.sm} {
     margin-left: 0;
-    margin-right: 16px;
   }
 `
 
