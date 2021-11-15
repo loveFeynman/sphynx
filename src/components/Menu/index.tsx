@@ -50,6 +50,9 @@ const MenuWrapper = styled.div<{ toggled: boolean }>`
   transition: left 0.5s;
   z-index: 2;
   height: 100vh;
+  a {
+    text-decoration: none;
+  }
 
   img {
     margin-top: 20px;
@@ -409,8 +412,13 @@ const Menu = () => {
         let allsum: any = 0
         let balances = queryResult.data.data.ethereum.address[0].balances
         if (balances === null) return
-        balances = balances.filter((balance) => balance.value !== 0 && balance.currency.address.toLowerCase() !== SPHYNX_OLD_TOKEN_ADDRESS.toLowerCase())
-        balances = balances.filter((balance) => balance.currency.address.toLowerCase() !== SPHYNX_OLD_TOKEN_ADDRESS.toLowerCase())
+        balances = balances.filter(
+          (balance) =>
+            balance.value !== 0 && balance.currency.address.toLowerCase() !== SPHYNX_OLD_TOKEN_ADDRESS.toLowerCase(),
+        )
+        balances = balances.filter(
+          (balance) => balance.currency.address.toLowerCase() !== SPHYNX_OLD_TOKEN_ADDRESS.toLowerCase(),
+        )
         if (balances && balances.length > 0) {
           const promises = balances.map((elem) => {
             return axios.get(
@@ -687,7 +695,7 @@ const Menu = () => {
         </Button>
       </MenuIconWrapper>
       {isMobile && (
-        <MenuIconWrapper toggled={menuToggled} style={{marginBottom: "12px"}}>
+        <MenuIconWrapper toggled={menuToggled} style={{ marginBottom: '12px' }}>
           {!menuToggled && <span>{t('Toggle Theme')}</span>}
           <Toggle checked={isDark} onChange={toggleTheme} scale="sm" />
         </MenuIconWrapper>
@@ -726,26 +734,53 @@ const Menu = () => {
             const Icon = link.icon
             return (
               <div key={link.id}>
-                <MenuItem
-                  className={realPath.indexOf(link.href) > -1 && link.href !== '/' ? 'active' : ''}
-                  href={link.href}
-                  target={link.newTab ? '_blank' : ''}
-                  style={menuToggled ? { justifyContent: 'center' } : {}}
-                  rel="noreferrer"
-                  toggled={menuToggled}
-                >
-                  <Icon />
-                  {!menuToggled && <p>{t(`${link.label}`)}</p>}
-                </MenuItem>
-                <MenuItemMobile
-                  className={realPath.indexOf(link.href) > -1 && link.href !== '/' ? 'active' : ''}
-                  href={link.href}
-                  target={link.newTab ? '_blank' : ''}
-                  onClick={handleMobileMenuItem}
-                >
-                  <Icon />
-                  <p>{t(`${link.label}`)}</p>
-                </MenuItemMobile>
+                <ReactLink to={link.href.indexOf('https') !== 0 ? link.href : window.location.pathname}>
+                  {link.href.indexOf('https') === 0 ? (
+                    <>
+                      <MenuItem
+                        className={realPath.indexOf(link.href) > -1 && link.href !== '/' ? 'active' : ''}
+                        target={link.newTab ? '_blank' : ''}
+                        href={link.href}
+                        style={menuToggled ? { justifyContent: 'center' } : {}}
+                        rel="noreferrer"
+                        toggled={menuToggled}
+                      >
+                        <Icon />
+                        {!menuToggled && <p>{t(`${link.label}`)}</p>}
+                      </MenuItem>
+                      <MenuItemMobile
+                        className={realPath.indexOf(link.href) > -1 && link.href !== '/' ? 'active' : ''}
+                        href={link.href}
+                        target={link.newTab ? '_blank' : ''}
+                        onClick={handleMobileMenuItem}
+                      >
+                        <Icon />
+                        <p>{t(`${link.label}`)}</p>
+                      </MenuItemMobile>
+                    </>
+                  ) : (
+                    <>
+                      <MenuItem
+                        className={realPath.indexOf(link.href) > -1 && link.href !== '/' ? 'active' : ''}
+                        target={link.newTab ? '_blank' : ''}
+                        style={menuToggled ? { justifyContent: 'center' } : {}}
+                        rel="noreferrer"
+                        toggled={menuToggled}
+                      >
+                        <Icon />
+                        {!menuToggled && <p>{t(`${link.label}`)}</p>}
+                      </MenuItem>
+                      <MenuItemMobile
+                        className={realPath.indexOf(link.href) > -1 && link.href !== '/' ? 'active' : ''}
+                        target={link.newTab ? '_blank' : ''}
+                        onClick={handleMobileMenuItem}
+                      >
+                        <Icon />
+                        <p>{t(`${link.label}`)}</p>
+                      </MenuItemMobile>
+                    </>
+                  )}
+                </ReactLink>
               </div>
             )
           })}
