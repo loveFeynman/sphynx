@@ -452,7 +452,7 @@ async function getChartStats(address: string, routerVersion: string, chainId = 5
       }
     }
   }
-  const wBNBContract = new web3.eth.Contract(abi as AbiItem[], 'WBNB_ADDRESS')
+  const wBNBContract = new web3.eth.Contract(abi as AbiItem[], `${WBNB_ADDRESS}`)
   try {
     if (!address) {
       return {

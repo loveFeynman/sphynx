@@ -96,8 +96,7 @@ const Container = styled.div`
 
 export default function CoinStatsBoard(props) {
   const dispatch = useDispatch()
-  const { token } = props
-  const input = token
+  const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
   const { chainId } = useActiveWeb3React()
   const routerVersion = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.routerVersion)
   const marketCapacity = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.marketCapacity)
@@ -129,8 +128,6 @@ export default function CoinStatsBoard(props) {
 
   const RealContainer = isExtra ? ContainerExtra : Container
 
-  const nativeSymbol = chainId === 56 ? "BNB" : "ETH"
-
   const getTableData = useCallback(async () => {
     try {
       if (result) {
@@ -154,8 +151,7 @@ export default function CoinStatsBoard(props) {
     interval.current = setInterval(() => {
       const sessionData = JSON.parse(sessionStorage.getItem(storages.SESSION_LIVE_PRICE))
       if (!sessionData) return
-      if (!sessionData.input) return
-      // if (sessionData?.input.toLowerCase() !== tokenAddress.current.toLowerCase()) return
+      if (sessionData.input.toLowerCase() !== tokenAddress.current.toLowerCase()) return
       setPrice(sessionData.price)
     }, 2000)
     return () => {
