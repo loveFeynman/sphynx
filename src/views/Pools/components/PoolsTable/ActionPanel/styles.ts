@@ -5,21 +5,20 @@ export const ActionContainer = styled.div`
   flex-grow: 1;
   flex-basis: 0;
   margin-bottom: 16px;
-  flex-direction: row;
+  flex-direction: column;
+  align-items: center;
   display: flex;
   justify-content: center;
   height: 110px;
+  position: relative;
 
   ${({ theme }) => theme.mediaQueries.sm} {
-    margin-left: 12px;
-    margin-right: 12px;
     margin-bottom: 0;
     height: 130px;
     max-height: 130px;
   }
 
   ${({ theme }) => theme.mediaQueries.xl} {
-    margin-left: 32px;
     margin-right: 0;
     margin-bottom: 0;
     height: 130px;
@@ -37,6 +36,10 @@ export const StakeActionTitles = styled.div`
   font-weight: 600;
   font-size: 12px;
   position: absolute;
+  top: 0px;
+  ${({ theme }) => theme.mediaQueries.sm} {
+    top: 10px;
+  }
 `
 
 export const ActionContent = styled.div`
