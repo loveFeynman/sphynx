@@ -10,7 +10,7 @@ export function FormattedNumber({prefix, value, suffix }) {
       suffix={suffix}
       thousandSeparator
       decimalScale={2}
-      style={{fontFamily:'Raleway'}}
+      style={{fontFamily:'Raleway', color: '#F2C94C'}}
     />
   );
 }
