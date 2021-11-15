@@ -135,7 +135,7 @@ const Farms: React.FC = () => {
       const masterChefBalance = await lpToken.balanceOf(masterChef)
       const tokenPrice = await getTokenPrice(sphynxToken)
       const totalLiquidity = bnbBalance * 2 / (10 ** 18) * bnbPrice * masterChefBalance / totalSupply
-      const apr = tokenPrice * 200 / totalLiquidity * 1000 * 365 * 100
+      const apr = tokenPrice * 100 / totalLiquidity * 1000 * 365 * 100
       setTotalLiquidity(totalLiquidity.toFixed(2))
       setFarmApr(apr.toFixed(2))
     }
@@ -334,7 +334,7 @@ const Farms: React.FC = () => {
       },
       multiplier: {
         // multiplier: farm.multiplier,
-        multiplier: '200x',
+        multiplier: '100x',
       },
       details: farm,
     }

@@ -719,7 +719,6 @@ export default function Swap({ history }: RouteComponentProps) {
       tokenAddress.toLowerCase() === sphynxAddr.toLowerCase() ||
       tokenAddress.toLowerCase() === SPHYNX_TOKEN_ADDRESS.toLowerCase()
     ) {
-      console.log('HEEEEEEEELLLO')
       if (swapRouter !== SwapRouter.SPHYNX_SWAP) {
         setSwapRouter(SwapRouter.SPHYNX_SWAP)
         setRouterType(RouterType.sphynx)
