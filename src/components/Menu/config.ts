@@ -29,9 +29,14 @@ export const links = [
     href: '/pools',
   },
   {
-    label: 'Launchpad (coming soon)',
+    label: 'Sphynx pad (coming soon)',
     icon: LaunchPadIcon,
-    href: '/launchpad',
+    href: '/',
+  },
+  {
+    label: 'Projects live on Sphynx (coming soon)',
+    icon: PredictionIcon,
+    href: '/',
   },
   {
     label: 'Lottery (coming soon)',
@@ -46,14 +51,12 @@ export const links = [
   {
     label: 'CoinMarketCap',
     icon: CoinMarketCapsIcon,
-    href: 'https://coinmarketcap.com/currencies/sphynx-token/',
-    newTab: true
+    href: '/'
   },
   {
     label: 'CoinGecko',
     icon: CoingeckoIcon,
-    href: 'https://www.coingecko.com/en/coins/sphynx-token',
-    newTab: true
+    href: '/'
   },
   {
     label: 'Learning Hub',
