@@ -46,7 +46,7 @@ const GlobalStyle = createGlobalStyle`
     background: ${({ theme }) => (theme.isDark ? '#27262c !important' : '#191c41 !important')};
     border: ${({ theme }) => (theme.isDark ? '' : '1px solid #2E2E55 !important')}; 
   }
-  div.gcFUcx, div.ePwqSE {
+  div.gcFUcx, div.ePwqSE, div.gGntUw {
     background: ${({ theme }) => (theme.isDark ? '#27262c !important' : '#191c41 !important')};
   }
 
