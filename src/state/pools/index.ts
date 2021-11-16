@@ -16,7 +16,6 @@ import {
 } from './fetchPoolsUser'
 import { fetchPublicVaultData, fetchVaultFees } from './fetchVaultPublic'
 import fetchVaultUser from './fetchVaultUser'
-import { getTokenPricesFromFarm } from './helpers'
 
 const initialState: PoolsState = {
   data: [...poolsConfig],
@@ -113,50 +112,50 @@ export const { setPoolsPublicData, setPoolsUserData, updatePoolsUserData } = Poo
 
 export const updateUserAllowance =
   (sousId: number, account: string): AppThunk =>
-  async (dispatch) => {
-    const allowances = await fetchPoolsAllowance(account)
-    dispatch(updatePoolsUserData({ sousId, field: 'allowance', value: allowances[sousId] }))
-  }
+    async (dispatch) => {
+      const allowances = await fetchPoolsAllowance(account)
+      dispatch(updatePoolsUserData({ sousId, field: 'allowance', value: allowances[sousId] }))
+    }
 
 export const updateUserBalance =
   (sousId: number, account: string): AppThunk =>
-  async (dispatch) => {
-    const tokenBalances = await fetchUserBalances(account)
-    dispatch(updatePoolsUserData({ sousId, field: 'stakingTokenBalance', value: tokenBalances[sousId] }))
-  }
+    async (dispatch) => {
+      const tokenBalances = await fetchUserBalances(account)
+      dispatch(updatePoolsUserData({ sousId, field: 'stakingTokenBalance', value: tokenBalances[sousId] }))
+    }
 
 export const updateUserStakedBalance =
   (sousId: number, account: string): AppThunk =>
-  async (dispatch) => {
-    const stakedBalances = await fetchUserStakeBalances(account)
-    dispatch(updatePoolsUserData({ sousId, field: 'stakedBalance', value: stakedBalances[sousId] }))
-  }
+    async (dispatch) => {
+      const stakedBalances = await fetchUserStakeBalances(account)
+      dispatch(updatePoolsUserData({ sousId, field: 'stakedBalance', value: stakedBalances[sousId] }))
+    }
 
 export const updateUserPendingReward =
   (sousId: number, account: string): AppThunk =>
-  async (dispatch) => {
-    const pendingRewards = await fetchUserPendingRewards(account)
-    dispatch(updatePoolsUserData({ sousId, field: 'pendingReward', value: pendingRewards[sousId] }))
-  }
+    async (dispatch) => {
+      const pendingRewards = await fetchUserPendingRewards(account)
+      dispatch(updatePoolsUserData({ sousId, field: 'pendingReward', value: pendingRewards[sousId] }))
+    }
 
 export const fetchPoolsUserDataAsync =
   (account: string): AppThunk =>
-  async (dispatch) => {
-    const allowances = await fetchPoolsAllowance(account)
-    const stakingTokenBalances = await fetchUserBalances(account)
-    const stakedBalances = await fetchUserStakeBalances(account)
-    const pendingRewards = await fetchUserPendingRewards(account)
+    async (dispatch) => {
+      const allowances = await fetchPoolsAllowance(account)
+      const stakingTokenBalances = await fetchUserBalances(account)
+      const stakedBalances = await fetchUserStakeBalances(account)
+      const pendingRewards = await fetchUserPendingRewards(account)
 
-    const userData = poolsConfig.map((pool) => ({
-      sousId: pool.sousId,
-      allowance: allowances[pool.sousId],
-      stakingTokenBalance: stakingTokenBalances[pool.sousId],
-      stakedBalance: stakedBalances[pool.sousId],
-      pendingReward: pendingRewards[pool.sousId],
-    }))
+      const userData = poolsConfig.map((pool) => ({
+        sousId: pool.sousId,
+        allowance: allowances[pool.sousId],
+        stakingTokenBalance: stakingTokenBalances[pool.sousId],
+        stakedBalance: stakedBalances[pool.sousId],
+        pendingReward: pendingRewards[pool.sousId],
+      }))
 
-    dispatch(setPoolsUserData(userData))
-  }
+      dispatch(setPoolsUserData(userData))
+    }
 
 // Thunks
 export const fetchPoolsPublicDataAsync = (currentBlock: number) => async (dispatch, getState) => {
@@ -183,11 +182,11 @@ export const fetchPoolsPublicDataAsync = (currentBlock: number) => async (dispat
     const earningTokenPrice = earningTokenAddress ? prices[earningTokenAddress] : 0
     const apr = !isPoolFinished
       ? getPoolApr(
-          stakingTokenPrice,
-          earningTokenPrice,
-          getBalanceNumber(new BigNumber(totalStaking.totalStaked), pool.stakingToken.decimals),
-          parseFloat(pool.tokenPerBlock),
-        )
+        stakingTokenPrice,
+        earningTokenPrice,
+        getBalanceNumber(new BigNumber(totalStaking.totalStaked), pool.stakingToken.decimals),
+        parseFloat(pool.tokenPerBlock),
+      )
       : 0
 
     return {

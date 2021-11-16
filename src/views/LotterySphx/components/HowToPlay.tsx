@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Box, Flex, Text, Heading, useMatchBreakpoints, Link } from '@sphynxswap/uikit'
+import { Box, Flex, Text, Heading, Link } from '@sphynxswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 import useTheme from 'hooks/useTheme'
 import WebFont from 'webfontloader'
@@ -181,7 +181,6 @@ const TicketFlex = styled(Flex)`
 `
 
 const PoolAllocations = () => {
-  const { t } = useTranslation()
   const theme = useTheme();
   return (
     <StyledStepCard style={{ border: 'none', background: 'none' }}>
@@ -267,7 +266,7 @@ const HowToPlay: React.FC = () => {
                     <Box maxWidth="18px">
                       <ListMaker />
                     </Box>
-                    <Text display="inline"  fontSize="14px" color="#A7A7CC">
+                    <Text display="inline" fontSize="14px" color="#A7A7CC">
                       {t(
                         'Ticket B: Even though the last 5 digits match, the first digit is wrong, so this ticket doesn’t win a prize.',
                       )}
@@ -286,7 +285,7 @@ const HowToPlay: React.FC = () => {
             <img src={theme.isDark ? LotteryWinningCardSapmple : LotteryWinningCardWSapmple} alt="" />
           </Flex>
         </GappedFlex>
-        <Divider style={{margin: "0px 48px"}} />
+        <Divider style={{ margin: "0px 48px" }} />
         <GappedFlex >
           <Flex flex="1" justifyContent="center">
             <PoolAllocations />
@@ -297,7 +296,7 @@ const HowToPlay: React.FC = () => {
                 <img src={LotteryFundsIcon} width="69px" height="78px" alt="funds" />
               </FundsFlex>
               <Box pl="5px" maxWidth="400px">
-                <Heading  mb="13px" scale="lg" color="white">
+                <Heading mb="13px" scale="lg" color="white">
                   {t('Prize Funds')}
                 </Heading>
                 <Text color="#A7A7CC" fontSize="15px" lineHeight="142%">
@@ -334,13 +333,13 @@ const HowToPlay: React.FC = () => {
         </GappedFlex>
       </Container>
 
-      <Flex 
-        justifyContent="center" 
-        alignItems="center" 
-        flexDirection="column" 
-        mt="40px" 
-        mb="66px" 
-        style={{textAlign: 'center'}}
+      <Flex
+        justifyContent="center"
+        alignItems="center"
+        flexDirection="column"
+        mt="40px"
+        mb="66px"
+        style={{ textAlign: 'center' }}
       >
         {/* <img src={LotteryDMatchWhite} alt="question" /> */}
         <img src={Question} alt="question" />

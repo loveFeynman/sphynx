@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React from 'react'
 import styled from 'styled-components';
 
 const CardWrapper = styled.div`
@@ -19,13 +19,13 @@ interface ImgCardProps {
     desc?: string;
 }
 
-const ImgCard: React.FC<ImgCardProps> = ({children, desc}) => {
+const ImgCard: React.FC<ImgCardProps> = ({ children, desc }) => {
     return (
-      <CardWrapper>
-          {children}
-          <p>{desc}</p>
-      </CardWrapper>
+        <CardWrapper>
+            {children}
+            <p>{desc}</p>
+        </CardWrapper>
     )
-  }
+}
 
 export default ImgCard;
