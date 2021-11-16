@@ -4,15 +4,12 @@ import { Box } from '@sphynxswap/uikit'
 import Container from '../Layout/Container'
 
 const Outer = styled(Box)<{ background?: string }>`
-  background: ${({ background }) => background ?? `rgba(0,0,0,0.2)`};
+  background: transparent;
   border-radius: 8px;
   width: 100%;
   margin: 0px;
   max-width: none;
   > div {
-    // display: flex;
-    // flex-direction: row;
-    // width: 100%;
     max-width: none;
   }
 `
