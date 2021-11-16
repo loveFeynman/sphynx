@@ -12,7 +12,7 @@ const DistributionWrapper = styled.div`
     height: 36px;
   }
   .dateString {
-    font-size: 10px;
+    font-size: 8px;
   }
   .titleString {
     font-size: 12px;
