@@ -4,9 +4,7 @@ import erc20 from 'config/abi/erc20.json'
 import { getAddress, getMasterChefAddress } from 'utils/addressHelpers'
 import { BIG_TEN, BIG_ZERO } from 'utils/bigNumber'
 import multicall from 'utils/multicall'
-import { ethers } from 'ethers'
-import {simpleRpcProvider} from 'utils/providers'
-import { ERC20_ABI } from 'config/abi/erc20'
+import { getSphynxPerBlock } from 'utils/blockProvider'
 import { Farm, SerializedBigNumber } from '../types'
 
 type PublicFarmData = {
@@ -95,8 +93,8 @@ const fetchFarm = async (farm: Farm): Promise<PublicFarmData> => {
         ])
       : [null, null]
 
-  const masterChef = new ethers.Contract(masterChefAddress, masterchefABI, simpleRpcProvider)
-  const sphynxPerBlock = (await masterChef.sphynxPerBlock()) / (10 ** 18)
+  const sphynxPerBlock = await getSphynxPerBlock()
+
 
   const allocPoint = info ? new BigNumber(info.allocPoint?._hex) : BIG_ZERO
   const poolWeight = totalAllocPoint ? allocPoint.div(new BigNumber(totalAllocPoint)) : BIG_ZERO
