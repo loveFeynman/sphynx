@@ -1,9 +1,8 @@
 import React, { useState } from 'react'
-import { Button, Heading, Skeleton, Text } from '@sphynxswap/uikit'
+import { Button, Skeleton } from '@sphynxswap/uikit'
 import BigNumber from 'bignumber.js'
 import { useWeb3React } from '@web3-react/core'
 import { FarmWithStakedValue } from 'views/Farms/components/FarmCard/FarmCard'
-import Balance from 'components/Balance'
 import { BIG_ZERO } from 'utils/bigNumber'
 import { getBalanceAmount } from 'utils/formatBalance'
 import { useAppDispatch } from 'state'
@@ -14,14 +13,14 @@ import styled from 'styled-components'
 import { useTranslation } from 'contexts/Localization'
 import useHarvestFarm from '../../../hooks/useHarvestFarm'
 
-import { ActionContainer, ActionTitles, ActionContent } from './styles'
+import { ActionContainer } from './styles'
 
 const DarkButton = styled(Button)`
   border-radius: 5px;
   border: none;
   height: 34px;
   font-size: 13px;
-  background: ${({ theme }) => theme.isDark? '#0E0E26' : '#2A2E60'};
+  background: ${({ theme }) => theme.isDark ? '#0E0E26' : '#2A2E60'};
   width: 102px;
   outline: none;
 
@@ -30,7 +29,7 @@ const DarkButton = styled(Button)`
   }
 
   &:disabled {
-    background: ${({ theme }) => theme.isDark? '#0E0E26' : '#2A2E60'};
+    background: ${({ theme }) => theme.isDark ? '#0E0E26' : '#2A2E60'};
   }
 `
 
@@ -81,29 +80,13 @@ const HarvestAction: React.FunctionComponent<HarvestActionProps> = ({ pid, userD
 
   return (
     <ActionContainer>
-      {/* <ActionTitles>
-        <Text bold textTransform="uppercase" color="secondary" fontSize="12px" pr="4px">
-          SPHYNX
-        </Text>
-        <Text bold textTransform="uppercase" color="textSubtle" fontSize="12px">
-          {t('Earned')}
-        </Text>
-      </ActionTitles>
-      <ActionContent>
-        <div>
-          <Heading>{displayBalance}</Heading>
-          {earningsBusd > 0 && (
-            <Balance fontSize="12px" color="textSubtle" decimals={2} value={earningsBusd} unit=" USD" prefix="~" />
-          )}
-        </div> */}
-        <DarkButton
-          disabled={earnings.eq(0) || pendingTx || !userDataReady}
-          onClick={handleHarvest}
-          ml="4px"
-        >
-          {t('Harvest')}
-        </DarkButton>
-      {/* </ActionContent> */}
+      <DarkButton
+        disabled={earnings.eq(0) || pendingTx || !userDataReady}
+        onClick={handleHarvest}
+        ml="4px"
+      >
+        {t('Harvest')}
+      </DarkButton>
     </ActionContainer>
   )
 }

@@ -1,6 +1,5 @@
 import React from 'react'
-import styled from 'styled-components'
-import { Box, Flex , Text} from '@sphynxswap/uikit'
+import { Flex, Text } from '@sphynxswap/uikit'
 import LotteryLatestMark from 'assets/svg/icon/LotteryLatestMarkSmall.svg'
 
 const BackgroundColors = {
@@ -12,23 +11,23 @@ const BackgroundColors = {
   5: '#ECAB2E',
 }
 
-export default function  LatestWinningNumbers({ winningCardNumbers, size , numberWidth, numberHeight}) {
+export default function LatestWinningNumbers({ winningCardNumbers, size, numberWidth, numberHeight }) {
   return (
-    <Flex style={{columnGap: '5px'}}>
+    <Flex style={{ columnGap: '5px' }}>
       {winningCardNumbers.map((item, index) => (
-        <Flex flexDirection="column" alignItems="center" style={{rowGap: '5px'}} >
-          <img src={LotteryLatestMark} width={numberWidth} height={numberHeight} alt=""/>
+        <Flex flexDirection="column" alignItems="center" style={{ rowGap: '5px' }} >
+          <img src={LotteryLatestMark} width={numberWidth} height={numberHeight} alt="" />
           <Flex style={{
-            width: `${size}px`, 
+            width: `${size}px`,
             height: `${size}px`,
-            background:BackgroundColors[index],
-            borderRadius: size/2,
+            background: BackgroundColors[index],
+            borderRadius: size / 2,
             border: '2px solid rgba(255, 255, 255, 0.3)',
-            }}
+          }}
             alignItems="center"
             justifyContent="center"
           >
-            <Text color="white"> {item === '' ? '?' : item} </Text>  
+            <Text color="white"> {item === '' ? '?' : item} </Text>
           </Flex>
         </Flex>
       ))}

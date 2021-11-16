@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { ChevronDownIcon, useMatchBreakpoints, Text } from '@sphynxswap/uikit'
+import { ChevronDownIcon, Text } from '@sphynxswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 
 interface DetailsProps {
@@ -24,8 +24,6 @@ const ArrowIcon = styled(ChevronDownIcon) <{ toggled: boolean }>`
 
 const Details: React.FC<DetailsProps> = ({ actionPanelToggled }) => {
   const { t } = useTranslation()
-  const { isXl } = useMatchBreakpoints()
-  const isMobile = !isXl
 
   return (
     <StyledCell role="cell">

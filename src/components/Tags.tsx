@@ -4,8 +4,6 @@ import {
   Text,
   VerifiedIcon,
   CommunityIcon,
-  RefreshIcon,
-  AutoRenewIcon,
   TagProps,
   TimerIcon,
   BlockIcon,

@@ -1,3 +1,4 @@
+
 import React from 'react'
 import styled, { css, keyframes } from 'styled-components'
 import { useTranslation } from 'contexts/Localization'
@@ -11,9 +12,9 @@ import { CommunityTag, CoreTag, DualTag } from 'components/Tags'
 import HarvestAction from './HarvestAction'
 import TokenLogo from './TokenLogo'
 import StakedAction from './StakedAction'
-import Apr, { AprProps } from '../Apr'
-import Multiplier, { MultiplierProps } from '../Multiplier'
-import Liquidity, { LiquidityProps } from '../Liquidity'
+import { AprProps } from '../Apr'
+import { MultiplierProps } from '../Multiplier'
+import { LiquidityProps } from '../Liquidity'
 
 export interface ActionPanelProps {
   apr: AprProps
@@ -82,18 +83,6 @@ const StyledLinkExternal = styled(LinkExternal)`
     font-size: 10px;
   }
 `
-
-const StakeContainer = styled.div`
-  color: ${({ theme }) => theme.colors.text};
-  align-items: center;
-  display: flex;
-  justify-content: space-between;
-
-  ${({ theme }) => theme.mediaQueries.sm} {
-    justify-content: flex-start;
-  }
-`
-
 const TagsContainer = styled.div`
   display: flex;
   align-items: center;
@@ -126,22 +115,6 @@ const ActionContainer = styled.div`
 const InfoContainer = styled.div`
   min-width: 200px;
 `
-
-const ValueContainer = styled.div`
-  display: block;
-
-  ${({ theme }) => theme.mediaQueries.lg} {
-    display: none;
-  }
-`
-
-const ValueWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin: 4px 0px;
-`
-
 const DetailContainer = styled(Flex)`
   display: flex;
   flex-direction: row;
@@ -173,9 +146,6 @@ const TokenLogoSection = styled(Flex)`
 
 const ActionPanel: React.FunctionComponent<ActionPanelProps> = ({
   details,
-  apr,
-  multiplier,
-  liquidity,
   userDataReady,
   expanded,
 }) => {
@@ -184,14 +154,12 @@ const ActionPanel: React.FunctionComponent<ActionPanelProps> = ({
   const { t } = useTranslation()
   const { isXl } = useMatchBreakpoints()
   const isMobile = !isXl
-  const isActive = farm.multiplier !== '0X'
   const { dual } = farm
   const lpLabel = farm.lpSymbol && farm.lpSymbol.toUpperCase().replace('PANCAKE', '')
   const farmLabel = lpLabel && lpLabel.replace(' LP', '')
   const lpAddress = getAddress(farm.lpAddresses)
   const bsc = getBscScanLink(lpAddress, 'address')
   const info = `${BASE_SWAP_URL}/pool/${lpAddress}`
-  const addLiquidityUrl = `${BASE_SWAP_URL}`
 
   return (
     <Container expanded={expanded} isMobile={isMobile}>
@@ -204,11 +172,6 @@ const ActionPanel: React.FunctionComponent<ActionPanelProps> = ({
               {dual ? <DualTag /> : null}
             </TagsContainer>
           </Flex>
-          {/* {isActive && (
-            <StakeContainer>
-              <StyledLinkExternal href={addLiquidityUrl}>{t('Get %symbol%', { symbol: lpLabel })}</StyledLinkExternal>
-            </StakeContainer>
-          )} */}
           <Flex flexDirection='row' mb="8px">
             <BorderFlex mr='2px'>
               <StyledLinkExternal href={bsc}>{t('View Contract')}</StyledLinkExternal>
@@ -218,20 +181,6 @@ const ActionPanel: React.FunctionComponent<ActionPanelProps> = ({
             </BorderFlex>
           </Flex>
         </InfoContainer>
-        {/* <ValueContainer>
-          <ValueWrapper>
-            <Text>{t('APR')}</Text>
-            <Apr {...apr} />
-          </ValueWrapper>
-          <ValueWrapper>
-            <Text>{t('Multiplier')}</Text>
-            <Multiplier {...multiplier} />
-          </ValueWrapper>
-          <ValueWrapper>
-            <Text>{t('Liquidity')}</Text>
-            <Liquidity {...liquidity} />
-          </ValueWrapper>
-        </ValueContainer> */}
         <TokenLogoSection>
           <TokenLogo {...farm} userDataReady={userDataReady} />
         </TokenLogoSection>

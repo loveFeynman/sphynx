@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React from 'react'
 import styled from 'styled-components';
 
 const CardWrapper = styled.div`
@@ -22,13 +22,13 @@ interface VauleCardProps {
     desc?: string;
 }
 
-const ValueCard: React.FC<VauleCardProps> = ({value, desc}) => {
+const ValueCard: React.FC<VauleCardProps> = ({ value, desc }) => {
     return (
-      <CardWrapper>
-          <h1>{value}</h1>
-          <p>{desc}</p>
-      </CardWrapper>
+        <CardWrapper>
+            <h1>{value}</h1>
+            <p>{desc}</p>
+        </CardWrapper>
     )
-  }
+}
 
 export default ValueCard;

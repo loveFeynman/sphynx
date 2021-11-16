@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Tag, Flex, Heading } from '@sphynxswap/uikit'
+import { Flex, Heading } from '@sphynxswap/uikit'
 import { CommunityTag, CoreTag } from 'components/Tags'
 import { Token } from 'config/constants/types'
 import { TokenPairImage } from 'components/TokenImage'
@@ -36,11 +36,7 @@ const TagsContainer = styled.div`
   }
 `
 
-const MultiplierTag = styled(Tag)`
-  margin-left: 4px;
-`
-
-const CardHeading: React.FC<ExpandableSectionProps> = ({ lpLabel, multiplier, isCommunityFarm, token, quoteToken }) => {
+const CardHeading: React.FC<ExpandableSectionProps> = ({ lpLabel, isCommunityFarm, token, quoteToken }) => {
   return (
     <Wrapper justifyContent="space-between" alignItems="center" mb="12px">
       <Flex flexDirection="column" alignItems="center" justifyContent="center" width='100%'>
@@ -51,7 +47,6 @@ const CardHeading: React.FC<ExpandableSectionProps> = ({ lpLabel, multiplier, is
           </Heading>
           <TagsContainer>
             {isCommunityFarm ? <CommunityTag /> : <CoreTag />}
-            {/* <MultiplierTag variant="secondary">{multiplier}</MultiplierTag> */}
           </TagsContainer>
         </Flex>
       </Flex>

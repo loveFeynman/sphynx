@@ -1,12 +1,11 @@
 import React, { useState, useCallback } from 'react'
 import styled from 'styled-components'
-import { Button, useModal, IconButton, AddIcon, MinusIcon, Skeleton, Text, Heading, Flex, useMatchBreakpoints } from '@sphynxswap/uikit'
+import { Button, useModal, IconButton, AddIcon, MinusIcon, Skeleton, Text, Flex, useMatchBreakpoints } from '@sphynxswap/uikit'
 import { useLocation } from 'react-router-dom'
 import { BigNumber } from 'bignumber.js'
 import ConnectWalletButton from 'components/ConnectWalletButton'
-import Balance from 'components/Balance'
 import { useWeb3React } from '@web3-react/core'
-import { useFarmUser, useLpTokenPrice } from 'state/farms/hooks'
+import { useFarmUser } from 'state/farms/hooks'
 import { fetchFarmUserDataAsync } from 'state/farms'
 import { FarmWithStakedValue } from 'views/Farms/components/FarmCard/FarmCard'
 import { useTranslation } from 'contexts/Localization'
@@ -14,13 +13,13 @@ import { useERC20 } from 'hooks/useContract'
 import { BASE_SWAP_URL } from 'config'
 import { useAppDispatch } from 'state'
 import { getAddress } from 'utils/addressHelpers'
-import { getBalanceAmount, getBalanceNumber, getFullDisplayBalance } from 'utils/formatBalance'
+import { getBalanceAmount, getFullDisplayBalance } from 'utils/formatBalance'
 import useUnstakeFarms from '../../../hooks/useUnstakeFarms'
 import DepositModal from '../../DepositModal'
 import WithdrawModal from '../../WithdrawModal'
 import useStakeFarms from '../../../hooks/useStakeFarms'
 import useApproveFarm from '../../../hooks/useApproveFarm'
-import { ActionContainer, StakeActionTitles, ActionTitles, ActionContent } from './styles'
+import { ActionContainer, StakeActionTitles, ActionContent } from './styles'
 
 const IconButtonWrapper = styled.div`
   display: flex;
@@ -98,7 +97,6 @@ const Staked: React.FunctionComponent<StackedActionProps> = ({
   const { onStake } = useStakeFarms(pid)
   const { onUnstake } = useUnstakeFarms(pid)
   const location = useLocation()
-  const lpPrice = useLpTokenPrice(lpSymbol)
 
   const isApproved = account && allowance && allowance.isGreaterThan(0)
 
@@ -177,7 +175,7 @@ const Staked: React.FunctionComponent<StackedActionProps> = ({
           </StakeActionTitles>
           <ActionContent>
             <StackedFlex>
-              <Text fontSize={isMobile? "12px": "16px"}>{displayBalance()}</Text>
+              <Text fontSize={isMobile ? "12px" : "16px"}>{displayBalance()}</Text>
               {/* {stakedBalance.gt(0) && lpPrice.gt(0) && (
                 <Balance
                   fontSize="12px"

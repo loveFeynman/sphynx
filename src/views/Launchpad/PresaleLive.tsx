@@ -1,6 +1,6 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react'
-import styled, { useTheme } from 'styled-components'
-import Select, { OptionProps } from 'components/Select/Select'
+import React, { useState } from 'react'
+import styled from 'styled-components'
+import Select from 'components/Select/Select'
 import { Button, Text } from '@sphynxswap/uikit'
 import SearchInput from 'components/SearchInput'
 import { useTranslation } from 'contexts/Localization'
@@ -11,7 +11,6 @@ import DislikeIcon from 'assets/images/DislikeIcon.png'
 import HillariousIcon from 'assets/images/HillariousIcon.png'
 import NuclearIcon from 'assets/svg/icon/NuclearIcon.svg'
 import WarningIcon from 'assets/images/WarningIcon.png'
-import BinanceLogo from 'assets/images/BSCNetworkIcon.png'
 import { Line } from 'rc-progress';
 import { SwapTabs, SwapTabList, SwapTab, SwapTabPanel } from 'components/Tab/tab'
 
@@ -430,27 +429,10 @@ const FilterWrapper = styled.div`
   width: 100%;
 `
 
-const LogoTitleWrapper = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  width: 100%;
-  margin-bottom: 20px;
-  button {
-    height: 40px;
-    width: 100%;
-    max-width: 164px;
-  }
-`
-
 const PresaleLive: React.FC = () => {
-  const [sortyBy, setSortBy] = useState()
   const { t } = useTranslation()
   const { menuToggled } = useMenuToggle()
   const [claimToken, setClaimToken] = useState(true)
-
-  const handleSortOptionChange = (e) => {
-    setSortBy(e.target.value)
-  }
 
   const handleChangeQuery = (e) => {
     console.log(e)
@@ -458,7 +440,6 @@ const PresaleLive: React.FC = () => {
 
   const handleComponent = () => {
     setClaimToken(!claimToken)
-    console.log("claimToken: ", claimToken)
   }
 
   return (
@@ -482,7 +463,7 @@ const PresaleLive: React.FC = () => {
           <CardWrapper wrapperFlex="2">
             <PadTitle>
               <Text fontSize="22px" lineHeight="24px" fontWeight="700" pb="6px">SphynxSale Automated Warning System</Text>
-            </PadTitle> 
+            </PadTitle>
             <PadText>
               3 Warnings Detected
             </PadText>
@@ -499,14 +480,14 @@ const PresaleLive: React.FC = () => {
           </CardWrapper>
           <CardWrapper wrapperFlex="3">
             <TokenContainer>
-              <img src={ShivaLogo} width="64px" height="64px" alt="token icon"/>
+              <img src={ShivaLogo} width="64px" height="64px" alt="token icon" />
               <TokenSymbolWrapper>
                 <TokenSymbol>SHIVA</TokenSymbol>
                 <TokenName>Shiva Token</TokenName>
               </TokenSymbolWrapper>
             </TokenContainer>
             <TokenDescription>
-              <p style={{fontSize: "14px"}}>$SHIVA is a new reflection protocol on the Binance Smart Chain with a deflationary burn mechanism that offers reflections to holders with 0% buy and sell tax.</p>
+              <p style={{ fontSize: "14px" }}>$SHIVA is a new reflection protocol on the Binance Smart Chain with a deflationary burn mechanism that offers reflections to holders with 0% buy and sell tax.</p>
             </TokenDescription>
             <TokenAddressContainer>
               <AddressWrapper>
@@ -519,8 +500,8 @@ const PresaleLive: React.FC = () => {
               </AddressWrapper>
               <AddressSendError>Do not send BNB to the token address!</AddressSendError>
               <CustomContract>
-                  <img src={NuclearIcon} alt="nuclear icon" />
-                  <Text>Custom Contract</Text>
+                <img src={NuclearIcon} alt="nuclear icon" />
+                <Text>Custom Contract</Text>
               </CustomContract>
             </TokenAddressContainer>
             <Separate />
@@ -528,13 +509,13 @@ const PresaleLive: React.FC = () => {
               <Text mb="16px">Whitelist Enabled Sale</Text>
               <Text mb="28px">Only Whitelisted Wallets can Purchase This Token!</Text>
               <WalletAddressError>
-                <img src={WarningIcon}  alt="nuclear icon" />
+                <img src={WarningIcon} alt="nuclear icon" />
                 <Text>Your wallet address is not whitelisted</Text>
               </WalletAddressError>
             </WhitelistCard>
             <Separate />
             <ContributeWrapper>
-              {claimToken? (
+              {claimToken ? (
                 <>
                   <Text textAlign="center" color="#37AEE2" fontSize="16px" fontWeight="500">Raised: 270.5/300</Text>
                   <LinearProgressBar>
@@ -547,11 +528,11 @@ const PresaleLive: React.FC = () => {
                   <Button style={{ borderRadius: "8px" }} onClick={handleComponent}>Contribute</Button>
                   <Text fontSize="12px" fontWeight="600">Sale ends in: 06:23:49:16</Text>
                 </>
-                ):(
+              ) : (
                 <>
                   <Text textAlign="center" fontSize="12px" fontWeight="500">This presale has ended. Go back to the dashboard to view others!</Text>
-                  <Button style={{backgroundColor: "#6941C6", borderRadius: "8px"}} mt="16px">Trade on PancakeSwap</Button>
-                  <Button style={{backgroundColor: "#8B2A9B", borderRadius: "8px"}} mt="16px">Trade on SphynxSwap</Button>
+                  <Button style={{ backgroundColor: "#6941C6", borderRadius: "8px" }} mt="16px">Trade on PancakeSwap</Button>
+                  <Button style={{ backgroundColor: "#8B2A9B", borderRadius: "8px" }} mt="16px">Trade on SphynxSwap</Button>
                   <Text textAlign="center" fontSize="12px" fontWeight="500" mt="16px">If you participated in the presale click the claim button below to claim your tokens!</Text>
                   <Button style={{ backgroundColor: "#31B902", borderRadius: "8px" }} mt="16px" mb="16px" onClick={handleComponent}>Claim Token</Button>
                 </>
@@ -568,7 +549,7 @@ const PresaleLive: React.FC = () => {
                 </TokenAmountView>
               </AmountWrapper>
               <Separate />
-              <Button style={{ borderRadius: "8px", fontSize: "14px", background: "rgba(139, 42, 155, 0.2)"}}>Emergency Withdraw</Button>
+              <Button style={{ borderRadius: "8px", fontSize: "14px", background: "rgba(139, 42, 155, 0.2)" }}>Emergency Withdraw</Button>
               <Separate />
               <Separate />
               <PresaleDataContainer>
@@ -585,30 +566,30 @@ const PresaleLive: React.FC = () => {
           </CardWrapper>
           <CardWrapper wrapperFlex="1.5">
             <ThinkCardWrapper>
-            <CardTitle>What do you think?</CardTitle>
-            <ItemContainer>
-              <ItemWrapper>
-                <ThinkItem>
-                  <img src={LikeIcon} alt="think icon"/>
-                  <Text fontSize="16px" fontWeight="normal">Like</Text>
-                </ThinkItem>
-                <ThinkItem>
-                  <img src={HillariousIcon} alt="think icon"/>
-                  <Text fontSize="16px" fontWeight="normal">Hillarious</Text>
-                </ThinkItem>
-              </ItemWrapper>
-              <ItemWrapper>
-                <ThinkItem>
-                  <img src={DislikeIcon} alt="think icon"/>
-                  <Text fontSize="16px" fontWeight="normal">Dislike</Text>
-                </ThinkItem>
-                <ThinkItem>
-                  <img src={WarningIcon} alt="think icon"/>
-                  <Text fontSize="16px" fontWeight="normal">Scam</Text>
-                </ThinkItem>
-              </ItemWrapper>
-            </ItemContainer>
-            <SwapTabs
+              <CardTitle>What do you think?</CardTitle>
+              <ItemContainer>
+                <ItemWrapper>
+                  <ThinkItem>
+                    <img src={LikeIcon} alt="think icon" />
+                    <Text fontSize="16px" fontWeight="normal">Like</Text>
+                  </ThinkItem>
+                  <ThinkItem>
+                    <img src={HillariousIcon} alt="think icon" />
+                    <Text fontSize="16px" fontWeight="normal">Hillarious</Text>
+                  </ThinkItem>
+                </ItemWrapper>
+                <ItemWrapper>
+                  <ThinkItem>
+                    <img src={DislikeIcon} alt="think icon" />
+                    <Text fontSize="16px" fontWeight="normal">Dislike</Text>
+                  </ThinkItem>
+                  <ThinkItem>
+                    <img src={WarningIcon} alt="think icon" />
+                    <Text fontSize="16px" fontWeight="normal">Scam</Text>
+                  </ThinkItem>
+                </ItemWrapper>
+              </ItemContainer>
+              <SwapTabs
                 selectedTabClassName='is-selected'
                 selectedTabPanelClassName='is-selected'
               >
@@ -625,15 +606,15 @@ const PresaleLive: React.FC = () => {
                   </SwapTab>
                 </SwapTabList>
                 <SwapTabPanel>
-                  <Separate/>
+                  <Separate />
                   <Button style={{ backgroundColor: "transparent", borderRadius: "10px", border: "1px solid #8B2A9B" }}>Join the Discussion</Button>
                 </SwapTabPanel>
                 <SwapTabPanel>
-                  <Separate/>
+                  <Separate />
                   <Button style={{ backgroundColor: "transparent", borderRadius: "10px", border: "1px solid #8B2A9B" }}>Join the Discussion</Button>
                 </SwapTabPanel>
               </SwapTabs>
-              </ThinkCardWrapper>
+            </ThinkCardWrapper>
           </CardWrapper>
         </TokenPresaleContainder>
       </TokenPresaleBody>
