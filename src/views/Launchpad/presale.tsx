@@ -7,6 +7,7 @@ import { ReactComponent as MainLogo } from 'assets/svg/icon/logo_new.svg'
 import * as ethers from 'ethers'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import { isAddress } from '@ethersproject/address'
+import useToast from 'hooks/useToast'
 import styled, { useTheme } from 'styled-components'
 import { ERC20_ABI } from 'config/abi/erc20'
 
@@ -287,6 +288,7 @@ const Presale: React.FC = () => {
   const [presaleEnd, setPresaleEnd] = useState(new Date())
   const [liquidityLock, setLiquidityLock] = useState(new Date())
   const [step, setStep] = useState(1)
+  const {toastError} = useToast()
 
   const handleChange = async (e) => {
     const value = e.target.value
@@ -310,6 +312,54 @@ const Presale: React.FC = () => {
 
   const handleChangeRate = (e) => {
     setPresaleRate(e.target.value)
+  }
+
+  const validate = () => {
+    if(!tokenAddress || !tokenName || !tokenSymbol) {
+      toastError("Oops, we can not parse token data, please inpute correct token address!")
+      setStep(1)
+    }
+    if(!parseFloat(presaleRate)) {
+      toastError("Please input presale rate correctly!")
+      setStep(2)
+    }
+    if(!parseFloat(softCap) || !parseFloat(hardCap)) {
+      toastError("Please input soft cap & hard cap!")
+      setStep(3)
+    }
+    if(parseFloat(softCap) * 2 > parseFloat(hardCap)) {
+      toastError("Hard cap should be greater than 2 times about soft cap")
+      setStep(3)
+    }
+    if(!parseFloat(minBuy) || !parseFloat(maxBuy)) {
+      toastError("Please input contribution limit correctly!")
+      setStep(4)
+    }
+    if(parseFloat(minBuy) >= parseFloat(maxBuy)) {
+      toastError("Max buy amount should be greater than min buy amount!")
+      setStep(4)
+    }
+    if(!parseFloat(liquidityRate) || parseFloat(liquidityRate) <= 50) {
+      toastError("Liquidity amount should be more than 50%!")
+      setStep(5)
+    }
+    if(!parseFloat(listingRate)) {
+      toastError("Please input listing rate!")
+      setStep(6)
+    }
+    
+    if(new Date(presaleStart).getTime() <= (new Date().getTime() + 600000)) {
+      toastError("Presale start time must be more than 10 minutes after now!")
+      setStep(8)
+    }
+    if(new Date(presaleStart).getTime() >= new Date(presaleEnd).getTime() || (new Date(presaleStart).getTime() + 3600 * 1000 * 24 * 3) <= new Date(presaleEnd).getTime()) {
+      toastError("Presale period must be less than 3 days!")
+      setStep(8)
+    }
+    if(new Date(liquidityLock).getTime() <= (new Date(presaleEnd).getTime() + 30 * 24 * 3600 * 1000)) {
+      toastError("Liquidity lock time must be more than 1 month from presale end time!")
+      setStep(8)
+    }
   }
 
   return (
@@ -595,7 +645,7 @@ const Presale: React.FC = () => {
                 <Sperate />
                 <InlineWrapper>
                   <LineBtn onClick={() => setStep(1)}>Edit</LineBtn>
-                  <FillBtn className="ml16" onClick={() => setStep(9)}>
+                  <FillBtn className="ml16" onClick={validate}>
                     Submit
                   </FillBtn>
                 </InlineWrapper>
