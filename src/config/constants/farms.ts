@@ -10,7 +10,7 @@ const farms: FarmConfig[] = [
     lpSymbol: 'SPHYNX',
     lpAddresses: {
       97: '0x1b318e1C45147e8c4834d16BBed4c9994cf76f86',
-      56: '0x1b318e1C45147e8c4834d16BBed4c9994cf76f86',
+      56: '0xd38Ec16cAf3464ca04929E847E4550Dcff25b27a',
     },
     token: tokens.syrup,
     quoteToken: tokens.wbnb,
@@ -26,11 +26,11 @@ const farms: FarmConfig[] = [
     quoteToken: tokens.wbnb,
   },
   // {
-  //   pid: 252,
+  //   pid: 2,
   //   lpSymbol: 'BUSD-BNB LP',
   //   lpAddresses: {
   //     97: '',
-  //     56: '0x58F876857a02D6762E0101bb5C46A8c1ED44Dc16',
+  //     56: '0xC878c4BD3b58c8E6791301D4Ac10aa88f59707de',
   //   },
   //   token: tokens.busd,
   //   quoteToken: tokens.wbnb,

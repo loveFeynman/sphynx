@@ -4,6 +4,9 @@ import erc20 from 'config/abi/erc20.json'
 import { getAddress, getMasterChefAddress } from 'utils/addressHelpers'
 import { BIG_TEN, BIG_ZERO } from 'utils/bigNumber'
 import multicall from 'utils/multicall'
+import { ethers } from 'ethers'
+import {simpleRpcProvider} from 'utils/providers'
+import { ERC20_ABI } from 'config/abi/erc20'
 import { Farm, SerializedBigNumber } from '../types'
 
 type PublicFarmData = {
@@ -21,6 +24,8 @@ type PublicFarmData = {
 const fetchFarm = async (farm: Farm): Promise<PublicFarmData> => {
   const { pid, lpAddresses, token, quoteToken } = farm
   const lpAddress = getAddress(lpAddresses)
+  const masterChefAddress = getMasterChefAddress()
+
   const calls = [
     // Balance of token in the LP contract
     {
@@ -38,7 +43,7 @@ const fetchFarm = async (farm: Farm): Promise<PublicFarmData> => {
     {
       address: lpAddress,
       name: 'balanceOf',
-      params: [getMasterChefAddress()],
+      params: [masterChefAddress],
     },
     // Total supply of LP tokens
     {
@@ -79,20 +84,22 @@ const fetchFarm = async (farm: Farm): Promise<PublicFarmData> => {
     pid || pid === 0
       ? await multicall(masterchefABI, [
           {
-            address: getMasterChefAddress(),
+            address: masterChefAddress,
             name: 'poolInfo',
             params: [pid],
           },
           {
-            address: getMasterChefAddress(),
+            address: masterChefAddress,
             name: 'totalAllocPoint',
           },
         ])
       : [null, null]
 
+  const masterChef = new ethers.Contract(masterChefAddress, masterchefABI, simpleRpcProvider)
+  const sphynxPerBlock = (await masterChef.sphynxPerBlock()) / (10 ** 18)
+
   const allocPoint = info ? new BigNumber(info.allocPoint?._hex) : BIG_ZERO
   const poolWeight = totalAllocPoint ? allocPoint.div(new BigNumber(totalAllocPoint)) : BIG_ZERO
-
   return {
     tokenAmountMc: tokenAmountMc.toJSON(),
     quoteTokenAmountMc: quoteTokenAmountMc.toJSON(),
@@ -102,7 +109,7 @@ const fetchFarm = async (farm: Farm): Promise<PublicFarmData> => {
     lpTotalInQuoteToken: lpTotalInQuoteToken.toJSON(),
     tokenPriceVsQuote: quoteTokenAmountTotal.div(tokenAmountTotal).toJSON(),
     poolWeight: poolWeight.toJSON(),
-    multiplier: `${allocPoint.div(100).toString()}X`,
+    multiplier: `${sphynxPerBlock * poolWeight.toNumber()}X`,
   }
 }
 
