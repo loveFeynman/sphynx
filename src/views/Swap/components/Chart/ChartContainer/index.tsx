@@ -42,7 +42,8 @@ export interface ChartContainerProps {
   container: ChartingLibraryWidgetOptions['container']
   height: number,
   tokenAddress: string,
-  priceScale: number
+  priceScale: number,
+  routerVersion: string
 }
 
 const ChartContainerProps = {
@@ -73,7 +74,7 @@ const Chart: React.FC<Partial<ChartContainerProps>> = (props) => {
   const dispatch = useDispatch()
   const { account } = useWeb3React()
   const input = props.tokenAddress
-  const routerVersion = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.routerVersion)
+  const routerVersion = props.routerVersion
   const customChartType = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.customChartType)
   const result = isAddress(input)
   const symbolRef = React.useRef(null)
@@ -423,7 +424,7 @@ const Chart: React.FC<Partial<ChartContainerProps>> = (props) => {
         });
 
       })
-  }, [input, dispatch])
+  }, [input, dispatch, routerVersion])
 
   return (
     <ChartContainer height={props.height}>
