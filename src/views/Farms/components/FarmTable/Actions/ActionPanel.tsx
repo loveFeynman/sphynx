@@ -214,7 +214,7 @@ const ActionPanel: React.FunctionComponent<ActionPanelProps> = ({
               <StyledLinkExternal href={bsc}>{t('View Contract')}</StyledLinkExternal>
             </BorderFlex>
             <BorderFlex ml='2px'>
-              <StyledLinkExternal href={info}>{t('See Pair Info')}</StyledLinkExternal>
+              <StyledLinkExternal href={bsc}>{t('See Pair Info')}</StyledLinkExternal>
             </BorderFlex>
           </Flex>
         </InfoContainer>
