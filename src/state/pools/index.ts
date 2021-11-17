@@ -15,6 +15,7 @@ import {
 } from './fetchPoolsUser'
 import { fetchPublicVaultData, fetchVaultFees } from './fetchVaultPublic'
 import fetchVaultUser from './fetchVaultUser'
+import { getTokenPricesFromFarm } from './helpers'
 
 const initialState: PoolsState = {
   data: [...poolsConfig],
