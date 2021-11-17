@@ -5,17 +5,24 @@ import {  Flex } from '@sphynxswap/uikit'
 const CardWrapper = styled.div<{color: string}>`
     display: flex;
     align-items: center;
-    width: 24%;
+    width: 100%;
     padding: 17px 24px;
     background: ${ ({color}) => color };
     border-radius: 5px;
     border: 1px solid #5E2B60;
     flex-flow: row;
+    margin: 10px 0;
     h1 {
         font-size: 20px;
     }
     p {
         font-size: 12px;
+    }
+    ${({ theme }) => theme.mediaQueries.sm} {
+        width: 48%;
+    }
+    ${({ theme }) => theme.mediaQueries.xl} {
+        width: 24%;
     }
 `
 

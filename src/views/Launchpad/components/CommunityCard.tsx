@@ -4,10 +4,10 @@ import { Text } from '@sphynxswap/uikit'
 
 const CardWrapper = styled.div`
     display: flex;
-    width: 24%;
+    width: 100%;
     justify-content: space-between;
     align-items: center;
-    padding: 36px;
+    padding: 9px;
     background:  ${({ theme }) => theme.isDark ? '#1A1A3A' : '#191C41'};
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-sizing: border-box;
@@ -15,6 +15,15 @@ const CardWrapper = styled.div`
     flex-flow: column;
     & > *:first-child {
         margin-bottom: 12px;
+    }
+    margin: 10px 0;
+    ${({ theme }) => theme.mediaQueries.sm} {
+        width: 48%;
+        padding: 18px;
+    }
+    ${({ theme }) => theme.mediaQueries.xl} {
+        width: 24%;
+        padding: 36px;
     }
 `
 

@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'contexts/Localization'
+import { Button, Text, Flex, Box, useMatchBreakpoints } from '@sphynxswap/uikit'
 import { ReactComponent as MainLogo } from 'assets/svg/icon/logo_new.svg'
 import { ReactComponent as BinanceIcon1 } from 'assets/svg/icon/BinanceIcon1.svg'
 import { ReactComponent as BinanceIcon2 } from 'assets/svg/icon/BinanceIcon2.svg'
@@ -8,6 +9,7 @@ import { ReactComponent as TwitterIcon } from 'assets/svg/icon/TwitterFullIcon.s
 import { ReactComponent as TelegramIcon } from 'assets/svg/icon/TelegramFullIcon.svg'
 import { ReactComponent as DocumentIcon } from 'assets/svg/icon/DocumentIcon1.svg'
 import { ReactComponent as DiscordIcon } from 'assets/svg/icon/DiscordFullIcon.svg'
+import MainLogo1 from 'assets/images/sphynxToken.png'
 import TokenIcon from 'assets/images/MainLogo.png'
 import TVIcon from 'assets/images/sphynxTV.png'
 import NFTIcon from 'assets/images/sphynxNFT.png'
@@ -15,7 +17,6 @@ import { ReactComponent as NounRaiseIcon } from 'assets/svg/icon/NounRaiseIcon.s
 import { ReactComponent as NounProjectIcon } from 'assets/svg/icon/NounProjectIcon.svg'
 import { ReactComponent as NounUserIcon } from 'assets/svg/icon/NounUserIcon.svg'
 import { ReactComponent as NounLockIcon } from 'assets/svg/icon/NounLockIcon.svg'
-import { Button, Text, Flex, Box } from '@sphynxswap/uikit'
 import styled from 'styled-components'
 import ValueCard from './components/ValueCard'
 import ImgCard from './components/ImgCard'
@@ -27,16 +28,32 @@ const Wrapper = styled.div`
   align-items: center;
   flex-flow: column;
   color: white;
-  padding: 24px;
+  padding: 5px;
   margin-top: 24px;
   text-align: center;
   p {
     line-height: 24px;
   }
+  ${({ theme }) => theme.mediaQueries.xs} {
+    padding: 24px;
+  }
 `
 
 const PageHeader = styled.div`
   width: 100%;
+`
+
+const WelcomeText = styled(Text)`
+    color: white;
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 1.5;
+    font-size: 20px;
+    text-align: left;
+    padding: 0px;
+    ${({ theme }) => theme.mediaQueries.sm} {
+      font-size: 30px;
+    }
 `
 
 const FlexWrapper = styled.div`
@@ -58,15 +75,23 @@ const FlexIconWrapper = styled.div`
 `
 
 const LogoTitle = styled(Text)`
-  font-size: 18px;
+  text-align: center;
+  font-size: 15px;
   font-weight: 600;
+  ${({ theme }) => theme.mediaQueries.sm} {
+    font-size: 18px;
+    text-align: left;
+  }
 `
 
 const SubTitle = styled(Text)`
   font-style: normal;
   font-weight: 600;
-  font-size: 26px;
+  font-size: 18px;
   color: #FFFFFF;
+  ${({ theme }) => theme.mediaQueries.sm} {
+    font-size: 26px;
+  }
 `
 
 const Sperate = styled.div`
@@ -88,26 +113,47 @@ const ColorButton = styled(Button)`
   height: 34px;
   font-size: 13px;
   background: linear-gradient(90deg,#610D89 0%,#C42BB4 100%);
-  width: 102px;
   outline: none;
   color: white;
-
-  ${({ theme }) => theme.mediaQueries.sm} {
-    width: 156px;
-  }
+  width: 156px;
 `
 
 const PresaleBox = styled(Box)`
-  background: transparent;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   width: 100%;
   margin: 0px;
-  max-width: none;
   background: ${({ theme }) => theme.isDark ? '#0E0E26' : '#2A2E60'};
   border: 1px solid #5E2B60;
   box-sizing: border-box;
   border-radius: 5px;
   padding: 1.5em;
   margin-top: 25px;
+  flex-direction: column;
+  ${({ theme }) => theme.mediaQueries.xl} {
+    flex-direction: row;
+  }
+`
+
+const PresaleLogoFlex = styled(Flex)`
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  ${({ theme }) => theme.mediaQueries.xl} {
+    flex-direction: row;
+  }
+`
+
+const PresaleTextFlex = styled(Flex)`
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 0 15px 0;
+  ${({ theme }) => theme.mediaQueries.xl} {
+    align-items: start;
+    margin: 0 0 0 15px;
+  }
 `
 
 const BorderFlex = styled(Flex)`
@@ -117,7 +163,7 @@ const BorderFlex = styled(Flex)`
 `
 
 const BinanceCard = styled(Flex)`
-  width: 48%;
+  width: 100%;
   background: ${({ theme }) => theme.isDark ? '#0E0E26' : '#2A2E60'};
   border-radius: 5px;
   flex-flow: column;
@@ -125,6 +171,10 @@ const BinanceCard = styled(Flex)`
   justify-content: flex-start;
   padding: 30px 0px;
   position: relative;
+  margin: 10px 0;
+  ${({ theme }) => theme.mediaQueries.xl} {
+    width: 48%;
+  }
 `
 
 const WaterMarkFlex = styled(Flex)`
@@ -136,9 +186,12 @@ const WaterMarkFlex = styled(Flex)`
 const BottomFlex = styled.div`
   width: 100%;
   margin-top: 35px;
-  padding: 60px;
+  padding: 20px;
   background: ${({ theme }) => theme.isDark ? '#0E0E26' : '#2A2E60'};
   border-radius: 5px;
+  ${({ theme }) => theme.mediaQueries.sm} {
+    padding: 60px;
+  }
 `
 
 const NetworkCard = ({ networkName, children }) => {
@@ -153,6 +206,8 @@ const NetworkCard = ({ networkName, children }) => {
 
 const Launchpad: React.FC = () => {
   const { t } = useTranslation()
+  const { isXl } = useMatchBreakpoints()
+  const isMobile = !isXl
 
   const handleNetwork = useCallback(async () => {
     console.log("handleNetwork")
@@ -164,10 +219,10 @@ const Launchpad: React.FC = () => {
           <Flex alignItems='center'>
             <MainLogo width="80" height="80" />
             <Flex flexDirection="column" ml="10px">
-              <Text fontSize="30px" color="white" bold textAlign='left'>
+              <WelcomeText>
                 {t('Welcome to sphynx!')}
-              </Text>
-              <Text fontSize="12px" color="#777777" bold>
+              </WelcomeText>
+              <Text fontSize="12px" color="#777777" bold textAlign='left'>
                 {t('Lorem ipsum dolor sit amet, consectetur adipiscing elit')}
               </Text>
             </Flex>
@@ -175,24 +230,27 @@ const Launchpad: React.FC = () => {
         </Flex>
       </PageHeader>
       <PresaleBox>
-        <Flex justifyContent='space-between' alignItems='center'>
-          <Flex alignItems='center' justifyContent='center'>
-            <BinanceIcon1 width='40' height='40' />
-            <Flex flexDirection='column' alignItems='start' ml='15px'>
-              <LogoTitle>Binance Chain Decentralized</LogoTitle>
-              <LogoTitle>Protocols & Services</LogoTitle>
-            </Flex>
-          </Flex>
-          {/* <BorderFlex /> */}
-          <Flex flexDirection='column' alignItems='start' justifyContent='center'>
-            <Text fontSize='12px' color='#777777' bold>Sphynx helps everyone to create their own tokens and token sales in few seconds.</Text>
-            <Text fontSize='12px' color='#777777' bold>Tokens created on Sphynx willbe verified and published on explorer websites.</Text>
-          </Flex>
-          <Flex>
-            <Link to="/launchpad/presale">
-              <ColorButton>{t('Create Presale')}</ColorButton>
-            </Link>
-          </Flex>
+        <PresaleLogoFlex>
+          <BinanceIcon1 width='40' height='40' />
+          <PresaleTextFlex>
+            <LogoTitle>Binance Chain Decentralized</LogoTitle>
+            <LogoTitle>Protocols & Services</LogoTitle>
+          </PresaleTextFlex>
+        </PresaleLogoFlex>
+        {/* {!isMobile&&<BorderFlex /> } */}
+        <Flex flexDirection='column' alignItems='start' justifyContent='center'>
+          {isMobile ?
+            <Text fontSize='12px' color='#777777' bold>Sphynx helps everyone to create their own tokens and token sales in few seconds. Tokens created on Sphynx willbe verified and published on explorer websites.</Text>
+            : <>
+              <Text fontSize='12px' color='#777777' bold>Sphynx helps everyone to create their own tokens and token sales in few seconds.</Text>
+              <Text fontSize='12px' color='#777777' bold>Tokens created on Sphynx willbe verified and published on explorer websites.</Text>
+            </>
+          }
+        </Flex>
+        <Flex mt={isMobile ? '10px' : '0px'}>
+          <Link to="/launchpad/presale">
+            <ColorButton>{t('Create Presale')}</ColorButton>
+          </Link>
         </Flex>
       </PresaleBox>
       <FlexWrapper style={{ marginTop: '32px' }}>
@@ -209,16 +267,16 @@ const Launchpad: React.FC = () => {
           <NounLockIcon />
         </ValueCard>
       </FlexWrapper>
-      <Flex justifyContent='space-between' mt='35px' width='100%'>
+      <FlexWrapper>
         <BinanceCard>
           <Title>BLOCKCHAINS</Title>
           <SubTitle>Supported BlockChain</SubTitle>
           <Sperate />
           <NetworkCard networkName="Binance">
-            <BinanceIcon1 width='200px' />
+            <BinanceIcon1 width='150' />
           </NetworkCard>
           <WaterMarkFlex>
-            <BinanceIcon2 width='200px' />
+            <BinanceIcon2 width='150' />
           </WaterMarkFlex>
         </BinanceCard>
         <BinanceCard>
@@ -227,29 +285,26 @@ const Launchpad: React.FC = () => {
           <SubTitle>Ecosystem</SubTitle>
           <FlexIconWrapper>
             <ImgCard desc="Sphynx Swap">
-              <MainLogo width='130' height='130' />
+              <img src={MainLogo1} alt="swap icon" width='130' height='130' />
             </ImgCard>
             <ImgCard desc="Sphynx Token">
               <img src={TokenIcon} alt="token icon" width='130' height='130' />
-              {/* <TokenIcon width='130' /> */}
             </ImgCard>
             <ImgCard desc="Sphynx TV">
               <img src={TVIcon} alt="TV icon" width='130' height='130' />
-              {/* <TVIcon width='130' /> */}
             </ImgCard>
             <ImgCard desc="Sphynx Wallet">
-              <MainLogo width='130' height='130' />
+              <img src={MainLogo1} alt="swap icon" width='130' height='130' />
             </ImgCard>
             <ImgCard desc="Sphynx Sale">
-              <MainLogo width='130' height='130' />
+              <img src={MainLogo1} alt="swap icon" width='130' height='130' />
             </ImgCard>
             <ImgCard desc="Sphynx NFTs">
               <img src={NFTIcon} alt="NFT icon" width='130' height='130' />
-              {/* <NFTIcon width='130' /> */}
             </ImgCard>
           </FlexIconWrapper>
         </BinanceCard>
-      </Flex>
+      </FlexWrapper>
       <BottomFlex>
         <Title>Community</Title>
         <SubTitle>BE A PART OF ACTIVE COMMUNITY</SubTitle>
