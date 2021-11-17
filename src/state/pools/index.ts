@@ -6,7 +6,6 @@ import { PoolsState, Pool, CakeVault, VaultFees, VaultUser, AppThunk } from 'sta
 import { getPoolApr } from 'utils/apr'
 import { getBalanceNumber } from 'utils/formatBalance'
 import { getAddress } from 'utils/addressHelpers'
-import { getBNBPrice } from 'utils/priceProvider'
 import { fetchPoolsBlockLimits, fetchPoolsStakingLimits, fetchPoolsTotalStaking } from './fetchPools'
 import {
   fetchPoolsAllowance,
@@ -161,13 +160,7 @@ export const fetchPoolsUserDataAsync =
 export const fetchPoolsPublicDataAsync = (currentBlock: number) => async (dispatch, getState) => {
   const blockLimits = await fetchPoolsBlockLimits()
   const totalStakings = await fetchPoolsTotalStaking()
-  const bnbPrice = await getBNBPrice()
-
-  // const prices = getTokenPricesFromFarm(getState().farms.data)
-  const prices = {
-    '0xd38ec16caf3464ca04929e847e4550dcff25b27a': 0.02,
-    '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c': bnbPrice
-  }
+  const prices = getTokenPricesFromFarm(getState().farms.data)
 
   const liveData = poolsConfig.map((pool) => {
     const blockLimit = blockLimits.find((entry) => entry.sousId === pool.sousId)
