@@ -24,6 +24,9 @@ const ChartContainer = styled.div<{ height: number }>`
   height: ${(props) => props.height}px;
 `
 
+const interval = localStorage.getItem('chart_interval')
+console.log("interval", interval)
+
 // eslint-disable-next-line import/extensions
 
 export interface ChartContainerProps {
@@ -48,7 +51,7 @@ export interface ChartContainerProps {
 
 const ChartContainerProps = {
   symbol: 'AAPL',
-  interval: '15' as ResolutionString,
+  interval: interval ? interval as ResolutionString : '15' as ResolutionString,
   container: 'tv_chart_container',
   datafeedUrl: 'https://demo_feed.tradingview.com',
   libraryPath: '/charting_library/',
@@ -160,6 +163,7 @@ const Chart: React.FC<Partial<ChartContainerProps>> = (props) => {
       onErrorCallback: any,
     ) => {
 
+      localStorage.setItem('chart_interval', resolution)
       const { to, countBack, firstDataRequest } = periodParams
       try {
         if (result) {
