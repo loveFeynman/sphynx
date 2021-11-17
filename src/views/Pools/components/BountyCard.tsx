@@ -57,7 +57,7 @@ const BountyText = styled(Text)`
 `
 
 const TooltipText = styled(Text)`
-  color: ${({ theme }) => theme.isDark? 'white' : 'black'}
+  color: white;
 `
 
 const BountyCard = () => {
