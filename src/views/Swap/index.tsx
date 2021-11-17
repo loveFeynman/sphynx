@@ -65,7 +65,6 @@ import Page from '../Page'
 import BuyersCard from './components/BuyersCard'
 import SellersCard from './components/SellersCard'
 import SwapWarningModal from './components/SwapWarningModal'
-import DividendPanel from './components/DividendPanel'
 import LiveAmountPanel from './components/LiveAmountPanel'
 import { Field, replaceSwapState } from '../../state/swap/actions'
 
