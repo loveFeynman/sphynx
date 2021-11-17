@@ -2,8 +2,9 @@ import 'date-fns'
 import React, { useState } from 'react'
 import { KeyboardDateTimePicker, MuiPickersUtilsProvider } from '@material-ui/pickers'
 import DateFnsUtils from '@date-io/date-fns'
-import { ReactComponent as NoteIcon } from 'assets/svg/icon/NoteIcon.svg'
+import { ReactComponent as BellIcon } from 'assets/svg/icon/Bell.svg'
 import { ReactComponent as MainLogo } from 'assets/svg/icon/logo_new.svg'
+import { ReactComponent as CheckList } from 'assets/svg/icon/CheckList.svg'
 import * as ethers from 'ethers'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import { isAddress } from '@ethersproject/address'
@@ -66,10 +67,15 @@ const Wrapper = styled.div`
   }
 `
 
-const LogoTitle = styled.h2`
+const LogoTitle = styled.div`
+  display: flex;
+  align-items: center;
   font-size: 18px;
   line-height: 24px;
   font-weight: 700;
+  & > *:first-child {
+    margin-right: 16px;
+  }
   ${({ theme }) => theme.mediaQueries.xl} {
     font-size: 36px;
     line-height: 42px;
@@ -81,19 +87,21 @@ const Sperate = styled.div`
 `
 
 const Title = styled.p`
-  color: #de64ed;
   font-size: 24px;
   font-weight: 700;
 `
 
 const NoteWrapper = styled.div`
-  background: ${({ theme }) => (theme.isDark ? "#040413" : "#2A2E60")};
+  background: ${({ theme }) => (theme.isDark ? '#0E0E26' : '#2A2E60')};
   border-radius: 10px;
   width: 100%;
   padding: 24px;
   color: white;
-  p {
-    max-width: 724px;
+  padding-left: 12px;
+  padding-right: 12px;
+  ${({ theme }) => theme.mediaQueries.md} {
+    padding-left: 48px;
+    padding-right: 48px;
   }
 `
 
@@ -101,24 +109,9 @@ const ContentWrapper = styled.div`
   display: flex;
   width: 100%;
   justify-content: space-between;
-  flex-flow: row-reverse;
   flex-wrap: wrap;
   p.description {
     font-size: 14px;
-  }
-  & > * {
-    width: 95%;
-    margin: 2.5%;
-  }
-  ${({ theme }) => theme.mediaQueries.xl} {
-    & > *:first-child {
-      width: 20%;
-      margin: 1.5%;
-    }
-    & > *:nth-child(2) {
-      width: 75%;
-      margin: 1%;
-    }
   }
 `
 
@@ -145,11 +138,11 @@ const InlineWrapper = styled.div`
 `
 
 const CardWrapper = styled.div`
-  background: ${({ theme }) => (theme.isDark ? "#040413" : "#2A2E60")};
+  background: ${({ theme }) => (theme.isDark ? '#0E0E26' : '#2A2E60')};
   border: 1px solid #21214a;
-  padding: 40px;
+  width: 100%;
+  padding: 24px;
   display: flex;
-  flex-flow: column;
   align-items: center;
   border-radius: 10px;
   height: max-content;
@@ -171,22 +164,59 @@ const NumberWrapper = styled.div`
   font-weight: 700;
 `
 
+const FeeWrapper = styled.div`
+  margin-left: 16px;
+  display: flex;
+  flex-flow: column;
+  font-weight: 700;
+  max-width: 1080px;
+  & > p {
+    line-height: 36px;
+    & > span {
+      color: #f2c94c;
+      margin-left: 8px;
+    }
+  }
+  ${({ theme }) => theme.mediaQueries.xl} {
+    flex-flow: row;
+    flex-grow: 1;
+    justify-content: space-around;
+  }
+`
+
+const VerticalSperator = styled.div`
+  width: 0px;
+  height: 0px;
+  ${({ theme }) => theme.mediaQueries.xl} {
+    border-right: 1px solid #ffffff12;
+    height: 36px;
+  }
+`
+
 const FeeCard = () => {
   return (
     <CardWrapper>
-      <MainLogo />
+      <MainLogo style={{ width: '60px', height: '60px' }} />
       <Sperate />
-      <p>Current Fee: 1BNB</p>
-      <h3>+</h3>
-      <p>2% of Tokens Sold</p>
-      <h3>+</h3>
-      <p>2% of BNB Raised</p>
+      <FeeWrapper>
+        <p>
+          Current Fee: <span>1BNB</span>
+        </p>
+        <VerticalSperator />
+        <p>
+          Tokens Sold: <span>2%</span>
+        </p>
+        <VerticalSperator />
+        <p>
+          BNB Raised: <span>2%</span>
+        </p>
+      </FeeWrapper>
     </CardWrapper>
   )
 }
 
 const MyInput = styled.input`
-  background: ${({ theme }) => (theme.isDark ? '#040413' : '#2A2E60')};
+  background: ${({ theme }) => (theme.isDark ? '#0E0E26' : '#2A2E60')};
   border-radius: 8px;
   padding: 10px 14px;
   height: 44px;
@@ -194,49 +224,67 @@ const MyInput = styled.input`
   border: none;
   outline: none;
   &:focus {
-    outline: 2px solid #8B2A9B99;
+    outline: 2px solid #8b2a9b99;
   }
 `
 
 const LineBtn = styled.button`
   height: 35px;
-  background: transparent;
-  border: 1px solid white;
+  background: ${({ theme }) => (theme.isDark ? '#222341' : '#1A1A3A')};
+  width: 125px;
   color: white;
   padding: 8px 16px;
-  border-radius: 20px;
+  border-radius: 5px;
   cursor: pointer;
   outline: none;
+  border: none;
   &:hover {
-    color: #9b3aab;
-    border: 1px solid #9b3aab;
+    background: #3A3A5A;
   }
   &:disabled {
-    color: #888;
+    background: #777;
     border: 1px solid #888;
   }
 `
 const FillBtn = styled.button`
   height: 35px;
-  background: #8b2a9b;
+  background: linear-gradient(90deg, #610d89 0%, #c42bb4 100%);
+  width: 125px;
   border: 1px solid #8b2a9b;
   color: white;
   padding: 8px 16px;
-  border-radius: 20px;
+  border-radius: 5px;
   cursor: pointer;
   outline: none;
   &:hover {
-    background: #9b3aab;
+    background: linear-gradient(90deg, #722da9 0%, #e44bd4 100%);
     border: 1px solid #9b3aab;
   }
   &:disabled {
-    background: #888;
+    background: linear-gradient(90deg, #222 0%, #fff 100%);
     border: 1px solid #888;
   }
 `
 
 const StepContainer = styled.div`
   max-width: 1000px;
+`
+
+const Notification = styled.p`
+  color: #777;
+  font-size: 14px;
+  line-height: 20px;
+`
+
+const WarningPanel = styled.div`
+  background: #fa899e;
+  border-radius: 10px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  color: white;
+  font-size: 14px;
 `
 
 const NumberMark = ({ number }) => {
@@ -316,48 +364,51 @@ const Presale: React.FC = () => {
 
   const validate = () => {
     if (!tokenAddress || !tokenName || !tokenSymbol) {
-      toastError("Oops, we can not parse token data, please inpute correct token address!")
+      toastError('Oops, we can not parse token data, please inpute correct token address!')
       setStep(1)
     }
     if (!parseFloat(presaleRate)) {
-      toastError("Please input presale rate correctly!")
+      toastError('Please input presale rate correctly!')
       setStep(2)
     }
     if (!parseFloat(softCap) || !parseFloat(hardCap)) {
-      toastError("Please input soft cap & hard cap!")
+      toastError('Please input soft cap & hard cap!')
       setStep(3)
     }
     if (parseFloat(softCap) * 2 > parseFloat(hardCap)) {
-      toastError("Hard cap should be greater than 2 times about soft cap")
+      toastError('Hard cap should be greater than 2 times about soft cap')
       setStep(3)
     }
     if (!parseFloat(minBuy) || !parseFloat(maxBuy)) {
-      toastError("Please input contribution limit correctly!")
+      toastError('Please input contribution limit correctly!')
       setStep(4)
     }
     if (parseFloat(minBuy) >= parseFloat(maxBuy)) {
-      toastError("Max buy amount should be greater than min buy amount!")
+      toastError('Max buy amount should be greater than min buy amount!')
       setStep(4)
     }
     if (!parseFloat(liquidityRate) || parseFloat(liquidityRate) <= 50) {
-      toastError("Liquidity amount should be more than 50%!")
+      toastError('Liquidity amount should be more than 50%!')
       setStep(5)
     }
     if (!parseFloat(listingRate)) {
-      toastError("Please input listing rate!")
+      toastError('Please input listing rate!')
       setStep(6)
     }
 
-    if (new Date(presaleStart).getTime() <= (new Date().getTime() + 600000)) {
-      toastError("Presale start time must be more than 10 minutes after now!")
+    if (new Date(presaleStart).getTime() <= new Date().getTime() + 600000) {
+      toastError('Presale start time must be more than 10 minutes after now!')
       setStep(8)
     }
-    if (new Date(presaleStart).getTime() >= new Date(presaleEnd).getTime() || (new Date(presaleStart).getTime() + 3600 * 1000 * 24 * 3) <= new Date(presaleEnd).getTime()) {
-      toastError("Presale period must be less than 3 days!")
+    if (
+      new Date(presaleStart).getTime() >= new Date(presaleEnd).getTime() ||
+      new Date(presaleStart).getTime() + 3600 * 1000 * 24 * 3 <= new Date(presaleEnd).getTime()
+    ) {
+      toastError('Presale period must be less than 3 days!')
       setStep(8)
     }
-    if (new Date(liquidityLock).getTime() <= (new Date(presaleEnd).getTime() + 30 * 24 * 3600 * 1000)) {
-      toastError("Liquidity lock time must be more than 1 month from presale end time!")
+    if (new Date(liquidityLock).getTime() <= new Date(presaleEnd).getTime() + 30 * 24 * 3600 * 1000) {
+      toastError('Liquidity lock time must be more than 1 month from presale end time!')
       setStep(8)
     }
   }
@@ -365,29 +416,38 @@ const Presale: React.FC = () => {
   return (
     <Wrapper>
       <MuiPickersUtilsProvider utils={DateFnsUtils}>
-        <LogoTitle>Create/Manage Presale</LogoTitle>
+        <LogoTitle>
+          <CheckList /> Create/Manage Presale
+        </LogoTitle>
         <Sperate />
         <NoteWrapper>
           <InlineWrapper>
-            <NoteIcon />
-            <Title className="ml16">Create Sale</Title>
+            <Title>Create Sale</Title>
           </InlineWrapper>
           <Sperate />
-          <p>Get started in just a few simple steps!</p>
+          <Notification>Get started in just a few simple steps!</Notification>
           <Sperate />
-          <p>
+          <Notification>
             This process is entirely decentralized, we cannot be held reponsible for incorrect entry of information or
             be held liable for anything related to your use of our platform. Please ensure you enter all your details to
-            the best accuracy possible and that you are in compliance with your local laws and regulations.
-          </p>
-          <Sperate />
-          <p>If your local laws require KYC and AML please use the security menu option to first KYC your account!</p>
+            the best accuracy possible and that you are in compliance with your local laws and regulations. If your
+            local laws require KYC and AML please use the security menu option to first KYC your account!
+          </Notification>
           <Sperate />
           <p style={{ color: '#D91A00' }}>
             For tokens with burns, rebase or other special transfers please ensure you have a way to whitelist multiple
             addresses or turn off the special transfer events (By setting fees to 0 for example for the duration of the
             presale)
           </p>
+          <Sperate />
+          <WarningPanel>
+            <BellIcon style={{ flexShrink: 0.3 }} />
+            <p className="ml16">
+              For tokens with burns, rebase or other special transfers please ensure you have a way to whitelist
+              multiple addresses or turn off the special transfer events (By setting fees to 0 for example for the
+              duration of the presale)
+            </p>
+          </WarningPanel>
         </NoteWrapper>
         <Sperate />
         <ContentWrapper>

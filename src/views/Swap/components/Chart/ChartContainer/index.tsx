@@ -392,9 +392,6 @@ const Chart: React.FC<Partial<ChartContainerProps>> = (props) => {
       autosize: ChartContainerProps.autosize,
       studies_overrides: ChartContainerProps.studiesOverrides,
       timezone: custom_timezone,
-      time_frames: [
-        { text: '10', resolution: '10' as ResolutionString }
-      ],
       overrides: {
         'mainSeriesProperties.style': Number(customChartType),
       },

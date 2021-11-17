@@ -70,18 +70,19 @@ import { Field, replaceSwapState } from '../../state/swap/actions'
 
 import Web3 from 'web3'
 import ERC20ABI from 'assets/abis/erc20.json'
-import { getPancakePairAddress, getPancakePairAddressV1, getSphynxPairAddress } from 'state/info/ws/priceData'
+import { getPancakePairAddress, getPancakePairAddressV1, getSphynxPairAddress } from 'utils/priceProvider'
 import * as ethers from 'ethers'
 import { getBNBPrice } from 'utils/priceProvider'
 import { simpleRpcProvider } from 'utils/providers'
 import { UNSET_PRICE } from 'config/constants/info'
 import storages from 'config/constants/storages'
-import Row from 'components/Row'
 import RewardsPanel from './components/RewardsPanel'
 import { SwapTabs, SwapTabList, SwapTab, SwapTabPanel } from '../../components/Tab/tab'
+import { web3ArchiveProvider } from 'utils/providers'
 import { SPHYNX_TOKEN_ADDRESS } from 'config/constants'
+import { WBNB } from 'config/constants/tokens'
 
-const wBNBAddr = '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c'
+const wBNBAddr = WBNB.address
 const sphynxAddr = `${SPHYNX_TOKEN_ADDRESS}`
 let tokenDecimal = 18
 
@@ -93,8 +94,7 @@ let config = {
   },
 }
 
-const providerURL = 'https://speedy-nodes-nyc.moralis.io/fbb4b2b82993bf507eaaab13/bsc/mainnet/archive'
-const web3 = new Web3(new Web3.providers.HttpProvider(providerURL))
+const web3 = new Web3(web3ArchiveProvider)
 
 const ArrowContainer = styled(ArrowWrapper)`
   width: 32px;
@@ -474,8 +474,15 @@ export default function Swap({ history }: RouteComponentProps) {
         setBlockFlag(!blockFlag)
       })
     } else {
-      setCurrentBlock(blockNumber)
-      setBlockFlag(!blockFlag)
+      web3.eth.getBlockNumber().then((blockNumberCache) => {
+        if(parseInt(blockNumber) + 50 <= blockNumberCache) {
+          setCurrentBlock(blockNumberCache - 50)
+          setBlockFlag(!blockFlag)
+        } else {
+          setCurrentBlock(blockNumber)
+          setBlockFlag(!blockFlag)
+        }
+      })
     }
   }
 
