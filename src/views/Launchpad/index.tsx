@@ -45,7 +45,6 @@ const PageHeader = styled.div`
 
 const WelcomeText = styled(Text)`
     color: white;
-    font-size: 20px;
     font-weight: 600;
     line-height: 1.5;
     font-size: 20px;
