@@ -135,7 +135,7 @@ async function getTokenInfoForChart(input: any, pair: any, routerVersion: any) {
       } else {
         let scale = 1
         let tempPrice = price
-        for (;;) {
+        for (; ;) {
           scale *= 10
           tempPrice *= 10
           if (tempPrice > 100) {
@@ -149,14 +149,13 @@ async function getTokenInfoForChart(input: any, pair: any, routerVersion: any) {
         })
       }
     } catch (error) {
-      console.log('error', error)
       getTokenDetails(input, routerVersion)
-      .then(data => {
-        resolve(data)
-      })
-      .catch( err => {
-        reject(err)
-      })
+        .then(data => {
+          resolve(data)
+        })
+        .catch(err => {
+          reject(err)
+        })
     }
   })
 }
@@ -284,7 +283,6 @@ async function getChartData(input: any, pair: any, resolution: any, routerVersio
       })
       resolve(data)
     } catch (error) {
-      console.log('error', error)
       reject(error)
     }
   })
@@ -434,7 +432,7 @@ async function getChartStats(address: string, routerVersion: string) {
       100 *
       Math.abs(
         (parseFloat(dexTrades[0].open_price) - parseFloat(dexTrades[0].close_price)) /
-          ((parseFloat(dexTrades[0].open_price) + parseFloat(dexTrades[0].close_price)) / 2),
+        ((parseFloat(dexTrades[0].open_price) + parseFloat(dexTrades[0].close_price)) / 2),
       )
     const sign = dexTrades[0].open_price > dexTrades[0].close_price ? '-' : '+'
 
@@ -448,7 +446,6 @@ async function getChartStats(address: string, routerVersion: string) {
       liquidityV2BNB,
     }
   } catch (error) {
-    console.log('error', error)
     const baseAddress = address
     const quoteAddress =
       baseAddress === '0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c'
@@ -777,7 +774,6 @@ async function getMarksData(account: any, input: any) {
       })
       resolve(data)
     } catch (error) {
-      console.log('error', error)
       reject(error)
     }
   })
@@ -868,7 +864,6 @@ async function getChartDurationData(input: any, pair: any, resolution: any, to: 
       })
       resolve(data)
     } catch (error) {
-      console.log('error', error)
       reject(error)
     }
   })
@@ -959,7 +954,6 @@ async function getChartDurationPanData(input: any, routerVersion: any, resolutio
       })
       resolve(data)
     } catch (error) {
-      console.log('error', error)
       reject(error)
     }
   })

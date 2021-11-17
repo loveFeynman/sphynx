@@ -1,9 +1,8 @@
 /* eslint-disable */
 import React from 'react'
-import { useSelector } from 'react-redux'
 import styled from 'styled-components'
-import { AppState } from 'state'
 import { ReactComponent as UpDownArrow } from 'assets/svg/icon/UpDownArrow.svg'
+import Chart from "./ChartContainer"
 
 const Wrapper = styled.div`
   display: flex;
@@ -30,11 +29,8 @@ const ArrowWrapper = styled.div`
   }
 `
 
-const Chart = React.lazy(() => import("./ChartContainer"))
-
-const ChartContainer = ({tokenAddress, tokenData}) => {
+const ChartContainer = ({tokenAddress, tokenData, routerVersion}) => {
   const input = tokenAddress
-  const routerVersion = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.routerVersion)
 
   const draggableArrow = React.useRef<any>(null)
   const [chartHeight, setChartHeight] = React.useState(600)
@@ -54,7 +50,7 @@ const ChartContainer = ({tokenAddress, tokenData}) => {
 
   return (
     <Wrapper>
-      <Chart tokenAddress={input} height={chartHeight} />
+      <Chart tokenAddress={input} height={chartHeight} routerVersion={routerVersion} />
       <UpDownArrowBox>
         <ArrowWrapper
           ref={draggableArrow}

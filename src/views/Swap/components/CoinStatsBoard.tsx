@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import { utils } from 'ethers'
 import styled from 'styled-components'
 import { isAddress } from 'utils'
-import { useTranslation } from 'contexts/Localization'
 import { marketCap } from 'state/input/actions'
 import { ReactComponent as PriceIcon } from 'assets/svg/icon/PriceIcon.svg'
 import { ReactComponent as ChangeIcon } from 'assets/svg/icon/ChangeIcon.svg'
@@ -102,7 +101,6 @@ export default function CoinStatsBoard(props) {
   const interval = useRef(null)
   const tokenAddress = useRef(null)
   tokenAddress.current = input
-  const { t } = useTranslation()
 
   const [alldata, setalldata] = useState({
     address: '',
@@ -133,8 +131,7 @@ export default function CoinStatsBoard(props) {
         setalldata(chartStats)
         setPrice(chartStats.price)
         setLinkIcon(
-          `https://r.poocoin.app/smartchain/assets/${
-            input ? utils.getAddress(input) : '0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82'
+          `https://r.poocoin.app/smartchain/assets/${input ? utils.getAddress(input) : '0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82'
           }/logo.png`,
         )
       }
@@ -179,7 +176,7 @@ export default function CoinStatsBoard(props) {
         variantFill
         flexGrow={2}
         fillColor="#F75183"
-        tokenAddress = {tokenAddress.current}
+        tokenAddress={tokenAddress.current}
       />
       <TokenStateCard
         CardIcon={PriceIcon}

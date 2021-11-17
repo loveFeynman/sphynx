@@ -1,6 +1,6 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react'
-import styled, { useTheme } from 'styled-components'
-import Select, { OptionProps } from 'components/Select/Select'
+import React from 'react'
+import styled from 'styled-components'
+import Select from 'components/Select/Select'
 import { Button, Text } from '@sphynxswap/uikit'
 import SearchInput from 'components/SearchInput'
 import { useTranslation } from 'contexts/Localization'
@@ -10,7 +10,6 @@ import SnifferIcon from 'assets/images/SnifferIcon.png'
 import LamboIcon from 'assets/images/LamboIcon.png'
 import AfiIcon from 'assets/images/AFIIcon.png'
 import GalabetIcon from 'assets/images/GalabetIcon.png'
-import BinanceLogo from 'assets/images/BSCNetworkIcon.png'
 import { useMenuToggle } from 'state/application/hooks'
 import TokenCard from './components/TokenCard'
 import Pagenation from './components/Pagenation'
@@ -227,32 +226,9 @@ const TokenListContainder = styled.div<{ toggled: boolean }>`
   }
 `
 
-const LogoTitleWrapper = styled.div`
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  margin-bottom: 20px;
-
-  ${({ theme }) => theme.mediaQueries.xs} {
-    flex-direction: column-reverse;
-    gap: 40px;
-    align-items: center;
-  }
-  ${({ theme }) => theme.mediaQueries.md} {
-    flex-direction: unset;
-    gap: unset;
-    align-items: unset;
-  }
-`
-
 const Presale: React.FC = () => {
-  const [sortyBy, setSortBy] = useState('')
   const { t } = useTranslation()
   const { menuToggled } = useMenuToggle()
-
-  const handleSortOptionChange = (e) => {
-    setSortBy(e.target.value)
-  }
 
   const handleChangeQuery = (e) => {
     console.log(e)

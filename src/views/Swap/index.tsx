@@ -65,7 +65,6 @@ import Page from '../Page'
 import BuyersCard from './components/BuyersCard'
 import SellersCard from './components/SellersCard'
 import SwapWarningModal from './components/SwapWarningModal'
-import DividendPanel from './components/DividendPanel'
 import LiveAmountPanel from './components/LiveAmountPanel'
 import { Field, replaceSwapState } from '../../state/swap/actions'
 
@@ -196,20 +195,6 @@ export default function Swap({ history }: RouteComponentProps) {
   const [symbol, setSymbol] = useState('')
   const theme = useTheme()
 
-  if (
-    tokenAddress === '' ||
-    tokenAddress.toLowerCase() === sphynxAddr.toLowerCase() ||
-    tokenAddress.toLowerCase() === SPHYNX_TOKEN_ADDRESS.toLowerCase()
-  ) {
-    if (routerVersion !== 'sphynx') {
-      dispatch(typeRouterVersion({ routerVersion: 'sphynx' }))
-    }
-  } else {
-    if (routerVersion !== 'v2') {
-      dispatch(typeRouterVersion({ routerVersion: 'v2' }))
-    }
-  }
-
   stateRef.current = transactionData
   pairsRef.current = pairs
   loadingRef.current = isLoading
@@ -217,6 +202,22 @@ export default function Swap({ history }: RouteComponentProps) {
   let input = tokenAddress
   if (input === '-' || input === '') input = sphynxAddr
   const contract: any = new web3.eth.Contract(abi, input)
+
+  useEffect(() => {
+    if (
+      tokenAddress === '' ||
+      tokenAddress.toLowerCase() === sphynxAddr.toLowerCase() ||
+      tokenAddress.toLowerCase() === SPHYNX_TOKEN_ADDRESS.toLowerCase()
+    ) {
+      if (routerVersion !== 'sphynx') {
+        dispatch(typeRouterVersion({ routerVersion: 'sphynx' }))
+      }
+    } else {
+      if (routerVersion !== 'v2') {
+        dispatch(typeRouterVersion({ routerVersion: 'v2' }))
+      }
+    }
+  }, [])
 
   const getDataQuery = useCallback(
     (pairAddress: any) => {
@@ -1218,7 +1219,7 @@ export default function Swap({ history }: RouteComponentProps) {
               price={tokenPrice}
             />
             <CoinStatsBoard tokenData={tokenData} />
-            <ChartContainer tokenAddress={input} tokenData={tokenData} />
+            <ChartContainer tokenAddress={input} tokenData={tokenData} routerVersion={routerVersion} />
             <SwapTabs selectedTabClassName="is-selected" selectedTabPanelClassName="is-selected">
               <SwapTabList>
                 <SwapTab>
