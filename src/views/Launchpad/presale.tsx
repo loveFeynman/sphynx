@@ -153,12 +153,12 @@ const CardWrapper = styled.div`
 `
 
 const NumberWrapper = styled.div`
-  background: rgba(189, 21, 229, 0.3);
+  background: linear-gradient(90deg, #610D89 0%, #C42BB4 100%);
   width: 28px;
   height: 28px;
   border-radius: 14px;
   display: flex;
-  color: #9c3bab;
+  color: white;
   align-items: center;
   justify-content: center;
   font-weight: 700;
@@ -217,9 +217,11 @@ const FeeCard = () => {
 
 const MyInput = styled.input`
   background: ${({ theme }) => (theme.isDark ? '#0E0E26' : '#2A2E60')};
-  border-radius: 8px;
+  border-radius: 5px;
+  border: 1px solid #4A5187;
   padding: 10px 14px;
-  height: 44px;
+  padding-inline-start: 12px;
+  height: 38px;
   color: white;
   border: none;
   outline: none;
@@ -243,7 +245,7 @@ const LineBtn = styled.button`
   }
   &:disabled {
     background: #777;
-    border: 1px solid #888;
+    border: 1px solid #444;
   }
 `
 const FillBtn = styled.button`
@@ -262,7 +264,7 @@ const FillBtn = styled.button`
   }
   &:disabled {
     background: linear-gradient(90deg, #222 0%, #fff 100%);
-    border: 1px solid #888;
+    border: 1px solid #444;
   }
 `
 
@@ -452,7 +454,7 @@ const Presale: React.FC = () => {
         <Sperate />
         <ContentWrapper>
           <FeeCard />
-          <div>
+          <div style={{marginTop: '24px', width: '100%', marginBottom: '24px'}}>
             <StepWrapper number="1" stepName="Token Address" step={step} onClick={() => setStep(1)}>
               <p className="description">Enter your token Adderss</p>
               <MyInput onChange={handleChange} value={tokenAddress} style={{ width: '100%' }} />
