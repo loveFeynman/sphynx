@@ -317,10 +317,7 @@ const ContributeWrapper = styled.div`
   border-radius: 5px;
 `
 
-const LinearProgressBar = styled.div`
-  width: 100%;
-  margin-bottom: 20px;
-`
+
 
 const TokenRateView = styled.div`
   width: 100%;
@@ -471,6 +468,25 @@ const ThinkCardWrapper = styled.div`
   align-items: center;
 `
 
+const ProgressBarWrapper = styled.div`
+  width: 100%;
+  margin-bottom: 20px;
+`
+
+const ProgressBar = styled.div`
+  background-color: #23234B;
+  border-radius: 8px;
+  position: relative;
+`
+
+const Progress = styled.div<{state}>`
+  width: ${props => `${props.state}%`};
+  height: 12px;
+  background: linear-gradient(90deg, #610D89 0%, #C42BB4 100%);
+  border-radius: 8px 0px 0px 8px;
+  padding: 1px;
+`
+
 const PRESALE_DATA = [
   {
     presaleItem: "Sale ID:",
@@ -618,7 +634,7 @@ const PresaleLive: React.FC = () => {
             </TokenAddressContainer>
             <Separate />
             <FlexWrapper>
-              <WhitelistCard style={{padding: '75px 15px'}}>
+              <WhitelistCard style={{ padding: '75px 15px' }}>
                 <WhitelistTitle mb="16px">Whitelist Enabled Sale</WhitelistTitle>
                 <WhitelistSubText mb="28px">Only Whitelisted Wallets can Purchase This Token!</WhitelistSubText>
                 <WalletAddressError>
@@ -630,9 +646,12 @@ const PresaleLive: React.FC = () => {
                 {/* {claimToken ? (
                   <> */}
                 <WhitelistTitle>Raised: 270.5/300</WhitelistTitle>
-                <LinearProgressBar>
-                  <Line percent={50} strokeWidth={3} strokeColor="#C42BB4" />
-                </LinearProgressBar>
+                <ProgressBarWrapper>
+                  <ProgressBar>
+                    <Progress state='70' />
+                  </ProgressBar>
+                </ProgressBarWrapper>
+
                 <TokenRateView>
                   <Text fontSize="14px" fontWeight="600" color="#777777" textAlign="left">1 BNB = 250000000 SHIVA</Text>
                 </TokenRateView>
@@ -712,7 +731,7 @@ const PresaleLive: React.FC = () => {
                 </ItemWrapper>
               </ItemContainer>
               <Separate />
-              <ColorButton style={{width: '80%' }}>Join Community</ColorButton>
+              <ColorButton style={{ width: '95%' }}>Join Community</ColorButton>
               {/* <SwapTabs
                 selectedTabClassName='is-selected'
                 selectedTabPanelClassName='is-selected'
