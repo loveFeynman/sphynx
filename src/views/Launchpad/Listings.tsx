@@ -14,6 +14,7 @@ import BinanceFilledIcon from 'assets/svg/icon/BinanceFilledIcon.svg'
 import { useMenuToggle } from 'state/application/hooks'
 import TokenCard from './components/TokenCard'
 import Pagenation from './components/Pagenation'
+import SearchPannel from './components/SearchPannel'
 import {
   Wrapper, 
   HeaderWrapper,
@@ -148,16 +149,7 @@ const Presale: React.FC = () => {
           </Button>
         </NetworkButtonWrapper>
       </HeaderWrapper>
-      <FilterContainer>
-        <SelectWrapper>
-          <Text textTransform="uppercase">{t('Sort by')}</Text>
-          <Select options={SORTBY_OPTIONS} />
-        </SelectWrapper>
-        <InputWrapper>
-          <Text textTransform="uppercase">{t('Search')}</Text>
-          <SearchInput onChange={handleChangeQuery} placeholder="" />
-        </InputWrapper>
-      </FilterContainer>
+      <SearchPannel />
       <TokenListContainder toggled={menuToggled}>
         {TOKEN_DATA.map((item) => (
           <TokenCard

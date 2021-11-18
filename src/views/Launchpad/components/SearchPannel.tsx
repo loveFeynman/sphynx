@@ -12,7 +12,7 @@ const ViewControls = styled.div`
   align-items: center;
   width: 100%;
   background: ${({ theme }) => theme.isDark ? "#0E0E26" : "#2A2E60"};
-  padding: 15px;
+  padding: 0px 15px;
   margin: 21px 0px;
   border-radius: 3px;
   > div {
@@ -21,7 +21,6 @@ const ViewControls = styled.div`
 
   ${({ theme }) => theme.mediaQueries.sm} {
     justify-content: center;
-    width: auto;
 
     > div {
       padding: 0;
@@ -109,7 +108,6 @@ const ContractCard = styled(Text) <{ isMobile?: boolean }>`
   }
   ${({ theme }) => theme.mediaQueries.md} {
     flex: 1;
-    margin: 0;
     border: 1px solid ${({ theme }) => theme.isDark ? "#2E2E55" : "#4A5187"};
     border-radius: 5px;
   }
@@ -123,12 +121,20 @@ const TransparentIconButton = styled(IconButton)`
 }
 `
 
-const SearchPannel = ({ setSortOption, setQuery }) => {
+const SearchPannel = () => {
   const { t } = useTranslation()
   const { isXl } = useMatchBreakpoints()
   const isMobile = !isXl
   const [showDrop, setShowDrop] = useState(false)
   const [data, setdata] = useState([])
+
+  const setSortOption = (value: string) => {
+    return value;
+  }
+
+  const setQuery = (value: string) => {
+    return value;
+  }
 
   const handleSortOptionChange = (option: OptionProps): void => {
     setSortOption(option.value)
@@ -140,7 +146,7 @@ const SearchPannel = ({ setSortOption, setQuery }) => {
 
   const submitFuntioncall = () => {
     console.log('search')
-  }
+  }  
 
   return (
     <ViewControls>
