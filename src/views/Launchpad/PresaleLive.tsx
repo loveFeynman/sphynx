@@ -29,7 +29,7 @@ const Wrapper = styled.div`
   p {
     line-height: 24px;
   }
-  ${({ theme }) => theme.mediaQueries.xs} {
+  ${({ theme }) => theme.mediaQueries.sm} {
     padding: 24px;
   }
 `
@@ -42,10 +42,13 @@ const HeaderTitleText = styled(Text)`
   color: white;
   font-weight: 600;
   line-height: 1.5;
-  font-size: 20px;
+  font-size: 14px;
   text-align: left;
   padding: 0px;
   ${({ theme }) => theme.mediaQueries.sm} {
+    font-size: 20px;
+  }
+  ${({ theme }) => theme.mediaQueries.md} {
     font-size: 30px;
   }
 `
@@ -80,9 +83,9 @@ const CardWrapper = styled.div`
   background: ${({ theme }) => (theme.isDark ? "#1A1A3A" : "#2A2E60")};
   min-width: 240px;
   height: fit-content;
-  padding: 24px 34px;
+  padding: 14px;
   ${({ theme }) => theme.mediaQueries.lg} {
-    padding: 24px;
+    padding: 24px 34px;
   }
 `
 
@@ -96,30 +99,41 @@ const SubCardWrapper = styled(CardWrapper)`
 `
 
 const DefiFlex = styled(Flex)`
-  width: 57%;
+  width: 100%;
   flex-direction: column;
   background: #E93F33;
   border: 1px solid #5E2B60;
   border-radius: 5px;
   padding: 17px;
+  margin-bottom: 10px;
+  ${({ theme }) => theme.mediaQueries.xl} {
+    width: 57%;
+    margin-bottom: 0px;
+  }
 `
 
 const SoftFlex = styled(Flex)`
-  width: 19%;
+  width: 49%;
   flex-direction: column;
   background: #E97F33;
   border: 1px solid #5E2B60;
   border-radius: 5px;
   padding: 17px;
+  ${({ theme }) => theme.mediaQueries.xl} {
+    width: 19%;
+  }
 `
 
 const LiquidityFlex = styled(Flex)`
-  width: 19%;
+  width: 49%;
   flex-direction: column;
   background: #FFB800;
   border: 1px solid #5E2B60;
   border-radius: 5px;
   padding: 17px;
+  ${({ theme }) => theme.mediaQueries.xl} {
+    width: 19%;
+  }
 `
 
 const WarningTitle = styled.div`
@@ -185,27 +199,31 @@ const TokenAddressContainer = styled.div`
 `
 
 const AddressFlex = styled(Flex)`
+  flex-wrap: wrap;
   padding-bottom: 10px;
   border-bottom: 1px solid #31314E;
+  justify-content: space-between;
 `
 
 const AddressWrapper = styled.div`
   display: flex;
-  width: 100%;
-  justify-content: center;
+  justify-content: start;
   align-items: center;
   flex-wrap: wrap;
   gap: 4px;
   flex-direction: row;
+  div {
+    font-size: 14px;
+  }
   div:last-child {
     color: #F2C94C;
     font-size: 12px;
     font-weight: 600;
+    word-break: break-word;
+    text-align: left;
   }
   ${({ theme }) => theme.mediaQueries.lg} {
-    div {
-      font-size: 14px;
-    }
+    justify-content: space-between;
   }
 `
 
@@ -238,35 +256,52 @@ const WhitelistCard = styled.div`
   align-items: center;
   flex-direction: column;
   justify-content: center;
-  border: 1px solid #5E2B60;
+  border: 1px solid ${({ theme }) => theme.isDark ? '#5E2B60' : '#4A5187'};
   box-sizing: border-box;
   border-radius: 5px;
-  width: 49%;
-  padding: 25px;
+  width: 100%;
+  padding: 15px;
   position: relative;
+  margin: 10px 0;
+  ${({ theme }) => theme.mediaQueries.sm} {
+    padding: 25px;
+  }
+  ${({ theme }) => theme.mediaQueries.xl} {
+    width: 49%;
+    margin: 0;
+    padding: 25px;
+  }
 `
 
 const WhitelistTitle = styled(Text)`
   font-weight: 600;
-  font-size: 20px;
+  font-size: 15px;
   margin-bottom: 20px;
+  ${({ theme }) => theme.mediaQueries.sm} {
+    font-size: 20px;
+  }
 `
 
 const WhitelistSubText = styled(Text)`
   font-weight: 600;
-  font-size: 15px;
+  font-size: 12px;
   color: #A7A7CC;
+  ${({ theme }) => theme.mediaQueries.sm} {
+    font-size: 15px;
+  }
 `
 
 const WalletAddressError = styled.div`
   display: flex;
   justify-content: center;
   position: absolute;
-  gap: 10px;
+  align-items: center;
   bottom: 30px;
+  padding: 17px;
   img {
     width: 20px;
     height: 20px;
+    margin-right: 5px;
   }
   div:last-child {
       text-align: center;
@@ -278,7 +313,7 @@ const WalletAddressError = styled.div`
 
 const ContributeWrapper = styled.div`
   width: 100%;
-  border: 1px solid #5E2B60;
+  border: 1px solid ${({ theme }) => theme.isDark ? '#5E2B60' : '#4A5187'};
   border-radius: 5px;
 `
 
@@ -305,7 +340,8 @@ const InputWrapper = styled.div`
   border-radius: 5px;
   justify-content: center;
   display: flex;
-  width: 50%;
+  max-width: 50%;
+  margin-right: 5px;
   & input {
     width: 100%;
     background: transparent;
@@ -328,7 +364,10 @@ const ColorButton = styled(Button)`
   background: linear-gradient(90deg,#610D89 0%,#C42BB4 100%);
   outline: none;
   color: white;
-  width: 156px;
+  width: 98px;
+  ${({ theme }) => theme.mediaQueries.sm} {
+    width: 156px;
+  }
 `
 
 const DarkButton = styled(Button)`
@@ -353,24 +392,31 @@ const DataItem = styled.div`
   justify-content: center;
   div:first-child {
     flex: 1;
-    padding: 5px 20px;
+    align-items: center;
+    display: flex;
+    padding: 5px 0 5px 5px;
+    ${({ theme }) => theme.mediaQueries.sm} {
+      padding: 5px 20px;
+    }
     text-align: start;
     font-size: 12px;
     color: #A7A7CC;
     font-style: normal;
     font-weight: 600;
-    border-bottom: 1px solid #5E2B60;
-    border-right: 1px solid #5E2B60;
+    border-bottom: 1px solid ${({ theme }) => theme.isDark ? '#5E2B60' : '#4A5187'};
+    border-right: 1px solid ${({ theme }) => theme.isDark ? '#5E2B60' : '#4A5187'};
   }
   div:last-child {
     flex: 1;
+    align-items: center;
+    display: flex;
     padding: 5px 20px;
     text-align: start;
     font-size: 12px;
     color: #F2C94C;
     font-style: normal;
     font-weight: 600;
-    border-bottom: 1px solid #5E2B60;
+    border-bottom: 1px solid ${({ theme }) => theme.isDark ? '#5E2B60' : '#4A5187'};
   }
 `
 
@@ -387,7 +433,7 @@ const ItemWrapper = styled.div`
 `
 
 const ThinkItem = styled.div`
-  border: 1px solid #5E2B60;
+  border: 1px solid ${({ theme }) => theme.isDark ? '#5E2B60' : '#4A5187'};
   box-sizing: border-box;
   border-radius: 11px;
   display: flex;
@@ -572,7 +618,7 @@ const PresaleLive: React.FC = () => {
             </TokenAddressContainer>
             <Separate />
             <FlexWrapper>
-              <WhitelistCard>
+              <WhitelistCard style={{padding: '75px 15px'}}>
                 <WhitelistTitle mb="16px">Whitelist Enabled Sale</WhitelistTitle>
                 <WhitelistSubText mb="28px">Only Whitelisted Wallets can Purchase This Token!</WhitelistSubText>
                 <WalletAddressError>
