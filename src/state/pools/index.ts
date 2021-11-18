@@ -182,7 +182,7 @@ export const fetchPoolsPublicDataAsync = (currentBlock: number) => async (dispat
         stakingTokenPrice,
         earningTokenPrice,
         getBalanceNumber(new BigNumber(totalStaking.totalStaked), pool.stakingToken.decimals),
-        parseFloat(pool.tokenPerBlock),
+        tokenPerBlock,
       )
       : 0
 
