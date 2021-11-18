@@ -57,45 +57,15 @@ const CardBody = styled.div`
     align-items: center;
 `
 
-const RaisedRow = styled.div`
-    margin-top: 30px;
-    div {
-        color: #37AEE2;
-        text-align: center;
-        font-weight: 500;
-        font-size: 16px;
-    }
-`
-
-const CapRate = styled.div`
-    margin-top: 8px;
-    div {
-        color: white;
-        text-align: center;
-        font-weight: 500;
-        font-size: 14px;
-    }
-`
-
-const ContributionRate = styled.div`
-    margin-top: 8px;
-    div {
-        color: white;
-        text-align: center;
-        font-weight: 500;
-        font-size: 14px;
-    }
-`
-
 const CardFooter = styled.div`
     display: flex;
     justify-content: center;
     gap: 10px;
-    padding: 37px;
+    padding-bottom: 37px;
     div:last-child {
         text-align: center;
-        font-weight: 600;
-        font-size: 12px;
+        font-size: 14px;
+        color: #A7A7CC;
     }
 `
 
@@ -137,6 +107,35 @@ const ProgressText = styled.div`
     width: fit-content;
     height: fit-content;
     position: absolute;
+`
+
+const SaleInfo = styled.div`
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    // padding: 0px 24px; 
+`
+
+const SaleInfoTitle = styled.div`
+    color: #A7A7CC;
+    font-weight: 600;
+    font-size: 14px;
+`
+
+const SaleInfoValue = styled.div`
+    color: #F2C94C;
+    font-weight: 600;
+    font-size: 14px;
+`
+
+const Divider = styled.div`
+    height: 1px;
+    background: #21214A;
+    margin: 16px 0px;
+`
+const SaleInfoWrapper = styled.div`
+    padding: 24px 0px;
+    width: calc(100% - 42px);
 `
 
 const TokenImg = styled.div`
@@ -197,17 +196,35 @@ const TokenCard: React.FC<ImgCardProps> = ({ tokenSymbole, tokenName, tokenLogo,
                         </ProgressText>
                     </ProgressBar>
                 </ProgressBarWrapper>
-                <RaisedRow>
-                    <Text>
-                        Raised: 0.00/300
-                    </Text>
-                </RaisedRow>
-                <CapRate>
-                    <Text>Soft Cap/Hard Cap: {softCap}/{hardCap} BNB</Text>
-                </CapRate>
-                <ContributionRate>
-                    <Text>Min/Max contribution: {minContribution}/{maxContribution} BNB</Text>
-                </ContributionRate>
+                <SaleInfoWrapper>
+                    <SaleInfo>
+                        <SaleInfoTitle>
+                            Raised:
+                        </SaleInfoTitle>
+                        <SaleInfoValue>
+                            0.00/300
+                        </SaleInfoValue>
+                    </SaleInfo>
+                    <Divider/>
+                    <SaleInfo>
+                        <SaleInfoTitle>
+                            Soft Cap / Hard Cap:
+                        </SaleInfoTitle>
+                        <SaleInfoValue>
+                            {softCap}/{hardCap} BNB
+                        </SaleInfoValue>
+                    </SaleInfo>
+                    <Divider/>
+                    <SaleInfo>
+                        <SaleInfoTitle>
+                            Min/Max Contribution:
+                        </SaleInfoTitle>
+                        <SaleInfoValue>
+                            {minContribution}/{maxContribution} BNB
+                        </SaleInfoValue>
+                    </SaleInfo>
+                    <Divider/>
+                </SaleInfoWrapper>
             </CardBody>
             <CardFooter>
                 <ContractHelper

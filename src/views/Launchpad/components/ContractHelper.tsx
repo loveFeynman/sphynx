@@ -2,6 +2,7 @@ import React from 'react'
 import { useTooltip, Box, BoxProps } from '@sphynxswap/uikit'
 import styled from 'styled-components'
 import NuclearIcon from 'assets/svg/icon/NuclearIcon.svg'
+import GearIcon from 'assets/svg/icon/GearIcon.svg'
 
 interface Props extends BoxProps {
   text: string | React.ReactNode
@@ -22,7 +23,7 @@ const ContractHelper: React.FC<Props> = ({ text, ...props }) => {
     <Box {...props}>
       {tooltipVisible && tooltip}
       <ImageWrapper ref={targetRef}>
-        <img src={NuclearIcon} alt="nuclear icon" />
+        <img src={GearIcon} alt="nuclear icon" />
       </ImageWrapper>
     </Box>
   )
