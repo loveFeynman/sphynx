@@ -417,6 +417,15 @@ const DataItem = styled.div`
   }
 `
 
+const DataLatestItem = styled(DataItem)`
+  div:first-child {
+    border-bottom: 0px;
+  }
+  div:last-child {
+    border-bottom: 0px;
+  }
+`
+
 const ItemContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -479,7 +488,7 @@ const ProgressBar = styled.div`
   position: relative;
 `
 
-const Progress = styled.div<{state}>`
+const Progress = styled.div<{ state }>`
   width: ${props => `${props.state}%`};
   height: 12px;
   background: linear-gradient(90deg, #610D89 0%, #C42BB4 100%);
@@ -696,11 +705,17 @@ const PresaleLive: React.FC = () => {
             </FlexWrapper>
             <Separate />
             <ContributeWrapper>
-              {PRESALE_DATA.map((item) => (
-                <DataItem>
-                  <Text>{item.presaleItem}</Text>
-                  <Text>{item.presaleValue}</Text>
-                </DataItem>
+              {PRESALE_DATA.map((item, index) => (
+                 index === PRESALE_DATA.length - 1 ?
+                  < DataLatestItem >
+                    <Text>{item.presaleItem}</Text>
+                    <Text>{item.presaleValue}</Text>
+                  </DataLatestItem>
+                  :
+                  <DataItem>
+                    <Text>{item.presaleItem}</Text>
+                    <Text>{item.presaleValue}</Text>
+                  </DataItem>
               ))}
             </ContributeWrapper>
           </MainCardWrapper>
@@ -761,7 +776,7 @@ const PresaleLive: React.FC = () => {
           </SubCardWrapper>
         </TokenPresaleContainder>
       </TokenPresaleBody>
-    </Wrapper>
+    </Wrapper >
   )
 }
 
