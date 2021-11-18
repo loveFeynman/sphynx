@@ -9,7 +9,7 @@ import ShivaLogo from 'assets/images/ShiaToken.png'
 import LikeIcon from 'assets/images/LikeIcon.png'
 import DislikeIcon from 'assets/images/DislikeIcon.png'
 import HillariousIcon from 'assets/images/HillariousIcon.png'
-import NuclearIcon from 'assets/svg/icon/NuclearIcon.svg'
+import { ReactComponent as SettingIcon } from 'assets/svg/icon/SettingIcon.svg'
 import WarningIcon from 'assets/images/WarningIcon.png'
 import { Line } from 'rc-progress';
 import { SwapTabs, SwapTabList, SwapTab, SwapTabPanel } from 'components/Tab/tab'
@@ -65,12 +65,9 @@ const FlexWrapper = styled.div`
 const TokenPresaleContainder = styled.div<{ toggled: boolean }>`
   display: flex;
   gap: 20px;
-  justiy-content: center;
+  justify-content: center;
   flex-wrap:wrap;
-  @media screen and (max-width: 918px) {
-    max-width: 492px;
-    width: 100%;
-  }
+  width: 100%;
 `
 
 const CardWrapper = styled.div`
@@ -78,7 +75,7 @@ const CardWrapper = styled.div`
   box-sizing: border-box;
   border-radius: 10px;
   background: ${({ theme }) => (theme.isDark ? "#1A1A3A" : "#2A2E60")};
-  min-width: 237px;
+  min-width: 240px;
   height: fit-content;
   padding: 24px 34px;
   ${({ theme }) => theme.mediaQueries.lg} {
@@ -87,11 +84,11 @@ const CardWrapper = styled.div`
 `
 
 const MainCardWrapper = styled(CardWrapper)`
-  width: 64%;
+  width: auto;
 `
 
 const SubCardWrapper = styled(CardWrapper)`
-  width: 32%
+  width: 300px;
 `
 
 const PadTitle = styled.div`
@@ -187,13 +184,19 @@ const TokenAddressContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 24px;
-  margin-top: 64px;
+  margin-top: 30px;
+`
+
+const AddressFlex = styled(Flex)`
+  padding-bottom: 10px;
+  border-bottom: 1px solid #31314E;
 `
 
 const AddressWrapper = styled.div`
   display: flex;
   width: 100%;
   justify-content: center;
+  align-items: center;
   flex-wrap: wrap;
   gap: 4px;
   flex-direction: row;
@@ -211,40 +214,49 @@ const AddressWrapper = styled.div`
 
 const AddressSendError = styled.div`
   margin-top: -8px;
-  color: #D91A00;
-  font-weight: 500;
-  font-size: 14px;
-  text-align: center;
+  font-style: italic;
+  font-weight: normal;
+  font-size: 11px;
+  line-height: 16px;
+  letter-spacing: 0.15em;
+  color: #E93F33;
+  text-align: left;
 `
 
 const CustomContract = styled.div`
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
+  align-items: center;
   gap: 10px;
   div:last-child {
     text-align: center;
     font-weight: 600;
-    font-size: 12px;
+    font-size: 14px;
+    color: #A7A7CC;
   }
 `
 
 const WhitelistCard = styled.div`
   display: flex;
-  background: ${({ theme }) => theme.isDark ? "rgba(0, 0, 0, 0.4)" : "rgb(32 35 78)"};
-  box-shadow: 0px 2px 12px rgba(37, 51, 66, 0.15);
-  border-radius: 8px;
+  align-items: center;
   flex-direction: column;
   justify-content: center;
-  padding: 12px;
-  div:nth-child(1) {
-    text-align: center;
-    color: #31B902;
-    font-weight: 500;
-  }
-  div:nth-child(2) {
-    text-align: center;
-    font-weight: 500;
-  }
+  border: 1px solid #5E2B60;
+  box-sizing: border-box;
+  border-radius: 5px;
+  width: 49%;
+  padding: 25px;
+`
+
+const WhitelistTitle = styled(Text)`
+  font-weight: 600;
+  font-size: 20px;
+`
+
+const WhitelistSubText = styled(Text)`
+  font-weight: 600;
+  font-size: 15px;
+  color: #A7A7CC;
 `
 
 const WalletAddressError = styled.div`
@@ -258,8 +270,8 @@ const WalletAddressError = styled.div`
   div:last-child {
       text-align: center;
       font-weight: 600;
-      font-size: 16px;
-      color: #D91A00;
+      font-size: 12px;
+      color: #A7A7CC;
   }
 `
 
@@ -509,7 +521,7 @@ const PresaleLive: React.FC = () => {
               <Text fontSize='12px' textAlign='left' color='#A7A7CC'>$SHIVA is a new reflection protocol on the Binance Smart Chain with a deflationary burn mechanism that offers reflections to holders with 0% buy and sell tax.</Text>
             </TokenDescription>
             <TokenAddressContainer>
-              <Flex>
+              <AddressFlex>
                 <AddressWrapper>
                   <Text color='#A7A7CC' bold>Presale Address:</Text>
                   <Text>0xB90B5CFE959c1a663da15BC21F1b4bfE5B83C706</Text>
@@ -518,59 +530,64 @@ const PresaleLive: React.FC = () => {
                   <Text color='#A7A7CC' bold>Token Address:</Text>
                   <Text>0xE44a3670D9691C8F7caF197123fEF5095cF956Eb</Text>
                 </AddressWrapper>
-              </Flex>
+              </AddressFlex>
               <AddressSendError>Do not send BNB to the token address!</AddressSendError>
               <CustomContract>
-                <img src={NuclearIcon} alt="nuclear icon" />
+                <SettingIcon />
                 <Text>Custom Contract</Text>
               </CustomContract>
             </TokenAddressContainer>
             <Separate />
-            <WhitelistCard>
-              <Text mb="16px">Whitelist Enabled Sale</Text>
-              <Text mb="28px">Only Whitelisted Wallets can Purchase This Token!</Text>
-              <WalletAddressError>
-                <img src={WarningIcon} alt="nuclear icon" />
-                <Text>Your wallet address is not whitelisted</Text>
-              </WalletAddressError>
-            </WhitelistCard>
+            <FlexWrapper>
+              <WhitelistCard>
+                <WhitelistTitle mb="16px">Whitelist Enabled Sale</WhitelistTitle>
+                <WhitelistSubText mb="28px">Only Whitelisted Wallets can Purchase This Token!</WhitelistSubText>
+                <WalletAddressError>
+                  <img src={WarningIcon} alt="nuclear icon" />
+                  <Text>Your wallet address is not whitelisted</Text>
+                </WalletAddressError>
+              </WhitelistCard>
+              <WhitelistCard>
+                {claimToken ? (
+                  <>
+                    <WhitelistTitle textAlign="center" color="#37AEE2" fontSize="16px" fontWeight="500">Raised: 270.5/300</WhitelistTitle>
+                    <LinearProgressBar>
+                      <Line percent={86} strokeWidth={1} strokeColor="#70D4FB" />
+                    </LinearProgressBar>
+                    <TokenRateView>
+                      <Text fontSize="16px" fontWeight="600" color="#616161" textAlign="center">1 BNB = 250000000 SHIVA</Text>
+                    </TokenRateView>
+                    <Text fontSize="12px" fontWeight="600">Tokens you will get</Text>
+                    <Button style={{ borderRadius: "8px" }} onClick={handleComponent}>Contribute</Button>
+                    <Text fontSize="12px" fontWeight="600">Sale ends in: 06:23:49:16</Text>
+                  </>
+                ) : (
+                  <>
+                    <Text textAlign="center" fontSize="12px" fontWeight="500">This presale has ended. Go back to the dashboard to view others!</Text>
+                    <Button style={{ backgroundColor: "#6941C6", borderRadius: "8px" }} mt="16px">Trade on PancakeSwap</Button>
+                    <Button style={{ backgroundColor: "#8B2A9B", borderRadius: "8px" }} mt="16px">Trade on SphynxSwap</Button>
+                    <Text textAlign="center" fontSize="12px" fontWeight="500" mt="16px">If you participated in the presale click the claim button below to claim your tokens!</Text>
+                    <Button style={{ backgroundColor: "#31B902", borderRadius: "8px" }} mt="16px" mb="16px" onClick={handleComponent}>Claim Token</Button>
+                  </>
+                )}
+
+                <AmountWrapper>
+                  <TokenAmountView>
+                    <Text fontSize="12px" fontWeight="normal">Your Contributed Account</Text>
+                    <Text fontSize="12px" fontWeight="600" textAlign="center">1BNB</Text>
+                  </TokenAmountView>
+                  <TokenAmountView>
+                    <Text fontSize="12px" fontWeight="normal">Your Reserved Tokens</Text>
+                    <Text fontSize="12px" fontWeight="600" textAlign="center">250000000 SHIVA</Text>
+                  </TokenAmountView>
+                </AmountWrapper>
+                <Separate />
+                <Button style={{ borderRadius: "8px", fontSize: "14px", background: "rgba(139, 42, 155, 0.2)" }}>Emergency Withdraw</Button>
+              </WhitelistCard>
+            </FlexWrapper>
+
             <Separate />
             <ContributeWrapper>
-              {claimToken ? (
-                <>
-                  <Text textAlign="center" color="#37AEE2" fontSize="16px" fontWeight="500">Raised: 270.5/300</Text>
-                  <LinearProgressBar>
-                    <Line percent={86} strokeWidth={1} strokeColor="#70D4FB" />
-                  </LinearProgressBar>
-                  <TokenRateView>
-                    <Text fontSize="16px" fontWeight="600" color="#616161" textAlign="center">1 BNB = 250000000 SHIVA</Text>
-                  </TokenRateView>
-                  <Text fontSize="12px" fontWeight="600">Tokens you will get</Text>
-                  <Button style={{ borderRadius: "8px" }} onClick={handleComponent}>Contribute</Button>
-                  <Text fontSize="12px" fontWeight="600">Sale ends in: 06:23:49:16</Text>
-                </>
-              ) : (
-                <>
-                  <Text textAlign="center" fontSize="12px" fontWeight="500">This presale has ended. Go back to the dashboard to view others!</Text>
-                  <Button style={{ backgroundColor: "#6941C6", borderRadius: "8px" }} mt="16px">Trade on PancakeSwap</Button>
-                  <Button style={{ backgroundColor: "#8B2A9B", borderRadius: "8px" }} mt="16px">Trade on SphynxSwap</Button>
-                  <Text textAlign="center" fontSize="12px" fontWeight="500" mt="16px">If you participated in the presale click the claim button below to claim your tokens!</Text>
-                  <Button style={{ backgroundColor: "#31B902", borderRadius: "8px" }} mt="16px" mb="16px" onClick={handleComponent}>Claim Token</Button>
-                </>
-              )}
-
-              <AmountWrapper>
-                <TokenAmountView>
-                  <Text fontSize="12px" fontWeight="normal">Your Contributed Account</Text>
-                  <Text fontSize="12px" fontWeight="600" textAlign="center">1BNB</Text>
-                </TokenAmountView>
-                <TokenAmountView>
-                  <Text fontSize="12px" fontWeight="normal">Your Reserved Tokens</Text>
-                  <Text fontSize="12px" fontWeight="600" textAlign="center">250000000 SHIVA</Text>
-                </TokenAmountView>
-              </AmountWrapper>
-              <Separate />
-              <Button style={{ borderRadius: "8px", fontSize: "14px", background: "rgba(139, 42, 155, 0.2)" }}>Emergency Withdraw</Button>
               <Separate />
               <Separate />
               <PresaleDataContainer>
