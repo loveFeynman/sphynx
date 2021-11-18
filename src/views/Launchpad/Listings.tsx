@@ -142,12 +142,6 @@ const Presale: React.FC = () => {
             <span>Lorem ipsum dolor sit amet, consectetur adipiscing elit</span>
           </Title>
         </TitleWrapper>
-        <NetworkButtonWrapper>
-          <Button>
-            <img src={BinanceFilledIcon} alt="binanceFilledIcon" />
-            BSC Network
-          </Button>
-        </NetworkButtonWrapper>
       </HeaderWrapper>
       <SearchPannel />
       <TokenListContainder toggled={menuToggled}>
