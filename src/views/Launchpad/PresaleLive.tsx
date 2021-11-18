@@ -5,14 +5,17 @@ import { useTranslation } from 'contexts/Localization'
 import { useMenuToggle } from 'state/application/hooks'
 import { ReactComponent as MainLogo } from 'assets/svg/icon/WarningIcon.svg'
 import { ReactComponent as WarningIcon2 } from 'assets/svg/icon/WarningIcon2.svg'
+import { ReactComponent as SettingIcon } from 'assets/svg/icon/SettingIcon.svg'
+import { ReactComponent as StopwatchIcon } from 'assets/svg/icon/StopwatchIcon1.svg'
+import { ReactComponent as LightIcon } from 'assets/svg/icon/LightIcon.svg'
 import ShivaLogo from 'assets/images/ShiaToken.png'
 import LikeIcon from 'assets/images/LikeIcon.png'
 import DislikeIcon from 'assets/images/DislikeIcon.png'
 import HillariousIcon from 'assets/images/HillariousIcon.png'
-import { ReactComponent as SettingIcon } from 'assets/svg/icon/SettingIcon.svg'
 import WarningIcon from 'assets/images/WarningIcon.png'
 import { Line } from 'rc-progress';
 import { SwapTabs, SwapTabList, SwapTab, SwapTabPanel } from 'components/Tab/tab'
+import SearchPannel from './components/SearchPannel'
 
 const Wrapper = styled.div`
   display: flex;
@@ -89,20 +92,7 @@ const MainCardWrapper = styled(CardWrapper)`
 
 const SubCardWrapper = styled(CardWrapper)`
   width: 300px;
-`
-
-const PadTitle = styled.div`
-    max-width: 264px;
-    width: 100%;
-  ${({ theme }) => theme.mediaQueries.md} {
-    max-width: 240px;
-  }
-`
-
-const PadText = styled.div`
-  font-size: 22px;
-  font-weight: 500;
-  margin-top: 52px;
+  padding: 30px;
 `
 
 const DefiFlex = styled(Flex)`
@@ -149,6 +139,13 @@ const WarningSubTitle = styled(Text)`
 
 const Separate = styled.div`
   margin-top: 30px;
+`
+
+const UnderLine = styled.div`
+  width: 100%;
+  opacity: 0.1;
+  border-bottom: 1px solid #FFFFFF;
+  margin: 10px 0;
 `
 
 const TokenContainer = styled.div`
@@ -246,11 +243,13 @@ const WhitelistCard = styled.div`
   border-radius: 5px;
   width: 49%;
   padding: 25px;
+  position: relative;
 `
 
 const WhitelistTitle = styled(Text)`
   font-weight: 600;
   font-size: 20px;
+  margin-bottom: 20px;
 `
 
 const WhitelistSubText = styled(Text)`
@@ -262,7 +261,9 @@ const WhitelistSubText = styled(Text)`
 const WalletAddressError = styled.div`
   display: flex;
   justify-content: center;
+  position: absolute;
   gap: 10px;
+  bottom: 30px;
   img {
     width: 20px;
     height: 20px;
@@ -276,102 +277,135 @@ const WalletAddressError = styled.div`
 `
 
 const ContributeWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  gap: 16px;
+  width: 100%;
+  border: 1px solid #5E2B60;
+  border-radius: 5px;
 `
 
 const LinearProgressBar = styled.div`
-  max-width: 355px;
   width: 100%;
+  margin-bottom: 20px;
 `
 
 const TokenRateView = styled.div`
-  border: 1px solid #8B2A9B;
-  border-radius: 10px;
-  padding: 12px 12px;
-  max-width: 355px;
+  width: 100%;
+  margin-bottom: 20px;
+`
+
+const ContributeFlex = styled(Flex)`
+  width: 100%;
+  justify-content: space-between;
+  margin-bottom: 20px;
+`
+
+const InputWrapper = styled.div`
+  padding: 0 10px;
+  border: 1px solid #595989;
+  box-sizing: border-box;
+  border-radius: 5px;
+  justify-content: center;
+  display: flex;
+  width: 50%;
+  & input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    outline: none;
+    color: #A7A7CC;
+    font-size: 13px;
+    &::placeholder {
+      color: #A7A7CC;
+    }
+  }
+`
+
+const ColorButton = styled(Button)`
+  border-radius: 5px;
+  border: none;
+  height: 34px;
+  font-size: 13px;
+  background: linear-gradient(90deg,#610D89 0%,#C42BB4 100%);
+  outline: none;
+  color: white;
+  width: 156px;
+`
+
+const DarkButton = styled(Button)`
+  border-radius: 5px;
+  border: none;
+  height: 34px;
+  font-size: 13px;
+  background: ${({ theme }) => theme.isDark ? '#0E0E26' : '#191C41'};
+  outline: none;
+  color: white;
   width: 100%;
 `
 
-const AmountWrapper = styled.div`
-  display: flex;
-  gap: 24px;
-  flex-wrap: wrap;
-  justify-content: center;
-`
-
 const TokenAmountView = styled.div`
-  border: 1px solid #8B2A9B;
-  border-radius: 10px;
-  padding: 9px 34px;
-`
-
-const PresaleDataContainer = styled.div`
   display: flex;
-  flex-direction: column;
-  gap: 16px;
+  width: 100%;
+  justify-content: space-between;
 `
 
 const DataItem = styled.div`
   display: flex;
-  gap: 32px;
   justify-content: center;
-  ${({ theme }) => theme.mediaQueries.lg} {
-    gap: 64px;
-  }
   div:first-child {
     flex: 1;
-    text-align: end;
+    padding: 5px 20px;
+    text-align: start;
     font-size: 12px;
-    font-weight: 500;
-    ${({ theme }) => theme.mediaQueries.lg} {
-      font-size: 17px;
-    }
+    color: #A7A7CC;
+    font-style: normal;
+    font-weight: 600;
+    border-bottom: 1px solid #5E2B60;
+    border-right: 1px solid #5E2B60;
   }
   div:last-child {
     flex: 1;
+    padding: 5px 20px;
     text-align: start;
     font-size: 12px;
-    font-weight: 500;
-    ${({ theme }) => theme.mediaQueries.lg} {
-      font-size: 17px;
-    }
+    color: #F2C94C;
+    font-style: normal;
+    font-weight: 600;
+    border-bottom: 1px solid #5E2B60;
   }
-`
-
-const CardTitle = styled.div`
-  font-weight: bold;
-  font-size: 18px;
-  text-align: center;
 `
 
 const ItemContainer = styled.div`
   display: flex;
-  margin: 40px 0 20px;
   flex-direction: column;
-  gap: 10px;
+  width: 100%;
 `
 
 const ItemWrapper = styled.div`
   display: flex;
-  justify-content: space-between;
-  gap: 10px;
+  justify-content: space-around;
+  width: 100%;
 `
 
 const ThinkItem = styled.div`
-  background: ${({ theme }) => theme.isDark ? "rgba(0, 0, 0, 0.8)" : "rgb(32 35 78)"};
-  box-shadow: 0px 2px 12px rgba(37, 51, 66, 0.15);
-  border-radius: 8px;
+  border: 1px solid #5E2B60;
+  box-sizing: border-box;
+  border-radius: 11px;
   display: flex;
-  flex-wrap: wrap;
   height: fit-content;
   padding: 10px;
-  gap: 10px;
+  flex-direction: column;
+  width: 40%;
+  align-items: center;
+  margin: 9px 9px;
   img {
     width: 25px;
     height: 25px;
+  }
+  div {
+    margin-top: 5px;
+    font-weight: 500;
+    font-size: 12px;
+    color: #A7A7CC;
   }
 `
 
@@ -391,62 +425,61 @@ const ThinkCardWrapper = styled.div`
   align-items: center;
 `
 
-
 const PRESALE_DATA = [
   {
-    presaleItem: "Sale ID",
+    presaleItem: "Sale ID:",
     presaleValue: "671",
   },
   {
-    presaleItem: "Total Supply",
+    presaleItem: "Total Supply:",
     presaleValue: "9,195,981.563 SHIVA",
   },
   {
-    presaleItem: "Tokens For Presale",
+    presaleItem: "Tokens For Presale:",
     presaleValue: "4,600,000 SHIVA",
   },
   {
-    presaleItem: "Tokens For Liquidity",
+    presaleItem: "Tokens For Liquidity:",
     presaleValue: "3,220,000 SHIVA",
   },
   {
-    presaleItem: "Soft Cap",
+    presaleItem: "Soft Cap:",
     presaleValue: "100 BNB",
   },
   {
-    presaleItem: "Hard Cap",
+    presaleItem: "Hard Cap:",
     presaleValue: "200 BNB",
   },
   {
-    presaleItem: "Presale Rate",
+    presaleItem: "Presale Rate:",
     presaleValue: "23,000 BZAP per BNB",
   },
   {
-    presaleItem: "PancakeSwap Listing Rate",
+    presaleItem: "PancakeSwap Listing Rate:",
     presaleValue: "23,000 BZAP per BNB",
   },
   {
-    presaleItem: "PancakeSwap Liquidity",
+    presaleItem: "PancakeSwap Liquidity:",
     presaleValue: "70%",
   },
   {
-    presaleItem: "Minimum Contribution",
+    presaleItem: "Minimum Contribution:",
     presaleValue: "0.1 BNB",
   },
   {
-    presaleItem: "Maximum Contribution",
+    presaleItem: "Maximum Contribution:",
     presaleValue: "1 BNB",
   },
   {
-    presaleItem: "Presale Start Time",
+    presaleItem: "Presale Start Time:",
     presaleValue: "30 Sep 2021 at 22:30",
   },
   {
-    presaleItem: "Presale End Time",
+    presaleItem: "Presale End Time:",
     presaleValue: "1 Oct 2021 at 00:30",
   },
   {
-    presaleItem: "Liquidity Unlock",
+    presaleItem: "Liquidity Unlock:",
     presaleValue: "30 Sep 2022 at 22:30",
   },
 ]
@@ -456,8 +489,8 @@ const PresaleLive: React.FC = () => {
   const { menuToggled } = useMenuToggle()
   const [claimToken, setClaimToken] = useState(true)
 
-  const handleChangeQuery = (e) => {
-    console.log(e)
+  const handlerChange = (e: any) => {
+    console.log(e.target.value)
   }
 
   const handleComponent = () => {
@@ -548,19 +581,31 @@ const PresaleLive: React.FC = () => {
                 </WalletAddressError>
               </WhitelistCard>
               <WhitelistCard>
-                {claimToken ? (
-                  <>
-                    <WhitelistTitle textAlign="center" color="#37AEE2" fontSize="16px" fontWeight="500">Raised: 270.5/300</WhitelistTitle>
-                    <LinearProgressBar>
-                      <Line percent={86} strokeWidth={1} strokeColor="#70D4FB" />
-                    </LinearProgressBar>
-                    <TokenRateView>
-                      <Text fontSize="16px" fontWeight="600" color="#616161" textAlign="center">1 BNB = 250000000 SHIVA</Text>
-                    </TokenRateView>
-                    <Text fontSize="12px" fontWeight="600">Tokens you will get</Text>
-                    <Button style={{ borderRadius: "8px" }} onClick={handleComponent}>Contribute</Button>
-                    <Text fontSize="12px" fontWeight="600">Sale ends in: 06:23:49:16</Text>
-                  </>
+                {/* {claimToken ? (
+                  <> */}
+                <WhitelistTitle>Raised: 270.5/300</WhitelistTitle>
+                <LinearProgressBar>
+                  <Line percent={50} strokeWidth={3} strokeColor="#C42BB4" />
+                </LinearProgressBar>
+                <TokenRateView>
+                  <Text fontSize="14px" fontWeight="600" color="#777777" textAlign="left">1 BNB = 250000000 SHIVA</Text>
+                </TokenRateView>
+                <ContributeFlex>
+                  <InputWrapper>
+                    <input
+                      placeholder=""
+                      onChange={handlerChange}
+                    />
+                  </InputWrapper>
+                  <ColorButton style={{ borderRadius: "8px" }} onClick={handleComponent}>Contribute</ColorButton>
+                </ContributeFlex>
+                <Flex alignItems="center" style={{ width: '100%' }}>
+                  <StopwatchIcon />
+                  <Text fontSize="13px" fontWeight="600" style={{ margin: '0 10px' }}>Sale ends in: </Text>
+                  <Text fontSize="12px" fontWeight="600" color="#A7A7CC">06:23:49:16</Text>
+                </Flex>
+                <UnderLine />
+                {/* </>
                 ) : (
                   <>
                     <Text textAlign="center" fontSize="12px" fontWeight="500">This presale has ended. Go back to the dashboard to view others!</Text>
@@ -569,65 +614,60 @@ const PresaleLive: React.FC = () => {
                     <Text textAlign="center" fontSize="12px" fontWeight="500" mt="16px">If you participated in the presale click the claim button below to claim your tokens!</Text>
                     <Button style={{ backgroundColor: "#31B902", borderRadius: "8px" }} mt="16px" mb="16px" onClick={handleComponent}>Claim Token</Button>
                   </>
-                )}
+                )} */}
 
-                <AmountWrapper>
-                  <TokenAmountView>
-                    <Text fontSize="12px" fontWeight="normal">Your Contributed Account</Text>
-                    <Text fontSize="12px" fontWeight="600" textAlign="center">1BNB</Text>
-                  </TokenAmountView>
-                  <TokenAmountView>
-                    <Text fontSize="12px" fontWeight="normal">Your Reserved Tokens</Text>
-                    <Text fontSize="12px" fontWeight="600" textAlign="center">250000000 SHIVA</Text>
-                  </TokenAmountView>
-                </AmountWrapper>
+                <TokenAmountView>
+                  <Text fontSize="12px" fontWeight="600" color="#A7A7CC">Your Contributed Account:</Text>
+                  <Text fontSize="12px" fontWeight="600" textAlign="center" color="#F2C94C">1BNB</Text>
+                </TokenAmountView>
+                <UnderLine />
+                <TokenAmountView>
+                  <Text fontSize="12px" fontWeight="600" color="#A7A7CC">Your Reserved Tokens:</Text>
+                  <Text fontSize="12px" fontWeight="600" textAlign="center" color="#F2C94C">250000000 SHIVA</Text>
+                </TokenAmountView>
                 <Separate />
-                <Button style={{ borderRadius: "8px", fontSize: "14px", background: "rgba(139, 42, 155, 0.2)" }}>Emergency Withdraw</Button>
+                <DarkButton>Emergency Withdraw</DarkButton>
               </WhitelistCard>
             </FlexWrapper>
-
             <Separate />
             <ContributeWrapper>
-              <Separate />
-              <Separate />
-              <PresaleDataContainer>
-                {PRESALE_DATA.map((item) => (
-                  <DataItem>
-                    <Text>{item.presaleItem}</Text>
-                    <Text>{item.presaleValue}</Text>
-                  </DataItem>
-                ))}
-              </PresaleDataContainer>
-              <Separate />
-              <Separate />
+              {PRESALE_DATA.map((item) => (
+                <DataItem>
+                  <Text>{item.presaleItem}</Text>
+                  <Text>{item.presaleValue}</Text>
+                </DataItem>
+              ))}
             </ContributeWrapper>
           </MainCardWrapper>
           <SubCardWrapper>
             <ThinkCardWrapper>
-              <CardTitle>What do you think?</CardTitle>
+              <LightIcon />
+              <WhitelistTitle>What do you think?</WhitelistTitle>
               <ItemContainer>
                 <ItemWrapper>
                   <ThinkItem>
                     <img src={LikeIcon} alt="think icon" />
-                    <Text fontSize="16px" fontWeight="normal">Like</Text>
+                    <Text>Like</Text>
                   </ThinkItem>
                   <ThinkItem>
                     <img src={HillariousIcon} alt="think icon" />
-                    <Text fontSize="16px" fontWeight="normal">Hillarious</Text>
+                    <Text>Hillarious</Text>
                   </ThinkItem>
                 </ItemWrapper>
                 <ItemWrapper>
                   <ThinkItem>
                     <img src={DislikeIcon} alt="think icon" />
-                    <Text fontSize="16px" fontWeight="normal">Dislike</Text>
+                    <Text>Dislike</Text>
                   </ThinkItem>
                   <ThinkItem>
                     <img src={WarningIcon} alt="think icon" />
-                    <Text fontSize="16px" fontWeight="normal">Scam</Text>
+                    <Text>Scam</Text>
                   </ThinkItem>
                 </ItemWrapper>
               </ItemContainer>
-              <SwapTabs
+              <Separate />
+              <ColorButton style={{width: '80%' }}>Join Community</ColorButton>
+              {/* <SwapTabs
                 selectedTabClassName='is-selected'
                 selectedTabPanelClassName='is-selected'
               >
@@ -651,7 +691,7 @@ const PresaleLive: React.FC = () => {
                   <Separate />
                   <Button style={{ backgroundColor: "transparent", borderRadius: "10px", border: "1px solid #8B2A9B" }}>Join the Discussion</Button>
                 </SwapTabPanel>
-              </SwapTabs>
+              </SwapTabs> */}
             </ThinkCardWrapper>
           </SubCardWrapper>
         </TokenPresaleContainder>
