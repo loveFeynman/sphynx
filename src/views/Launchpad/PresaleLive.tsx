@@ -5,7 +5,7 @@ import { useTranslation } from 'contexts/Localization'
 import { useMenuToggle } from 'state/application/hooks'
 import { ReactComponent as MainLogo } from 'assets/svg/icon/WarningIcon.svg'
 import { ReactComponent as WarningIcon2 } from 'assets/svg/icon/WarningIcon2.svg'
-import ShivaLogo from 'assets/images/ShivaTokenIcon.png'
+import ShivaLogo from 'assets/images/ShiaToken.png'
 import LikeIcon from 'assets/images/LikeIcon.png'
 import DislikeIcon from 'assets/images/DislikeIcon.png'
 import HillariousIcon from 'assets/images/HillariousIcon.png'
@@ -63,8 +63,6 @@ const FlexWrapper = styled.div`
 `
 
 const TokenPresaleContainder = styled.div<{ toggled: boolean }>`
-  max-width: 1160px;
-  margin-top: 24px;
   display: flex;
   gap: 20px;
   justiy-content: center;
@@ -75,16 +73,25 @@ const TokenPresaleContainder = styled.div<{ toggled: boolean }>`
   }
 `
 
-const CardWrapper = styled.div<{ wrapperFlex?: string }>`
-  background: ${({ theme }) => (theme.isDark ? "#040413" : "#2A2E60")};
-  border-radius: 8px;
+const CardWrapper = styled.div`
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-sizing: border-box;
+  border-radius: 10px;
+  background: ${({ theme }) => (theme.isDark ? "#1A1A3A" : "#2A2E60")};
   min-width: 237px;
-  flex: ${(props) => (props.wrapperFlex ?? 'unset')};
   height: fit-content;
   padding: 24px 34px;
   ${({ theme }) => theme.mediaQueries.lg} {
     padding: 24px;
   }
+`
+
+const MainCardWrapper = styled(CardWrapper)`
+  width: 64%;
+`
+
+const SubCardWrapper = styled(CardWrapper)`
+  width: 32%
 `
 
 const PadTitle = styled.div`
@@ -101,11 +108,46 @@ const PadText = styled.div`
   margin-top: 52px;
 `
 
+const DefiFlex = styled(Flex)`
+  width: 57%;
+  flex-direction: column;
+  background: #E93F33;
+  border: 1px solid #5E2B60;
+  border-radius: 5px;
+  padding: 17px;
+`
+
+const SoftFlex = styled(Flex)`
+  width: 19%;
+  flex-direction: column;
+  background: #E97F33;
+  border: 1px solid #5E2B60;
+  border-radius: 5px;
+  padding: 17px;
+`
+
+const LiquidityFlex = styled(Flex)`
+  width: 19%;
+  flex-direction: column;
+  background: #FFB800;
+  border: 1px solid #5E2B60;
+  border-radius: 5px;
+  padding: 17px;
+`
+
 const WarningTitle = styled.div`
-  font-size: 22px;
+  font-size: 15px;
   font-weight: 600;
-  color: #D91A00;
+  color: white;
   padding-bottom: 4px;
+  text-align: left;
+  font-weight: 600;
+`
+
+const WarningSubTitle = styled(Text)`
+  font-size: 12px;
+  text-align: left;
+  font-weight: 500;
 `
 
 const Separate = styled.div`
@@ -115,17 +157,20 @@ const Separate = styled.div`
 const TokenContainer = styled.div`
   display: flex;
   width: 100%;
+  align-items: center;
   gap: 16px;
 `
 
 const TokenSymbol = styled.div`
-  font-weight: bold;
-  font-size: 18px;
+  font-weight: 600;
+  font-size: 22px;
+  text-align: left;
 `
 
 const TokenName = styled.div`
-  font-weight: normal;
-  font-size: 16px;
+  font-weight: 600;
+  font-size: 14px;
+  color: #A7A7CC;
 `
 
 const TokenSymbolWrapper = styled.div`
@@ -135,7 +180,7 @@ const TokenSymbolWrapper = styled.div`
 `
 
 const TokenDescription = styled.div`
-  margin-top: 45px;
+  margin-top: 25px;
 `
 
 const TokenAddressContainer = styled.div`
@@ -151,10 +196,11 @@ const AddressWrapper = styled.div`
   justify-content: center;
   flex-wrap: wrap;
   gap: 4px;
+  flex-direction: row;
   div:last-child {
-    color: #70D4FB;
-    text-decoration: underline;
+    color: #F2C94C;
     font-size: 12px;
+    font-weight: 600;
   }
   ${({ theme }) => theme.mediaQueries.lg} {
     div {
@@ -321,6 +367,10 @@ const TokenPresaleBody = styled.div`
   width: 100%;
   display: flex;
   justify-content: center;
+  background: ${({ theme }) => theme.isDark ? "#0E0E26" : "#191C41"};
+  padding: 23px 28px;
+  border-radius: 5px;
+  margin-top: 30px;
 `
 
 const ThinkCardWrapper = styled.div`
@@ -431,30 +481,23 @@ const PresaleLive: React.FC = () => {
           </Flex>
         </Flex>
       </PageHeader>
-      {/* <FlexWrapper style={{ marginTop: '32px' }}>
-        
-      </FlexWrapper> */}
+      <FlexWrapper style={{ marginTop: '32px' }}>
+        <DefiFlex>
+          <WarningTitle>DeFi Zone Warning</WarningTitle>
+          <WarningSubTitle style={{ opacity: '0.8' }}>This sale is listed in the DeFi Zone. Presales in this area use custom contracts that are not vetted by the DxSale team. Developers of tokens in this area can block transfers, can stop users from claiming tokens, can stop trading on exchanges and requires extra vetting. Participate at your own risk!</WarningSubTitle>
+        </DefiFlex>
+        <SoftFlex>
+          <WarningTitle>Soft Cap Warning</WarningTitle>
+          <WarningSubTitle style={{ opacity: '0.8' }}>The softcap of this sale is very low.</WarningSubTitle>
+        </SoftFlex>
+        <LiquidityFlex>
+          <WarningTitle style={{ opacity: '0.8', color: '#1A1A3A' }}>Liquidity Percentage Warning</WarningTitle>
+          <WarningSubTitle color='#1A1A3A' style={{ opacity: '0.7' }}>This sale has a very low liquidity percentage.</WarningSubTitle>
+        </LiquidityFlex>
+      </FlexWrapper>
       <TokenPresaleBody>
         <TokenPresaleContainder toggled={menuToggled}>
-          <CardWrapper wrapperFlex="2">
-            <PadTitle>
-              <Text fontSize="22px" lineHeight="24px" fontWeight="700" pb="6px">SphynxSale Automated Warning System</Text>
-            </PadTitle>
-            <PadText>
-              3 Warnings Detected
-            </PadText>
-            <Separate />
-            <WarningTitle>DeFi Zone Warning</WarningTitle>
-            <p>This sale is listed in the Defi Zone. Presales in this area use custom contracts that are not vetted by the DxSale team. Developers of tokens in this area can block transfers, can stop users from claiming tokens, can stop trading on exchanges and requires extra vetting. Participate at your own risk!</p>
-            <p>(You could lose your funds)</p>
-            <Separate />
-            <WarningTitle>Soft Cap Warning</WarningTitle>
-            <p>The softcap of this sale is very low.</p>
-            <Separate />
-            <WarningTitle>Soft Cap Warning</WarningTitle>
-            <p>This sale has a very low liquidity percentage.</p>
-          </CardWrapper>
-          <CardWrapper wrapperFlex="3">
+          <MainCardWrapper>
             <TokenContainer>
               <img src={ShivaLogo} width="64px" height="64px" alt="token icon" />
               <TokenSymbolWrapper>
@@ -463,17 +506,19 @@ const PresaleLive: React.FC = () => {
               </TokenSymbolWrapper>
             </TokenContainer>
             <TokenDescription>
-              <p style={{ fontSize: "14px" }}>$SHIVA is a new reflection protocol on the Binance Smart Chain with a deflationary burn mechanism that offers reflections to holders with 0% buy and sell tax.</p>
+              <Text fontSize='12px' textAlign='left' color='#A7A7CC'>$SHIVA is a new reflection protocol on the Binance Smart Chain with a deflationary burn mechanism that offers reflections to holders with 0% buy and sell tax.</Text>
             </TokenDescription>
             <TokenAddressContainer>
-              <AddressWrapper>
-                <Text>Presale Address:</Text>
-                <Text>0xB90B5CFE959c1a663da15BC21F1b4bfE5B83C706</Text>
-              </AddressWrapper>
-              <AddressWrapper>
-                <Text>Token Address:</Text>
-                <Text>0xE44a3670D9691C8F7caF197123fEF5095cF956Eb</Text>
-              </AddressWrapper>
+              <Flex>
+                <AddressWrapper>
+                  <Text color='#A7A7CC' bold>Presale Address:</Text>
+                  <Text>0xB90B5CFE959c1a663da15BC21F1b4bfE5B83C706</Text>
+                </AddressWrapper>
+                <AddressWrapper>
+                  <Text color='#A7A7CC' bold>Token Address:</Text>
+                  <Text>0xE44a3670D9691C8F7caF197123fEF5095cF956Eb</Text>
+                </AddressWrapper>
+              </Flex>
               <AddressSendError>Do not send BNB to the token address!</AddressSendError>
               <CustomContract>
                 <img src={NuclearIcon} alt="nuclear icon" />
@@ -539,8 +584,8 @@ const PresaleLive: React.FC = () => {
               <Separate />
               <Separate />
             </ContributeWrapper>
-          </CardWrapper>
-          <CardWrapper wrapperFlex="1.5">
+          </MainCardWrapper>
+          <SubCardWrapper>
             <ThinkCardWrapper>
               <CardTitle>What do you think?</CardTitle>
               <ItemContainer>
@@ -591,7 +636,7 @@ const PresaleLive: React.FC = () => {
                 </SwapTabPanel>
               </SwapTabs>
             </ThinkCardWrapper>
-          </CardWrapper>
+          </SubCardWrapper>
         </TokenPresaleContainder>
       </TokenPresaleBody>
     </Wrapper>
