@@ -1,7 +1,5 @@
 import React from 'react'
-import Select from 'components/Select/Select'
-import { Button, Text } from '@sphynxswap/uikit'
-import SearchInput from 'components/SearchInput'
+import Pagination from '@material-ui/lab/Pagination';
 import { useTranslation } from 'contexts/Localization'
 import MainLogo from 'assets/svg/icon/logo_new.svg'
 import ShivaLogo from 'assets/images/ShivaTokenIcon.png'
@@ -10,39 +8,18 @@ import LamboIcon from 'assets/images/LamboIcon.png'
 import AfiIcon from 'assets/images/AFIIcon.png'
 import GalabetIcon from 'assets/images/GalabetIcon.png'
 import ListIcon from 'assets/svg/icon/ListIcon.svg'
-import BinanceFilledIcon from 'assets/svg/icon/BinanceFilledIcon.svg'
 import { useMenuToggle } from 'state/application/hooks'
 import TokenCard from './components/TokenCard'
-import Pagenation from './components/Pagenation'
 import SearchPannel from './components/SearchPannel'
 import {
   Wrapper, 
   HeaderWrapper,
   TitleWrapper,
   Title,
-  LogoTitle, 
-  NetworkButtonWrapper, 
-  InputWrapper, 
-  SelectWrapper, 
-  FilterContainer, 
-  LoadMoreWrapper, 
-  TokenListContainder
+  LogoTitle,
+  TokenListContainder, 
+  PaginationWrapper
 } from './ListingsStyles'
-
-const SORTBY_OPTIONS = [
-  {
-    label: 'All',
-    value: 'all',
-  },
-  {
-    label: 'First',
-    value: 'first',
-  },
-  {
-    label: 'Second',
-    value: 'second',
-  },
-]
 
 const TOKEN_DATA = [
   {
@@ -128,10 +105,6 @@ const Presale: React.FC = () => {
   const { t } = useTranslation()
   const { menuToggled } = useMenuToggle()
 
-  const handleChangeQuery = (e) => {
-    console.log(e)
-  }
-
   return (
     <Wrapper>
       <HeaderWrapper>
@@ -161,10 +134,12 @@ const Presale: React.FC = () => {
           </TokenCard>
         ))}
       </TokenListContainder>
-      <LoadMoreWrapper>
-        <Button>Load More</Button>
-      </LoadMoreWrapper>
-      <Pagenation pageCount="10" />
+      <PaginationWrapper>
+        <Pagination 
+          count={5} 
+          siblingCount={0} 
+        />
+      </PaginationWrapper>
     </Wrapper>
   )
 }

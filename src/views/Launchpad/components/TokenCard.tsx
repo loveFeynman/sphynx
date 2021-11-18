@@ -94,19 +94,11 @@ const Progress = styled.div<{state}>`
     background: linear-gradient(90deg, #610D89 0%, #C42BB4 100%);
     border-radius: 8px 0px 0px 8px;
     padding: 1px;
-`
-
-const ProgressText = styled.div`
+    display: flex;
+    justify-content: center;
     font-size: 9px;
     font-weight: bold;
-    top: 0;
-    bottom: 0;
-    right: 0;
-    left: 0;
-    margin: auto;
-    width: fit-content;
-    height: fit-content;
-    position: absolute;
+
 `
 
 const SaleInfo = styled.div`
@@ -190,10 +182,9 @@ const TokenCard: React.FC<ImgCardProps> = ({ tokenSymbole, tokenName, tokenLogo,
                 </ActiveSaleText>
                 <ProgressBarWrapper>
                     <ProgressBar>
-                        <Progress state={activeSale}/>
-                        <ProgressText>
+                        <Progress state={activeSale}>
                             {activeSale}%
-                        </ProgressText>
+                        </Progress>
                     </ProgressBar>
                 </ProgressBarWrapper>
                 <SaleInfoWrapper>
