@@ -203,7 +203,7 @@ const HowToPlay: React.FC = () => {
     {
       label: t('Step %number%', { number: 2 }),
       title: t('Wait for the Draw'),
-      subtitle: t('There is one draw every day: one every 24 hours. First draw will be drawn on Monday, 4th of October 3AM UTC.'),
+      subtitle: t('There is one draw every day: one every 24 hours. First draw will be drawn on Monday, 24th of November 3AM UTC.'),
       img: LotteryStep2,
     },
     {

@@ -1,6 +1,8 @@
 import React, { useCallback, useState } from 'react'
 import styled from 'styled-components'
-import { RouterType } from '@sphynxswap/sdk'
+import { AppState } from 'state'
+import { autoSlippage } from 'state/flags/actions'
+import { useDispatch, useSelector } from 'react-redux'
 import {
   Text,
   Flex,
@@ -14,7 +16,7 @@ import {
 } from '@sphynxswap/uikit'
 import SettingsModal from 'components/Menu/GlobalSettings/SettingsModal'
 import { useTranslation } from 'contexts/Localization'
-import { useSwapType, useSetRouterType } from 'state/application/hooks'
+import { useSwapType } from 'state/application/hooks'
 import { useExpertModeManager } from 'state/user/hooks'
 import Transactions from './Transactions'
 import QuestionHelper from '../QuestionHelper'
@@ -54,7 +56,7 @@ const AutoButton = styled(Button)`
   border: 1px solid #B314DA;
   border-radius: 12px;
   &.focused {
-    // box-shadow: 0 0 0 2px #8b2a9b !important;
+    box-shadow: 0 0 0 2px #8b2a9b !important;
   }
 `
 
@@ -62,10 +64,11 @@ const AppHeader: React.FC<Props> = ({ title, subtitle, helper, backTo, showAuto,
   const [expertMode] = useExpertModeManager()
 
   const { setSwapType } = useSwapType()
-  const [autoFocused, setAutoFocused] = useState(true)
+  const autoSlippageFlag = useSelector<AppState, AppState['autoSwapReducer']>((state) => state.autoSwapReducer.autoSlippageFlag)
+  const [autoFocused, setAutoFocused] = useState(autoSlippageFlag)
+  const dispatch = useDispatch()
 
   const { t } = useTranslation()
-  const { setRouterType } = useSetRouterType()
 
   const [onPresentSettingsModal] = useModal(<SettingsModal />)
 
@@ -74,9 +77,9 @@ const AppHeader: React.FC<Props> = ({ title, subtitle, helper, backTo, showAuto,
   }, [backTo, setSwapType])
 
   const handleAutoFocused = useCallback(() => {
-    setAutoFocused(true)
-    setRouterType(RouterType.sphynx)
-  }, [setRouterType])
+    setAutoFocused(!autoFocused)
+    dispatch(autoSlippage({ autoSlippageFlag: !autoFocused }))
+  }, [autoFocused, dispatch])
   
   const handleSettingsModal = useCallback(() => {
     onPresentSettingsModal()

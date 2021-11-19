@@ -3,7 +3,7 @@ import { FarmConfig } from './types'
 
 const farms: FarmConfig[] = [
   /**
-   * These 3 farms (PID 0, 251, 252) should always be at the top of the file.
+   * These 3 farms (PID 0, 1, 2) should always be at the top of the file.
    */
   {
     pid: 0,
@@ -25,16 +25,16 @@ const farms: FarmConfig[] = [
     token: tokens.sphynx,
     quoteToken: tokens.wbnb,
   },
-  // {
-  //   pid: 2,
-  //   lpSymbol: 'BUSD-BNB LP',
-  //   lpAddresses: {
-  //     97: '',
-  //     56: '0xC878c4BD3b58c8E6791301D4Ac10aa88f59707de',
-  //   },
-  //   token: tokens.busd,
-  //   quoteToken: tokens.wbnb,
-  // },
+  {
+    pid: 2,
+    lpSymbol: 'SPHYNX-BUSD LP',
+    lpAddresses: {
+      97: '',
+      56: '0xacd8f104f3467f9549764b1e521678d82fbaeb43',
+    },
+    token: tokens.sphynx,
+    quoteToken: tokens.busd,
+  },
 ]
 
 export default farms

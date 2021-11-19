@@ -1,5 +1,4 @@
 import React from 'react'
-import styled from 'styled-components'
 import Select from 'components/Select/Select'
 import { Button, Text } from '@sphynxswap/uikit'
 import SearchInput from 'components/SearchInput'
@@ -10,9 +9,24 @@ import SnifferIcon from 'assets/images/SnifferIcon.png'
 import LamboIcon from 'assets/images/LamboIcon.png'
 import AfiIcon from 'assets/images/AFIIcon.png'
 import GalabetIcon from 'assets/images/GalabetIcon.png'
+import ListIcon from 'assets/svg/icon/ListIcon.svg'
+import BinanceFilledIcon from 'assets/svg/icon/BinanceFilledIcon.svg'
 import { useMenuToggle } from 'state/application/hooks'
 import TokenCard from './components/TokenCard'
 import Pagenation from './components/Pagenation'
+import {
+  Wrapper, 
+  HeaderWrapper,
+  TitleWrapper,
+  Title,
+  LogoTitle, 
+  NetworkButtonWrapper, 
+  InputWrapper, 
+  SelectWrapper, 
+  FilterContainer, 
+  LoadMoreWrapper, 
+  TokenListContainder
+} from './ListingsStyles'
 
 const SORTBY_OPTIONS = [
   {
@@ -109,123 +123,6 @@ const TOKEN_DATA = [
   },
 ]
 
-const Wrapper = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-flow: column;
-  color: white;
-  margin: 24px 0 40px;
-  text-align: left;
-  .ml16 {
-    margin-left: 16px;
-  }
-  .ml32 {
-    margin-left: 32px;
-  }
-  p {
-    line-height: 24px;
-  }
-  p.w110 {
-    width: 110px;
-  }
-  p.w80 {
-    width: 80px;
-  }
-  ${({ theme }) => theme.mediaQueries.xl} {
-    align-items: flex-start;
-  }
-`
-
-const LogoTitle = styled.h2`
-  font-size: 24px;
-  line-height: 24px;
-  font-weight: 700;
-  ${({ theme }) => theme.mediaQueries.xl} {
-    font-size: 36px;
-    line-height: 42px;
-  }
-`
-
-const InputWrapper = styled.div`
-  > ${Text} {
-    font-size: 12px;
-  }
-  div:last-child {
-    input {
-      border-radius: 8px;
-      border: unset;
-      height: 34px;
-      max-width: 192px;
-      width: 100%;
-      background: ${({ theme }) => (theme.isDark ? '#040413' : '#2A2E60')};
-    }
-  }
-`
-
-const SelectWrapper = styled.div`
-  > ${Text} {
-    font-size: 12px;
-  }
-  div: last-child {
-    background: ${({ theme }) => (theme.isDark ? '#040413' : '#2A2E60')};
-    border-radius: 8px;
-    div {
-      border-radius: 8px;
-      border: unset;
-      background: ${({ theme }) => (theme.isDark ? '#040413' : '#2A2E60')};
-    }
-  }
-`
-
-const FilterContainer = styled.div`
-  display: flex;
-  width: 100%;
-  gap: 16px;
-  padding: 8px 0px;
-  justify-content: flex-end;
-  ${({ theme }) => theme.mediaQueries.xs} {
-    flex-direction: column;
-    align-items: end;
-  }
-  ${({ theme }) => theme.mediaQueries.md} {
-    flex-direction: unset;
-    align-items: center;
-  }
-`
-
-const LoadMoreWrapper = styled.div`
-  margin-top: 48px;
-  display: flex;
-  width: 100%;
-  justify-content: center;
-`
-
-const TokenListContainder = styled.div<{ toggled: boolean }>`
-  margin-top: 24px;
-  display: grid;
-  grid-gap: 20px;
-  width: 100%;
-  ${({ theme }) => theme.mediaQueries.xs} {
-    grid-template-columns: repeat(1, 1fr);
-  }
-  ${({ theme }) => theme.mediaQueries.md} {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  ${({ theme }) => theme.mediaQueries.lg} {
-    grid-template-columns: repeat(3, 1fr);
-  }
-  ${({ theme }) => theme.mediaQueries.xl} {
-    grid-template-columns: repeat(${(props) => (props.toggled ? '3' : '2')}, 1fr);
-  }
-  @media screen and (min-width: 1320px) {
-    grid-template-columns: repeat(${(props) => (props.toggled ? '4' : '3')}, 1fr);
-  }
-  @media screen and (min-width: 1720px) {
-    grid-template-columns: repeat(${(props) => (props.toggled ? '5' : '4')}, 1fr);
-  }
-`
-
 const Presale: React.FC = () => {
   const { t } = useTranslation()
   const { menuToggled } = useMenuToggle()
@@ -236,7 +133,21 @@ const Presale: React.FC = () => {
 
   return (
     <Wrapper>
-      <LogoTitle>LaunchPad Listings</LogoTitle>
+      <HeaderWrapper>
+        <TitleWrapper>
+          <img src={ListIcon} alt="listIcon" />
+          <Title>
+            <LogoTitle>LaunchPad Listings</LogoTitle>
+            <span>Lorem ipsum dolor sit amet, consectetur adipiscing elit</span>
+          </Title>
+        </TitleWrapper>
+        <NetworkButtonWrapper>
+          <Button>
+            <img src={BinanceFilledIcon} alt="binanceFilledIcon" />
+            BSC Network
+          </Button>
+        </NetworkButtonWrapper>
+      </HeaderWrapper>
       <FilterContainer>
         <SelectWrapper>
           <Text textTransform="uppercase">{t('Sort by')}</Text>

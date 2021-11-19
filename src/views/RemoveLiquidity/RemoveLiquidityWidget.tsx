@@ -239,7 +239,7 @@ export default function RemoveLiquidityWidget({
     if (approval === ApprovalState.APPROVED) {
       // removeLiquidityETH
       if (oneCurrencyIsETH) {
-        methodNames = ['removeLiquidityETH', 'removeLiquidityETHSupportingFeeOnTransferTokens']
+        methodNames = ['removeLiquidityETHSupportingFeeOnTransferTokens']
         args = [
           currencyBIsETH ? tokenA.address : tokenB.address,
           liquidityAmount.raw.toString(),

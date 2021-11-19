@@ -16,6 +16,7 @@ import {
 import { fetchPublicVaultData, fetchVaultFees } from './fetchVaultPublic'
 import fetchVaultUser from './fetchVaultUser'
 import { getTokenPricesFromFarm } from './helpers'
+import fetchTokenPerBlock from './fetchTokenPerBlock'
 
 const initialState: PoolsState = {
   data: [...poolsConfig],
@@ -163,7 +164,7 @@ export const fetchPoolsPublicDataAsync = (currentBlock: number) => async (dispat
   const totalStakings = await fetchPoolsTotalStaking()
   const prices = getTokenPricesFromFarm(getState().farms.data)
 
-  const liveData = poolsConfig.map((pool) => {
+  const liveData = await Promise.all(poolsConfig.map(async (pool) => {
     const blockLimit = blockLimits.find((entry) => entry.sousId === pool.sousId)
     const totalStaking = totalStakings.find((entry) => entry.sousId === pool.sousId)
     const isPoolEndBlockExceeded = currentBlock > 0 && blockLimit ? currentBlock > Number(blockLimit.endBlock) : false
@@ -174,12 +175,14 @@ export const fetchPoolsPublicDataAsync = (currentBlock: number) => async (dispat
 
     const earningTokenAddress = pool.earningToken.address ? getAddress(pool.earningToken.address).toLowerCase() : null
     const earningTokenPrice = earningTokenAddress ? prices[earningTokenAddress] : 0
+    const tokenPerBlock = await fetchTokenPerBlock(pool.sousId)
+
     const apr = !isPoolFinished
       ? getPoolApr(
         stakingTokenPrice,
         earningTokenPrice,
         getBalanceNumber(new BigNumber(totalStaking.totalStaked), pool.stakingToken.decimals),
-        parseFloat(pool.tokenPerBlock),
+        tokenPerBlock,
       )
       : 0
 
@@ -191,7 +194,7 @@ export const fetchPoolsPublicDataAsync = (currentBlock: number) => async (dispat
       apr,
       isFinished: isPoolFinished,
     }
-  })
+  }))
 
   dispatch(setPoolsPublicData(liveData))
 }
