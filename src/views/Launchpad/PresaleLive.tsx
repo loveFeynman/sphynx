@@ -13,9 +13,13 @@ import LikeIcon from 'assets/images/LikeIcon.png'
 import DislikeIcon from 'assets/images/DislikeIcon.png'
 import HillariousIcon from 'assets/images/HillariousIcon.png'
 import WarningIcon from 'assets/images/WarningIcon.png'
-import { Line } from 'rc-progress';
-import { SwapTabs, SwapTabList, SwapTab, SwapTabPanel } from 'components/Tab/tab'
-import SearchPannel from './components/SearchPannel'
+import { getPresaleContract } from 'utils/contractHelpers'
+import useActiveWeb3React from 'hooks/useActiveWeb3React'
+import BigNumber from 'bignumber.js'
+import { BIG_TEN } from 'utils/bigNumber'
+import { useWeb3React } from '@web3-react/core'
+import presaleABI from 'config/abi/presaleABI.json'
+import * as ethers from 'ethers'
 
 const Wrapper = styled.div`
   display: flex;
@@ -556,16 +560,22 @@ const PRESALE_DATA = [
 ]
 
 const PresaleLive: React.FC = () => {
+  const { account } = useWeb3React()
   const { t } = useTranslation()
   const { menuToggled } = useMenuToggle()
   const [claimToken, setClaimToken] = useState(true)
+  const { library } = useActiveWeb3React()
+  const signer = library.getSigner()
+  const presaleContract = getPresaleContract(signer)
+  const [contribute, setContribute] = useState('')
 
   const handlerChange = (e: any) => {
-    console.log(e.target.value)
+    setContribute(e.target.value)
   }
 
   const handleComponent = () => {
-    setClaimToken(!claimToken)
+    const value = new BigNumber(contribute).times(BIG_TEN.pow(18)).toString()
+    presaleContract.contribute('0', {value})
   }
 
   return (
@@ -652,8 +662,8 @@ const PresaleLive: React.FC = () => {
                 </WalletAddressError>
               </WhitelistCard>
               <WhitelistCard>
-                {/* {claimToken ? (
-                  <> */}
+                {claimToken ? (
+                  <>
                 <WhitelistTitle>Raised: 270.5/300</WhitelistTitle>
                 <ProgressBarWrapper>
                   <ProgressBar>
@@ -679,7 +689,7 @@ const PresaleLive: React.FC = () => {
                   <Text fontSize="12px" fontWeight="600" color="#A7A7CC">06:23:49:16</Text>
                 </Flex>
                 <UnderLine />
-                {/* </>
+                </>
                 ) : (
                   <>
                     <Text textAlign="center" fontSize="12px" fontWeight="500">This presale has ended. Go back to the dashboard to view others!</Text>
@@ -688,7 +698,7 @@ const PresaleLive: React.FC = () => {
                     <Text textAlign="center" fontSize="12px" fontWeight="500" mt="16px">If you participated in the presale click the claim button below to claim your tokens!</Text>
                     <Button style={{ backgroundColor: "#31B902", borderRadius: "8px" }} mt="16px" mb="16px" onClick={handleComponent}>Claim Token</Button>
                   </>
-                )} */}
+                )}
 
                 <TokenAmountView>
                   <Text fontSize="12px" fontWeight="600" color="#A7A7CC">Your Contributed Account:</Text>
@@ -706,7 +716,7 @@ const PresaleLive: React.FC = () => {
             <Separate />
             <ContributeWrapper>
               {PRESALE_DATA.map((item, index) => (
-                 index === PRESALE_DATA.length - 1 ?
+                index === PRESALE_DATA.length - 1 ?
                   < DataLatestItem >
                     <Text>{item.presaleItem}</Text>
                     <Text>{item.presaleValue}</Text>
@@ -747,31 +757,6 @@ const PresaleLive: React.FC = () => {
               </ItemContainer>
               <Separate />
               <ColorButton style={{ width: '95%' }}>Join Community</ColorButton>
-              {/* <SwapTabs
-                selectedTabClassName='is-selected'
-                selectedTabPanelClassName='is-selected'
-              >
-                <SwapTabList>
-                  <SwapTab borderBottom>
-                    <Text>
-                      {t('Comments')}
-                    </Text>
-                  </SwapTab>
-                  <SwapTab borderBottom>
-                    <Text>
-                      {t('Community')}
-                    </Text>
-                  </SwapTab>
-                </SwapTabList>
-                <SwapTabPanel>
-                  <Separate />
-                  <Button style={{ backgroundColor: "transparent", borderRadius: "10px", border: "1px solid #8B2A9B" }}>Join the Discussion</Button>
-                </SwapTabPanel>
-                <SwapTabPanel>
-                  <Separate />
-                  <Button style={{ backgroundColor: "transparent", borderRadius: "10px", border: "1px solid #8B2A9B" }}>Join the Discussion</Button>
-                </SwapTabPanel>
-              </SwapTabs> */}
             </ThinkCardWrapper>
           </SubCardWrapper>
         </TokenPresaleContainder>

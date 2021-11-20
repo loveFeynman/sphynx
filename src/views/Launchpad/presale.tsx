@@ -11,6 +11,13 @@ import { isAddress } from '@ethersproject/address'
 import useToast from 'hooks/useToast'
 import styled from 'styled-components'
 import { ERC20_ABI } from 'config/abi/erc20'
+import BigNumber from 'bignumber.js'
+import { BIG_TEN } from 'utils/bigNumber'
+import axios from 'axios'
+import { getPresaleContract } from 'utils/contractHelpers'
+import { useWeb3React } from '@web3-react/core'
+import { getSphynxRouterAddress } from 'utils/addressHelpers'
+import CoinStatsBoard from 'views/Swap/components/CoinStatsBoard'
 
 const Wrapper = styled.div`
   display: flex;
@@ -313,6 +320,7 @@ const StepWrapper = ({ number, stepName, children, step, onClick }) => {
 }
 
 const Presale: React.FC = () => {
+  const { account } = useWeb3React()
   const { library } = useActiveWeb3React()
   const signer = library.getSigner()
   const [tokenAddress, setTokenAddress] = useState('')
@@ -320,6 +328,9 @@ const Presale: React.FC = () => {
   const [tokenSymbol, setSymbol] = useState('')
   const [tokenDecimal, setDecimal] = useState('')
   const [presaleRate, setPresaleRate] = useState('')
+  const [tier1, setTier1] = useState('')
+  const [tier2, setTier2] = useState('')
+  const [tier3, setTier3] = useState('')
   const [softCap, setSoftCap] = useState('')
   const [hardCap, setHardCap] = useState('')
   const [minBuy, setMinBuy] = useState('')
@@ -336,9 +347,12 @@ const Presale: React.FC = () => {
   const [updateDec, setUpdateDec] = useState('')
   const [presaleStart, setPresaleStart] = useState(new Date())
   const [presaleEnd, setPresaleEnd] = useState(new Date())
+  const [tier1Time, setTier1Time] = useState(new Date())
+  const [tier2Time, setTier2Time] = useState(new Date())
   const [liquidityLock, setLiquidityLock] = useState(new Date())
   const [step, setStep] = useState(1)
-  const { toastError } = useToast()
+  const { toastSuccess, toastError } = useToast()
+  const presaleContract = getPresaleContract(signer)
 
   const handleChange = async (e) => {
     const value = e.target.value
@@ -360,47 +374,64 @@ const Presale: React.FC = () => {
     }
   }
 
-  const handleChangeRate = (e) => {
-    setPresaleRate(e.target.value)
+  const handleTier1 = (e) => {
+    setTier1(e.target.value)
   }
 
-  const validate = () => {
+  const handleTier2 = (e) => {
+    setTier2(e.target.value)
+  }
+
+  const handleTier3 = (e) => {
+    setTier3(e.target.value)
+  }
+
+  const validate = async () => {
     if (!tokenAddress || !tokenName || !tokenSymbol) {
       toastError('Oops, we can not parse token data, please inpute correct token address!')
       setStep(1)
+      return;
     }
-    if (!parseFloat(presaleRate)) {
+    if (!parseFloat(tier1) || !parseFloat(tier2) || !parseFloat(tier3)) {
       toastError('Please input presale rate correctly!')
       setStep(2)
+      return;
     }
     if (!parseFloat(softCap) || !parseFloat(hardCap)) {
       toastError('Please input soft cap & hard cap!')
       setStep(3)
+      return;
     }
     if (parseFloat(softCap) * 2 > parseFloat(hardCap)) {
       toastError('Hard cap should be greater than 2 times about soft cap')
       setStep(3)
+      return;
     }
     if (!parseFloat(minBuy) || !parseFloat(maxBuy)) {
       toastError('Please input contribution limit correctly!')
       setStep(4)
+      return;
     }
     if (parseFloat(minBuy) >= parseFloat(maxBuy)) {
       toastError('Max buy amount should be greater than min buy amount!')
       setStep(4)
+      return;
     }
     if (!parseFloat(liquidityRate) || parseFloat(liquidityRate) <= 50) {
       toastError('Liquidity amount should be more than 50%!')
       setStep(5)
+      return;
     }
     if (!parseFloat(listingRate)) {
       toastError('Please input listing rate!')
       setStep(6)
+      return;
     }
 
     if (new Date(presaleStart).getTime() <= new Date().getTime() + 600000) {
       toastError('Presale start time must be more than 10 minutes after now!')
       setStep(8)
+      return;
     }
     if (
       new Date(presaleStart).getTime() >= new Date(presaleEnd).getTime() ||
@@ -408,11 +439,92 @@ const Presale: React.FC = () => {
     ) {
       toastError('Presale period must be less than 3 days!')
       setStep(8)
+      return;
+    }
+    if (new Date(presaleStart).getTime() > new Date(tier1Time).getTime()) {
+      toastError('Presale tier1 period must be more than the presale start time!')
+      setStep(8)
+      return;
+    }
+    if (new Date(tier1Time).getTime() > new Date(tier2Time).getTime()) {
+      toastError('Presale tier2 time must be more than the presale tier1 time!')
+      setStep(8)
+      return;
     }
     if (new Date(liquidityLock).getTime() <= new Date(presaleEnd).getTime() + 30 * 24 * 3600 * 1000) {
       toastError('Liquidity lock time must be more than 1 month from presale end time!')
       setStep(8)
+      return;
     }
+
+    const presaleId = (await presaleContract.currentPresaleId.call()).toString()
+    const routerAddress = getSphynxRouterAddress()
+    const decimals = parseInt(tokenDecimal)
+    const startTime = (Math.floor((new Date(presaleStart).getTime() / 1000)))
+    const tierOneTime = (Math.floor((new Date(tier1Time).getTime() / 1000)))
+    const tierTwoTime = (Math.floor((new Date(tier2Time).getTime() / 1000)))
+    const endTime = (Math.floor((new Date(presaleEnd).getTime() / 1000)))
+    const liquidityLockTime = (Math.floor((new Date(liquidityLock).getTime() / 1000)))
+
+    const value: any = {
+      saleId: presaleId,
+      token: tokenAddress,
+      minContributeRate: new BigNumber(minBuy).times(BIG_TEN.pow(decimals)).toString(),
+      maxContributeRate: new BigNumber(maxBuy).times(BIG_TEN.pow(decimals)).toString(),
+      startTime: startTime.toString(),
+      tier1Time: tierOneTime.toString(),
+      tier2Time: tierTwoTime.toString(),
+      endTime: endTime.toString(),
+      liquidityLockTime: liquidityLockTime.toString(),
+      routerId: routerAddress,
+      tier1Rate: new BigNumber(tier1).times(BIG_TEN.pow(decimals)).toString(),
+      tier2Rate: new BigNumber(tier2).times(BIG_TEN.pow(decimals)).toString(),
+      publicRate: new BigNumber(tier3).times(BIG_TEN.pow(decimals)).toString(),
+      liquidityRate,
+      softCap: new BigNumber(softCap).times(BIG_TEN.pow(decimals)).toString(),
+      hardCap: new BigNumber(hardCap).times(BIG_TEN.pow(decimals)).toString(),
+      routerRate: listingRate,
+    }
+
+    const fee = new BigNumber('0.001').times(BIG_TEN.pow(18)).toString()
+    presaleContract.createPresale(value, { value: fee })
+      .then((res) => { /* if presale created successfully */
+        const data: any = {
+          sale_id: presaleId,
+          owner_address: account,
+          token_address: tokenAddress,
+          token_name: tokenName,
+          token_symbol: tokenSymbol,
+          token_decimal: tokenDecimal,
+          tier1,
+          tier2,
+          tier3,
+          soft_cap: softCap,
+          hard_cap: hardCap,
+          min_buy: minBuy,
+          max_buy: maxBuy,
+          liquidity: liquidityRate,
+          listing_rate: listingRate,
+          logo_link: logoLink,
+          website_link: webSiteLink,
+          github_link: gitLink,
+          twitter_link: twitterLink,
+          reddit_link: redditLink,
+          telegram_link: telegramLink,
+          project_dec: projectDec,
+          update_dec: updateDec,
+          start_time: startTime,
+          end_time: endTime,
+          tier1_time: tierOneTime,
+          tier2_time: tierTwoTime,
+          lock_time: liquidityLockTime
+        }
+
+        toastSuccess('Pushed!', 'Your presale info is saved successfully.')
+        axios.post(`${process.env.REACT_APP_BACKEND_API_URL2}/insertPresaleInfo`, { data }).then((response) => {
+          console.log(response)
+        })
+      })
   }
 
   return (
@@ -454,7 +566,7 @@ const Presale: React.FC = () => {
         <Sperate />
         <ContentWrapper>
           <FeeCard />
-          <div style={{marginTop: '24px', width: '100%', marginBottom: '24px'}}>
+          <div style={{ marginTop: '24px', width: '100%', marginBottom: '24px' }}>
             <StepWrapper number="1" stepName="Token Address" step={step} onClick={() => setStep(1)}>
               <p className="description">Enter your token Adderss</p>
               <MyInput onChange={handleChange} value={tokenAddress} style={{ width: '100%' }} />
@@ -483,8 +595,20 @@ const Presale: React.FC = () => {
             </StepWrapper>
             <Sperate />
             <StepWrapper number="2" stepName="Presale Rate" step={step} onClick={() => setStep(2)}>
-              <p className="description">Enter your Presale Rate/BNB</p>
-              <MyInput onChange={handleChangeRate} value={presaleRate} style={{ width: '100%' }} />
+              <InlineWrapper>
+                <p className="description w110">Tier1</p>
+                <MyInput className="ml16" value={tier1} onChange={handleTier1} />
+              </InlineWrapper>
+              <Sperate />
+              <InlineWrapper>
+                <p className="description w110">Tier2</p>
+                <MyInput className="ml16" value={tier2} onChange={handleTier2} />
+              </InlineWrapper>
+              <Sperate />
+              <InlineWrapper>
+                <p className="description w110">Tier3</p>
+                <MyInput className="ml16" value={tier3} onChange={handleTier3} />
+              </InlineWrapper>
               <Sperate />
               <InlineWrapper>
                 <LineBtn onClick={() => setStep(1)}>Back</LineBtn>
@@ -636,6 +760,26 @@ const Presale: React.FC = () => {
                     format="yyyy-MM-dd hh:mm:ss"
                     value={presaleEnd}
                     onChange={(date, value) => setPresaleEnd(date)}
+                  />
+                </InlineWrapper>
+              </FlexWrapper>
+              <Sperate />
+              <FlexWrapper>
+                <InlineWrapper>
+                  <p className="description w110">Tier1 Time</p>
+                  <KeyboardDateTimePicker
+                    format="yyyy-MM-dd hh:mm:ss"
+                    value={tier1Time}
+                    onChange={(date, value) => setTier1Time(date)}
+                  />
+                </InlineWrapper>
+                <MarginWrapper />
+                <InlineWrapper>
+                  <p className="description w110">Tier2 Time</p>
+                  <KeyboardDateTimePicker
+                    format="yyyy-MM-dd hh:mm:ss"
+                    value={tier2Time}
+                    onChange={(date, value) => setTier2Time(date)}
                   />
                 </InlineWrapper>
               </FlexWrapper>
