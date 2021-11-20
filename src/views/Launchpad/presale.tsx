@@ -11,6 +11,12 @@ import { isAddress } from '@ethersproject/address'
 import useToast from 'hooks/useToast'
 import styled from 'styled-components'
 import { ERC20_ABI } from 'config/abi/erc20'
+import PRESALE_ABI from 'config/abi/presaleABI.json'
+import BigNumber from 'bignumber.js'
+import { BIG_TEN } from 'utils/bigNumber'
+import axios from 'axios'
+import { getPresaleAddress } from 'utils/addressHelpers'
+import { getPresaleContract } from 'utils/contractHelpers'
 
 const Wrapper = styled.div`
   display: flex;
@@ -312,6 +318,8 @@ const StepWrapper = ({ number, stepName, children, step, onClick }) => {
   )
 }
 
+
+
 const Presale: React.FC = () => {
   const { library } = useActiveWeb3React()
   const signer = library.getSigner()
@@ -341,7 +349,9 @@ const Presale: React.FC = () => {
   const [presaleEnd, setPresaleEnd] = useState(new Date())
   const [liquidityLock, setLiquidityLock] = useState(new Date())
   const [step, setStep] = useState(1)
-  const { toastError } = useToast()
+  const { toastSuccess, toastError } = useToast()
+  const presaleAddress = getPresaleAddress()
+  const presaleContract = getPresaleContract(signer)
 
   const handleChange = async (e) => {
     const value = e.target.value
@@ -383,39 +393,48 @@ const Presale: React.FC = () => {
     if (!tokenAddress || !tokenName || !tokenSymbol) {
       toastError('Oops, we can not parse token data, please inpute correct token address!')
       setStep(1)
+      return;
     }
-    if (!parseFloat(presaleRate)) {
+    if (!parseFloat(tier1) || !parseFloat(tier2) || !parseFloat(tier3)) {
       toastError('Please input presale rate correctly!')
       setStep(2)
+      return;
     }
     if (!parseFloat(softCap) || !parseFloat(hardCap)) {
       toastError('Please input soft cap & hard cap!')
       setStep(3)
+      return;
     }
     if (parseFloat(softCap) * 2 > parseFloat(hardCap)) {
       toastError('Hard cap should be greater than 2 times about soft cap')
       setStep(3)
+      return;
     }
     if (!parseFloat(minBuy) || !parseFloat(maxBuy)) {
       toastError('Please input contribution limit correctly!')
       setStep(4)
+      return;
     }
     if (parseFloat(minBuy) >= parseFloat(maxBuy)) {
       toastError('Max buy amount should be greater than min buy amount!')
       setStep(4)
+      return;
     }
     if (!parseFloat(liquidityRate) || parseFloat(liquidityRate) <= 50) {
       toastError('Liquidity amount should be more than 50%!')
       setStep(5)
+      return;
     }
     if (!parseFloat(listingRate)) {
       toastError('Please input listing rate!')
       setStep(6)
+      return;
     }
 
     if (new Date(presaleStart).getTime() <= new Date().getTime() + 600000) {
       toastError('Presale start time must be more than 10 minutes after now!')
       setStep(8)
+      return;
     }
     if (
       new Date(presaleStart).getTime() >= new Date(presaleEnd).getTime() ||
@@ -423,11 +442,63 @@ const Presale: React.FC = () => {
     ) {
       toastError('Presale period must be less than 3 days!')
       setStep(8)
+      return;
     }
     if (new Date(liquidityLock).getTime() <= new Date(presaleEnd).getTime() + 30 * 24 * 3600 * 1000) {
       toastError('Liquidity lock time must be more than 1 month from presale end time!')
       setStep(8)
+      return;
     }
+
+    const data : any = {
+      token_address: tokenAddress,
+      token_name: tokenName,
+      token_symbol: tokenSymbol,
+      token_decimal: tokenDecimal,
+      tier1,
+      tier2,
+      tier3,
+      soft_cap: softCap,
+      hard_cap: hardCap,
+      min_buy: minBuy,
+      max_buy: maxBuy,
+      liquidity: liquidityRate,
+      listing_rate: listingRate,
+      logo_link: logoLink,
+      website_link: webSiteLink,
+      github_link: gitLink,
+      twitter_link: twitterLink,
+      reddit_link: redditLink,
+      telegram_link: telegramLink,
+      description: projectDec,
+      extra: updateDec,
+      start_time: presaleStart,
+      end_time: presaleEnd,
+      lock_time: liquidityLock
+    }
+    
+    const decimals = parseInt(tokenDecimal)
+    const value: any = {
+      token: tokenAddress,
+      minContributeRate: new BigNumber(minBuy).times(BIG_TEN.pow(decimals)).toString(),
+      maxContributeRate: new BigNumber(maxBuy).times(BIG_TEN.pow(decimals)).toString(),
+      startTime: (Math.floor((new Date(presaleStart).getTime() / 1000))).toString(),
+      endTime: (Math.floor((new Date(presaleEnd).getTime() / 1000))).toString(),
+      liquidityLockTime: (Math.floor((new Date(liquidityLock).getTime() / 1000))).toString(),
+      routerId: '0xD99D1c33F9fC3444f8101754aBC46c52416550D1',
+      tier1Rate: new BigNumber(tier1).times(BIG_TEN.pow(decimals)).toString(),
+      tier2Rate: new BigNumber(tier2).times(BIG_TEN.pow(decimals)).toString(),
+      publicRate: new BigNumber(tier3).times(BIG_TEN.pow(decimals)).toString(),
+      softCap: new BigNumber(softCap).times(BIG_TEN.pow(decimals)).toString(),
+      hardCap: new BigNumber(hardCap).times(BIG_TEN.pow(decimals)).toString(),
+      routerRate: listingRate,
+    }
+
+    presaleContract.createPresale(value)
+
+    axios.post(`${process.env.REACT_APP_BACKEND_API_URL2}/insertPresaleInfo`, { data }).then((response) => {
+      toastSuccess('Pushed!', 'Your presale info is saved successfully.')
+    })
   }
 
   return (
