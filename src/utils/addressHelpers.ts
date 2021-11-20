@@ -68,3 +68,6 @@ export const getBunnySpecialPredictionAddress = () => {
 export const getFarmAuctionAddress = () => {
   return getAddress(addresses.farmAuction)
 }
+export const getPresaleAddress = () => {
+  return getAddress(addresses.presale)
+}
