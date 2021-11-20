@@ -374,10 +374,6 @@ const Presale: React.FC = () => {
     }
   }
 
-  const handleChangeRate = (e) => {
-    setPresaleRate(e.target.value)
-  }
-
   const handleTier1 = (e) => {
     setTier1(e.target.value)
   }
@@ -464,17 +460,22 @@ const Presale: React.FC = () => {
     const presaleId = (await presaleContract.currentPresaleId.call()).toString()
     const routerAddress = getSphynxRouterAddress()
     const decimals = parseInt(tokenDecimal)
+    const startTime = (Math.floor((new Date(presaleStart).getTime() / 1000)))
+    const tierOneTime = (Math.floor((new Date(tier1Time).getTime() / 1000)))
+    const tierTwoTime = (Math.floor((new Date(tier2Time).getTime() / 1000)))
+    const endTime = (Math.floor((new Date(presaleEnd).getTime() / 1000)))
+    const liquidityLockTime = (Math.floor((new Date(liquidityLock).getTime() / 1000)))
 
     const value: any = {
-      saleId: new BigNumber(presaleId).times(BIG_TEN.pow(decimals)).toString(),
+      saleId: presaleId,
       token: tokenAddress,
       minContributeRate: new BigNumber(minBuy).times(BIG_TEN.pow(decimals)).toString(),
       maxContributeRate: new BigNumber(maxBuy).times(BIG_TEN.pow(decimals)).toString(),
-      startTime: (Math.floor((new Date(presaleStart).getTime() / 1000))).toString(),
-      tier1Time: (Math.floor((new Date(tier1Time).getTime() / 1000))).toString(),
-      tier2Time: (Math.floor((new Date(tier2Time).getTime() / 1000))).toString(),
-      endTime: (Math.floor((new Date(presaleEnd).getTime() / 1000))).toString(),
-      liquidityLockTime: (Math.floor((new Date(liquidityLock).getTime() / 1000))).toString(),
+      startTime: startTime.toString(),
+      tier1Time: tierOneTime.toString(),
+      tier2Time: tierTwoTime.toString(),
+      endTime: endTime.toString(),
+      liquidityLockTime: liquidityLockTime.toString(),
       routerId: routerAddress,
       tier1Rate: new BigNumber(tier1).times(BIG_TEN.pow(decimals)).toString(),
       tier2Rate: new BigNumber(tier2).times(BIG_TEN.pow(decimals)).toString(),
@@ -486,38 +487,42 @@ const Presale: React.FC = () => {
     }
 
     const fee = new BigNumber('0.001').times(BIG_TEN.pow(18)).toString()
-    presaleContract.createPresale(value, {value: fee})
+    presaleContract.createPresale(value, { value: fee })
+      .then((res) => { /* if presale created successfully */
+        const data: any = {
+          sale_id: presaleId,
+          token_address: tokenAddress,
+          token_name: tokenName,
+          token_symbol: tokenSymbol,
+          token_decimal: tokenDecimal,
+          tier1,
+          tier2,
+          tier3,
+          soft_cap: softCap,
+          hard_cap: hardCap,
+          min_buy: minBuy,
+          max_buy: maxBuy,
+          liquidity: liquidityRate,
+          listing_rate: listingRate,
+          logo_link: logoLink,
+          website_link: webSiteLink,
+          github_link: gitLink,
+          twitter_link: twitterLink,
+          reddit_link: redditLink,
+          telegram_link: telegramLink,
+          project_dec: projectDec,
+          update_dec: updateDec,
+          start_time: startTime,
+          end_time: endTime,
+          tier1_time: tierOneTime,
+          tier2_time: tierTwoTime,
+          lock_time: liquidityLockTime
+        }
 
-    const data: any = {
-      sale_id: 1,
-      token_address: tokenAddress,
-      token_name: tokenName,
-      token_symbol: tokenSymbol,
-      token_decimal: tokenDecimal,
-      tier1,
-      tier2,
-      tier3,
-      soft_cap: softCap,
-      hard_cap: hardCap,
-      min_buy: minBuy,
-      max_buy: maxBuy,
-      liquidity: liquidityRate,
-      listing_rate: listingRate,
-      logo_link: logoLink,
-      website_link: webSiteLink,
-      github_link: gitLink,
-      twitter_link: twitterLink,
-      reddit_link: redditLink,
-      telegram_link: telegramLink,
-      project_dec: projectDec,
-      update_dec: updateDec,
-      start_time: presaleStart,
-      end_time: presaleEnd,
-      lock_time: liquidityLock
-    }
-    axios.post(`${process.env.REACT_APP_BACKEND_API_URL2}/insertPresaleInfo`, { data }).then((response) => {
-      toastSuccess('Pushed!', 'Your presale info is saved successfully.')
-    })
+        axios.post(`${process.env.REACT_APP_BACKEND_API_URL2}/insertPresaleInfo`, { data }).then((response) => {
+          toastSuccess('Pushed!', 'Your presale info is saved successfully.')
+        })
+      })
   }
 
   return (
@@ -588,8 +593,6 @@ const Presale: React.FC = () => {
             </StepWrapper>
             <Sperate />
             <StepWrapper number="2" stepName="Presale Rate" step={step} onClick={() => setStep(2)}>
-              {/* <p className="description">Enter your Presale Rate/BNB</p>
-              <MyInput onChange={handleChangeRate} value={presaleRate} style={{ width: '100%' }} /> */}
               <InlineWrapper>
                 <p className="description w110">Tier1</p>
                 <MyInput className="ml16" value={tier1} onChange={handleTier1} />
