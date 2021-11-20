@@ -11,12 +11,13 @@ import { isAddress } from '@ethersproject/address'
 import useToast from 'hooks/useToast'
 import styled from 'styled-components'
 import { ERC20_ABI } from 'config/abi/erc20'
-import PRESALE_ABI from 'config/abi/presaleABI.json'
 import BigNumber from 'bignumber.js'
 import { BIG_TEN } from 'utils/bigNumber'
 import axios from 'axios'
-import { getPresaleAddress } from 'utils/addressHelpers'
 import { getPresaleContract } from 'utils/contractHelpers'
+import { useWeb3React } from '@web3-react/core'
+import { getSphynxRouterAddress } from 'utils/addressHelpers'
+import CoinStatsBoard from 'views/Swap/components/CoinStatsBoard'
 
 const Wrapper = styled.div`
   display: flex;
@@ -318,9 +319,8 @@ const StepWrapper = ({ number, stepName, children, step, onClick }) => {
   )
 }
 
-
-
 const Presale: React.FC = () => {
+  const { account } = useWeb3React()
   const { library } = useActiveWeb3React()
   const signer = library.getSigner()
   const [tokenAddress, setTokenAddress] = useState('')
@@ -347,10 +347,11 @@ const Presale: React.FC = () => {
   const [updateDec, setUpdateDec] = useState('')
   const [presaleStart, setPresaleStart] = useState(new Date())
   const [presaleEnd, setPresaleEnd] = useState(new Date())
+  const [tier1Time, setTier1Time] = useState(new Date())
+  const [tier2Time, setTier2Time] = useState(new Date())
   const [liquidityLock, setLiquidityLock] = useState(new Date())
   const [step, setStep] = useState(1)
   const { toastSuccess, toastError } = useToast()
-  const presaleAddress = getPresaleAddress()
   const presaleContract = getPresaleContract(signer)
 
   const handleChange = async (e) => {
@@ -389,7 +390,7 @@ const Presale: React.FC = () => {
     setTier3(e.target.value)
   }
 
-  const validate = () => {
+  const validate = async () => {
     if (!tokenAddress || !tokenName || !tokenSymbol) {
       toastError('Oops, we can not parse token data, please inpute correct token address!')
       setStep(1)
@@ -444,13 +445,51 @@ const Presale: React.FC = () => {
       setStep(8)
       return;
     }
+    if (new Date(presaleStart).getTime() > new Date(tier1Time).getTime()) {
+      toastError('Presale tier1 period must be more than the presale start time!')
+      setStep(8)
+      return;
+    }
+    if (new Date(tier1Time).getTime() > new Date(tier2Time).getTime()) {
+      toastError('Presale tier2 time must be more than the presale tier1 time!')
+      setStep(8)
+      return;
+    }
     if (new Date(liquidityLock).getTime() <= new Date(presaleEnd).getTime() + 30 * 24 * 3600 * 1000) {
       toastError('Liquidity lock time must be more than 1 month from presale end time!')
       setStep(8)
       return;
     }
 
-    const data : any = {
+    const presaleId = (await presaleContract.currentPresaleId.call()).toString()
+    const routerAddress = getSphynxRouterAddress()
+    const decimals = parseInt(tokenDecimal)
+
+    const value: any = {
+      saleId: new BigNumber(presaleId).times(BIG_TEN.pow(decimals)).toString(),
+      token: tokenAddress,
+      minContributeRate: new BigNumber(minBuy).times(BIG_TEN.pow(decimals)).toString(),
+      maxContributeRate: new BigNumber(maxBuy).times(BIG_TEN.pow(decimals)).toString(),
+      startTime: (Math.floor((new Date(presaleStart).getTime() / 1000))).toString(),
+      tier1Time: (Math.floor((new Date(tier1Time).getTime() / 1000))).toString(),
+      tier2Time: (Math.floor((new Date(tier2Time).getTime() / 1000))).toString(),
+      endTime: (Math.floor((new Date(presaleEnd).getTime() / 1000))).toString(),
+      liquidityLockTime: (Math.floor((new Date(liquidityLock).getTime() / 1000))).toString(),
+      routerId: routerAddress,
+      tier1Rate: new BigNumber(tier1).times(BIG_TEN.pow(decimals)).toString(),
+      tier2Rate: new BigNumber(tier2).times(BIG_TEN.pow(decimals)).toString(),
+      publicRate: new BigNumber(tier3).times(BIG_TEN.pow(decimals)).toString(),
+      liquidityRate,
+      softCap: new BigNumber(softCap).times(BIG_TEN.pow(decimals)).toString(),
+      hardCap: new BigNumber(hardCap).times(BIG_TEN.pow(decimals)).toString(),
+      routerRate: listingRate,
+    }
+
+    const fee = new BigNumber('0.001').times(BIG_TEN.pow(18)).toString()
+    presaleContract.createPresale(value, {value: fee})
+
+    const data: any = {
+      sale_id: 1,
       token_address: tokenAddress,
       token_name: tokenName,
       token_symbol: tokenSymbol,
@@ -470,32 +509,12 @@ const Presale: React.FC = () => {
       twitter_link: twitterLink,
       reddit_link: redditLink,
       telegram_link: telegramLink,
-      description: projectDec,
-      extra: updateDec,
+      project_dec: projectDec,
+      update_dec: updateDec,
       start_time: presaleStart,
       end_time: presaleEnd,
       lock_time: liquidityLock
     }
-    
-    const decimals = parseInt(tokenDecimal)
-    const value: any = {
-      token: tokenAddress,
-      minContributeRate: new BigNumber(minBuy).times(BIG_TEN.pow(decimals)).toString(),
-      maxContributeRate: new BigNumber(maxBuy).times(BIG_TEN.pow(decimals)).toString(),
-      startTime: (Math.floor((new Date(presaleStart).getTime() / 1000))).toString(),
-      endTime: (Math.floor((new Date(presaleEnd).getTime() / 1000))).toString(),
-      liquidityLockTime: (Math.floor((new Date(liquidityLock).getTime() / 1000))).toString(),
-      routerId: '0xD99D1c33F9fC3444f8101754aBC46c52416550D1',
-      tier1Rate: new BigNumber(tier1).times(BIG_TEN.pow(decimals)).toString(),
-      tier2Rate: new BigNumber(tier2).times(BIG_TEN.pow(decimals)).toString(),
-      publicRate: new BigNumber(tier3).times(BIG_TEN.pow(decimals)).toString(),
-      softCap: new BigNumber(softCap).times(BIG_TEN.pow(decimals)).toString(),
-      hardCap: new BigNumber(hardCap).times(BIG_TEN.pow(decimals)).toString(),
-      routerRate: listingRate,
-    }
-
-    presaleContract.createPresale(value)
-
     axios.post(`${process.env.REACT_APP_BACKEND_API_URL2}/insertPresaleInfo`, { data }).then((response) => {
       toastSuccess('Pushed!', 'Your presale info is saved successfully.')
     })
@@ -540,7 +559,7 @@ const Presale: React.FC = () => {
         <Sperate />
         <ContentWrapper>
           <FeeCard />
-          <div style={{marginTop: '24px', width: '100%', marginBottom: '24px'}}>
+          <div style={{ marginTop: '24px', width: '100%', marginBottom: '24px' }}>
             <StepWrapper number="1" stepName="Token Address" step={step} onClick={() => setStep(1)}>
               <p className="description">Enter your token Adderss</p>
               <MyInput onChange={handleChange} value={tokenAddress} style={{ width: '100%' }} />
@@ -736,6 +755,26 @@ const Presale: React.FC = () => {
                     format="yyyy-MM-dd hh:mm:ss"
                     value={presaleEnd}
                     onChange={(date, value) => setPresaleEnd(date)}
+                  />
+                </InlineWrapper>
+              </FlexWrapper>
+              <Sperate />
+              <FlexWrapper>
+                <InlineWrapper>
+                  <p className="description w110">Tier1 Time</p>
+                  <KeyboardDateTimePicker
+                    format="yyyy-MM-dd hh:mm:ss"
+                    value={tier1Time}
+                    onChange={(date, value) => setTier1Time(date)}
+                  />
+                </InlineWrapper>
+                <MarginWrapper />
+                <InlineWrapper>
+                  <p className="description w110">Tier2 Time</p>
+                  <KeyboardDateTimePicker
+                    format="yyyy-MM-dd hh:mm:ss"
+                    value={tier2Time}
+                    onChange={(date, value) => setTier2Time(date)}
                   />
                 </InlineWrapper>
               </FlexWrapper>
