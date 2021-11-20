@@ -7,8 +7,12 @@ import { ReactComponent as CheckList } from 'assets/svg/icon/CheckList.svg'
 import useToast from 'hooks/useToast'
 import styled from 'styled-components'
 import axios from 'axios'
-import { useWeb3React } from '@web3-react/core'
-import { useLocation, useParams } from 'react-router'
+import useActiveWeb3React from 'hooks/useActiveWeb3React'
+import { useParams } from 'react-router'
+import { getPresaleContract } from 'utils/contractHelpers'
+import { getPresaleAddress } from 'utils/addressHelpers'
+import * as ethers from 'ethers'
+import { ERC20_ABI } from 'config/abi/erc20'
 
 const Wrapper = styled.div`
   display: flex;
@@ -216,7 +220,8 @@ const DarkButton = styled(Button)`
 
 const PresaleManage: React.FC = () => {
   const param : any = useParams()
-  const { account } = useWeb3React()
+  const { library } = useActiveWeb3React()
+  const signer = library.getSigner()
   const [tokenAddress, setTokenAddress] = useState('')
   const [tokenName, setName] = useState('')
   const [tokenSymbol, setSymbol] = useState('')
@@ -232,14 +237,15 @@ const PresaleManage: React.FC = () => {
   const [updateDec, setUpdateDec] = useState('')
   const [hadCap, setHadCap] = useState(1)
   const [raise, setRaise] = useState(0)
+  const [decimal, setDecimal] = useState(18)
   const { toastSuccess, toastError } = useToast()
+  const presaleContract = getPresaleContract(signer)
 
   console.log(param.saleId)
 
   useEffect(() => {
     if(param.saleId){
       axios.get(`${process.env.REACT_APP_BACKEND_API_URL2}/getPresaleInfo/${param.saleId}`).then((response) => {
-        console.log(">>>>>>>>>>", response.data)
         setTokenAddress(response.data.token_address)
         setName(response.data.token_name)
         setSymbol(response.data.token_symbol)
@@ -251,13 +257,32 @@ const PresaleManage: React.FC = () => {
         setRedditLink(response.data.reddit_link)
         setProjectDec(response.data.project_dec)
         setUpdateDec(response.data.update_dec)
-
+        setDecimal(response.data.token_decimal)
       })
     }
   }, [param.saleId])
 
-  const handleDeposit = () => {
-    console.log('desposit')
+  useEffect(() => {
+    const fetchData = async () => {
+      let temp = (await presaleContract.hardCap(param.saleId)).toString()
+      let value = parseFloat(ethers.utils.formatUnits(temp, decimal))
+      setHadCap(value)
+      temp = (await presaleContract.totalContributionBNB(param.saleId)).toString()
+      value = parseFloat(ethers.utils.formatUnits(temp, decimal))
+      setRaise(value)
+    }
+
+    fetchData()
+  }, [presaleContract, decimal, param.saleId])
+
+  const handleDeposit = async () => {
+    const abi: any = ERC20_ABI
+    const tokenContract = new ethers.Contract(tokenAddress, abi, signer)
+
+    const tx = await tokenContract.approve(getPresaleAddress(), '0xfffffffffffffffffffffffffffffffff')
+    await tx.wait()
+    const tx1 = await presaleContract.depositToken(param.saleId)
+    await tx1.wait()
   }
 
   const handleBurn = () => {
