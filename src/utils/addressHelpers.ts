@@ -71,3 +71,6 @@ export const getFarmAuctionAddress = () => {
 export const getPresaleAddress = () => {
   return getAddress(addresses.presale)
 }
+export const getSphynxRouterAddress = () => {
+  return getAddress(addresses.sphynxRouter)
+}
