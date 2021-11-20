@@ -491,6 +491,7 @@ const Presale: React.FC = () => {
       .then((res) => { /* if presale created successfully */
         const data: any = {
           sale_id: presaleId,
+          owner_address: account,
           token_address: tokenAddress,
           token_name: tokenName,
           token_symbol: tokenSymbol,
@@ -519,8 +520,9 @@ const Presale: React.FC = () => {
           lock_time: liquidityLockTime
         }
 
+        toastSuccess('Pushed!', 'Your presale info is saved successfully.')
         axios.post(`${process.env.REACT_APP_BACKEND_API_URL2}/insertPresaleInfo`, { data }).then((response) => {
-          toastSuccess('Pushed!', 'Your presale info is saved successfully.')
+          console.log(response)
         })
       })
   }
