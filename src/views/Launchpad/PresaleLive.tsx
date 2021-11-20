@@ -681,7 +681,7 @@ const PresaleLive: React.FC = () => {
                       onChange={handlerChange}
                     />
                   </InputWrapper>
-                  <ColorButton style={{ borderRadius: "8px" }} onClick={handleComponent}>Contribute</ColorButton>
+                  <ColorButton onClick={handleComponent}>Contribute</ColorButton>
                 </ContributeFlex>
                 <Flex alignItems="center" style={{ width: '100%' }}>
                   <StopwatchIcon />
