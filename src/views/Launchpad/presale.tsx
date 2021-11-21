@@ -17,7 +17,7 @@ import axios from 'axios'
 import { getPresaleContract } from 'utils/contractHelpers'
 import { useWeb3React } from '@web3-react/core'
 import { getSphynxRouterAddress } from 'utils/addressHelpers'
-import CoinStatsBoard from 'views/Swap/components/CoinStatsBoard'
+import { useHistory } from 'react-router-dom'
 
 const Wrapper = styled.div`
   display: flex;
@@ -353,6 +353,7 @@ const Presale: React.FC = () => {
   const [step, setStep] = useState(1)
   const { toastSuccess, toastError } = useToast()
   const presaleContract = getPresaleContract(signer)
+  const history = useHistory()
 
   const handleChange = async (e) => {
     const value = e.target.value
@@ -459,7 +460,6 @@ const Presale: React.FC = () => {
 
     const presaleId = (await presaleContract.currentPresaleId.call()).toString()
     const routerAddress = getSphynxRouterAddress()
-    const decimals = parseInt(tokenDecimal)
     const startTime = (Math.floor((new Date(presaleStart).getTime() / 1000)))
     const tierOneTime = (Math.floor((new Date(tier1Time).getTime() / 1000)))
     const tierTwoTime = (Math.floor((new Date(tier2Time).getTime() / 1000)))
@@ -523,6 +523,7 @@ const Presale: React.FC = () => {
         axios.post(`${process.env.REACT_APP_BACKEND_API_URL2}/insertPresaleInfo`, { data }).then((response) => {
           console.log(response)
         })
+        history.push(`/launchpad/presale/${presaleId}`)
       })
   }
 
