@@ -151,6 +151,7 @@ interface ImgCardProps {
     tokenName?: string;
     tokenLogo?: string;
     activeSale?: number;
+    totalCap?: number;
     softCap?: number;
     hardCap?: number;
     minContribution?: number;
@@ -158,7 +159,7 @@ interface ImgCardProps {
     tokenState?: string;    
 }
 
-const TokenCard: React.FC<ImgCardProps> = ({ tokenSymbole, tokenName, tokenLogo, activeSale, softCap, hardCap, minContribution, maxContribution, tokenState }: ImgCardProps) => {
+const TokenCard: React.FC<ImgCardProps> = ({ tokenSymbole, tokenName, tokenLogo, activeSale, softCap, hardCap, totalCap, minContribution, maxContribution, tokenState }: ImgCardProps) => {
     return (
         <CardWrapper>
             <CardHeader>
@@ -193,7 +194,7 @@ const TokenCard: React.FC<ImgCardProps> = ({ tokenSymbole, tokenName, tokenLogo,
                             Raised:
                         </SaleInfoTitle>
                         <SaleInfoValue>
-                            0.00/300
+                            {totalCap}/{hardCap}
                         </SaleInfoValue>
                     </SaleInfo>
                     <Divider/>

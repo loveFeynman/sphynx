@@ -230,7 +230,6 @@ const PresaleManage: React.FC = () => {
   const [telegramLink, setTelegramLink] = useState('')
   const [projectDec, setProjectDec] = useState('')
   const [updateDec, setUpdateDec] = useState('')
-  const [hardCap, setHardCap] = useState(0)
   const [raise, setRaise] = useState(0)
   const [tokenData, setTokenData] = useState(null)
   const { toastSuccess, toastError } = useToast()
@@ -260,13 +259,11 @@ const PresaleManage: React.FC = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      let temp = (await presaleContract.hardCap(param.saleId)).toString()
-      let value = parseFloat(ethers.utils.formatUnits(temp, tokenData.decimal))
-      setHardCap(value)
-
-      temp = (await presaleContract.totalContributionBNB(param.saleId)).toString()
-      value = parseFloat(ethers.utils.formatUnits(temp, tokenData.decimal))
+      console.log("tokenData", tokenData, presaleContract)
+      let temp = (await presaleContract.totalContributionBNB(param.saleId)).toString()
+      const value = parseFloat(ethers.utils.formatUnits(temp, tokenData.decimal))
       setRaise(value)
+      console.log("value", value)
 
       temp = (await presaleContract.isDeposited(param.saleId))
       setIsDeposit(temp)
@@ -369,10 +366,10 @@ const PresaleManage: React.FC = () => {
                 <MyInput className="ml16" value={presaleStatus} readOnly style={{ width: '80%' }} />
               </InlineWrapper>
               <Sperate />
-              <WhitelistTitle>Raised: {raise}/{hardCap}</WhitelistTitle>
+              <WhitelistTitle>Raised: {raise}/{tokenData&&tokenData.hard_cap}</WhitelistTitle>
               <ProgressBarWrapper>
                 <ProgressBar>
-                  <Progress state={raise / hardCap * 100} />
+                  <Progress state={tokenData&&(raise / tokenData.hard_cap * 100)} />
                 </ProgressBar>
               </ProgressBarWrapper>
               <Sperate />
