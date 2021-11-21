@@ -20,6 +20,7 @@ import { BIG_TEN } from 'utils/bigNumber'
 import { useParams } from 'react-router'
 import axios from 'axios'
 import * as ethers from 'ethers'
+import { getPresaleAddress } from 'utils/addressHelpers'
 
 const Wrapper = styled.div`
   display: flex;
@@ -502,7 +503,7 @@ const PresaleLive: React.FC = () => {
   const param: any = useParams()
   const { t } = useTranslation()
   const { menuToggled } = useMenuToggle()
-  const [claimToken, setClaimToken] = useState(true)
+  const [presaleStatus, setPresaleStatus] = useState(true)
   const { library } = useActiveWeb3React()
   const signer = library.getSigner()
   const presaleContract = getPresaleContract(signer)
@@ -513,6 +514,7 @@ const PresaleLive: React.FC = () => {
   const [raise, setRaise] = useState(0)
   const [minContribute, setMinContribute] = useState(0)
   const [maxContribute, setMaxContribute] = useState(0)
+  const presaleAddress = getPresaleAddress()
   const PRESALE_DATA = [
     {
       presaleItem: "Sale ID:",
@@ -603,7 +605,10 @@ const PresaleLive: React.FC = () => {
 
       temp = (await presaleContract.maxContributeRate(param.saleId)).toString()
       value = parseFloat(ethers.utils.formatUnits(temp, '18'))
-      setMaxContribute(value)    
+      setMaxContribute(value)
+      
+      temp = (await presaleContract.presaleStatus(param.saleId))
+      setPresaleStatus(temp)  
     }
 
     if (tokenData) {
@@ -683,7 +688,7 @@ const PresaleLive: React.FC = () => {
               <AddressFlex>
                 <AddressWrapper>
                   <Text color='#A7A7CC' bold>Presale Address:</Text>
-                  <Text>{tokenData&&tokenData.owner_address}</Text>
+                  <Text>{presaleAddress}</Text>
                 </AddressWrapper>
                 <AddressWrapper>
                   <Text color='#A7A7CC' bold>Token Address:</Text>
@@ -707,7 +712,7 @@ const PresaleLive: React.FC = () => {
                 </WalletAddressError>
               </WhitelistCard>
               <WhitelistCard>
-                {claimToken ? (
+                {!presaleStatus ? (
                   <>
                     <WhitelistTitle>Raised: {raise}/{hardCap}</WhitelistTitle>
                     <ProgressBarWrapper>

@@ -120,6 +120,8 @@ const Presale: React.FC = () => {
         if (response.data) {
           const list = await Promise.all(response.data.map(async (cell) => {
             const item = {
+              saleId: cell.sale_id,
+              ownerAddress: cell.owner_address,
               tokenName: cell.token_name,
               tokenSymbole: cell.token_symbol,
               tokenLogo: cell.logo_link,
@@ -181,6 +183,8 @@ const Presale: React.FC = () => {
       <TokenListContainder toggled={menuToggled}>
         {tokenList && tokenList.map((item) => (
           <TokenCard
+            saleId={item.saleId}
+            ownerAddress={item.ownerAddress}
             tokenName={item.tokenName}
             tokenSymbole={item.tokenSymbole}
             tokenLogo={item.tokenLogo}

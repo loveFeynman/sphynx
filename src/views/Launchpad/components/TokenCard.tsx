@@ -1,6 +1,8 @@
 import React from 'react'
 import styled from 'styled-components'
 import { Text } from '@sphynxswap/uikit';
+import { useHistory } from 'react-router-dom'
+import { useWeb3React } from '@web3-react/core'
 import ContractHelper from './ContractHelper';
 
 const CardWrapper = styled.div`
@@ -147,6 +149,8 @@ const TokenWrapper = styled.div`
 `
 
 interface ImgCardProps {
+    saleId: number;
+    ownerAddress: string;
     tokenSymbole?: string;
     tokenName?: string;
     tokenLogo?: string;
@@ -159,9 +163,21 @@ interface ImgCardProps {
     tokenState?: string;    
 }
 
-const TokenCard: React.FC<ImgCardProps> = ({ tokenSymbole, tokenName, tokenLogo, activeSale, softCap, hardCap, totalCap, minContribution, maxContribution, tokenState }: ImgCardProps) => {
+const TokenCard: React.FC<ImgCardProps> = ({ saleId, ownerAddress, tokenSymbole, tokenName, tokenLogo, activeSale, softCap, hardCap, totalCap, minContribution, maxContribution, tokenState }: ImgCardProps) => {
+    const history = useHistory()
+    const { account } = useWeb3React()
+
+    const handleClicked = () => {
+        if(account === ownerAddress){
+            history.push(`/launchpad/presale/${saleId}`)
+        }
+        else {
+            history.push(`/launchpad/live/${saleId}`)
+        }
+    }
+
     return (
-        <CardWrapper>
+        <CardWrapper onClick={handleClicked}>
             <CardHeader>
                 <TokenWrapper>
                     <TokenImg>
