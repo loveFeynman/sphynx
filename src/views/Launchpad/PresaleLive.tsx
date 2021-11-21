@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { Button, Text, Flex } from '@sphynxswap/uikit'
 import { useTranslation } from 'contexts/Localization'
@@ -17,8 +17,8 @@ import { getPresaleContract } from 'utils/contractHelpers'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import BigNumber from 'bignumber.js'
 import { BIG_TEN } from 'utils/bigNumber'
-import { useWeb3React } from '@web3-react/core'
-import presaleABI from 'config/abi/presaleABI.json'
+import { useParams } from 'react-router'
+import axios from 'axios'
 import * as ethers from 'ethers'
 
 const Wrapper = styled.div`
@@ -321,8 +321,6 @@ const ContributeWrapper = styled.div`
   border-radius: 5px;
 `
 
-
-
 const TokenRateView = styled.div`
   width: 100%;
   margin-bottom: 20px;
@@ -500,67 +498,8 @@ const Progress = styled.div<{ state }>`
   padding: 1px;
 `
 
-const PRESALE_DATA = [
-  {
-    presaleItem: "Sale ID:",
-    presaleValue: "671",
-  },
-  {
-    presaleItem: "Total Supply:",
-    presaleValue: "9,195,981.563 SHIVA",
-  },
-  {
-    presaleItem: "Tokens For Presale:",
-    presaleValue: "4,600,000 SHIVA",
-  },
-  {
-    presaleItem: "Tokens For Liquidity:",
-    presaleValue: "3,220,000 SHIVA",
-  },
-  {
-    presaleItem: "Soft Cap:",
-    presaleValue: "100 BNB",
-  },
-  {
-    presaleItem: "Hard Cap:",
-    presaleValue: "200 BNB",
-  },
-  {
-    presaleItem: "Presale Rate:",
-    presaleValue: "23,000 BZAP per BNB",
-  },
-  {
-    presaleItem: "PancakeSwap Listing Rate:",
-    presaleValue: "23,000 BZAP per BNB",
-  },
-  {
-    presaleItem: "PancakeSwap Liquidity:",
-    presaleValue: "70%",
-  },
-  {
-    presaleItem: "Minimum Contribution:",
-    presaleValue: "0.1 BNB",
-  },
-  {
-    presaleItem: "Maximum Contribution:",
-    presaleValue: "1 BNB",
-  },
-  {
-    presaleItem: "Presale Start Time:",
-    presaleValue: "30 Sep 2021 at 22:30",
-  },
-  {
-    presaleItem: "Presale End Time:",
-    presaleValue: "1 Oct 2021 at 00:30",
-  },
-  {
-    presaleItem: "Liquidity Unlock:",
-    presaleValue: "30 Sep 2022 at 22:30",
-  },
-]
-
 const PresaleLive: React.FC = () => {
-  const { account } = useWeb3React()
+  const param: any = useParams()
   const { t } = useTranslation()
   const { menuToggled } = useMenuToggle()
   const [claimToken, setClaimToken] = useState(true)
@@ -568,14 +507,120 @@ const PresaleLive: React.FC = () => {
   const signer = library.getSigner()
   const presaleContract = getPresaleContract(signer)
   const [contribute, setContribute] = useState('')
+  const [tokenData, setTokenData] = useState(null)
+  const [softCap, setSoftCap] = useState(0)
+  const [hardCap, setHardCap] = useState(0)
+  const [raise, setRaise] = useState(0)
+  const [minContribute, setMinContribute] = useState(0)
+  const [maxContribute, setMaxContribute] = useState(0)
+  const PRESALE_DATA = [
+    {
+      presaleItem: "Sale ID:",
+      presaleValue: param.saleId,
+    },
+    {
+      presaleItem: "Total Supply:",
+      presaleValue: `9,195,981.563 ${tokenData&&tokenData.token_symbol}`,
+    },
+    {
+      presaleItem: "Tokens For Presale:",
+      presaleValue: `4,600,000 ${tokenData&&tokenData.token_symbol}`,
+    },
+    {
+      presaleItem: "Tokens For Liquidity:",
+      presaleValue: `3,220,000 ${tokenData&&tokenData.token_symbol}`,
+    },
+    {
+      presaleItem: "Soft Cap:",
+      presaleValue: `${softCap} BNB`,
+    },
+    {
+      presaleItem: "Hard Cap:",
+      presaleValue: `${hardCap} BNB`,
+    },
+    {
+      presaleItem: "Presale Rate:",
+      presaleValue: "23,000 BZAP per BNB",
+    },
+    {
+      presaleItem: "PancakeSwap Listing Rate:",
+      presaleValue: "23,000 BZAP per BNB",
+    },
+    {
+      presaleItem: "PancakeSwap Liquidity:",
+      presaleValue: "70%",
+    },
+    {
+      presaleItem: "Minimum Contribution:",
+      presaleValue: `${minContribute} BNB`,
+    },
+    {
+      presaleItem: "Maximum Contribution:",
+      presaleValue: `${maxContribute} BNB`,
+    },
+    {
+      presaleItem: "Presale Start Time:",
+      presaleValue: `${new Date(tokenData&&tokenData.start_time * 1000).toString()}`,
+    },
+    {
+      presaleItem: "Presale End Time:",
+      presaleValue: `${new Date(tokenData&&tokenData.end_time * 1000).toString()}`,
+    },
+    {
+      presaleItem: "Liquidity Unlock:",
+      presaleValue: `${new Date(tokenData&&tokenData.lock_time * 1000).toString()}`,
+    },
+  ]
+
+  useEffect(() => {
+    const isValue = !Number.isNaN(parseInt(param.saleId))
+    if (isValue) {
+      axios.get(`${process.env.REACT_APP_BACKEND_API_URL2}/getPresaleInfo/${param.saleId}`).then((response) => {
+        if(response.data){
+          setTokenData(response.data)
+        }
+      })
+    }
+  }, [param.saleId])
+
+  useEffect(() => {
+    const fetchData = async () => {
+      let temp = (await presaleContract.hardCap(param.saleId)).toString()
+      let value = parseFloat(ethers.utils.formatUnits(temp, tokenData.decimal))
+      setHardCap(value)
+
+      temp = (await presaleContract.softCap(param.saleId)).toString()
+      value = parseFloat(ethers.utils.formatUnits(temp, tokenData.decimal))
+      setSoftCap(value)
+
+      temp = (await presaleContract.totalContributionBNB(param.saleId)).toString()
+      value = parseFloat(ethers.utils.formatUnits(temp, tokenData.decimal))
+      setRaise(value)
+
+      temp = (await presaleContract.minContributeRate(param.saleId)).toString()
+      value = parseFloat(ethers.utils.formatUnits(temp, '18'))
+      setMinContribute(value)
+
+      temp = (await presaleContract.maxContributeRate(param.saleId)).toString()
+      value = parseFloat(ethers.utils.formatUnits(temp, '18'))
+      setMaxContribute(value)    
+    }
+
+    if (tokenData) {
+      fetchData()
+    }
+  }, [presaleContract, tokenData, param.saleId])
 
   const handlerChange = (e: any) => {
     setContribute(e.target.value)
   }
 
   const handleComponent = () => {
-    const value = new BigNumber(contribute).times(BIG_TEN.pow(18)).toString()
-    presaleContract.contribute('0', {value})
+    const isValue = !Number.isNaN(parseInt(param.saleId))
+    if (isValue && parseFloat(contribute) > 0 && tokenData) {
+      const value = new BigNumber(contribute).times(BIG_TEN.pow(tokenData.token_decimal)).toString()
+      presaleContract.contribute(param.saleId, { value })
+    }
   }
 
   return (
@@ -625,24 +670,24 @@ const PresaleLive: React.FC = () => {
         <TokenPresaleContainder toggled={menuToggled}>
           <MainCardWrapper>
             <TokenContainer>
-              <img src={ShivaLogo} width="64px" height="64px" alt="token icon" />
+              <img src={tokenData&&tokenData.logo_link} width="64px" height="64px" alt="token icon" />
               <TokenSymbolWrapper>
-                <TokenSymbol>SHIVA</TokenSymbol>
-                <TokenName>Shiva Token</TokenName>
+                <TokenSymbol>{tokenData&&tokenData.token_symbol}</TokenSymbol>
+                <TokenName>{tokenData&&tokenData.token_name}</TokenName>
               </TokenSymbolWrapper>
             </TokenContainer>
             <TokenDescription>
-              <Text fontSize='12px' textAlign='left' color='#A7A7CC'>$SHIVA is a new reflection protocol on the Binance Smart Chain with a deflationary burn mechanism that offers reflections to holders with 0% buy and sell tax.</Text>
+              <Text fontSize='12px' textAlign='left' color='#A7A7CC'>${tokenData&&tokenData.token_symbol} is a new reflection protocol on the Binance Smart Chain with a deflationary burn mechanism that offers reflections to holders with 0% buy and sell tax.</Text>
             </TokenDescription>
             <TokenAddressContainer>
               <AddressFlex>
                 <AddressWrapper>
                   <Text color='#A7A7CC' bold>Presale Address:</Text>
-                  <Text>0xB90B5CFE959c1a663da15BC21F1b4bfE5B83C706</Text>
+                  <Text>{tokenData&&tokenData.owner_address}</Text>
                 </AddressWrapper>
                 <AddressWrapper>
                   <Text color='#A7A7CC' bold>Token Address:</Text>
-                  <Text>0xE44a3670D9691C8F7caF197123fEF5095cF956Eb</Text>
+                  <Text>{tokenData&&tokenData.token_address}</Text>
                 </AddressWrapper>
               </AddressFlex>
               <AddressSendError>Do not send BNB to the token address!</AddressSendError>
@@ -664,42 +709,40 @@ const PresaleLive: React.FC = () => {
               <WhitelistCard>
                 {claimToken ? (
                   <>
-                <WhitelistTitle>Raised: 270.5/300</WhitelistTitle>
-                <ProgressBarWrapper>
-                  <ProgressBar>
-                    <Progress state='70' />
-                  </ProgressBar>
-                </ProgressBarWrapper>
-
-                <TokenRateView>
-                  <Text fontSize="14px" fontWeight="600" color="#777777" textAlign="left">1 BNB = 250000000 SHIVA</Text>
-                </TokenRateView>
-                <ContributeFlex>
-                  <InputWrapper>
-                    <input
-                      placeholder=""
-                      onChange={handlerChange}
-                    />
-                  </InputWrapper>
-                  <ColorButton onClick={handleComponent}>Contribute</ColorButton>
-                </ContributeFlex>
-                <Flex alignItems="center" style={{ width: '100%' }}>
-                  <StopwatchIcon />
-                  <Text fontSize="13px" fontWeight="600" style={{ margin: '0 10px' }}>Sale ends in: </Text>
-                  <Text fontSize="12px" fontWeight="600" color="#A7A7CC">06:23:49:16</Text>
-                </Flex>
-                <UnderLine />
-                </>
+                    <WhitelistTitle>Raised: {raise}/{hardCap}</WhitelistTitle>
+                    <ProgressBarWrapper>
+                      <ProgressBar>
+                        <Progress state={raise / hardCap * 100} />
+                      </ProgressBar>
+                    </ProgressBarWrapper>
+                    <TokenRateView>
+                      <Text fontSize="14px" fontWeight="600" color="#777777" textAlign="left">1 BNB = 250000000 {tokenData&&tokenData.token_symbol} </Text>
+                    </TokenRateView>
+                    <ContributeFlex>
+                      <InputWrapper>
+                        <input
+                          placeholder=""
+                          onChange={handlerChange}
+                        />
+                      </InputWrapper>
+                      <ColorButton onClick={handleComponent}>Contribute</ColorButton>
+                    </ContributeFlex>
+                    <Flex alignItems="center" style={{ width: '100%' }}>
+                      <StopwatchIcon />
+                      <Text fontSize="13px" fontWeight="600" style={{ margin: '0 10px' }}>Sale ends in: </Text>
+                      <Text fontSize="12px" fontWeight="600" color="#A7A7CC">06:23:49:16</Text>
+                    </Flex>
+                    <UnderLine />
+                  </>
                 ) : (
                   <>
-                    <Text textAlign="center" fontSize="12px" fontWeight="500">This presale has ended. Go back to the dashboard to view others!</Text>
-                    <Button style={{ backgroundColor: "#6941C6", borderRadius: "8px" }} mt="16px">Trade on PancakeSwap</Button>
-                    <Button style={{ backgroundColor: "#8B2A9B", borderRadius: "8px" }} mt="16px">Trade on SphynxSwap</Button>
-                    <Text textAlign="center" fontSize="12px" fontWeight="500" mt="16px">If you participated in the presale click the claim button below to claim your tokens!</Text>
-                    <Button style={{ backgroundColor: "#31B902", borderRadius: "8px" }} mt="16px" mb="16px" onClick={handleComponent}>Claim Token</Button>
+                    <Text textAlign="left" fontSize="12px" fontWeight="500" color="#777777">This presale has ended. Go back to the dashboard to view others!</Text>
+                    <DarkButton style={{ width: '100%' }} mt="16px">Trade on PancakeSwap</DarkButton>
+                    <DarkButton style={{ width: '100%' }} mt="16px">Trade on SphynxSwap</DarkButton>
+                    <Text textAlign="left" fontSize="12px" fontWeight="500" mt="16px" color="#777777">If you participated in the presale click the claim button below to claim your tokens!</Text>
+                    <ColorButton style={{ width: '100%' }} mt="16px" mb="16px" onClick={handleComponent}>Claim Token</ColorButton>
                   </>
                 )}
-
                 <TokenAmountView>
                   <Text fontSize="12px" fontWeight="600" color="#A7A7CC">Your Contributed Account:</Text>
                   <Text fontSize="12px" fontWeight="600" textAlign="center" color="#F2C94C">1BNB</Text>
@@ -707,7 +750,7 @@ const PresaleLive: React.FC = () => {
                 <UnderLine />
                 <TokenAmountView>
                   <Text fontSize="12px" fontWeight="600" color="#A7A7CC">Your Reserved Tokens:</Text>
-                  <Text fontSize="12px" fontWeight="600" textAlign="center" color="#F2C94C">250000000 SHIVA</Text>
+                  <Text fontSize="12px" fontWeight="600" textAlign="center" color="#F2C94C">250000000 {tokenData&&tokenData.token_symbol}</Text>
                 </TokenAmountView>
                 <Separate />
                 <DarkButton>Emergency Withdraw</DarkButton>

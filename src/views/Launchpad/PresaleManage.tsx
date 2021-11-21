@@ -219,14 +219,9 @@ const DarkButton = styled(Button)`
 `
 
 const PresaleManage: React.FC = () => {
-  const param : any = useParams()
+  const param: any = useParams()
   const { library } = useActiveWeb3React()
   const signer = library.getSigner()
-  const [tokenAddress, setTokenAddress] = useState('')
-  const [tokenName, setName] = useState('')
-  const [tokenSymbol, setSymbol] = useState('')
-  const [presaleStatus, setPresaleStatus] = useState('')
-  const [isDeposit, setIsDeposit] = useState(true)
   const [logoLink, setLogoLink] = useState('')
   const [webSiteLink, setWebSiteLink] = useState('')
   const [gitLink, setGitLink] = useState('')
@@ -235,29 +230,30 @@ const PresaleManage: React.FC = () => {
   const [telegramLink, setTelegramLink] = useState('')
   const [projectDec, setProjectDec] = useState('')
   const [updateDec, setUpdateDec] = useState('')
-  const [hadCap, setHadCap] = useState(1)
+  const [hardCap, setHardCap] = useState(0)
   const [raise, setRaise] = useState(0)
-  const [decimal, setDecimal] = useState(18)
+  const [tokenData, setTokenData] = useState(null)
   const { toastSuccess, toastError } = useToast()
   const presaleContract = getPresaleContract(signer)
-
-  console.log(param.saleId)
+  const [presaleStatus, setPresaleStatus] = useState('')
+  const [isDeposit, setIsDeposit] = useState(false)
+  const [isFinalize, setIsFinalize] = useState(false)
 
   useEffect(() => {
-    if(param.saleId){
+    const isValue = !Number.isNaN(parseInt(param.saleId))
+    if (isValue) {
       axios.get(`${process.env.REACT_APP_BACKEND_API_URL2}/getPresaleInfo/${param.saleId}`).then((response) => {
-        setTokenAddress(response.data.token_address)
-        setName(response.data.token_name)
-        setSymbol(response.data.token_symbol)
-        setLogoLink(response.data.logo_link)
-        setWebSiteLink(response.data.website_link)
-        setGitLink(response.data.github_link)
-        setTelegramLink(response.data.telegram_link)
-        setTwitterLink(response.data.twitter_link)
-        setRedditLink(response.data.reddit_link)
-        setProjectDec(response.data.project_dec)
-        setUpdateDec(response.data.update_dec)
-        setDecimal(response.data.token_decimal)
+        if (response.data) {
+          setTokenData(response.data)
+          setLogoLink(response.data.logo_link)
+          setWebSiteLink(response.data.website_link)
+          setGitLink(response.data.github_link)
+          setTelegramLink(response.data.telegram_link)
+          setTwitterLink(response.data.twitter_link)
+          setRedditLink(response.data.reddit_link)
+          setProjectDec(response.data.project_dec)
+          setUpdateDec(response.data.update_dec)
+        }
       })
     }
   }, [param.saleId])
@@ -265,24 +261,31 @@ const PresaleManage: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       let temp = (await presaleContract.hardCap(param.saleId)).toString()
-      let value = parseFloat(ethers.utils.formatUnits(temp, decimal))
-      setHadCap(value)
+      let value = parseFloat(ethers.utils.formatUnits(temp, tokenData.decimal))
+      setHardCap(value)
+
       temp = (await presaleContract.totalContributionBNB(param.saleId)).toString()
-      value = parseFloat(ethers.utils.formatUnits(temp, decimal))
+      value = parseFloat(ethers.utils.formatUnits(temp, tokenData.decimal))
       setRaise(value)
+
+      temp = (await presaleContract.isDeposited(param.saleId))
+      setIsDeposit(temp)
     }
 
-    fetchData()
-  }, [presaleContract, decimal, param.saleId])
+    if (tokenData) {
+      fetchData()
+    }
+  }, [presaleContract, tokenData, param.saleId])
 
   const handleDeposit = async () => {
-    const abi: any = ERC20_ABI
-    const tokenContract = new ethers.Contract(tokenAddress, abi, signer)
-
-    const tx = await tokenContract.approve(getPresaleAddress(), '0xfffffffffffffffffffffffffffffffff')
-    await tx.wait()
-    const tx1 = await presaleContract.depositToken(param.saleId)
-    await tx1.wait()
+    if (tokenData) {
+      const abi: any = ERC20_ABI
+      const tokenContract = new ethers.Contract(tokenData.token_address, abi, signer)
+      const tx = await tokenContract.approve(getPresaleAddress(), '0xfffffffffffffffffffffffffffffffff')
+      await tx.wait()
+      const tx1 = await presaleContract.depositToken(param.saleId)
+      await tx1.wait()
+    }
   }
 
   const handleBurn = () => {
@@ -294,22 +297,24 @@ const PresaleManage: React.FC = () => {
   }
 
   const handleUpdate = () => {
-    const data: any = {
-      sale_id: param.saleId,
-      logo_link: logoLink,
-      website_link: webSiteLink,
-      github_link: gitLink,
-      twitter_link: twitterLink,
-      reddit_link: redditLink,
-      telegram_link: telegramLink,
-      project_dec: projectDec,
-      update_dec: updateDec,
+    const isValue = !Number.isNaN(parseInt(param.saleId))
+    if (isValue) {
+      const data: any = {
+        sale_id: param.saleId,
+        logo_link: logoLink,
+        website_link: webSiteLink,
+        github_link: gitLink,
+        twitter_link: twitterLink,
+        reddit_link: redditLink,
+        telegram_link: telegramLink,
+        project_dec: projectDec,
+        update_dec: updateDec,
+      }
 
+      axios.post(`${process.env.REACT_APP_BACKEND_API_URL2}/updatePresaleInfo`, { data }).then((response) => {
+        toastSuccess('Updated!', 'Your presale info is udpated successfully.')
+      })
     }
-
-    axios.post(`${process.env.REACT_APP_BACKEND_API_URL2}/updatePresaleInfo`, { data }).then((response) => {
-      toastSuccess('Updated!', 'Your presale info is udpated successfully.')
-    })
   }
 
   return (
@@ -346,17 +351,17 @@ const PresaleManage: React.FC = () => {
             <StepContainer>
               <InlineWrapper>
                 <p className="description w110">Token Address</p>
-                <MyInput className="ml16" value={tokenAddress} readOnly style={{ width: '80%' }} />
+                <MyInput className="ml16" value={tokenData && tokenData.token_address} readOnly style={{ width: '80%' }} />
               </InlineWrapper>
               <Sperate />
               <InlineWrapper>
                 <p className="description w110">Token Name</p>
-                <MyInput className="ml16" value={tokenName} readOnly style={{ width: '80%' }} />
+                <MyInput className="ml16" value={tokenData && tokenData.token_name} readOnly style={{ width: '80%' }} />
               </InlineWrapper>
               <Sperate />
               <InlineWrapper>
                 <p className="description w110">Token Symbol</p>
-                <MyInput className="ml16" value={tokenSymbol} readOnly style={{ width: '80%' }} />
+                <MyInput className="ml16" value={tokenData && tokenData.token_symbol} readOnly style={{ width: '80%' }} />
               </InlineWrapper>
               <Sperate />
               <InlineWrapper>
@@ -364,21 +369,24 @@ const PresaleManage: React.FC = () => {
                 <MyInput className="ml16" value={presaleStatus} readOnly style={{ width: '80%' }} />
               </InlineWrapper>
               <Sperate />
-              <WhitelistTitle>Raised: {raise}/{hadCap}</WhitelistTitle>
+              <WhitelistTitle>Raised: {raise}/{hardCap}</WhitelistTitle>
               <ProgressBarWrapper>
                 <ProgressBar>
-                  <Progress state={raise/hadCap * 100} />
+                  <Progress state={raise / hardCap * 100} />
                 </ProgressBar>
               </ProgressBarWrapper>
               <Sperate />
               {isDeposit ?
-                <ColorButton onClick={handleDeposit}>Deposit</ColorButton>
+                isFinalize ?
+                  <>
+                    {/* <ColorButton onClick={handleBurn}>Burn</ColorButton>
+                  <Sperate /> */}
+                    <DarkButton onClick={handleWithdraw}>Withdraw Liquidity Token</DarkButton>
+                  </>
+                  :
+                  <ColorButton onClick={handleBurn} disable >Finalize</ColorButton>
                 :
-                <>
-                  <ColorButton onClick={handleBurn}>Burn</ColorButton>
-                  <Sperate />
-                  <DarkButton onClick={handleWithdraw}>Withdraw Liquidity Token</DarkButton>
-                </>
+                <ColorButton onClick={handleDeposit}>Deposit</ColorButton>
               }
               <Sperate />
               <p className="description">
