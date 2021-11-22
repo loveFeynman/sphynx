@@ -329,7 +329,6 @@ const Presale: React.FC = () => {
   const [tokenName, setName] = useState('')
   const [tokenSymbol, setSymbol] = useState('')
   const [tokenDecimal, setDecimal] = useState('')
-  const [presaleRate, setPresaleRate] = useState('')
   const [tier1, setTier1] = useState('')
   const [tier2, setTier2] = useState('')
   const [tier3, setTier3] = useState('')
@@ -461,7 +460,7 @@ const Presale: React.FC = () => {
     //   return;
     // }
 
-    const presaleId = (await presaleContract.currentPresaleId.call()).toString()
+    const presaleId = (await presaleContract.currentPresaleId()).toString()
     const routerAddress = getSphynxRouterAddress()
     const startTime = (Math.floor((new Date(presaleStart).getTime() / 1000)))
     const tierOneTime = (Math.floor((new Date(tier1Time).getTime() / 1000)))
