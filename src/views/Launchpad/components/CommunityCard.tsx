@@ -35,7 +35,7 @@ const CommunityCard: React.FC<ImgCardProps> = ({ children, desc }) => {
     return (
         <CardWrapper>
             {children}
-            <Text fontSize='16px' color='white'>{desc}</Text>
+            <Text fontSize='16px' color='white' fontWeight='bold'>{desc}</Text>
         </CardWrapper>
     )
 }

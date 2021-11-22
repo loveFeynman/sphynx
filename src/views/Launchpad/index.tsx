@@ -31,6 +31,7 @@ const Wrapper = styled.div`
   padding: 5px;
   margin-top: 24px;
   text-align: center;
+  font-weight: bold;
   p {
     line-height: 24px;
   }
@@ -257,19 +258,19 @@ const Launchpad: React.FC = () => {
       </PresaleBox>
       <FlexWrapper style={{ marginTop: '32px' }}>
         <ValueCard
-          value="$ 1.8M"
+          value="$ 0"
           desc="Total Liquidity Raised"
           color="linear-gradient(90deg, #610D89 0%, #C42BB4 100%)"
         >
           <NounRaiseIcon />
         </ValueCard>
-        <ValueCard value="12" desc="Projects">
+        <ValueCard value="0" desc="Projects">
           <NounProjectIcon />
         </ValueCard>
-        <ValueCard value="3200" desc="Participants">
+        <ValueCard value="0" desc="Participants">
           <NounUserIcon />
         </ValueCard>
-        <ValueCard value="$ 1.8M" desc="Total Liquidity Locked">
+        <ValueCard value="$ 0" desc="Total Liquidity Locked">
           <NounLockIcon />
         </ValueCard>
       </FlexWrapper>
