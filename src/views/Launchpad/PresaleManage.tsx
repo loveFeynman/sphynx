@@ -126,7 +126,7 @@ const InlineWrapper = styled.div`
 const MyInput = styled.input`
   background: ${({ theme }) => (theme.isDark ? '#0E0E26' : '#2A2E60')};
   border-radius: 5px;
-  border: 1px solid #4A5187;
+  border: 1px solid #4a5187;
   padding: 10px 14px;
   padding-inline-start: 12px;
   height: 38px;
@@ -183,15 +183,15 @@ const ProgressBarWrapper = styled.div`
 `
 
 const ProgressBar = styled.div`
-  background-color: #23234B;
+  background-color: #23234b;
   border-radius: 8px;
   position: relative;
 `
 
 const Progress = styled.div<{ state }>`
-  width: ${props => `${props.state}%`};
+  width: ${(props) => `${props.state}%`};
   height: 12px;
-  background: linear-gradient(90deg, #610D89 0%, #C42BB4 100%);
+  background: linear-gradient(90deg, #610d89 0%, #c42bb4 100%);
   border-radius: 8px 0px 0px 8px;
   padding: 1px;
 `
@@ -201,7 +201,7 @@ const ColorButton = styled(Button)`
   border: none;
   height: 34px;
   font-size: 13px;
-  background: linear-gradient(90deg,#610D89 0%,#C42BB4 100%);
+  background: linear-gradient(90deg, #610d89 0%, #c42bb4 100%);
   outline: none;
   color: white;
   width: 176px;
@@ -212,7 +212,7 @@ const DarkButton = styled(Button)`
   border: none;
   height: 34px;
   font-size: 13px;
-  background: ${({ theme }) => theme.isDark ? '#0E0E26' : '#191C41'};
+  background: ${({ theme }) => (theme.isDark ? '#0E0E26' : '#191C41')};
   outline: none;
   color: white;
   width: 276px;
@@ -242,27 +242,33 @@ const PresaleManage: React.FC = () => {
   const [isDeposit, setIsDeposit] = useState(false)
   const [isFinalize, setIsFinalize] = useState(false)
   const [liquidityUnlocked, setUnlockedLiquidity] = useState(false)
+  const [isWhiteList, setIsWhiteList] = useState(false)
+  const [whitelist1, setWhitelist1] = useState('')
+  const [whitelist2, setWhitelist2] = useState('')
+  const [isWithDraw, setWithdraw] = useState(false)
 
   useEffect(() => {
     const isValue = !Number.isNaN(parseInt(param.saleId))
     if (isValue && chainId) {
-      axios.get(`${process.env.REACT_APP_BACKEND_API_URL2}/getPresaleInfo/${param.saleId}/${chainId}`).then((response) => {
-        if (response.data) {
-          setTokenData(response.data)
-          setLogoLink(response.data.logo_link)
-          setWebSiteLink(response.data.website_link)
-          setGitLink(response.data.github_link)
-          setTelegramLink(response.data.telegram_link)
-          setTwitterLink(response.data.twitter_link)
-          setRedditLink(response.data.reddit_link)
-          setProjectDec(response.data.project_dec)
-          setUpdateDec(response.data.update_dec)
-          setCertikAudit(response.data.certik_audit)
-          setDoxxedTeam(response.data.doxxed_team)
-          setUtility(response.data.utility)
-          setKYC(response.data.kyc)
-        }
-      })
+      axios
+        .get(`${process.env.REACT_APP_BACKEND_API_URL2}/getPresaleInfo/${param.saleId}/${chainId}`)
+        .then((response) => {
+          if (response.data) {
+            setTokenData(response.data)
+            setLogoLink(response.data.logo_link)
+            setWebSiteLink(response.data.website_link)
+            setGitLink(response.data.github_link)
+            setTelegramLink(response.data.telegram_link)
+            setTwitterLink(response.data.twitter_link)
+            setRedditLink(response.data.reddit_link)
+            setProjectDec(response.data.project_dec)
+            setUpdateDec(response.data.update_dec)
+            setCertikAudit(response.data.certik_audit)
+            setDoxxedTeam(response.data.doxxed_team)
+            setUtility(response.data.utility)
+            setKYC(response.data.kyc)
+          }
+        })
     }
   }, [param.saleId, chainId])
 
@@ -272,15 +278,21 @@ const PresaleManage: React.FC = () => {
       const value = parseFloat(ethers.utils.formatUnits(temp, tokenData.decimal))
       setRaise(value)
 
-      temp = (await presaleContract.isDeposited(param.saleId))
+      temp = await presaleContract.isDeposited(param.saleId)
       setIsDeposit(temp)
 
       const finalize = await presaleContract.presaleStatus(param.saleId)
       setIsFinalize(finalize)
 
-      const liquidityLockTime = await presaleContract.liquidityLockTime(param.saleId);
-      const isUnlocked = new Date().getTime()/1000 > parseFloat(liquidityLockTime)
+      const liquidityLockTime = await presaleContract.liquidityLockTime(param.saleId)
+      const isUnlocked = new Date().getTime() / 1000 > parseFloat(liquidityLockTime)
       setUnlockedLiquidity(isUnlocked)
+
+      const whileListStatus = await presaleContract.iswhitelist(param.saleId)
+      setIsWhiteList(whileListStatus)
+
+      const withdrawFlag = await presaleContract.withdrawFlag(param.saleId)
+      setWithdraw(withdrawFlag)
     }
 
     if (tokenData) {
@@ -305,8 +317,36 @@ const PresaleManage: React.FC = () => {
   }
 
   const handleWithdraw = async () => {
-    const tx = await presaleContract.withdrawLiquidity(param.saleId);
+    const tx = await presaleContract.withdrawLiquidity(param.saleId)
     await tx.wait()
+  }
+
+  const enableWhiteList = async () => {
+    const tx = await presaleContract.enablewhitelist(param.saleId, true)
+    const receipt = await tx.wait()
+    if (receipt.status === 1) {
+      setIsWhiteList(true)
+    }
+  }
+
+  const disableWhiteList = async () => {
+    const tx = await presaleContract.enablewhitelist(param.saleId, false)
+    const receipt = await tx.wait()
+    if (receipt.status === 1) {
+      setIsWhiteList(false)
+    }
+  }
+
+  const enableWhiteList1 = async () => {
+    const whitelists = whitelist1.split(',')
+    const tx = await presaleContract.updatewhitelist(param.saleId, whitelists, '1')
+    const receipt = await tx.wait()
+  }
+
+  const enableWhiteList2 = async () => {
+    const whitelists = whitelist2.split(',')
+    const tx = await presaleContract.updatewhitelist(param.saleId, whitelists, '2')
+    const receipt = await tx.wait()
   }
 
   const handleUpdate = () => {
@@ -330,10 +370,9 @@ const PresaleManage: React.FC = () => {
       }
 
       axios.post(`${process.env.REACT_APP_BACKEND_API_URL2}/updatePresaleInfo`, { data }).then((response) => {
-        if(response.data) {
+        if (response.data) {
           toastSuccess('Updated!', 'Your presale info is udpated successfully.')
-        }
-        else {
+        } else {
           toastError('Failed!', 'Your action is failed.')
         }
       })
@@ -355,17 +394,28 @@ const PresaleManage: React.FC = () => {
           <Notification>Congratulations your presale is created successfully.</Notification>
           <Sperate />
           <p style={{ color: '#D91A00' }}>
-            If your token contains special transfers such as burn, rebase or something else you must ensure the DxSale LP Router Address and the Presale Address are excluded from these features! Or you must set fees, burns or whatever else to be 0 or disabled for the duration of the presale and until the finalize button is clicked!
+            If your token contains special transfers such as burn, rebase or something else you must ensure the DxSale
+            LP Router Address and the Presale Address are excluded from these features! Or you must set fees, burns or
+            whatever else to be 0 or disabled for the duration of the presale and until the finalize button is clicked!
           </p>
           <Sperate />
           <Notification>
-            DxSale LP Router Address: 0x7519f576E666cD80c83BEF74Bc6a390aDDfb8e1C<br />
-            Presale Address: 0x919Ce88872737b49FB861E68BeC43880DA824E6b<br />
-            - You must deposit the required number of tokens to the presale address to start the sale (Click the Deposit Tokens button below)<br />
-            - The finalize button will become available once you hit your hard cap or presale time ends.<br />
-            - Clicking the finalize button will list your token on PancakeSwap immediately. Listing will be done at the set PancakeSwap rate with liquidity locked by DxLock.<br />
-            - Once finalized your BNB will be released to the creation wallet.<br />
-            Here is a summary of your presale (more details on the presale page):<br />
+            DxSale LP Router Address: 0x7519f576E666cD80c83BEF74Bc6a390aDDfb8e1C
+            <br />
+            Presale Address: 0x919Ce88872737b49FB861E68BeC43880DA824E6b
+            <br />
+            - You must deposit the required number of tokens to the presale address to start the sale (Click the Deposit
+            Tokens button below)
+            <br />
+            - The finalize button will become available once you hit your hard cap or presale time ends.
+            <br />
+            - Clicking the finalize button will list your token on PancakeSwap immediately. Listing will be done at the
+            set PancakeSwap rate with liquidity locked by DxLock.
+            <br />
+            - Once finalized your BNB will be released to the creation wallet.
+            <br />
+            Here is a summary of your presale (more details on the presale page):
+            <br />
           </Notification>
         </NoteWrapper>
         <Sperate />
@@ -374,7 +424,12 @@ const PresaleManage: React.FC = () => {
             <StepContainer>
               <InlineWrapper>
                 <p className="description w110">Token Address</p>
-                <MyInput className="ml16" value={tokenData && tokenData.token_address} readOnly style={{ width: '80%' }} />
+                <MyInput
+                  className="ml16"
+                  value={tokenData && tokenData.token_address}
+                  readOnly
+                  style={{ width: '80%' }}
+                />
               </InlineWrapper>
               <Sperate />
               <InlineWrapper>
@@ -384,7 +439,12 @@ const PresaleManage: React.FC = () => {
               <Sperate />
               <InlineWrapper>
                 <p className="description w110">Token Symbol</p>
-                <MyInput className="ml16" value={tokenData && tokenData.token_symbol} readOnly style={{ width: '80%' }} />
+                <MyInput
+                  className="ml16"
+                  value={tokenData && tokenData.token_symbol}
+                  readOnly
+                  style={{ width: '80%' }}
+                />
               </InlineWrapper>
               <Sperate />
               <InlineWrapper>
@@ -392,25 +452,57 @@ const PresaleManage: React.FC = () => {
                 <MyInput className="ml16" value={presaleStatus} readOnly style={{ width: '80%' }} />
               </InlineWrapper>
               <Sperate />
-              <WhitelistTitle>Raised: {raise}/{tokenData&&tokenData.hard_cap}</WhitelistTitle>
+              <WhitelistTitle>
+                Raised: {raise}/{tokenData && tokenData.hard_cap}
+              </WhitelistTitle>
               <ProgressBarWrapper>
                 <ProgressBar>
-                  <Progress state={tokenData&&(raise / tokenData.hard_cap * 100)} />
+                  <Progress state={tokenData && (raise / tokenData.hard_cap) * 100} />
                 </ProgressBar>
               </ProgressBarWrapper>
               <Sperate />
-              {isDeposit ?
-                isFinalize ?
+              {isFinalize ? (
+                ''
+              ) : !isWhiteList ? (
+                <>
+                  <DarkButton onClick={enableWhiteList}>Enable WhiteList</DarkButton>
+                  <Sperate />
+                </>
+              ) : (
+                <>
+                <DarkButton onClick={disableWhiteList}>Disable WhiteList</DarkButton>
+                <Sperate />
+                  <MyInput
+                    onChange={(e) => setWhitelist1(e.target.value)}
+                    value={whitelist1}
+                    style={{ width: '100%' }}
+                  />
+                  <Sperate />
+                  <DarkButton onClick={enableWhiteList1}>Add WhiteList1</DarkButton>
+                  <Sperate />
+                  <MyInput
+                    onChange={(e) => setWhitelist2(e.target.value)}
+                    value={whitelist2}
+                    style={{ width: '100%' }}
+                  />
+                  <Sperate />
+                  <DarkButton onClick={enableWhiteList2}>Add WhiteList2</DarkButton>
+                  <Sperate />
+                </>
+              )}
+              {isDeposit ? (
+                isFinalize ? (
                   <>
-                    {/* <ColorButton onClick={handleBurn}>Burn</ColorButton>
-                  <Sperate /> */}
-                    <DarkButton onClick={handleWithdraw} disabled={!liquidityUnlocked}>Withdraw Liquidity Token</DarkButton>
+                    <DarkButton onClick={handleWithdraw} disabled={!liquidityUnlocked || isWithDraw}>
+                      Withdraw Liquidity Token
+                    </DarkButton>
                   </>
-                  :
-                  <ColorButton onClick={handleFinalize} >Finalize</ColorButton>
-                :
+                ) : (
+                  <ColorButton onClick={handleFinalize}>Finalize</ColorButton>
+                )
+              ) : (
                 <ColorButton onClick={handleDeposit}>Deposit</ColorButton>
-              }
+              )}
               <Sperate />
               <p className="description">
                 Logo Link: (URL must end with a supported image extension png, jpg, jpeg or gif)
@@ -430,7 +522,11 @@ const PresaleManage: React.FC = () => {
               <MyInput onChange={(e) => setRedditLink(e.target.value)} value={redditLink} style={{ width: '100%' }} />
               <Sperate />
               <p className="description">Telegram Link</p>
-              <MyInput onChange={(e) => setTelegramLink(e.target.value)} value={telegramLink} style={{ width: '100%' }} />
+              <MyInput
+                onChange={(e) => setTelegramLink(e.target.value)}
+                value={telegramLink}
+                style={{ width: '100%' }}
+              />
               <Sperate />
               <p className="description">Project Description</p>
               <MyInput onChange={(e) => setProjectDec(e.target.value)} value={projectDec} style={{ width: '100%' }} />
