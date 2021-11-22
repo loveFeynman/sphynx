@@ -687,7 +687,7 @@ const Presale: React.FC = () => {
             <StepWrapper number="6" stepName="PancakeSwap Liquidity" step={step} onClick={() => setStep(5)}>
               <p className="description">
                 Enter the percentage of raised funds that should be allocated to Liquidity on PancakeSwap (Min 0%, Max
-                100%, We recommend SphynxSwap)
+                95%, We recommend SphynxSwap)
               </p>
               <MyInput
                 onChange={(e) => setPancakeLiquidityRate(e.target.value)}
