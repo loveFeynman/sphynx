@@ -280,13 +280,13 @@ const StepContainer = styled.div`
 `
 
 const Notification = styled.p`
-  color: #777;
+  color: white;
   font-size: 14px;
   line-height: 20px;
 `
 
 const WarningPanel = styled.div`
-  background: #fa899e;
+  background: #e04e69;
   border-radius: 10px;
   padding: 16px;
   display: flex;
@@ -335,7 +335,8 @@ const Presale: React.FC = () => {
   const [hardCap, setHardCap] = useState('')
   const [minBuy, setMinBuy] = useState('')
   const [maxBuy, setMaxBuy] = useState('')
-  const [liquidityRate, setLiquidityRate] = useState('')
+  const [pancakeLiquidityRate, setPancakeLiquidityRate] = useState('')
+  const [sphynxLiquidityRate, setSphynxLiquidityRate] = useState('')
   const [listingRate, setListingRate] = useState('')
   const [logoLink, setLogoLink] = useState('')
   const [webSiteLink, setWebSiteLink] = useState('')
@@ -418,45 +419,50 @@ const Presale: React.FC = () => {
       setStep(4)
       return;
     }
-    if (!parseFloat(liquidityRate) || parseFloat(liquidityRate) <= 50) {
-      toastError('Liquidity amount should be more than 50%!')
+    if (!parseFloat(pancakeLiquidityRate) || parseFloat(pancakeLiquidityRate) <= 5) {
+      toastError('Pancake Liquidity amount should be more than 5%!')
       setStep(5)
+      return;
+    }
+    if (!parseFloat(sphynxLiquidityRate) || parseFloat(sphynxLiquidityRate) <= 50) {
+      toastError('Sphynx Liquidity amount should be more than 50%!')
+      setStep(6)
       return;
     }
     if (!parseFloat(listingRate)) {
       toastError('Please input listing rate!')
-      setStep(6)
+      setStep(7)
       return;
     }
 
-    // if (new Date(presaleStart).getTime() <= new Date().getTime() + 600000) {
-    //   toastError('Presale start time must be more than 10 minutes after now!')
-    //   setStep(8)
-    //   return;
-    // }
-    // if (
-    //   new Date(presaleStart).getTime() >= new Date(presaleEnd).getTime() ||
-    //   new Date(presaleStart).getTime() + 3600 * 1000 * 24 * 3 <= new Date(presaleEnd).getTime()
-    // ) {
-    //   toastError('Presale period must be less than 3 days!')
-    //   setStep(8)
-    //   return;
-    // }
-    // if (new Date(presaleStart).getTime() > new Date(tier1Time).getTime()) {
-    //   toastError('Presale tier1 period must be more than the presale start time!')
-    //   setStep(8)
-    //   return;
-    // }
-    // if (new Date(tier1Time).getTime() > new Date(tier2Time).getTime()) {
-    //   toastError('Presale tier2 time must be more than the presale tier1 time!')
-    //   setStep(8)
-    //   return;
-    // }
-    // if (new Date(liquidityLock).getTime() <= new Date(presaleEnd).getTime() + 30 * 24 * 3600 * 1000) {
-    //   toastError('Liquidity lock time must be more than 1 month from presale end time!')
-    //   setStep(8)
-    //   return;
-    // }
+    if (new Date(presaleStart).getTime() <= new Date().getTime() + 600000) {
+      toastError('Presale start time must be more than 10 minutes after now!')
+      setStep(9)
+      return;
+    }
+    if (
+      new Date(presaleStart).getTime() >= new Date(presaleEnd).getTime() ||
+      new Date(presaleStart).getTime() + 3600 * 1000 * 24 * 3 <= new Date(presaleEnd).getTime()
+    ) {
+      toastError('Presale period must be less than 3 days!')
+      setStep(9)
+      return;
+    }
+    if (new Date(presaleStart).getTime() > new Date(tier1Time).getTime()) {
+      toastError('Presale tier1 period must be more than the presale start time!')
+      setStep(9)
+      return;
+    }
+    if (new Date(tier1Time).getTime() > new Date(tier2Time).getTime()) {
+      toastError('Presale tier2 time must be more than the presale tier1 time!')
+      setStep(9)
+      return;
+    }
+    if (new Date(liquidityLock).getTime() <= new Date(presaleEnd).getTime() + 30 * 24 * 3600 * 1000) {
+      toastError('Liquidity lock time must be more than 1 month from presale end time!')
+      setStep(9)
+      return;
+    }
 
     const presaleId = (await presaleContract.currentPresaleId.call()).toString()
     const routerAddress = getSphynxRouterAddress()
@@ -480,10 +486,11 @@ const Presale: React.FC = () => {
       tier1Rate: new BigNumber(tier1).toString(),
       tier2Rate: new BigNumber(tier2).toString(),
       publicRate: new BigNumber(tier3).toString(),
-      liquidityRate,
+      liquidityRate: listingRate,
       softCap: new BigNumber(softCap).times(BIG_TEN.pow(18)).toString(),
       hardCap: new BigNumber(hardCap).times(BIG_TEN.pow(18)).toString(),
-      routerRate: listingRate,
+      routerRate: pancakeLiquidityRate,
+      defaultRouterRate: sphynxLiquidityRate
     }
 
     const fee = new BigNumber('0.001').times(BIG_TEN.pow(18)).toString()
@@ -503,7 +510,8 @@ const Presale: React.FC = () => {
           hard_cap: hardCap,
           min_buy: minBuy,
           max_buy: maxBuy,
-          liquidity: liquidityRate,
+          router_rate: pancakeLiquidityRate,
+          default_router_rate: sphynxLiquidityRate,
           listing_rate: listingRate,
           logo_link: logoLink,
           website_link: webSiteLink,
@@ -521,7 +529,7 @@ const Presale: React.FC = () => {
         }
         toastSuccess('Pushed!', 'Your presale info is saved successfully.')
         axios.post(`${process.env.REACT_APP_BACKEND_API_URL2}/insertPresaleInfo`, { data }).then((response) => {
-          console.log(response)
+          console.log("--------------------", response)
         })
         history.push(`/launchpad/presale/${presaleId}`)
       })
@@ -661,15 +669,14 @@ const Presale: React.FC = () => {
                 </FillBtn>
               </InlineWrapper>
             </StepWrapper>
-            <Sperate />
-            <StepWrapper number="5" stepName="SphynxSwap Liquidity" step={step} onClick={() => setStep(5)}>
+            <Sperate /><StepWrapper number="5" stepName="PancakeSwap Liquidity" step={step} onClick={() => setStep(5)}>
               <p className="description">
-                Enter the percentage of raised funds that should be allocated to Liquidity on PancakeSwap (Min 51%, Max
+                Enter the percentage of raised funds that should be allocated to Liquidity on PancakeSwap (Min 5%, Max
                 100%, We recommend &gt; 70%)
               </p>
               <MyInput
-                onChange={(e) => setLiquidityRate(e.target.value)}
-                value={liquidityRate}
+                onChange={(e) => setPancakeLiquidityRate(e.target.value)}
+                value={pancakeLiquidityRate}
                 style={{ width: '100%' }}
               />
               <Sperate />
@@ -681,12 +688,16 @@ const Presale: React.FC = () => {
               </InlineWrapper>
             </StepWrapper>
             <Sperate />
-            <StepWrapper number="6" stepName="SphynxSwap Listing Rate" step={step} onClick={() => setStep(6)}>
+            <StepWrapper number="6" stepName="SphynxSwap Liquidity" step={step} onClick={() => setStep(6)}>
               <p className="description">
-                Enter the PancakeSwap listing price: (If I buy 1 BNB worth on PancakeSwap how many tokens do I get?
-                Usually this amount is lower than presale rate to allow for a higher listing price on PancakeSwap)
+                Enter the percentage of raised funds that should be allocated to Liquidity on SphynxSwap (Min 51%, Max
+                100%, We recommend &gt; 70%)
               </p>
-              <MyInput onChange={(e) => setListingRate(e.target.value)} value={listingRate} style={{ width: '100%' }} />
+              <MyInput
+                onChange={(e) => setSphynxLiquidityRate(e.target.value)}
+                value={sphynxLiquidityRate}
+                style={{ width: '100%' }}
+              />
               <Sperate />
               <InlineWrapper>
                 <LineBtn onClick={() => setStep(5)}>Back</LineBtn>
@@ -696,7 +707,22 @@ const Presale: React.FC = () => {
               </InlineWrapper>
             </StepWrapper>
             <Sperate />
-            <StepWrapper number="7" stepName="Additional Information" step={step} onClick={() => setStep(7)}>
+            <StepWrapper number="7" stepName="SphynxSwap Listing Rate" step={step} onClick={() => setStep(7)}>
+              <p className="description">
+                Enter the SphynxSwap listing price: (If I buy 1 BNB worth on SphynxSwap how many tokens do I get?
+                Usually this amount is lower than presale rate to allow for a higher listing price on SphynxSwap)
+              </p>
+              <MyInput onChange={(e) => setListingRate(e.target.value)} value={listingRate} style={{ width: '100%' }} />
+              <Sperate />
+              <InlineWrapper>
+                <LineBtn onClick={() => setStep(6)}>Back</LineBtn>
+                <FillBtn className="ml16" onClick={() => setStep(8)}>
+                  Next
+                </FillBtn>
+              </InlineWrapper>
+            </StepWrapper>
+            <Sperate />
+            <StepWrapper number="8" stepName="Additional Information" step={step} onClick={() => setStep(8)}>
               <p className="description">
                 Please fill out the additional information below to display it on your presale. (Information in this
                 section is optional, but a description and logo link is recommended) Note the information in this
@@ -735,14 +761,14 @@ const Presale: React.FC = () => {
               <MyInput onChange={(e) => setUpdateDec(e.target.value)} value={updateDec} style={{ width: '100%' }} />
               <Sperate />
               <InlineWrapper>
-                <LineBtn onClick={() => setStep(6)}>Back</LineBtn>
-                <FillBtn className="ml16" onClick={() => setStep(8)}>
+                <LineBtn onClick={() => setStep(7)}>Back</LineBtn>
+                <FillBtn className="ml16" onClick={() => setStep(9)}>
                   Next
                 </FillBtn>
               </InlineWrapper>
             </StepWrapper>
             <Sperate />
-            <StepWrapper number="8" stepName="Timing" step={step} onClick={() => setStep(8)}>
+            <StepWrapper number="9" stepName="Timing" step={step} onClick={() => setStep(9)}>
               <Sperate />
               <FlexWrapper>
                 <InlineWrapper>
@@ -796,14 +822,14 @@ const Presale: React.FC = () => {
               </FlexWrapper>
               <Sperate />
               <InlineWrapper>
-                <LineBtn onClick={() => setStep(7)}>Back</LineBtn>
-                <FillBtn className="ml16" onClick={() => setStep(9)}>
+                <LineBtn onClick={() => setStep(8)}>Back</LineBtn>
+                <FillBtn className="ml16" onClick={() => setStep(10)}>
                   Finish
                 </FillBtn>
               </InlineWrapper>
             </StepWrapper>
             <Sperate />
-            <StepWrapper number="9" stepName="Finalize" step={step} onClick={() => setStep(9)}>
+            <StepWrapper number="10" stepName="Finalize" step={step} onClick={() => setStep(10)}>
               <NoteWrapper style={{ maxWidth: 'unset' }}>
                 <FlexWrapper>
                   <p className="description w220">Token Name</p>
@@ -840,7 +866,7 @@ const Presale: React.FC = () => {
                 <Sperate />
                 <FlexWrapper>
                   <p className="description w220">SphynxSwap Liquidity</p>
-                  <p className="description w220">{liquidityRate}</p>
+                  <p className="description w220">{sphynxLiquidityRate}</p>
                   <p className="description">Liquidity Locked: {liquidityLock.toDateString()}</p>
                 </FlexWrapper>
                 <Sperate />

@@ -3,6 +3,8 @@ import styled from 'styled-components'
 import { Button, Text, Flex } from '@sphynxswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 import { useMenuToggle } from 'state/application/hooks'
+import { useWeb3React } from '@web3-react/core'
+import { ERC20_ABI } from 'config/abi/erc20'
 import { ReactComponent as MainLogo } from 'assets/svg/icon/WarningIcon.svg'
 import { ReactComponent as WarningIcon2 } from 'assets/svg/icon/WarningIcon2.svg'
 import { ReactComponent as SettingIcon } from 'assets/svg/icon/SettingIcon.svg'
@@ -21,6 +23,7 @@ import { useParams } from 'react-router'
 import axios from 'axios'
 import * as ethers from 'ethers'
 import { getPresaleAddress } from 'utils/addressHelpers'
+import TimerComponent from './components/TimerComponent'
 
 const Wrapper = styled.div`
   display: flex;
@@ -502,8 +505,9 @@ const Progress = styled.div<{ state }>`
 const PresaleLive: React.FC = () => {
   const param: any = useParams()
   const { t } = useTranslation()
+  const { account } = useWeb3React()
   const { menuToggled } = useMenuToggle()
-  const [presaleStatus, setPresaleStatus] = useState(true)
+  const [presaleStatus, setPresaleStatus] = useState(false)
   const { library } = useActiveWeb3React()
   const signer = library.getSigner()
   const presaleContract = getPresaleContract(signer)
@@ -514,6 +518,9 @@ const PresaleLive: React.FC = () => {
   const [raise, setRaise] = useState(0)
   const [minContribute, setMinContribute] = useState(0)
   const [maxContribute, setMaxContribute] = useState(0)
+  const [userContributeBNB, setUserContributeBNB] = useState(0)
+  const [userContributeToken, setUserContributeToken] = useState(0)
+  const [totalTokenSupply, setTotalTokenSupply] = useState(0)
   const presaleAddress = getPresaleAddress()
   const PRESALE_DATA = [
     {
@@ -522,15 +529,15 @@ const PresaleLive: React.FC = () => {
     },
     {
       presaleItem: "Total Supply:",
-      presaleValue: `9,195,981.563 ${tokenData&&tokenData.token_symbol}`,
+      presaleValue: `${totalTokenSupply} ${tokenData&&tokenData.token_symbol}`,
     },
     {
       presaleItem: "Tokens For Presale:",
-      presaleValue: `4,600,000 ${tokenData&&tokenData.token_symbol}`,
+      presaleValue: `${tokenData&&(tokenData.hard_cap * tokenData.tier3)} ${tokenData&&tokenData.token_symbol}`,
     },
     {
       presaleItem: "Tokens For Liquidity:",
-      presaleValue: `3,220,000 ${tokenData&&tokenData.token_symbol}`,
+      presaleValue: `${tokenData&&(tokenData.listing_rate * tokenData.hard_cap / 100)} ${tokenData&&tokenData.token_symbol}`,
     },
     {
       presaleItem: "Soft Cap:",
@@ -542,15 +549,15 @@ const PresaleLive: React.FC = () => {
     },
     {
       presaleItem: "Presale Rate:",
-      presaleValue: "23,000 BZAP per BNB",
+      presaleValue: `${tokenData&&tokenData.tier3} ${tokenData&&tokenData.token_symbol} per BNB`,
     },
     {
       presaleItem: "PancakeSwap Listing Rate:",
-      presaleValue: "23,000 BZAP per BNB",
+      presaleValue: `${tokenData&&tokenData.listing_rate} ${tokenData&&tokenData.token_symbol} per BNB`,
     },
     {
       presaleItem: "PancakeSwap Liquidity:",
-      presaleValue: "70%",
+      presaleValue: `${tokenData&&tokenData.tier3}%`,
     },
     {
       presaleItem: "Minimum Contribution:",
@@ -587,6 +594,7 @@ const PresaleLive: React.FC = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+      /* from presale contract */
       let temp = (await presaleContract.hardCap(param.saleId)).toString()
       let value = parseFloat(ethers.utils.formatUnits(temp, tokenData.decimal))
       setHardCap(value)
@@ -608,13 +616,28 @@ const PresaleLive: React.FC = () => {
       setMaxContribute(value)
       
       temp = (await presaleContract.presaleStatus(param.saleId))
-      setPresaleStatus(temp)  
+      setPresaleStatus(temp)
+
+      temp = (await presaleContract.userContributionBNB(param.saleId, account)).toString()
+      value = parseFloat(ethers.utils.formatUnits(temp, tokenData.decimal))
+      setUserContributeBNB(value)
+
+      temp = (await presaleContract.userContributionToken(param.saleId, account)).toString()
+      value = parseFloat(ethers.utils.formatUnits(temp, tokenData.decimal))
+      setUserContributeToken(value)
+
+      /* from token contract */
+      const abi: any = ERC20_ABI
+      const tokenContract = new ethers.Contract(tokenData.token_address, abi, signer)
+      temp = (await tokenContract.totalSupply()).toString()
+      value = parseFloat(ethers.utils.formatUnits(temp, tokenData.decimal))
+      setTotalTokenSupply(value)
     }
 
     if (tokenData) {
       fetchData()
     }
-  }, [presaleContract, tokenData, param.saleId])
+  }, [presaleContract, tokenData, param.saleId, account, signer])
 
   const handlerChange = (e: any) => {
     setContribute(e.target.value)
@@ -735,7 +758,8 @@ const PresaleLive: React.FC = () => {
                     <Flex alignItems="center" style={{ width: '100%' }}>
                       <StopwatchIcon />
                       <Text fontSize="13px" fontWeight="600" style={{ margin: '0 10px' }}>Sale ends in: </Text>
-                      <Text fontSize="12px" fontWeight="600" color="#A7A7CC">06:23:49:16</Text>
+                      {/* <Text fontSize="12px" fontWeight="600" color="#A7A7CC">06:23:49:16</Text> */}
+                      <TimerComponent time={tokenData&&tokenData.end_time}/>
                     </Flex>
                     <UnderLine />
                   </>
@@ -750,12 +774,12 @@ const PresaleLive: React.FC = () => {
                 )}
                 <TokenAmountView>
                   <Text fontSize="12px" fontWeight="600" color="#A7A7CC">Your Contributed Account:</Text>
-                  <Text fontSize="12px" fontWeight="600" textAlign="center" color="#F2C94C">1BNB</Text>
+                  <Text fontSize="12px" fontWeight="600" textAlign="center" color="#F2C94C">{userContributeBNB}BNB</Text>
                 </TokenAmountView>
                 <UnderLine />
                 <TokenAmountView>
                   <Text fontSize="12px" fontWeight="600" color="#A7A7CC">Your Reserved Tokens:</Text>
-                  <Text fontSize="12px" fontWeight="600" textAlign="center" color="#F2C94C">250000000 {tokenData&&tokenData.token_symbol}</Text>
+                  <Text fontSize="12px" fontWeight="600" textAlign="center" color="#F2C94C">{userContributeToken} {tokenData&&tokenData.token_symbol}</Text>
                 </TokenAmountView>
                 <Separate />
                 <DarkButton>Emergency Withdraw</DarkButton>

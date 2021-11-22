@@ -50,6 +50,7 @@ const Presale: React.FC = () => {
               hardCap: cell.hard_cap,
               minContribution: cell.min_buy,
               maxContribution: cell.max_buy,
+              endTime: cell.end_time,
               tokenState: 'active',
             }
             let temp = (await presaleContract.totalContributionBNB(cell.sale_id)).toString()
@@ -113,6 +114,7 @@ const Presale: React.FC = () => {
             hardCap={item.hardCap}
             minContribution={item.minContribution}
             maxContribution={item.maxContribution}
+            endTime={item.endTime}
             tokenState={item.tokenState}
           >
             <img src={item.tokenLogo} alt="token icon" />
