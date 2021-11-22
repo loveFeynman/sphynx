@@ -219,11 +219,8 @@ const Launchpad: React.FC = () => {
             <MainLogo width="80" height="80" />
             <Flex flexDirection="column" ml="10px">
               <WelcomeText>
-                {t('Welcome to sphynx!')}
+                {t('SPHYNX PAD')}
               </WelcomeText>
-              <Text fontSize="12px" color="#777777" bold textAlign='left'>
-                {t('Lorem ipsum dolor sit amet, consectetur adipiscing elit')}
-              </Text>
             </Flex>
           </Flex>
         </Flex>

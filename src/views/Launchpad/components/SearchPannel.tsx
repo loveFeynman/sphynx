@@ -154,25 +154,21 @@ const SearchPannel = () => {
         <Select
           options={[
             {
-              label: t('ALL'),
-              value: 'all',
+              label: t('Gold'),
+              value: 'gold',
             },
             {
-              label: t('PENDDING'),
-              value: 'pendding',
+              label: t('Silver'),
+              value: 'silver',
             },
             {
-              label: t('ACTIVE'),
-              value: 'active',
+              label: t('Bronze'),
+              value: 'Bronze',
             },
             {
-              label: t('ENDED'),
-              value: 'ended',
-            },
-            {
-              label: t('FAILED'),
-              value: 'failed',
-            },
+              label: t('other'),
+              value: 'other',
+            }
           ]}
           onChange={handleSortOptionChange}
         />

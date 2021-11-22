@@ -5,12 +5,6 @@ import axios from 'axios'
 import * as ethers from 'ethers'
 import { simpleRpcProvider } from 'utils/providers'
 import { getPresaleContract } from 'utils/contractHelpers'
-import MainLogo from 'assets/svg/icon/logo_new.svg'
-import ShivaLogo from 'assets/images/ShivaTokenIcon.png'
-import SnifferIcon from 'assets/images/SnifferIcon.png'
-import LamboIcon from 'assets/images/LamboIcon.png'
-import AfiIcon from 'assets/images/AFIIcon.png'
-import GalabetIcon from 'assets/images/GalabetIcon.png'
 import ListIcon from 'assets/svg/icon/ListIcon.svg'
 import { useMenuToggle } from 'state/application/hooks'
 import TokenCard from './components/TokenCard'
@@ -95,7 +89,6 @@ const Presale: React.FC = () => {
           <img src={ListIcon} alt="listIcon" />
           <Title>
             <LogoTitle>LaunchPad Listings</LogoTitle>
-            <span>Lorem ipsum dolor sit amet, consectetur adipiscing elit</span>
           </Title>
         </TitleWrapper>
       </HeaderWrapper>
