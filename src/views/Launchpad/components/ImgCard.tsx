@@ -20,7 +20,7 @@ const ImgCard: React.FC<ImgCardProps> = ({ children, desc }) => {
     return (
         <CardWrapper>
             {children}
-            <Text color='#777777' fontSize='16px' bold>{desc}</Text>
+            <Text fontSize='16px' bold>{desc}</Text>
         </CardWrapper>
     )
 }

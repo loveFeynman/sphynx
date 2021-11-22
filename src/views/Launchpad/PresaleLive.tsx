@@ -80,7 +80,7 @@ const TokenPresaleContainder = styled.div<{ toggled: boolean }>`
   display: flex;
   gap: 20px;
   justify-content: center;
-  flex-wrap:wrap;
+  flex-wrap: wrap;
   width: 100%;
 `
 
@@ -88,7 +88,7 @@ const CardWrapper = styled.div`
   border: 1px solid rgba(255, 255, 255, 0.1);
   box-sizing: border-box;
   border-radius: 10px;
-  background: ${({ theme }) => (theme.isDark ? "#1A1A3A" : "#2A2E60")};
+  background: ${({ theme }) => (theme.isDark ? '#1A1A3A' : '#2A2E60')};
   min-width: 240px;
   height: fit-content;
   padding: 14px;
@@ -109,8 +109,8 @@ const SubCardWrapper = styled(CardWrapper)`
 const DefiFlex = styled(Flex)`
   width: 100%;
   flex-direction: column;
-  background: #E93F33;
-  border: 1px solid #5E2B60;
+  background: #e93f33;
+  border: 1px solid #5e2b60;
   border-radius: 5px;
   padding: 17px;
   margin-bottom: 10px;
@@ -123,8 +123,8 @@ const DefiFlex = styled(Flex)`
 const SoftFlex = styled(Flex)`
   width: 49%;
   flex-direction: column;
-  background: #E97F33;
-  border: 1px solid #5E2B60;
+  background: #e97f33;
+  border: 1px solid #5e2b60;
   border-radius: 5px;
   padding: 17px;
   ${({ theme }) => theme.mediaQueries.xl} {
@@ -135,8 +135,8 @@ const SoftFlex = styled(Flex)`
 const LiquidityFlex = styled(Flex)`
   width: 49%;
   flex-direction: column;
-  background: #FFB800;
-  border: 1px solid #5E2B60;
+  background: #ffb800;
+  border: 1px solid #5e2b60;
   border-radius: 5px;
   padding: 17px;
   ${({ theme }) => theme.mediaQueries.xl} {
@@ -166,7 +166,7 @@ const Separate = styled.div`
 const UnderLine = styled.div`
   width: 100%;
   opacity: 0.1;
-  border-bottom: 1px solid #FFFFFF;
+  border-bottom: 1px solid #ffffff;
   margin: 10px 0;
 `
 
@@ -186,7 +186,7 @@ const TokenSymbol = styled.div`
 const TokenName = styled.div`
   font-weight: 600;
   font-size: 14px;
-  color: #A7A7CC;
+  color: #a7a7cc;
 `
 
 const TokenSymbolWrapper = styled.div`
@@ -209,7 +209,7 @@ const TokenAddressContainer = styled.div`
 const AddressFlex = styled(Flex)`
   flex-wrap: wrap;
   padding-bottom: 10px;
-  border-bottom: 1px solid #31314E;
+  border-bottom: 1px solid #31314e;
   justify-content: space-between;
 `
 
@@ -224,7 +224,7 @@ const AddressWrapper = styled.div`
     font-size: 14px;
   }
   div:last-child {
-    color: #F2C94C;
+    color: #f2c94c;
     font-size: 12px;
     font-weight: 600;
     word-break: break-word;
@@ -242,7 +242,7 @@ const AddressSendError = styled.div`
   font-size: 11px;
   line-height: 16px;
   letter-spacing: 0.15em;
-  color: #E93F33;
+  color: #e93f33;
   text-align: left;
 `
 
@@ -255,7 +255,7 @@ const CustomContract = styled.div`
     text-align: center;
     font-weight: 600;
     font-size: 14px;
-    color: #A7A7CC;
+    color: #a7a7cc;
   }
 `
 
@@ -264,7 +264,7 @@ const WhitelistCard = styled.div`
   align-items: center;
   flex-direction: column;
   justify-content: center;
-  border: 1px solid ${({ theme }) => theme.isDark ? '#5E2B60' : '#4A5187'};
+  border: 1px solid ${({ theme }) => (theme.isDark ? '#5E2B60' : '#4A5187')};
   box-sizing: border-box;
   border-radius: 5px;
   width: 100%;
@@ -293,7 +293,7 @@ const WhitelistTitle = styled(Text)`
 const WhitelistSubText = styled(Text)`
   font-weight: 600;
   font-size: 12px;
-  color: #A7A7CC;
+  color: #a7a7cc;
   ${({ theme }) => theme.mediaQueries.sm} {
     font-size: 15px;
   }
@@ -312,16 +312,16 @@ const WalletAddressError = styled.div`
     margin-right: 5px;
   }
   div:last-child {
-      text-align: center;
-      font-weight: 600;
-      font-size: 12px;
-      color: #A7A7CC;
+    text-align: center;
+    font-weight: 600;
+    font-size: 12px;
+    color: #a7a7cc;
   }
 `
 
 const ContributeWrapper = styled.div`
   width: 100%;
-  border: 1px solid ${({ theme }) => theme.isDark ? '#5E2B60' : '#4A5187'};
+  border: 1px solid ${({ theme }) => (theme.isDark ? '#5E2B60' : '#4A5187')};
   border-radius: 5px;
 `
 
@@ -351,10 +351,10 @@ const InputWrapper = styled.div`
     border: none;
     box-shadow: none;
     outline: none;
-    color: #A7A7CC;
+    color: #a7a7cc;
     font-size: 13px;
     &::placeholder {
-      color: #A7A7CC;
+      color: #a7a7cc;
     }
   }
 `
@@ -364,7 +364,7 @@ const ColorButton = styled(Button)`
   border: none;
   height: 34px;
   font-size: 13px;
-  background: linear-gradient(90deg,#610D89 0%,#C42BB4 100%);
+  background: linear-gradient(90deg, #610d89 0%, #c42bb4 100%);
   outline: none;
   color: white;
   width: 98px;
@@ -378,7 +378,7 @@ const DarkButton = styled(Button)`
   border: none;
   height: 34px;
   font-size: 13px;
-  background: ${({ theme }) => theme.isDark ? '#0E0E26' : '#191C41'};
+  background: ${({ theme }) => (theme.isDark ? '#0E0E26' : '#191C41')};
   outline: none;
   color: white;
   width: 100%;
@@ -403,11 +403,11 @@ const DataItem = styled.div`
     }
     text-align: start;
     font-size: 12px;
-    color: #A7A7CC;
+    color: #a7a7cc;
     font-style: normal;
     font-weight: 600;
-    border-bottom: 1px solid ${({ theme }) => theme.isDark ? '#5E2B60' : '#4A5187'};
-    border-right: 1px solid ${({ theme }) => theme.isDark ? '#5E2B60' : '#4A5187'};
+    border-bottom: 1px solid ${({ theme }) => (theme.isDark ? '#5E2B60' : '#4A5187')};
+    border-right: 1px solid ${({ theme }) => (theme.isDark ? '#5E2B60' : '#4A5187')};
   }
   div:last-child {
     flex: 1;
@@ -416,10 +416,10 @@ const DataItem = styled.div`
     padding: 5px 20px;
     text-align: start;
     font-size: 12px;
-    color: #F2C94C;
+    color: #f2c94c;
     font-style: normal;
     font-weight: 600;
-    border-bottom: 1px solid ${({ theme }) => theme.isDark ? '#5E2B60' : '#4A5187'};
+    border-bottom: 1px solid ${({ theme }) => (theme.isDark ? '#5E2B60' : '#4A5187')};
   }
 `
 
@@ -445,7 +445,7 @@ const ItemWrapper = styled.div`
 `
 
 const ThinkItem = styled.div`
-  border: 1px solid ${({ theme }) => theme.isDark ? '#5E2B60' : '#4A5187'};
+  border: 1px solid ${({ theme }) => (theme.isDark ? '#5E2B60' : '#4A5187')};
   box-sizing: border-box;
   border-radius: 11px;
   display: flex;
@@ -463,7 +463,7 @@ const ThinkItem = styled.div`
     margin-top: 5px;
     font-weight: 500;
     font-size: 12px;
-    color: #A7A7CC;
+    color: #a7a7cc;
   }
 `
 
@@ -471,7 +471,7 @@ const TokenPresaleBody = styled.div`
   width: 100%;
   display: flex;
   justify-content: center;
-  background: ${({ theme }) => theme.isDark ? "#0E0E26" : "#191C41"};
+  background: ${({ theme }) => (theme.isDark ? '#0E0E26' : '#191C41')};
   padding: 23px 28px;
   border-radius: 5px;
   margin-top: 30px;
@@ -489,15 +489,15 @@ const ProgressBarWrapper = styled.div`
 `
 
 const ProgressBar = styled.div`
-  background-color: #23234B;
+  background-color: #23234b;
   border-radius: 8px;
   position: relative;
 `
 
 const Progress = styled.div<{ state }>`
-  width: ${props => `${props.state}%`};
+  width: ${(props) => `${props.state}%`};
   height: 12px;
-  background: linear-gradient(90deg, #610D89 0%, #C42BB4 100%);
+  background: linear-gradient(90deg, #610d89 0%, #c42bb4 100%);
   border-radius: 8px 0px 0px 8px;
   padding: 1px;
 `
@@ -521,63 +521,71 @@ const PresaleLive: React.FC = () => {
   const [userContributeBNB, setUserContributeBNB] = useState(0)
   const [userContributeToken, setUserContributeToken] = useState(0)
   const [totalTokenSupply, setTotalTokenSupply] = useState(0)
+  const [isClaimed, setIsClaimed] = useState(false)
   const presaleAddress = getPresaleAddress()
   const PRESALE_DATA = [
     {
-      presaleItem: "Sale ID:",
+      presaleItem: 'Sale ID:',
       presaleValue: param.saleId,
     },
     {
-      presaleItem: "Total Supply:",
-      presaleValue: `${totalTokenSupply} ${tokenData&&tokenData.token_symbol}`,
+      presaleItem: 'Total Supply:',
+      presaleValue: `${totalTokenSupply} ${tokenData && tokenData.token_symbol}`,
     },
     {
-      presaleItem: "Tokens For Presale:",
-      presaleValue: `${tokenData&&(tokenData.hard_cap * tokenData.tier3)} ${tokenData&&tokenData.token_symbol}`,
+      presaleItem: 'Tokens For Presale:',
+      presaleValue: `${tokenData && tokenData.hard_cap * tokenData.tier3} ${tokenData && tokenData.token_symbol}`,
     },
     {
-      presaleItem: "Tokens For Liquidity:",
-      presaleValue: `${tokenData&&(tokenData.listing_rate * tokenData.hard_cap * (tokenData.router_rate + tokenData.default_router_rate)/ 100)} ${tokenData&&tokenData.token_symbol}`,
+      presaleItem: 'Tokens For Liquidity:',
+      presaleValue: `${
+        tokenData &&
+        (tokenData.listing_rate * tokenData.hard_cap * (tokenData.router_rate + tokenData.default_router_rate)) / 100
+      } ${tokenData && tokenData.token_symbol}`,
     },
     {
-      presaleItem: "Soft Cap:",
+      presaleItem: 'Soft Cap:',
       presaleValue: `${softCap} BNB`,
     },
     {
-      presaleItem: "Hard Cap:",
+      presaleItem: 'Hard Cap:',
       presaleValue: `${hardCap} BNB`,
     },
     {
-      presaleItem: "Presale Rate:",
-      presaleValue: `${tokenData&&tokenData.tier3} ${tokenData&&tokenData.token_symbol} per BNB`,
+      presaleItem: 'Presale Rate:',
+      presaleValue: `${tokenData && tokenData.tier3} ${tokenData && tokenData.token_symbol} per BNB`,
     },
     {
-      presaleItem: "PancakeSwap Listing Rate:",
-      presaleValue: `${tokenData&&tokenData.listing_rate} ${tokenData&&tokenData.token_symbol} per BNB`,
+      presaleItem: 'SphynxSwap Listing Rate:',
+      presaleValue: `${tokenData && tokenData.listing_rate} ${tokenData && tokenData.token_symbol} per BNB`,
     },
     {
-      presaleItem: "PancakeSwap Liquidity:",
-      presaleValue: `${tokenData&&tokenData.tier3}%`,
+      presaleItem: 'SphynxSwap Liquidity:',
+      presaleValue: `${tokenData && tokenData.default_router_rate}%`,
     },
     {
-      presaleItem: "Minimum Contribution:",
+      presaleItem: 'PancakeSwap Liquidity:',
+      presaleValue: `${tokenData && tokenData.router_rate}%`,
+    },
+    {
+      presaleItem: 'Minimum Contribution:',
       presaleValue: `${minContribute} BNB`,
     },
     {
-      presaleItem: "Maximum Contribution:",
+      presaleItem: 'Maximum Contribution:',
       presaleValue: `${maxContribute} BNB`,
     },
     {
-      presaleItem: "Presale Start Time:",
-      presaleValue: `${new Date(tokenData&&tokenData.start_time * 1000).toString()}`,
+      presaleItem: 'Presale Start Time:',
+      presaleValue: `${new Date(tokenData && tokenData.start_time * 1000).toString()}`,
     },
     {
-      presaleItem: "Presale End Time:",
-      presaleValue: `${new Date(tokenData&&tokenData.end_time * 1000).toString()}`,
+      presaleItem: 'Presale End Time:',
+      presaleValue: `${new Date(tokenData && tokenData.end_time * 1000).toString()}`,
     },
     {
-      presaleItem: "Liquidity Unlock:",
-      presaleValue: `${new Date(tokenData&&tokenData.lock_time * 1000).toString()}`,
+      presaleItem: 'Liquidity Unlock:',
+      presaleValue: `${new Date(tokenData && tokenData.lock_time * 1000).toString()}`,
     },
   ]
 
@@ -585,7 +593,8 @@ const PresaleLive: React.FC = () => {
     const isValue = !Number.isNaN(parseInt(param.saleId))
     if (isValue) {
       axios.get(`${process.env.REACT_APP_BACKEND_API_URL2}/getPresaleInfo/${param.saleId}`).then((response) => {
-        if(response.data){
+        if (response.data) {
+          console.log('responseData', response.data)
           setTokenData(response.data)
         }
       })
@@ -614,8 +623,8 @@ const PresaleLive: React.FC = () => {
       temp = (await presaleContract.maxContributeRate(param.saleId)).toString()
       value = parseFloat(ethers.utils.formatUnits(temp, '18'))
       setMaxContribute(value)
-      
-      temp = (await presaleContract.presaleStatus(param.saleId))
+
+      temp = await presaleContract.presaleStatus(param.saleId)
       setPresaleStatus(temp)
 
       temp = (await presaleContract.userContributionBNB(param.saleId, account)).toString()
@@ -632,6 +641,9 @@ const PresaleLive: React.FC = () => {
       temp = (await tokenContract.totalSupply()).toString()
       value = parseFloat(ethers.utils.formatUnits(temp, tokenData.decimal))
       setTotalTokenSupply(value)
+
+      const claimed = await presaleContract.isClaimed(param.saleId, account)
+      setIsClaimed(claimed)
     }
 
     if (tokenData) {
@@ -656,17 +668,20 @@ const PresaleLive: React.FC = () => {
     await tx.wait()
   }
 
+  const handleEmergencyWithdraw = async () => {
+    const tx = await presaleContract.emergencyWithdraw(param.saleId)
+    await tx.wait()
+  }
+
   return (
     <Wrapper>
       <PageHeader>
-        <Flex justifyContent="space-between" alignItems='center' flexDirection='row'>
-          <Flex alignItems='center'>
+        <Flex justifyContent="space-between" alignItems="center" flexDirection="row">
+          <Flex alignItems="center">
             <MainLogo width="40" height="40" />
             <Flex flexDirection="column" ml="10px">
-              <HeaderTitleText>
-                {t('SphynxSale Automated Warning System')}
-              </HeaderTitleText>
-              <Text fontSize="12px" color="#777777" bold textAlign='left'>
+              <HeaderTitleText>{t('SphynxSale Automated Warning System')}</HeaderTitleText>
+              <Text fontSize="12px" color="#777777" bold textAlign="left">
                 {t('Lorem ipsum dolor sit amet, consectetur adipiscing elit')}
               </Text>
             </Flex>
@@ -674,13 +689,11 @@ const PresaleLive: React.FC = () => {
         </Flex>
       </PageHeader>
       <PageHeader>
-        <Flex justifyContent="space-between" alignItems='center' flexDirection='row' mt='30px'>
-          <Flex alignItems='center'>
+        <Flex justifyContent="space-between" alignItems="center" flexDirection="row" mt="30px">
+          <Flex alignItems="center">
             <WarningIcon2 width="40" height="40" />
             <Flex flexDirection="column" ml="10px">
-              <WarningTitleText>
-                {t('3 Warnings Detected')}
-              </WarningTitleText>
+              <WarningTitleText>{t('3 Warnings Detected')}</WarningTitleText>
             </Flex>
           </Flex>
         </Flex>
@@ -688,7 +701,11 @@ const PresaleLive: React.FC = () => {
       <FlexWrapper style={{ marginTop: '32px' }}>
         <DefiFlex>
           <WarningTitle>DeFi Zone Warning</WarningTitle>
-          <WarningSubTitle style={{ opacity: '0.8' }}>This sale is listed in the DeFi Zone. Presales in this area use custom contracts that are not vetted by the DxSale team. Developers of tokens in this area can block transfers, can stop users from claiming tokens, can stop trading on exchanges and requires extra vetting. Participate at your own risk!</WarningSubTitle>
+          <WarningSubTitle style={{ opacity: '0.8' }}>
+            This sale is listed in the DeFi Zone. Presales in this area use custom contracts that are not vetted by the
+            DxSale team. Developers of tokens in this area can block transfers, can stop users from claiming tokens, can
+            stop trading on exchanges and requires extra vetting. Participate at your own risk!
+          </WarningSubTitle>
         </DefiFlex>
         <SoftFlex>
           <WarningTitle>Soft Cap Warning</WarningTitle>
@@ -696,31 +713,40 @@ const PresaleLive: React.FC = () => {
         </SoftFlex>
         <LiquidityFlex>
           <WarningTitle style={{ opacity: '0.8', color: '#1A1A3A' }}>Liquidity Percentage Warning</WarningTitle>
-          <WarningSubTitle color='#1A1A3A' style={{ opacity: '0.7' }}>This sale has a very low liquidity percentage.</WarningSubTitle>
+          <WarningSubTitle color="#1A1A3A" style={{ opacity: '0.7' }}>
+            This sale has a very low liquidity percentage.
+          </WarningSubTitle>
         </LiquidityFlex>
       </FlexWrapper>
       <TokenPresaleBody>
         <TokenPresaleContainder toggled={menuToggled}>
           <MainCardWrapper>
             <TokenContainer>
-              <img src={tokenData&&tokenData.logo_link} width="64px" height="64px" alt="token icon" />
+              <img src={tokenData && tokenData.logo_link} width="64px" height="64px" alt="token icon" />
               <TokenSymbolWrapper>
-                <TokenSymbol>{tokenData&&tokenData.token_symbol}</TokenSymbol>
-                <TokenName>{tokenData&&tokenData.token_name}</TokenName>
+                <TokenSymbol>{tokenData && tokenData.token_symbol}</TokenSymbol>
+                <TokenName>{tokenData && tokenData.token_name}</TokenName>
               </TokenSymbolWrapper>
             </TokenContainer>
             <TokenDescription>
-              <Text fontSize='12px' textAlign='left' color='#A7A7CC'>${tokenData&&tokenData.token_symbol} is a new reflection protocol on the Binance Smart Chain with a deflationary burn mechanism that offers reflections to holders with 0% buy and sell tax.</Text>
+              <Text fontSize="12px" textAlign="left" color="#A7A7CC">
+                ${tokenData && tokenData.token_symbol} is a new reflection protocol on the Binance Smart Chain with a
+                deflationary burn mechanism that offers reflections to holders with 0% buy and sell tax.
+              </Text>
             </TokenDescription>
             <TokenAddressContainer>
               <AddressFlex>
                 <AddressWrapper>
-                  <Text color='#A7A7CC' bold>Presale Address:</Text>
+                  <Text color="#A7A7CC" bold>
+                    Presale Address:
+                  </Text>
                   <Text>{presaleAddress}</Text>
                 </AddressWrapper>
                 <AddressWrapper>
-                  <Text color='#A7A7CC' bold>Token Address:</Text>
-                  <Text>{tokenData&&tokenData.token_address}</Text>
+                  <Text color="#A7A7CC" bold>
+                    Token Address:
+                  </Text>
+                  <Text>{tokenData && tokenData.token_address}</Text>
                 </AddressWrapper>
               </AddressFlex>
               <AddressSendError>Do not send BNB to the token address!</AddressSendError>
@@ -742,67 +768,94 @@ const PresaleLive: React.FC = () => {
               <WhitelistCard>
                 {!presaleStatus ? (
                   <>
-                    <WhitelistTitle>Raised: {raise}/{hardCap}</WhitelistTitle>
+                    <WhitelistTitle>
+                      Raised: {raise}/{hardCap}
+                    </WhitelistTitle>
                     <ProgressBarWrapper>
                       <ProgressBar>
-                        <Progress state={raise / hardCap * 100} />
+                        <Progress state={(raise / hardCap) * 100} />
                       </ProgressBar>
                     </ProgressBarWrapper>
                     <TokenRateView>
-                      <Text fontSize="14px" fontWeight="600" color="#777777" textAlign="left">1 BNB = 250000000 {tokenData&&tokenData.token_symbol} </Text>
+                      <Text fontSize="14px" fontWeight="600" color="#777777" textAlign="left">
+                        1 BNB = 250000000 {tokenData && tokenData.token_symbol}{' '}
+                      </Text>
                     </TokenRateView>
                     <ContributeFlex>
                       <InputWrapper>
-                        <input
-                          placeholder=""
-                          onChange={handlerChange}
-                        />
+                        <input placeholder="" onChange={handlerChange} />
                       </InputWrapper>
                       <ColorButton onClick={handleComponent}>Contribute</ColorButton>
                     </ContributeFlex>
                     <Flex alignItems="center" style={{ width: '100%' }}>
                       <StopwatchIcon />
-                      <Text fontSize="13px" fontWeight="600" style={{ margin: '0 10px' }}>Sale ends in: </Text>
-                      <TimerComponent time={tokenData&&tokenData.end_time}/>
+                      <Text fontSize="13px" fontWeight="600" style={{ margin: '0 10px' }}>
+                        Sale ends in:{' '}
+                      </Text>
+                      <TimerComponent time={tokenData && tokenData.end_time} />
                     </Flex>
                     <UnderLine />
                   </>
                 ) : (
                   <>
-                    <Text textAlign="left" fontSize="12px" fontWeight="500" color="#777777">This presale has ended. Go back to the dashboard to view others!</Text>
-                    <DarkButton style={{ width: '100%' }} mt="16px">Trade on PancakeSwap</DarkButton>
-                    <DarkButton style={{ width: '100%' }} mt="16px">Trade on SphynxSwap</DarkButton>
-                    <Text textAlign="left" fontSize="12px" fontWeight="500" mt="16px" color="#777777">If you participated in the presale click the claim button below to claim your tokens!</Text>
-                    <ColorButton style={{ width: '100%' }} mt="16px" mb="16px" onClick={handleClaimToken}>Claim Token</ColorButton>
+                    <Text textAlign="left" fontSize="12px" fontWeight="500" color="#777777">
+                      This presale has ended. Go back to the dashboard to view others!
+                    </Text>
+                    <DarkButton style={{ width: '100%' }} mt="16px">
+                      Trade on PancakeSwap
+                    </DarkButton>
+                    <DarkButton style={{ width: '100%' }} mt="16px">
+                      Trade on SphynxSwap
+                    </DarkButton>
+                    <Text textAlign="left" fontSize="12px" fontWeight="500" mt="16px" color="#777777">
+                      If you participated in the presale click the claim button below to claim your tokens!
+                    </Text>
+                    <ColorButton
+                      style={{ width: '100%' }}
+                      mt="16px"
+                      mb="16px"
+                      onClick={handleClaimToken}
+                      disabled={isClaimed}
+                    >
+                      Claim Token
+                    </ColorButton>
                   </>
                 )}
                 <TokenAmountView>
-                  <Text fontSize="12px" fontWeight="600" color="#A7A7CC">Your Contributed Account:</Text>
-                  <Text fontSize="12px" fontWeight="600" textAlign="center" color="#F2C94C">{userContributeBNB}BNB</Text>
+                  <Text fontSize="12px" fontWeight="600" color="#A7A7CC">
+                    Your Contributed Account:
+                  </Text>
+                  <Text fontSize="12px" fontWeight="600" textAlign="center" color="#F2C94C">
+                    {userContributeBNB}BNB
+                  </Text>
                 </TokenAmountView>
                 <UnderLine />
                 <TokenAmountView>
-                  <Text fontSize="12px" fontWeight="600" color="#A7A7CC">Your Reserved Tokens:</Text>
-                  <Text fontSize="12px" fontWeight="600" textAlign="center" color="#F2C94C">{userContributeToken} {tokenData&&tokenData.token_symbol}</Text>
+                  <Text fontSize="12px" fontWeight="600" color="#A7A7CC">
+                    Your Reserved Tokens:
+                  </Text>
+                  <Text fontSize="12px" fontWeight="600" textAlign="center" color="#F2C94C">
+                    {userContributeToken} {tokenData && tokenData.token_symbol}
+                  </Text>
                 </TokenAmountView>
-                <Separate />
-                <DarkButton>Emergency Withdraw</DarkButton>
+                {!presaleStatus ? <><Separate /><DarkButton onClick={handleEmergencyWithdraw}>Emergency Withdraw</DarkButton></> : ''}
               </WhitelistCard>
             </FlexWrapper>
             <Separate />
             <ContributeWrapper>
-              {PRESALE_DATA.map((item, index) => (
-                index === PRESALE_DATA.length - 1 ?
-                  < DataLatestItem >
+              {PRESALE_DATA.map((item, index) =>
+                index === PRESALE_DATA.length - 1 ? (
+                  <DataLatestItem>
                     <Text>{item.presaleItem}</Text>
                     <Text>{item.presaleValue}</Text>
                   </DataLatestItem>
-                  :
+                ) : (
                   <DataItem>
                     <Text>{item.presaleItem}</Text>
                     <Text>{item.presaleValue}</Text>
                   </DataItem>
-              ))}
+                ),
+              )}
             </ContributeWrapper>
           </MainCardWrapper>
           <SubCardWrapper>
@@ -837,7 +890,7 @@ const PresaleLive: React.FC = () => {
           </SubCardWrapper>
         </TokenPresaleContainder>
       </TokenPresaleBody>
-    </Wrapper >
+    </Wrapper>
   )
 }
 

@@ -207,7 +207,7 @@ const FeeCard = () => {
       <Sperate />
       <FeeWrapper>
         <p>
-          Current Fee: <span>1BNB</span>
+          Current Fee: <span>2BNB</span>
         </p>
         <VerticalSperator />
         <p>
@@ -419,13 +419,8 @@ const Presale: React.FC = () => {
       setStep(4)
       return;
     }
-    if (!parseFloat(pancakeLiquidityRate) || parseFloat(pancakeLiquidityRate) <= 5) {
-      toastError('Pancake Liquidity amount should be more than 5%!')
-      setStep(5)
-      return;
-    }
-    if (!parseFloat(sphynxLiquidityRate) || parseFloat(sphynxLiquidityRate) <= 50) {
-      toastError('Sphynx Liquidity amount should be more than 50%!')
+    if (!parseFloat(sphynxLiquidityRate) || parseFloat(sphynxLiquidityRate) < 5) {
+      toastError('Sphynx Liquidity amount should be more than 5%!')
       setStep(6)
       return;
     }
@@ -560,15 +555,9 @@ const Presale: React.FC = () => {
             local laws require KYC and AML please use the security menu option to first KYC your account!
           </Notification>
           <Sperate />
-          <p style={{ color: '#D91A00' }}>
-            For tokens with burns, rebase or other special transfers please ensure you have a way to whitelist multiple
-            addresses or turn off the special transfer events (By setting fees to 0 for example for the duration of the
-            presale)
-          </p>
-          <Sperate />
           <WarningPanel>
             <BellIcon style={{ flexShrink: 0.3 }} />
-            <p className="ml16">
+            <p className="ml16" style={{fontSize: "16px"}}>
               For tokens with burns, rebase or other special transfers please ensure you have a way to whitelist
               multiple addresses or turn off the special transfer events (By setting fees to 0 for example for the
               duration of the presale)
@@ -675,8 +664,8 @@ const Presale: React.FC = () => {
             </StepWrapper>
             <Sperate /><StepWrapper number="5" stepName="PancakeSwap Liquidity" step={step} onClick={() => setStep(5)}>
               <p className="description">
-                Enter the percentage of raised funds that should be allocated to Liquidity on PancakeSwap (Min 5%, Max
-                100%, We recommend &gt; 70%)
+                Enter the percentage of raised funds that should be allocated to Liquidity on PancakeSwap (Min 0%, Max
+                100%, We recommend SphynxSwap)
               </p>
               <MyInput
                 onChange={(e) => setPancakeLiquidityRate(e.target.value)}
@@ -694,7 +683,7 @@ const Presale: React.FC = () => {
             <Sperate />
             <StepWrapper number="6" stepName="SphynxSwap Liquidity" step={step} onClick={() => setStep(6)}>
               <p className="description">
-                Enter the percentage of raised funds that should be allocated to Liquidity on SphynxSwap (Min 51%, Max
+                Enter the percentage of raised funds that should be allocated to Liquidity on SphynxSwap (Min 5%, Max
                 100%, We recommend &gt; 70%)
               </p>
               <MyInput
@@ -847,7 +836,7 @@ const Presale: React.FC = () => {
                 <Sperate />
                 <FlexWrapper>
                   <p className="description w220">Presale Rate(Per BNB)</p>
-                  <p className="description w220">{presaleRate}/BNB</p>
+                  <p className="description w220">{tier3}/BNB</p>
                 </FlexWrapper>
                 <Sperate />
                 <FlexWrapper>
@@ -875,8 +864,9 @@ const Presale: React.FC = () => {
                 </FlexWrapper>
                 <Sperate />
                 <FlexWrapper>
-                  <p className="description w220">SphynxSwap Rate(Per BNB)</p>
-                  <p className="description w220">{listingRate}</p>
+                  <p className="description w220">PancakeSwap Liquidity</p>
+                  <p className="description w220">{pancakeLiquidityRate}</p>
+                  <p className="description">SphynxSwap Rate(Per BNB): {listingRate}</p>
                 </FlexWrapper>
                 <Sperate />
                 <InlineWrapper>
