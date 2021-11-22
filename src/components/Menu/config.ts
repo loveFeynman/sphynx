@@ -29,12 +29,12 @@ export const links = [
     href: '/pools',
   },
   {
-    label: 'Sphynx pad (coming soon)',
+    label: 'Sphynx pad (live)',
     icon: LaunchPadIcon,
     href: '/launchpad',
   },
   {
-    label: 'Projects live on Sphynx (coming soon)',
+    label: 'Projects live on Sphynx (live)',
     icon: PredictionIcon,
     href: '/launchpad/listing',
   },
