@@ -11,7 +11,6 @@ import CopyHelper from 'components/AccountDetails/Copy'
 import './dropdown.css'
 import axios from 'axios'
 import { MenuItem } from '@material-ui/core'
-import ToggleList from './ToggleList'
 import LiveAmountPanel from './LiveAmountPanel'
 import { AppState } from '../../../state'
 import { setIsInput, typeInput } from '../../../state/input/actions'
@@ -224,7 +223,6 @@ export default function ContractPanel({ value, symbol, amount, price }: Contract
 
   return (
     <ContractPanelWrapper>
-      <ToggleList poolDatas={poolDatas} />
       <ContractCard>
         <CopyHelper toCopy={value ? value.contractAddress : addressSearch}>&nbsp;</CopyHelper>
         <SearchInputDivider />

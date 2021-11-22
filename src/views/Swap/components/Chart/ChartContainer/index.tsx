@@ -124,7 +124,7 @@ const Chart: React.FC<Partial<ChartContainerProps>> = (props) => {
       onResultReadyCallback(newSymbols)
     },
     resolveSymbol: async (symbolName: any, onSymbolResolvedCallback: any, onResolveErrorCallback: any) => {
-      const exchange = routerVersion === 'sphynx' ? 'SPHYNX DEX' : 'Pancake ' + routerVersion
+      const exchange = 'SPHYNX DEX'
       symbolRef.current = onSymbolResolvedCallback
       getTokenInfo(input, routerVersion).then((tokenInfo) => {
         const res = {
@@ -415,7 +415,7 @@ const Chart: React.FC<Partial<ChartContainerProps>> = (props) => {
           })
       })
     })
-  }, [input, dispatch, routerVersion])
+  }, [input, dispatch])
 
   return (
     <ChartContainer height={props.height}>
