@@ -651,6 +651,11 @@ const PresaleLive: React.FC = () => {
     }
   }
 
+  const handleClaimToken = async () => {
+    const tx = await presaleContract.claimToken(param.saleId)
+    await tx.wait()
+  }
+
   return (
     <Wrapper>
       <PageHeader>
@@ -769,7 +774,7 @@ const PresaleLive: React.FC = () => {
                     <DarkButton style={{ width: '100%' }} mt="16px">Trade on PancakeSwap</DarkButton>
                     <DarkButton style={{ width: '100%' }} mt="16px">Trade on SphynxSwap</DarkButton>
                     <Text textAlign="left" fontSize="12px" fontWeight="500" mt="16px" color="#777777">If you participated in the presale click the claim button below to claim your tokens!</Text>
-                    <ColorButton style={{ width: '100%' }} mt="16px" mb="16px" onClick={handleComponent}>Claim Token</ColorButton>
+                    <ColorButton style={{ width: '100%' }} mt="16px" mb="16px" onClick={handleClaimToken}>Claim Token</ColorButton>
                   </>
                 )}
                 <TokenAmountView>

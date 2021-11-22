@@ -73,7 +73,7 @@ export default {
   },
   presale: {
     56: '0xb92Ab7c1edcb273AbA24b0656cEb3681654805D2',
-    97: '0x21ac3Dd6614937da7877082dd774BBc04870329c',
+    97: '0xA484AF0E9EFD5f7dABD446900d2d48c3319b5C45',
   },
   sphynxRouter: {
     56: '0x0c8094a69e8e44404371676f07b2c32923b5699c',

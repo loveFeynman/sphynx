@@ -237,6 +237,7 @@ const PresaleManage: React.FC = () => {
   const [presaleStatus, setPresaleStatus] = useState('')
   const [isDeposit, setIsDeposit] = useState(false)
   const [isFinalize, setIsFinalize] = useState(false)
+  const [liquidityUnlocked, setUnlockedLiquidity] = useState(false)
 
   useEffect(() => {
     const isValue = !Number.isNaN(parseInt(param.saleId))
@@ -265,6 +266,13 @@ const PresaleManage: React.FC = () => {
 
       temp = (await presaleContract.isDeposited(param.saleId))
       setIsDeposit(temp)
+
+      const finalize = await presaleContract.presaleStatus(param.saleId)
+      setIsFinalize(finalize)
+
+      const liquidityLockTime = await presaleContract.liquidityLockTime(param.saleId);
+      const isUnlocked = new Date().getTime()/1000 > parseFloat(liquidityLockTime)
+      setUnlockedLiquidity(isUnlocked)
     }
 
     if (tokenData) {
@@ -283,18 +291,14 @@ const PresaleManage: React.FC = () => {
     }
   }
 
-  const handleBurn = () => {
-    console.log('burn')
-  }
-
   const handleFinalize = async () => {
     const tx = await presaleContract.finalize(param.saleId)
     await tx.wait()
-    console.log("tx", tx)
   }
 
-  const handleWithdraw = () => {
-    console.log('withdraw')
+  const handleWithdraw = async () => {
+    const tx = await presaleContract.withdrawLiquidity(param.saleId);
+    await tx.wait()
   }
 
   const handleUpdate = () => {
@@ -382,10 +386,10 @@ const PresaleManage: React.FC = () => {
                   <>
                     {/* <ColorButton onClick={handleBurn}>Burn</ColorButton>
                   <Sperate /> */}
-                    <DarkButton onClick={handleWithdraw}>Withdraw Liquidity Token</DarkButton>
+                    <DarkButton onClick={handleWithdraw} disabled={!liquidityUnlocked}>Withdraw Liquidity Token</DarkButton>
                   </>
                   :
-                  <ColorButton onClick={handleFinalize} disable >Finalize</ColorButton>
+                  <ColorButton onClick={handleFinalize} >Finalize</ColorButton>
                 :
                 <ColorButton onClick={handleDeposit}>Deposit</ColorButton>
               }
