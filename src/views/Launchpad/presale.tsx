@@ -322,14 +322,13 @@ const StepWrapper = ({ number, stepName, children, step, onClick }) => {
 }
 
 const Presale: React.FC = () => {
-  const { account } = useWeb3React()
+  const { account, chainId } = useWeb3React()
   const { library } = useActiveWeb3React()
   const signer = library.getSigner()
   const [tokenAddress, setTokenAddress] = useState('')
   const [tokenName, setName] = useState('')
   const [tokenSymbol, setSymbol] = useState('')
   const [tokenDecimal, setDecimal] = useState('')
-  const [presaleRate, setPresaleRate] = useState('')
   const [tier1, setTier1] = useState('')
   const [tier2, setTier2] = useState('')
   const [tier3, setTier3] = useState('')
@@ -348,6 +347,10 @@ const Presale: React.FC = () => {
   const [telegramLink, setTelegramLink] = useState('')
   const [projectDec, setProjectDec] = useState('')
   const [updateDec, setUpdateDec] = useState('')
+  const [certikAudit, setCertikAudit] = useState('')
+  const [doxxedTeam, setDoxxedTeam] = useState('')
+  const [utility, setUtility] = useState('')
+  const [kyc, setKYC] = useState('')
   const [presaleStart, setPresaleStart] = useState(new Date())
   const [presaleEnd, setPresaleEnd] = useState(new Date())
   const [tier1Time, setTier1Time] = useState(new Date())
@@ -494,6 +497,7 @@ const Presale: React.FC = () => {
     presaleContract.createPresale(value, { value: fee })
       .then((res) => { /* if presale created successfully */
         const data: any = {
+          chain_id: chainId,
           sale_id: presaleId,
           owner_address: account,
           token_address: tokenAddress,
@@ -518,6 +522,10 @@ const Presale: React.FC = () => {
           telegram_link: telegramLink,
           project_dec: projectDec,
           update_dec: updateDec,
+          certik_audit: certikAudit,
+          doxxed_team: doxxedTeam,
+          utility,
+          kyc,
           start_time: startTime,
           end_time: endTime,
           tier1_time: tierOneTime,
@@ -684,10 +692,10 @@ const Presale: React.FC = () => {
               </InlineWrapper>
             </StepWrapper>
             <Sperate />
-            <StepWrapper number="6" stepName="PancakeSwap Liquidity" step={step} onClick={() => setStep(6)}>
+            <StepWrapper number="6" stepName="PancakeSwap Liquidity" step={step} onClick={() => setStep(5)}>
               <p className="description">
                 Enter the percentage of raised funds that should be allocated to Liquidity on PancakeSwap (Min 0%, Max
-                95%, We recommend SphynxSwap)
+                100%, We recommend SphynxSwap)
               </p>
               <MyInput
                 onChange={(e) => setPancakeLiquidityRate(e.target.value)}
@@ -744,17 +752,25 @@ const Presale: React.FC = () => {
               <MyInput onChange={(e) => setRedditLink(e.target.value)} value={redditLink} style={{ width: '100%' }} />
               <Sperate />
               <p className="description">Telegram Link</p>
-              <MyInput
-                onChange={(e) => setTelegramLink(e.target.value)}
-                value={telegramLink}
-                style={{ width: '100%' }}
-              />
+              <MyInput onChange={(e) => setTelegramLink(e.target.value)} value={telegramLink} style={{ width: '100%' }} />
               <Sperate />
               <p className="description">Project Description</p>
               <MyInput onChange={(e) => setProjectDec(e.target.value)} value={projectDec} style={{ width: '100%' }} />
               <Sperate />
               <p className="description">Any update you want to provide to participants</p>
               <MyInput onChange={(e) => setUpdateDec(e.target.value)} value={updateDec} style={{ width: '100%' }} />
+              <Sperate />
+              <p className="description">Certik audit</p>
+              <MyInput onChange={(e) => setCertikAudit(e.target.value)} value={certikAudit} style={{ width: '100%' }} />
+              <Sperate />
+              <p className="description">Doxxed team</p>
+              <MyInput onChange={(e) => setDoxxedTeam(e.target.value)} value={doxxedTeam} style={{ width: '100%' }} />
+              <Sperate />
+              <p className="description">Utility information</p>
+              <MyInput onChange={(e) => setUtility(e.target.value)} value={utility} style={{ width: '100%' }} />
+              <Sperate />
+              <p className="description">KYC</p>
+              <MyInput onChange={(e) => setKYC(e.target.value)} value={kyc} style={{ width: '100%' }} />
               <Sperate />
               <InlineWrapper>
                 <LineBtn onClick={() => setStep(7)}>Back</LineBtn>

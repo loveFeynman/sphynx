@@ -220,7 +220,7 @@ const DarkButton = styled(Button)`
 
 const PresaleManage: React.FC = () => {
   const param: any = useParams()
-  const { library } = useActiveWeb3React()
+  const { chainId, library } = useActiveWeb3React()
   const signer = library.getSigner()
   const [logoLink, setLogoLink] = useState('')
   const [webSiteLink, setWebSiteLink] = useState('')
@@ -230,6 +230,10 @@ const PresaleManage: React.FC = () => {
   const [telegramLink, setTelegramLink] = useState('')
   const [projectDec, setProjectDec] = useState('')
   const [updateDec, setUpdateDec] = useState('')
+  const [certikAudit, setCertikAudit] = useState('')
+  const [doxxedTeam, setDoxxedTeam] = useState('')
+  const [utility, setUtility] = useState('')
+  const [kyc, setKYC] = useState('')
   const [raise, setRaise] = useState(0)
   const [tokenData, setTokenData] = useState(null)
   const { toastSuccess, toastError } = useToast()
@@ -241,8 +245,8 @@ const PresaleManage: React.FC = () => {
 
   useEffect(() => {
     const isValue = !Number.isNaN(parseInt(param.saleId))
-    if (isValue) {
-      axios.get(`${process.env.REACT_APP_BACKEND_API_URL2}/getPresaleInfo/${param.saleId}`).then((response) => {
+    if (isValue && chainId) {
+      axios.get(`${process.env.REACT_APP_BACKEND_API_URL2}/getPresaleInfo/${param.saleId}/${chainId}`).then((response) => {
         if (response.data) {
           setTokenData(response.data)
           setLogoLink(response.data.logo_link)
@@ -253,10 +257,14 @@ const PresaleManage: React.FC = () => {
           setRedditLink(response.data.reddit_link)
           setProjectDec(response.data.project_dec)
           setUpdateDec(response.data.update_dec)
+          setCertikAudit(response.data.certik_audit)
+          setDoxxedTeam(response.data.doxxed_team)
+          setUtility(response.data.utility)
+          setKYC(response.data.kyc)
         }
       })
     }
-  }, [param.saleId])
+  }, [param.saleId, chainId])
 
   useEffect(() => {
     const fetchData = async () => {
@@ -305,6 +313,7 @@ const PresaleManage: React.FC = () => {
     const isValue = !Number.isNaN(parseInt(param.saleId))
     if (isValue) {
       const data: any = {
+        chain_id: chainId,
         sale_id: param.saleId,
         logo_link: logoLink,
         website_link: webSiteLink,
@@ -314,6 +323,10 @@ const PresaleManage: React.FC = () => {
         telegram_link: telegramLink,
         project_dec: projectDec,
         update_dec: updateDec,
+        certik_audit: certikAudit,
+        doxxed_team: doxxedTeam,
+        utility,
+        kyc,
       }
 
       axios.post(`${process.env.REACT_APP_BACKEND_API_URL2}/updatePresaleInfo`, { data }).then((response) => {
@@ -417,17 +430,25 @@ const PresaleManage: React.FC = () => {
               <MyInput onChange={(e) => setRedditLink(e.target.value)} value={redditLink} style={{ width: '100%' }} />
               <Sperate />
               <p className="description">Telegram Link</p>
-              <MyInput
-                onChange={(e) => setTelegramLink(e.target.value)}
-                value={telegramLink}
-                style={{ width: '100%' }}
-              />
+              <MyInput onChange={(e) => setTelegramLink(e.target.value)} value={telegramLink} style={{ width: '100%' }} />
               <Sperate />
               <p className="description">Project Description</p>
               <MyInput onChange={(e) => setProjectDec(e.target.value)} value={projectDec} style={{ width: '100%' }} />
               <Sperate />
               <p className="description">Any update you want to provide to participants</p>
               <MyInput onChange={(e) => setUpdateDec(e.target.value)} value={updateDec} style={{ width: '100%' }} />
+              <Sperate />
+              <p className="description">Certik audit</p>
+              <MyInput onChange={(e) => setCertikAudit(e.target.value)} value={certikAudit} style={{ width: '100%' }} />
+              <Sperate />
+              <p className="description">Doxxed team</p>
+              <MyInput onChange={(e) => setDoxxedTeam(e.target.value)} value={doxxedTeam} style={{ width: '100%' }} />
+              <Sperate />
+              <p className="description">Utility information</p>
+              <MyInput onChange={(e) => setUtility(e.target.value)} value={utility} style={{ width: '100%' }} />
+              <Sperate />
+              <p className="description">KYC</p>
+              <MyInput onChange={(e) => setKYC(e.target.value)} value={kyc} style={{ width: '100%' }} />
               <Sperate />
               <ColorButton onClick={handleUpdate}>Update</ColorButton>
             </StepContainer>

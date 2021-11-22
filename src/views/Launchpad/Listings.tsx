@@ -3,6 +3,7 @@ import Pagination from '@material-ui/lab/Pagination';
 import { useTranslation } from 'contexts/Localization'
 import axios from 'axios'
 import * as ethers from 'ethers'
+import { useWeb3React } from '@web3-react/core'
 import { simpleRpcProvider } from 'utils/providers'
 import { getPresaleContract } from 'utils/contractHelpers'
 import ListIcon from 'assets/svg/icon/ListIcon.svg'
@@ -23,13 +24,14 @@ import {
 const presaleContract = getPresaleContract(simpleRpcProvider)
 
 const Presale: React.FC = () => {
+  const { chainId } = useWeb3React()
   const { t } = useTranslation()
   const { menuToggled } = useMenuToggle()
   const [tokenList, setTokenList] = useState(null)
 
   useEffect(() => {
     const fetchData = async () => {
-      axios.get(`${process.env.REACT_APP_BACKEND_API_URL2}/getAllPresaleInfo`).then(async (response) => {
+      axios.get(`${process.env.REACT_APP_BACKEND_API_URL2}/getAllPresaleInfo/${chainId}`).then(async (response) => {
         if (response.data) {
           const list = await Promise.all(response.data.map(async (cell) => {
             const item = {
@@ -68,7 +70,7 @@ const Presale: React.FC = () => {
               else if (now > parseInt(cell.end_time)) {
                 item.tokenState = 'ended'
               }
-              else if ( now < parseInt(cell.start_time)) {
+              else if (now < parseInt(cell.start_time)) {
                 item.tokenState = 'pending'
               }
             }
@@ -79,8 +81,9 @@ const Presale: React.FC = () => {
       })
     }
 
-    fetchData()
-  }, [])
+    if (chainId)
+      fetchData()
+  }, [chainId])
 
   return (
     <Wrapper>
