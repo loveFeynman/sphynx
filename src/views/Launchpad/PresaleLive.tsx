@@ -505,7 +505,7 @@ const Progress = styled.div<{ state }>`
 const PresaleLive: React.FC = () => {
   const param: any = useParams()
   const { t } = useTranslation()
-  const { account } = useWeb3React()
+  const { account, chainId } = useWeb3React()
   const { menuToggled } = useMenuToggle()
   const [presaleStatus, setPresaleStatus] = useState(false)
   const { library } = useActiveWeb3React()
@@ -591,15 +591,15 @@ const PresaleLive: React.FC = () => {
 
   useEffect(() => {
     const isValue = !Number.isNaN(parseInt(param.saleId))
-    if (isValue) {
-      axios.get(`${process.env.REACT_APP_BACKEND_API_URL2}/getPresaleInfo/${param.saleId}`).then((response) => {
+    if (isValue && chainId) {
+      axios.get(`${process.env.REACT_APP_BACKEND_API_URL2}/getPresaleInfo/${param.saleId}/${chainId}`).then((response) => {
         if (response.data) {
           console.log('responseData', response.data)
           setTokenData(response.data)
         }
       })
     }
-  }, [param.saleId])
+  }, [param.saleId, chainId])
 
   useEffect(() => {
     const fetchData = async () => {

@@ -4,6 +4,7 @@ import { useTranslation } from 'contexts/Localization'
 import styled from 'styled-components'
 import axios from 'axios'
 import * as ethers from 'ethers'
+import { useWeb3React } from '@web3-react/core'
 import { simpleRpcProvider } from 'utils/providers'
 import { getPresaleContract } from 'utils/contractHelpers'
 import ListIcon from 'assets/svg/icon/ListIcon.svg'
@@ -32,6 +33,7 @@ const LoadingWrapper = styled.div`
 `
 
 const Presale: React.FC = () => {
+  const { chainId } = useWeb3React()
   const { t } = useTranslation()
   const { menuToggled } = useMenuToggle()
   const [tokenList, setTokenList] = useState(null)
@@ -39,7 +41,7 @@ const Presale: React.FC = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      axios.get(`${process.env.REACT_APP_BACKEND_API_URL2}/getAllPresaleInfo`).then(async (response) => {
+      axios.get(`${process.env.REACT_APP_BACKEND_API_URL2}/getAllPresaleInfo/${chainId}`).then(async (response) => {
         if (response.data) {
           try {
             const list = await Promise.all(
@@ -94,8 +96,9 @@ const Presale: React.FC = () => {
       })
     }
 
-    fetchData()
-  }, [])
+    if (chainId)
+      fetchData()
+  }, [chainId])
 
   return (
     <Wrapper>
