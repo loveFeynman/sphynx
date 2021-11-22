@@ -429,34 +429,34 @@ const Presale: React.FC = () => {
       return;
     }
 
-    if (new Date(presaleStart).getTime() <= new Date().getTime() + 600000) {
-      toastError('Presale start time must be more than 10 minutes after now!')
-      setStep(8)
-      return;
-    }
-    if (
-      new Date(presaleStart).getTime() >= new Date(presaleEnd).getTime() ||
-      new Date(presaleStart).getTime() + 3600 * 1000 * 24 * 3 <= new Date(presaleEnd).getTime()
-    ) {
-      toastError('Presale period must be less than 3 days!')
-      setStep(8)
-      return;
-    }
-    if (new Date(presaleStart).getTime() > new Date(tier1Time).getTime()) {
-      toastError('Presale tier1 period must be more than the presale start time!')
-      setStep(8)
-      return;
-    }
-    if (new Date(tier1Time).getTime() > new Date(tier2Time).getTime()) {
-      toastError('Presale tier2 time must be more than the presale tier1 time!')
-      setStep(8)
-      return;
-    }
-    if (new Date(liquidityLock).getTime() <= new Date(presaleEnd).getTime() + 30 * 24 * 3600 * 1000) {
-      toastError('Liquidity lock time must be more than 1 month from presale end time!')
-      setStep(8)
-      return;
-    }
+    // if (new Date(presaleStart).getTime() <= new Date().getTime() + 600000) {
+    //   toastError('Presale start time must be more than 10 minutes after now!')
+    //   setStep(8)
+    //   return;
+    // }
+    // if (
+    //   new Date(presaleStart).getTime() >= new Date(presaleEnd).getTime() ||
+    //   new Date(presaleStart).getTime() + 3600 * 1000 * 24 * 3 <= new Date(presaleEnd).getTime()
+    // ) {
+    //   toastError('Presale period must be less than 3 days!')
+    //   setStep(8)
+    //   return;
+    // }
+    // if (new Date(presaleStart).getTime() > new Date(tier1Time).getTime()) {
+    //   toastError('Presale tier1 period must be more than the presale start time!')
+    //   setStep(8)
+    //   return;
+    // }
+    // if (new Date(tier1Time).getTime() > new Date(tier2Time).getTime()) {
+    //   toastError('Presale tier2 time must be more than the presale tier1 time!')
+    //   setStep(8)
+    //   return;
+    // }
+    // if (new Date(liquidityLock).getTime() <= new Date(presaleEnd).getTime() + 30 * 24 * 3600 * 1000) {
+    //   toastError('Liquidity lock time must be more than 1 month from presale end time!')
+    //   setStep(8)
+    //   return;
+    // }
 
     const presaleId = (await presaleContract.currentPresaleId.call()).toString()
     const routerAddress = getSphynxRouterAddress()

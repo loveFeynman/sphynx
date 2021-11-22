@@ -31,12 +31,12 @@ export const links = [
   {
     label: 'Sphynx pad (coming soon)',
     icon: LaunchPadIcon,
-    href: '/',
+    href: '/launchpad',
   },
   {
     label: 'Projects live on Sphynx (coming soon)',
     icon: PredictionIcon,
-    href: '/',
+    href: '/launchpad/listing',
   },
   {
     label: 'Lottery (coming soon)',
