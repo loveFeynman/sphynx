@@ -27,6 +27,7 @@ const Wrapper = styled.div`
   color: white;
   margin-top: 24px;
   text-align: left;
+  font-weight: bold;
   .ml16 {
     margin-left: 16px;
   }
@@ -281,8 +282,9 @@ const StepContainer = styled.div`
 
 const Notification = styled.p`
   color: white;
-  font-size: 14px;
+  font-size: 16px;
   line-height: 20px;
+  font-weight: 600;
 `
 
 const WarningPanel = styled.div`
@@ -421,7 +423,7 @@ const Presale: React.FC = () => {
     }
     if (!parseFloat(sphynxLiquidityRate) || parseFloat(sphynxLiquidityRate) < 5) {
       toastError('Sphynx Liquidity amount should be more than 5%!')
-      setStep(6)
+      setStep(5)
       return;
     }
     if (!parseFloat(listingRate)) {
@@ -557,7 +559,7 @@ const Presale: React.FC = () => {
           <Sperate />
           <WarningPanel>
             <BellIcon style={{ flexShrink: 0.3 }} />
-            <p className="ml16" style={{fontSize: "16px"}}>
+            <p className="ml16" style={{fontSize: "18px", fontWeight: 'bold'}}>
               For tokens with burns, rebase or other special transfers please ensure you have a way to whitelist
               multiple addresses or turn off the special transfer events (By setting fees to 0 for example for the
               duration of the presale)
@@ -607,7 +609,7 @@ const Presale: React.FC = () => {
               </InlineWrapper>
               <Sperate />
               <InlineWrapper>
-                <p className="description w110">Tier3</p>
+                <p className="description w110">Public</p>
                 <MyInput className="ml16" value={tier3} onChange={handleTier3} />
               </InlineWrapper>
               <Sperate />
@@ -662,26 +664,8 @@ const Presale: React.FC = () => {
                 </FillBtn>
               </InlineWrapper>
             </StepWrapper>
-            <Sperate /><StepWrapper number="5" stepName="PancakeSwap Liquidity" step={step} onClick={() => setStep(5)}>
-              <p className="description">
-                Enter the percentage of raised funds that should be allocated to Liquidity on PancakeSwap (Min 0%, Max
-                100%, We recommend SphynxSwap)
-              </p>
-              <MyInput
-                onChange={(e) => setPancakeLiquidityRate(e.target.value)}
-                value={pancakeLiquidityRate}
-                style={{ width: '100%' }}
-              />
-              <Sperate />
-              <InlineWrapper>
-                <LineBtn onClick={() => setStep(4)}>Back</LineBtn>
-                <FillBtn className="ml16" onClick={() => setStep(6)}>
-                  Next
-                </FillBtn>
-              </InlineWrapper>
-            </StepWrapper>
             <Sperate />
-            <StepWrapper number="6" stepName="SphynxSwap Liquidity" step={step} onClick={() => setStep(6)}>
+            <StepWrapper number="5" stepName="SphynxSwap Liquidity" step={step} onClick={() => setStep(5)}>
               <p className="description">
                 Enter the percentage of raised funds that should be allocated to Liquidity on SphynxSwap (Min 5%, Max
                 100%, We recommend &gt; 70%)
@@ -693,6 +677,25 @@ const Presale: React.FC = () => {
               />
               <Sperate />
               <InlineWrapper>
+                <LineBtn onClick={() => setStep(4)}>Back</LineBtn>
+                <FillBtn className="ml16" onClick={() => setStep(6)}>
+                  Next
+                </FillBtn>
+              </InlineWrapper>
+            </StepWrapper>
+            <Sperate />
+            <StepWrapper number="6" stepName="PancakeSwap Liquidity" step={step} onClick={() => setStep(5)}>
+              <p className="description">
+                Enter the percentage of raised funds that should be allocated to Liquidity on PancakeSwap (Min 0%, Max
+                100%, We recommend SphynxSwap)
+              </p>
+              <MyInput
+                onChange={(e) => setPancakeLiquidityRate(e.target.value)}
+                value={pancakeLiquidityRate}
+                style={{ width: '100%' }}
+              />
+              <Sperate />
+              <InlineWrapper>
                 <LineBtn onClick={() => setStep(5)}>Back</LineBtn>
                 <FillBtn className="ml16" onClick={() => setStep(7)}>
                   Next
@@ -700,7 +703,7 @@ const Presale: React.FC = () => {
               </InlineWrapper>
             </StepWrapper>
             <Sperate />
-            <StepWrapper number="7" stepName="SphynxSwap Listing Rate" step={step} onClick={() => setStep(7)}>
+            <StepWrapper number="7" stepName="Sphynx/Pancake Listing Rate" step={step} onClick={() => setStep(7)}>
               <p className="description">
                 Enter the SphynxSwap listing price: (If I buy 1 BNB worth on SphynxSwap how many tokens do I get?
                 Usually this amount is lower than presale rate to allow for a higher listing price on SphynxSwap)
