@@ -5,7 +5,6 @@ import axios from 'axios'
 import * as ethers from 'ethers'
 import { simpleRpcProvider } from 'utils/providers'
 import { getPresaleContract } from 'utils/contractHelpers'
-import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import MainLogo from 'assets/svg/icon/logo_new.svg'
 import ShivaLogo from 'assets/images/ShivaTokenIcon.png'
 import SnifferIcon from 'assets/images/SnifferIcon.png'
@@ -26,86 +25,6 @@ import {
   TokenListContainder,
   PaginationWrapper
 } from './ListingsStyles'
-
-const TOKEN_DATA = [
-  {
-    tokenName: 'sphynx token',
-    tokenSymbole: 'sphynx',
-    tokenLogo: MainLogo,
-    activeSale: 19,
-    softCap: 150,
-    hardCap: 300,
-    minContribution: 0.1,
-    maxContribution: 3,
-    tokenState: 'active',
-  },
-  {
-    tokenName: 'sphynx token',
-    tokenSymbole: 'sphynx',
-    tokenLogo: ShivaLogo,
-    activeSale: 4,
-    softCap: 150,
-    hardCap: 300,
-    minContribution: 0.1,
-    maxContribution: 3,
-    tokenState: 'active',
-  },
-  {
-    tokenName: 'sphynx token',
-    tokenSymbole: 'sphynx',
-    tokenLogo: SnifferIcon,
-    activeSale: 88,
-    softCap: 150,
-    hardCap: 300,
-    minContribution: 0.1,
-    maxContribution: 3,
-    tokenState: 'active',
-  },
-  {
-    tokenName: 'sphynx token',
-    tokenSymbole: 'sphynx',
-    tokenLogo: LamboIcon,
-    activeSale: 65,
-    softCap: 150,
-    hardCap: 300,
-    minContribution: 0.1,
-    maxContribution: 3,
-    tokenState: 'active',
-  },
-  {
-    tokenName: 'sphynx token',
-    tokenSymbole: 'sphynx',
-    tokenLogo: AfiIcon,
-    activeSale: 36,
-    softCap: 150,
-    hardCap: 300,
-    minContribution: 0.1,
-    maxContribution: 3,
-    tokenState: 'pending',
-  },
-  {
-    tokenName: 'sphynx token',
-    tokenSymbole: 'sphynx',
-    tokenLogo: GalabetIcon,
-    activeSale: 64,
-    softCap: 150,
-    hardCap: 300,
-    minContribution: 0.1,
-    maxContribution: 3,
-    tokenState: 'failed',
-  },
-  {
-    tokenName: 'sphynx token',
-    tokenSymbole: 'sphynx',
-    tokenLogo: MainLogo,
-    activeSale: 78,
-    softCap: 150,
-    hardCap: 300,
-    minContribution: 0.1,
-    maxContribution: 3,
-    tokenState: 'active',
-  },
-]
 
 const presaleContract = getPresaleContract(simpleRpcProvider)
 
@@ -189,7 +108,7 @@ const Presale: React.FC = () => {
             tokenName={item.tokenName}
             tokenSymbole={item.tokenSymbole}
             tokenLogo={item.tokenLogo}
-            activeSale={item.activeSale}
+            activeSale={item.activeSale * 100}
             totalCap={item.totalCap}
             softCap={item.softCap}
             hardCap={item.hardCap}

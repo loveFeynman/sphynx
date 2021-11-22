@@ -287,6 +287,12 @@ const PresaleManage: React.FC = () => {
     console.log('burn')
   }
 
+  const handleFinalize = async () => {
+    const tx = await presaleContract.finalize(param.saleId)
+    await tx.wait()
+    console.log("tx", tx)
+  }
+
   const handleWithdraw = () => {
     console.log('withdraw')
   }
@@ -384,7 +390,7 @@ const PresaleManage: React.FC = () => {
                     <DarkButton onClick={handleWithdraw}>Withdraw Liquidity Token</DarkButton>
                   </>
                   :
-                  <ColorButton onClick={handleBurn} disable >Finalize</ColorButton>
+                  <ColorButton onClick={handleFinalize} disable >Finalize</ColorButton>
                 :
                 <ColorButton onClick={handleDeposit}>Deposit</ColorButton>
               }
