@@ -193,7 +193,6 @@ const TokenCard: React.FC<ImgCardProps> = ({ saleId, ownerAddress, tokenSymbole,
                 <EndTimeWrapper>
                     <Text>Sale end in:</Text>
                     <TimerComponent time={endTime}/>
-                    {/* <Text>06:23:49:16</Text> */}
                 </EndTimeWrapper>
             </CardHeader>
             <CardBody>
@@ -203,7 +202,7 @@ const TokenCard: React.FC<ImgCardProps> = ({ saleId, ownerAddress, tokenSymbole,
                 <ProgressBarWrapper>
                     <ProgressBar>
                         <Progress state={activeSale}>
-                            {activeSale * 100}%
+                            {(activeSale).toFixed(2)}%
                         </Progress>
                     </ProgressBar>
                 </ProgressBarWrapper>

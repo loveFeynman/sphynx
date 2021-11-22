@@ -317,7 +317,12 @@ const PresaleManage: React.FC = () => {
       }
 
       axios.post(`${process.env.REACT_APP_BACKEND_API_URL2}/updatePresaleInfo`, { data }).then((response) => {
-        toastSuccess('Updated!', 'Your presale info is udpated successfully.')
+        if(response.data) {
+          toastSuccess('Updated!', 'Your presale info is udpated successfully.')
+        }
+        else {
+          toastError('Failed!', 'Your action is failed.')
+        }
       })
     }
   }
