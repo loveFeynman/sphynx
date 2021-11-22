@@ -215,9 +215,9 @@ const FeeCard = () => {
           Tokens Sold: <span>2%</span>
         </p>
         <VerticalSperator />
-        <p>
+        {/* <p>
           BNB Raised: <span>2%</span>
-        </p>
+        </p> */}
       </FeeWrapper>
     </CardWrapper>
   )
