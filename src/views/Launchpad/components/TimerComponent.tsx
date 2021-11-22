@@ -17,7 +17,7 @@ const TimerComponent: React.FC<TimeProps> = ({ time }) => {
     useEffect(() => {
         if (time) {
             timerRef.current = setInterval(() => {
-                setIndex(i => i - 1)
+                setIndex(i => i <= 0 ? 0 : i - 1)
             }, 1000)
         }
 
