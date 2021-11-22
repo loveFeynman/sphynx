@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react'
 import styled from 'styled-components'
-import { Button, Text, Flex } from '@sphynxswap/uikit'
+import { useHistory } from 'react-router-dom'
+import { Button, Text, Flex, Link } from '@sphynxswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 import { useMenuToggle } from 'state/application/hooks'
 import { useWeb3React } from '@web3-react/core'
@@ -505,6 +506,7 @@ const Progress = styled.div<{ state }>`
 const PresaleLive: React.FC = () => {
   const param: any = useParams()
   const { t } = useTranslation()
+  const history = useHistory()
   const { account, chainId } = useWeb3React()
   const { menuToggled } = useMenuToggle()
   const [presaleStatus, setPresaleStatus] = useState(false)
@@ -513,11 +515,7 @@ const PresaleLive: React.FC = () => {
   const presaleContract = getPresaleContract(signer)
   const [contribute, setContribute] = useState('')
   const [tokenData, setTokenData] = useState(null)
-  const [softCap, setSoftCap] = useState(0)
-  const [hardCap, setHardCap] = useState(0)
   const [raise, setRaise] = useState(0)
-  const [minContribute, setMinContribute] = useState(0)
-  const [maxContribute, setMaxContribute] = useState(0)
   const [userContributeBNB, setUserContributeBNB] = useState(0)
   const [userContributeToken, setUserContributeToken] = useState(0)
   const [totalTokenSupply, setTotalTokenSupply] = useState(0)
@@ -525,8 +523,12 @@ const PresaleLive: React.FC = () => {
   const [isWhiteList, setIsWhiteList] = useState(false)
   const [whiteList1, setWhiteList1] = useState(false)
   const [whiteList2, setWhiteList2] = useState(false)
+  const [baseWhiteList, setBaseWhiteList] = useState(false)
+  const [privateSale1, setPrivateSale1] = useState(false)
+  const [privateSale2, setPrivateSale2] = useState(false)
+  const [publicSale, setPublicSale] = useState(false)
   const presaleAddress = getPresaleAddress()
-  const timerRef = useRef<NodeJS.Timeout>();
+  const timerRef = useRef<NodeJS.Timeout>()
   const PRESALE_DATA = [
     {
       presaleItem: 'Sale ID:',
@@ -542,17 +544,18 @@ const PresaleLive: React.FC = () => {
     },
     {
       presaleItem: 'Tokens For Liquidity:',
-      presaleValue: `${tokenData &&
+      presaleValue: `${
+        tokenData &&
         (tokenData.listing_rate * tokenData.hard_cap * (tokenData.router_rate + tokenData.default_router_rate)) / 100
-        } ${tokenData && tokenData.token_symbol}`,
+      } ${tokenData && tokenData.token_symbol}`,
     },
     {
       presaleItem: 'Soft Cap:',
-      presaleValue: `${softCap} BNB`,
+      presaleValue: `${tokenData && tokenData.soft_cap} BNB`,
     },
     {
       presaleItem: 'Hard Cap:',
-      presaleValue: `${hardCap} BNB`,
+      presaleValue: `${tokenData && tokenData.hard_cap} BNB`,
     },
     {
       presaleItem: 'Presale Rate:',
@@ -572,11 +575,11 @@ const PresaleLive: React.FC = () => {
     },
     {
       presaleItem: 'Minimum Contribution:',
-      presaleValue: `${minContribute} BNB`,
+      presaleValue: `${tokenData && tokenData.min_buy} BNB`,
     },
     {
       presaleItem: 'Maximum Contribution:',
-      presaleValue: `${maxContribute} BNB`,
+      presaleValue: `${tokenData && tokenData.max_buy} BNB`,
     },
     {
       presaleItem: 'Presale Start Time:',
@@ -594,32 +597,36 @@ const PresaleLive: React.FC = () => {
 
   useEffect(() => {
     timerRef.current = setInterval(() => {
-      if( tokenData ){
+      if (tokenData) {
         const now = Math.floor(new Date().getTime() / 1000)
-        if(parseInt(tokenData.start_time) < now && now < parseInt(tokenData.tier1_time)) {
-          console.log("whitelist1")
-        }
-        else if(parseInt(tokenData.tier1_time) < now && now < parseInt(tokenData.tier2_time)) {
-          console.log("whitelist2")
-        }
-        else if(parseInt(tokenData.tier2_time) < now && now < parseInt(tokenData.end_time)) {
-          console.log("anybody")
+        if (parseInt(tokenData.start_time) < now && now < parseInt(tokenData.tier1_time)) {
+          setPrivateSale1(true)
+        } else if (parseInt(tokenData.tier1_time) < now && now < parseInt(tokenData.tier2_time)) {
+          setPrivateSale1(false)
+          setPrivateSale2(true)
+        } else if (parseInt(tokenData.tier2_time) < now && now < parseInt(tokenData.end_time)) {
+          setPrivateSale1(false)
+          setPrivateSale2(false)
+          setPublicSale(true)
         }
       }
     }, 10000)
     return () => {
-      clearInterval(timerRef.current!);
+      clearInterval(timerRef.current!)
     }
   }, [timerRef, tokenData])
 
   useEffect(() => {
     const isValue = !Number.isNaN(parseInt(param.saleId))
     if (isValue && chainId) {
-      axios.get(`${process.env.REACT_APP_BACKEND_API_URL2}/getPresaleInfo/${param.saleId}/${chainId}`).then((response) => {
-        if (response.data) {
-          setTokenData(response.data)
-        }
-      })
+      axios
+        .get(`${process.env.REACT_APP_BACKEND_API_URL2}/getPresaleInfo/${param.saleId}/${chainId}`)
+        .then((response) => {
+          if (response.data) {
+            console.log('responseData', response.data)
+            setTokenData(response.data)
+          }
+        })
     }
   }, [param.saleId, chainId])
 
@@ -627,43 +634,20 @@ const PresaleLive: React.FC = () => {
     const fetchData = async () => {
       let temp: any
       let value: any
-      /* from token contract */
-      const abi: any = ERC20_ABI
-      const tokenContract = new ethers.Contract(tokenData.token_address, abi, signer)
-      temp = (await tokenContract.totalSupply()).toString()
-      value = parseFloat(ethers.utils.formatUnits(temp, tokenData.decimal))
-      setTotalTokenSupply(value)
-
       /* from presale contract */
-      temp = (await presaleContract.hardCap(param.saleId)).toString()
-      value = parseFloat(ethers.utils.formatUnits(temp, tokenData.decimal))
-      setHardCap(value)
-
-      temp = (await presaleContract.softCap(param.saleId)).toString()
-      value = parseFloat(ethers.utils.formatUnits(temp, tokenData.decimal))
-      setSoftCap(value)
-
       temp = (await presaleContract.totalContributionBNB(param.saleId)).toString()
-      value = parseFloat(ethers.utils.formatUnits(temp, tokenData.decimal))
+      value = parseFloat(ethers.utils.formatEther(temp))
       setRaise(value)
-
-      temp = (await presaleContract.minContributeRate(param.saleId)).toString()
-      value = parseFloat(ethers.utils.formatUnits(temp, '18'))
-      setMinContribute(value)
-
-      temp = (await presaleContract.maxContributeRate(param.saleId)).toString()
-      value = parseFloat(ethers.utils.formatUnits(temp, '18'))
-      setMaxContribute(value)
 
       temp = await presaleContract.presaleStatus(param.saleId)
       setPresaleStatus(temp)
 
       temp = (await presaleContract.userContributionBNB(param.saleId, account)).toString()
-      value = parseFloat(ethers.utils.formatUnits(temp, tokenData.decimal))
+      value = parseFloat(ethers.utils.formatEther(temp))
       setUserContributeBNB(value)
 
       temp = (await presaleContract.userContributionToken(param.saleId, account)).toString()
-      value = parseFloat(ethers.utils.formatUnits(temp, tokenData.decimal))
+      value = parseFloat(ethers.utils.formatUnits(temp, tokenData.token_decimal))
       setUserContributeToken(value)
 
       temp = await presaleContract.isClaimed(param.saleId, account)
@@ -671,12 +655,21 @@ const PresaleLive: React.FC = () => {
 
       temp = await presaleContract.iswhitelist(param.saleId)
       setIsWhiteList(temp)
+      /* from token contract */
+      const abi: any = ERC20_ABI
+      const tokenContract = new ethers.Contract(tokenData.token_address, abi, signer)
+      temp = (await tokenContract.totalSupply()).toString()
+      value = parseFloat(ethers.utils.formatUnits(temp, tokenData.token_decimal))
+      setTotalTokenSupply(value)
 
       temp = await presaleContract.whitelist1(param.saleId, account)
       setWhiteList1(temp)
 
       temp = await presaleContract.whitelist2(param.saleId, account)
       setWhiteList2(temp)
+
+      temp = await presaleContract.basewhitelist(account)
+      setBaseWhiteList(temp)
     }
 
     if (tokenData) {
@@ -688,11 +681,12 @@ const PresaleLive: React.FC = () => {
     setContribute(e.target.value)
   }
 
-  const handleComponent = () => {
+  const handleComponent = async () => {
     const isValue = !Number.isNaN(parseInt(param.saleId))
     if (isValue && parseFloat(contribute) > 0 && tokenData) {
-      const value = new BigNumber(contribute).times(BIG_TEN.pow(tokenData.token_decimal)).toString()
-      presaleContract.contribute(param.saleId, { value })
+      const value = ethers.utils.parseEther(contribute)
+      const tx = await presaleContract.contribute(param.saleId, { value })
+      await tx.wait()
     }
   }
 
@@ -704,6 +698,10 @@ const PresaleLive: React.FC = () => {
   const handleEmergencyWithdraw = async () => {
     const tx = await presaleContract.emergencyWithdraw(param.saleId)
     await tx.wait()
+  }
+
+  const toSphynxSwap = () => {
+    history.push(`/swap/${tokenData.token_address}`)
   }
 
   return (
@@ -791,33 +789,35 @@ const PresaleLive: React.FC = () => {
             <Separate />
             <FlexWrapper>
               <WhitelistCard style={{ padding: '75px 15px' }}>
-                <WhitelistTitle mb="16px">Whitelist {isWhiteList ? "Enabled" : "Public"} Sale</WhitelistTitle>
+                <WhitelistTitle mb="16px">Whitelist {isWhiteList ? 'Enabled' : 'Public'} Sale</WhitelistTitle>
                 <WhitelistSubText mb="28px">
-                  {isWhiteList ? "Only Whitelisted Wallets can Purchase This Token!" : "Anybody can Purchase This Token!"}
+                  {isWhiteList
+                    ? 'Only Whitelisted Wallets can Purchase This Token!'
+                    : 'Anybody can Purchase This Token!'}
                 </WhitelistSubText>
-                {
-                  isWhiteList && (!whiteList1 || !whiteList2) &&
+                {isWhiteList && whiteList1 && <Text>Your wallet address is on the whitelist1!</Text>}
+                {isWhiteList && whiteList2 && <Text>Your wallet address is on the whitelist2!</Text>}
+                {isWhiteList && !whiteList1 && !whiteList2 && (
                   <WalletAddressError>
                     <img src={WarningIcon} alt="nuclear icon" />
                     <Text>Your wallet address is not whitelisted</Text>
                   </WalletAddressError>
-                }
-
+                )}
               </WhitelistCard>
               <WhitelistCard>
                 {!presaleStatus ? (
                   <>
                     <WhitelistTitle>
-                      Raised: {raise}/{hardCap}
+                      Raised: {raise}/{tokenData?.hard_cap}
                     </WhitelistTitle>
                     <ProgressBarWrapper>
                       <ProgressBar>
-                        <Progress state={(raise / hardCap) * 100} />
+                        <Progress state={(raise / tokenData?.hard_cap) * 100} />
                       </ProgressBar>
                     </ProgressBarWrapper>
                     <TokenRateView>
                       <Text fontSize="14px" fontWeight="600" color="#777777" textAlign="left">
-                        1 BNB = 250000000 {tokenData && tokenData.token_symbol}{' '}
+                        1 BNB = {tokenData && tokenData.tier3} {tokenData && tokenData.token_symbol}{' '}
                       </Text>
                     </TokenRateView>
                     <ContributeFlex>
@@ -829,9 +829,13 @@ const PresaleLive: React.FC = () => {
                     <Flex alignItems="center" style={{ width: '100%' }}>
                       <StopwatchIcon />
                       <Text fontSize="13px" fontWeight="600" style={{ margin: '0 10px' }}>
-                        Sale ends in:{' '}
+                        {privateSale1
+                          ? 'Private sale 1 ends in'
+                          : privateSale2
+                          ? 'Private sale 2 ends in'
+                          : 'Public sale ends in'}{' '}
                       </Text>
-                      <TimerComponent time={tokenData && tokenData.end_time} />
+                      <TimerComponent time={tokenData && privateSale1 ? tokenData?.tier1_time : privateSale2 ? tokenData?.tier2_time : tokenData?.end_time} />
                     </Flex>
                     <UnderLine />
                   </>
@@ -840,10 +844,12 @@ const PresaleLive: React.FC = () => {
                     <Text textAlign="left" fontSize="12px" fontWeight="500" color="#777777">
                       This presale has ended. Go back to the dashboard to view others!
                     </Text>
-                    <DarkButton style={{ width: '100%' }} mt="16px">
-                      Trade on PancakeSwap
-                    </DarkButton>
-                    <DarkButton style={{ width: '100%' }} mt="16px">
+                    <Link external href="https://pancakeswap.finance/swap" style={{ width: '100%' }}>
+                      <DarkButton style={{ width: '100%', textDecoration: 'none' }} mt="16px">
+                        Trade on PancakeSwap
+                      </DarkButton>
+                    </Link>
+                    <DarkButton onClick={toSphynxSwap} style={{ width: '100%' }} mt="16px">
                       Trade on SphynxSwap
                     </DarkButton>
                     <Text textAlign="left" fontSize="12px" fontWeight="500" mt="16px" color="#777777">
@@ -877,7 +883,14 @@ const PresaleLive: React.FC = () => {
                     {userContributeToken} {tokenData && tokenData.token_symbol}
                   </Text>
                 </TokenAmountView>
-                {!presaleStatus ? <><Separate /><DarkButton onClick={handleEmergencyWithdraw}>Emergency Withdraw</DarkButton></> : ''}
+                {!presaleStatus ? (
+                  <>
+                    <Separate />
+                    <DarkButton onClick={handleEmergencyWithdraw}>Emergency Withdraw</DarkButton>
+                  </>
+                ) : (
+                  ''
+                )}
               </WhitelistCard>
             </FlexWrapper>
             <Separate />
