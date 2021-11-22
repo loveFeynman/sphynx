@@ -1,6 +1,8 @@
 import React from 'react'
 import styled from 'styled-components'
 import { Text } from '@sphynxswap/uikit';
+import { useHistory } from 'react-router-dom'
+import { useWeb3React } from '@web3-react/core'
 import ContractHelper from './ContractHelper';
 
 const CardWrapper = styled.div`
@@ -94,19 +96,11 @@ const Progress = styled.div<{state}>`
     background: linear-gradient(90deg, #610D89 0%, #C42BB4 100%);
     border-radius: 8px 0px 0px 8px;
     padding: 1px;
-`
-
-const ProgressText = styled.div`
+    display: flex;
+    justify-content: center;
     font-size: 9px;
     font-weight: bold;
-    top: 0;
-    bottom: 0;
-    right: 0;
-    left: 0;
-    margin: auto;
-    width: fit-content;
-    height: fit-content;
-    position: absolute;
+
 `
 
 const SaleInfo = styled.div`
@@ -155,10 +149,13 @@ const TokenWrapper = styled.div`
 `
 
 interface ImgCardProps {
+    saleId: number;
+    ownerAddress: string;
     tokenSymbole?: string;
     tokenName?: string;
     tokenLogo?: string;
     activeSale?: number;
+    totalCap?: number;
     softCap?: number;
     hardCap?: number;
     minContribution?: number;
@@ -166,9 +163,21 @@ interface ImgCardProps {
     tokenState?: string;    
 }
 
-const TokenCard: React.FC<ImgCardProps> = ({ tokenSymbole, tokenName, tokenLogo, activeSale, softCap, hardCap, minContribution, maxContribution, tokenState }: ImgCardProps) => {
+const TokenCard: React.FC<ImgCardProps> = ({ saleId, ownerAddress, tokenSymbole, tokenName, tokenLogo, activeSale, softCap, hardCap, totalCap, minContribution, maxContribution, tokenState }: ImgCardProps) => {
+    const history = useHistory()
+    const { account } = useWeb3React()
+
+    const handleClicked = () => {
+        if(account === ownerAddress){
+            history.push(`/launchpad/presale/${saleId}`)
+        }
+        else {
+            history.push(`/launchpad/live/${saleId}`)
+        }
+    }
+
     return (
-        <CardWrapper>
+        <CardWrapper onClick={handleClicked}>
             <CardHeader>
                 <TokenWrapper>
                     <TokenImg>
@@ -190,10 +199,9 @@ const TokenCard: React.FC<ImgCardProps> = ({ tokenSymbole, tokenName, tokenLogo,
                 </ActiveSaleText>
                 <ProgressBarWrapper>
                     <ProgressBar>
-                        <Progress state={activeSale}/>
-                        <ProgressText>
+                        <Progress state={activeSale}>
                             {activeSale}%
-                        </ProgressText>
+                        </Progress>
                     </ProgressBar>
                 </ProgressBarWrapper>
                 <SaleInfoWrapper>
@@ -202,7 +210,7 @@ const TokenCard: React.FC<ImgCardProps> = ({ tokenSymbole, tokenName, tokenLogo,
                             Raised:
                         </SaleInfoTitle>
                         <SaleInfoValue>
-                            0.00/300
+                            {totalCap}/{hardCap}
                         </SaleInfoValue>
                     </SaleInfo>
                     <Divider/>

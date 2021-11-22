@@ -160,3 +160,59 @@ export const TokenListContainder = styled.div<{ toggled: boolean }>`
     grid-template-columns: repeat(${(props) => (props.toggled ? '5' : '4')}, 1fr);
   }
 `
+
+export const PaginationWrapper = styled.div`
+  margin: 50px auto;
+  .MuiPagination-root {
+    .MuiPagination-ul {
+      flex-wrap: nowrap;
+      li {
+        &:first-child {
+          flex-basis: 100%;
+          display: flex;
+          justify-content: flex-start;
+          align-items: center;
+          > button::after {
+            content: 'Previous';
+            color: #7F1696;
+          }
+          > button {
+            border: none;
+          }
+          > button.Mui-disabled::after {
+            color: #888888;
+          }
+        }
+        &:last-child {
+          flex-basis: 100%;
+          display: flex;
+          justify-content: flex-end;
+          align-items: center;
+          border: none;
+          > button::before {
+            content: 'Next';
+            color: #7F1696;
+          }
+          > button {
+            border: none;
+          }
+          > button.Mui-disabled::before {
+            color: #888888;
+          }
+        }
+        & .MuiPaginationItem-icon {
+          display: none;
+        }
+        & button {
+          color: white;
+          border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+        & button.Mui-selected {
+          border: none;
+          background: linear-gradient(90deg, #610D89 0%, #C42BB4 100%);
+        }
+
+      }
+    }
+  }
+`
