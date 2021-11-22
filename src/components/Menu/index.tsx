@@ -738,7 +738,7 @@ const Menu = () => {
                   {link.href.indexOf('https') === 0 ? (
                     <>
                       <MenuItem
-                        className={realPath.indexOf(link.href) > -1 && link.href !== '/' ? 'active' : ''}
+                        className={window.location.pathname == link.href && link.href !== '/' ? 'active' : ''}
                         target={link.newTab ? '_blank' : ''}
                         href={link.href}
                         style={menuToggled ? { justifyContent: 'center' } : {}}
@@ -749,7 +749,7 @@ const Menu = () => {
                         {!menuToggled && <p>{t(`${link.label}`)}</p>}
                       </MenuItem>
                       <MenuItemMobile
-                        className={realPath.indexOf(link.href) > -1 && link.href !== '/' ? 'active' : ''}
+                        className={window.location.pathname == link.href && link.href !== '/' ? 'active' : ''}
                         href={link.href}
                         target={link.newTab ? '_blank' : ''}
                         onClick={handleMobileMenuItem}
@@ -761,7 +761,7 @@ const Menu = () => {
                   ) : (
                     <>
                       <MenuItem
-                        className={realPath.indexOf(link.href) > -1 && link.href !== '/' ? 'active' : ''}
+                        className={window.location.pathname == link.href && link.href !== '/' ? 'active' : ''}
                         target={link.newTab ? '_blank' : ''}
                         style={menuToggled ? { justifyContent: 'center' } : {}}
                         rel="noreferrer"
@@ -771,7 +771,7 @@ const Menu = () => {
                         {!menuToggled && <p>{t(`${link.label}`)}</p>}
                       </MenuItem>
                       <MenuItemMobile
-                        className={realPath.indexOf(link.href) > -1 && link.href !== '/' ? 'active' : ''}
+                        className={window.location.pathname == link.href && link.href !== '/' ? 'active' : ''}
                         target={link.newTab ? '_blank' : ''}
                         onClick={handleMobileMenuItem}
                       >
