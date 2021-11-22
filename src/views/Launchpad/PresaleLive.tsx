@@ -537,7 +537,7 @@ const PresaleLive: React.FC = () => {
     },
     {
       presaleItem: "Tokens For Liquidity:",
-      presaleValue: `${tokenData&&(tokenData.listing_rate * tokenData.hard_cap / 100)} ${tokenData&&tokenData.token_symbol}`,
+      presaleValue: `${tokenData&&(tokenData.listing_rate * tokenData.hard_cap * (tokenData.router_rate + tokenData.default_router_rate)/ 100)} ${tokenData&&tokenData.token_symbol}`,
     },
     {
       presaleItem: "Soft Cap:",

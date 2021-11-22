@@ -527,11 +527,15 @@ const Presale: React.FC = () => {
           tier2_time: tierTwoTime,
           lock_time: liquidityLockTime
         }
-        toastSuccess('Pushed!', 'Your presale info is saved successfully.')
         axios.post(`${process.env.REACT_APP_BACKEND_API_URL2}/insertPresaleInfo`, { data }).then((response) => {
-          console.log("--------------------", response)
+          if(response.data) {
+            toastSuccess('Pushed!', 'Your presale info is saved successfully.')
+            history.push(`/launchpad/presale/${presaleId}`)
+          }
+          else {
+            toastError('Failed!', 'Your action is failed.')
+          }
         })
-        history.push(`/launchpad/presale/${presaleId}`)
       })
   }
 
