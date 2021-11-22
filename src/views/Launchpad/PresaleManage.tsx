@@ -163,7 +163,7 @@ const StepContainer = styled.div`
 `
 
 const Notification = styled.p`
-  color: #777;
+  color: white;
   font-size: 14px;
   line-height: 20px;
 `
@@ -259,11 +259,9 @@ const PresaleManage: React.FC = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      console.log("tokenData", tokenData, presaleContract)
       let temp = (await presaleContract.totalContributionBNB(param.saleId)).toString()
       const value = parseFloat(ethers.utils.formatUnits(temp, tokenData.decimal))
       setRaise(value)
-      console.log("value", value)
 
       temp = (await presaleContract.isDeposited(param.saleId))
       setIsDeposit(temp)

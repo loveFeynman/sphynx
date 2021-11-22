@@ -154,24 +154,24 @@ const SearchPannel = () => {
         <Select
           options={[
             {
-              label: t('Hot'),
-              value: 'hot',
+              label: t('ALL'),
+              value: 'all',
             },
             {
-              label: t('APR'),
-              value: 'apr',
+              label: t('PENDDING'),
+              value: 'pendding',
             },
             {
-              label: t('Multiplier'),
-              value: 'multiplier',
+              label: t('ACTIVE'),
+              value: 'active',
             },
             {
-              label: t('Earned'),
-              value: 'earned',
+              label: t('ENDED'),
+              value: 'ended',
             },
             {
-              label: t('Liquidity'),
-              value: 'liquidity',
+              label: t('FAILED'),
+              value: 'failed',
             },
           ]}
           onChange={handleSortOptionChange}
@@ -180,7 +180,7 @@ const SearchPannel = () => {
       <ContractCard isMobile={isMobile}>
         <SearchInputWrapper>
           <input
-            placeholder="Search farms"
+            placeholder="Search"
             onChange={handlerChange}
           />
           {showDrop && (
