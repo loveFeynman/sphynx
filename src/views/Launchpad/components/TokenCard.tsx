@@ -4,6 +4,7 @@ import { Text } from '@sphynxswap/uikit';
 import { useHistory } from 'react-router-dom'
 import { useWeb3React } from '@web3-react/core'
 import ContractHelper from './ContractHelper';
+import TimerComponent from './TimerComponent';
 
 const CardWrapper = styled.div`
     background: ${({ theme }) => (theme.isDark ? "#040413" : "#2A2E60")};
@@ -160,10 +161,11 @@ interface ImgCardProps {
     hardCap?: number;
     minContribution?: number;
     maxContribution?: number;
+    endTime?: string;
     tokenState?: string;    
 }
 
-const TokenCard: React.FC<ImgCardProps> = ({ saleId, ownerAddress, tokenSymbole, tokenName, tokenLogo, activeSale, softCap, hardCap, totalCap, minContribution, maxContribution, tokenState }: ImgCardProps) => {
+const TokenCard: React.FC<ImgCardProps> = ({ saleId, ownerAddress, tokenSymbole, tokenName, tokenLogo, activeSale, softCap, hardCap, totalCap, minContribution, maxContribution, endTime, tokenState }: ImgCardProps) => {
     const history = useHistory()
     const { account } = useWeb3React()
 
@@ -190,7 +192,8 @@ const TokenCard: React.FC<ImgCardProps> = ({ saleId, ownerAddress, tokenSymbole,
                 </TokenWrapper>
                 <EndTimeWrapper>
                     <Text>Sale end in:</Text>
-                    <Text>06:23:49:16</Text>
+                    <TimerComponent time={endTime}/>
+                    {/* <Text>06:23:49:16</Text> */}
                 </EndTimeWrapper>
             </CardHeader>
             <CardBody>
@@ -200,7 +203,7 @@ const TokenCard: React.FC<ImgCardProps> = ({ saleId, ownerAddress, tokenSymbole,
                 <ProgressBarWrapper>
                     <ProgressBar>
                         <Progress state={activeSale}>
-                            {activeSale}%
+                            {activeSale * 100}%
                         </Progress>
                     </ProgressBar>
                 </ProgressBarWrapper>
