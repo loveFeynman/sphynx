@@ -24,7 +24,7 @@ import { useParams } from 'react-router'
 import axios from 'axios'
 import * as ethers from 'ethers'
 import { getPresaleAddress } from 'utils/addressHelpers'
-import TimerComponent from './components/TimerComponent'
+import TimerComponent from 'components/Timer/TimerComponent'
 
 const Wrapper = styled.div`
   display: flex;
