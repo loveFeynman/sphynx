@@ -5,7 +5,7 @@
     "static/js/2.7651556f.chunk.js": "/static/js/2.7651556f.chunk.js",
     "main.css": "/static/css/main.134dfe97.chunk.css",
     "main.js": "/static/js/main.3161a461.chunk.js",
-    "runtime-main.js": "/static/js/runtime-main.1523aed9.js",
+    "runtime-main.js": "/static/js/runtime-main.2a88620b.js",
     "static/css/5.6bf97410.chunk.css": "/static/css/5.6bf97410.chunk.css",
     "static/js/5.250f8732.chunk.js": "/static/js/5.250f8732.chunk.js",
     "static/js/6.03840f58.chunk.js": "/static/js/6.03840f58.chunk.js",
@@ -17,7 +17,7 @@
     "static/js/12.e3a1e266.chunk.js": "/static/js/12.e3a1e266.chunk.js",
     "static/js/13.fba03cf9.chunk.js": "/static/js/13.fba03cf9.chunk.js",
     "static/js/14.b8fd10b2.chunk.js": "/static/js/14.b8fd10b2.chunk.js",
-    "static/js/15.7833038f.chunk.js": "/static/js/15.7833038f.chunk.js",
+    "static/js/15.22ca433d.chunk.js": "/static/js/15.22ca433d.chunk.js",
     "static/js/16.849734cc.chunk.js": "/static/js/16.849734cc.chunk.js",
     "static/js/17.88213bc2.chunk.js": "/static/js/17.88213bc2.chunk.js",
     "static/js/18.065e47ee.chunk.js": "/static/js/18.065e47ee.chunk.js",
@@ -96,7 +96,7 @@
     "static/media/sphynxToken.7fbf717c.png": "/static/media/sphynxToken.7fbf717c.png"
   },
   "entrypoints": [
-    "static/js/runtime-main.1523aed9.js",
+    "static/js/runtime-main.2a88620b.js",
     "static/css/5.6bf97410.chunk.css",
     "static/js/5.250f8732.chunk.js",
     "static/css/main.134dfe97.chunk.css",

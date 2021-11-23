@@ -579,7 +579,7 @@ const Presale: React.FC = () => {
           <FeeCard />
           <div style={{ marginTop: '24px', width: '100%', marginBottom: '24px' }}>
             <StepWrapper number="1" stepName="Token Address" step={step} onClick={() => setStep(1)}>
-              <p className="description">Enter your token Adderss</p>
+              <p className="description">Enter your token Address</p>
               <MyInput onChange={handleChange} value={tokenAddress} style={{ width: '100%' }} />
               <Sperate />
               <InlineWrapper>
