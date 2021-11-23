@@ -80,7 +80,7 @@ import RewardsPanel from './components/RewardsPanel'
 import { SwapTabs, SwapTabList, SwapTab, SwapTabPanel } from '../../components/Tab/tab'
 import { web3ArchiveProvider } from 'utils/providers'
 import { SPHYNX_TOKEN_ADDRESS } from 'config/constants'
-import { WBNB } from 'config/constants/tokens'
+import { WBNB, BUSD } from 'config/constants/tokens'
 
 const wBNBAddr = WBNB.address
 const sphynxAddr = `${SPHYNX_TOKEN_ADDRESS}`
@@ -169,9 +169,11 @@ export default function Swap({ history }: RouteComponentProps) {
   const tokenAddress = pathname.substr(6)
   const [swapRouter, setSwapRouter] = useState(SwapRouter.SPHYNX_SWAP)
   const [pairs, setPairs] = useState([])
+  const [stablePairs, setStablePairs] = useState([])
   const [transactionData, setTransactions] = useState([])
   const stateRef = useRef([])
   const pairsRef = useRef([])
+  const stablePairsRef = useRef([])
   const loadingRef = useRef(false)
   const busyRef = useRef(false)
   const [isLoading, setLoading] = useState(false)
@@ -194,9 +196,13 @@ export default function Swap({ history }: RouteComponentProps) {
   const isMobile = !isXl
   const [symbol, setSymbol] = useState('')
   const theme = useTheme()
+  const { chainId } = useActiveWeb3React()
+  const BUSDAddr = BUSD[chainId].address
+  const wrappedCurrencySymbol = 'WBNB'
 
   stateRef.current = transactionData
   pairsRef.current = pairs
+  stablePairsRef.current = stablePairs
   loadingRef.current = isLoading
   busyRef.current = isBusy
   let input = tokenAddress
@@ -219,18 +225,15 @@ export default function Swap({ history }: RouteComponentProps) {
     }
   }, [])
 
-  const getDataQuery = useCallback(
-    (pairAddress: any) => {
-      if (pairAddress === '0xc522ce70f8aeb1205223659156d6c398743e3e7a') {
-        return `
+  const getDataQuery = useCallback(() => {
+    return `
     {
     ethereum(network: bsc) {
         dexTrades(
         options: {desc: ["block.height", "tradeIndex"], limit: 30, offset: 0}
         date: {till: null}
-        smartContractAddress: {in: ["0xE4023ee4d957A5391007aE698B3A730B2dc2ba67", "${pairAddress}"]}
         baseCurrency: {is: "${input}"}
-        quoteCurrency:{is : "${wBNBAddr}"}
+        quoteCurrency:{in: ["${wBNBAddr}", "${BUSDAddr}"]}
         ) {
         block {
           timestamp {
@@ -277,66 +280,7 @@ export default function Swap({ history }: RouteComponentProps) {
         }
       }
     }`
-      } else {
-        return `
-    {
-    ethereum(network: bsc) {
-        dexTrades(
-        options: {desc: ["block.height", "tradeIndex"], limit: 30, offset: 0}
-        date: {till: null}
-        smartContractAddress: {is: "${pairAddress}"}
-        baseCurrency: {is: "${input}"}
-        quoteCurrency:{is : "${wBNBAddr}"}
-        ) {
-        block {
-          timestamp {
-          time(format: "%Y-%m-%d %H:%M:%S")
-          }
-          height
-        }
-        tradeIndex
-        protocol
-        exchange {
-          fullName
-        }
-        smartContract {
-          address {
-          address
-          annotation
-          }
-        }
-        baseAmount
-        baseCurrency {
-          address
-          symbol
-        }
-        quoteAmount
-        quoteCurrency {
-          address
-          symbol
-        }
-        transaction {
-          hash
-        }
-        buyCurrency {
-          symbol
-          address
-          name
-        }
-        sellCurrency {
-          symbol
-          address
-          name
-          }
-        price
-        quotePrice
-        }
-      }
-    }`
-      }
-    },
-    [input],
-  )
+  }, [input])
 
   const parseData: any = async (events: any, blockNumber: any) => {
     setBusy(true)
@@ -414,7 +358,7 @@ export default function Swap({ history }: RouteComponentProps) {
             let oneData: any = {}
             oneData.amount = tokenAmt
             oneData.value = BNBAmt
-            oneData.price = (BNBAmt / tokenAmt) * price
+            oneData.price = event.quoteCurrency === wrappedCurrencySymbol ? (BNBAmt / tokenAmt) * price : BNBAmt / tokenAmt
             const estimatedDateValue = new Date(new Date().getTime() - (blockNumber - event.blockNumber) * 3000)
             oneData.transactionTime = formatTimeString(
               `${estimatedDateValue.getUTCFullYear()}-${
@@ -454,7 +398,17 @@ export default function Swap({ history }: RouteComponentProps) {
             cachedBlockNumber = info[info.length - 1].blockNumber
           }
           info = info.filter((oneData) => oneData.blockNumber !== cachedBlockNumber)
-          info = info.filter((oneData) => pairsRef.current.indexOf(oneData.address.toLowerCase()) !== -1)
+          info = info.filter(
+            (oneData) =>
+              pairsRef.current.indexOf(oneData.address.toLowerCase()) !== -1 ||
+              stablePairsRef.current.indexOf(oneData.address.toLowerCase()) !== -1,
+          )
+          info = info.map((oneData) =>
+            pairsRef.current.indexOf(oneData.address.toLowerCase()) !== -1
+              ? { ...oneData, quoteCurrency: wrappedCurrencySymbol }
+              : { ...oneData, quoteCurrency: 'BUSD' },
+          )
+
           info = [...new Set(info)]
 
           if (!isBusy) {
@@ -475,7 +429,7 @@ export default function Swap({ history }: RouteComponentProps) {
       })
     } else {
       web3.eth.getBlockNumber().then((blockNumberCache) => {
-        if(parseInt(blockNumber) + 50 <= blockNumberCache) {
+        if (parseInt(blockNumber) + 50 <= blockNumberCache) {
           setCurrentBlock(blockNumberCache - 50)
           setBlockFlag(!blockFlag)
         } else {
@@ -526,18 +480,20 @@ export default function Swap({ history }: RouteComponentProps) {
     const fetchData = async () => {
       try {
         let pairs = []
-        if (routerVersion !== 'sphynx') {
-          let wBNBPair = await getPancakePairAddress(input, wBNBAddr, simpleRpcProvider)
-          if (wBNBPair !== null) pairs.push(wBNBPair.toLowerCase())
-          let wBNBPairV1 = await getPancakePairAddressV1(input, wBNBAddr, simpleRpcProvider)
-          if (wBNBPairV1 !== null) pairs.push(wBNBPairV1.toLowerCase())
-        }
+        let stablePairs = []
+        let wBNBPair = await getPancakePairAddress(input, wBNBAddr, simpleRpcProvider)
+        if (wBNBPair !== null) pairs.push(wBNBPair.toLowerCase())
         let wBNBPairSphynx = await getSphynxPairAddress(input, wBNBAddr, simpleRpcProvider)
         if (wBNBPairSphynx !== null) pairs.push(wBNBPairSphynx.toLowerCase())
+        let BUSDPairSphynx = await getSphynxPairAddress(input, BUSDAddr, simpleRpcProvider)
+        if (BUSDPairSphynx !== null) stablePairs.push(BUSDPairSphynx.toLowerCase())
+        let BUSDPair = await getPancakePairAddress(input, BUSDAddr, simpleRpcProvider)
+        if (BUSDPair !== null) stablePairs.push(BUSDPair.toLowerCase())
         setPairs(pairs)
+        setStablePairs(pairs)
         const bnbPrice = await getBNBPrice()
         // pull historical data
-        const queryResult = await axios.post(BITQUERY_API, { query: getDataQuery(pairs[0]) }, config)
+        const queryResult = await axios.post(BITQUERY_API, { query: getDataQuery() }, config)
         if (queryResult.data.data && queryResult.data.data.ethereum.dexTrades) {
           setSymbol(queryResult.data.data.ethereum.dexTrades[0].baseCurrency.symbol)
           newTransactions = queryResult.data.data.ethereum.dexTrades.map((item, index) => {
@@ -545,8 +501,12 @@ export default function Swap({ history }: RouteComponentProps) {
               transactionTime: formatTimeString(item.block.timestamp.time),
               amount: item.baseAmount,
               value: item.quoteAmount,
-              price: item.quotePrice * bnbPrice,
-              usdValue: item.baseAmount * item.quotePrice * bnbPrice,
+              quoteCurrency: item.quoteCurrency.symbol,
+              price: item.quoteCurrency.symbol === wrappedCurrencySymbol ? item.quotePrice * bnbPrice : item.quotePrice,
+              usdValue:
+                item.quoteCurrency.symbol === wrappedCurrencySymbol
+                  ? item.baseAmount * item.quotePrice * bnbPrice
+                  : item.baseAmount * item.quotePrice,
               isBuy: item.baseCurrency.symbol === item.buyCurrency.symbol,
               tx: item.transaction.hash,
             }
@@ -600,11 +560,11 @@ export default function Swap({ history }: RouteComponentProps) {
   const getTokenData = async (tokenAddress) => {
     try {
       const contract = new web3.eth.Contract(abi, tokenAddress)
-      let totalSupply = await contract.methods.totalSupply().call();
-      let decimals = await contract.methods.decimals().call();
-      let symbol = await contract.methods.symbol().call();
-      let name = await contract.methods.name().call();
-      totalSupply = totalSupply / (10 ** decimals)
+      let totalSupply = await contract.methods.totalSupply().call()
+      let decimals = await contract.methods.decimals().call()
+      let symbol = await contract.methods.symbol().call()
+      let name = await contract.methods.name().call()
+      totalSupply = totalSupply / 10 ** decimals
       const data = {
         marketCap,
         totalSupply,

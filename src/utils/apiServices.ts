@@ -19,12 +19,10 @@ const config = {
 
 async function getTokenDetails(
   address: string,
-  routerVersion: string,
 ): Promise<{
   name: string
   symbol: string
   pair: string
-  version: string
 }> {
   if (!address) {
     return null
@@ -32,68 +30,16 @@ async function getTokenDetails(
   const token = new web3.eth.Contract(abi as AbiItem[], address)
   const name = await token.methods.name().call()
   const symbol = await token.methods.symbol().call()
-  return { name, symbol, pair: `${symbol}/BNB`, version: routerVersion }
+  return { name, symbol, pair: `${symbol}/BNB` }
 }
 
-async function getTokenInfoForChart(input: any, pair: any, routerVersion: any) {
-  let query
+async function getTokenInfoForChart(input: any) {
   const minutes = 5
-  if (routerVersion === 'sphynx') {
-    if (pair === '0xc522CE70F8aeb1205223659156D6C398743E3e7a') {
-      const pairs = ['0xE4023ee4d957A5391007aE698B3A730B2dc2ba67', pair]
-      query = `{
-        ethereum(network: bsc) {
-          dexTrades(
-            options: {limit: 1, desc: "timeInterval.minute"}
-            smartContractAddress: {in: ["${pairs[0]}", "${pairs[1]}"]}
-            protocol: {is: "Uniswap v2"}
-            baseCurrency: {is: "${input}"}
-            quoteCurrency: {is: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"}
-          ) {
-            timeInterval {
-              minute(count: ${minutes})
-            }
-            baseCurrency {
-              symbol
-              name
-              address
-            }
-            open_price: minimum(of: time, get: quote_price)
-          }
-        }
-      }
-      `
-    } else {
-      query = `{
-        ethereum(network: bsc) {
-          dexTrades(
-            options: {limit: 1, desc: "timeInterval.minute"}
-            smartContractAddress: {is: "${pair}"}
-            protocol: {is: "Uniswap v2"}
-            baseCurrency: {is: "${input}"}
-            quoteCurrency: {is: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"}
-          ) {
-            timeInterval {
-              minute(count: ${minutes})
-            }
-            baseCurrency {
-              symbol
-              name
-              address
-            }
-            open_price: minimum(of: time, get: quote_price)
-          }
-        }
-      }
-      `
-    }
-  } else {
-    query = `{
+  const query = `{
       ethereum(network: bsc) {
         dexTrades(
           options: {limit: 1, desc: "timeInterval.minute"}
           protocol: {is: "Uniswap v2"}
-          exchangeName: {is: "Pancake ${routerVersion}"}
           baseCurrency: {is: "${input}"}
           quoteCurrency: {is: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"}
         ) {
@@ -110,7 +56,6 @@ async function getTokenInfoForChart(input: any, pair: any, routerVersion: any) {
       }
     }
     `
-  }
 
   const url = `https://graphql.bitquery.io/`
   const {
@@ -135,7 +80,7 @@ async function getTokenInfoForChart(input: any, pair: any, routerVersion: any) {
       } else {
         let scale = 1
         let tempPrice = price
-        for (; ;) {
+        for (;;) {
           scale *= 10
           tempPrice *= 10
           if (tempPrice > 100) {
@@ -149,18 +94,18 @@ async function getTokenInfoForChart(input: any, pair: any, routerVersion: any) {
         })
       }
     } catch (error) {
-      getTokenDetails(input, routerVersion)
-        .then(data => {
+      getTokenDetails(input)
+        .then((data) => {
           resolve(data)
         })
-        .catch(err => {
+        .catch((err) => {
           reject(err)
         })
     }
   })
 }
 
-async function getChartData(input: any, pair: any, resolution: any, routerVersion: any) {
+async function getChartData(input: any, resolution: any) {
   const resolutionMap = {
     1: 1,
     5: 5,
@@ -174,13 +119,10 @@ async function getChartData(input: any, pair: any, resolution: any, routerVersio
     '1M': 1440 * 30,
   }
   const minutes = resolutionMap[resolution]
-  let query
-  if (routerVersion === 'sphynx') {
-    query = `{
+  const query = `{
         ethereum(network: bsc) {
           dexTrades(
             options: {limit: 320, desc: "timeInterval.minute"}
-            smartContractAddress: {is: "${pair}"}
             protocol: {is: "Uniswap v2"}
             baseCurrency: {is: "${input}"}
             quoteCurrency: {is: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"}
@@ -211,43 +153,6 @@ async function getChartData(input: any, pair: any, resolution: any, routerVersio
         }
       }
       `
-  } else {
-    query = `{
-      ethereum(network: bsc) {
-        dexTrades(
-          options: {limit: 320, desc: "timeInterval.minute"}
-          protocol: {is: "Uniswap v2"}
-          exchangeName: {is: "Pancake ${routerVersion}"}
-          baseCurrency: {is: "${input}"}
-          quoteCurrency: {is: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"}
-        ) {
-          exchange {
-            name
-          }
-          timeInterval {
-            minute(count: ${minutes})
-          }
-          baseCurrency {
-            symbol
-            address
-          }
-          baseAmount
-          quoteCurrency {
-            symbol
-            address
-          }
-          quoteAmount
-          trades: count
-          maximum_price: quotePrice(calculate: maximum)
-          minimum_price: quotePrice(calculate: minimum)
-          open_price: minimum(of: time, get: quote_price)
-          close_price: maximum(of: time, get: quote_price)
-          tradeAmount(in: USD, calculate: sum)
-        }
-      }
-    }
-    `
-  }
 
   const url = `https://graphql.bitquery.io/`
   let {
@@ -432,7 +337,7 @@ async function getChartStats(address: string, routerVersion: string) {
       100 *
       Math.abs(
         (parseFloat(dexTrades[0].open_price) - parseFloat(dexTrades[0].close_price)) /
-        ((parseFloat(dexTrades[0].open_price) + parseFloat(dexTrades[0].close_price)) / 2),
+          ((parseFloat(dexTrades[0].open_price) + parseFloat(dexTrades[0].close_price)) / 2),
       )
     const sign = dexTrades[0].open_price > dexTrades[0].close_price ? '-' : '+'
 

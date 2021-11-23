@@ -120,7 +120,7 @@ const TransactionCard: React.FC<TransactionProps> = (props) => {
                           <br/>
                           {Number(data.value)
                             .toFixed(4)
-                            .replace(/(\d)(?=(\d{3})+\.)/g, '$&,')} BNB
+                            .replace(/(\d)(?=(\d{3})+\.)/g, '$&,')} {data.quoteCurrency}
                         </h2>
                       </a>
                     </td>
