@@ -39,6 +39,16 @@ export const links = [
     href: '/launchpad/listing',
   },
   {
+    label: 'Sphynx lockers (coming soon)',
+    icon: LaunchPadIcon,
+    href: '/locker',
+  },
+  {
+    label: 'Sphynx lock (coming soon)',
+    icon: PredictionIcon,
+    href: '/locker/create',
+  },
+  {
     label: 'Lottery (coming soon)',
     icon: IFOIcon,
     href: '/lottery',
