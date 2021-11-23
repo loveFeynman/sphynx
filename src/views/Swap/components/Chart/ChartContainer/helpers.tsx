@@ -12,7 +12,9 @@ const pancakeFactoryContract = new web3.eth.Contract(abi, PANCAKE_FACTORY_ADDRES
 
 export async function getHistoricalData(path: any, routerVersion: any, resolution: any) {
   try {
-    const data: any = await getChartData(path, resolution)
+    const factoryContract = routerVersion === 'sphynx' ? sphynxFactoryContract : pancakeFactoryContract
+    const pairAddress = await factoryContract.methods.getPair(path, WBNB.address).call()
+    const data: any = await getChartData(path, pairAddress, resolution, routerVersion)
     return data
   } catch (error) {
     console.log("error", error)
@@ -22,7 +24,13 @@ export async function getHistoricalData(path: any, routerVersion: any, resolutio
 
 export async function getTokenInfo(path: any, routerVersion: any) {
   try {
-    const data: any = await getTokenInfoForChart(path)
+    const factoryContract = routerVersion === 'sphynx' ? sphynxFactoryContract : pancakeFactoryContract
+    if (routerVersion === 'sphynx') {
+      const pairAddress = await factoryContract.methods.getPair(path, WBNB.address).call()
+      const data: any = await getTokenInfoForChart(path, pairAddress, routerVersion)
+      return data
+    }
+    const data: any = await getTokenInfoForChart(path, '', routerVersion)
     return data
   } catch (error) {
     console.log("error", error)
