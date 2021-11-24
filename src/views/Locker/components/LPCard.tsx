@@ -79,7 +79,7 @@ const SaleInfoValue = styled.div`
 
 const Divider = styled.div`
     height: 1px;
-    background: #21214A;
+    background: rgba(255, 255, 255, 0.1);
     margin: 16px 0px;
 `
 const SaleInfoWrapper = styled.div`

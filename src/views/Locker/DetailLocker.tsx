@@ -160,7 +160,7 @@ const SaleInfoValue = styled.div`
 
 const Divider = styled.div`
     height: 1px;
-    background: #21214A;
+    background: rgba(255, 255, 255, 0.1);
     margin: 16px 0px;
 `
 
@@ -190,6 +190,7 @@ const TableWrapper = styled.div`
         background: transparent;
         padding: 16px 8px;
         font-weight: 600;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         & > div > div {
           font-size: 16px;
           font-weight: 500;
