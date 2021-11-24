@@ -58,6 +58,7 @@ const Presale: React.FC = () => {
                   hardCap: cell.hard_cap,
                   minContribution: cell.min_buy,
                   maxContribution: cell.max_buy,
+                  startTime: cell.start_time,
                   endTime: cell.end_time,
                   tokenState: 'active',
                 }
@@ -72,13 +73,13 @@ const Presale: React.FC = () => {
                   /* is deposited */
                   const now = Math.floor(new Date().getTime() / 1000)
                   if (parseInt(cell.start_time) < now && parseInt(cell.end_time) > now) {
+                    item.tokenState = 'active'
+                  } else if (now > parseInt(cell.end_time)) {
                     if (item.totalCap < item.softCap) {
                       item.tokenState = 'failed'
                     } else {
-                      item.tokenState = 'active'
+                      item.tokenState = 'ended'
                     }
-                  } else if (now > parseInt(cell.end_time)) {
-                    item.tokenState = 'ended'
                   } else if (now < parseInt(cell.start_time)) {
                     item.tokenState = 'pending'
                   }
@@ -96,8 +97,7 @@ const Presale: React.FC = () => {
       })
     }
 
-    if (chainId)
-      fetchData()
+    if (chainId) fetchData()
   }, [chainId])
 
   return (
@@ -131,6 +131,7 @@ const Presale: React.FC = () => {
               hardCap={item.hardCap}
               minContribution={item.minContribution}
               maxContribution={item.maxContribution}
+              startTime={item.startTime}
               endTime={item.endTime}
               tokenState={item.tokenState}
             >
