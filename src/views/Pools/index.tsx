@@ -254,6 +254,12 @@ const Pools: React.FC = () => {
 
   chosenPools = sortPools(chosenPools).slice(0, numberOfPoolsVisible)
   chosenPoolsLength.current = chosenPools.length
+
+  chosenPools = chosenPools.map((cell) => {
+    const temp = cell
+    temp.totalStaked = cell.isAutoVault ? totalCakeInVault : cell.totalStaked
+    return temp
+  })
   const cardLayout = (
     <CardLayout>
       {chosenPools.map((pool) =>
