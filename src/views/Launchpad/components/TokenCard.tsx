@@ -3,8 +3,8 @@ import styled from 'styled-components'
 import { Text } from '@sphynxswap/uikit';
 import { useHistory } from 'react-router-dom'
 import { useWeb3React } from '@web3-react/core'
+import TimerComponent from 'components/Timer/TimerComponent'
 import ContractHelper from './ContractHelper';
-import TimerComponent from './TimerComponent';
 
 const CardWrapper = styled.div`
     background: ${({ theme }) => (theme.isDark ? "#040413" : "#2A2E60")};

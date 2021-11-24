@@ -9,9 +9,9 @@ import { simpleRpcProvider } from 'utils/providers'
 import { getPresaleContract } from 'utils/contractHelpers'
 import ListIcon from 'assets/svg/icon/ListIcon.svg'
 import { useMenuToggle } from 'state/application/hooks'
+import Spinner from 'components/Loader/Spinner'
 import TokenCard from './components/TokenCard'
 import SearchPannel from './components/SearchPannel'
-import { Spinner } from '../LotterySphx/components/Spinner'
 
 import {
   Wrapper,
