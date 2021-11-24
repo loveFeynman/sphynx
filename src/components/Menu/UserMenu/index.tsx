@@ -4,7 +4,6 @@ import { useWeb3React } from '@web3-react/core'
 import { Text } from '@sphynxswap/uikit'
 import useAuth from 'hooks/useAuth'
 import ConnectWalletButton from 'components/ConnectWalletButton'
-import { useTranslation } from 'contexts/Localization'
 import { ReactComponent as UserIcon } from 'assets/svg/icon/UserIcon.svg'
 
 const AvatarWrapper = styled.div`
@@ -15,7 +14,6 @@ const AvatarWrapper = styled.div`
 `
 
 const UserMenu = () => {
-  const { t } = useTranslation()
   const { account } = useWeb3React()
   const { logout } = useAuth()
 
@@ -47,7 +45,7 @@ const UserMenu = () => {
         }}
       >
         <Text color="white" ml={3} textAlign="center" fontSize="13px">
-          {`${account.slice(0, 4)}...${account.slice(account.length-3, account.length)}`}
+          {`${account.slice(0, 4)}...${account.slice(account.length - 3, account.length)}`}
         </Text>
         <UserIcon />
       </AvatarWrapper>

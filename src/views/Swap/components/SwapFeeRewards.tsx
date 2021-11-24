@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import styled from 'styled-components'
 import { Flex, Text } from '@sphynxswap/uikit'
 import MainLogo from 'assets/svg/icon/logo_new.svg'
@@ -8,16 +8,21 @@ const RewardsWrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  width: 100%;
-  max-width: 410px;
+  white-sapce: no-wrap;
 `
 
 const RewardsContent = styled(Flex)`
   align-items: center;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 12px;
   img {
     width: 38px;
   }
   ${({ theme }) => theme.mediaQueries.md} {
+    margin-bottom: 0px;
+    justify-content: flex-end;
+    width: max-content;
     img {
       width: 75px;
     }
@@ -27,6 +32,7 @@ const RewardsContent = styled(Flex)`
 const LogoTitle = styled.div`
   display: block;
   width: 100%;
+  white-space: nowrap;
   div:nth-child(1) {
     font-size: 10px;
   }
@@ -49,7 +55,6 @@ const LogoTitleWrapper = styled.div`
 `
 
 const RewardsPanel: React.FC = () => {
-  const [balance, setBalance] = useState(0)
   const { t } = useTranslation()
 
   return (
@@ -58,9 +63,7 @@ const RewardsPanel: React.FC = () => {
         <img src={MainLogo} alt="Main Logo" width="75" height="72" />
         <LogoTitleWrapper>
           <LogoTitle>
-            <Text color="white">
-              {t('Sphynx Swap')}
-            </Text>
+            <Text color="white">{t('Sphynx Swap')}</Text>
             <Text color="white" bold>
               {t('Fee Rewards')}
             </Text>

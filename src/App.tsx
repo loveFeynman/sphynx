@@ -1,7 +1,7 @@
-import React, { lazy, Suspense, useState } from 'react'
+import React, { lazy, Suspense } from 'react'
 import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom'
 import styled from 'styled-components'
-import { ResetCSS, Button, useMatchBreakpoints } from '@sphynxswap/uikit'
+import { ResetCSS, Button } from '@sphynxswap/uikit'
 import BigNumber from 'bignumber.js'
 import useEagerConnect from 'hooks/useEagerConnect'
 import { usePollBlockNumber } from 'state/block/hooks'
@@ -31,6 +31,10 @@ const Launchpad = lazy(() => import('./views/Launchpad'))
 const Presale = lazy(() => import('./views/Launchpad/presale'))
 const Listings = lazy(() => import('./views/Launchpad/Listings'))
 const PresaleLive = lazy(() => import('./views/Launchpad/PresaleLive'))
+const PresaleManage = lazy(() => import('./views/Launchpad/PresaleManage'))
+const Locker = lazy(() => import('./views/Locker'))
+const DetailLocker = lazy(() => import('./views/Locker/DetailLocker'))
+const ManageLocker = lazy(() => import('./views/Locker/ManageLocker'))
 const Lottery = lazy(() => import('./views/LotterySphx'))
 const Bridge = lazy(() => import('./views/Bridge'))
 const FAQ = lazy(() => import('./views/FAQ'))
@@ -70,12 +74,25 @@ const BodyOverlay = styled.div<{ toggled: boolean }>`
   }
 `
 
-const FlexWrapper = styled.div`
+const FlexWrapper = styled.div<{ gap?: string; mobile?: boolean }>`
   display: flex;
-  justify-content: space-between;
+  justify-content: ${(props) => (props.mobile ? '' : 'space-between')};
   align-items: center;
   width: 100%;
-  padding: 6px;
+  padding: 6px 0;
+  gap: ${(props) => props.gap};
+  div:nth-child(1) {
+    flex: ${(props) => (props.mobile ? '1' : '')};
+  }
+  div:nth-child(2) {
+    flex: ${(props) => (props.mobile ? '1' : '')};
+    button {
+      width: ${(props) => (props.mobile ? '100%' : '')};
+    }
+  }
+  div:nth-child(3) {
+    flex: ${(props) => (props.mobile ? '1' : '')};
+  }
 `
 
 const TopBar = styled.div<{ toggled: boolean; mobile: boolean }>`
@@ -89,11 +106,11 @@ const TopBar = styled.div<{ toggled: boolean; mobile: boolean }>`
   height: ${(props) => (props.mobile ? 'auto' : '57px')};
   flex-flow: ${(props) => (props.mobile ? 'column' : 'row')};
   flex-wrap: wrap;
-  padding: 0 20px;
+  padding: ${(props) => (props.mobile ? '8px 12px' : '0 20px')};
   background-color: ${({ theme }) => (theme.isDark ? '#0E0E26' : '#191C41')};
 `
 
-const AccountWrapper = styled.div`
+const AccountWrapper = styled.div<{ mobile?: boolean }>`
   display: flex;
   align-items: center;
   & > div:first-child {
@@ -101,10 +118,10 @@ const AccountWrapper = styled.div`
     border-radius: 6px;
     height: 34px;
     color: white;
-    background: #610d89;
+    background: linear-gradient(90deg, #610d89 0%, #c42bb4 100%);
     font-size: 16px;
     font-weight: 700;
-    margin-right: 24px;
+    margin-right: ${(props) => (props.mobile ? '0px' : '24px')};
   }
   & > div:last-child {
     display: flex;
@@ -131,19 +148,12 @@ const MenuOpenButton = styled(Button)`
   outline: none;
   padding: 0;
   width: 111px;
+  box-shadow: none;
   justify-content: left;
   & svg {
     fill: white;
     width: 32px;
   }
-  ${({ theme }) => theme.mediaQueries.xl} {
-    display: none;
-  }
-`
-
-const TokenBarMobile = styled.div`
-  width: 100%;
-  margin-bottom: 20px;
   ${({ theme }) => theme.mediaQueries.xl} {
     display: none;
   }
@@ -166,18 +176,9 @@ const App: React.FC = () => {
   useEagerConnect()
   usePollCoreFarmData()
   const { account } = useWeb3React()
-  const { isSm, isXs, isMd } = useMatchBreakpoints()
   const { menuToggled, toggleMenu } = useMenuToggle()
-  const [isMobile, setMobile] = useState(false)
+  const isMobile = document.body.clientWidth <= 1024
   const { t } = useTranslation()
-
-  React.useEffect(() => {
-    if (isMd || isSm || isXs) {
-      toggleMenu(true)
-      setMobile(true)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
 
   return (
     <>
@@ -203,11 +204,11 @@ const App: React.FC = () => {
                     </div>
                   </FlexWrapper>
                   <HotTokenBar />
-                  <FlexWrapper>
+                  <FlexWrapper gap="8px" mobile={isMobile}>
                     <LanguageOptionButton />
                     <SwitchNetworkButton />
                     {account ? (
-                      <AccountWrapper>
+                      <AccountWrapper mobile={isMobile}>
                         <div>{t('Connected')}</div>
                       </AccountWrapper>
                     ) : (
@@ -254,7 +255,11 @@ const App: React.FC = () => {
                   <Route exact strict path="/launchpad" component={Launchpad} />
                   <Route exact strict path="/launchpad/presale" component={Presale} />
                   <Route exact strict path="/launchpad/listing" component={Listings} />
-                  <Route exact strict path="/launchpad/live" component={PresaleLive} />
+                  <Route exact strict path="/launchpad/live/:saleId" component={PresaleLive} />
+                  <Route exact strict path="/launchpad/presale/:saleId" component={PresaleManage} />
+                  <Route exact strict path="/locker" component={Locker} />
+                  <Route exact strict path="/locker/detail/:id" component={DetailLocker} />
+                  <Route exact strict path="/locker/manage" component={ManageLocker} />
                   <Route exact strict path="/lottery" component={Lottery} />
                   <Route exact strict path="/bridge" component={Bridge} />
                   <Route exact strict path="/faq" component={FAQ} />

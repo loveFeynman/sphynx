@@ -6,10 +6,18 @@ import { useTranslation } from 'contexts/Localization'
 
 const ConnectButtonWrapper = styled.div`
   button {
-    padding: 9px 18px;
     color: white;
     border-radius: 5px;
     height: 34px;
+    background: linear-gradient(90deg, #610D89 0%, #C42BB4 100%);
+    font-weight: 600;
+    font-size: 13px;
+    width: 102px;
+    outline: none;
+
+    ${({ theme }) => theme.mediaQueries.sm} {
+      width: 176px;
+    }
   }
 `
 

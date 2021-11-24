@@ -10,10 +10,36 @@ import Balance from 'components/Balance'
 import { useCakeVault } from 'state/pools/hooks'
 import { BIG_ZERO } from 'utils/bigNumber'
 import { Pool } from 'state/types'
-
+import styled from 'styled-components'
+import { DarkButtonStyle } from 'style/buttonStyle'
 import { ActionContainer, ActionTitles, ActionContent } from './styles'
 import CollectModal from '../../PoolCard/Modals/CollectModal'
 import UnstakingFeeCountdownRow from '../../CakeVaultCard/UnstakingFeeCountdownRow'
+
+const DarkButton = styled(Button)`
+  border-radius: 5px;
+  border: none;
+  height: 34px;
+  font-size: 13px;
+  background: ${({ theme }) => theme.isDark? '#0E0E26' : '#2A2E60'};
+  width: 102px;
+  outline: none;
+
+  ${({ theme }) => theme.mediaQueries.sm} {
+    width: 176px;
+  }
+
+  &:disabled {
+    background: ${({ theme }) => theme.isDark? '#0E0E26' : '#2A2E60'};
+  }
+`
+
+const ButtonSkeleton = styled(Skeleton)`
+  width: 102px;
+  ${({ theme }) => theme.mediaQueries.sm} {
+    width: 176px;
+  }
+`
 
 interface HarvestActionProps extends Pool {
   userDataLoaded: boolean
@@ -77,15 +103,15 @@ const HarvestAction: React.FunctionComponent<HarvestActionProps> = ({
   )
 
   const actionTitle = isAutoVault ? (
-    <Text fontSize="12px" bold color="secondary" as="span" textTransform="uppercase">
+    <Text fontSize="12px" bold color="white" as="span" textTransform="uppercase">
       {t('Recent SPHYNX profit')}
     </Text>
   ) : (
     <>
-      <Text fontSize="12px" bold color="secondary" as="span" textTransform="uppercase">
+      <Text fontSize="12px" bold color="white" as="span" textTransform="uppercase">
         {earningToken.symbol}{' '}
       </Text>
-      <Text fontSize="12px" bold color="textSubtle" as="span" textTransform="uppercase">
+      <Text fontSize="12px" bold color="white" as="span" textTransform="uppercase">
         {t('Earned')}
       </Text>
     </>
@@ -94,10 +120,19 @@ const HarvestAction: React.FunctionComponent<HarvestActionProps> = ({
   if (!account) {
     return (
       <ActionContainer>
-        <ActionTitles>{actionTitle}</ActionTitles>
+        {/* <Flex flexDirection='row' alignItems='center'>
+          <img src={SphynxTokenLogo} style={{ height: '70%', marginLeft: '4px' }} alt="token" />
+          <Flex flexDirection="column">
+            <ActionTitles>{actionTitle}</ActionTitles>
+            <Text fontSize="24px" color="textDisabled">
+              $0
+            </Text>
+          </Flex>
+        </Flex> */}
         <ActionContent>
-          <Heading>0</Heading>
-          <Button disabled>{isCompoundPool ? t('Collect') : t('Harvest')}</Button>
+          <DarkButton disabled>
+            {isCompoundPool ? t('Harvest') : t('Harvest')}
+          </DarkButton>
         </ActionContent>
       </ActionContainer>
     )
@@ -106,45 +141,53 @@ const HarvestAction: React.FunctionComponent<HarvestActionProps> = ({
   if (!userDataLoaded) {
     return (
       <ActionContainer>
-        <ActionTitles>{actionTitle}</ActionTitles>
+        {/* <Flex flexDirection='row' alignItems='center'>
+          <img src={SphynxTokenLogo} style={{ height: '70%', marginLeft: '4px' }} alt="token" />
+          <Flex flexDirection="column">
+            <ActionTitles>{actionTitle}</ActionTitles>
+          </Flex>
+        </Flex> */}
         <ActionContent>
-          <Skeleton width={180} height="32px" marginTop={14} />
+          <ButtonSkeleton height="32px" marginTop={14} />
         </ActionContent>
       </ActionContainer>
     )
   }
-
   return (
     <ActionContainer>
-      <ActionTitles>{actionTitle}</ActionTitles>
-      <ActionContent>
-        <Flex flex="1" pt="16px" flexDirection="column" alignSelf="flex-start">
-          <>
-            {hasEarnings ? (
-              <>
-                <Balance lineHeight="1" bold fontSize="20px" decimals={5} value={earningTokenBalance} />
-                {earningTokenPrice > 0 && (
-                  <Balance
-                    display="inline"
-                    fontSize="12px"
-                    color="textSubtle"
-                    decimals={2}
-                    prefix="~"
-                    value={earningTokenDollarBalance}
-                    unit=" USD"
-                  />
-                )}
-              </>
-            ) : (
-              <>
-                <Heading color="textDisabled">0</Heading>
-                <Text fontSize="12px" color="textDisabled">
-                  0 USD
-                </Text>
-              </>
-            )}
-          </>
+      {/* <Flex flexDirection='row' alignItems='center'>
+        <img src={SphynxTokenLogo} style={{ height: '70%', marginLeft: '4px' }} alt="token" />
+        <Flex flexDirection="column">
+          <ActionTitles>{actionTitle}</ActionTitles>
+          <Flex flex="1" alignSelf="flex-start">
+            <>
+              {hasEarnings ? (
+                <>
+                  <Balance lineHeight="1" bold fontSize="20px" decimals={5} value={earningTokenBalance} />
+                  {earningTokenPrice > 0 && (
+                    <Balance
+                      display="inline"
+                      fontSize="24px"
+                      color="white"
+                      decimals={2}
+                      prefix="$"
+                      value={earningTokenDollarBalance}
+                    />
+                  )}
+                </>
+              ) : (
+                <>
+                  <Heading color="textDisabled">0</Heading>
+                  <Text fontSize="24px" color="textDisabled">
+                    $0
+                  </Text>
+                </>
+              )}
+            </>
+          </Flex>
         </Flex>
+      </Flex> */}
+      <ActionContent>
         {isAutoVault ? (
           <Flex flex="1.3" flexDirection="column" alignSelf="flex-start" alignItems="flex-start">
             <UnstakingFeeCountdownRow isTableVariant />
@@ -161,9 +204,12 @@ const HarvestAction: React.FunctionComponent<HarvestActionProps> = ({
             </Flex>
           </Flex>
         ) : (
-          <Button disabled={!hasEarnings} onClick={onPresentCollect}>
-            {isCompoundPool ? t('Collect') : t('Harvest')}
-          </Button>
+          <DarkButton
+            disabled={!hasEarnings}
+            onClick={onPresentCollect}
+          >
+            {isCompoundPool ? t('Harvest') : t('Harvest')}
+          </DarkButton>
         )}
       </ActionContent>
     </ActionContainer>

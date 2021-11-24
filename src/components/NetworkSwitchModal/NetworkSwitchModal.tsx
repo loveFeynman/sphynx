@@ -11,7 +11,6 @@ import {
   Box,
 } from '@sphynxswap/uikit'
 import styled from 'styled-components'
-import { useTranslation } from 'contexts/Localization'
 import { AutoRow } from 'components/Row'
 import { useSelector, useDispatch } from 'react-redux'
 import { AppState } from 'state'
@@ -19,6 +18,11 @@ import { setConnectedNetworkID } from 'state/input/actions'
 import { switchNetwork } from 'utils/wallet'
 
 const StyledModalContainer = styled(ModalContainer)`
+  background-color: ${({ theme }) => theme.isDark ? "#191C41" : "#2A2E60"};
+  div:first-child {
+    border-bottom: none;
+  }
+
   ${({ theme }) => theme.mediaQueries.sm} {
     width: 420px
   }
@@ -46,9 +50,9 @@ const NetworkList = styled.div`
   }
 `
 
-const NetworkItem = styled(Box)<{ selected?: boolean }>`
+const NetworkItem = styled(Box) <{ selected?: boolean }>`
   display: flex;
-  background: ${({ selected }) => !selected? '#202231' : 'linear-gradient(to right, #0f92ec, #f039c3)'};
+  background: ${({ selected }) => !selected ? `${({ theme }) => theme.isDark ? "#191C41" : "#2A2E60"}` : 'linear-gradient(90deg, #610D89 0%, #C42BB4 100%)'};
   color: white;
   border-radius: 0.625rem;
   padding: 2px;
@@ -56,7 +60,7 @@ const NetworkItem = styled(Box)<{ selected?: boolean }>`
   text-decoration: 'none';
 
   div {
-    background: ${({ selected }) => !selected? '#202231' : '#0d0415'};
+    background: ${({ theme }) => theme.isDark ? "#2A2E60" : "#191C41"};
     display: flex;
     padding: 0.4rem 0.8rem;
     border-radius: 0.625rem;
@@ -65,117 +69,117 @@ const NetworkItem = styled(Box)<{ selected?: boolean }>`
     }
   }
   
-  &: ${({ selected }) => !selected && 
-  `hover {
-    background: #2e3348;
+  &: ${({ selected }) => !selected &&
+    `hover {
+    background: linear-gradient(90deg, #610D89 0%, #C42BB4 100%);
     div { 
-      background: #2e3348;
+      background: ${({ theme }) => theme.isDark ? "#2A2E60" : "#191C41"};
     }
   }`};
 `
-  
-  interface NetworkData {
-    ChainID: number,
-    btIcon: string,
-    networkName: string,
-    selected: boolean,
-  }
-  
-  interface NetworkSearchModalProps extends InjectedModalProps {
-    selectedNetwork?: NetworkData | null
-    otherSelectedNetwork?: NetworkData | null
-    showCommonBases?: boolean
-  }
 
-  const NETWORK_LIST = [
-    {
-      ChainID: 1,
-      btIcon: "/images/net/ethereum.png",
-      networkName: "Ethereum (coming soon)",
-      selected: false,
-    },
-    {
-      ChainID: 137,
-      btIcon: "/images/net/polygon.png",
-      networkName: "Polygon (coming soon)",
-      selected: false,
-    },
-    {
-      ChainID: 250,
-      btIcon: "/images/net/fantom.png",
-      networkName: "Fantom (coming soon)",
-      selected: false,
-    },
-    {
-      ChainID: 42161,
-      btIcon: "/images/net/arbitrum.png",
-      networkName: "Arbitrum (coming soon)",
-      selected: false,
-    },
-    {
-      ChainID: 66,
-      btIcon: "/images/net/okex.png",
-      networkName: "OKEx (coming soon)",
-      selected: false,
-    },
-    {
-      ChainID: 4441,
-      btIcon: "/images/net/heco.png",
-      networkName: "HECO (coming soon)",
-      selected: false,
-    },
-    {
-      ChainID: 56,
-      btIcon: "/images/net/bsc.png",
-      networkName: "BSC",
-      selected: false,
-    },
-    {
-      ChainID: 100,
-      btIcon: "/images/net/xdai.png",
-      networkName: "xDai (coming soon)",
-      selected: false,
-    },
-    {
-      ChainID: 4442,
-      btIcon: "/images/net/harmonyone.png",
-      networkName: "Harmony (coming soon)",
-      selected: false,
-    },
-    {
-      ChainID: 43114,
-      btIcon: "/images/net/avalanche.png",
-      networkName: "Avalanche (coming soon)",
-      selected: false,
-    },
-    {
-      ChainID: 42220,
-      btIcon: "/images/net/celo.png",
-      networkName: "Celo (coming soon)",
-      selected: false,
-    },
-    {
-      ChainID: 11297108109,
-      btIcon: "/images/net/palm.png",
-      networkName: "Palm (coming soon)",
-      selected: false,
-    },
-    {
-      ChainID: 1285,
-      btIcon: "/images/net/moonriver.png",
-      networkName: "Moonriver (coming soon)",
-      selected: false,
-    },
-  ]
+interface NetworkData {
+  ChainID: number,
+  btIcon: string,
+  networkName: string,
+  selected: boolean,
+}
 
-  const PREFIX = '0x'
-  
+interface NetworkSearchModalProps extends InjectedModalProps {
+  selectedNetwork?: NetworkData | null
+  otherSelectedNetwork?: NetworkData | null
+  showCommonBases?: boolean
+}
+
+const NETWORK_LIST = [
+  {
+    ChainID: 1,
+    btIcon: "/images/net/ethereum.png",
+    networkName: "Ethereum (coming soon)",
+    selected: false,
+  },
+  {
+    ChainID: 137,
+    btIcon: "/images/net/polygon.png",
+    networkName: "Polygon (coming soon)",
+    selected: false,
+  },
+  {
+    ChainID: 250,
+    btIcon: "/images/net/fantom.png",
+    networkName: "Fantom (coming soon)",
+    selected: false,
+  },
+  {
+    ChainID: 42161,
+    btIcon: "/images/net/arbitrum.png",
+    networkName: "Arbitrum (coming soon)",
+    selected: false,
+  },
+  {
+    ChainID: 66,
+    btIcon: "/images/net/okex.png",
+    networkName: "OKEx (coming soon)",
+    selected: false,
+  },
+  {
+    ChainID: 4441,
+    btIcon: "/images/net/heco.png",
+    networkName: "HECO (coming soon)",
+    selected: false,
+  },
+  {
+    ChainID: 56,
+    btIcon: "/images/net/bsc.png",
+    networkName: "BSC",
+    selected: false,
+  },
+  {
+    ChainID: 100,
+    btIcon: "/images/net/xdai.png",
+    networkName: "xDai (coming soon)",
+    selected: false,
+  },
+  {
+    ChainID: 4442,
+    btIcon: "/images/net/harmonyone.png",
+    networkName: "Harmony (coming soon)",
+    selected: false,
+  },
+  {
+    ChainID: 43114,
+    btIcon: "/images/net/avalanche.png",
+    networkName: "Avalanche (coming soon)",
+    selected: false,
+  },
+  {
+    ChainID: 42220,
+    btIcon: "/images/net/celo.png",
+    networkName: "Celo (coming soon)",
+    selected: false,
+  },
+  {
+    ChainID: 11297108109,
+    btIcon: "/images/net/palm.png",
+    networkName: "Palm (coming soon)",
+    selected: false,
+  },
+  {
+    ChainID: 1285,
+    btIcon: "/images/net/moonriver.png",
+    networkName: "Moonriver (coming soon)",
+    selected: false,
+  },
+]
+
+const PREFIX = '0x'
+
 export default function NetworkSwitchModal({
-    onDismiss = () => null,
-    selectedNetwork,
-    otherSelectedNetwork,
-    showCommonBases = false,
-  }: NetworkSearchModalProps) {
+  onDismiss = () => null,
+  selectedNetwork,
+  otherSelectedNetwork,
+  showCommonBases = false,
+}: NetworkSearchModalProps) {
 
   const dispatch = useDispatch()
   const connectedNetworkID = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.connectedNetworkID)
@@ -186,8 +190,6 @@ export default function NetworkSwitchModal({
       document.body.style.overflow = 'unset';
     }
   }, [])
-    
-  const { t } = useTranslation()
 
   const handleNetworkItemClick = (networkItem) => {
     switchNetwork(PREFIX + networkItem.ChainID.toString(16))
@@ -210,7 +212,7 @@ export default function NetworkSwitchModal({
               <NetworkItem onClick={() => handleNetworkItemClick(item)} selected={item.ChainID === connectedNetworkID}>
                 <AutoRow>
                   <img src={item.btIcon} width="32" height="32" alt="icon" />
-                  <Text bold>{item.networkName}</Text>
+                  <Text bold fontSize="14px">{item.networkName}</Text>
                 </AutoRow>
               </NetworkItem>
             </>

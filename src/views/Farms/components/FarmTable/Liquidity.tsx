@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { HelpIcon, Text, Skeleton, useTooltip } from '@sphynxswap/uikit'
+import { HelpIcon, Text, Skeleton, useTooltip, Flex } from '@sphynxswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 import BigNumber from 'bignumber.js'
 
@@ -12,8 +12,21 @@ export interface LiquidityProps {
   liquidity: BigNumber
 }
 
+const Container = styled.div`
+  flex: 1;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 24px 8px;
+`
+
+const TitleText = styled(Text)`
+  font-size: 12px;
+  color: #A7A7CC;
+  text-align: left;
+  margin-right: 5px;
+`
+
 const LiquidityWrapper = styled.div`
-  min-width: 110px;
   font-weight: 600;
   text-align: right;
   margin-right: 14px;
@@ -22,11 +35,6 @@ const LiquidityWrapper = styled.div`
     text-align: left;
     margin-right: 0;
   }
-`
-
-const Container = styled.div`
-  display: flex;
-  align-items: center;
 `
 
 const Liquidity: React.FunctionComponent<LiquidityProps> = ({ liquidity }) => {
@@ -44,12 +52,15 @@ const Liquidity: React.FunctionComponent<LiquidityProps> = ({ liquidity }) => {
 
   return (
     <Container>
+      <Flex mb='5px'>
+        <TitleText>{t('Liquidity')}</TitleText>
+        <ReferenceElement ref={targetRef}>
+          <HelpIcon color="white" width='15'/>
+        </ReferenceElement>
+      </Flex>
       <LiquidityWrapper>
         <Text>{displayLiquidity}</Text>
       </LiquidityWrapper>
-      <ReferenceElement ref={targetRef}>
-        <HelpIcon color="textSubtle" />
-      </ReferenceElement>
       {tooltipVisible && tooltip}
     </Container>
   )

@@ -5,7 +5,7 @@ import styled from 'styled-components'
 import { Text, Flex, Modal, InjectedModalProps, Button, Input } from '@sphynxswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
-import { Spinner } from './Spinner'
+import Spinner from 'components/Loader/Spinner'
 import { useLotteryBalance, viewUserInfoForLotteryId, claimTickets } from '../../../hooks/useLottery'
 import useToast from 'hooks/useToast'
 

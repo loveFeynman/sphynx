@@ -10,8 +10,8 @@ export const fetchPublicVaultData = async () => {
     const calls = [
       'getPricePerFullShare',
       'totalShares',
-      'calculateHarvestCakeRewards',
-      'calculateTotalPendingCakeRewards',
+      'calculateHarvestSphynxRewards',
+      'calculateTotalPendingSphynxRewards',
     ].map((method) => ({
       address: getCakeVaultAddress(),
       name: method,

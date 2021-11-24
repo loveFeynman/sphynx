@@ -12,14 +12,14 @@ const InputRow = styled.div<{ selected: boolean }>`
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-  padding: 8px 6px;
+  padding: 8px 0px;
 
   & input {
     text-align: right;
     color: white;
-    font-size: 22px;
+    font-weight: 600;
+    font-size: 14px;
     letter-spacing: -0.04em;
-    font-weight: normal;
     &::placeholder {
       color: white;
     }
@@ -29,14 +29,14 @@ const CurrencySelectButton = styled(Button).attrs({ variant: 'text', scale: 'xs'
   align-items: center;
   font-size: 16px;
   font-weight: 500;
-  background-color: #8b2a9b;
+  background-color: transparent;
   color: ${({ selected, theme }) => (selected ? theme.colors.text : '#FFFFFF')};
-  border-radius: 12px;
+  border: 1px solid ${({ theme }) => theme.isDark ? "#2E2E55" : "#4A5187"};
+  border-radius: 5px;
   outline: none;
   cursor: pointer;
   user-select: none;
-  border: none;
-  padding: 2px 4px;
+  padding: 15px 8px;
   margin-right: 4px;
 
   :focus,
@@ -46,10 +46,10 @@ const CurrencySelectButton = styled(Button).attrs({ variant: 'text', scale: 'xs'
 
   & > div {
     & > div {
-      font-size: 12px;
+      font-weight: 600;
+      font-size: 10px;
       letter-spacing: -0.02em;
-      color: white;
-      font-weight: 700;
+      color: #A7A7CC;
     }
     & > svg > path {
       fill: white;
@@ -75,8 +75,10 @@ const InputPanel = styled.div<{ hideInput?: boolean; isBridge?: boolean }>`
   display: flex;
   flex-flow: column nowrap;
   position: relative;
-  border-radius: ${({ hideInput }) => (hideInput ? '8px' : '20px')};
-  background-color: ${({ isBridge }) => (isBridge ? 'none' : 'rgb(0,0,0,0.4)')};
+  // border-radius: ${({ hideInput }) => (hideInput ? '8px' : '20px')};
+  border-top: 1px solid ${({ theme }) => theme.isDark ? "#21214A" : "#4A5187"};
+  border-bottom: 1px solid ${({ theme }) => theme.isDark ? "#21214A" : "#4A5187"};
+  background-color: transparent;
 `
 
 const Container = styled.div<{ hideInput: boolean }>`
@@ -139,7 +141,7 @@ export default function CurrencyInputPanel({
   return (
     <InputPanel id={id} isBridge={isBridge}>
       <Container hideInput={hideInput}>
-        <InputRow style={hideInput ? { padding: '0', borderRadius: '8px' } : {}} selected={disableCurrencySelect}>
+        <InputRow style={hideInput ? { padding: '0' } : {}} selected={disableCurrencySelect}>
           <CurrencySelectButton
             selected={!!currency}
             className="open-currency-select-button"
