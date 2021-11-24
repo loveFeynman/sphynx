@@ -9,9 +9,13 @@ import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import * as ethers from 'ethers'
 import { ERC20_ABI } from 'config/abi/erc20'
 import { isAddress } from '@ethersproject/address'
+import BigNumber from 'bignumber.js'
+import { BIG_TEN } from 'utils/bigNumber'
 import Select, { OptionProps } from 'components/Select/Select'
 import Slider from 'react-rangeslider'
 import { DarkButtonStyle, ColorButtonStyle } from 'style/buttonStyle'
+/* eslint-disable camelcase */
+import LPToken_ABI from 'config/abi/lpToken.json'
 
 const Wrapper = styled.div`
   display: flex;
@@ -143,12 +147,18 @@ const ManageLocker: React.FC = () => {
   const isMobile = !isXl
   const [tokenAddress, setTokenAddress] = useState('')
   const [tokenName, setName] = useState('')
+  const [token0, setToken0] = useState('')
+  const [token1, setToken1] = useState('')
+  const [lpName0, setLpName0] = useState('')
+  const [lpName1, setLpName1] = useState('')
   const [tokenSymbol, setSymbol] = useState('')
   const [totalSupply, setTotalSupply] = useState(0)
+  const [isToken, setIsToken] = useState(true)
   const [unLock, setUnLock] = useState(new Date())
   const [logoLink, setLogoLink] = useState('')
   const [percent, setPercent] = useState(0)
   const [isApprove, setIsApprove] = useState(false)
+  const [isSubmit, setIsSubmit] = useState(false)
   const options = [
     {
       label: t('No vesting, all tokens will be released at unlock time!'),
@@ -222,9 +232,34 @@ const ManageLocker: React.FC = () => {
         const name = await tokenContract.name()
         const symbol = await tokenContract.symbol()
         const decimals = await tokenContract.decimals()
+        const bgSupply = await tokenContract.totalSupply()
+        const supply = parseFloat(ethers.utils.formatUnits(bgSupply, decimals))
+        console.log(supply)
         setName(name)
         setSymbol(symbol)
-        setTotalSupply(decimals)
+        setTotalSupply(supply)
+
+        if (name.slice(-3) === "LPs" && symbol.slice(-3) === "-LP") {
+          /* eslint-disable camelcase */
+          const lpContract = new ethers.Contract(value, LPToken_ABI, signer)
+          const address0 = await lpContract.token0()
+          const address1 = await lpContract.token1()
+          setToken0(address0)
+          setToken1(address1)
+
+          const lpTokenContract0 = new ethers.Contract(address0, abi, signer)
+          const name0 = await lpTokenContract0.name()
+          setLpName0(name0)
+          
+          const lpTokenContract1 = new ethers.Contract(address1, abi, signer)
+          const name1 = await lpTokenContract1.name()
+          setLpName1(name1)
+
+          setIsToken(false)
+        }
+        else {
+          setIsToken(true)
+        }
       } catch (err) {
         console.log('error', err.message)
       }
@@ -270,20 +305,36 @@ const ManageLocker: React.FC = () => {
         </PageHeader>
         <Sperate />
         <PageBody>
-          <p className="description w110" style={{ marginBottom: '5px' }}>Token Address</p>
+          <p className="description w110" style={{ marginBottom: '5px' }}>Token or Pair Address:</p>
           <InlineWrapper>
             <MyInput onChange={handleChange} value={tokenAddress} style={{ maxWidth: '1000px' }} />
           </InlineWrapper>
           <Sperate />
-          <InlineWrapper>
-            <p className="description w110">Token Name:</p>
-            <p className="description w120">{tokenName}</p>
-          </InlineWrapper>
-          <Sperate />
-          <InlineWrapper>
-            <p className="description w110">Token Symbol:</p>
-            <p className="description w120">{tokenSymbol}</p>
-          </InlineWrapper>
+          {isToken ?
+            <>
+              <InlineWrapper>
+                <p className="description w110">Token Name:</p>
+                <p className="description w120">{tokenName}</p>
+              </InlineWrapper>
+              <Sperate />
+              <InlineWrapper>
+                <p className="description w110">Token Symbol:</p>
+                <p className="description w120">{tokenSymbol}</p>
+              </InlineWrapper>
+            </>
+            :
+            <>
+              <InlineWrapper>
+                <p className="description w110">{lpName0}:</p>
+                <p className="description w120">{token0}</p>
+              </InlineWrapper>
+              <Sperate />
+              <InlineWrapper>
+                <p className="description w110">{lpName1}:</p>
+                <p className="description w120">{token1}</p>
+              </InlineWrapper>
+            </>
+          }
           <Sperate />
           <InlineWrapper>
             <p className="description w110">Total Supply:</p>
@@ -347,6 +398,7 @@ const ManageLocker: React.FC = () => {
           </Button>
           <Button
             onClick={handleSubmitClick}
+            disabled={!isSubmit}
             style={ColorButtonStyle}
           >
             {t('Submit')}
