@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import {
   ModalContainer,
   ModalHeader,
@@ -11,9 +11,7 @@ import {
   Button,
   Link,
 } from '@sphynxswap/uikit'
-// import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
-import { useSelector, useDispatch } from 'react-redux'
 import { TERMS_LIST } from './config'
 
 const StyledModalContainer = styled(ModalContainer)`
@@ -57,37 +55,33 @@ const CheckGroup = styled.div`
 `
 
 interface DisclaimerModalProps extends InjectedModalProps {
-  // setModalShow: (disclaimerModalShow: boolean) => void
   modalState?: true,
 }
 
 export default function DisclaimerModal({ onDismiss = () => null, modalState }: DisclaimerModalProps) {
-  const dispatch = useDispatch()
-  // const history = useHistory()
 
-  const checkedArrayLen = 10
+  const CHECKEDARRAY_LEN = 10
   const [arrayCheckedState, setArrayCheckedState] = useState([])
-  const [tested, setTested] = useState(false)
 
   const handleChangeCheckbox = (index: number) => {
     const arr = [...arrayCheckedState]
 
     if (arr.indexOf(index) > -1) {
       arr.splice(arr.indexOf(index), 1)
-      if (index === checkedArrayLen - 1) {
+      if (index === CHECKEDARRAY_LEN - 1) {
         setArrayCheckedState([])
         return
       }
     } else {
       arr.push(index)
-      if (index === checkedArrayLen - 1) {
-        for (let i = 0; i < checkedArrayLen; i++) {
+      if (index === CHECKEDARRAY_LEN - 1) {
+        for (let i = 0; i < CHECKEDARRAY_LEN; i++) {
           if (arr.indexOf(i) < 0) {
             arr.push(i)
           }
         }
-      } else if (arr.length === checkedArrayLen - 1) {
-        arr.push(checkedArrayLen - 1)
+      } else if (arr.length === CHECKEDARRAY_LEN - 1) {
+        arr.push(CHECKEDARRAY_LEN - 1)
       }
     }
 
@@ -127,7 +121,7 @@ export default function DisclaimerModal({ onDismiss = () => null, modalState }: 
             </Link>
           </ButtonWrapper>
           <ButtonWrapper>
-            <Button  style={{borderRadius: "5px"}} onClick={handleConfirm} disabled={arrayCheckedState.length !== checkedArrayLen}>
+            <Button  style={{borderRadius: "5px"}} onClick={handleConfirm} disabled={arrayCheckedState.length !== CHECKEDARRAY_LEN}>
               CONFIRM
             </Button>
           </ButtonWrapper>
