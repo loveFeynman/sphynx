@@ -6,6 +6,8 @@ import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import { isAddress } from '@ethersproject/address'
 import styled, { useTheme } from 'styled-components'
 import { ERC20_ABI } from 'config/abi/erc20'
+import { useModal } from '@sphynxswap/uikit'
+import DisclaimerModal from 'components/DisclaimerModal/DisclaimerModal'
 
 const Wrapper = styled.div`
   display: flex;
@@ -239,6 +241,7 @@ const Presale: React.FC = () => {
   const [liquidityRate, setLiquidityRate] = useState('')
   const [listingRate, setListingRate] = useState('')
   const [step, setStep] = useState(1)
+  const [disclaimerModalShow, setDisclaimerModalShow] = useState(true)
 
   const handleChange = async (e) => {
     const value = e.target.value
@@ -263,6 +266,15 @@ const Presale: React.FC = () => {
   const handleChangeRate = (e) => {
     setPresaleRate(e.target.value)
   }
+
+  const [onDisclaimerModal] = useModal(<DisclaimerModal />, false)
+
+  useEffect(() => {
+    if (disclaimerModalShow) {
+      onDisclaimerModal()
+      setDisclaimerModalShow(false)
+    }
+  }, [disclaimerModalShow, setDisclaimerModalShow, onDisclaimerModal])
 
   return (
     <Wrapper>
