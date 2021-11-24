@@ -403,8 +403,7 @@ export default function Swap({ history }: RouteComponentProps) {
           info = info.filter((oneData) => oneData.blockNumber !== cachedBlockNumber)
           info = info.filter(
             (oneData) =>
-              pairsRef.current.indexOf(oneData.address.toLowerCase()) !== -1 ||
-              stablePairsRef.current.indexOf(oneData.address.toLowerCase()) !== -1,
+              pairsRef.current.indexOf(oneData.address.toLowerCase()) !== -1
           )
           info = info.map((oneData) =>
             pairsRef.current.indexOf(oneData.address.toLowerCase()) !== -1
@@ -502,7 +501,6 @@ export default function Swap({ history }: RouteComponentProps) {
           if (input.toLowerCase() === SPHYNX_TOKEN_ADDRESS.toLowerCase()) {
             dexTrades = dexTrades.filter(
               (oneData) =>
-                oneData.smartContract.address.address.toLowerCase() === stablePairsRef.current[1].toLowerCase() ||
                 oneData.smartContract.address.address.toLowerCase() === pairsRef.current[1].toLowerCase(),
             )
           }
