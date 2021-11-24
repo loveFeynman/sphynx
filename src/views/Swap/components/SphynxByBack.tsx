@@ -21,6 +21,8 @@ const CollectedWrapper = styled.div`
   & > div:nth-child(1) {
     font-size: 11px;
     text-align: start;
+    display: flex;
+    justify-content: center;
   }
   ${({ theme }) => theme.mediaQueries.md} {
     white-space: nowrap;
@@ -32,7 +34,7 @@ const CollectedWrapper = styled.div`
       text-align: center;
       padding: 12px;
     }
-    padding: 22px 0px 20px;
+    padding: 22px 40px 20px;
     margin: 16px;
   }
 `
@@ -42,6 +44,9 @@ const BalanceContent = styled(AutoRow)`
   gap: 2px;
   div:nth-child(1) {
     font-size: 16px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
   }
   ${({ theme }) => theme.mediaQueries.md} {
     justify-content: center;
@@ -52,46 +57,27 @@ const BalanceContent = styled(AutoRow)`
   }
 `
 
-const TotalTransactionCollected: React.FC = () => {
+const SphynxByBack: React.FC = () => {
   const [balance, setBalance] = useState(0)
   const { t } = useTranslation()
-
-  useEffect(() => {
-    const ac = new AbortController()
-    const web3 = new Web3(web3Provider)
-    const getBalance = () => {
-      web3.eth.getBalance(FEE_WALLET).then((bnbBalance) => {
-        let bnb: any = web3.utils.fromWei(bnbBalance)
-        bnb = Number(bnb)
-          .toFixed(3)
-          .replace(/(\d)(?=(\d{3})+\.)/g, '$&,')
-        setBalance(bnb)
-        setTimeout(() => getBalance(), 60000)
-      })
-    }
-
-    getBalance()
-
-    return () => ac.abort()
-  }, [])
 
   return (
     <CollectedWrapper>
       <Text color="white" bold textAlign="center" fontSize="18px">
-        {t('Total Transaction Fees Collected')}
+        {t('Sphynx Buy Back')}
       </Text>
       <BalanceContent>
         <Text color="#C32BB4" bold textAlign="center" fontSize="22px">
           {t(`${balance}BNB`)}
         </Text>
-        <QuestionHelper
+        {/* <QuestionHelper
           text={t(
             'Total fees will be redistributed to holders on a weekly basis. Holders must hold Sphynx Token for 7 days to be eligible for the reward. Amount distributed will be dependent on the amount of supply an investor holds.',
             )}
-            />
+            /> */}
       </BalanceContent>
     </CollectedWrapper>
   )
 }
 
-export default TotalTransactionCollected
+export default SphynxByBack
