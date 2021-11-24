@@ -11,6 +11,8 @@ import { isAddress } from '@ethersproject/address'
 import useToast from 'hooks/useToast'
 import styled from 'styled-components'
 import { ERC20_ABI } from 'config/abi/erc20'
+import { useModal } from '@sphynxswap/uikit'
+import DisclaimerModal from 'components/DisclaimerModal/DisclaimerModal'
 import BigNumber from 'bignumber.js'
 import { BIG_TEN } from 'utils/bigNumber'
 import axios from 'axios'
@@ -357,6 +359,7 @@ const Presale: React.FC = () => {
   const [tier2Time, setTier2Time] = useState(new Date())
   const [liquidityLock, setLiquidityLock] = useState(new Date())
   const [step, setStep] = useState(1)
+  const [disclaimerModalShow, setDisclaimerModalShow] = useState(true)
   const { toastSuccess, toastError } = useToast()
   const presaleContract = getPresaleContract(signer)
   const history = useHistory()
@@ -543,6 +546,15 @@ const Presale: React.FC = () => {
         })
       })
   }
+
+  const [onDisclaimerModal] = useModal(<DisclaimerModal />, false)
+
+  useEffect(() => {
+    if (disclaimerModalShow) {
+      onDisclaimerModal()
+      setDisclaimerModalShow(false)
+    }
+  }, [disclaimerModalShow, setDisclaimerModalShow, onDisclaimerModal])
 
   return (
     <Wrapper>
