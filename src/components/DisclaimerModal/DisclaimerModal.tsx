@@ -15,6 +15,7 @@ import styled from 'styled-components'
 import { TERMS_LIST } from './config'
 
 const StyledModalContainer = styled(ModalContainer)`
+  font-size: 20px;
   ${({ theme }) => theme.mediaQueries.sm} {
     width: 420px;
   }
@@ -110,7 +111,7 @@ export default function DisclaimerModal({ onDismiss = () => null, modalState }: 
                 checked={(arrayCheckedState.indexOf(index) > -1) as boolean}
                 onClick={() => handleChangeCheckbox(index)}
               />
-              <Text fontSize="12px">{item.text}</Text>
+              <Text fontSize="16px">{item.text}</Text>
             </TermRow>
           ))}
         </CheckGroup>
