@@ -38,6 +38,16 @@ export const links = [
     icon: PredictionIcon,
     href: '/launchpad/listing',
   },
+  // {
+  //   label: 'Sphynx lockers (coming soon)',
+  //   icon: LaunchPadIcon,
+  //   href: '/locker',
+  // },
+  // {
+  //   label: 'Sphynx lock (coming soon)',
+  //   icon: PredictionIcon,
+  //   href: '/locker/manage',
+  // },
   {
     label: 'Lottery (coming soon)',
     icon: IFOIcon,

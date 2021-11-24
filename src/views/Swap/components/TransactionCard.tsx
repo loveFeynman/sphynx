@@ -1,7 +1,7 @@
 /* eslint-disable */
 import React from 'react'
 import styled from 'styled-components'
-import { Spinner } from '../../LotterySphx/components/Spinner'
+import Spinner from 'components/Loader/Spinner'
 import { useTranslation } from 'contexts/Localization'
 import { formatPrice } from '../../../utils'
 

@@ -6,7 +6,7 @@ import { AppState } from 'state'
 import styled from 'styled-components'
 import { useTranslation } from 'contexts/Localization'
 import { v4 as uuidv4 } from 'uuid'
-import { Spinner } from '../../LotterySphx/components/Spinner'
+import Spinner from 'components/Loader/Spinner'
 import { topTrades } from '../../../utils/apiServices'
 
 const fontSize = window.screen.width > 768 ? '14px' : '12px'

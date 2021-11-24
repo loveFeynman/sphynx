@@ -32,6 +32,9 @@ const Presale = lazy(() => import('./views/Launchpad/presale'))
 const Listings = lazy(() => import('./views/Launchpad/Listings'))
 const PresaleLive = lazy(() => import('./views/Launchpad/PresaleLive'))
 const PresaleManage = lazy(() => import('./views/Launchpad/PresaleManage'))
+const Locker = lazy(() => import('./views/Locker'))
+const DetailLocker = lazy(() => import('./views/Locker/DetailLocker'))
+const ManageLocker = lazy(() => import('./views/Locker/ManageLocker'))
 const Lottery = lazy(() => import('./views/LotterySphx'))
 const Bridge = lazy(() => import('./views/Bridge'))
 const FAQ = lazy(() => import('./views/FAQ'))
@@ -254,6 +257,9 @@ const App: React.FC = () => {
                   <Route exact strict path="/launchpad/listing" component={Listings} />
                   <Route exact strict path="/launchpad/live/:saleId" component={PresaleLive} />
                   <Route exact strict path="/launchpad/presale/:saleId" component={PresaleManage} />
+                  <Route exact strict path="/locker" component={Locker} />
+                  <Route exact strict path="/locker/detail/:id" component={DetailLocker} />
+                  <Route exact strict path="/locker/manage" component={ManageLocker} />
                   <Route exact strict path="/lottery" component={Lottery} />
                   <Route exact strict path="/bridge" component={Bridge} />
                   <Route exact strict path="/faq" component={FAQ} />

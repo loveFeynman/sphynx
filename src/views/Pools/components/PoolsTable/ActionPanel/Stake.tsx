@@ -22,6 +22,7 @@ import { useCheckVaultApprovalStatus, useApprovePool, useVaultApprove } from '..
 
 const IconButtonWrapper = styled.div`
   display: flex;
+  gap: 5px;
 `
 
 const ColorButton = styled(Button)`
@@ -240,11 +241,11 @@ const Staked: React.FunctionComponent<StackedActionProps> = ({ pool, userDataLoa
   if (isNotVaultAndHasStake || isVaultWithShares) {
     return (
       <ActionContainer>
-        <Flex mb='5px'>
-          <Text fontSize="12px" bold color="#A7A7CC" as="span" textTransform="uppercase">
+        <Flex mb='5px' flexDirection='column'>
+          <Text fontSize="12px" bold color="#A7A7CC" as="span" textTransform="uppercase" textAlign="center">
             {stakingToken.symbol}{' '}
           </Text>
-          <Text fontSize="12px" bold color="#A7A7CC" as="span" textTransform="uppercase">
+          <Text fontSize="12px" bold color="#A7A7CC" as="span" textTransform="uppercase" textAlign="center">
             {isAutoVault ? t('Staked (compounding)') : t('Staked')}
           </Text>
         </Flex>
