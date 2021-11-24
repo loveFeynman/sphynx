@@ -30,6 +30,19 @@ import { getAprData, getCakeVaultEarnings } from './helpers'
 import { SwapTabs, SwapTabList, SwapTab, SwapTabPanel } from "../../components/Tab/tab";
 import Card from '../../components/Card'
 
+const WrapFlex = styled(Flex)`
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 0px;
+  ${({ theme }) => theme.mediaQueries.md} {
+    padding: 0px 10px;
+  }
+  ${({ theme }) => theme.mediaQueries.xl} {
+    padding: 0px 10px;
+  }
+`
+
 const CardLayout = styled(FlexLayout)`
   justify-content: center;
   padding: 47px 69px 0;
@@ -257,7 +270,7 @@ const Pools: React.FC = () => {
 
   return (
     <>
-      <Flex flexDirection='column' justifyContent="center" alignItems="center" style={{ padding: `0px ${isMobile ? '10px' : '50px'}` }}>
+      <WrapFlex>
         <div style={{ height: 24 }} />
         <PageHeader>
           <Flex justifyContent="space-between" flexDirection='row'>
@@ -396,7 +409,7 @@ const Pools: React.FC = () => {
             </Card>
           </SwapTabs>
         </Page>
-      </Flex>
+      </WrapFlex>
     </>
   )
 }
