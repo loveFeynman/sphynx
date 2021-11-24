@@ -1,7 +1,7 @@
 export const TERMS_LIST = [
   {
     id: 1,
-    text: "I have tested my token with the DxSale app on a test network. (Ex. Ropsten)"
+    text: "I have tested my token with the Sphynx Sale app on a test network. (Ex. Ropsten)"
   },
   {
     id: 2,
@@ -13,7 +13,7 @@ export const TERMS_LIST = [
   },
   {
     id: 4,
-    text: "I understand that DxSale is not responsible for any issues or loss of funds caused due to errors or exploits of code."
+    text: "I understand that Sphynx Sale is not responsible for any issues or loss of funds caused due to errors or exploits of code."
   },
   {
     id: 5,
@@ -25,7 +25,7 @@ export const TERMS_LIST = [
   },
   {
     id: 7,
-    text: "I am using DxSale as a software tool only and am responsible for anything I create on it."
+    text: "I am using Sphynx Sale as a software tool only and am responsible for anything I create on it."
   },
   {
     id: 8,
