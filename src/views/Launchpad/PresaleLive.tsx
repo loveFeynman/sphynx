@@ -4,22 +4,18 @@ import { useHistory } from 'react-router-dom'
 import { Button, Text, Flex, Link } from '@sphynxswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 import { useMenuToggle } from 'state/application/hooks'
-import { useWeb3React } from '@web3-react/core'
 import { ERC20_ABI } from 'config/abi/erc20'
 import { ReactComponent as MainLogo } from 'assets/svg/icon/WarningIcon.svg'
 import { ReactComponent as WarningIcon2 } from 'assets/svg/icon/WarningIcon2.svg'
 import { ReactComponent as SettingIcon } from 'assets/svg/icon/SettingIcon.svg'
 import { ReactComponent as StopwatchIcon } from 'assets/svg/icon/StopwatchIcon1.svg'
 import { ReactComponent as LightIcon } from 'assets/svg/icon/LightIcon.svg'
-import ShivaLogo from 'assets/images/ShiaToken.png'
 import LikeIcon from 'assets/images/LikeIcon.png'
 import DislikeIcon from 'assets/images/DislikeIcon.png'
 import HillariousIcon from 'assets/images/HillariousIcon.png'
 import WarningIcon from 'assets/images/WarningIcon.png'
 import { getPresaleContract } from 'utils/contractHelpers'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
-import BigNumber from 'bignumber.js'
-import { BIG_TEN } from 'utils/bigNumber'
 import { useParams } from 'react-router'
 import axios from 'axios'
 import * as ethers from 'ethers'
@@ -507,10 +503,9 @@ const PresaleLive: React.FC = () => {
   const param: any = useParams()
   const { t } = useTranslation()
   const history = useHistory()
-  const { account, chainId } = useWeb3React()
   const { menuToggled } = useMenuToggle()
   const [presaleStatus, setPresaleStatus] = useState(false)
-  const { library } = useActiveWeb3React()
+  const { library, account, chainId } = useActiveWeb3React()
   const signer = library.getSigner()
   const presaleContract = getPresaleContract(signer)
   const [contribute, setContribute] = useState('')

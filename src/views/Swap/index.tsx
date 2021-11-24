@@ -95,6 +95,7 @@ let config = {
 }
 
 const web3 = new Web3(web3ArchiveProvider)
+const datafeedWeb3 = new Web3('https://bsc-dataseed.binance.org')
 
 const ArrowContainer = styled(ArrowWrapper)`
   width: 32px;
@@ -358,7 +359,8 @@ export default function Swap({ history }: RouteComponentProps) {
             let oneData: any = {}
             oneData.amount = tokenAmt
             oneData.value = BNBAmt
-            oneData.price = event.quoteCurrency === wrappedCurrencySymbol ? (BNBAmt / tokenAmt) * price : BNBAmt / tokenAmt
+            oneData.price =
+              event.quoteCurrency === wrappedCurrencySymbol ? (BNBAmt / tokenAmt) * price : BNBAmt / tokenAmt
             const estimatedDateValue = new Date(new Date().getTime() - (blockNumber - event.blockNumber) * 3000)
             oneData.transactionTime = formatTimeString(
               `${estimatedDateValue.getUTCFullYear()}-${
@@ -369,6 +371,7 @@ export default function Swap({ history }: RouteComponentProps) {
             oneData.tx = event.transactionHash
             oneData.isBuy = isBuy
             oneData.usdValue = oneData.amount * oneData.price
+            oneData.quoteCurrency = event.quoteCurrency
             newTransactions.unshift(oneData)
             if (newTransactions.length > 300) {
               newTransactions.pop()
@@ -387,7 +390,7 @@ export default function Swap({ history }: RouteComponentProps) {
   const getTransactions = async (blockNumber) => {
     let cachedBlockNumber = blockNumber
     try {
-      web3.eth
+      datafeedWeb3.eth
         .getPastLogs({
           fromBlock: blockNumber,
           toBlock: 'latest',
@@ -423,12 +426,12 @@ export default function Swap({ history }: RouteComponentProps) {
 
   const startRealTimeData = (blockNumber) => {
     if (blockNumber === null) {
-      web3.eth.getBlockNumber().then((blockNumber) => {
+      datafeedWeb3.eth.getBlockNumber().then((blockNumber) => {
         setCurrentBlock(blockNumber)
         setBlockFlag(!blockFlag)
       })
     } else {
-      web3.eth.getBlockNumber().then((blockNumberCache) => {
+      datafeedWeb3.eth.getBlockNumber().then((blockNumberCache) => {
         if (parseInt(blockNumber) + 50 <= blockNumberCache) {
           setCurrentBlock(blockNumberCache - 50)
           setBlockFlag(!blockFlag)
@@ -485,18 +488,26 @@ export default function Swap({ history }: RouteComponentProps) {
         if (wBNBPair !== null) pairs.push(wBNBPair.toLowerCase())
         let wBNBPairSphynx = await getSphynxPairAddress(input, wBNBAddr, simpleRpcProvider)
         if (wBNBPairSphynx !== null) pairs.push(wBNBPairSphynx.toLowerCase())
-        let BUSDPairSphynx = await getSphynxPairAddress(input, BUSDAddr, simpleRpcProvider)
-        if (BUSDPairSphynx !== null) stablePairs.push(BUSDPairSphynx.toLowerCase())
         let BUSDPair = await getPancakePairAddress(input, BUSDAddr, simpleRpcProvider)
         if (BUSDPair !== null) stablePairs.push(BUSDPair.toLowerCase())
+        let BUSDPairSphynx = await getSphynxPairAddress(input, BUSDAddr, simpleRpcProvider)
+        if (BUSDPairSphynx !== null) stablePairs.push(BUSDPairSphynx.toLowerCase())
         setPairs(pairs)
         setStablePairs(pairs)
         const bnbPrice = await getBNBPrice()
         // pull historical data
         const queryResult = await axios.post(BITQUERY_API, { query: getDataQuery() }, config)
         if (queryResult.data.data && queryResult.data.data.ethereum.dexTrades) {
+          let dexTrades = queryResult.data.data.ethereum.dexTrades
+          if (input.toLowerCase() === SPHYNX_TOKEN_ADDRESS.toLowerCase()) {
+            dexTrades = dexTrades.filter(
+              (oneData) =>
+                oneData.smartContract.address.address.toLowerCase() === stablePairsRef.current[1].toLowerCase() ||
+                oneData.smartContract.address.address.toLowerCase() === pairsRef.current[1].toLowerCase(),
+            )
+          }
           setSymbol(queryResult.data.data.ethereum.dexTrades[0].baseCurrency.symbol)
-          newTransactions = queryResult.data.data.ethereum.dexTrades.map((item, index) => {
+          newTransactions = dexTrades.map((item, index) => {
             return {
               transactionTime: formatTimeString(item.block.timestamp.time),
               amount: item.baseAmount,

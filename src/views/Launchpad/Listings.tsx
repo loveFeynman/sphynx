@@ -4,7 +4,7 @@ import { useTranslation } from 'contexts/Localization'
 import styled from 'styled-components'
 import axios from 'axios'
 import * as ethers from 'ethers'
-import { useWeb3React } from '@web3-react/core'
+import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import { simpleRpcProvider } from 'utils/providers'
 import { getPresaleContract } from 'utils/contractHelpers'
 import ListIcon from 'assets/svg/icon/ListIcon.svg'
@@ -33,7 +33,7 @@ const LoadingWrapper = styled.div`
 `
 
 const Presale: React.FC = () => {
-  const { chainId } = useWeb3React()
+  const { chainId } = useActiveWeb3React()
   const { t } = useTranslation()
   const { menuToggled } = useMenuToggle()
   const [tokenList, setTokenList] = useState(null)
