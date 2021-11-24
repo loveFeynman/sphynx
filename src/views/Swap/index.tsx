@@ -13,7 +13,6 @@ import { RouteComponentProps } from 'react-router-dom'
 import { useTranslation } from 'contexts/Localization'
 import SwapWarningTokens from 'config/constants/swapWarningTokens'
 import { getAddress } from 'utils/addressHelpers'
-import SwapCardNav from 'components/SwapCardNav'
 import AutoCardNav from 'components/AutoCardNav'
 import { FullHeightColumn } from 'components/Column'
 import Column, { AutoColumn } from 'components/Layout/Column'
@@ -23,8 +22,8 @@ import { AppHeader } from 'components/App'
 import { BalanceNumber } from 'components/BalanceNumber'
 import { useMatchBreakpoints } from '@sphynxswap/uikit'
 
-import { useSwapTransCard, useSwapType, useSetRouterType } from 'state/application/hooks'
-import { ReactComponent as DownArrow } from 'assets/svg/icon/DownArrow.svg'
+import { useSetRouterType } from 'state/application/hooks'
+import SwapIcon from 'components/Icon/SwapIcon'
 import { typeInput, marketCap, typeRouterVersion } from 'state/input/actions'
 import { BITQUERY_API, BITQUERY_API_KEY } from 'config/constants/endpoints'
 import SwapRouter, { messages } from 'config/constants/swaps'
@@ -66,24 +65,25 @@ import Page from '../Page'
 import BuyersCard from './components/BuyersCard'
 import SellersCard from './components/SellersCard'
 import SwapWarningModal from './components/SwapWarningModal'
-import DividendPanel from './components/DividendPanel'
 import LiveAmountPanel from './components/LiveAmountPanel'
 import { Field, replaceSwapState } from '../../state/swap/actions'
 
 import Web3 from 'web3'
 import ERC20ABI from 'assets/abis/erc20.json'
-import { getPancakePairAddress, getPancakePairAddressV1, getSphynxPairAddress } from 'state/info/ws/priceData'
+import { getPancakePairAddress, getPancakePairAddressV1, getSphynxPairAddress } from 'utils/priceProvider'
 import * as ethers from 'ethers'
 import { getBNBPrice } from 'utils/priceProvider'
 import { simpleRpcProvider } from 'utils/providers'
 import { UNSET_PRICE } from 'config/constants/info'
 import storages from 'config/constants/storages'
-import Row from 'components/Row'
 import RewardsPanel from './components/RewardsPanel'
-import { SwapTabs, SwapTabList, SwapTab, SwapTabPanel } from "../../components/Tab/tab";
+import { SwapTabs, SwapTabList, SwapTab, SwapTabPanel } from '../../components/Tab/tab'
+import { web3ArchiveProvider } from 'utils/providers'
+import { SPHYNX_TOKEN_ADDRESS } from 'config/constants'
+import { WBNB, BUSD } from 'config/constants/tokens'
 
-const wBNBAddr = '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c'
-const sphynxAddr = '0x2e121Ed64EEEB58788dDb204627cCB7C7c59884c'
+const wBNBAddr = WBNB.address
+const sphynxAddr = `${SPHYNX_TOKEN_ADDRESS}`
 let tokenDecimal = 18
 
 const abi: any = ERC20ABI
@@ -94,8 +94,8 @@ let config = {
   },
 }
 
-const providerURL = 'https://speedy-nodes-nyc.moralis.io/fbb4b2b82993bf507eaaab13/bsc/mainnet/archive'
-const web3 = new Web3(new Web3.providers.HttpProvider(providerURL))
+const web3 = new Web3(web3ArchiveProvider)
+const datafeedWeb3 = new Web3('https://bsc-dataseed.binance.org')
 
 const ArrowContainer = styled(ArrowWrapper)`
   width: 32px;
@@ -103,8 +103,8 @@ const ArrowContainer = styled(ArrowWrapper)`
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 3px solid rgb(255, 255, 255);
-  border-radius: 12px;
+  background-color: #710d89;
+  border-radius: 15px;
   margin: 0;
   cursor: pointer;
   &:hover {
@@ -120,20 +120,27 @@ const BalanceText = styled.p`
   font-size: 14px;
   font-weight: 500;
   line-height: 12px;
-  color: white;
-  margin: 0 8px;
+  color: #f2c94c;
   margin-left: auto;
 `
 
 const SlippageText = styled.p`
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 500;
   line-height: 12px;
-  color: white;
+  color: #a7a7cc;
   margin: 0 8px;
   & span {
-    text-decoration: underline;
+    // text-decoration: underline;
   }
+`
+
+const SlippageTextWrapper = styled(Flex)`
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+  flex-direction: column;
+  gap: 6px;
 `
 
 const BottomGrouping = styled(Box)`
@@ -163,9 +170,11 @@ export default function Swap({ history }: RouteComponentProps) {
   const tokenAddress = pathname.substr(6)
   const [swapRouter, setSwapRouter] = useState(SwapRouter.SPHYNX_SWAP)
   const [pairs, setPairs] = useState([])
+  const [stablePairs, setStablePairs] = useState([])
   const [transactionData, setTransactions] = useState([])
   const stateRef = useRef([])
   const pairsRef = useRef([])
+  const stablePairsRef = useRef([])
   const loadingRef = useRef(false)
   const busyRef = useRef(false)
   const [isLoading, setLoading] = useState(false)
@@ -188,37 +197,44 @@ export default function Swap({ history }: RouteComponentProps) {
   const isMobile = !isXl
   const [symbol, setSymbol] = useState('')
   const theme = useTheme()
-
-  if (tokenAddress === '' || tokenAddress.toLowerCase() === sphynxAddr.toLowerCase()) {
-    if (routerVersion !== 'sphynx') {
-      dispatch(typeRouterVersion({ routerVersion: 'sphynx' }))
-    }
-  } else {
-    if (routerVersion !== 'v2') {
-      dispatch(typeRouterVersion({ routerVersion: 'v2' }))
-    }
-  }
+  const { chainId } = useActiveWeb3React()
+  const BUSDAddr = BUSD[chainId].address
+  const wrappedCurrencySymbol = 'WBNB'
 
   stateRef.current = transactionData
   pairsRef.current = pairs
+  stablePairsRef.current = stablePairs
   loadingRef.current = isLoading
   busyRef.current = isBusy
   let input = tokenAddress
   if (input === '-' || input === '') input = sphynxAddr
   const contract: any = new web3.eth.Contract(abi, input)
 
-  const getDataQuery = useCallback(
-    (pairAddress: any) => {
-      if (pairAddress === '0xc522ce70f8aeb1205223659156d6c398743e3e7a') {
-        return `
+  useEffect(() => {
+    if (
+      tokenAddress === '' ||
+      tokenAddress.toLowerCase() === sphynxAddr.toLowerCase() ||
+      tokenAddress.toLowerCase() === SPHYNX_TOKEN_ADDRESS.toLowerCase()
+    ) {
+      if (routerVersion !== 'sphynx') {
+        dispatch(typeRouterVersion({ routerVersion: 'sphynx' }))
+      }
+    } else {
+      if (routerVersion !== 'v2') {
+        dispatch(typeRouterVersion({ routerVersion: 'v2' }))
+      }
+    }
+  }, [])
+
+  const getDataQuery = useCallback(() => {
+    return `
     {
     ethereum(network: bsc) {
         dexTrades(
         options: {desc: ["block.height", "tradeIndex"], limit: 30, offset: 0}
         date: {till: null}
-        smartContractAddress: {in: ["0xE4023ee4d957A5391007aE698B3A730B2dc2ba67", "${pairAddress}"]}
         baseCurrency: {is: "${input}"}
-        quoteCurrency:{is : "${wBNBAddr}"}
+        quoteCurrency:{in: ["${wBNBAddr}", "${BUSDAddr}"]}
         ) {
         block {
           timestamp {
@@ -265,66 +281,7 @@ export default function Swap({ history }: RouteComponentProps) {
         }
       }
     }`
-      } else {
-        return `
-    {
-    ethereum(network: bsc) {
-        dexTrades(
-        options: {desc: ["block.height", "tradeIndex"], limit: 30, offset: 0}
-        date: {till: null}
-        smartContractAddress: {is: "${pairAddress}"}
-        baseCurrency: {is: "${input}"}
-        quoteCurrency:{is : "${wBNBAddr}"}
-        ) {
-        block {
-          timestamp {
-          time(format: "%Y-%m-%d %H:%M:%S")
-          }
-          height
-        }
-        tradeIndex
-        protocol
-        exchange {
-          fullName
-        }
-        smartContract {
-          address {
-          address
-          annotation
-          }
-        }
-        baseAmount
-        baseCurrency {
-          address
-          symbol
-        }
-        quoteAmount
-        quoteCurrency {
-          address
-          symbol
-        }
-        transaction {
-          hash
-        }
-        buyCurrency {
-          symbol
-          address
-          name
-        }
-        sellCurrency {
-          symbol
-          address
-          name
-          }
-        price
-        quotePrice
-        }
-      }
-    }`
-      }
-    },
-    [input],
-  )
+  }, [input])
 
   const parseData: any = async (events: any, blockNumber: any) => {
     setBusy(true)
@@ -379,22 +336,22 @@ export default function Swap({ history }: RouteComponentProps) {
             if (input < wBNBAddr) {
               tokenAmt = Math.abs(
                 parseFloat(ethers.utils.formatUnits(datas.amount0In + '', tokenDecimal)) -
-                parseFloat(ethers.utils.formatUnits(datas.amount0Out + '', tokenDecimal)),
+                  parseFloat(ethers.utils.formatUnits(datas.amount0Out + '', tokenDecimal)),
               )
 
               isBuy = datas.amount1In === '0'
               BNBAmt = Math.abs(
                 parseFloat(ethers.utils.formatUnits(datas.amount1In + '', 18)) -
-                parseFloat(ethers.utils.formatUnits(datas.amount1Out + '', 18)),
+                  parseFloat(ethers.utils.formatUnits(datas.amount1Out + '', 18)),
               )
             } else {
               BNBAmt = Math.abs(
                 parseFloat(ethers.utils.formatUnits(datas.amount0In + '', 18)) -
-                parseFloat(ethers.utils.formatUnits(datas.amount0Out + '', 18)),
+                  parseFloat(ethers.utils.formatUnits(datas.amount0Out + '', 18)),
               )
               tokenAmt = Math.abs(
                 parseFloat(ethers.utils.formatUnits(datas.amount1In + '', tokenDecimal)) -
-                parseFloat(ethers.utils.formatUnits(datas.amount1Out + '', tokenDecimal)),
+                  parseFloat(ethers.utils.formatUnits(datas.amount1Out + '', tokenDecimal)),
               )
               isBuy = datas.amount0In === '0'
             }
@@ -402,16 +359,19 @@ export default function Swap({ history }: RouteComponentProps) {
             let oneData: any = {}
             oneData.amount = tokenAmt
             oneData.value = BNBAmt
-            oneData.price = (BNBAmt / tokenAmt) * price
+            oneData.price =
+              event.quoteCurrency === wrappedCurrencySymbol ? (BNBAmt / tokenAmt) * price : BNBAmt / tokenAmt
             const estimatedDateValue = new Date(new Date().getTime() - (blockNumber - event.blockNumber) * 3000)
             oneData.transactionTime = formatTimeString(
-              `${estimatedDateValue.getUTCFullYear()}-${estimatedDateValue.getUTCMonth() + 1
+              `${estimatedDateValue.getUTCFullYear()}-${
+                estimatedDateValue.getUTCMonth() + 1
               }-${estimatedDateValue.getDate()} ${estimatedDateValue.getUTCHours()}:${estimatedDateValue.getUTCMinutes()}:${estimatedDateValue.getUTCSeconds()}`,
             )
 
             oneData.tx = event.transactionHash
             oneData.isBuy = isBuy
             oneData.usdValue = oneData.amount * oneData.price
+            oneData.quoteCurrency = event.quoteCurrency
             newTransactions.unshift(oneData)
             if (newTransactions.length > 300) {
               newTransactions.pop()
@@ -430,7 +390,7 @@ export default function Swap({ history }: RouteComponentProps) {
   const getTransactions = async (blockNumber) => {
     let cachedBlockNumber = blockNumber
     try {
-      web3.eth
+      datafeedWeb3.eth
         .getPastLogs({
           fromBlock: blockNumber,
           toBlock: 'latest',
@@ -441,7 +401,21 @@ export default function Swap({ history }: RouteComponentProps) {
             cachedBlockNumber = info[info.length - 1].blockNumber
           }
           info = info.filter((oneData) => oneData.blockNumber !== cachedBlockNumber)
-          info = info.filter((oneData) => pairsRef.current.indexOf(oneData.address.toLowerCase()) !== -1)
+          if (input.toLowerCase() === SPHYNX_TOKEN_ADDRESS.toLowerCase()) {
+            info = info.filter((oneData) => pairsRef.current[1] === oneData.address.toLowerCase())
+          } else {
+            info = info.filter(
+              (oneData) =>
+                pairsRef.current.indexOf(oneData.address.toLowerCase()) !== -1 ||
+                stablePairsRef.current.indexOf(oneData.address.toLowerCase()) !== -1,
+            )
+          }
+          info = info.map((oneData) =>
+            pairsRef.current.indexOf(oneData.address.toLowerCase()) !== -1
+              ? { ...oneData, quoteCurrency: wrappedCurrencySymbol }
+              : { ...oneData, quoteCurrency: 'BUSD' },
+          )
+
           info = [...new Set(info)]
 
           if (!isBusy) {
@@ -456,13 +430,20 @@ export default function Swap({ history }: RouteComponentProps) {
 
   const startRealTimeData = (blockNumber) => {
     if (blockNumber === null) {
-      web3.eth.getBlockNumber().then((blockNumber) => {
+      datafeedWeb3.eth.getBlockNumber().then((blockNumber) => {
         setCurrentBlock(blockNumber)
         setBlockFlag(!blockFlag)
       })
     } else {
-      setCurrentBlock(blockNumber)
-      setBlockFlag(!blockFlag)
+      datafeedWeb3.eth.getBlockNumber().then((blockNumberCache) => {
+        if (parseInt(blockNumber) + 50 <= blockNumberCache) {
+          setCurrentBlock(blockNumberCache - 50)
+          setBlockFlag(!blockFlag)
+        } else {
+          setCurrentBlock(blockNumber)
+          setBlockFlag(!blockFlag)
+        }
+      })
     }
   }
 
@@ -506,27 +487,40 @@ export default function Swap({ history }: RouteComponentProps) {
     const fetchData = async () => {
       try {
         let pairs = []
-        if (routerVersion !== 'sphynx') {
-          let wBNBPair = await getPancakePairAddress(input, wBNBAddr, simpleRpcProvider)
-          if (wBNBPair !== null) pairs.push(wBNBPair.toLowerCase())
-          let wBNBPairV1 = await getPancakePairAddressV1(input, wBNBAddr, simpleRpcProvider)
-          if (wBNBPairV1 !== null) pairs.push(wBNBPairV1.toLowerCase())
-        }
+        let stablePairs = []
+        let wBNBPair = await getPancakePairAddress(input, wBNBAddr, simpleRpcProvider)
+        if (wBNBPair !== null) pairs.push(wBNBPair.toLowerCase())
         let wBNBPairSphynx = await getSphynxPairAddress(input, wBNBAddr, simpleRpcProvider)
         if (wBNBPairSphynx !== null) pairs.push(wBNBPairSphynx.toLowerCase())
+        let BUSDPair = await getPancakePairAddress(input, BUSDAddr, simpleRpcProvider)
+        if (BUSDPair !== null) stablePairs.push(BUSDPair.toLowerCase())
+        let BUSDPairSphynx = await getSphynxPairAddress(input, BUSDAddr, simpleRpcProvider)
+        if (BUSDPairSphynx !== null) stablePairs.push(BUSDPairSphynx.toLowerCase())
         setPairs(pairs)
+        setStablePairs(pairs)
         const bnbPrice = await getBNBPrice()
         // pull historical data
-        const queryResult = await axios.post(BITQUERY_API, { query: getDataQuery(pairs[0]) }, config)
+        const queryResult = await axios.post(BITQUERY_API, { query: getDataQuery() }, config)
         if (queryResult.data.data && queryResult.data.data.ethereum.dexTrades) {
+          let dexTrades = queryResult.data.data.ethereum.dexTrades
+          if (input.toLowerCase() === SPHYNX_TOKEN_ADDRESS.toLowerCase()) {
+            dexTrades = dexTrades.filter(
+              (oneData) =>
+                oneData.smartContract.address.address.toLowerCase() === pairsRef.current[1].toLowerCase()
+            )
+          }
           setSymbol(queryResult.data.data.ethereum.dexTrades[0].baseCurrency.symbol)
-          newTransactions = queryResult.data.data.ethereum.dexTrades.map((item, index) => {
+          newTransactions = dexTrades.map((item, index) => {
             return {
               transactionTime: formatTimeString(item.block.timestamp.time),
               amount: item.baseAmount,
               value: item.quoteAmount,
-              price: item.quotePrice * bnbPrice,
-              usdValue: item.baseAmount * item.quotePrice * bnbPrice,
+              quoteCurrency: item.quoteCurrency.symbol,
+              price: item.quoteCurrency.symbol === wrappedCurrencySymbol ? item.quotePrice * bnbPrice : item.quotePrice,
+              usdValue:
+                item.quoteCurrency.symbol === wrappedCurrencySymbol
+                  ? item.baseAmount * item.quotePrice * bnbPrice
+                  : item.baseAmount * item.quotePrice,
               isBuy: item.baseCurrency.symbol === item.buyCurrency.symbol,
               tx: item.transaction.hash,
             }
@@ -548,7 +542,7 @@ export default function Swap({ history }: RouteComponentProps) {
         } else {
           web3.eth.getBlockNumber().then((blockNumber) => {
             setDatas([], blockNumber - 200)
-          })  
+          })
         }
       } catch (err) {
         // eslint-disable-next-line no-console
@@ -579,10 +573,19 @@ export default function Swap({ history }: RouteComponentProps) {
 
   const getTokenData = async (tokenAddress) => {
     try {
-      axios.post(`${process.env.REACT_APP_BACKEND_API_URL}/tokenStats`, { address: tokenAddress }).then((response) => {
-        setTokenData(response.data)
-        dispatch(marketCap({ marketCapacity: parseFloat(response.data.marketCap) }))
-      })
+      const contract = new web3.eth.Contract(abi, tokenAddress)
+      let totalSupply = await contract.methods.totalSupply().call()
+      let decimals = await contract.methods.decimals().call()
+      let symbol = await contract.methods.symbol().call()
+      let name = await contract.methods.name().call()
+      totalSupply = totalSupply / 10 ** decimals
+      const data = {
+        marketCap,
+        totalSupply,
+        decimals,
+        symbol: `${name} (${symbol})`,
+      }
+      setTokenData(data)
     } catch (err) {
       // eslint-disable-next-line no-console
       console.log(err)
@@ -635,19 +638,17 @@ export default function Swap({ history }: RouteComponentProps) {
     inputError: wrapInputError,
   } = useWrapCallback(currencies[Field.INPUT], currencies[Field.OUTPUT], typedValue)
   const showWrap: boolean = wrapType !== WrapType.NOT_APPLICABLE
-  const { swapType } = useSwapType()
-  const { swapTransCard } = useSwapTransCard()
   const trade = showWrap ? undefined : v2Trade
 
   const parsedAmounts = showWrap
     ? {
-      [Field.INPUT]: parsedAmount,
-      [Field.OUTPUT]: parsedAmount,
-    }
+        [Field.INPUT]: parsedAmount,
+        [Field.OUTPUT]: parsedAmount,
+      }
     : {
-      [Field.INPUT]: independentField === Field.INPUT ? parsedAmount : trade?.inputAmount,
-      [Field.OUTPUT]: independentField === Field.OUTPUT ? parsedAmount : trade?.outputAmount,
-    }
+        [Field.INPUT]: independentField === Field.INPUT ? parsedAmount : trade?.inputAmount,
+        [Field.OUTPUT]: independentField === Field.OUTPUT ? parsedAmount : trade?.outputAmount,
+      }
 
   const { onSwitchTokens, onCurrencySelection, onUserInput, onChangeRecipient } = useSwapActionHandlers()
   const isValid = !swapInputError
@@ -697,7 +698,8 @@ export default function Swap({ history }: RouteComponentProps) {
       tokenAddress === null ||
       tokenAddress === '' ||
       tokenAddress === undefined ||
-      tokenAddress.toLowerCase() === sphynxAddr.toLowerCase()
+      tokenAddress.toLowerCase() === sphynxAddr.toLowerCase() ||
+      tokenAddress.toLowerCase() === SPHYNX_TOKEN_ADDRESS.toLowerCase()
     ) {
       if (swapRouter !== SwapRouter.SPHYNX_SWAP) {
         setSwapRouter(SwapRouter.SPHYNX_SWAP)
@@ -706,7 +708,7 @@ export default function Swap({ history }: RouteComponentProps) {
       dispatch(
         replaceSwapState({
           outputCurrencyId: 'BNB',
-          inputCurrencyId: '0x2e121Ed64EEEB58788dDb204627cCB7C7c59884c',
+          inputCurrencyId: `${SPHYNX_TOKEN_ADDRESS}`,
           typedValue: '',
           field: Field.OUTPUT,
           recipient: null,
@@ -990,23 +992,20 @@ export default function Swap({ history }: RouteComponentProps) {
               price={tokenPrice}
             />
           ) : null}
-          <SwapTabs
-            selectedTabClassName='is-selected'
-            selectedTabPanelClassName='is-selected'
-          >
+          <SwapTabs selectedTabClassName="is-selected" selectedTabPanelClassName="is-selected">
             <SwapTabList>
               <SwapTab>
-                <Text>
+                <Text textAlign="center" fontSize="14px" bold color="#A7A7CC">
                   {t('Swap')}
                 </Text>
               </SwapTab>
               <SwapTab>
-                <Text>
+                <Text textAlign="center" fontSize="14px" bold color="#A7A7CC">
                   {t('Liquidity')}
                 </Text>
               </SwapTab>
             </SwapTabList>
-            <Card bgColor={theme.isDark ? "#0E0E26" : "#2A2E60"} borderRadius="0 0 3px 3px" padding="20px 10px">
+            <Card bgColor={theme.isDark ? '#0E0E26' : '#2A2E60'} borderRadius="0 0 3px 3px" padding="20px 10px">
               <SwapTabPanel>
                 <Wrapper id="swap-page">
                   <Flex alignItems="center" justifyContent="center">
@@ -1019,7 +1018,9 @@ export default function Swap({ history }: RouteComponentProps) {
                   <AppHeader title={t('Swap')} showAuto />
                   <AutoColumn gap="md">
                     <CurrencyInputPanel
-                      label={independentField === Field.OUTPUT && !showWrap && trade ? t('From (estimated)') : t('From')}
+                      label={
+                        independentField === Field.OUTPUT && !showWrap && trade ? t('From (estimated)') : t('From')
+                      }
                       value={formattedAmounts[Field.INPUT]}
                       showMaxButton={!atMaxAmountInput}
                       currency={currencies[Field.INPUT]}
@@ -1039,7 +1040,8 @@ export default function Swap({ history }: RouteComponentProps) {
                           onClick={handleArrowContainer}
                           color={currencies[Field.INPUT] && currencies[Field.OUTPUT] ? 'primary' : 'text'}
                         >
-                          <DownArrow />
+                          {/* <DownArrow /> */}
+                          <SwapIcon color="white" width="14px" height="18px" />
                         </ArrowContainer>
                         {recipient === null && !showWrap && isExpertMode ? (
                           <Button variant="text" id="add-recipient-button" onClick={handleChangeRecipient}>
@@ -1074,7 +1076,7 @@ export default function Swap({ history }: RouteComponentProps) {
                         <AddressInputPanel id="recipient" value={recipient} onChange={onChangeRecipient} />
                       </>
                     ) : null}
-                    <Flex justifyContent="space-between" alignItems="center" marginTop="20px">
+                    <SlippageTextWrapper>
                       <Flex alignItems="center">
                         <SlippageText>
                           <span>{t('Slippage Tolerance')}</span>
@@ -1091,7 +1093,7 @@ export default function Swap({ history }: RouteComponentProps) {
                           </SlippageText>
                         </Flex>
                       )}
-                    </Flex>
+                    </SlippageTextWrapper>
                   </AutoColumn>
                   <BottomGrouping mt="1rem">
                     {swapIsUnsupported ? (
@@ -1140,14 +1142,16 @@ export default function Swap({ history }: RouteComponentProps) {
                           width="48%"
                           id="swap-button"
                           disabled={
-                            !isValid || approval !== ApprovalState.APPROVED || (priceImpactSeverity > 3 && !isExpertMode)
+                            !isValid ||
+                            approval !== ApprovalState.APPROVED ||
+                            (priceImpactSeverity > 3 && !isExpertMode)
                           }
                         >
                           {priceImpactSeverity > 3 && !isExpertMode
                             ? t('Price Impact High')
                             : priceImpactSeverity > 2
-                              ? t('Swap Anyway')
-                              : t('Swap')}
+                            ? t('Swap Anyway')
+                            : t('Swap')}
                         </Button>
                       </RowBetween>
                     ) : (
@@ -1162,8 +1166,8 @@ export default function Swap({ history }: RouteComponentProps) {
                           (priceImpactSeverity > 3 && !isExpertMode
                             ? `Price Impact Too High`
                             : priceImpactSeverity > 2
-                              ? t('Swap Anyway')
-                              : t('Swap'))}
+                            ? t('Swap Anyway')
+                            : t('Swap'))}
                       </Button>
                     )}
                     {showApproveFlow && (
@@ -1182,186 +1186,6 @@ export default function Swap({ history }: RouteComponentProps) {
               </SwapTabPanel>
             </Card>
           </SwapTabs>
-          {/* <div style={{ height: 48, marginTop: 16, marginBottom: 25 }}>
-            <Flex alignItems="center" justifyContent="center" style={{ marginBottom: 8 }}>
-              <SwapCardNav />
-            </Flex>
-            <Flex alignItems="center" justifyContent="center">
-              <AutoCardNav
-                swapRouter={swapRouter}
-                setSwapRouter={setSwapRouter}
-                connectedNetworkID={connectedNetworkID}
-              />
-            </Flex>
-          </div> */}
-          {/* <Card bgColor={theme.isDark ? "#0E0E26" : "#2A2E60"} borderRadius="8px" padding="0 10px 20px 10px">
-            {swapType === 'swap' && (
-              <Wrapper id="swap-page">
-                <AppHeader title={t('Swap')} showAuto />
-                <AutoColumn gap="md">
-                  <CurrencyInputPanel
-                    label={independentField === Field.OUTPUT && !showWrap && trade ? t('From (estimated)') : t('From')}
-                    value={formattedAmounts[Field.INPUT]}
-                    showMaxButton={!atMaxAmountInput}
-                    currency={currencies[Field.INPUT]}
-                    onUserInput={handleTypeInput}
-                    onMax={handleMaxInput}
-                    onCurrencySelect={handleInputSelect}
-                    otherCurrency={currencies[Field.OUTPUT]}
-                    id="swap-currency-input"
-                  />
-                  <AutoColumn justify="space-between">
-                    <BalanceText>
-                      <BalanceNumber prefix="" value={Number(inputBalance).toFixed(2)} />
-                    </BalanceText>
-                    <AutoRow justify={isExpertMode ? 'space-between' : 'center'} style={{ padding: '0 1rem' }}>
-                      <ArrowContainer
-                        clickable
-                        onClick={handleArrowContainer}
-                        color={currencies[Field.INPUT] && currencies[Field.OUTPUT] ? 'primary' : 'text'}
-                      >
-                        <DownArrow />
-                      </ArrowContainer>
-                      {recipient === null && !showWrap && isExpertMode ? (
-                        <Button variant="text" id="add-recipient-button" onClick={handleChangeRecipient}>
-                          {t('+ Add a send (optional)')}
-                        </Button>
-                      ) : null}
-                    </AutoRow>
-                  </AutoColumn>
-                  <CurrencyInputPanel
-                    value={formattedAmounts[Field.OUTPUT]}
-                    onUserInput={handleTypeOutput}
-                    label={independentField === Field.INPUT && !showWrap && trade ? t('To (estimated)') : t('To')}
-                    showMaxButton={false}
-                    currency={currencies[Field.OUTPUT]}
-                    onCurrencySelect={handleOutputSelect}
-                    otherCurrency={currencies[Field.INPUT]}
-                    id="swap-currency-output"
-                  />
-                  <BalanceText>
-                    <BalanceNumber prefix="" value={Number(outputBalance).toFixed(2)} />
-                  </BalanceText>
-                  {isExpertMode && recipient !== null && !showWrap ? (
-                    <>
-                      <AutoRow justify="space-between" style={{ padding: '0 1rem' }}>
-                        <ArrowWrapper clickable={false}>
-                          <ArrowDownIcon width="16px" />
-                        </ArrowWrapper>
-                        <Button variant="text" id="remove-recipient-button" onClick={handleRemoveRecipient}>
-                          {t('- Remove send')}
-                        </Button>
-                      </AutoRow>
-                      <AddressInputPanel id="recipient" value={recipient} onChange={onChangeRecipient} />
-                    </>
-                  ) : null}
-                  <Flex justifyContent="space-between" alignItems="center" marginTop="20px">
-                    <Flex alignItems="center">
-                      <SlippageText>
-                        <span>{t('Slippage Tolerance')}</span>
-                        <b>: {allowedSlippage / 100}%</b>
-                      </SlippageText>
-                    </Flex>
-                    {currencies[Field.INPUT] && currencies[Field.OUTPUT] && (
-                      <Flex alignItems="center">
-                        <SlippageText>
-                          <b>
-                            1 {currencies[Field.INPUT]?.symbol} = {trade?.executionPrice.toSignificant(6)}{' '}
-                            {currencies[Field.OUTPUT]?.symbol}
-                          </b>
-                        </SlippageText>
-                      </Flex>
-                    )}
-                  </Flex>
-                </AutoColumn>
-                <BottomGrouping mt="1rem">
-                  {swapIsUnsupported ? (
-                    <Button width="100%" disabled mb="4px">
-                      {t('Unsupported Asset')}
-                    </Button>
-                  ) : !account ? (
-                    <ConnectWalletButton width="100%" />
-                  ) : showWrap ? (
-                    <Button width="100%" disabled={Boolean(wrapInputError)} onClick={onWrap}>
-                      {wrapInputError ??
-                        (wrapType === WrapType.WRAP ? 'Wrap' : wrapType === WrapType.UNWRAP ? 'Unwrap' : null)}
-                    </Button>
-                  ) : noRoute && userHasSpecifiedInputOutput ? (
-                    <GreyCard style={{ textAlign: 'center' }}>
-                      <Text color="textSubtle" mb="4px">
-                        {t('Insufficient liquidity for this trade.')}
-                      </Text>
-                      {singleHopOnly && (
-                        <Text color="textSubtle" mb="4px">
-                          {t('Try enabling multi-hop trades.')}
-                        </Text>
-                      )}
-                    </GreyCard>
-                  ) : showApproveFlow ? (
-                    <RowBetween>
-                      <Button
-                        variant={approval === ApprovalState.APPROVED ? 'success' : 'primary'}
-                        onClick={approveCallback}
-                        disabled={approval !== ApprovalState.NOT_APPROVED || approvalSubmitted}
-                        width="48%"
-                      >
-                        {approval === ApprovalState.PENDING ? (
-                          <AutoRow gap="6px" justify="center">
-                            {t('Enabling')} <CircleLoader stroke="white" />
-                          </AutoRow>
-                        ) : approvalSubmitted && approval === ApprovalState.APPROVED ? (
-                          t('Enabled')
-                        ) : (
-                          t('Enable %asset%', { asset: currencies[Field.INPUT]?.symbol ?? '' })
-                        )}
-                      </Button>
-                      <Button
-                        variant={isValid && priceImpactSeverity > 2 ? 'danger' : 'primary'}
-                        onClick={handleSwapState}
-                        width="48%"
-                        id="swap-button"
-                        disabled={
-                          !isValid || approval !== ApprovalState.APPROVED || (priceImpactSeverity > 3 && !isExpertMode)
-                        }
-                      >
-                        {priceImpactSeverity > 3 && !isExpertMode
-                          ? t('Price Impact High')
-                          : priceImpactSeverity > 2
-                            ? t('Swap Anyway')
-                            : t('Swap')}
-                      </Button>
-                    </RowBetween>
-                  ) : (
-                    <Button
-                      variant={isValid && priceImpactSeverity > 2 && !swapCallbackError ? 'danger' : 'primary'}
-                      onClick={handleSwapState}
-                      id="swap-button"
-                      width="100%"
-                      disabled={!isValid || (priceImpactSeverity > 3 && !isExpertMode) || !!swapCallbackError}
-                    >
-                      {swapInputError ||
-                        (priceImpactSeverity > 3 && !isExpertMode
-                          ? `Price Impact Too High`
-                          : priceImpactSeverity > 2
-                            ? t('Swap Anyway')
-                            : t('Swap'))}
-                    </Button>
-                  )}
-                  {showApproveFlow && (
-                    <Column style={{ marginTop: '1rem' }}>
-                      <ProgressSteps steps={[approval === ApprovalState.APPROVED]} />
-                    </Column>
-                  )}
-                  {isExpertMode && swapErrorMessage ? <SwapCallbackError error={swapErrorMessage} /> : null}
-                </BottomGrouping>
-              </Wrapper>
-            )}
-            {(swapType === 'liquidity' || swapType === 'addLiquidity' || swapType === 'removeLiquidity') && (
-              <Wrapper id="pool-page">
-                <LiquidityWidget />
-              </Wrapper>
-            )}
-          </Card> */}
           <AdvancedSwapDetailsDropdown trade={trade} />
           <TokenInfoWrapper>
             <TokenInfo tokenData={tokenData} tokenAddress={input} />
@@ -1376,29 +1200,33 @@ export default function Swap({ history }: RouteComponentProps) {
               price={tokenPrice}
             />
             <CoinStatsBoard tokenData={tokenData} />
-            <ChartContainer tokenAddress={input} tokenData={tokenData}/>
-            <SwapTabs
-              selectedTabClassName='is-selected'
-              selectedTabPanelClassName='is-selected'
-            >
+            <ChartContainer tokenAddress={input} tokenData={tokenData} routerVersion={routerVersion} />
+            <SwapTabs selectedTabClassName="is-selected" selectedTabPanelClassName="is-selected">
               <SwapTabList>
                 <SwapTab>
-                  <Text>
+                  <Text textAlign="center" fontSize="14px" bold textTransform="capitalize" color="#A7A7CC">
                     {t('tokenDX')}
                   </Text>
                 </SwapTab>
                 <SwapTab>
-                  <Text>
+                  <Text textAlign="center" fontSize="14px" bold textTransform="capitalize" color="#A7A7CC">
                     {t('buyers')}
                   </Text>
                 </SwapTab>
                 <SwapTab>
-                  <Text>
+                  <Text textAlign="center" fontSize="14px" bold textTransform="capitalize" color="#A7A7CC">
                     {t('sellers')}
                   </Text>
                 </SwapTab>
+                {isMobile && (
+                  <SwapTab>
+                    <Text textAlign="center" fontSize="14px" bold textTransform="capitalize" color="#A7A7CC">
+                      {t('info')}
+                    </Text>
+                  </SwapTab>
+                )}
               </SwapTabList>
-              <Card bgColor={theme.isDark ? "#0E0E26" : "#2A2E60"} borderRadius="0 0 3px 3px" padding="20px 10px">
+              <Card bgColor={theme.isDark ? '#0E0E26' : '#2A2E60'} borderRadius="0 0 3px 3px" padding="20px 10px">
                 <SwapTabPanel>
                   <TransactionCard transactionData={transactionData} isLoading={isLoading} symbol={symbol} />
                 </SwapTabPanel>
@@ -1408,22 +1236,11 @@ export default function Swap({ history }: RouteComponentProps) {
                 <SwapTabPanel>
                   <SellersCard pairAddress={pairs[0]} />
                 </SwapTabPanel>
+                <SwapTabPanel>
+                  <TokenInfo tokenData={tokenData} tokenAddress={input} />
+                </SwapTabPanel>
               </Card>
             </SwapTabs>
-            {/* <div
-              style={{
-                alignSelf: 'center',
-                textAlign: 'center',
-                width: '100%',
-                marginTop: '25px',
-              }}
-            >
-              {swapTransCard === 'tokenDX' && (
-                <TransactionCard transactionData={transactionData} isLoading={isLoading} symbol={symbol} />
-              )}
-              {swapTransCard === 'buyers' && <BuyersCard pairAddress={pairs[0]} />}
-              {swapTransCard === 'sellers' && <SellersCard pairAddress={pairs[0]} />}
-            </div> */}
           </FullHeightColumn>
         </div>
       </Cards>

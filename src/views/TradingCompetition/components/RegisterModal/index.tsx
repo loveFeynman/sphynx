@@ -2,11 +2,11 @@ import React from 'react'
 import styled from 'styled-components'
 import { Modal, Button, NoProfileAvatarIcon, Flex } from '@sphynxswap/uikit'
 import { useTranslation } from 'contexts/Localization'
+import ProfileAvatar from 'components/ProfileAvatar'
 import { CompetitionProps } from '../../types'
 import MakeProfile from './MakeProfile'
 import ReactivateProfile from './ReactivateProfile'
 import RegisterWithProfile from './RegisterWithProfile'
-import ProfileAvatar from 'components/ProfileAvatar'
 
 const AvatarWrapper = styled.div`
   height: 64px;

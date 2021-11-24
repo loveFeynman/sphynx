@@ -1,4 +1,5 @@
 import { createReducer } from '@reduxjs/toolkit'
+import { SPHYNX_TOKEN_ADDRESS } from 'config/constants'
 import { resetMintState, typeInput, setIsInput, typeRouterVersion, marketCap, setCustomChartType, setConnectedNetworkID } from './actions'
 
 interface InputState {
@@ -14,7 +15,7 @@ const CHART_TYPE = 'tv.chart.type'
 const CONNECTED_NETWORKID = 'chainID'
 
 const initialState: InputState = {
-  input: '0x2e121ed64eeeb58788ddb204627ccb7c7c59884c',
+  input: `${SPHYNX_TOKEN_ADDRESS}`,
   isInput: true,
   routerVersion: 'sphynx',
   marketCapacity: 0,

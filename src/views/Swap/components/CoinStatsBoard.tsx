@@ -2,9 +2,7 @@ import React, { useEffect, useState, useRef, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { utils } from 'ethers'
 import styled from 'styled-components'
-import Column from 'components/Column'
 import { isAddress } from 'utils'
-import { useTranslation } from 'contexts/Localization'
 import { marketCap } from 'state/input/actions'
 import { ReactComponent as PriceIcon } from 'assets/svg/icon/PriceIcon.svg'
 import { ReactComponent as ChangeIcon } from 'assets/svg/icon/ChangeIcon.svg'
@@ -16,21 +14,42 @@ import { getChartStats } from 'utils/apiServices'
 import { AppState } from '../../../state'
 import TokenStateCard from './TokenStateCard'
 
-const IconWrapper = styled.div<{ size?: number }>`
+const ContainerExtra = styled.div`
   display: flex;
-  flex-flow: column nowrap;
-  align-items: center;
-  justify-content: center;
-  margin-right: 8px;
-  & > img,
-  height: ${({ size }) => (size ? `${size}px` : '32px')};
-  width: ${({ size }) => (size ? `${size}px` : '32px')};
-  span {
-    height: ${({ size }) => (size ? `${size}px` : '32px')};
-    width: ${({ size }) => (size ? `${size}px` : '32px')};
+  width: 100%;
+  margin-bottom: 24px;
+  gap: 12px;
+  flex-wrap: nowrap;
+  & > div:first-child {
+    width: unset;
   }
-  ${({ theme }) => theme.mediaQueries.lg} {
-    align-items: flex-end;
+  & > div:nth-child(2) {
+    width: unset;
+    div {
+      white-space: nowrap;
+      width: 90%;
+    }
+  }
+  & > div:nth-child(3) {
+    width: unset;
+    div {
+      white-space: nowrap;
+      width: 90%;
+    }
+  }
+  & > div:nth-child(4) {
+    width: unset;
+    div {
+      white-space: nowrap;
+      width: 90%;
+    }
+  }
+  & > div:nth-child(5) {
+    width: unset;
+    div {
+      white-space: nowrap;
+      width: 90%;
+    }
   }
 `
 
@@ -40,115 +59,38 @@ const Container = styled.div`
   margin-bottom: 24px;
   gap: 12px;
   flex-wrap: wrap;
-
-  div:nth-child(2) {
+  &>div:first-child {
+    width: 100%;
+  }
+  &>div:nth-child(2) {
     width: 47%;
     div {
-      width: 100%;
+      white-space: nowrap;
+      width: 90%;
     }
   }
-  div:nth-child(3) {
+  &>div:nth-child(3) {
     width: 47%;
     div {
-      width: 100%;
+      white-space: nowrap;
+      width: 90%;
     }
   }
-  div:nth-child(4) {
+  &>div:nth-child(4) {
     width: 13%;
     div {
-      width: 100%;
+      white-space: nowrap;
+      width: 90%;
     }
   }
-  div:nth-child(5) {
+  &>div:nth-child(5) {
     width: 13%;
     div {
-      width: 100%;
+      white-space: nowrap;
+      width: 90%;
     }
   }
-
-  ${({ theme }) => theme.mediaQueries.lg} {
-    flex-wrap: nowrap;
-    div:nth-child(1) {
-      width: unset;
-    }
-    div:nth-child(2) {
-      width: unset;
-    }
-    div:nth-child(3) {
-      width: unset;
-    }
-    div:nth-child(4) {
-      width: unset;
-    }
-    div:nth-child(5) {
-      width: unset;
-    }
-  }
-}
-`
-
-const StyledWrapper = styled.div`
-  padding: 8px 16px 0;
-  display: flex;
-  flex-wrap: wrap;
-  & > div {
-    margin: 0 12px 8px 0;
-    width: calc(50% - 12px);
-    &:first-child {
-      width: 100%;
-    }
-    & > div,
-    & > div > div > div {
-      &:first-child {
-        color: white;
-        font-size: 14px;
-        line-height: 16px;
-        font-weight: 500;
-        margin-bottom: 2px;
-      }
-      &:last-child {
-        color: #adb5bd;
-        font-weight: bold;
-        font-size: 14px;
-        line-height: 16px;
-      }
-    }
-    & .success {
-      color: #00ac1c;
-    }
-    & .error {
-      color: #ea3943;
-    }
-    & h2 {
-      font-size: 14px;
-      line-height: 16px;
-      font-weight: bold;
-    }
-  }
-  ${({ theme }) => theme.mediaQueries.md} {
-    flex-wrap: nowrap;
-    align-items: center;
-    justify-content: space-between;
-    margin: 0;
-    min-width: 500px;
-    & > div {
-      &:first-child {
-        min-width: 192px;
-      }
-    }
-  }
-`
-
-const TokenTitleCard = styled(Column)<{variantFill}>`
-  background: ${({ variantFill }) => (variantFill ? 'linear-gradient(90deg, #610D89 0%, #C42BB4 100%)' : '')};
-  border: 1px solid ${({ theme }) => theme.colors.primary};
-  border-radius: 5px;
-  padding: 24px;
-`
-
-const TokenPriceCard = styled(Column)`
-
-`
+}`
 
 export default function CoinStatsBoard(props) {
   const dispatch = useDispatch()
@@ -159,7 +101,6 @@ export default function CoinStatsBoard(props) {
   const interval = useRef(null)
   const tokenAddress = useRef(null)
   tokenAddress.current = input
-  const { t } = useTranslation()
 
   const [alldata, setalldata] = useState({
     address: '',
@@ -174,13 +115,14 @@ export default function CoinStatsBoard(props) {
   const [price, setPrice] = useState<any>(null)
   const [scale, setScale] = useState(2)
 
-  const [linkIcon, setLinkIcon] = useState(
-    DefaultImg,
-  )
+  const [linkIcon, setLinkIcon] = useState(DefaultImg)
   const changedecimal: any = parseFloat(alldata.change).toFixed(3)
   const volumedecimal = parseFloat(alldata.volume).toFixed(3)
   const liquidityV2decimal = parseFloat(alldata.liquidityV2).toFixed(3)
   const liquidityV2BNBdecimal = parseFloat(alldata.liquidityV2BNB).toFixed(3)
+  const isExtra = document.body.clientWidth > 1500
+
+  const RealContainer = isExtra ? ContainerExtra : Container
 
   const getTableData = useCallback(async () => {
     try {
@@ -189,8 +131,7 @@ export default function CoinStatsBoard(props) {
         setalldata(chartStats)
         setPrice(chartStats.price)
         setLinkIcon(
-          `https://r.poocoin.app/smartchain/assets/${
-            input ? utils.getAddress(input) : '0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82'
+          `https://r.poocoin.app/smartchain/assets/${input ? utils.getAddress(input) : '0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82'
           }/logo.png`,
         )
       }
@@ -217,7 +158,7 @@ export default function CoinStatsBoard(props) {
   useEffect(() => {
     if (tokenData) dispatch(marketCap({ marketCapacity: Number(parseInt(tokenData.totalSupply) * parseFloat(price)) }))
     const realPrice = parseFloat(price)
-    if(realPrice > 1) {
+    if (realPrice > 1) {
       setScale(2)
     } else {
       const lg10 = Math.round(Math.abs(Math.log10(realPrice)))
@@ -227,12 +168,50 @@ export default function CoinStatsBoard(props) {
   }, [tokenData, price])
 
   return (
-    <Container>
-      <TokenStateCard tokenImg={linkIcon} cardTitle={tokenData?.symbol?? ''} cardValue={`$ ${marketCapacity.toLocaleString()}`} variantFill flexGrow={2} fillColor='#F75183'/>
-      <TokenStateCard CardIcon={PriceIcon} cardTitle='Price' cardValue={price? `$ ${Number(price).toFixed(scale).toLocaleString()}` : ''} variantFill={false} flexGrow={1} fillColor='#9B51E0' />
-      <TokenStateCard CardIcon={ChangeIcon} cardTitle='24h Change' cardValue={changedecimal? `${changedecimal}%`:''} valueActive variantFill={false} flexGrow={1} fillColor='#77BF3E' />
-      <TokenStateCard CardIcon={VolumeIcon} cardTitle='24h Volume' cardValue={volumedecimal? `$ ${Number(volumedecimal).toLocaleString()}` : ''} variantFill={false} flexGrow={1.5} fillColor='#21C2CC' />
-      <TokenStateCard CardIcon={LiquidityIcon} cardTitle='Liquidity' cardValue={`${Number(liquidityV2BNBdecimal).toLocaleString()} BNB`} fillColor='#2F80ED' subPriceValue={liquidityV2decimal? `(${Number(liquidityV2decimal).toLocaleString()})` : ''} variantFill={false} flexGrow={1.5} />
-    </Container>
+    <RealContainer>
+      <TokenStateCard
+        tokenImg={linkIcon}
+        cardTitle={tokenData?.symbol ?? ''}
+        cardValue={`$ ${marketCapacity.toLocaleString()}`}
+        variantFill
+        flexGrow={2}
+        fillColor="#F75183"
+        tokenAddress={tokenAddress.current}
+      />
+      <TokenStateCard
+        CardIcon={PriceIcon}
+        cardTitle="Price"
+        cardValue={price ? `$ ${Number(price).toFixed(scale).toLocaleString()}` : ''}
+        variantFill={false}
+        flexGrow={1}
+        fillColor="#9B51E0"
+      />
+      <TokenStateCard
+        CardIcon={ChangeIcon}
+        cardTitle="24h Change"
+        cardValue={changedecimal ? `${changedecimal}%` : ''}
+        valueActive
+        variantFill={false}
+        flexGrow={1}
+        fillColor="#77BF3E"
+      />
+      <TokenStateCard
+        CardIcon={VolumeIcon}
+        cardTitle="24h Volume"
+        cardValue={volumedecimal ? `$ ${Number(volumedecimal).toLocaleString()}` : ''}
+        variantFill={false}
+        flexGrow={1.5}
+        fillColor="#21C2CC"
+      />
+      <TokenStateCard
+        CardIcon={LiquidityIcon}
+        cardTitle="Liquidity"
+        cardValue={`${Number(liquidityV2BNBdecimal).toLocaleString()} BNB`}
+        fillColor="#2F80ED"
+        subPriceValue={liquidityV2decimal ? `($ ${Number(liquidityV2decimal).toLocaleString()})` : ''}
+        variantFill={false}
+        flexGrow={1.5}
+      />
+    </RealContainer>
   )
 }

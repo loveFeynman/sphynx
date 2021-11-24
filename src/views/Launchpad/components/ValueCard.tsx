@@ -1,34 +1,47 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React from 'react'
 import styled from 'styled-components';
+import {  Flex } from '@sphynxswap/uikit'
 
-const CardWrapper = styled.div`
+const CardWrapper = styled.div<{color: string}>`
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 36px;
-    background: #0006;
-    border-radius: 8px;
-    flex-flow: column;
+    width: 100%;
+    padding: 17px 24px;
+    background: ${ ({color}) => color };
+    border-radius: 5px;
+    border: 1px solid #5E2B60;
+    flex-flow: row;
+    margin: 10px 0;
     h1 {
-        font-size: 48px;
-        line-height: 72px;
-        margin-bottom: 36px;
-        margin-top: 36px;
+        font-size: 20px;
+    }
+    p {
+        font-size: 12px;
+    }
+    ${({ theme }) => theme.mediaQueries.sm} {
+        width: 48%;
+    }
+    ${({ theme }) => theme.mediaQueries.xl} {
+        width: 24%;
     }
 `
 
 interface VauleCardProps {
     value?: string;
     desc?: string;
+    color?: string;
 }
 
-const ValueCard: React.FC<VauleCardProps> = ({value, desc}) => {
+const ValueCard: React.FC<VauleCardProps> = ({ children, value, desc, color="transparent" }) => {
     return (
-      <CardWrapper>
-          <h1>{value}</h1>
-          <p>{desc}</p>
-      </CardWrapper>
+        <CardWrapper color={color}>
+            {children}
+            <Flex flexDirection='column' alignItems='start' ml='25px'>
+                <h1>{value}</h1>
+                <p>{desc}</p>
+            </Flex>
+        </CardWrapper>
     )
-  }
+}
 
 export default ValueCard;

@@ -8,6 +8,12 @@ const fetchFarms = async (farmsToFetch: FarmConfig[]) => {
       return farm
     }),
   )
+  .then((res) => {
+    return res
+  })
+  .catch(error => {
+    return undefined
+  });
   return data
 }
 

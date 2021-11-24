@@ -1,31 +1,28 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React from 'react'
 import styled from 'styled-components';
+import {  Text } from '@sphynxswap/uikit'
 
 const CardWrapper = styled.div`
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 36px;
-    background: #0006;
+    background: transparent;
     border-radius: 8px;
     flex-flow: column;
-    & > *:first-child {
-        margin-top: 32px;
-        margin-bottom: 32px;
-    }
+    width: 30%;
 `
 
 interface ImgCardProps {
     desc?: string;
 }
 
-const ImgCard: React.FC<ImgCardProps> = ({children, desc}) => {
+const ImgCard: React.FC<ImgCardProps> = ({ children, desc }) => {
     return (
-      <CardWrapper>
-          {children}
-          <p>{desc}</p>
-      </CardWrapper>
+        <CardWrapper>
+            {children}
+            <Text fontSize='16px' bold>{desc}</Text>
+        </CardWrapper>
     )
-  }
+}
 
 export default ImgCard;

@@ -22,7 +22,7 @@ const StyledBar = styled.div`
 
 const FlowBar = styled.div`
   width: calc(100% - 100px);
-  background-color: rgba(0, 0, 0, 0.2);
+  background-color: transparent;
   border-radius: 0px 12px 12px 0px;
   padding: 6px;
 `
@@ -33,12 +33,14 @@ const BarIntro = styled.div`
   align-items: center;
   justify-content: space-between;
   padding: 0 8px;
-  color: #fff;
-  background-color: #101010;
+  background-color: transparent;
   border-radius: 8px 0px 0px 8px;
   & span {
+    color: #A7A7CC;
     font-size: 12px;
+    font-weight: bold;
     line-height: 14px;
+    text-transform: uppercase;
   }
 `
 
@@ -110,7 +112,7 @@ export default function HotTokenBar() {
             gradient={false}
             speed={40}
             className="marquee-container"
-            style={{ overflow: 'hidden !important', color: 'white' }}
+            style={{ overflow: 'hidden !important', color: 'white', fontSize: '12px' }}
           >
             Coming soon
           </Marquee>

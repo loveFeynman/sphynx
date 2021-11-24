@@ -5,8 +5,8 @@ import { BoxesLoader } from 'react-awesome-loaders'
 import axios from 'axios'
 import { useSelector } from 'react-redux'
 import styled from 'styled-components'
-import { AppState } from '../../../state'
 import { BITQUERY_API, BITQUERY_API_KEY } from 'config/constants/endpoints'
+import { AppState } from '../../../state'
 
 export interface LineChartProps {
   data?: Array<any>
@@ -110,7 +110,7 @@ const LineChart: React.FC<LineChartProps> = ({ data = [], width = 500, height = 
       if (input) {
         // console.log('in here:::::::')
         setLoader(true)
-        let config = {
+        const config = {
           headers: {
             'X-API-KEY': BITQUERY_API_KEY,
           },

@@ -1,6 +1,8 @@
 import React, { useCallback, useState } from 'react'
 import styled from 'styled-components'
-import { RouterType } from '@sphynxswap/sdk'
+import { AppState } from 'state'
+import { autoSlippage } from 'state/flags/actions'
+import { useDispatch, useSelector } from 'react-redux'
 import {
   Text,
   Flex,
@@ -14,7 +16,7 @@ import {
 } from '@sphynxswap/uikit'
 import SettingsModal from 'components/Menu/GlobalSettings/SettingsModal'
 import { useTranslation } from 'contexts/Localization'
-import { useSwapType, useSetRouterType } from 'state/application/hooks'
+import { useSwapType } from 'state/application/hooks'
 import { useExpertModeManager } from 'state/user/hooks'
 import Transactions from './Transactions'
 import QuestionHelper from '../QuestionHelper'
@@ -43,13 +45,16 @@ const TransparentIconButton = styled(IconButton)`
 
 const AutoButton = styled(Button)`
   color: white;
-  background: transparent !important;
-  padding: 4px 6px;
+  background: ${({ theme }) => theme.isDark ? "transparent !important" : "#20234E"};
+  padding: 4px 12px;
   margin-right: 8px;
-  height: 36px;
+  height: 25px;
   outline: none;
-  border: none;
+  font-weight: 600;
+  font-size: 12px;
   box-shadow: none !important;
+  border: 1px solid #B314DA;
+  border-radius: 12px;
   &.focused {
     box-shadow: 0 0 0 2px #8b2a9b !important;
   }
@@ -59,10 +64,11 @@ const AppHeader: React.FC<Props> = ({ title, subtitle, helper, backTo, showAuto,
   const [expertMode] = useExpertModeManager()
 
   const { setSwapType } = useSwapType()
-  const [autoFocused, setAutoFocused] = useState(true)
+  const autoSlippageFlag = useSelector<AppState, AppState['autoSwapReducer']>((state) => state.autoSwapReducer.autoSlippageFlag)
+  const [autoFocused, setAutoFocused] = useState(autoSlippageFlag)
+  const dispatch = useDispatch()
 
   const { t } = useTranslation()
-  const { setRouterType } = useSetRouterType()
 
   const [onPresentSettingsModal] = useModal(<SettingsModal />)
 
@@ -71,9 +77,9 @@ const AppHeader: React.FC<Props> = ({ title, subtitle, helper, backTo, showAuto,
   }, [backTo, setSwapType])
 
   const handleAutoFocused = useCallback(() => {
-    setAutoFocused(true)
-    setRouterType(RouterType.sphynx)
-  }, [setRouterType])
+    setAutoFocused(!autoFocused)
+    dispatch(autoSlippage({ autoSlippageFlag: !autoFocused }))
+  }, [autoFocused, dispatch])
   
   const handleSettingsModal = useCallback(() => {
     onPresentSettingsModal()
@@ -120,7 +126,6 @@ const AppHeader: React.FC<Props> = ({ title, subtitle, helper, backTo, showAuto,
                 onClick={handleSettingsModal}
                 variant="text"
                 scale="sm"
-                mr="8px"
                 aria-label="setting modal"
               >
                 <CogIcon height={22} width={22} color="white" />

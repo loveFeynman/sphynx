@@ -1,10 +1,17 @@
 import BigNumber from 'bignumber.js'
+import styled from 'styled-components'
 import React, { useCallback, useMemo, useState } from 'react'
 import { Button, Modal, LinkExternal } from '@sphynxswap/uikit'
 import { ModalActions, ModalInput } from 'components/Modal'
 import { useTranslation } from 'contexts/Localization'
 import { getFullDisplayBalance } from 'utils/formatBalance'
 import useToast from 'hooks/useToast'
+import { DarkButtonStyle, ColorButtonStyle } from 'style/buttonStyle'
+
+const CustomModal = styled(Modal)`
+  border-radius: 20px;
+  background: #1A1A3A;
+`
 
 interface DepositModalProps {
   max: BigNumber
@@ -57,7 +64,7 @@ const DepositModal: React.FC<DepositModalProps> = ({ max, onConfirm, onDismiss, 
   }, [onConfirm, onDismiss, t, toastError, toastSuccess, val])
 
   return (
-    <Modal title={t('Stake LP tokens')} onDismiss={onDismiss}>
+    <CustomModal title={t('Stake LP tokens')} onDismiss={onDismiss} headerBackground='#0E0E26'>
       <ModalInput
         value={val}
         onSelectMax={handleSelectMax}
@@ -68,11 +75,12 @@ const DepositModal: React.FC<DepositModalProps> = ({ max, onConfirm, onDismiss, 
         inputTitle={t('Stake')}
       />
       <ModalActions>
-        <Button variant="secondary" onClick={onDismiss} width="100%" disabled={pendingTx}>
+        <Button variant="secondary" onClick={onDismiss} width="100%" disabled={pendingTx} style={DarkButtonStyle}>
           {t('Cancel')}
         </Button>
         <Button
           width="100%"
+          style={ColorButtonStyle}
           disabled={pendingTx || !valNumber.isFinite() || valNumber.eq(0) || valNumber.gt(fullBalanceNumber)}
           onClick={handleConfirm}
         >
@@ -82,7 +90,7 @@ const DepositModal: React.FC<DepositModalProps> = ({ max, onConfirm, onDismiss, 
       <LinkExternal href={addLiquidityUrl} style={{ alignSelf: 'center' }}>
         {t('Get %symbol%', { symbol: tokenName })}
       </LinkExternal>
-    </Modal>
+    </CustomModal>
   )
 }
 

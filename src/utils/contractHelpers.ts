@@ -27,6 +27,7 @@ import {
   getBunnySpecialCakeVaultAddress,
   getBunnySpecialPredictionAddress,
   getFarmAuctionAddress,
+  getPresaleAddress,
 } from 'utils/addressHelpers'
 
 // ABI
@@ -56,6 +57,7 @@ import MultiCallAbi from 'config/abi/Multicall.json'
 import bunnySpecialCakeVaultAbi from 'config/abi/bunnySpecialCakeVault.json'
 import bunnySpecialPredictionAbi from 'config/abi/bunnySpecialPrediction.json'
 import farmAuctionAbi from 'config/abi/farmAuction.json'
+import presaleAbi from 'config/abi/presaleABI.json'
 import { ChainLinkOracleContract, FarmAuctionContract, PredictionsContract } from './types'
 
 const getContract = (abi: any, address: string, signer?: ethers.Signer | ethers.providers.Provider) => {
@@ -145,4 +147,7 @@ export const getBunnySpecialPredictionContract = (signer?: ethers.Signer | ether
 }
 export const getFarmAuctionContract = (signer?: ethers.Signer | ethers.providers.Provider) => {
   return getContract(farmAuctionAbi, getFarmAuctionAddress(), signer) as FarmAuctionContract
+}
+export const getPresaleContract = (signer?: ethers.Signer | ethers.providers.Provider) => {
+  return getContract(presaleAbi, getPresaleAddress(), signer)
 }

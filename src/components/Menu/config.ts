@@ -19,20 +19,35 @@ export const links = [
     href: '/swap',
   },
   {
-    label: 'Farms (coming soon)',
+    label: 'Farms (live)',
     icon: FarmIcon,
     href: '/farms',
   },
   {
-    label: 'Pools (coming soon)',
+    label: 'Pools (live)',
     icon: PoolIcon,
     href: '/pools',
   },
   {
-    label: 'Launchpad (coming soon)',
+    label: 'Sphynx pad (live)',
     icon: LaunchPadIcon,
     href: '/launchpad',
   },
+  {
+    label: 'Projects live on Sphynx (live)',
+    icon: PredictionIcon,
+    href: '/launchpad/listing',
+  },
+  // {
+  //   label: 'Sphynx lockers (coming soon)',
+  //   icon: LaunchPadIcon,
+  //   href: '/locker',
+  // },
+  // {
+  //   label: 'Sphynx lock (coming soon)',
+  //   icon: PredictionIcon,
+  //   href: '/locker/manage',
+  // },
   {
     label: 'Lottery (coming soon)',
     icon: IFOIcon,
@@ -46,14 +61,12 @@ export const links = [
   {
     label: 'CoinMarketCap',
     icon: CoinMarketCapsIcon,
-    href: 'https://coinmarketcap.com/currencies/sphynx-token/',
-    newTab: true
+    href: '/'
   },
   {
     label: 'CoinGecko',
     icon: CoingeckoIcon,
-    href: 'https://www.coingecko.com/en/coins/sphynx-token',
-    newTab: true
+    href: '/'
   },
   {
     label: 'Learning Hub',
