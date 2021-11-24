@@ -95,7 +95,8 @@ let config = {
 }
 
 const web3 = new Web3(web3ArchiveProvider)
-const datafeedWeb3 = new Web3('https://bsc-dataseed.binance.org')
+const dataFeedProvider = new Web3.providers.HttpProvider("https://bsc-dataseed.binance.org/")
+const datafeedWeb3 = new Web3(dataFeedProvider)
 
 const ArrowContainer = styled(ArrowWrapper)`
   width: 32px;

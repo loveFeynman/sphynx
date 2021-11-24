@@ -23,6 +23,7 @@ import { ReactComponent as SocialIcon2 } from 'assets/svg/icon/SocialIcon2.svg'
 import { ReactComponent as TelegramIcon } from 'assets/svg/icon/TelegramIcon.svg'
 import { ReactComponent as DiscordIcon } from 'assets/svg/icon/DiscordIcon.svg'
 import axios from 'axios'
+import { web3Provider } from 'utils/providers'
 import { BITQUERY_API, BITQUERY_API_KEY } from 'config/constants/endpoints'
 import storages from 'config/constants/storages'
 import { TOKEN_INTERVAL } from 'config/constants/info'
@@ -35,8 +36,7 @@ import { getBNBPrice } from 'utils/priceProvider'
 import { useThemeManager } from 'state/user/hooks'
 
 const abi: any = ERC20ABI
-const providerURL = 'https://speedy-nodes-nyc.moralis.io/fbb4b2b82993bf507eaaab13/bsc/mainnet/archive'
-const web3 = new Web3(new Web3.providers.HttpProvider(providerURL))
+const web3 = new Web3(web3Provider)
 
 const MenuWrapper = styled.div<{ toggled: boolean }>`
   width: 320px;

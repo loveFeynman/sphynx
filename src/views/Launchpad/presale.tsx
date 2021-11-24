@@ -21,7 +21,6 @@ import { useWeb3React } from '@web3-react/core'
 import { getSphynxRouterAddress } from 'utils/addressHelpers'
 import { useHistory } from 'react-router-dom'
 
-
 const Wrapper = styled.div`
   display: flex;
   justify-content: center;

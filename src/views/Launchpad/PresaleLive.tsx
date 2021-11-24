@@ -522,6 +522,8 @@ const PresaleLive: React.FC = () => {
   const [privateSale1, setPrivateSale1] = useState(false)
   const [privateSale2, setPrivateSale2] = useState(false)
   const [publicSale, setPublicSale] = useState(false)
+  const [endSale, setendSale] = useState(false)
+  const [failedSale, setFailedSale] = useState(false)
   const presaleAddress = getPresaleAddress()
   const timerRef = useRef<NodeJS.Timeout>()
   const PRESALE_DATA = [
@@ -603,6 +605,8 @@ const PresaleLive: React.FC = () => {
           setPrivateSale1(false)
           setPrivateSale2(false)
           setPublicSale(true)
+        } else if (now >= parseInt(tokenData.end_time)) {
+          setendSale(true)
         }
       }
     }, 10000)
@@ -633,6 +637,9 @@ const PresaleLive: React.FC = () => {
       temp = (await presaleContract.totalContributionBNB(param.saleId)).toString()
       value = parseFloat(ethers.utils.formatEther(temp))
       setRaise(value)
+      if (value < tokenData?.soft_cap && endSale) {
+        setFailedSale(true)
+      }
 
       temp = await presaleContract.presaleStatus(param.saleId)
       setPresaleStatus(temp)
@@ -670,7 +677,7 @@ const PresaleLive: React.FC = () => {
     if (tokenData) {
       fetchData()
     }
-  }, [presaleContract, tokenData, param.saleId, account, signer])
+  }, [presaleContract, tokenData, param.saleId, account, signer, endSale])
 
   const handlerChange = (e: any) => {
     setContribute(e.target.value)
@@ -801,39 +808,67 @@ const PresaleLive: React.FC = () => {
               </WhitelistCard>
               <WhitelistCard>
                 {!presaleStatus ? (
-                  <>
-                    <WhitelistTitle>
-                      Raised: {raise}/{tokenData?.hard_cap}
-                    </WhitelistTitle>
-                    <ProgressBarWrapper>
-                      <ProgressBar>
-                        <Progress state={(raise / tokenData?.hard_cap) * 100} />
-                      </ProgressBar>
-                    </ProgressBarWrapper>
-                    <TokenRateView>
-                      <Text fontSize="14px" fontWeight="600" color="#777777" textAlign="left">
-                        1 BNB = {tokenData && tokenData.tier3} {tokenData && tokenData.token_symbol}{' '}
+                  !failedSale ? (
+                    <>
+                      <WhitelistTitle>
+                        Raised: {raise}/{tokenData?.hard_cap}
+                      </WhitelistTitle>
+                      <ProgressBarWrapper>
+                        <ProgressBar>
+                          <Progress state={(raise / tokenData?.hard_cap) * 100} />
+                        </ProgressBar>
+                      </ProgressBarWrapper>
+                      <TokenRateView>
+                        <Text fontSize="14px" fontWeight="600" color="#777777" textAlign="left">
+                          1 BNB = {tokenData && tokenData.tier3} {tokenData && tokenData.token_symbol}{' '}
+                        </Text>
+                      </TokenRateView>
+                      <ContributeFlex>
+                        <InputWrapper>
+                          <input placeholder="" onChange={handlerChange} />
+                        </InputWrapper>
+                        <ColorButton onClick={handleComponent}>Contribute</ColorButton>
+                      </ContributeFlex>
+                      <Flex alignItems="center" style={{ width: '100%' }}>
+                        <StopwatchIcon />
+                        <Text fontSize="13px" fontWeight="600" style={{ margin: '0 10px' }}>
+                          {privateSale1
+                            ? 'Private sale 1 ends in'
+                            : privateSale2
+                            ? 'Private sale 2 ends in'
+                            : 'Public sale ends in'}{' '}
+                        </Text>
+                        <TimerComponent
+                          time={
+                            tokenData && privateSale1
+                              ? tokenData?.tier1_time
+                              : privateSale2
+                              ? tokenData?.tier2_time
+                              : tokenData?.end_time
+                          }
+                        />
+                      </Flex>
+                      <UnderLine />
+                    </>
+                  ) : (
+                    <>
+                      <Text textAlign="left" fontSize="12px" fontWeight="500" color="#777777">
+                        This presale has failed!
                       </Text>
-                    </TokenRateView>
-                    <ContributeFlex>
-                      <InputWrapper>
-                        <input placeholder="" onChange={handlerChange} />
-                      </InputWrapper>
-                      <ColorButton onClick={handleComponent}>Contribute</ColorButton>
-                    </ContributeFlex>
-                    <Flex alignItems="center" style={{ width: '100%' }}>
-                      <StopwatchIcon />
-                      <Text fontSize="13px" fontWeight="600" style={{ margin: '0 10px' }}>
-                        {privateSale1
-                          ? 'Private sale 1 ends in'
-                          : privateSale2
-                          ? 'Private sale 2 ends in'
-                          : 'Public sale ends in'}{' '}
+                      <Text textAlign="left" fontSize="12px" fontWeight="500" mt="16px" color="#777777">
+                        If you participated in the presale click the claim button below to claim your BNB!
                       </Text>
-                      <TimerComponent time={tokenData && privateSale1 ? tokenData?.tier1_time : privateSale2 ? tokenData?.tier2_time : tokenData?.end_time} />
-                    </Flex>
-                    <UnderLine />
-                  </>
+                      <ColorButton
+                        style={{ width: '100%' }}
+                        mt="16px"
+                        mb="16px"
+                        onClick={handleClaimToken}
+                        disabled={isClaimed}
+                      >
+                        Claim BNB
+                      </ColorButton>
+                    </>
+                  )
                 ) : (
                   <>
                     <Text textAlign="left" fontSize="12px" fontWeight="500" color="#777777">
@@ -878,7 +913,7 @@ const PresaleLive: React.FC = () => {
                     {userContributeToken} {tokenData && tokenData.token_symbol}
                   </Text>
                 </TokenAmountView>
-                {!presaleStatus ? (
+                {!presaleStatus && !failedSale ? (
                   <>
                     <Separate />
                     <DarkButton onClick={handleEmergencyWithdraw}>Emergency Withdraw</DarkButton>
