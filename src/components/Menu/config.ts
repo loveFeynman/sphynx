@@ -46,7 +46,7 @@ export const links = [
   {
     label: 'Sphynx lock (coming soon)',
     icon: PredictionIcon,
-    href: '/locker/create',
+    href: '/locker/manage',
   },
   {
     label: 'Lottery (coming soon)',
