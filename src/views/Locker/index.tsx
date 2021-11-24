@@ -4,8 +4,8 @@ import { Text, Flex, Box, useMatchBreakpoints } from '@sphynxswap/uikit'
 import { ReactComponent as MainLogo } from 'assets/svg/icon/logo_new.svg'
 import styled, { useTheme } from 'styled-components'
 import { SwapTabs, SwapTabList, SwapTab, SwapTabPanel } from "components/Tab/tab";
-import TokenLocker from './TokenLocker'
-import LPLocker from './LPLocker'
+import TokenLocker from './components/TokenLocker'
+import LPLocker from './components/LPLocker'
 
 const Wrapper = styled.div`
   display: flex;

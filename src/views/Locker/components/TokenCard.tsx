@@ -104,6 +104,7 @@ const TokenWrapper = styled.div`
 `
 
 interface TokenCardProps {
+    id: number;
     tokenLogo: string;
     tokenSymbol: string;
     tokenName: string;
@@ -114,12 +115,12 @@ interface TokenCardProps {
     tokenAddress?: string;
 }
 
-const TokenCard: React.FC<TokenCardProps> = ({ tokenLogo, tokenName, tokenSymbol, startTime, endTime, amount, vestingRate, tokenAddress }: TokenCardProps) => {
+const TokenCard: React.FC<TokenCardProps> = ({ id, tokenLogo, tokenName, tokenSymbol, startTime, endTime, amount, vestingRate, tokenAddress }: TokenCardProps) => {
     const history = useHistory()
     const { account } = useWeb3React()
 
     const handleClicked = () => {
-        console.log("handleClicked")
+        history.push(`/locker/detail/${id}`)
     }
 
     return (
@@ -146,7 +147,7 @@ const TokenCard: React.FC<TokenCardProps> = ({ tokenLogo, tokenName, tokenSymbol
                             Lock started:
                         </SaleInfoTitle>
                         <SaleInfoValue>
-                            {new Date(parseInt(startTime) * 1000).toString()}
+                            {new Date(parseInt(startTime) * 1000).toLocaleString()}
                         </SaleInfoValue>
                     </SaleInfo>
                     <Divider />

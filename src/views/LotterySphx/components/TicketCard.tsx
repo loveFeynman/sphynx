@@ -71,7 +71,7 @@ export default function TicketCard({ lastLoteryInfo, roundID }) {
         let prizePot = (parseFloat(_amountCollectedInSphynx) * parseFloat(price)).toFixed(5)
         setTotalCount(prizePot)
         setEndTime(
-          moment(new Date(parseInt(lastLoteryInfo?.endTime) * 1000).toString())
+          moment(new Date(parseInt(lastLoteryInfo?.endTime) * 1000).toLocaleString())
             .format('MMM d hh a')
             .toString()
             .concat(' UTC'),
