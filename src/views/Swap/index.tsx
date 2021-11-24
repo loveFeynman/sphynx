@@ -401,10 +401,15 @@ export default function Swap({ history }: RouteComponentProps) {
             cachedBlockNumber = info[info.length - 1].blockNumber
           }
           info = info.filter((oneData) => oneData.blockNumber !== cachedBlockNumber)
-          info = info.filter(
-            (oneData) =>
-              pairsRef.current.indexOf(oneData.address.toLowerCase()) !== -1
-          )
+          if (input.toLowerCase() === SPHYNX_TOKEN_ADDRESS.toLowerCase()) {
+            info = info.filter((oneData) => pairsRef.current[1] === oneData.address.toLowerCase())
+          } else {
+            info = info.filter(
+              (oneData) =>
+                pairsRef.current.indexOf(oneData.address.toLowerCase()) !== -1 ||
+                stablePairsRef.current.indexOf(oneData.address.toLowerCase()) !== -1,
+            )
+          }
           info = info.map((oneData) =>
             pairsRef.current.indexOf(oneData.address.toLowerCase()) !== -1
               ? { ...oneData, quoteCurrency: wrappedCurrencySymbol }
@@ -501,7 +506,7 @@ export default function Swap({ history }: RouteComponentProps) {
           if (input.toLowerCase() === SPHYNX_TOKEN_ADDRESS.toLowerCase()) {
             dexTrades = dexTrades.filter(
               (oneData) =>
-                oneData.smartContract.address.address.toLowerCase() === pairsRef.current[1].toLowerCase(),
+                oneData.smartContract.address.address.toLowerCase() === pairsRef.current[1].toLowerCase()
             )
           }
           setSymbol(queryResult.data.data.ethereum.dexTrades[0].baseCurrency.symbol)
