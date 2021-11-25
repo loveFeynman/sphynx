@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'contexts/Localization'
-import { Text, Flex, useMatchBreakpoints } from '@sphynxswap/uikit'
+import { Text, Flex, useMatchBreakpoints, Button } from '@sphynxswap/uikit'
 import { ReactComponent as MainLogo } from 'assets/svg/icon/logo_new.svg'
 import styled from 'styled-components'
 import Spinner from 'components/Loader/Spinner'
@@ -8,6 +8,7 @@ import TimerComponent from 'components/Timer/TimerComponent'
 import { useWeb3React } from '@web3-react/core'
 import { useParams } from 'react-router'
 import axios from 'axios'
+import { ColorButtonStyle } from 'style/buttonStyle'
 
 const Wrapper = styled.div`
   display: flex;
@@ -228,6 +229,7 @@ const DetailLocker: React.FC = () => {
     const { isXl } = useMatchBreakpoints()
     const [tokenInfo, setTokenInfo] = useState(null)
     const [cpkSchedules, setCpkSchedules] = useState(null)
+    const [isUnlock, setIsUnlock] = useState(false)
     const isMobile = !isXl
 
     useEffect(() => {
@@ -236,16 +238,15 @@ const DetailLocker: React.FC = () => {
             axios.get(`${process.env.REACT_APP_BACKEND_API_URL2}/getTokenLockInfo/${param.lockId}/${chainId}`)
                 .then((response) => {
                     if (response.data) {
-                        console.log('>>>>>>>responseData', response.data)
                         setTokenInfo(response.data)
                         /* eslint-disable camelcase */
                         const vest_num = response.data.vest_num
                         const cpk_list: any = []
-                        if(vest_num > 0) {
-                            for(let i=0; i<vest_num; i++){
+                        if (vest_num > 0) {
+                            for (let i = 0; i < vest_num; i++) {
                                 const item = {
-                                    date: (parseInt(response.data.start_time) + (parseInt(response.data.end_time) - parseInt(response.data.start_time)) * (i + 1) /vest_num).toString(),
-                                    amount: response.data.lock_supply / vest_num 
+                                    date: (parseInt(response.data.start_time) + (parseInt(response.data.end_time) - parseInt(response.data.start_time)) * (i + 1) / vest_num).toString(),
+                                    amount: response.data.lock_supply / vest_num
                                 }
                                 cpk_list.push(item)
                             }
@@ -256,6 +257,9 @@ const DetailLocker: React.FC = () => {
         }
     }, [param.lockId, chainId])
 
+    const handleUnlockClick = () => {
+        console.log("unlock clicked")
+    }
 
     return (
         <Wrapper>
@@ -336,6 +340,14 @@ const DetailLocker: React.FC = () => {
                                 1
                             </SaleInfoValue>
                         </SaleInfo>
+                        <Divider />
+                        <Button
+                            onClick={handleUnlockClick}
+                            disabled={!isUnlock}
+                            style={ColorButtonStyle}
+                        >
+                            {t('Unlock')}
+                        </Button>
                     </MainCardWrapper>
                     <SubCardWrapper>
                         <Text fontSize='20px' bold>
@@ -351,7 +363,7 @@ const DetailLocker: React.FC = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {cpkSchedules&&cpkSchedules.map((cell, index) => {
+                                    {cpkSchedules && cpkSchedules.map((cell, index) => {
                                         return (
                                             <tr key="key">
                                                 <td style={{ width: '15%' }}>

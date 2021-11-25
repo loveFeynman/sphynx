@@ -13,6 +13,7 @@ import axios from 'axios'
 import { simpleRpcProvider } from 'utils/providers'
 import { MaxUint256 } from '@ethersproject/constants'
 import { getLockerContract } from 'utils/contractHelpers'
+import { LOCK_PAYABLE_BNB } from 'config/constants/lock'
 import useToast from 'hooks/useToast'
 import Select, { OptionProps } from 'components/Select/Select'
 import Slider from 'react-rangeslider'
@@ -237,8 +238,6 @@ const ManageLocker: React.FC = () => {
         const allowance = await tokenContract.allowance(account, getLockerAddress())
         const value = parseFloat(ethers.utils.formatUnits(allowance, tokenDecimals))
 
-        console.log("allowance", value)
-
         if (value > (totalSupply * percent / 100)) {
           setIsApprove(false)
           setIsSubmit(true)
@@ -339,7 +338,6 @@ const ManageLocker: React.FC = () => {
   }
 
   const handleApproveClick = async () => {
-    console.log("clicked approve")
     try {
       const abi: any = ERC20_ABI
       const tokenContract = new ethers.Contract(tokenAddress, abi, signer)
@@ -361,11 +359,18 @@ const ManageLocker: React.FC = () => {
 
   const handleSubmitClick = async () => {
     try {
-      lockContract.approve()
+      const lockId = (await lockContract.currentLockId()).toString()
+
+      const payableBNB = ethers.utils.parseEther(LOCK_PAYABLE_BNB)
+      const lockTime = Math.floor((new Date(unLock).getTime() / 1000))
+      const lockAmount = ethers.utils.parseUnits((totalSupply * percent / 100).toString(), tokenDecimals)
+
+      const fee = ethers.utils.parseEther('0.001')
+      lockContract.createLock(payableBNB, lockTime.toString(), lockAmount, tokenAddress, {value: fee})
         .then((res) => { /* If token locked successfully */
           const data: any = {
             chain_id: chainId,
-            lock_id: 2,
+            lock_id: lockId,
             lock_address: tokenAddress,
             token_name: tokenName,
             token_symbol: tokenSymbol,
