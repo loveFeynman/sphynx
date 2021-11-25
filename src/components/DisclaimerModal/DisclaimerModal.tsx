@@ -55,6 +55,11 @@ const CheckGroup = styled.div`
   gap: 18px;
 `
 
+const CheckboxWrapper = styled.div`
+  width: 32px;
+  height: 32px;
+`
+
 interface DisclaimerModalProps extends InjectedModalProps {
   modalState?: true,
 }
@@ -105,13 +110,15 @@ export default function DisclaimerModal({ onDismiss = () => null, modalState }: 
         <CheckGroup>
           {TERMS_LIST.map((item, index) => (
             <TermRow key={item.id}>
-              <Checkbox
-                type="checkbox"
-                key={item.id}
-                checked={(arrayCheckedState.indexOf(index) > -1) as boolean}
-                onClick={() => handleChangeCheckbox(index)}
-              />
-              <Text fontSize="16px">{item.text}</Text>
+              <CheckboxWrapper>
+                <Checkbox
+                  type="checkbox"
+                  key={item.id}
+                  checked={(arrayCheckedState.indexOf(index) > -1) as boolean}
+                  onClick={() => handleChangeCheckbox(index)}
+                />
+              </CheckboxWrapper>
+              <Text fontSize="12px">{item.text}</Text>
             </TermRow>
           ))}
         </CheckGroup>
