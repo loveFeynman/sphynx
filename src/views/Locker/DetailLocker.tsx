@@ -4,7 +4,10 @@ import { Text, Flex, useMatchBreakpoints } from '@sphynxswap/uikit'
 import { ReactComponent as MainLogo } from 'assets/svg/icon/logo_new.svg'
 import styled from 'styled-components'
 import Spinner from 'components/Loader/Spinner'
-import TimerComponent from 'components/Timer/TimerComponent';
+import TimerComponent from 'components/Timer/TimerComponent'
+import { useWeb3React } from '@web3-react/core'
+import { useParams } from 'react-router'
+import axios from 'axios'
 
 const Wrapper = styled.div`
   display: flex;
@@ -219,6 +222,8 @@ const TableWrapper = styled.div`
 `
 
 const DetailLocker: React.FC = () => {
+    const param: any = useParams()
+    const { chainId } = useWeb3React()
     const { t } = useTranslation()
     const { isXl } = useMatchBreakpoints()
     const [tokenInfo, setTokenInfo] = useState(null)
@@ -226,52 +231,31 @@ const DetailLocker: React.FC = () => {
     const isMobile = !isXl
 
     useEffect(() => {
-        const info = {
-            id: 0,
-            tokenLogo: "https://sphynxtoken.co/static/media/Sphynx-Token-Transparent-1.020aae53.png",
-            tokenName: "Sphynx Token",
-            tokenSymbol: "SPHYNX",
-            startTime: "1637691698",
-            endTime: "1637791698",
-            totalSupply: 1000000000,
-            totalUnlocked: 100000000,
-            totalLocks: 3,
-            tokenAddress: "0xEE0C0E647d6E78d74C42E3747e0c38Cef41d6C88"
+        const isValue = !Number.isNaN(parseInt(param.lockId))
+        if (isValue && chainId) {
+            axios.get(`${process.env.REACT_APP_BACKEND_API_URL2}/getTokenLockInfo/${param.lockId}/${chainId}`)
+                .then((response) => {
+                    if (response.data) {
+                        console.log('>>>>>>>responseData', response.data)
+                        setTokenInfo(response.data)
+                        /* eslint-disable camelcase */
+                        const vest_num = response.data.vest_num
+                        const cpk_list: any = []
+                        if(vest_num > 0) {
+                            for(let i=0; i<vest_num; i++){
+                                const item = {
+                                    date: (parseInt(response.data.start_time) + (parseInt(response.data.end_time) - parseInt(response.data.start_time)) * (i + 1) /vest_num).toString(),
+                                    amount: response.data.lock_supply / vest_num 
+                                }
+                                cpk_list.push(item)
+                            }
+                            setCpkSchedules(cpk_list)
+                        }
+                    }
+                })
         }
-        setTokenInfo(info)
+    }, [param.lockId, chainId])
 
-        const cpks = [
-            {
-                date: "1637791698",
-                amount: 100000000
-            },
-            {
-                date: "1637792698",
-                amount: 100000000
-            },
-            {
-                date: "1637793698",
-                amount: 100000000
-            },
-            {
-                date: "1637794698",
-                amount: 100000000
-            },
-            {
-                date: "1637795698",
-                amount: 100000000
-            },
-            {
-                date: "1637796698",
-                amount: 100000000
-            },
-            {
-                date: "1637797698",
-                amount: 100000000
-            },
-        ]
-        setCpkSchedules(cpks)
-    }, [setTokenInfo])
 
     return (
         <Wrapper>
@@ -293,11 +277,11 @@ const DetailLocker: React.FC = () => {
                         <CardHeader>
                             <TokenWrapper>
                                 <TokenImg>
-                                    <img src={tokenInfo.tokenLogo} alt="token icon" />
+                                    <img src={tokenInfo.logo_link} alt="token icon" />
                                 </TokenImg>
                                 <TokenSymbolWrapper>
-                                    <Text>{tokenInfo.tokenSymbol}</Text>
-                                    <Text>{tokenInfo.tokenName}</Text>
+                                    <Text>{tokenInfo.token_symbol}</Text>
+                                    <Text>{tokenInfo.token_name}</Text>
                                 </TokenSymbolWrapper>
                             </TokenWrapper>
                         </CardHeader>
@@ -305,7 +289,7 @@ const DetailLocker: React.FC = () => {
                             <Text color="#A7A7CC" bold>
                                 Token Address:
                             </Text>
-                            <Text>{tokenInfo.tokenAddress}</Text>
+                            <Text>{tokenInfo.lock_address}</Text>
                         </AddressWrapper>
                         <Divider />
                         <SaleInfo>
@@ -313,7 +297,7 @@ const DetailLocker: React.FC = () => {
                                 Lock Timer:
                             </SaleInfoTitle>
                             <SaleInfoValue>
-                                <TimerComponent time={tokenInfo.endTime} />
+                                <TimerComponent time={tokenInfo.end_time} />
                             </SaleInfoValue>
                         </SaleInfo>
                         <Divider />
@@ -322,7 +306,7 @@ const DetailLocker: React.FC = () => {
                                 Total Supply of Tokens:
                             </SaleInfoTitle>
                             <SaleInfoValue>
-                                {tokenInfo.totalSupply}
+                                {tokenInfo.total_supply}
                             </SaleInfoValue>
                         </SaleInfo>
                         <Divider />
@@ -331,7 +315,7 @@ const DetailLocker: React.FC = () => {
                                 Total Locked Tokens:
                             </SaleInfoTitle>
                             <SaleInfoValue>
-                                {tokenInfo.totalUnlocked}
+                                {tokenInfo.lock_supply}
                             </SaleInfoValue>
                         </SaleInfo>
                         <Divider />
@@ -340,7 +324,7 @@ const DetailLocker: React.FC = () => {
                                 Unlock Date:
                             </SaleInfoTitle>
                             <SaleInfoValue>
-                                {new Date(parseInt(tokenInfo.startTime) * 1000).toLocaleString()}
+                                {new Date(parseInt(tokenInfo.end_time) * 1000).toLocaleString()}
                             </SaleInfoValue>
                         </SaleInfo>
                         <Divider />
@@ -349,7 +333,7 @@ const DetailLocker: React.FC = () => {
                                 Total Locks:
                             </SaleInfoTitle>
                             <SaleInfoValue>
-                                {tokenInfo.totalLocks}
+                                1
                             </SaleInfoValue>
                         </SaleInfo>
                     </MainCardWrapper>
@@ -367,7 +351,7 @@ const DetailLocker: React.FC = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {cpkSchedules.map((cell, index) => {
+                                    {cpkSchedules&&cpkSchedules.map((cell, index) => {
                                         return (
                                             <tr key="key">
                                                 <td style={{ width: '15%' }}>

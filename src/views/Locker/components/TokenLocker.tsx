@@ -1,8 +1,10 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'contexts/Localization'
 import { Flex, useMatchBreakpoints } from '@sphynxswap/uikit'
 import styled from 'styled-components'
 import Spinner from 'components/Loader/Spinner'
+import axios from 'axios'
+import { useWeb3React } from '@web3-react/core'
 import SearchPannel from './SearchPannel'
 import TokenCard from './TokenCard'
 
@@ -70,69 +72,28 @@ const TokenListContainder = styled.div`
 const TokenLocker: React.FC = () => {
   const { t } = useTranslation()
   const { isXl } = useMatchBreakpoints()
+  const { chainId } = useWeb3React()
   const isMobile = !isXl
-  const tokenList = [
-    {
-      id: 0,
-      tokenLogo: "https://sphynxtoken.co/static/media/Sphynx-Token-Transparent-1.020aae53.png",
-      tokenName: "Sphynx Token",
-      tokenSymbol: "SPHYNX",
-      startTime: "1637691698",
-      endTime: "1637791698",
-      amount: 1000000000,
-      vestingRate: 70,
-      tokenAddress: "0xEE0C0E647d6E78d74C42E3747e0c38Cef41d6C88"
-    },
-    {
-      id: 1,
-      tokenLogo: "https://sphynxtoken.co/static/media/Sphynx-Token-Transparent-1.020aae53.png",
-      tokenName: "Sphynx Token",
-      tokenSymbol: "SPHYNX",
-      startTime: "1637691698",
-      endTime: "1637791698",
-      amount: 1000000000,
-      vestingRate: 70,
-      tokenAddress: "0xEE0C0E647d6E78d74C42E3747e0c38Cef41d6C88"
-    },
-    {
-      id: 2,
-      tokenLogo: "https://sphynxtoken.co/static/media/Sphynx-Token-Transparent-1.020aae53.png",
-      tokenName: "Sphynx Token",
-      tokenSymbol: "SPHYNX",
-      startTime: "1637691698",
-      endTime: "1637791698",
-      amount: 1000000000,
-      vestingRate: 70,
-      tokenAddress: "0xEE0C0E647d6E78d74C42E3747e0c38Cef41d6C88"
-    },
-    {
-      id: 3,
-      tokenLogo: "https://sphynxtoken.co/static/media/Sphynx-Token-Transparent-1.020aae53.png",
-      tokenName: "Sphynx Token",
-      tokenSymbol: "SPHYNX",
-      startTime: "1637691698",
-      endTime: "1637791698",
-      amount: 1000000000,
-      vestingRate: 70,
-      tokenAddress: "0xEE0C0E647d6E78d74C42E3747e0c38Cef41d6C88"
-    },
-    {
-      id: 4,
-      tokenLogo: "https://sphynxtoken.co/static/media/Sphynx-Token-Transparent-1.020aae53.png",
-      tokenName: "Sphynx Token",
-      tokenSymbol: "SPHYNX",
-      startTime: "1637691698",
-      endTime: "1637791698",
-      amount: 1000000000,
-      vestingRate: 70,
-      tokenAddress: "0xEE0C0E647d6E78d74C42E3747e0c38Cef41d6C88"
+  const [tokenList, setTokenList] = useState(null)
+
+  useEffect(() => {
+    const fetchData = async () => {
+      axios.get(`${process.env.REACT_APP_BACKEND_API_URL2}/getAllTokenLockInfo/${chainId}`).then(async (response) => {
+        if (response.data) {
+          setTokenList(response.data)
+        }
+      })
     }
-  ]
+
+    if (chainId)
+      fetchData()
+  }, [chainId])
+
 
   return (
     <Wrapper>
       <SearchPannel />
-      {!tokenList.length && <Flex justifyContent="center" mb="4px">
+      {!tokenList && <Flex justifyContent="center" mb="4px">
         <Spinner />
       </Flex>}
       <SaleInfo>
@@ -140,21 +101,21 @@ const TokenLocker: React.FC = () => {
           Total Token Locks:
         </SaleInfoTitle>
         <SaleInfoValue>
-          {tokenList.length}
+          {!tokenList ? 0 : tokenList.length}
         </SaleInfoValue>
       </SaleInfo>
       <TokenListContainder>
         {tokenList && tokenList.map((cell) => (
           <TokenCard
-            id={cell.id}
-            tokenLogo={cell.tokenLogo}
-            tokenName={cell.tokenName}
-            tokenSymbol={cell.tokenSymbol}
-            startTime={cell.startTime}
-            endTime={cell.endTime}
-            amount={cell.amount}
-            vestingRate={cell.vestingRate}
-            tokenAddress={cell.tokenAddress}
+            id={cell.lock_id}
+            tokenLogo={cell.logo_link}
+            tokenName={cell.token_name}
+            tokenSymbol={cell.token_symbol}
+            startTime={cell.start_time}
+            endTime={cell.end_time}
+            amount={cell.lock_supply}
+            vestingRate={100 / cell.vest_num}
+            tokenAddress={cell.lock_address}
           />
         ))}
       </TokenListContainder>

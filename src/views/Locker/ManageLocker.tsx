@@ -9,8 +9,8 @@ import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import * as ethers from 'ethers'
 import { ERC20_ABI } from 'config/abi/erc20'
 import { isAddress } from '@ethersproject/address'
-import BigNumber from 'bignumber.js'
-import { BIG_TEN } from 'utils/bigNumber'
+import axios from 'axios'
+import useToast from 'hooks/useToast'
 import Select, { OptionProps } from 'components/Select/Select'
 import Slider from 'react-rangeslider'
 import { DarkButtonStyle, ColorButtonStyle } from 'style/buttonStyle'
@@ -140,11 +140,12 @@ const ControlStretch = styled(Flex) <{ isMobile?: boolean }>`
 `
 
 const ManageLocker: React.FC = () => {
-  const { library } = useActiveWeb3React()
+  const { library, chainId } = useActiveWeb3React()
   const signer = library.getSigner()
   const { t } = useTranslation()
   const { isXl } = useMatchBreakpoints()
   const isMobile = !isXl
+  const { toastSuccess, toastError } = useToast()
   const [tokenAddress, setTokenAddress] = useState('')
   const [tokenName, setName] = useState('')
   const [token0, setToken0] = useState('')
@@ -156,45 +157,46 @@ const ManageLocker: React.FC = () => {
   const [isToken, setIsToken] = useState(true)
   const [unLock, setUnLock] = useState(new Date())
   const [logoLink, setLogoLink] = useState('')
+  const [vestId, setVestId] = useState(0)
   const [percent, setPercent] = useState(0)
   const [isApprove, setIsApprove] = useState(false)
-  const [isSubmit, setIsSubmit] = useState(false)
+  const [isSubmit, setIsSubmit] = useState(true)
   const options = [
     {
       label: t('No vesting, all tokens will be released at unlock time!'),
-      value: 0,
-    },
-    {
-      label: t('Vest twice (Unlock 50% tokens in 2 periods, 1 halfway and 1 at unlock time)'),
       value: 1,
     },
     {
-      label: t('Vest four times (25% of your tokens are unlocked in 4 periods)'),
+      label: t('Vest twice (Unlock 50% tokens in 2 periods, 1 halfway and 1 at unlock time)'),
       value: 2,
     },
     {
-      label: t('Vest five times'),
-      value: 3,
-    },
-    {
-      label: t('Vest ten times'),
+      label: t('Vest four times (25% of your tokens are unlocked in 4 periods)'),
       value: 4,
     },
     {
-      label: t('Vest twenty times'),
+      label: t('Vest five times'),
       value: 5,
     },
     {
+      label: t('Vest ten times'),
+      value: 10,
+    },
+    {
+      label: t('Vest twenty times'),
+      value: 20,
+    },
+    {
       label: t('Vest twenty-five times'),
-      value: 6,
+      value: 25,
     },
     {
       label: t('Vest fifty times'),
-      value: 7,
+      value: 50,
     },
     {
       label: t('Vest one-hundred times'),
-      value: 8,
+      value: 100,
     },
   ]
 
@@ -217,7 +219,7 @@ const ManageLocker: React.FC = () => {
     },
     {
       value: 100,
-      label: '100°C',
+      label: '100',
     },
   ];
 
@@ -234,14 +236,14 @@ const ManageLocker: React.FC = () => {
         const decimals = await tokenContract.decimals()
         const bgSupply = await tokenContract.totalSupply()
         const supply = parseFloat(ethers.utils.formatUnits(bgSupply, decimals))
-        console.log(supply)
         setName(name)
         setSymbol(symbol)
         setTotalSupply(supply)
 
         if (name.slice(-3) === "LPs" && symbol.slice(-3) === "-LP") {
           /* eslint-disable camelcase */
-          const lpContract = new ethers.Contract(value, LPToken_ABI, signer)
+          const lpAbi: any = LPToken_ABI
+          const lpContract = new ethers.Contract(value, lpAbi, signer)
           const address0 = await lpContract.token0()
           const address1 = await lpContract.token1()
           setToken0(address0)
@@ -250,7 +252,7 @@ const ManageLocker: React.FC = () => {
           const lpTokenContract0 = new ethers.Contract(address0, abi, signer)
           const name0 = await lpTokenContract0.name()
           setLpName0(name0)
-          
+
           const lpTokenContract1 = new ethers.Contract(address1, abi, signer)
           const name1 = await lpTokenContract1.name()
           setLpName1(name1)
@@ -266,8 +268,9 @@ const ManageLocker: React.FC = () => {
     }
   }
 
-  const handleSortOptionChange = (option: OptionProps): void => {
+  const handleVestOptionChange = (option: OptionProps): void => {
     console.log(option.value)
+    setVestId(option.value)
   }
 
   const handleChangePercent = (sliderPercent: number) => {
@@ -287,7 +290,29 @@ const ManageLocker: React.FC = () => {
   }
 
   const handleSubmitClick = () => {
-    console.log("clicked submit")
+    const data: any = {
+      chain_id: chainId,
+      lock_id: 2,
+      lock_address: tokenAddress,
+      token_name: tokenName,
+      token_symbol: tokenSymbol,
+      lock_supply: totalSupply * percent / 100,
+      total_supply: totalSupply,
+      start_time: Math.floor((new Date().getTime() / 1000)),
+      end_time: Math.floor((new Date(unLock).getTime() / 1000)),
+      logo_link: logoLink,
+      vest_num: vestId,
+    }
+    
+    axios.post(`${process.env.REACT_APP_BACKEND_API_URL2}/insertTokenLockInfo`, { data }).then((response) => {
+      if (response.data) {
+        toastSuccess('Pushed!', 'Your presale info is saved successfully.')
+        // history.push(`/locker/presale/${presaleId}`)
+      }
+      else {
+        toastError('Failed!', 'Your action is failed.')
+      }
+    })
   }
 
   return (
@@ -360,8 +385,9 @@ const ManageLocker: React.FC = () => {
           <InlineWrapper>
             <ControlStretch isMobile={isMobile}>
               <Select
+                defaultValue={vestId}
                 options={options}
-                onChange={handleSortOptionChange}
+                onChange={handleVestOptionChange}
               />
             </ControlStretch>
           </InlineWrapper>

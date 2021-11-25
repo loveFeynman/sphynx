@@ -120,7 +120,7 @@ const TokenCard: React.FC<TokenCardProps> = ({ id, tokenLogo, tokenName, tokenSy
     const { account } = useWeb3React()
 
     const handleClicked = () => {
-        history.push(`/locker/detail/${id}`)
+        history.push(`/locker/tokendetail/${id}`)
     }
 
     return (
