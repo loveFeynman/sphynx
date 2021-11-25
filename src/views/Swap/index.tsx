@@ -95,7 +95,7 @@ let config = {
 }
 
 const web3 = new Web3(web3ArchiveProvider)
-const dataFeedProvider = new Web3.providers.HttpProvider("https://bsc-dataseed.binance.org/")
+const dataFeedProvider = new Web3.providers.HttpProvider('https://bsc-dataseed.binance.org/')
 const datafeedWeb3 = new Web3(dataFeedProvider)
 
 const ArrowContainer = styled(ArrowWrapper)`
@@ -377,9 +377,17 @@ export default function Swap({ history }: RouteComponentProps) {
             if (newTransactions.length > 300) {
               newTransactions.pop()
             }
-            curPrice = oneData.price
-            curAmount += oneData.usdValue
-            setTokenPrice(curPrice)
+            if (input.toLowerCase() === SPHYNX_TOKEN_ADDRESS.toLowerCase()) {
+              if (pairsRef.current[1] === event.address.toLowerCase()) {
+                curPrice = oneData.price
+                curAmount += oneData.usdValue
+                setTokenPrice(curPrice)
+              }
+            } else {
+              curPrice = oneData.price
+              curAmount += oneData.usdValue
+              setTokenPrice(curPrice)
+            }
           } catch (err) {
             console.log('error', err)
           }
@@ -402,15 +410,11 @@ export default function Swap({ history }: RouteComponentProps) {
             cachedBlockNumber = info[info.length - 1].blockNumber
           }
           info = info.filter((oneData) => oneData.blockNumber !== cachedBlockNumber)
-          if (input.toLowerCase() === SPHYNX_TOKEN_ADDRESS.toLowerCase()) {
-            info = info.filter((oneData) => pairsRef.current[1] === oneData.address.toLowerCase())
-          } else {
-            info = info.filter(
-              (oneData) =>
-                pairsRef.current.indexOf(oneData.address.toLowerCase()) !== -1 ||
-                stablePairsRef.current.indexOf(oneData.address.toLowerCase()) !== -1,
-            )
-          }
+          info = info.filter(
+            (oneData) =>
+              pairsRef.current.indexOf(oneData.address.toLowerCase()) !== -1 ||
+              stablePairsRef.current.indexOf(oneData.address.toLowerCase()) !== -1,
+          )
           info = info.map((oneData) =>
             pairsRef.current.indexOf(oneData.address.toLowerCase()) !== -1
               ? { ...oneData, quoteCurrency: wrappedCurrencySymbol }
@@ -506,12 +510,11 @@ export default function Swap({ history }: RouteComponentProps) {
           let dexTrades = queryResult.data.data.ethereum.dexTrades
           if (input.toLowerCase() === SPHYNX_TOKEN_ADDRESS.toLowerCase()) {
             dexTrades = dexTrades.filter(
-              (oneData) =>
-                oneData.smartContract.address.address.toLowerCase() === pairsRef.current[1].toLowerCase()
+              (oneData) => oneData.smartContract.address.address.toLowerCase() === pairsRef.current[1].toLowerCase(),
             )
           }
           setSymbol(queryResult.data.data.ethereum.dexTrades[0].baseCurrency.symbol)
-          newTransactions = dexTrades.map((item, index) => {
+          newTransactions = queryResult.data.data.ethereum.dexTrades.map((item, index) => {
             return {
               transactionTime: formatTimeString(item.block.timestamp.time),
               amount: item.baseAmount,
@@ -527,8 +530,11 @@ export default function Swap({ history }: RouteComponentProps) {
             }
           })
 
-          if (newTransactions.length > 0) {
-            const curPrice = newTransactions[0].price
+          if (dexTrades.length > 0) {
+            const curPrice =
+              dexTrades[0].quoteCurrency.symbol === wrappedCurrencySymbol
+                ? dexTrades[0].quotePrice * bnbPrice
+                : dexTrades[0].quotePrice
             const sessionData = {
               input,
               price: curPrice,
