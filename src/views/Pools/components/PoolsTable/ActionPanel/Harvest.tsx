@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button, Text, useModal, Flex, TooltipText, useTooltip, Skeleton, Heading } from '@sphynxswap/uikit'
+import { Button, Text, useModal, Flex, TooltipText, useTooltip, Skeleton, Heading, useMatchBreakpoints } from '@sphynxswap/uikit'
 import BigNumber from 'bignumber.js'
 import { useWeb3React } from '@web3-react/core'
 import { getCakeVaultEarnings } from 'views/Pools/helpers'
@@ -12,9 +12,35 @@ import { BIG_ZERO } from 'utils/bigNumber'
 import { Pool } from 'state/types'
 import styled from 'styled-components'
 import { DarkButtonStyle } from 'style/buttonStyle'
-import { ActionContainer, ActionTitles, ActionContent } from './styles'
+import { ActionTitles, ActionContent } from './styles'
 import CollectModal from '../../PoolCard/Modals/CollectModal'
 import UnstakingFeeCountdownRow from '../../CakeVaultCard/UnstakingFeeCountdownRow'
+
+const ActionContainer = styled.div`
+  padding: 16px;
+  flex-grow: 1;
+  flex-basis: 0;
+  margin-bottom: 0;
+  flex-direction: column;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  position: relative;
+
+  ${({ theme }) => theme.mediaQueries.sm} {
+    margin-bottom: 0;
+    height: 130px;
+    max-height: 130px;
+    margin-bottom: 16px;
+  }
+
+  ${({ theme }) => theme.mediaQueries.xl} {
+    margin-right: 0;
+    margin-bottom: 0;
+    height: 130px;
+    max-height: 130px;
+  }
+`
 
 const DarkButton = styled(Button)`
   border-radius: 5px;
@@ -66,6 +92,8 @@ const HarvestAction: React.FunctionComponent<HarvestActionProps> = ({
   const formattedBalance = formatNumber(earningTokenBalance, 3, 3)
   const isCompoundPool = sousId === 0
   const isBnbPool = poolCategory === PoolCategory.BINANCE
+  const { isXl } = useMatchBreakpoints()
+  const isMobile = !isXl
 
   // Auto SPHYNX vault calculations
   const {
@@ -193,7 +221,7 @@ const HarvestAction: React.FunctionComponent<HarvestActionProps> = ({
             <UnstakingFeeCountdownRow isTableVariant />
             <Flex mb="2px" justifyContent="space-between" alignItems="center">
               {tooltipVisible && tooltip}
-              <TooltipText ref={targetRef} small>
+              <TooltipText ref={targetRef} small fontSize={isMobile ? "12px" : "14px"}>
                 {t('Performance Fee')}
               </TooltipText>
               <Flex alignItems="center">

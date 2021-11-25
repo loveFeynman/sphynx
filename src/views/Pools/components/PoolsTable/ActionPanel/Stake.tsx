@@ -14,15 +14,46 @@ import { BIG_ZERO } from 'utils/bigNumber'
 import { getAddress } from 'utils/addressHelpers'
 import { useERC20 } from 'hooks/useContract'
 import { convertSharesToCake } from 'views/Pools/helpers'
-import { ActionContainer, StakeActionTitles, ActionContent } from './styles'
+import { StakeActionTitles, ActionContent } from './styles'
 import NotEnoughTokensModal from '../../PoolCard/Modals/NotEnoughTokensModal'
 import StakeModal from '../../PoolCard/Modals/StakeModal'
 import VaultStakeModal from '../../CakeVaultCard/VaultStakeModal'
 import { useCheckVaultApprovalStatus, useApprovePool, useVaultApprove } from '../../../hooks/useApprove'
 
+const ActionContainer = styled.div`
+  padding: 16px;
+  flex-grow: 1;
+  flex-basis: 0;
+  margin-bottom: 0;
+  flex-direction: column;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  // height: 110px;
+  position: relative;
+
+  ${({ theme }) => theme.mediaQueries.sm} {
+    margin-bottom: 0;
+    height: 130px;
+    max-height: 130px;
+    margin-bottom: 16px;
+  }
+
+  ${({ theme }) => theme.mediaQueries.xl} {
+    margin-right: 0;
+    margin-bottom: 0;
+    height: 130px;
+    max-height: 130px;
+  }
+`
+
 const IconButtonWrapper = styled.div`
   display: flex;
   gap: 5px;
+  flex-direction: column;
+  ${({ theme }) => theme.mediaQueries.sm} {
+    flex-direction: unset;
+  }
 `
 
 const ColorButton = styled(Button)`
@@ -60,23 +91,16 @@ const StackedFlex = styled(Flex)`
 
 const StackedActionContent = styled(ActionContent)`
   flex-direction: column;
-  ${({ theme }) => theme.mediaQueries.sm} {
-    flex-direction: row;
-  }
+  gap: 8px;
 `
 
-const AddIconButton = styled(IconButton)`
-  width: 30px;
-  height: 30px;
+const AddButton = styled(Button)`
   border-radius: 9px;
+  width: 112px;
   ${({ theme }) => theme.mediaQueries.sm} {
-    width: 40px;
-    height: 40px;
     border-radius: 12px;
   }
   ${({ theme }) => theme.mediaQueries.md} {
-    width: 48px;
-    height: 48px;
     border-radius: 16px;
   }
 `
@@ -239,6 +263,7 @@ const Staked: React.FunctionComponent<StackedActionProps> = ({ pool, userDataLoa
 
   // Wallet connected, user data loaded and approved
   if (isNotVaultAndHasStake || isVaultWithShares) {
+
     return (
       <ActionContainer>
         <Flex mb='5px' flexDirection='column'>
@@ -269,23 +294,23 @@ const Staked: React.FunctionComponent<StackedActionProps> = ({ pool, userDataLoa
             /> */}
           </StackedFlex>
           <IconButtonWrapper>
-            <AddIconButton variant="secondary" onClick={onUnstake} mr="6px">
-              <MinusIcon color="primary" width="14px" />
-            </AddIconButton>
+            <AddButton variant="secondary" onClick={onUnstake} mr={isMobile ? "0" : "6px"}>
+              <Text color="primary" fontSize="14px">Remove</Text>
+            </AddButton>
             {reachStakingLimit ? (
               <span ref={targetRef}>
-                <AddIconButton variant="secondary" disabled>
-                  <AddIcon color="textDisabled" width="24px" height="24px" />
-                </AddIconButton>
+                <AddButton variant="secondary" disabled>
+                  <Text color="primary" fontSize="14px">Add</Text>
+                </AddButton>
               </span>
             ) : (
-              <AddIconButton
+              <AddButton
                 variant="secondary"
                 onClick={stakingTokenBalance.gt(0) ? onStake : onPresentTokenRequired}
                 disabled={isFinished}
               >
-                <AddIcon color="primary" width="14px" />
-              </AddIconButton>
+                <Text color="primary" fontSize="14px">Add</Text>
+              </AddButton>
             )}
           </IconButtonWrapper>
           {tooltipVisible && tooltip}
