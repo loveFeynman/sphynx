@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'contexts/Localization'
 import { Text, Flex, useMatchBreakpoints, Button } from '@sphynxswap/uikit'
 import { ReactComponent as MainLogo } from 'assets/svg/icon/logo_new.svg'
@@ -10,10 +10,14 @@ import * as ethers from 'ethers'
 import { ERC20_ABI } from 'config/abi/erc20'
 import { isAddress } from '@ethersproject/address'
 import axios from 'axios'
+import { simpleRpcProvider } from 'utils/providers'
+import { MaxUint256 } from '@ethersproject/constants'
+import { getLockerContract } from 'utils/contractHelpers'
 import useToast from 'hooks/useToast'
 import Select, { OptionProps } from 'components/Select/Select'
 import Slider from 'react-rangeslider'
 import { DarkButtonStyle, ColorButtonStyle } from 'style/buttonStyle'
+import { getLockerAddress } from 'utils/addressHelpers'
 /* eslint-disable camelcase */
 import LPToken_ABI from 'config/abi/lpToken.json'
 
@@ -140,7 +144,7 @@ const ControlStretch = styled(Flex) <{ isMobile?: boolean }>`
 `
 
 const ManageLocker: React.FC = () => {
-  const { library, chainId } = useActiveWeb3React()
+  const { account, library, chainId } = useActiveWeb3React()
   const signer = library.getSigner()
   const { t } = useTranslation()
   const { isXl } = useMatchBreakpoints()
@@ -154,13 +158,15 @@ const ManageLocker: React.FC = () => {
   const [lpName1, setLpName1] = useState('')
   const [tokenSymbol, setSymbol] = useState('')
   const [totalSupply, setTotalSupply] = useState(0)
+  const [tokenDecimals, setDecimals] = useState(18)
+  const lockContract = getLockerContract(signer)
   const [isToken, setIsToken] = useState(true)
   const [unLock, setUnLock] = useState(new Date())
   const [logoLink, setLogoLink] = useState('')
   const [vestId, setVestId] = useState(0)
   const [percent, setPercent] = useState(0)
   const [isApprove, setIsApprove] = useState(false)
-  const [isSubmit, setIsSubmit] = useState(true)
+  const [isSubmit, setIsSubmit] = useState(false)
   const options = [
     {
       label: t('No vesting, all tokens will be released at unlock time!'),
@@ -223,6 +229,41 @@ const ManageLocker: React.FC = () => {
     },
   ];
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const abi: any = ERC20_ABI
+        const tokenContract = new ethers.Contract(tokenAddress, abi, simpleRpcProvider)
+        const allowance = await tokenContract.allowance(account, getLockerAddress())
+        const value = parseFloat(ethers.utils.formatUnits(allowance, tokenDecimals))
+
+        console.log("allowance", value)
+
+        if (value > (totalSupply * percent / 100)) {
+          setIsApprove(false)
+          setIsSubmit(true)
+        }
+        else {
+          setIsApprove(true)
+          setIsSubmit(false)
+        }
+      } catch (err) {
+        console.log('error', err.message)
+        setIsApprove(false)
+      }
+
+    }
+
+    if (account && totalSupply) {
+      fetchData()
+    }
+    else {
+      setIsSubmit(false)
+      setIsApprove(false)
+    }
+
+  }, [totalSupply, percent, account, tokenAddress, tokenDecimals])
+
   const handleChange = async (e) => {
     const value = e.target.value
     setTokenAddress(value)
@@ -239,6 +280,7 @@ const ManageLocker: React.FC = () => {
         setName(name)
         setSymbol(symbol)
         setTotalSupply(supply)
+        setDecimals(decimals)
 
         if (name.slice(-3) === "LPs" && symbol.slice(-3) === "-LP") {
           /* eslint-disable camelcase */
@@ -264,12 +306,23 @@ const ManageLocker: React.FC = () => {
         }
       } catch (err) {
         console.log('error', err.message)
+        setName('')
+        setSymbol('')
+        setTotalSupply(0)
+        setToken0('')
+        setToken1('')
       }
+    }
+    else {
+      setName('')
+      setSymbol('')
+      setTotalSupply(0)
+      setToken0('')
+      setToken1('')
     }
   }
 
   const handleVestOptionChange = (option: OptionProps): void => {
-    console.log(option.value)
     setVestId(option.value)
   }
 
@@ -285,34 +338,59 @@ const ManageLocker: React.FC = () => {
     return `${value}%`;
   }
 
-  const handleApproveClick = () => {
+  const handleApproveClick = async () => {
     console.log("clicked approve")
+    try {
+      const abi: any = ERC20_ABI
+      const tokenContract = new ethers.Contract(tokenAddress, abi, signer)
+      tokenContract.approve(getLockerAddress(), MaxUint256)
+        .then((res) => {
+          setIsApprove(false)
+          setIsSubmit(true)
+        })
+
+    } catch (err) {
+      console.log('error', err.message)
+      setName('')
+      setSymbol('')
+      setTotalSupply(0)
+      setToken0('')
+      setToken1('')
+    }
   }
 
-  const handleSubmitClick = () => {
-    const data: any = {
-      chain_id: chainId,
-      lock_id: 2,
-      lock_address: tokenAddress,
-      token_name: tokenName,
-      token_symbol: tokenSymbol,
-      lock_supply: totalSupply * percent / 100,
-      total_supply: totalSupply,
-      start_time: Math.floor((new Date().getTime() / 1000)),
-      end_time: Math.floor((new Date(unLock).getTime() / 1000)),
-      logo_link: logoLink,
-      vest_num: vestId,
+  const handleSubmitClick = async () => {
+    try {
+      lockContract.approve()
+        .then((res) => { /* If token locked successfully */
+          const data: any = {
+            chain_id: chainId,
+            lock_id: 2,
+            lock_address: tokenAddress,
+            token_name: tokenName,
+            token_symbol: tokenSymbol,
+            lock_supply: totalSupply * percent / 100,
+            total_supply: totalSupply,
+            start_time: Math.floor((new Date().getTime() / 1000)),
+            end_time: Math.floor((new Date(unLock).getTime() / 1000)),
+            logo_link: logoLink,
+            vest_num: vestId,
+          }
+
+          axios.post(`${process.env.REACT_APP_BACKEND_API_URL2}/insertTokenLockInfo`, { data }).then((response) => {
+            if (response.data) {
+              toastSuccess('Pushed!', 'Your presale info is saved successfully.')
+              // history.push(`/locker/presale/${presaleId}`)
+            }
+            else {
+              toastError('Failed!', 'Your action is failed.')
+            }
+          })
+        })
     }
-    
-    axios.post(`${process.env.REACT_APP_BACKEND_API_URL2}/insertTokenLockInfo`, { data }).then((response) => {
-      if (response.data) {
-        toastSuccess('Pushed!', 'Your presale info is saved successfully.')
-        // history.push(`/locker/presale/${presaleId}`)
-      }
-      else {
-        toastError('Failed!', 'Your action is failed.')
-      }
-    })
+    catch (err) {
+      console.log('error', err)
+    }
   }
 
   return (
