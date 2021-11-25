@@ -15,6 +15,7 @@ import styled from 'styled-components'
 import { TERMS_LIST } from './config'
 
 const StyledModalContainer = styled(ModalContainer)`
+  font-size: 20px;
   ${({ theme }) => theme.mediaQueries.sm} {
     width: 420px;
   }
