@@ -78,7 +78,8 @@ const TokenLocker: React.FC = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      axios.get(`${process.env.REACT_APP_BACKEND_API_URL2}/getAllTokenLockInfo/${chainId}`).then(async (response) => {
+      const type = false
+      axios.get(`${process.env.REACT_APP_BACKEND_API_URL2}/getAllTokenLockInfo/${chainId}/${type}`).then(async (response) => {
         if (response.data) {
           setTokenList(response.data)
         }

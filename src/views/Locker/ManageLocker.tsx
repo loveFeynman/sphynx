@@ -14,7 +14,7 @@ import { simpleRpcProvider } from 'utils/providers'
 import { MaxUint256 } from '@ethersproject/constants'
 import { getLockerContract } from 'utils/contractHelpers'
 import { useHistory } from 'react-router-dom'
-import { TOKEN_LOCK_PAYABLE_BNB } from 'config/constants/lock'
+import { TOKEN_LOCK_PAYABLE_BNB, LP_LOCK_PAYABLE_BNB } from 'config/constants/lock'
 import useToast from 'hooks/useToast'
 import Select, { OptionProps } from 'components/Select/Select'
 import Slider from 'react-rangeslider'
@@ -163,7 +163,7 @@ const ManageLocker: React.FC = () => {
   const [totalSupply, setTotalSupply] = useState(0)
   const [tokenDecimals, setDecimals] = useState(18)
   const lockContract = getLockerContract(signer)
-  const [isToken, setIsToken] = useState(true)
+  const [isLPToken, setIsLPToken] = useState(false)
   const [unLock, setUnLock] = useState(new Date())
   const [logoLink, setLogoLink] = useState('')
   const [vestId, setVestId] = useState(1)
@@ -265,45 +265,63 @@ const ManageLocker: React.FC = () => {
 
   }, [totalSupply, percent, account, tokenAddress, tokenDecimals])
 
+  const isLPTokenAddress = async (address) => {
+    try {
+      const lpAbi: any = LPToken_ABI
+      const lpContract = new ethers.Contract(address, lpAbi, signer)
+      await lpContract.token0()
+      return true
+    }
+    catch (err) {
+      return false
+    }
+  }
+
   const handleChange = async (e) => {
     const value = e.target.value
     setTokenAddress(value)
     const address = isAddress(value)
     if (address) {
       try {
-        const abi: any = ERC20_ABI
-        const tokenContract = new ethers.Contract(value, abi, signer)
-        const name = await tokenContract.name()
-        const symbol = await tokenContract.symbol()
-        const decimals = await tokenContract.decimals()
-        const bgSupply = await tokenContract.totalSupply()
-        const supply = parseFloat(ethers.utils.formatUnits(bgSupply, decimals))
-        setName(name)
-        setSymbol(symbol)
-        setTotalSupply(supply)
-        setDecimals(decimals)
-
-        if (name.slice(-3) === "LPs" && symbol.slice(-3) === "-LP") {
+        const isLP = await isLPTokenAddress(value)
+        if (isLP) {
           /* eslint-disable camelcase */
           const lpAbi: any = LPToken_ABI
           const lpContract = new ethers.Contract(value, lpAbi, signer)
+          const decimals = await lpContract.decimals()
+          const bgSupply = await lpContract.totalSupply()
+          const supply = parseFloat(ethers.utils.formatUnits(bgSupply, decimals))
+          setTotalSupply(supply)
+          setDecimals(decimals)
+
           const address0 = await lpContract.token0()
           const address1 = await lpContract.token1()
           setToken0(address0)
           setToken1(address1)
 
-          const lpTokenContract0 = new ethers.Contract(address0, abi, signer)
+          const lpTokenContract0 = new ethers.Contract(address0, lpAbi, signer)
           const name0 = await lpTokenContract0.name()
           setLpName0(name0)
 
-          const lpTokenContract1 = new ethers.Contract(address1, abi, signer)
+          const lpTokenContract1 = new ethers.Contract(address1, lpAbi, signer)
           const name1 = await lpTokenContract1.name()
           setLpName1(name1)
 
-          setIsToken(false)
+          setIsLPToken(true)
         }
         else {
-          setIsToken(true)
+          const abi: any = ERC20_ABI
+          const tokenContract = new ethers.Contract(value, abi, signer)
+          const name = await tokenContract.name()
+          const symbol = await tokenContract.symbol()
+          const decimals = await tokenContract.decimals()
+          const bgSupply = await tokenContract.totalSupply()
+          const supply = parseFloat(ethers.utils.formatUnits(bgSupply, decimals))
+          setName(name)
+          setSymbol(symbol)
+          setTotalSupply(supply)
+          setDecimals(decimals)
+          setIsLPToken(false)
         }
       } catch (err) {
         console.log('error', err.message)
@@ -312,6 +330,8 @@ const ManageLocker: React.FC = () => {
         setTotalSupply(0)
         setToken0('')
         setToken1('')
+        setLpName0('')
+        setLpName1('')
       }
     }
     else {
@@ -320,6 +340,8 @@ const ManageLocker: React.FC = () => {
       setTotalSupply(0)
       setToken0('')
       setToken1('')
+      setLpName0('')
+      setLpName1('')
     }
   }
 
@@ -365,16 +387,17 @@ const ManageLocker: React.FC = () => {
       const lockTime = Math.floor((new Date(unLock).getTime() / 1000))
       const lockAmount = ethers.utils.parseUnits((totalSupply * percent / 100).toString(), tokenDecimals)
 
-      const fee = ethers.utils.parseEther(TOKEN_LOCK_PAYABLE_BNB)
-      lockContract.createLock(lockTime.toString(), vestId, lockAmount, tokenAddress, {value: fee})
+      const fee = ethers.utils.parseEther(isLPToken ? LP_LOCK_PAYABLE_BNB : TOKEN_LOCK_PAYABLE_BNB)
+      lockContract.createLock(lockTime.toString(), vestId, lockAmount, tokenAddress, isLPToken, { value: fee })
         .then((res) => { /* If token locked successfully */
           const data: any = {
             chain_id: chainId,
             lock_id: lockId,
             owner_address: account,
             lock_address: tokenAddress,
-            token_name: tokenName,
-            token_symbol: tokenSymbol,
+            token_type: isLPToken,
+            token_name: isLPToken ? lpName1 : tokenName,
+            token_symbol: isLPToken ? lpName0 : tokenSymbol,
             lock_supply: totalSupply * percent / 100,
             total_supply: totalSupply,
             start_time: Math.floor((new Date().getTime() / 1000)),
@@ -419,19 +442,7 @@ const ManageLocker: React.FC = () => {
             <MyInput onChange={handleChange} value={tokenAddress} style={{ maxWidth: '1000px' }} />
           </InlineWrapper>
           <Sperate />
-          {isToken ?
-            <>
-              <InlineWrapper>
-                <p className="description w110">Token Name:</p>
-                <p className="description w120">{tokenName}</p>
-              </InlineWrapper>
-              <Sperate />
-              <InlineWrapper>
-                <p className="description w110">Token Symbol:</p>
-                <p className="description w120">{tokenSymbol}</p>
-              </InlineWrapper>
-            </>
-            :
+          {isLPToken ?
             <>
               <InlineWrapper>
                 <p className="description w110">{lpName0}:</p>
@@ -441,6 +452,18 @@ const ManageLocker: React.FC = () => {
               <InlineWrapper>
                 <p className="description w110">{lpName1}:</p>
                 <p className="description w120">{token1}</p>
+              </InlineWrapper>
+            </>
+            :
+            <>
+              <InlineWrapper>
+                <p className="description w110">Token Name:</p>
+                <p className="description w120">{tokenName}</p>
+              </InlineWrapper>
+              <Sperate />
+              <InlineWrapper>
+                <p className="description w110">Token Symbol:</p>
+                <p className="description w120">{tokenSymbol}</p>
               </InlineWrapper>
             </>
           }

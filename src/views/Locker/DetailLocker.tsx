@@ -226,7 +226,7 @@ const TableWrapper = styled.div`
 const DetailLocker: React.FC = () => {
     const param: any = useParams()
     const { account, chainId, library } = useWeb3React()
-    const signer = library.getSigner()
+    const signer = library&&library.getSigner()
     const lockContract = getLockerContract(signer)
     const { t } = useTranslation()
     const { isXl } = useMatchBreakpoints()
@@ -236,7 +236,6 @@ const DetailLocker: React.FC = () => {
     const isMobile = !isXl
 
     useEffect(() => {
-        console.log(account, tokenInfo)
         if (tokenInfo && account.toLowerCase() === tokenInfo.owner_address.toLowerCase())
             setIsOwner(true)
         else
@@ -246,7 +245,7 @@ const DetailLocker: React.FC = () => {
     useEffect(() => {
         const isValue = !Number.isNaN(parseInt(param.lockId))
         if (isValue && chainId) {
-            axios.get(`${process.env.REACT_APP_BACKEND_API_URL2}/getTokenLockInfo/${param.lockId}/${chainId}`)
+            axios.get(`${process.env.REACT_APP_BACKEND_API_URL2}/getTokenLockInfo/${chainId}/${param.lockId}`)
                 .then((response) => {
                     if (response.data) {
                         setTokenInfo(response.data)
@@ -304,7 +303,7 @@ const DetailLocker: React.FC = () => {
                         </CardHeader>
                         <AddressWrapper>
                             <Text color="#A7A7CC" bold>
-                                Token Address:
+                                {tokenInfo.token_type&&'LP '}Token Address:
                             </Text>
                             <Text>{tokenInfo.lock_address}</Text>
                         </AddressWrapper>
@@ -320,7 +319,7 @@ const DetailLocker: React.FC = () => {
                         <Divider />
                         <SaleInfo>
                             <SaleInfoTitle>
-                                Total Supply of Tokens:
+                                Total Supply of {tokenInfo.token_type&&'LP '}Tokens:
                             </SaleInfoTitle>
                             <SaleInfoValue>
                                 {tokenInfo.total_supply}
@@ -329,7 +328,7 @@ const DetailLocker: React.FC = () => {
                         <Divider />
                         <SaleInfo>
                             <SaleInfoTitle>
-                                Total Locked Tokens:
+                                Total Locked {tokenInfo.token_type&&'LP '}Tokens:
                             </SaleInfoTitle>
                             <SaleInfoValue>
                                 {tokenInfo.lock_supply}

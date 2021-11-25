@@ -1,10 +1,13 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'contexts/Localization'
 import { Flex, useMatchBreakpoints } from '@sphynxswap/uikit'
 import styled from 'styled-components'
 import Spinner from 'components/Loader/Spinner'
+import axios from 'axios'
+import { useWeb3React } from '@web3-react/core'
 import SearchPannel from './SearchPannel'
 import LPCard from './LPCard'
+
 
 const Wrapper = styled.div`
   display: flex;
@@ -70,55 +73,28 @@ const TokenListContainder = styled.div`
 const LPLocker: React.FC = () => {
   const { t } = useTranslation()
   const { isXl } = useMatchBreakpoints()
+  const { chainId } = useWeb3React()
   const isMobile = !isXl
+  const [LPList, setLPList] = useState(null)
 
-  const LPList = [
-    {
-      id: 0,
-      tokenSymbol1: "SPHYNX",
-      tokenSymbol2: "WBNB",
-      startTime: "1637691698",
-      endTime: "1637791698",
-      tokenAddress: "0xEE0C0E647d6E78d74C42E3747e0c38Cef41d6C88"
-    },
-    {
-      id: 1,
-      tokenSymbol1: "SPHYNX",
-      tokenSymbol2: "WBNB",
-      startTime: "1637691698",
-      endTime: "1637791698",
-      tokenAddress: "0xEE0C0E647d6E78d74C42E3747e0c38Cef41d6C88"
-    },
-    {
-      id: 2,
-      tokenSymbol1: "SPHYNX",
-      tokenSymbol2: "WBNB",
-      startTime: "1637691698",
-      endTime: "1637791698",
-      tokenAddress: "0xEE0C0E647d6E78d74C42E3747e0c38Cef41d6C88"
-    },
-    {
-      id: 3,
-      tokenSymbol1: "SPHYNX",
-      tokenSymbol2: "WBNB",
-      startTime: "1637691698",
-      endTime: "1637791698",
-      tokenAddress: "0xEE0C0E647d6E78d74C42E3747e0c38Cef41d6C88"
-    },
-    {
-      id: 4,
-      tokenSymbol1: "SPHYNX",
-      tokenSymbol2: "WBNB",
-      startTime: "1637691698",
-      endTime: "1637791698",
-      tokenAddress: "0xEE0C0E647d6E78d74C42E3747e0c38Cef41d6C88"
+  useEffect(() => {
+    const fetchData = async () => {
+      const type = true
+      axios.get(`${process.env.REACT_APP_BACKEND_API_URL2}/getAllTokenLockInfo/${chainId}/${type}`).then(async (response) => {
+        if (response.data) {
+          setLPList(response.data)
+        }
+      })
     }
-  ]
+
+    if (chainId)
+      fetchData()
+  }, [chainId])
 
   return (
     <Wrapper>
       <SearchPannel />
-      {!LPList.length && <Flex justifyContent="center" mb="4px">
+      {!LPList && <Flex justifyContent="center" mb="4px">
         <Spinner />
       </Flex>}
       <SaleInfo>
@@ -126,18 +102,18 @@ const LPLocker: React.FC = () => {
           Total Liquidity Locks:
         </SaleInfoTitle>
         <SaleInfoValue>
-          {LPList.length}
+          {!LPList ? 0 : LPList.length}
         </SaleInfoValue>
       </SaleInfo>
       <TokenListContainder>
         {LPList && LPList.map((cell) => (
           <LPCard
-            id={cell.id}
-            tokenSymbol1={cell.tokenSymbol1}
-            tokenSymbol2={cell.tokenSymbol2}
-            startTime={cell.startTime}
-            endTime={cell.endTime}
-            tokenAddress={cell.tokenAddress}
+            id={cell.lock_id}
+            tokenSymbol1={cell.token_name}
+            tokenSymbol2={cell.token_symbol}
+            startTime={cell.start_time}
+            endTime={cell.end_time}
+            tokenAddress={cell.lock_address}
           />
         ))}
       </TokenListContainder>
