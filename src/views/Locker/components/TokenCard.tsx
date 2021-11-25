@@ -165,7 +165,7 @@ const TokenCard: React.FC<TokenCardProps> = ({ id, tokenLogo, tokenName, tokenSy
                             Vesting Percent:
                         </SaleInfoTitle>
                         <SaleInfoValue>
-                            {vestingRate}
+                            {vestingRate}%
                         </SaleInfoValue>
                     </SaleInfo>
                     <Divider />

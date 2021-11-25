@@ -14,7 +14,7 @@ import { simpleRpcProvider } from 'utils/providers'
 import { MaxUint256 } from '@ethersproject/constants'
 import { getLockerContract } from 'utils/contractHelpers'
 import { useHistory } from 'react-router-dom'
-import { LOCK_PAYABLE_BNB } from 'config/constants/lock'
+import { TOKEN_LOCK_PAYABLE_BNB } from 'config/constants/lock'
 import useToast from 'hooks/useToast'
 import Select, { OptionProps } from 'components/Select/Select'
 import Slider from 'react-rangeslider'
@@ -166,7 +166,7 @@ const ManageLocker: React.FC = () => {
   const [isToken, setIsToken] = useState(true)
   const [unLock, setUnLock] = useState(new Date())
   const [logoLink, setLogoLink] = useState('')
-  const [vestId, setVestId] = useState(0)
+  const [vestId, setVestId] = useState(1)
   const [percent, setPercent] = useState(0)
   const [isApprove, setIsApprove] = useState(false)
   const [isSubmit, setIsSubmit] = useState(false)
@@ -365,7 +365,7 @@ const ManageLocker: React.FC = () => {
       const lockTime = Math.floor((new Date(unLock).getTime() / 1000))
       const lockAmount = ethers.utils.parseUnits((totalSupply * percent / 100).toString(), tokenDecimals)
 
-      const fee = ethers.utils.parseEther(LOCK_PAYABLE_BNB)
+      const fee = ethers.utils.parseEther(TOKEN_LOCK_PAYABLE_BNB)
       lockContract.createLock(lockTime.toString(), vestId, lockAmount, tokenAddress, {value: fee})
         .then((res) => { /* If token locked successfully */
           const data: any = {
