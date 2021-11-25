@@ -73,6 +73,9 @@ export default function DisclaimerModal({ onDismiss = () => null, modalState }: 
 
     if (arr.indexOf(index) > -1) {
       arr.splice(arr.indexOf(index), 1)
+      if (index !== CHECKEDARRAY_LEN - 1 && arr.length === CHECKEDARRAY_LEN - 1) {
+        arr.splice(arr.indexOf(CHECKEDARRAY_LEN - 1), 1)
+      }
       if (index === CHECKEDARRAY_LEN - 1) {
         setArrayCheckedState([])
         return
