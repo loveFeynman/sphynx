@@ -233,6 +233,7 @@ const DetailLocker: React.FC = () => {
     const [tokenInfo, setTokenInfo] = useState(null)
     const [cpkSchedules, setCpkSchedules] = useState(null)
     const [isOwner, setIsOwner] = useState(false)
+    const [lockCount, setLockCount] = useState(0)
     const isMobile = !isXl
 
     useEffect(() => {
@@ -266,6 +267,19 @@ const DetailLocker: React.FC = () => {
                 })
         }
     }, [param.lockId, chainId])
+
+
+    useEffect(() => {
+        if(chainId&&tokenInfo){
+            axios.get(`${process.env.REACT_APP_BACKEND_API_URL2}/getTokenLockCount/${chainId}/${tokenInfo.lock_address}`)
+                .then((response) => {
+                    if (response.data) {
+                        console.log("reap count", response.data)
+                        setLockCount(response.data)
+                    }
+                })
+        }
+    }, [chainId, tokenInfo])
 
     const handleUnlockClick = async () => {
         const availableBalance = (await lockContract.getAvailableBalance(tokenInfo.lock_id)).toString()
@@ -349,7 +363,7 @@ const DetailLocker: React.FC = () => {
                                 Total Locks:
                             </SaleInfoTitle>
                             <SaleInfoValue>
-                                1
+                                {lockCount}
                             </SaleInfoValue>
                         </SaleInfo>
                         <Divider />
