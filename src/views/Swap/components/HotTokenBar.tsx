@@ -215,7 +215,7 @@ export default function HotTokenBar() {
         </BarIntro>
 
         <FlowBar>
-          <Marquee pauseOnHover duration={14000} reverse={true} height="36px" width="100%">
+          <Marquee pauseOnHover duration={20000} reverse={true} height="36px" width="100%">
             <>
               <ul style={{ display: 'flex', listStyle: 'none', justifyContent: 'center' }}>
                 {data.map((elem: any, index) => {
@@ -244,7 +244,7 @@ export default function HotTokenBar() {
                   )
                 })}
               </ul>
-              <div style={{ width: '1080px' }} />
+              <div style={{ width: window.screen.width > 1080 ? '720px' : window.screen.width * 0.7 + 'px' }} />
             </>
           </Marquee>
           {/* {loader ? (
