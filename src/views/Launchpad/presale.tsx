@@ -7,12 +7,14 @@ import { ReactComponent as MainLogo } from 'assets/svg/icon/logo_new.svg'
 import { ReactComponent as CheckList } from 'assets/svg/icon/CheckList.svg'
 import * as ethers from 'ethers'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
+import { useTranslation } from 'contexts/Localization'
 import { isAddress } from '@ethersproject/address'
 import useToast from 'hooks/useToast'
 import styled from 'styled-components'
 import { ERC20_ABI } from 'config/abi/erc20'
 import { useModal } from '@sphynxswap/uikit'
 import DisclaimerModal from 'components/DisclaimerModal/DisclaimerModal'
+import Select from 'components/Select/Select'
 import BigNumber from 'bignumber.js'
 import { BIG_TEN } from 'utils/bigNumber'
 import axios from 'axios'
@@ -47,6 +49,9 @@ const Wrapper = styled.div`
   }
   p.w80 {
     width: 80px;
+  }
+  p.w140 {
+    width: 140px;
   }
   div.MuiTextField-root {
     margin-left: 16px;
@@ -144,6 +149,11 @@ const MarginWrapper = styled.div`
 const InlineWrapper = styled.div`
   display: flex;
   align-items: center;
+  & > div > div {
+    background: ${({ theme }) => (theme.isDark ? '#0E0E26' : '#2A2E60')};
+  }
+  & > div.MuiFormControl-root {
+    background: ${({ theme }) => (theme.isDark ? '#0E0E26' : '#2A2E60')};
   }
 `
 
@@ -163,7 +173,7 @@ const CardWrapper = styled.div`
 `
 
 const NumberWrapper = styled.div`
-  background: linear-gradient(90deg, #610D89 0%, #C42BB4 100%);
+  background: linear-gradient(90deg, #610d89 0%, #c42bb4 100%);
   width: 28px;
   height: 28px;
   border-radius: 14px;
@@ -228,7 +238,7 @@ const FeeCard = () => {
 const MyInput = styled.input`
   background: ${({ theme }) => (theme.isDark ? '#0E0E26' : '#2A2E60')};
   border-radius: 5px;
-  border: 1px solid #4A5187;
+  border: 1px solid #4a5187;
   padding: 10px 14px;
   padding-inline-start: 12px;
   height: 38px;
@@ -251,7 +261,7 @@ const LineBtn = styled.button`
   outline: none;
   border: none;
   &:hover {
-    background: #3A3A5A;
+    background: #3a3a5a;
   }
   &:disabled {
     background: #777;
@@ -324,6 +334,7 @@ const StepWrapper = ({ number, stepName, children, step, onClick }) => {
 }
 
 const Presale: React.FC = () => {
+  const { t } = useTranslation()
   const { account, chainId } = useWeb3React()
   const { library } = useActiveWeb3React()
   const signer = library.getSigner()
@@ -349,10 +360,10 @@ const Presale: React.FC = () => {
   const [telegramLink, setTelegramLink] = useState('')
   const [projectDec, setProjectDec] = useState('')
   const [updateDec, setUpdateDec] = useState('')
-  const [certikAudit, setCertikAudit] = useState('')
-  const [doxxedTeam, setDoxxedTeam] = useState('')
-  const [utility, setUtility] = useState('')
-  const [kyc, setKYC] = useState('')
+  const [certikAudit, setCertikAudit] = useState(false)
+  const [doxxedTeam, setDoxxedTeam] = useState(false)
+  const [utility, setUtility] = useState(false)
+  const [kyc, setKYC] = useState(false)
   const [presaleStart, setPresaleStart] = useState(new Date())
   const [presaleEnd, setPresaleEnd] = useState(new Date())
   const [tier1Time, setTier1Time] = useState(new Date())
@@ -400,42 +411,42 @@ const Presale: React.FC = () => {
     if (!tokenAddress || !tokenName || !tokenSymbol) {
       toastError('Oops, we can not parse token data, please inpute correct token address!')
       setStep(1)
-      return;
+      return
     }
     if (!parseFloat(tier1) || !parseFloat(tier2) || !parseFloat(tier3)) {
       toastError('Please input presale rate correctly!')
       setStep(2)
-      return;
+      return
     }
     if (!parseFloat(softCap) || !parseFloat(hardCap)) {
       toastError('Please input soft cap & hard cap!')
       setStep(3)
-      return;
+      return
     }
     if (parseFloat(softCap) * 2 < parseFloat(hardCap)) {
       toastError('Softcap should be at least half of hardcap')
       setStep(3)
-      return;
+      return
     }
     if (!parseFloat(minBuy) || !parseFloat(maxBuy)) {
       toastError('Please input contribution limit correctly!')
       setStep(4)
-      return;
+      return
     }
     if (parseFloat(minBuy) >= parseFloat(maxBuy)) {
       toastError('Max buy amount should be greater than min buy amount!')
       setStep(4)
-      return;
+      return
     }
     if (!parseFloat(sphynxLiquidityRate) || parseFloat(sphynxLiquidityRate) < 5) {
       toastError('Sphynx Liquidity amount should be more than 5%!')
       setStep(5)
-      return;
+      return
     }
     if (!parseFloat(listingRate)) {
       toastError('Please input listing rate!')
       setStep(7)
-      return;
+      return
     }
 
     // if (new Date(presaleStart).getTime() <= new Date().getTime() + 600000) {
@@ -469,11 +480,11 @@ const Presale: React.FC = () => {
 
     const presaleId = (await presaleContract.currentPresaleId()).toString()
     const routerAddress = getSphynxRouterAddress()
-    const startTime = (Math.floor((new Date(presaleStart).getTime() / 1000)))
-    const tierOneTime = (Math.floor((new Date(tier1Time).getTime() / 1000)))
-    const tierTwoTime = (Math.floor((new Date(tier2Time).getTime() / 1000)))
-    const endTime = (Math.floor((new Date(presaleEnd).getTime() / 1000)))
-    const liquidityLockTime = (Math.floor((new Date(liquidityLock).getTime() / 1000)))
+    const startTime = Math.floor(new Date(presaleStart).getTime() / 1000)
+    const tierOneTime = Math.floor(new Date(tier1Time).getTime() / 1000)
+    const tierTwoTime = Math.floor(new Date(tier2Time).getTime() / 1000)
+    const endTime = Math.floor(new Date(presaleEnd).getTime() / 1000)
+    const liquidityLockTime = Math.floor(new Date(liquidityLock).getTime() / 1000)
 
     const value: any = {
       saleId: presaleId,
@@ -493,58 +504,58 @@ const Presale: React.FC = () => {
       softCap: new BigNumber(softCap).times(BIG_TEN.pow(18)).toString(),
       hardCap: new BigNumber(hardCap).times(BIG_TEN.pow(18)).toString(),
       routerRate: pancakeLiquidityRate,
-      defaultRouterRate: sphynxLiquidityRate
+      defaultRouterRate: sphynxLiquidityRate,
+      isGold: kyc && utility && doxxedTeam && certikAudit,
     }
 
     const fee = new BigNumber('0.001').times(BIG_TEN.pow(18)).toString()
-    presaleContract.createPresale(value, { value: fee })
-      .then((res) => { /* if presale created successfully */
-        const data: any = {
-          chain_id: chainId,
-          sale_id: presaleId,
-          owner_address: account,
-          token_address: tokenAddress,
-          token_name: tokenName,
-          token_symbol: tokenSymbol,
-          token_decimal: tokenDecimal,
-          tier1,
-          tier2,
-          tier3,
-          soft_cap: softCap,
-          hard_cap: hardCap,
-          min_buy: minBuy,
-          max_buy: maxBuy,
-          router_rate: pancakeLiquidityRate,
-          default_router_rate: sphynxLiquidityRate,
-          listing_rate: listingRate,
-          logo_link: logoLink,
-          website_link: webSiteLink,
-          github_link: gitLink,
-          twitter_link: twitterLink,
-          reddit_link: redditLink,
-          telegram_link: telegramLink,
-          project_dec: projectDec,
-          update_dec: updateDec,
-          certik_audit: certikAudit,
-          doxxed_team: doxxedTeam,
-          utility,
-          kyc,
-          start_time: startTime,
-          end_time: endTime,
-          tier1_time: tierOneTime,
-          tier2_time: tierTwoTime,
-          lock_time: liquidityLockTime
+    presaleContract.createPresale(value, { value: fee }).then((res) => {
+      /* if presale created successfully */
+      const data: any = {
+        chain_id: chainId,
+        sale_id: presaleId,
+        owner_address: account,
+        token_address: tokenAddress,
+        token_name: tokenName,
+        token_symbol: tokenSymbol,
+        token_decimal: tokenDecimal,
+        tier1,
+        tier2,
+        tier3,
+        soft_cap: softCap,
+        hard_cap: hardCap,
+        min_buy: minBuy,
+        max_buy: maxBuy,
+        router_rate: pancakeLiquidityRate,
+        default_router_rate: sphynxLiquidityRate,
+        listing_rate: listingRate,
+        logo_link: logoLink,
+        website_link: webSiteLink,
+        github_link: gitLink,
+        twitter_link: twitterLink,
+        reddit_link: redditLink,
+        telegram_link: telegramLink,
+        project_dec: projectDec,
+        update_dec: updateDec,
+        certik_audit: certikAudit,
+        doxxed_team: doxxedTeam,
+        utility,
+        kyc,
+        start_time: startTime,
+        end_time: endTime,
+        tier1_time: tierOneTime,
+        tier2_time: tierTwoTime,
+        lock_time: liquidityLockTime,
+      }
+      axios.post(`${process.env.REACT_APP_BACKEND_API_URL2}/insertPresaleInfo`, { data }).then((response) => {
+        if (response.data) {
+          toastSuccess('Pushed!', 'Your presale info is saved successfully.')
+          history.push(`/launchpad/presale/${presaleId}`)
+        } else {
+          toastError('Failed!', 'Your action is failed.')
         }
-        axios.post(`${process.env.REACT_APP_BACKEND_API_URL2}/insertPresaleInfo`, { data }).then((response) => {
-          if(response.data) {
-            toastSuccess('Pushed!', 'Your presale info is saved successfully.')
-            history.push(`/launchpad/presale/${presaleId}`)
-          }
-          else {
-            toastError('Failed!', 'Your action is failed.')
-          }
-        })
       })
+    })
   }
 
   const [onDisclaimerModal] = useModal(<DisclaimerModal />, false)
@@ -579,7 +590,7 @@ const Presale: React.FC = () => {
           <Sperate />
           <WarningPanel>
             <BellIcon style={{ flexShrink: 0.3 }} />
-            <p className="ml16" style={{fontSize: "18px", fontWeight: 'bold'}}>
+            <p className="ml16" style={{ fontSize: '18px', fontWeight: 'bold' }}>
               For tokens with burns, rebase or other special transfers please ensure you have a way to whitelist
               multiple addresses or turn off the special transfer events (By setting fees to 0 for example for the
               duration of the presale)
@@ -764,7 +775,11 @@ const Presale: React.FC = () => {
               <MyInput onChange={(e) => setRedditLink(e.target.value)} value={redditLink} style={{ width: '100%' }} />
               <Sperate />
               <p className="description">Telegram Link</p>
-              <MyInput onChange={(e) => setTelegramLink(e.target.value)} value={telegramLink} style={{ width: '100%' }} />
+              <MyInput
+                onChange={(e) => setTelegramLink(e.target.value)}
+                value={telegramLink}
+                style={{ width: '100%' }}
+              />
               <Sperate />
               <p className="description">Project Description</p>
               <MyInput onChange={(e) => setProjectDec(e.target.value)} value={projectDec} style={{ width: '100%' }} />
@@ -772,17 +787,77 @@ const Presale: React.FC = () => {
               <p className="description">Any update you want to provide to participants</p>
               <MyInput onChange={(e) => setUpdateDec(e.target.value)} value={updateDec} style={{ width: '100%' }} />
               <Sperate />
-              <p className="description">Certik audit</p>
-              <MyInput onChange={(e) => setCertikAudit(e.target.value)} value={certikAudit} style={{ width: '100%' }} />
+              <FlexWrapper>
+                <InlineWrapper>
+                  <p className="description w140">Certik audit</p>
+                  <Select
+                    options={[
+                      {
+                        label: t('No'),
+                        value: false,
+                      },
+                      {
+                        label: t('Yes'),
+                        value: true,
+                      },
+                    ]}
+                    onChange={(option: any) => setCertikAudit(option.value)}
+                  />
+                </InlineWrapper>
+                <MarginWrapper />
+                <InlineWrapper>
+                  <p className="description w140">Doxxed team</p>
+                  <Select
+                    options={[
+                      {
+                        label: t('No'),
+                        value: false,
+                      },
+                      {
+                        label: t('Yes'),
+                        value: true,
+                      },
+                    ]}
+                    onChange={(option: any) => setDoxxedTeam(option.value)}
+                  />
+                </InlineWrapper>
+              </FlexWrapper>
               <Sperate />
-              <p className="description">Doxxed team</p>
-              <MyInput onChange={(e) => setDoxxedTeam(e.target.value)} value={doxxedTeam} style={{ width: '100%' }} />
-              <Sperate />
-              <p className="description">Utility information</p>
-              <MyInput onChange={(e) => setUtility(e.target.value)} value={utility} style={{ width: '100%' }} />
-              <Sperate />
-              <p className="description">KYC</p>
-              <MyInput onChange={(e) => setKYC(e.target.value)} value={kyc} style={{ width: '100%' }} />
+              <FlexWrapper>
+                <InlineWrapper>
+                  <p className="description w140">Utility information</p>
+                  <Select
+                    options={[
+                      {
+                        label: t('No'),
+                        value: false,
+                      },
+                      {
+                        label: t('Yes'),
+                        value: true,
+                      },
+                    ]}
+                    onChange={(option: any) => setUtility(option.value)}
+                  />
+                </InlineWrapper>
+                <MarginWrapper />
+                <InlineWrapper>
+                  <p className="description w140">KYC</p>
+                  <Select
+                    options={[
+                      {
+                        label: t('No'),
+                        value: false,
+                      },
+                      {
+                        label: t('Yes'),
+                        value: true,
+                      },
+                    ]}
+                    onChange={(option: any) => setKYC(option.value)}
+                  />
+                </InlineWrapper>
+              </FlexWrapper>
               <Sperate />
               <InlineWrapper>
                 <LineBtn onClick={() => setStep(7)}>Back</LineBtn>

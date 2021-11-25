@@ -7,7 +7,6 @@ import { useTranslation } from 'contexts/Localization'
 import { HotTokenType } from './types'
 // import { AppState } from '../../../state'
 
-
 export interface HotTokenBarProps {
   tokens?: HotTokenType[] | null
 }
@@ -36,7 +35,7 @@ const BarIntro = styled.div`
   background-color: transparent;
   border-radius: 8px 0px 0px 8px;
   & span {
-    color: #A7A7CC;
+    color: #a7a7cc;
     font-size: 12px;
     font-weight: bold;
     line-height: 14px;
@@ -45,6 +44,113 @@ const BarIntro = styled.div`
 `
 
 export default function HotTokenBar() {
+  const data = [
+    {
+      currency: {
+        symbol: 'SPHYNX',
+        name: 'SPHYNX BSC',
+        address: '0xd38ec16caf3464ca04929e847e4550dcff25b27a',
+      },
+    },
+    {
+      currency: {
+        symbol: '??',
+        name: '??',
+        address: '',
+      },
+    },
+    {
+      currency: {
+        symbol: '??',
+        name: '??',
+        address: '',
+      },
+    },
+    {
+      currency: {
+        symbol: '??',
+        name: '??',
+        address: '',
+      },
+    },
+    {
+      currency: {
+        symbol: '??',
+        name: '??',
+        address: '',
+      },
+    },
+    {
+      currency: {
+        symbol: '??',
+        name: '??',
+        address: '',
+      },
+    },
+    {
+      currency: {
+        symbol: '??',
+        name: '??',
+        address: '',
+      },
+    },
+    {
+      currency: {
+        symbol: '??',
+        name: '??',
+        address: '',
+      },
+    },
+    {
+      currency: {
+        symbol: '??',
+        name: '??',
+        address: '',
+      },
+    },
+    {
+      currency: {
+        symbol: '??',
+        name: '??',
+        address: '',
+      },
+    },
+    {
+      currency: {
+        symbol: '??',
+        name: '??',
+        address: '',
+      },
+    },
+    {
+      currency: {
+        symbol: '??',
+        name: '??',
+        address: '',
+      },
+    },
+    {
+      currency: {
+        symbol: '??',
+        name: '??',
+        address: '',
+      },
+    },
+    {
+      currency: {
+        symbol: '??',
+        name: '??',
+        address: '',
+      },
+    },
+    {
+      currency: {
+        symbol: '??',
+        name: '??',
+        address: '',
+      },
+    },
+  ]
   // const [data, setData] = React.useState([
   //   {
   //     currency: {
@@ -108,13 +214,23 @@ export default function HotTokenBar() {
         </BarIntro>
 
         <FlowBar>
-          <Marquee
-            gradient={false}
-            speed={40}
-            className="marquee-container"
-            style={{ overflow: 'hidden !important', color: 'white', fontSize: '12px' }}
-          >
-            Coming soon
+          <Marquee gradient={false} speed={40} className="marquee-container" style={{ overflow: 'hidden !important' }}>
+            <ul style={{ display: 'flex', listStyle: 'none', justifyContent: 'center' }}>
+              {data.map((elem: any, index) => {
+                return elem.currency.address !== '' ? (
+                  <li key={`${index + 1}.${elem.currency.symbol}`} style={{ color: 'white', padding: '12', paddingInlineEnd: '24px' }}>
+                    <a
+                      href={`/swap/${elem.currency.address}`}
+                      style={{ marginRight: 20, textDecoration: 'none' }}
+                    >{`${index + 1}. ${elem.currency.symbol}`}</a>
+                  </li>
+                ) : (
+                  <li key={`${index + 1}.${elem.currency.symbol}`} style={{ color: 'white', padding: '12', paddingInlineEnd: '24px' }}>
+                    {`${index + 1}. ${elem.currency.symbol}`}
+                  </li>
+                )
+              })}
+            </ul>
           </Marquee>
           {/* {loader ? (
             <div style={{ display: 'flex', justifyContent: 'center' }}>
