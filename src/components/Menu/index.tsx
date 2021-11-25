@@ -36,7 +36,8 @@ import { getBNBPrice } from 'utils/priceProvider'
 import { useThemeManager } from 'state/user/hooks'
 
 const abi: any = ERC20ABI
-const web3 = new Web3(web3Provider)
+const dataFeedProvider = new Web3.providers.HttpProvider("https://bsc-dataseed.binance.org/")
+const web3 = new Web3(dataFeedProvider)
 
 const MenuWrapper = styled.div<{ toggled: boolean }>`
   width: 320px;
