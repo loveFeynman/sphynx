@@ -1,6 +1,7 @@
+/* eslint-disable */
 import React from 'react'
 import styled from 'styled-components'
-import Marquee from 'react-fast-marquee'
+import Marquee from 'react-easy-marquee'
 // import { useDispatch, useSelector } from 'react-redux'
 // import moment from 'moment'
 import { useTranslation } from 'contexts/Localization'
@@ -47,7 +48,7 @@ export default function HotTokenBar() {
   const data = [
     {
       currency: {
-        symbol: 'SPHYNX',
+        symbol: 'SPHYNX BSC',
         name: 'SPHYNX BSC',
         address: '0xd38ec16caf3464ca04929e847e4550dcff25b27a',
       },
@@ -214,23 +215,37 @@ export default function HotTokenBar() {
         </BarIntro>
 
         <FlowBar>
-          <Marquee gradient={false} speed={40} className="marquee-container" style={{ overflow: 'hidden !important' }}>
-            <ul style={{ display: 'flex', listStyle: 'none', justifyContent: 'center' }}>
-              {data.map((elem: any, index) => {
-                return elem.currency.address !== '' ? (
-                  <li key={`${index + 1}.${elem.currency.symbol}`} style={{ color: 'white', padding: '12', paddingInlineEnd: '24px' }}>
-                    <a
-                      href={`/swap/${elem.currency.address}`}
-                      style={{ marginRight: 20, textDecoration: 'none' }}
-                    >{`${index + 1}. ${elem.currency.symbol}`}</a>
-                  </li>
-                ) : (
-                  <li key={`${index + 1}.${elem.currency.symbol}`} style={{ color: 'white', padding: '12', paddingInlineEnd: '24px' }}>
-                    {`${index + 1}. ${elem.currency.symbol}`}
-                  </li>
-                )
-              })}
-            </ul>
+          <Marquee pauseOnHover duration={14000} reverse={true} height="36px" width="100%">
+            <>
+              <ul style={{ display: 'flex', listStyle: 'none', justifyContent: 'center' }}>
+                {data.map((elem: any, index) => {
+                  return elem.currency.address !== '' ? (
+                    <li
+                      key={`${index + 1}.${elem.currency.symbol}`}
+                      style={{ color: 'white', padding: '12', paddingInlineEnd: '24px' }}
+                    >
+                      <a href={`/swap/${elem.currency.address}`} style={{ marginRight: 20, textDecoration: 'none' }}>
+                        <span style={{ color: index === 0 ? 'yellow' : 'white', fontSize: '14px' }}>{`${
+                          index + 1
+                        }. `}</span>
+                        {`${elem.currency.symbol}`}
+                      </a>
+                    </li>
+                  ) : (
+                    <li
+                      key={`${index + 1}.${elem.currency.symbol}`}
+                      style={{ color: 'white', padding: '12', paddingInlineEnd: '24px' }}
+                    >
+                      <span style={{ color: index === 0 ? 'yellow' : 'white', fontSize: '14px' }}>{`${
+                        index + 1
+                      }. `}</span>
+                      {`${elem.currency.symbol}`}
+                    </li>
+                  )
+                })}
+              </ul>
+              <div style={{ width: '1080px' }} />
+            </>
           </Marquee>
           {/* {loader ? (
             <div style={{ display: 'flex', justifyContent: 'center' }}>
