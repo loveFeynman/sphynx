@@ -13,6 +13,7 @@ import axios from 'axios'
 import { simpleRpcProvider } from 'utils/providers'
 import { MaxUint256 } from '@ethersproject/constants'
 import { getLockerContract } from 'utils/contractHelpers'
+import { useHistory } from 'react-router-dom'
 import { LOCK_PAYABLE_BNB } from 'config/constants/lock'
 import useToast from 'hooks/useToast'
 import Select, { OptionProps } from 'components/Select/Select'
@@ -146,6 +147,7 @@ const ControlStretch = styled(Flex) <{ isMobile?: boolean }>`
 
 const ManageLocker: React.FC = () => {
   const { account, library, chainId } = useActiveWeb3React()
+  const history = useHistory()
   const signer = library.getSigner()
   const { t } = useTranslation()
   const { isXl } = useMatchBreakpoints()
@@ -360,17 +362,16 @@ const ManageLocker: React.FC = () => {
   const handleSubmitClick = async () => {
     try {
       const lockId = (await lockContract.currentLockId()).toString()
-
-      const payableBNB = ethers.utils.parseEther(LOCK_PAYABLE_BNB)
       const lockTime = Math.floor((new Date(unLock).getTime() / 1000))
       const lockAmount = ethers.utils.parseUnits((totalSupply * percent / 100).toString(), tokenDecimals)
 
-      const fee = ethers.utils.parseEther('0.001')
-      lockContract.createLock(payableBNB, lockTime.toString(), lockAmount, tokenAddress, {value: fee})
+      const fee = ethers.utils.parseEther(LOCK_PAYABLE_BNB)
+      lockContract.createLock(lockTime.toString(), vestId, lockAmount, tokenAddress, {value: fee})
         .then((res) => { /* If token locked successfully */
           const data: any = {
             chain_id: chainId,
             lock_id: lockId,
+            owner_address: account,
             lock_address: tokenAddress,
             token_name: tokenName,
             token_symbol: tokenSymbol,
@@ -384,8 +385,8 @@ const ManageLocker: React.FC = () => {
 
           axios.post(`${process.env.REACT_APP_BACKEND_API_URL2}/insertTokenLockInfo`, { data }).then((response) => {
             if (response.data) {
-              toastSuccess('Pushed!', 'Your presale info is saved successfully.')
-              // history.push(`/locker/presale/${presaleId}`)
+              toastSuccess('Pushed!', 'Your lock info is saved successfully.')
+              history.push(`/locker/tokendetail/${lockId}`)
             }
             else {
               toastError('Failed!', 'Your action is failed.')

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'contexts/Localization'
 import { Text, Flex, useMatchBreakpoints, Button } from '@sphynxswap/uikit'
+import { getLockerContract } from 'utils/contractHelpers'
 import { ReactComponent as MainLogo } from 'assets/svg/icon/logo_new.svg'
 import styled from 'styled-components'
 import Spinner from 'components/Loader/Spinner'
@@ -224,13 +225,23 @@ const TableWrapper = styled.div`
 
 const DetailLocker: React.FC = () => {
     const param: any = useParams()
-    const { chainId } = useWeb3React()
+    const { account, chainId, library } = useWeb3React()
+    const signer = library.getSigner()
+    const lockContract = getLockerContract(signer)
     const { t } = useTranslation()
     const { isXl } = useMatchBreakpoints()
     const [tokenInfo, setTokenInfo] = useState(null)
     const [cpkSchedules, setCpkSchedules] = useState(null)
-    const [isUnlock, setIsUnlock] = useState(false)
+    const [isOwner, setIsOwner] = useState(false)
     const isMobile = !isXl
+
+    useEffect(() => {
+        console.log(account, tokenInfo)
+        if (tokenInfo && account.toLowerCase() === tokenInfo.owner_address.toLowerCase())
+            setIsOwner(true)
+        else
+            setIsOwner(false)
+    }, [account, tokenInfo])
 
     useEffect(() => {
         const isValue = !Number.isNaN(parseInt(param.lockId))
@@ -257,8 +268,10 @@ const DetailLocker: React.FC = () => {
         }
     }, [param.lockId, chainId])
 
-    const handleUnlockClick = () => {
-        console.log("unlock clicked")
+    const handleUnlockClick = async () => {
+        const availableBalance = (await lockContract.getAvailableBalance(tokenInfo.lock_id)).toString()
+        if (availableBalance !== '0')
+            lockContract.withdrawToken(tokenInfo.lock_id)
     }
 
     return (
@@ -341,13 +354,15 @@ const DetailLocker: React.FC = () => {
                             </SaleInfoValue>
                         </SaleInfo>
                         <Divider />
-                        <Button
-                            onClick={handleUnlockClick}
-                            disabled={!isUnlock}
-                            style={ColorButtonStyle}
-                        >
-                            {t('Unlock')}
-                        </Button>
+                        {
+                            isOwner &&
+                            <Button
+                                onClick={handleUnlockClick}
+                                style={ColorButtonStyle}
+                            >
+                                {t('Unlock')}
+                            </Button>
+                        }
                     </MainCardWrapper>
                     <SubCardWrapper>
                         <Text fontSize='20px' bold>
