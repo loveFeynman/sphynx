@@ -50,7 +50,7 @@ export const links = [
     href: '/locker',
   },
   {
-    label: 'Sphynx pad (live)',
+    label: 'Sphynx fair pad (live)',
     icon: LaunchPadIcon,
     href: '/fair-launchpad',
   },
