@@ -13,7 +13,30 @@ import styled from 'styled-components'
 import { useTranslation } from 'contexts/Localization'
 import useHarvestFarm from '../../../hooks/useHarvestFarm'
 
-import { ActionContainer } from './styles'
+export const HarvestActionContainer = styled.div`
+  padding: 16px;
+  flex-grow: 1;
+  flex-basis: 0;
+  flex-direction: column;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+
+  ${({ theme }) => theme.mediaQueries.sm} {
+    margin-left: 12px;
+    margin-right: 12px;
+    height: 130px;
+    max-height: 130px;
+  }
+
+  ${({ theme }) => theme.mediaQueries.xl} {
+    margin-left: 0;
+    margin-right: 32px;
+    height: 130px;
+    max-height: 130px;
+  }
+`
 
 const DarkButton = styled(Button)`
   border-radius: 5px;
@@ -79,15 +102,14 @@ const HarvestAction: React.FunctionComponent<HarvestActionProps> = ({ pid, userD
   }
 
   return (
-    <ActionContainer>
+    <HarvestActionContainer>
       <DarkButton
         disabled={earnings.eq(0) || pendingTx || !userDataReady}
         onClick={handleHarvest}
-        ml="4px"
       >
         {t('Harvest')}
       </DarkButton>
-    </ActionContainer>
+    </HarvestActionContainer>
   )
 }
 

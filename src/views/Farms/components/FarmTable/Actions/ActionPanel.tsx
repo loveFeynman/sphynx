@@ -113,10 +113,12 @@ const ActionContainer = styled.div`
 `
 
 const InfoContainer = styled.div`
-  min-width: 200px;
+  // min-width: 200px;
 `
+
 const DetailContainer = styled(Flex)`
   display: flex;
+  gap: 10px;
   flex-direction: row;
   align-items: center;
 
@@ -142,6 +144,17 @@ const TokenLogoSection = styled(Flex)`
   align-items: center;
   display: flex;
   flex-grow: 1;
+`
+
+const ViewGroupWrapper = styled(Flex)`
+  display: flex;
+  flex-direction: column;
+  margin-bottom: unset;
+  gap: 10px;
+  ${({ theme }) => theme.mediaQueries.md} {
+    flex-direction: row;
+    margin-bottom: 8px;
+  }
 `
 
 const ActionPanel: React.FunctionComponent<ActionPanelProps> = ({
@@ -172,14 +185,14 @@ const ActionPanel: React.FunctionComponent<ActionPanelProps> = ({
               {dual ? <DualTag /> : null}
             </TagsContainer>
           </Flex>
-          <Flex flexDirection='row' mb="8px">
-            <BorderFlex mr='2px'>
+          <ViewGroupWrapper>
+            <BorderFlex mr={isMobile ? '0' : '2px'}>
               <StyledLinkExternal href={bsc}>{t('View Contract')}</StyledLinkExternal>
             </BorderFlex>
-            <BorderFlex ml='2px'>
+            <BorderFlex ml={isMobile ? '0' : '2px'}>
               <StyledLinkExternal href={bsc}>{t('See Pair Info')}</StyledLinkExternal>
             </BorderFlex>
-          </Flex>
+          </ViewGroupWrapper>
         </InfoContainer>
         <TokenLogoSection>
           <TokenLogo {...farm} userDataReady={userDataReady} />
