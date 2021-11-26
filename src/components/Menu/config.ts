@@ -50,6 +50,11 @@ export const links = [
     href: '/locker',
   },
   {
+    label: 'Sphynx pad (live)',
+    icon: LaunchPadIcon,
+    href: '/fair-launchpad',
+  },
+  {
     label: 'Lottery (coming soon)',
     icon: IFOIcon,
     href: '/lottery',

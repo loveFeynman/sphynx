@@ -258,7 +258,7 @@ const App: React.FC = () => {
                   <Route exact strict path="/launchpad/listing" component={Listings} />
                   <Route exact strict path="/launchpad/live/:saleId" component={PresaleLive} />
                   <Route exact strict path="/launchpad/presale/:saleId" component={PresaleManage} />
-                  <Route exact strict path="/fair-launch" component = {FairLaunch} />
+                  <Route exact strict path="/fair-launchpad" component = {FairLaunch} />
                   <Route exact strict path="/locker" component={Locker} />
                   <Route exact strict path="/locker/tokendetail/:lockId" component={DetailLocker} />
                   <Route exact strict path="/locker/manage" component={ManageLocker} />
