@@ -234,14 +234,24 @@ const DetailLocker: React.FC = () => {
     const [cpkSchedules, setCpkSchedules] = useState(null)
     const [isOwner, setIsOwner] = useState(false)
     const [lockCount, setLockCount] = useState(0)
+    const [isDisabled, setIsDisabled] = useState(false)
     const isMobile = !isXl
 
     useEffect(() => {
-        if (tokenInfo && account.toLowerCase() === tokenInfo.owner_address.toLowerCase())
+        const fetchData = async () => {
+            const availableBalance = (await lockContract.getAvailableBalance(tokenInfo.lock_id)).toString()
+            if(Math.floor(new Date().getTime()/1000) > parseInt(tokenInfo.end_time) && availableBalance === '0'){
+                setIsDisabled(true)
+            }
+        }
+
+        if (tokenInfo && account.toLowerCase() === tokenInfo.owner_address.toLowerCase()){
             setIsOwner(true)
+            fetchData()
+        }
         else
             setIsOwner(false)
-    }, [account, tokenInfo])
+    }, [account, tokenInfo, lockContract])
 
     useEffect(() => {
         const isValue = !Number.isNaN(parseInt(param.lockId))
@@ -283,8 +293,12 @@ const DetailLocker: React.FC = () => {
 
     const handleUnlockClick = async () => {
         const availableBalance = (await lockContract.getAvailableBalance(tokenInfo.lock_id)).toString()
-        if (availableBalance !== '0')
+        if (availableBalance !== '0'){
             lockContract.withdrawToken(tokenInfo.lock_id)
+        }
+        else if(Math.floor(new Date().getTime()/1000) > parseInt(tokenInfo.end_time) && availableBalance === '0'){
+            setIsDisabled(true)
+        }
     }
 
     return (
@@ -370,6 +384,7 @@ const DetailLocker: React.FC = () => {
                         {
                             isOwner &&
                             <Button
+                                disabled={isDisabled}
                                 onClick={handleUnlockClick}
                                 style={ColorButtonStyle}
                             >
