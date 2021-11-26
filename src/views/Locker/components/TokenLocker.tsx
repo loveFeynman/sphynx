@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'contexts/Localization'
-import { Flex, useMatchBreakpoints } from '@sphynxswap/uikit'
+import { Flex } from '@sphynxswap/uikit'
 import styled from 'styled-components'
 import Spinner from 'components/Loader/Spinner'
 import axios from 'axios'
@@ -71,9 +71,7 @@ const TokenListContainder = styled.div`
 
 const TokenLocker: React.FC = () => {
   const { t } = useTranslation()
-  const { isXl } = useMatchBreakpoints()
   const { chainId } = useWeb3React()
-  const isMobile = !isXl
   const [tokenList, setTokenList] = useState(null)
 
   useEffect(() => {

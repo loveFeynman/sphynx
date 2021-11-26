@@ -95,14 +95,6 @@ const SaleInfoWrapper = styled.div`
     width: calc(100% - 42px);
 `
 
-const TokenImg = styled.div`
-    img {
-        width: 64px;
-        height: 64px;
-        max-width: unset;
-    }
-`
-
 const TokenWrapper = styled.div`
     display: flex;
     align-items: center;

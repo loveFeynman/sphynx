@@ -135,10 +135,6 @@ const SearchPannel = () => {
     return value;
   }
 
-  const handleSortOptionChange = (option: OptionProps): void => {
-    setSortOption(option.value)
-  }
-
   const handlerChange = (e: any) => {
     setQuery(e.target.value)
   }

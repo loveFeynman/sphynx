@@ -1,6 +1,6 @@
 import React from 'react'
 import { useTranslation } from 'contexts/Localization'
-import { Text, Flex, Box, useMatchBreakpoints } from '@sphynxswap/uikit'
+import { Text, Flex, Box } from '@sphynxswap/uikit'
 import { ReactComponent as MainLogo } from 'assets/svg/icon/logo_new.svg'
 import styled, { useTheme } from 'styled-components'
 import { SwapTabs, SwapTabList, SwapTab, SwapTabPanel } from "components/Tab/tab";
@@ -65,17 +65,6 @@ const Card = styled(Box) <{
 const Locker: React.FC = () => {
     const { t } = useTranslation()
     const theme = useTheme()
-    const { isXl } = useMatchBreakpoints()
-    const isMobile = !isXl
-
-    const selectedTab = (tabIndex: number): void => {
-        if (tabIndex === 0) {
-            // location.pathname = "/lock/"
-        }
-        else {
-            // location.pathname = "/pools/history"
-        }
-    }
 
     return (
         <Wrapper>
@@ -92,7 +81,6 @@ const Locker: React.FC = () => {
             <SwapTabs
                 selectedTabClassName='is-selected'
                 selectedTabPanelClassName='is-selected'
-                onSelect={(tabIndex) => selectedTab(tabIndex)}
                 style={{ width: '100%' }}
             >
                 <SwapTabList>
