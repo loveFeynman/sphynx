@@ -5,6 +5,7 @@ import styled from 'styled-components'
 import Spinner from 'components/Loader/Spinner'
 import axios from 'axios'
 import { useWeb3React } from '@web3-react/core'
+import { useMenuToggle } from 'state/application/hooks'
 import SearchPannel from './SearchPannel'
 import TokenCard from './TokenCard'
 
@@ -44,7 +45,7 @@ const SaleInfoValue = styled.div`
     font-size: 14px;
 `
 
-const TokenListContainder = styled.div`
+const TokenListContainder = styled.div<{ toggled: boolean }>`
   margin-top: 24px;
   display: grid;
   grid-gap: 20px;
@@ -52,25 +53,20 @@ const TokenListContainder = styled.div`
   ${({ theme }) => theme.mediaQueries.xs} {
     grid-template-columns: repeat(1, 1fr);
   }
-  ${({ theme }) => theme.mediaQueries.md} {
-    grid-template-columns: repeat(1, 1fr);
-  }
   ${({ theme }) => theme.mediaQueries.lg} {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  ${({ theme }) => theme.mediaQueries.xl} {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: ${(props) => (props.toggled ? 'repeat(2, 1fr)' : 'repeat(1, 1fr)')};
   }
   @media screen and (min-width: 1600px) {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: ${(props) => (props.toggled ? 'repeat(3, 1fr)' : 'repeat(2, 1fr)')};
   }
   @media screen and (min-width: 1920px) {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: ${(props) => (props.toggled ? 'repeat(4, 1fr)' : 'repeat(3, 1fr)')};
   }
 `
 
 const TokenLocker: React.FC = () => {
   const { t } = useTranslation()
+  const { menuToggled } = useMenuToggle()
   const { chainId } = useWeb3React()
   const [tokenList, setTokenList] = useState(null)
 
@@ -103,7 +99,7 @@ const TokenLocker: React.FC = () => {
           {!tokenList ? 0 : tokenList.length}
         </SaleInfoValue>
       </SaleInfo>
-      <TokenListContainder>
+      <TokenListContainder toggled={menuToggled}>
         {tokenList && tokenList.map((cell) => (
           <TokenCard
             id={cell.lock_id}
