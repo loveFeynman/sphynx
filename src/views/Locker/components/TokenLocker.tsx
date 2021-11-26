@@ -21,7 +21,7 @@ const Wrapper = styled.div`
   p {
     line-height: 24px;
   }
-  ${({ theme }) => theme.mediaQueries.xs} {
+  ${({ theme }) => theme.mediaQueries.sm} {
     padding: 24px;
   }
 `
@@ -56,7 +56,7 @@ const TokenListContainder = styled.div`
     grid-template-columns: repeat(1, 1fr);
   }
   ${({ theme }) => theme.mediaQueries.lg} {
-    grid-template-columns: repeat(1, 1fr);
+    grid-template-columns: repeat(2, 1fr);
   }
   ${({ theme }) => theme.mediaQueries.xl} {
     grid-template-columns: repeat(2, 1fr);

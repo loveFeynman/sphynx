@@ -17,11 +17,15 @@ const Wrapper = styled.div`
   margin-top: 24px;
   text-align: center;
   font-weight: bold;
+  padding: 0px;
   p {
     line-height: 24px;
   }
-  ${({ theme }) => theme.mediaQueries.xs} {
-    padding: 24px;
+  ${({ theme }) => theme.mediaQueries.sm} {
+    padding: 5px;
+  }
+  ${({ theme }) => theme.mediaQueries.sm} {
+    padding: 14px;
   }
 `
 

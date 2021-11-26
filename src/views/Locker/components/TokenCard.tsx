@@ -76,6 +76,15 @@ const SaleInfoValue = styled.div`
     font-size: 14px;
 `
 
+const AddressInfo = styled(SaleInfoValue)`
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 200px;
+    ${({ theme }) => theme.mediaQueries.sm} {
+        width: unset;
+    }
+`
+
 const Divider = styled.div`
     height: 1px;
     background: rgba(255, 255, 255, 0.1);
@@ -171,9 +180,9 @@ const TokenCard: React.FC<TokenCardProps> = ({ id, tokenLogo, tokenName, tokenSy
                         <SaleInfoTitle style={{ marginRight: '10px' }}>
                             Address:
                         </SaleInfoTitle>
-                        <SaleInfoValue style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        <AddressInfo>
                             {tokenAddress}
-                        </SaleInfoValue>
+                        </AddressInfo>
                     </SaleInfo>
                     <Divider />
                 </SaleInfoWrapper>

@@ -76,6 +76,15 @@ const SaleInfoValue = styled.div`
     font-size: 14px;
 `
 
+const AddressInfo = styled(SaleInfoValue)`
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 200px;
+    ${({ theme }) => theme.mediaQueries.sm} {
+        width: unset;
+    }
+`
+
 const Divider = styled.div`
     height: 1px;
     background: rgba(255, 255, 255, 0.1);
@@ -146,9 +155,9 @@ const LPCard: React.FC<TokenCardProps> = ({ id, tokenSymbol1, tokenSymbol2, star
                         <SaleInfoTitle style={{marginRight: '10px'}}>
                             Address:
                         </SaleInfoTitle>
-                        <SaleInfoValue style={{overflow: 'hidden', textOverflow: 'ellipsis'}}>
+                        <AddressInfo style={{overflow: 'hidden', textOverflow: 'ellipsis'}}>
                             {tokenAddress}
-                        </SaleInfoValue>
+                        </AddressInfo>
                     </SaleInfo>
                     <Divider/>
                 </SaleInfoWrapper>
