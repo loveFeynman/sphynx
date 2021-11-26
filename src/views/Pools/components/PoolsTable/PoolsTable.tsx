@@ -20,13 +20,6 @@ const StyledTableBorder = styled.div<{isMobile?: boolean}>`
   background-color: transparent;
 `
 
-const ScrollButtonContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  padding-top: 5px;
-  padding-bottom: 5px;
-`
-
 const PoolsTable: React.FC<PoolsTableProps> = ({ pools, userDataLoaded, account }) => {
   const { t } = useTranslation()
   const tableWrapperEl = useRef<HTMLDivElement>(null)
@@ -49,12 +42,6 @@ const PoolsTable: React.FC<PoolsTableProps> = ({ pools, userDataLoaded, account 
             userDataLoaded={userDataLoaded}
           />
         ))}
-        {/* <ScrollButtonContainer>
-          <Button variant="text" onClick={scrollToTop} style={{ color: 'white' }}>
-            {t('To Top')}
-            <ChevronUpIcon color="white" />
-          </Button>
-        </ScrollButtonContainer> */}
       </StyledTable>
     </StyledTableBorder>
   )

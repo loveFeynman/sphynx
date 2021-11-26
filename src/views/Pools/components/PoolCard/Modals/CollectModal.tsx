@@ -27,7 +27,7 @@ const CustomModal = styled(Modal)`
 `
 
 const TooltipText = styled(Text)`
-  color: ${({ theme }) => theme.isDark ? 'white' : 'black'}
+  color: 'white';
 `
 
 interface CollectModalProps {
