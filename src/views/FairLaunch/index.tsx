@@ -4,7 +4,6 @@ import { KeyboardDateTimePicker, MuiPickersUtilsProvider } from '@material-ui/pi
 import DateFnsUtils from '@date-io/date-fns'
 import { ReactComponent as BellIcon } from 'assets/svg/icon/Bell.svg'
 import { ReactComponent as MainLogo } from 'assets/svg/icon/logo_new.svg'
-import { ReactComponent as CheckList } from 'assets/svg/icon/CheckList.svg'
 import * as ethers from 'ethers'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import { useTranslation } from 'contexts/Localization'
@@ -15,7 +14,6 @@ import styled from 'styled-components'
 import { ERC20_ABI } from 'config/abi/erc20'
 import { useModal } from '@sphynxswap/uikit'
 import DisclaimerModal from 'components/DisclaimerModal/DisclaimerModal'
-import Select from 'components/Select/Select'
 import BigNumber from 'bignumber.js'
 import { BIG_TEN } from 'utils/bigNumber'
 import axios from 'axios'
@@ -23,7 +21,6 @@ import { getPresaleContract } from 'utils/contractHelpers'
 import { useWeb3React } from '@web3-react/core'
 import { getSphynxRouterAddress } from 'utils/addressHelpers'
 import { useHistory } from 'react-router-dom'
-import { math } from 'polished'
 
 const Wrapper = styled.div`
   display: flex;
@@ -81,21 +78,6 @@ const Wrapper = styled.div`
   }
   ${({ theme }) => theme.mediaQueries.xl} {
     align-items: flex-start;
-  }
-`
-
-const LogoTitle = styled.div`
-  display: flex;
-  align-items: center;
-  font-size: 18px;
-  line-height: 24px;
-  font-weight: 700;
-  & > *:first-child {
-    margin-right: 16px;
-  }
-  ${({ theme }) => theme.mediaQueries.xl} {
-    font-size: 36px;
-    line-height: 42px;
   }
 `
 
