@@ -23,6 +23,7 @@ import { getPresaleContract } from 'utils/contractHelpers'
 import { useWeb3React } from '@web3-react/core'
 import { getSphynxRouterAddress } from 'utils/addressHelpers'
 import { useHistory } from 'react-router-dom'
+import { math } from 'polished'
 
 const Wrapper = styled.div`
   display: flex;
@@ -345,8 +346,8 @@ const Presale: React.FC = () => {
   const [tokenDecimal, setDecimal] = useState('')
   const [totalSupply, setTotalSupply] = useState('')
   const [tier1, setTier1] = useState('')
-  const [tier2, setTier2] = useState('')
-  const [tier3, setTier3] = useState('')
+  const [tokenAmount, setTokenAmount] = useState('')
+  const [bnbAmount, setBnbAmount] = useState('')
   const [softCap, setSoftCap] = useState('')
   const [hardCap, setHardCap] = useState('')
   const [minBuy, setMinBuy] = useState('')
@@ -388,25 +389,23 @@ const Presale: React.FC = () => {
         const name = await tokenContract.name()
         const symbol = await tokenContract.symbol()
         const decimals = await tokenContract.decimals()
+        const total = await tokenContract.totalSupply()
         setName(name)
         setSymbol(symbol)
         setDecimal(decimals)
+        setTotalSupply(`${Number(total)/(10 ** 6)}`)
       } catch (err) {
         console.log('error', err.message)
       }
     }
   }
 
-  const handleTier1 = (e) => {
-    setTier1(e.target.value)
+  const handleTokenAmount = (e) => {
+    setTokenAmount(e.target.value)
   }
 
-  const handleTier2 = (e) => {
-    setTier2(e.target.value)
-  }
-
-  const handleTier3 = (e) => {
-    setTier3(e.target.value)
+  const handleBnbAmount = (e) => {
+    setBnbAmount(e.target.value)
   }
 
   const validate = async () => {
@@ -415,7 +414,7 @@ const Presale: React.FC = () => {
       setStep(1)
       return
     }
-    if (!parseFloat(tier1) || !parseFloat(tier2) || !parseFloat(tier3)) {
+    if (!parseFloat(tier1) || !parseFloat(tokenAmount) || !parseFloat(bnbAmount)) {
       toastError('Please input presale rate correctly!')
       setStep(2)
       return
@@ -471,8 +470,8 @@ const Presale: React.FC = () => {
       liquidityLockTime: liquidityLockTime.toString(),
       routerId: routerAddress,
       tier1Rate: new BigNumber(tier1).toString(),
-      tier2Rate: new BigNumber(tier2).toString(),
-      publicRate: new BigNumber(tier3).toString(),
+      tier2Rate: new BigNumber(tokenAmount).toString(),
+      publicRate: new BigNumber(bnbAmount).toString(),
       liquidityRate: listingRate,
       softCap: new BigNumber(softCap).times(BIG_TEN.pow(18)).toString(),
       hardCap: new BigNumber(hardCap).times(BIG_TEN.pow(18)).toString(),
@@ -493,8 +492,8 @@ const Presale: React.FC = () => {
         token_symbol: tokenSymbol,
         token_decimal: tokenDecimal,
         tier1,
-        tier2,
-        tier3,
+        tokenAmount,
+        bnbAmount,
         soft_cap: softCap,
         hard_cap: hardCap,
         min_buy: minBuy,
@@ -611,12 +610,12 @@ const Presale: React.FC = () => {
               <p className="description">
                 Please enter the amount of tokens for listing:
               </p>
-              <MyInput value={tier2} onChange={handleTier2} style={{ width: '100%' }}/>
+              <MyInput value={tokenAmount} onChange={handleTokenAmount} style={{ width: '100%' }}/>
               <Sperate />
               <p className="description">
                 Please enter the amount of BNB you will add:
               </p>
-              <MyInput value={tier3} onChange={handleTier3} style={{ width: '100%' }}/>
+              <MyInput value={bnbAmount} onChange={handleBnbAmount} style={{ width: '100%' }}/>
               <Sperate />
               <InlineWrapper>
                 <LineBtn onClick={() => setStep(1)}>Back</LineBtn>
@@ -719,12 +718,12 @@ const Presale: React.FC = () => {
                 <Sperate />
                 <FlexWrapper>
                   <p className="description w220">Token Amount</p>
-                  <p className="description w220">{tier2}</p>
+                  <p className="description w220">{tokenAmount}</p>
                 </FlexWrapper>
                 <Sperate />
                 <FlexWrapper>
                   <p className="description w220">BNB Amount</p>
-                  <p className="description w220">{tier3}</p>
+                  <p className="description w220">{bnbAmount}</p>
                 </FlexWrapper>
                 <Sperate />
                 <FlexWrapper>
