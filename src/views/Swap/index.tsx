@@ -1096,7 +1096,9 @@ export default function Swap({ history }: RouteComponentProps) {
                         {t('Unsupported Asset')}
                       </Button>
                     ) : !account ? (
+                      <Flex justifyContent="center">
                       <ConnectWalletButton width="100%" />
+                      </Flex>
                     ) : showWrap ? (
                       <Button width="100%" disabled={Boolean(wrapInputError)} onClick={onWrap}>
                         {wrapInputError ??
