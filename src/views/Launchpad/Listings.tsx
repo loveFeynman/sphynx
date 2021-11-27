@@ -10,7 +10,7 @@ import { getPresaleContract } from 'utils/contractHelpers'
 import ListIcon from 'assets/svg/icon/ListIcon.svg'
 import { useMenuToggle } from 'state/application/hooks'
 import Spinner from 'components/Loader/Spinner'
-import { SEARCH_OPTION } from 'config/constants/launchpad'
+import { SEARCH_OPTION, LAUNCHPAD_NUM_PER_PAGE } from 'config/constants/launchpad'
 import TokenCard from './components/TokenCard'
 import SearchPannel from './components/SearchPannel'
 
@@ -41,19 +41,27 @@ const Presale: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true)
   const [searchOption, setSearchOption] = useState(SEARCH_OPTION.ALL)
   const [searchKey, setSearchKey] = useState('')
+  const [pageIndex, setPageIndex] = useState(0)
+  const [pageCount, setPageCount] = useState(1)
 
   useEffect(() => {
     const fetchData = async () => {
       const data = {
         chain_id: chainId,
         token_level: searchOption,
-        key: searchKey
+        key: searchKey,
+        page_index: pageIndex,
+        num_per_page: LAUNCHPAD_NUM_PER_PAGE,
       }
 
       setIsLoading(true)
       setTokenList([])
       axios.post(`${process.env.REACT_APP_BACKEND_API_URL2}/getAllPresaleInfo`, { data }).then(async (response) => {
         if (response.data) {
+          let pages = 1
+          if(response.data.length > 0)
+           pages = Math.ceil(parseInt(response.data[0].count) / LAUNCHPAD_NUM_PER_PAGE)
+          setPageCount(pages)
           try {
             const list = await Promise.all(
               response.data.map(async (cell) => {
@@ -109,7 +117,11 @@ const Presale: React.FC = () => {
     }
 
     if (chainId && searchOption !== undefined) fetchData()
-  }, [chainId, searchOption, searchKey])
+  }, [chainId, searchOption, searchKey, pageIndex])
+
+  const handlePageIndex = (e, page) => {
+    setPageIndex(page - 1)
+  }
 
   return (
     <Wrapper>
@@ -151,7 +163,11 @@ const Presale: React.FC = () => {
           ))}
       </TokenListContainder>
       <PaginationWrapper>
-        <Pagination count={5} siblingCount={0} />
+        <Pagination 
+        count={pageCount} 
+        siblingCount={0} 
+        onChange={handlePageIndex}
+        />
       </PaginationWrapper>
     </Wrapper>
   )
