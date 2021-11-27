@@ -22,6 +22,7 @@ import { getPresaleContract } from 'utils/contractHelpers'
 import { useWeb3React } from '@web3-react/core'
 import { getSphynxRouterAddress } from 'utils/addressHelpers'
 import { useHistory } from 'react-router-dom'
+import { SEARCH_OPTION } from 'config/constants/launchpad'
 
 const Wrapper = styled.div`
   display: flex;
@@ -361,6 +362,9 @@ const Presale: React.FC = () => {
   const [projectDec, setProjectDec] = useState('')
   const [updateDec, setUpdateDec] = useState('')
   const [certikAudit, setCertikAudit] = useState(false)
+
+  const [selectedCount, setSelectedCount] = useState(0)
+
   const [doxxedTeam, setDoxxedTeam] = useState(false)
   const [utility, setUtility] = useState(false)
   const [kyc, setKYC] = useState(false)
@@ -374,6 +378,14 @@ const Presale: React.FC = () => {
   const { toastSuccess, toastError } = useToast()
   const presaleContract = getPresaleContract(signer)
   const history = useHistory()
+
+  const handleChecked = (value) => {
+    if (value) {
+      setSelectedCount(c => c + 1)
+    }
+    else if (selectedCount > 0)
+      setSelectedCount(c => c - 1)
+  }
 
   const handleChange = async (e) => {
     const value = e.target.value
@@ -509,6 +521,26 @@ const Presale: React.FC = () => {
     }
 
     const fee = new BigNumber('0.001').times(BIG_TEN.pow(18)).toString()
+
+    let tokenLevel: number 
+    switch (selectedCount) {
+      case 0:
+        tokenLevel = SEARCH_OPTION.OTHER
+        break
+      case 1:
+        tokenLevel = SEARCH_OPTION.BRONZE
+        break
+      case 2:
+      case 3:
+        tokenLevel = SEARCH_OPTION.SLIVER
+        break
+      case 4:
+      default:
+        tokenLevel = SEARCH_OPTION.GOLD
+        break
+    }
+
+
     presaleContract.createPresale(value, { value: fee }).then((res) => {
       /* if presale created successfully */
       const data: any = {
@@ -537,10 +569,7 @@ const Presale: React.FC = () => {
         telegram_link: telegramLink,
         project_dec: projectDec,
         update_dec: updateDec,
-        certik_audit: certikAudit,
-        doxxed_team: doxxedTeam,
-        utility,
-        kyc,
+        token_level: tokenLevel,
         start_time: startTime,
         end_time: endTime,
         tier1_time: tierOneTime,
@@ -801,7 +830,7 @@ const Presale: React.FC = () => {
                         value: true,
                       },
                     ]}
-                    onChange={(option: any) => setCertikAudit(option.value)}
+                    onChange={(option: any) => handleChecked(option.value)}
                   />
                 </InlineWrapper>
                 <MarginWrapper />
@@ -818,7 +847,7 @@ const Presale: React.FC = () => {
                         value: true,
                       },
                     ]}
-                    onChange={(option: any) => setDoxxedTeam(option.value)}
+                    onChange={(option: any) => handleChecked(option.value)}
                   />
                 </InlineWrapper>
               </FlexWrapper>
@@ -837,7 +866,7 @@ const Presale: React.FC = () => {
                         value: true,
                       },
                     ]}
-                    onChange={(option: any) => setUtility(option.value)}
+                    onChange={(option: any) => handleChecked(option.value)}
                   />
                 </InlineWrapper>
                 <MarginWrapper />
@@ -854,7 +883,7 @@ const Presale: React.FC = () => {
                         value: true,
                       },
                     ]}
-                    onChange={(option: any) => setKYC(option.value)}
+                    onChange={(option: any) => handleChecked(option.value)}
                   />
                 </InlineWrapper>
               </FlexWrapper>

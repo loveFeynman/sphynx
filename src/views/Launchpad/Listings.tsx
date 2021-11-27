@@ -10,6 +10,7 @@ import { getPresaleContract } from 'utils/contractHelpers'
 import ListIcon from 'assets/svg/icon/ListIcon.svg'
 import { useMenuToggle } from 'state/application/hooks'
 import Spinner from 'components/Loader/Spinner'
+import { SEARCH_OPTION } from 'config/constants/launchpad'
 import TokenCard from './components/TokenCard'
 import SearchPannel from './components/SearchPannel'
 
@@ -38,10 +39,20 @@ const Presale: React.FC = () => {
   const { menuToggled } = useMenuToggle()
   const [tokenList, setTokenList] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [searchOption, setSearchOption] = useState(SEARCH_OPTION.ALL)
+  const [searchKey, setSearchKey] = useState('')
 
   useEffect(() => {
     const fetchData = async () => {
-      axios.get(`${process.env.REACT_APP_BACKEND_API_URL2}/getAllPresaleInfo/${chainId}`).then(async (response) => {
+      const data = {
+        chain_id: chainId,
+        token_level: searchOption,
+        key: searchKey
+      }
+
+      setIsLoading(true)
+      setTokenList([])
+      axios.post(`${process.env.REACT_APP_BACKEND_API_URL2}/getAllPresaleInfo`, { data }).then(async (response) => {
         if (response.data) {
           try {
             const list = await Promise.all(
@@ -97,8 +108,8 @@ const Presale: React.FC = () => {
       })
     }
 
-    if (chainId) fetchData()
-  }, [chainId])
+    if (chainId && searchOption !== undefined) fetchData()
+  }, [chainId, searchOption, searchKey])
 
   return (
     <Wrapper>
@@ -110,7 +121,7 @@ const Presale: React.FC = () => {
           </Title>
         </TitleWrapper>
       </HeaderWrapper>
-      <SearchPannel />
+      <SearchPannel setSearchOption={setSearchOption} setSearchKey={setSearchKey}/>
       {isLoading && (
         <LoadingWrapper>
           <Spinner />
