@@ -4,10 +4,7 @@ import { useDispatch } from 'react-redux'
 import farmsReducer from './farms'
 import poolsReducer from './pools'
 import predictionsReducer from './predictions'
-import profileReducer from './profile'
-import achievementsReducer from './achievements'
 import blockReducer from './block'
-import collectiblesReducer from './collectibles'
 import application from './application/reducer'
 import { updateVersion } from './global/actions'
 import user from './user/reducer'
@@ -26,13 +23,10 @@ const PERSISTED_KEYS: string[] = ['user', 'transactions', 'lists']
 const store = configureStore({
   devTools: process.env.NODE_ENV !== 'production',
   reducer: {
-    achievements: achievementsReducer,
     block: blockReducer,
     farms: farmsReducer,
     pools: poolsReducer,
     predictions: predictionsReducer,
-    profile: profileReducer,
-    collectibles: collectiblesReducer,
     tokens: tokenReducer,
 
     // Exchange
