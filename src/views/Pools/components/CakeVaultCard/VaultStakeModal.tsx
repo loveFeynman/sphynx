@@ -87,7 +87,7 @@ const VaultStakeModal: React.FC<VaultStakeModalProps> = ({ pool, stakingMax, isR
 
     if (isWithdrawingAll) {
       try {
-        const tx = await cakeVaultContract.withdrawAll(callOptions)
+        const tx = await cakeVaultContract.withdrawAll()
         const receipt = await tx.wait()
         if (receipt.status) {
           toastSuccess(t('Unstaked!'), t('Your earnings have also been harvested to your wallet'))
@@ -103,7 +103,7 @@ const VaultStakeModal: React.FC<VaultStakeModalProps> = ({ pool, stakingMax, isR
       // .toString() being called to fix a BigNumber error in prod
       // as suggested here https://github.com/ChainSafe/web3.js/issues/2077
       try {
-        const tx = await cakeVaultContract.withdraw(shareStakeToWithdraw.sharesAsBigNumber.toString(), callOptions)
+        const tx = await cakeVaultContract.withdraw(shareStakeToWithdraw.sharesAsBigNumber.toString())
         const receipt = await tx.wait()
         if (receipt.status) {
           toastSuccess(t('Unstaked!'), t('Your earnings have also been harvested to your wallet'))
@@ -123,7 +123,7 @@ const VaultStakeModal: React.FC<VaultStakeModalProps> = ({ pool, stakingMax, isR
     try {
       // .toString() being called to fix a BigNumber error in prod
       // as suggested here https://github.com/ChainSafe/web3.js/issues/2077
-      const tx = await cakeVaultContract.deposit(convertedStakeAmount.toString(), callOptions)
+      const tx = await cakeVaultContract.deposit(convertedStakeAmount.toString())
       const receipt = await tx.wait()
       if (receipt.status) {
         toastSuccess(t('Staked!'), t('Your funds have been staked in the pool'))

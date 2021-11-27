@@ -71,6 +71,13 @@ const TokenDescription = styled(Flex)`
   }
 `
 
+const MobileIconWrapper = styled.div`
+  display: none;
+  ${({ theme }) => theme.mediaQueries.lg} {
+    display: unset
+  }
+`
+
 export default function TokenStateCard(props: TokenStateProps) {
   const { tokenImg, cardTitle, cardValue, subPriceValue, variantFill, valueActive, flexGrow, CardIcon, fillColor, tokenAddress } =
     props
@@ -141,9 +148,11 @@ export default function TokenStateCard(props: TokenStateProps) {
     >
       <Flex>
         {CardIcon !== undefined && isMobile ? (
-          <IconWrapper style={{ width: '42px', marginLeft: '8px' }}>
-            <CardIcon width="32" height="32" />
-          </IconWrapper>
+          <MobileIconWrapper>
+            <IconWrapper style={{ width: '42px', marginLeft: '8px' }}>
+              <CardIcon width="32" height="32" />
+            </IconWrapper>
+          </MobileIconWrapper>
         ) : (
           ''
         )}

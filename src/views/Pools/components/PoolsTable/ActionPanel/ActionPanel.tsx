@@ -168,6 +168,17 @@ const BorderFlex = styled(Flex)`
   }
 `
 
+const ViewGroupWrapper = styled(Flex)`
+  display: flex;
+  flex-direction: column;
+  margin-bottom: unset;
+  gap: 10px;
+  ${({ theme }) => theme.mediaQueries.md} {
+    flex-direction: row;
+    margin-bottom: 8px;
+  }
+`
+
 const ActionPanel: React.FC<ActionPanelProps> = ({ account, pool, userDataLoaded, expanded, breakpoints }) => {
   const {
     sousId,
@@ -310,8 +321,8 @@ const ActionPanel: React.FC<ActionPanelProps> = ({ account, pool, userDataLoaded
               {t('See Token Info')}
             </LargeLinkExternal>
           </Flex>
-          <Flex flexDirection='row' mb="8px">
-            <BorderFlex mr='2px'>
+          <ViewGroupWrapper>
+            <BorderFlex mr={isMobile ? '0' : '2px'}>
               <SmallLinkExternal
                 href={earningToken.projectLink}
               >
@@ -319,7 +330,7 @@ const ActionPanel: React.FC<ActionPanelProps> = ({ account, pool, userDataLoaded
               </SmallLinkExternal>
             </BorderFlex>
             {poolContractAddress && (
-              <BorderFlex ml='2px'>
+              <BorderFlex ml={isMobile ? '0' : '2px'}>
                 <SmallLinkExternal
                   href={`${BASE_BSC_SCAN_URL}/address/${isAutoVault ? cakeVaultContractAddress : poolContractAddress}`}
                 >
@@ -327,7 +338,7 @@ const ActionPanel: React.FC<ActionPanelProps> = ({ account, pool, userDataLoaded
                 </SmallLinkExternal>
               </BorderFlex>
             )}
-          </Flex>
+          </ViewGroupWrapper>
           {/* {account && isMetaMaskInScope && tokenAddress && (
             <Flex mb="8px">
               <Button

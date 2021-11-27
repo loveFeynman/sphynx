@@ -95,6 +95,8 @@ let config = {
 }
 
 const web3 = new Web3(web3ArchiveProvider)
+const dataFeedProvider = new Web3.providers.HttpProvider('https://bsc-dataseed.binance.org/')
+const datafeedWeb3 = new Web3(dataFeedProvider)
 
 const ArrowContainer = styled(ArrowWrapper)`
   width: 32px;
@@ -210,20 +212,47 @@ export default function Swap({ history }: RouteComponentProps) {
   const contract: any = new web3.eth.Contract(abi, input)
 
   useEffect(() => {
-    if (
-      tokenAddress === '' ||
-      tokenAddress.toLowerCase() === sphynxAddr.toLowerCase() ||
-      tokenAddress.toLowerCase() === SPHYNX_TOKEN_ADDRESS.toLowerCase()
-    ) {
-      if (routerVersion !== 'sphynx') {
-        dispatch(typeRouterVersion({ routerVersion: 'sphynx' }))
-      }
-    } else {
-      if (routerVersion !== 'v2') {
-        dispatch(typeRouterVersion({ routerVersion: 'v2' }))
+    const setInitData = async () => {
+      const pair = await getSphynxPairAddress(input, wBNBAddr, simpleRpcProvider)
+      if (pair !== null) {
+        if (routerVersion !== 'sphynx') {
+          dispatch(typeRouterVersion({ routerVersion: 'sphynx' }))
+        }
+        if (swapRouter !== SwapRouter.SPHYNX_SWAP) {
+          setSwapRouter(SwapRouter.SPHYNX_SWAP)
+          setRouterType(RouterType.sphynx)
+        }
+        dispatch(
+          replaceSwapState({
+            outputCurrencyId: 'BNB',
+            inputCurrencyId: input,
+            typedValue: '',
+            field: Field.OUTPUT,
+            recipient: null,
+          }),
+        )
+      } else {
+        if (routerVersion !== 'v2') {
+          dispatch(typeRouterVersion({ routerVersion: 'v2' }))
+        }
+        if (swapRouter !== SwapRouter.PANCAKE_SWAP) {
+          setSwapRouter(SwapRouter.PANCAKE_SWAP)
+          setRouterType(RouterType.pancake)
+        }
+        dispatch(
+          replaceSwapState({
+            outputCurrencyId: 'BNB',
+            inputCurrencyId: input,
+            typedValue: '',
+            field: Field.OUTPUT,
+            recipient: null,
+          }),
+        )
       }
     }
-  }, [])
+
+    setInitData()
+  }, [input])
 
   const getDataQuery = useCallback(() => {
     return `
@@ -358,7 +387,8 @@ export default function Swap({ history }: RouteComponentProps) {
             let oneData: any = {}
             oneData.amount = tokenAmt
             oneData.value = BNBAmt
-            oneData.price = event.quoteCurrency === wrappedCurrencySymbol ? (BNBAmt / tokenAmt) * price : BNBAmt / tokenAmt
+            oneData.price =
+              event.quoteCurrency === wrappedCurrencySymbol ? (BNBAmt / tokenAmt) * price : BNBAmt / tokenAmt
             const estimatedDateValue = new Date(new Date().getTime() - (blockNumber - event.blockNumber) * 3000)
             oneData.transactionTime = formatTimeString(
               `${estimatedDateValue.getUTCFullYear()}-${
@@ -369,13 +399,22 @@ export default function Swap({ history }: RouteComponentProps) {
             oneData.tx = event.transactionHash
             oneData.isBuy = isBuy
             oneData.usdValue = oneData.amount * oneData.price
+            oneData.quoteCurrency = event.quoteCurrency
             newTransactions.unshift(oneData)
             if (newTransactions.length > 300) {
               newTransactions.pop()
             }
-            curPrice = oneData.price
-            curAmount += oneData.usdValue
-            setTokenPrice(curPrice)
+            if (input.toLowerCase() === SPHYNX_TOKEN_ADDRESS.toLowerCase()) {
+              if (pairsRef.current[1] === event.address.toLowerCase()) {
+                curPrice = oneData.price
+                curAmount += oneData.usdValue
+                setTokenPrice(curPrice)
+              }
+            } else {
+              curPrice = oneData.price
+              curAmount += oneData.usdValue
+              setTokenPrice(curPrice)
+            }
           } catch (err) {
             console.log('error', err)
           }
@@ -387,7 +426,7 @@ export default function Swap({ history }: RouteComponentProps) {
   const getTransactions = async (blockNumber) => {
     let cachedBlockNumber = blockNumber
     try {
-      web3.eth
+      datafeedWeb3.eth
         .getPastLogs({
           fromBlock: blockNumber,
           toBlock: 'latest',
@@ -423,12 +462,12 @@ export default function Swap({ history }: RouteComponentProps) {
 
   const startRealTimeData = (blockNumber) => {
     if (blockNumber === null) {
-      web3.eth.getBlockNumber().then((blockNumber) => {
+      datafeedWeb3.eth.getBlockNumber().then((blockNumber) => {
         setCurrentBlock(blockNumber)
         setBlockFlag(!blockFlag)
       })
     } else {
-      web3.eth.getBlockNumber().then((blockNumberCache) => {
+      datafeedWeb3.eth.getBlockNumber().then((blockNumberCache) => {
         if (parseInt(blockNumber) + 50 <= blockNumberCache) {
           setCurrentBlock(blockNumberCache - 50)
           setBlockFlag(!blockFlag)
@@ -485,16 +524,22 @@ export default function Swap({ history }: RouteComponentProps) {
         if (wBNBPair !== null) pairs.push(wBNBPair.toLowerCase())
         let wBNBPairSphynx = await getSphynxPairAddress(input, wBNBAddr, simpleRpcProvider)
         if (wBNBPairSphynx !== null) pairs.push(wBNBPairSphynx.toLowerCase())
-        let BUSDPairSphynx = await getSphynxPairAddress(input, BUSDAddr, simpleRpcProvider)
-        if (BUSDPairSphynx !== null) stablePairs.push(BUSDPairSphynx.toLowerCase())
         let BUSDPair = await getPancakePairAddress(input, BUSDAddr, simpleRpcProvider)
         if (BUSDPair !== null) stablePairs.push(BUSDPair.toLowerCase())
+        let BUSDPairSphynx = await getSphynxPairAddress(input, BUSDAddr, simpleRpcProvider)
+        if (BUSDPairSphynx !== null) stablePairs.push(BUSDPairSphynx.toLowerCase())
         setPairs(pairs)
         setStablePairs(pairs)
         const bnbPrice = await getBNBPrice()
         // pull historical data
         const queryResult = await axios.post(BITQUERY_API, { query: getDataQuery() }, config)
         if (queryResult.data.data && queryResult.data.data.ethereum.dexTrades) {
+          let dexTrades = queryResult.data.data.ethereum.dexTrades
+          if (input.toLowerCase() === SPHYNX_TOKEN_ADDRESS.toLowerCase()) {
+            dexTrades = dexTrades.filter(
+              (oneData) => oneData.smartContract.address.address.toLowerCase() === pairsRef.current[1].toLowerCase(),
+            )
+          }
           setSymbol(queryResult.data.data.ethereum.dexTrades[0].baseCurrency.symbol)
           newTransactions = queryResult.data.data.ethereum.dexTrades.map((item, index) => {
             return {
@@ -512,8 +557,11 @@ export default function Swap({ history }: RouteComponentProps) {
             }
           })
 
-          if (newTransactions.length > 0) {
-            const curPrice = newTransactions[0].price
+          if (dexTrades.length > 0) {
+            const curPrice =
+              dexTrades[0].quoteCurrency.symbol === wrappedCurrencySymbol
+                ? dexTrades[0].quotePrice * bnbPrice
+                : dexTrades[0].quotePrice
             const sessionData = {
               input,
               price: curPrice,
@@ -678,45 +726,6 @@ export default function Swap({ history }: RouteComponentProps) {
     currencies[Field.INPUT] && currencies[Field.OUTPUT] && parsedAmounts[independentField]?.greaterThan(JSBI.BigInt(0)),
   )
   const noRoute = !route
-
-  useEffect(() => {
-    if (
-      tokenAddress === null ||
-      tokenAddress === '' ||
-      tokenAddress === undefined ||
-      tokenAddress.toLowerCase() === sphynxAddr.toLowerCase() ||
-      tokenAddress.toLowerCase() === SPHYNX_TOKEN_ADDRESS.toLowerCase()
-    ) {
-      if (swapRouter !== SwapRouter.SPHYNX_SWAP) {
-        setSwapRouter(SwapRouter.SPHYNX_SWAP)
-        setRouterType(RouterType.sphynx)
-      }
-      dispatch(
-        replaceSwapState({
-          outputCurrencyId: 'BNB',
-          inputCurrencyId: `${SPHYNX_TOKEN_ADDRESS}`,
-          typedValue: '',
-          field: Field.OUTPUT,
-          recipient: null,
-        }),
-      )
-    } else {
-      if (swapRouter !== SwapRouter.PANCAKE_SWAP) {
-        setSwapRouter(SwapRouter.PANCAKE_SWAP)
-        setRouterType(RouterType.pancake)
-      }
-      dispatch(
-        replaceSwapState({
-          outputCurrencyId: 'BNB',
-          inputCurrencyId: tokenAddress,
-          typedValue: '',
-          field: Field.OUTPUT,
-          recipient: null,
-        }),
-      )
-    }
-  }, [dispatch, tokenAddress])
-
   // check whether the user has approved the router on the input token
   const [approval, approveCallback] = useApproveCallbackFromTrade(trade, allowedSlippage)
 

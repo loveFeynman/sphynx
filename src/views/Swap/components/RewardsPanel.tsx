@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import { Flex } from '@sphynxswap/uikit'
 import SwapFeeRewards from './SwapFeeRewards'
 import TotalTransactionCollected from './TotalTransactionCollected'
+import SphynxByBack from './SphynxByBack'
 import DistributionIn from './DistributionIn'
 
 const Wrapper = styled.div`
@@ -21,6 +22,9 @@ const Wrapper = styled.div`
     & > div:nth-child(2) {
       width: 45%;
     }
+    & > div:nth-child(4) {
+      width: 100%;
+    }
   }
   ${({ theme }) => theme.mediaQueries.lg} {
     & > div {
@@ -34,6 +38,9 @@ const Wrapper = styled.div`
       & > div:nth-child(2) {
         width: unset;
       }
+      & > div:nth-child(4) {
+        width: unset;
+      }
     }
   }
 `
@@ -45,6 +52,7 @@ const RewardsPanel: React.FC = () => {
         <SwapFeeRewards />
         <TotalTransactionCollected />
         <DistributionIn />
+        <SphynxByBack />
       </Flex>
     </Wrapper>
   )

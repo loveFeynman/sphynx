@@ -239,6 +239,7 @@ const PresaleManage: React.FC = () => {
   const { toastSuccess, toastError } = useToast()
   const presaleContract = getPresaleContract(signer)
   const [presaleStatus, setPresaleStatus] = useState('')
+  const [softCap, setSoftCap] = useState('')
   const [isDeposit, setIsDeposit] = useState(false)
   const [isFinalize, setIsFinalize] = useState(false)
   const [liquidityUnlocked, setUnlockedLiquidity] = useState(false)
@@ -267,6 +268,7 @@ const PresaleManage: React.FC = () => {
             setDoxxedTeam(response.data.doxxed_team)
             setUtility(response.data.utility)
             setKYC(response.data.kyc)
+            setSoftCap(response.data.soft_cap)
           }
         })
     }
@@ -447,10 +449,10 @@ const PresaleManage: React.FC = () => {
                 />
               </InlineWrapper>
               <Sperate />
-              <InlineWrapper>
+              {/* <InlineWrapper>
                 <p className="description w110">Status</p>
                 <MyInput className="ml16" value={presaleStatus} readOnly style={{ width: '80%' }} />
-              </InlineWrapper>
+              </InlineWrapper> */}
               <Sperate />
               <WhitelistTitle>
                 Raised: {raise}/{tokenData && tokenData.hard_cap}
@@ -470,8 +472,8 @@ const PresaleManage: React.FC = () => {
                 </>
               ) : (
                 <>
-                <DarkButton onClick={disableWhiteList}>Disable WhiteList</DarkButton>
-                <Sperate />
+                  <DarkButton onClick={disableWhiteList}>Disable WhiteList</DarkButton>
+                  <Sperate />
                   <MyInput
                     onChange={(e) => setWhitelist1(e.target.value)}
                     value={whitelist1}
@@ -492,11 +494,15 @@ const PresaleManage: React.FC = () => {
               )}
               {isDeposit ? (
                 isFinalize ? (
-                  <>
-                    <DarkButton onClick={handleWithdraw} disabled={!liquidityUnlocked || isWithDraw}>
-                      Withdraw Liquidity Token
-                    </DarkButton>
-                  </>
+                  raise >= parseFloat(softCap) ? (
+                    <>
+                      <DarkButton onClick={handleWithdraw} disabled={!liquidityUnlocked || isWithDraw}>
+                        Withdraw Liquidity Token
+                      </DarkButton>
+                    </>
+                  ) : (
+                    ''
+                  )
                 ) : (
                   <ColorButton onClick={handleFinalize}>Finalize</ColorButton>
                 )

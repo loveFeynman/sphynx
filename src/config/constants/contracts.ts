@@ -48,8 +48,8 @@ export default {
     97: '0x24ec6962dbe874F6B67B5C50857565667fA0854F',
   },
   cakeVault: {
-    56: '0xa80240Eb5d7E05d3F250cF000eEc0891d00b51CC',
-    97: '',
+    56: '0xb1518ed058C5df45168e338e9b1e75941b690307',
+    97: '0x9615B9347Ad74486FCaDb2A826085ad97FE4fFA7',
   },
   predictions: {
     56: '0x516ffd7D1e0Ca40b1879935B2De87cb20Fc1124b',
@@ -73,7 +73,7 @@ export default {
   },
   presale: {
     56: '0xb92Ab7c1edcb273AbA24b0656cEb3681654805D2',
-    97: '0x05aA70b4C14cdA6816bbca9975Ddb938d8a0c702',
+    97: '0x474001e75aCfc084402B6d08151f6d820043ce98',
   },
   sphynxRouter: {
     56: '0x0c8094a69e8e44404371676f07b2c32923b5699c',

@@ -140,7 +140,7 @@ const AccountWrapper = styled.div<{ mobile?: boolean }>`
 const PageContent = styled.div<{ isMobile: boolean }>`
   width: 100%;
   min-height: 100vh;
-  margin-top: ${(props) => (props.isMobile ? '160px' : '57px')};
+  margin-top: ${(props) => (props.isMobile ? '180px' : '57px')};
 `
 
 const MenuOpenButton = styled(Button)`

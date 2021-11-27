@@ -52,7 +52,7 @@ const BalanceContent = styled(AutoRow)`
   }
 `
 
-const RewardsPanel: React.FC = () => {
+const TotalTransactionCollected: React.FC = () => {
   const [balance, setBalance] = useState(0)
   const { t } = useTranslation()
 
@@ -94,4 +94,4 @@ const RewardsPanel: React.FC = () => {
   )
 }
 
-export default RewardsPanel
+export default TotalTransactionCollected

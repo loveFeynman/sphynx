@@ -4,6 +4,7 @@ import { IconButton, Text, Flex, useMatchBreakpoints } from '@sphynxswap/uikit'
 import Select, { OptionProps } from 'components/Select/Select'
 import { useTranslation } from 'contexts/Localization'
 import SearchIcon from "components/Icon/SearchIcon";
+import { SEARCH_OPTION } from 'config/constants/launchpad'
 
 const ViewControls = styled.div`
   flex-wrap: wrap;
@@ -121,32 +122,38 @@ const TransparentIconButton = styled(IconButton)`
 }
 `
 
-const SearchPannel = () => {
+interface PropsFunction {
+  setSearchOption: (o) => void
+  setSearchKey: (k) => void
+  setPageIndex: (i) => void
+}
+
+
+const SearchPannel: React.FC<PropsFunction> = ({ setSearchOption, setSearchKey, setPageIndex }) => {
   const { t } = useTranslation()
   const { isXl } = useMatchBreakpoints()
   const isMobile = !isXl
-  const [showDrop, setShowDrop] = useState(false)
-  const [data, setdata] = useState([])
-
-  const setSortOption = (value: string) => {
-    return value;
-  }
-
-  const setQuery = (value: string) => {
-    return value;
-  }
+  const [query, setQuery] = useState('')
 
   const handleSortOptionChange = (option: OptionProps): void => {
-    setSortOption(option.value)
+    setPageIndex(0)
+    setSearchOption(option.value)
   }
 
   const handlerChange = (e: any) => {
     setQuery(e.target.value)
   }
 
+  const handleKeyDown = (e: any) => {
+    if (e.key === 'Enter') {
+      setPageIndex(0)
+      setSearchKey(query)
+    }
+  }
+
   const submitFuntioncall = () => {
-    console.log('search')
-  }  
+    setSearchKey(query)
+  }
 
   return (
     <ViewControls>
@@ -154,20 +161,24 @@ const SearchPannel = () => {
         <Select
           options={[
             {
+              label: t('ALL'),
+              value: SEARCH_OPTION.ALL,
+            },
+            {
               label: t('Gold'),
-              value: 'gold',
+              value: SEARCH_OPTION.GOLD,
             },
             {
               label: t('Silver'),
-              value: 'silver',
+              value: SEARCH_OPTION.SLIVER,
             },
             {
               label: t('Bronze'),
-              value: 'Bronze',
+              value: SEARCH_OPTION.BRONZE,
             },
             {
               label: t('other'),
-              value: 'other',
+              value: SEARCH_OPTION.OTHER,
             }
           ]}
           onChange={handleSortOptionChange}
@@ -178,19 +189,8 @@ const SearchPannel = () => {
           <input
             placeholder="Search"
             onChange={handlerChange}
+            onKeyDown={handleKeyDown}
           />
-          {showDrop && (
-            <MenuWrapper>
-              {data.length > 0 ? (
-                <span>
-                  ddd
-                </span>
-              ) : (
-                null
-                // <span style={{ padding: '0 16px' }}>no pool</span>
-              )}
-            </MenuWrapper>
-          )}
         </SearchInputWrapper>
         <TransparentIconButton onClick={submitFuntioncall}>
           <SearchIcon width="22px" height="22px" color={useTheme().colors.primary} />

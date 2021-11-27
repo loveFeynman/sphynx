@@ -4,12 +4,13 @@ import { useTranslation } from 'contexts/Localization'
 import styled from 'styled-components'
 import axios from 'axios'
 import * as ethers from 'ethers'
-import { useWeb3React } from '@web3-react/core'
+import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import { simpleRpcProvider } from 'utils/providers'
 import { getPresaleContract } from 'utils/contractHelpers'
 import ListIcon from 'assets/svg/icon/ListIcon.svg'
 import { useMenuToggle } from 'state/application/hooks'
 import Spinner from 'components/Loader/Spinner'
+import { SEARCH_OPTION, LAUNCHPAD_NUM_PER_PAGE } from 'config/constants/launchpad'
 import TokenCard from './components/TokenCard'
 import SearchPannel from './components/SearchPannel'
 
@@ -33,16 +34,34 @@ const LoadingWrapper = styled.div`
 `
 
 const Presale: React.FC = () => {
-  const { chainId } = useWeb3React()
+  const { chainId } = useActiveWeb3React()
   const { t } = useTranslation()
   const { menuToggled } = useMenuToggle()
   const [tokenList, setTokenList] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [searchOption, setSearchOption] = useState(SEARCH_OPTION.ALL)
+  const [searchKey, setSearchKey] = useState('')
+  const [pageIndex, setPageIndex] = useState(0)
+  const [pageCount, setPageCount] = useState(1)
 
   useEffect(() => {
     const fetchData = async () => {
-      axios.get(`${process.env.REACT_APP_BACKEND_API_URL2}/getAllPresaleInfo/${chainId}`).then(async (response) => {
+      const data = {
+        chain_id: chainId,
+        token_level: searchOption,
+        key: searchKey,
+        page_index: pageIndex,
+        num_per_page: LAUNCHPAD_NUM_PER_PAGE,
+      }
+
+      setIsLoading(true)
+      setTokenList([])
+      axios.post(`${process.env.REACT_APP_BACKEND_API_URL2}/getAllPresaleInfo`, { data }).then(async (response) => {
         if (response.data) {
+          let pages = 1
+          if(response.data.length > 0)
+           pages = Math.ceil(parseInt(response.data[0].count) / LAUNCHPAD_NUM_PER_PAGE)
+          setPageCount(pages)
           try {
             const list = await Promise.all(
               response.data.map(async (cell) => {
@@ -58,6 +77,7 @@ const Presale: React.FC = () => {
                   hardCap: cell.hard_cap,
                   minContribution: cell.min_buy,
                   maxContribution: cell.max_buy,
+                  startTime: cell.start_time,
                   endTime: cell.end_time,
                   tokenState: 'active',
                 }
@@ -72,13 +92,13 @@ const Presale: React.FC = () => {
                   /* is deposited */
                   const now = Math.floor(new Date().getTime() / 1000)
                   if (parseInt(cell.start_time) < now && parseInt(cell.end_time) > now) {
+                    item.tokenState = 'active'
+                  } else if (now > parseInt(cell.end_time)) {
                     if (item.totalCap < item.softCap) {
                       item.tokenState = 'failed'
                     } else {
-                      item.tokenState = 'active'
+                      item.tokenState = 'ended'
                     }
-                  } else if (now > parseInt(cell.end_time)) {
-                    item.tokenState = 'ended'
                   } else if (now < parseInt(cell.start_time)) {
                     item.tokenState = 'pending'
                   }
@@ -96,9 +116,12 @@ const Presale: React.FC = () => {
       })
     }
 
-    if (chainId)
-      fetchData()
-  }, [chainId])
+    if (chainId && searchOption !== undefined) fetchData()
+  }, [chainId, searchOption, searchKey, pageIndex])
+
+  const handlePageIndex = (e, page) => {
+    setPageIndex(page - 1)
+  }
 
   return (
     <Wrapper>
@@ -110,7 +133,7 @@ const Presale: React.FC = () => {
           </Title>
         </TitleWrapper>
       </HeaderWrapper>
-      <SearchPannel />
+      <SearchPannel setSearchOption={setSearchOption} setSearchKey={setSearchKey} setPageIndex={setPageIndex}/>
       {isLoading && (
         <LoadingWrapper>
           <Spinner />
@@ -131,6 +154,7 @@ const Presale: React.FC = () => {
               hardCap={item.hardCap}
               minContribution={item.minContribution}
               maxContribution={item.maxContribution}
+              startTime={item.startTime}
               endTime={item.endTime}
               tokenState={item.tokenState}
             >
@@ -139,7 +163,11 @@ const Presale: React.FC = () => {
           ))}
       </TokenListContainder>
       <PaginationWrapper>
-        <Pagination count={5} siblingCount={0} />
+        <Pagination 
+        count={pageCount} 
+        siblingCount={0} 
+        onChange={handlePageIndex}
+        />
       </PaginationWrapper>
     </Wrapper>
   )
