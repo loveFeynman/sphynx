@@ -95,7 +95,7 @@ const Progress = styled.div<{ state }>`
   width: ${(props) => `${props.state}%`};
   height: 12px;
   background: linear-gradient(90deg, #610d89 0%, #c42bb4 100%);
-  border-radius: 8px 0px 0px 8px;
+  border-radius: 8px;
   padding: 1px;
   display: flex;
   justify-content: center;
