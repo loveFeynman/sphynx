@@ -10,8 +10,8 @@ import ListIcon from 'assets/svg/icon/ListIcon.svg'
 import { useMenuToggle } from 'state/application/hooks'
 import Spinner from 'components/Loader/Spinner'
 import { SEARCH_OPTION, LAUNCHPAD_NUM_PER_PAGE } from 'config/constants/launchpad'
-import TokenCard from './components/TokenCard'
-import SearchPannel from './components/SearchPannel'
+import TokenCard from 'components/TokenCard'
+import SearchPannel from 'components/SearchPanel'
 
 import {
   Wrapper,

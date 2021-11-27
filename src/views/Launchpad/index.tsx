@@ -18,9 +18,9 @@ import { ReactComponent as NounProjectIcon } from 'assets/svg/icon/NounProjectIc
 import { ReactComponent as NounUserIcon } from 'assets/svg/icon/NounUserIcon.svg'
 import { ReactComponent as NounLockIcon } from 'assets/svg/icon/NounLockIcon.svg'
 import styled from 'styled-components'
-import ValueCard from './components/ValueCard'
-import ImgCard from './components/ImgCard'
-import CommunityCard from './components/CommunityCard'
+import CommunityCard from 'components/CommunityCard'
+import ValueCard from 'components/ValueCard'
+import ImgCard from 'components/ImgCard'
 
 const Wrapper = styled.div`
   display: flex;
