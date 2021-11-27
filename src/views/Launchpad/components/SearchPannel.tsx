@@ -125,16 +125,18 @@ const TransparentIconButton = styled(IconButton)`
 interface PropsFunction {
   setSearchOption: (o) => void
   setSearchKey: (k) => void
+  setPageIndex: (i) => void
 }
 
 
-const SearchPannel: React.FC<PropsFunction> = ({ setSearchOption, setSearchKey }) => {
+const SearchPannel: React.FC<PropsFunction> = ({ setSearchOption, setSearchKey, setPageIndex }) => {
   const { t } = useTranslation()
   const { isXl } = useMatchBreakpoints()
   const isMobile = !isXl
   const [query, setQuery] = useState('')
 
   const handleSortOptionChange = (option: OptionProps): void => {
+    setPageIndex(0)
     setSearchOption(option.value)
   }
 
@@ -144,6 +146,7 @@ const SearchPannel: React.FC<PropsFunction> = ({ setSearchOption, setSearchKey }
 
   const handleKeyDown = (e: any) => {
     if (e.key === 'Enter') {
+      setPageIndex(0)
       setSearchKey(query)
     }
   }

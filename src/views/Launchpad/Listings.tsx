@@ -133,7 +133,7 @@ const Presale: React.FC = () => {
           </Title>
         </TitleWrapper>
       </HeaderWrapper>
-      <SearchPannel setSearchOption={setSearchOption} setSearchKey={setSearchKey}/>
+      <SearchPannel setSearchOption={setSearchOption} setSearchKey={setSearchKey} setPageIndex={setPageIndex}/>
       {isLoading && (
         <LoadingWrapper>
           <Spinner />
