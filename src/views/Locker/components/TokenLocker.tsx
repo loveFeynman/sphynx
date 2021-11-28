@@ -6,6 +6,9 @@ import Spinner from 'components/Loader/Spinner'
 import axios from 'axios'
 import { useWeb3React } from '@web3-react/core'
 import { useMenuToggle } from 'state/application/hooks'
+import Pagination from '@material-ui/lab/Pagination'
+import { PaginationWrapper } from 'views/Launchpad/ListingsStyles'
+import { LOCK_NUM_PER_PAGE } from 'config/constants/lock'
 import SearchPannel from './SearchPannel'
 import TokenCard from './TokenCard'
 
@@ -69,12 +72,26 @@ const TokenLocker: React.FC = () => {
   const { menuToggled } = useMenuToggle()
   const { chainId } = useWeb3React()
   const [tokenList, setTokenList] = useState(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const [searchKey, setSearchKey] = useState('')
+  const [pageIndex, setPageIndex] = useState(0)
+  const [pageCount, setPageCount] = useState(1)
 
   useEffect(() => {
     const fetchData = async () => {
-      const type = false
-      axios.get(`${process.env.REACT_APP_BACKEND_API_URL2}/getAllTokenLockInfo/${chainId}/${type}`).then(async (response) => {
+      const data = {
+        chain_id: chainId,
+        type: false, /* token lock */
+        key: searchKey,
+        page_index: pageIndex,
+        num_per_page: LOCK_NUM_PER_PAGE,
+      }
+      axios.post(`${process.env.REACT_APP_BACKEND_API_URL2}/getAllTokenLockInfo`, { data }).then(async (response) => {
         if (response.data) {
+          let pages = 1
+          if(response.data.length > 0)
+           pages = Math.ceil(parseInt(response.data[0].count) / LOCK_NUM_PER_PAGE)
+          setPageCount(pages)
           setTokenList(response.data)
         }
       })
@@ -82,23 +99,26 @@ const TokenLocker: React.FC = () => {
 
     if (chainId)
       fetchData()
-  }, [chainId])
+  }, [chainId, searchKey, pageIndex])
 
+  const handlePageIndex = (e, page) => {
+    setPageIndex(page - 1)
+  }
 
   return (
     <Wrapper>
-      <SearchPannel />
-      {!tokenList && <Flex justifyContent="center" mb="4px">
+      <SearchPannel setSearchKey={setSearchKey} setPageIndex={setPageIndex} />
+      {!tokenList && (<Flex justifyContent="center" mb="4px">
         <Spinner />
-      </Flex>}
-      <SaleInfo>
+      </Flex>)}
+      {tokenList && (<SaleInfo>
         <SaleInfoTitle>
           Total Token Locks:
         </SaleInfoTitle>
         <SaleInfoValue>
           {!tokenList ? 0 : tokenList.length}
         </SaleInfoValue>
-      </SaleInfo>
+      </SaleInfo>)}
       <TokenListContainder toggled={menuToggled}>
         {tokenList && tokenList.map((cell) => (
           <TokenCard
@@ -114,6 +134,13 @@ const TokenLocker: React.FC = () => {
           />
         ))}
       </TokenListContainder>
+      <PaginationWrapper>
+        <Pagination
+          count={pageCount}
+          siblingCount={0}
+          onChange={handlePageIndex}
+        />
+      </PaginationWrapper>
     </Wrapper>
   )
 }
