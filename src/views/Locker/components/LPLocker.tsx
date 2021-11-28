@@ -6,6 +6,9 @@ import Spinner from 'components/Loader/Spinner'
 import axios from 'axios'
 import { useWeb3React } from '@web3-react/core'
 import { useMenuToggle } from 'state/application/hooks'
+import Pagination from '@material-ui/lab/Pagination'
+import { PaginationWrapper } from 'views/Launchpad/ListingsStyles'
+import { LOCK_NUM_PER_PAGE } from 'config/constants/lock'
 import SearchPannel from './SearchPannel'
 import LPCard from './LPCard'
 
@@ -72,12 +75,25 @@ const LPLocker: React.FC = () => {
   const { chainId } = useWeb3React()
   const isMobile = !isXl
   const [LPList, setLPList] = useState(null)
+  const [searchKey, setSearchKey] = useState('')
+  const [pageIndex, setPageIndex] = useState(0)
+  const [pageCount, setPageCount] = useState(1)
 
   useEffect(() => {
     const fetchData = async () => {
-      const type = true
-      axios.get(`${process.env.REACT_APP_BACKEND_API_URL2}/getAllTokenLockInfo/${chainId}/${type}`).then(async (response) => {
+      const data = {
+        chain_id: chainId,
+        type: true, /* liquidity lock type */
+        key: searchKey,
+        page_index: pageIndex,
+        num_per_page: LOCK_NUM_PER_PAGE,
+      }
+      axios.post(`${process.env.REACT_APP_BACKEND_API_URL2}/getAllTokenLockInfo`, { data }).then(async (response) => {
         if (response.data) {
+          let pages = 1
+          if (response.data.length > 0)
+            pages = Math.ceil(parseInt(response.data[0].count) / LOCK_NUM_PER_PAGE)
+          setPageCount(pages)
           setLPList(response.data)
         }
       })
@@ -85,22 +101,26 @@ const LPLocker: React.FC = () => {
 
     if (chainId)
       fetchData()
-  }, [chainId])
+  }, [chainId, searchKey, pageIndex])
+
+  const handlePageIndex = (e, page) => {
+    setPageIndex(page - 1)
+  }
 
   return (
     <Wrapper>
-      <SearchPannel />
+      <SearchPannel setSearchKey={setSearchKey} setPageIndex={setPageIndex} />
       {!LPList && <Flex justifyContent="center" mb="4px">
         <Spinner />
       </Flex>}
-      <SaleInfo>
+      {LPList && (<SaleInfo>
         <SaleInfoTitle>
           Total Liquidity Locks:
         </SaleInfoTitle>
         <SaleInfoValue>
           {!LPList ? 0 : LPList.length}
         </SaleInfoValue>
-      </SaleInfo>
+      </SaleInfo>)}
       <TokenListContainder toggled={menuToggled}>
         {LPList && LPList.map((cell) => (
           <LPCard
@@ -113,6 +133,13 @@ const LPLocker: React.FC = () => {
           />
         ))}
       </TokenListContainder>
+      <PaginationWrapper>
+        <Pagination
+          count={pageCount}
+          siblingCount={0}
+          onChange={handlePageIndex}
+        />
+      </PaginationWrapper>
     </Wrapper>
   )
 }

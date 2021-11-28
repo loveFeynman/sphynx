@@ -72,7 +72,6 @@ const TokenLocker: React.FC = () => {
   const { menuToggled } = useMenuToggle()
   const { chainId } = useWeb3React()
   const [tokenList, setTokenList] = useState(null)
-  const [isLoading, setIsLoading] = useState(true)
   const [searchKey, setSearchKey] = useState('')
   const [pageIndex, setPageIndex] = useState(0)
   const [pageCount, setPageCount] = useState(1)
@@ -81,7 +80,7 @@ const TokenLocker: React.FC = () => {
     const fetchData = async () => {
       const data = {
         chain_id: chainId,
-        type: false, /* token lock */
+        type: false, /* token lock type */
         key: searchKey,
         page_index: pageIndex,
         num_per_page: LOCK_NUM_PER_PAGE,
