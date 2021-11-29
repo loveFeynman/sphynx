@@ -1,14 +1,16 @@
-import { useAllLists } from 'state/lists/hooks'
+import { useActiveUniListUrls, useAllLists, useUniAllLists } from 'state/lists/hooks'
 import { getVersionUpgrade, VersionUpgrade } from '@uniswap/token-lists'
 import { useCallback, useEffect } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useAllInactiveTokens } from 'hooks/Tokens'
-import { UNSUPPORTED_LIST_URLS } from 'config/constants/lists'
-import useWeb3Provider from 'hooks/useActiveWeb3React'
+import { UNSUPPORTED_LIST_URLS, UNSUPPORTED_UNI_LIST_URLS } from 'config/constants/lists'
+import { ChainId } from '@sphynxswap/sdk'
 import useFetchListCallback from 'hooks/useFetchListCallback'
+import useFetchUniListCallback from 'hooks/useFetchUniListCallback'
 import useInterval from 'hooks/useInterval'
 import useIsWindowVisible from 'hooks/useIsWindowVisible'
-import { AppDispatch } from '../index'
+import useWeb3Provider from 'hooks/useActiveWeb3React'
+import { AppDispatch, AppState } from '../index'
 import { acceptListUpdate } from './actions'
 import { useActiveListUrls } from './hooks'
 
@@ -16,17 +18,28 @@ export default function Updater(): null {
   const { library } = useWeb3Provider()
   const dispatch = useDispatch<AppDispatch>()
   const isWindowVisible = useIsWindowVisible()
+  const connectedNetworkID = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.connectedNetworkID)
 
   // get all loaded lists, and the active urls
-  const lists = useAllLists()
-  const activeListUrls = useActiveListUrls()
+  let lists = useAllLists()
+  let activeListUrls = useActiveListUrls()
+  let fetchList = useFetchListCallback()
+
+  const uniLists = useUniAllLists();
+  const activeUniListUrls = useActiveUniListUrls();
+  const fetchUniList = useFetchUniListCallback()
+  if (connectedNetworkID === ChainId.MAINNET) {
+    lists = uniLists
+    activeListUrls = activeUniListUrls
+    fetchList = fetchUniList
+  }
 
   // initiate loading
   useAllInactiveTokens()
 
-  const fetchList = useFetchListCallback()
   const fetchAllListsCallback = useCallback(() => {
     if (!isWindowVisible) return
+    if (lists === null || lists === undefined) return
     Object.keys(lists).forEach((url) =>
       fetchList(url).catch((error) => console.debug('interval list fetching error', error)),
     )
@@ -37,6 +50,7 @@ export default function Updater(): null {
 
   // whenever a list is not loaded and not loading, try again to load it
   useEffect(() => {
+    if (lists === null || lists === undefined) return
     Object.keys(lists).forEach((listUrl) => {
       const list = lists[listUrl]
       if (!list.current && !list.loadingRequestId && !list.error) {
@@ -57,6 +71,7 @@ export default function Updater(): null {
 
   // automatically update lists if versions are minor/patch
   useEffect(() => {
+    if (lists === null || lists === undefined) return
     Object.keys(lists).forEach((listUrl) => {
       const list = lists[listUrl]
       if (list.current && list.pendingUpdate) {

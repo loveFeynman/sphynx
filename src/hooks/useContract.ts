@@ -28,7 +28,7 @@ import {
 
 // Imports below migrated from Exchange useContract.ts
 import { Contract } from '@ethersproject/contracts'
-import { ChainId, WETH, RouterType } from '@sphynxswap/sdk'
+import { ChainId, WETH, RouterType, UNISWAP_FACTORY_ADDRESS } from '@sphynxswap/sdk'
 import { abi as ISphynxPair } from '@sphynxswap/swap-core/build/ISphynxPair.json'
 import ENS_PUBLIC_RESOLVER_ABI from '../config/abi/ens-public-resolver.json'
 import ENS_ABI from '../config/abi/ens-registrar.json'
@@ -193,7 +193,7 @@ function useContract(address: string | undefined, ABI: any, withSignerIfPossible
 
 export function useRouterAddress() {
   const { routerType } = useSetRouterType()
-  return routerType === RouterType.pancake ? PANCAKE_ROUTER_ADDRESS : ROUTER_ADDRESS
+  return routerType === RouterType.pancake ? PANCAKE_ROUTER_ADDRESS : RouterType.uniswap ? UNISWAP_FACTORY_ADDRESS : ROUTER_ADDRESS
 }
 
 export function usePcsFactoryContract(): Contract | null {
@@ -207,7 +207,7 @@ export function useTokenContract(tokenAddress?: string, withSignerIfPossible?: b
 
 export function useWETHContract(withSignerIfPossible?: boolean): Contract | null {
   const { chainId } = useActiveWeb3React()
-  return useContract(chainId ? WETH[chainId].address : undefined, WETH_ABI, withSignerIfPossible)
+  return useContract(chainId && WETH[chainId] ? WETH[chainId].address : undefined, WETH_ABI, withSignerIfPossible)
 }
 
 export function useENSRegistrarContract(withSignerIfPossible?: boolean): Contract | null {

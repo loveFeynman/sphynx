@@ -2,10 +2,10 @@ import { createReducer } from '@reduxjs/toolkit'
 import { getVersionUpgrade, VersionUpgrade } from '@uniswap/token-lists'
 // eslint-disable-next-line import/no-unresolved
 import { TokenList } from '@uniswap/token-lists/dist/types'
-import { DEFAULT_ACTIVE_LIST_URLS, UNSUPPORTED_LIST_URLS, DEFAULT_LIST_OF_LISTS } from '../../config/constants/lists'
+import { DEFAULT_ACTIVE_LIST_URLS, UNSUPPORTED_LIST_URLS, DEFAULT_LIST_OF_LISTS, DEFAULT_ACTIVE_UNI_LIST_URLS, UNSUPPORTED_UNI_LIST_URLS, DEFAULT_UNI_LIST_OF_LISTS } from '../../config/constants/lists'
 
 import { updateVersion } from '../global/actions'
-import { acceptListUpdate, addList, fetchTokenList, removeList, enableList, disableList } from './actions'
+import { acceptListUpdate, addList, fetchTokenList, removeList, enableList, disableList, addUniList, acceptUniListUpdate, removeUniList, enableUniList, disableUniList } from './actions'
 
 export interface ListsState {
   readonly byUrl: {
@@ -21,11 +21,34 @@ export interface ListsState {
 
   // currently active lists
   readonly activeListUrls: string[] | undefined
+
+  // Uniswap
+  readonly byUniUrl: {
+    readonly [url: string]: {
+      readonly current: TokenList | null
+      readonly pendingUpdate: TokenList | null
+      readonly loadingRequestId: string | null
+      readonly error: string | null
+    }
+  }
+  // this contains the default list of lists from the last time the updateVersion was called, i.e. the app was reloaded
+  readonly lastInitializedDefaultUniListOfLists?: string[]
+
+  // currently active lists
+  readonly activeUniListUrls: string[] | undefined
 }
 
 type ListState = ListsState['byUrl'][string]
+type UniListState = ListsState['byUniUrl'][string]
 
 const NEW_LIST_STATE: ListState = {
+  error: null,
+  current: null,
+  loadingRequestId: null,
+  pendingUpdate: null,
+}
+
+const NEW_UNI_LIST_STATE: UniListState = {
   error: null,
   current: null,
   loadingRequestId: null,
@@ -43,6 +66,15 @@ const initialState: ListsState = {
     }, {}),
   },
   activeListUrls: DEFAULT_ACTIVE_LIST_URLS,
+
+  lastInitializedDefaultUniListOfLists: DEFAULT_UNI_LIST_OF_LISTS,
+  byUniUrl: {
+    ...DEFAULT_UNI_LIST_OF_LISTS.concat(...UNSUPPORTED_UNI_LIST_URLS).reduce<Mutable<ListsState['byUniUrl']>>((memo, listUrl) => {
+      memo[listUrl] = NEW_UNI_LIST_STATE
+      return memo
+    }, {}),
+  },
+  activeUniListUrls: DEFAULT_ACTIVE_UNI_LIST_URLS,
 }
 
 export default createReducer(initialState, (builder) =>
@@ -99,6 +131,62 @@ export default createReducer(initialState, (builder) =>
         ...state.byUrl[url],
         loadingRequestId: null,
         error: errorMessage,
+        current: null,
+        pendingUpdate: null,
+      }
+    })
+    .addCase(fetchTokenList.unipending, (state, { payload: { uniRequestId, uniUrl } }) => {
+      state.byUniUrl[uniUrl] = {
+        current: null,
+        pendingUpdate: null,
+        ...state.byUniUrl[uniUrl],
+        loadingRequestId: uniRequestId,
+        error: null,
+      }
+    })
+    .addCase(fetchTokenList.unifulfilled, (state, { payload: { uniRequestId, uniTokenList, uniUrl } }) => {
+      const current = state.byUniUrl[uniUrl]?.current
+      const loadingRequestId = state.byUniUrl[uniUrl]?.loadingRequestId
+
+      // no-op if update does nothing
+      if (current) {
+        const upgradeType = getVersionUpgrade(current.version, uniTokenList.version)
+
+        if (upgradeType === VersionUpgrade.NONE) return
+        if (loadingRequestId === null || loadingRequestId === uniRequestId) {
+          state.byUniUrl[uniUrl] = {
+            ...state.byUniUrl[uniUrl],
+            loadingRequestId: null,
+            error: null,
+            current,
+            pendingUpdate: uniTokenList,
+          }
+        }
+      } else {
+        // activate if on default active
+        if (DEFAULT_ACTIVE_UNI_LIST_URLS.includes(uniUrl)) {
+          state.activeUniListUrls?.push(uniUrl)
+        }
+
+        state.byUniUrl[uniUrl] = {
+          ...state.byUniUrl[uniUrl],
+          loadingRequestId: null,
+          error: null,
+          current: uniTokenList,
+          pendingUpdate: null,
+        }
+      }
+    })
+    .addCase(fetchTokenList.unirejected, (state, { payload: { uniUrl, uniRequestId, uniErrorMessage } }) => {
+      if (state.byUniUrl[uniUrl]?.loadingRequestId !== uniRequestId) {
+        // no-op since it's not the latest request
+        return
+      }
+
+      state.byUniUrl[uniUrl] = {
+        ...state.byUniUrl[uniUrl],
+        loadingRequestId: null,
+        error: uniErrorMessage,
         current: null,
         pendingUpdate: null,
       }
@@ -184,5 +272,47 @@ export default createReducer(initialState, (builder) =>
           return true
         })
       }
-    }),
+    })
+    .addCase(addUniList, (state, { payload: url }) => {
+      if (!state.byUniUrl[url]) {
+        state.byUniUrl[url] = NEW_UNI_LIST_STATE
+      }
+    })
+    .addCase(removeUniList, (state, { payload: url }) => {
+      if (state.byUniUrl[url]) {
+        delete state.byUniUrl[url]
+      }
+      // remove list from active urls if needed
+      if (state.activeUniListUrls && state.activeUniListUrls.includes(url)) {
+        state.activeUniListUrls = state.activeUniListUrls.filter((u) => u !== url)
+      }
+    })
+    .addCase(enableUniList, (state, { payload: url }) => {
+      if (!state.byUniUrl[url]) {
+        state.byUniUrl[url] = NEW_UNI_LIST_STATE
+      }
+
+      if (state.activeUniListUrls && !state.activeUniListUrls.includes(url)) {
+        state.activeUniListUrls.push(url)
+      }
+
+      if (!state.activeUniListUrls) {
+        state.activeUniListUrls = [url]
+      }
+    })
+    .addCase(disableUniList, (state, { payload: url }) => {
+      if (state.activeUniListUrls && state.activeUniListUrls.includes(url)) {
+        state.activeUniListUrls = state.activeUniListUrls.filter((u) => u !== url)
+      }
+    })
+    .addCase(acceptUniListUpdate, (state, { payload: url }) => {
+      if (!state.byUniUrl[url]?.pendingUpdate) {
+        throw new Error('accept list update called without pending update')
+      }
+      state.byUniUrl[url] = {
+        ...state.byUniUrl[url],
+        pendingUpdate: null,
+        current: state.byUniUrl[url].pendingUpdate,
+      }
+    })
 )

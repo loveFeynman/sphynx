@@ -8,12 +8,14 @@ import { useLocation } from 'react-router'
 import { Button, Link, Toggle } from '@sphynxswap/uikit'
 import { addToken, updateToken, deleteTokens } from 'state/wallet/tokenSlice'
 import { useMenuToggle, useRemovedAssets } from 'state/application/hooks'
-import { useWeb3React } from '@web3-react/core'
+import useActiveWeb3React from 'hooks/useActiveWeb3React'
+import { BITQUERY_NETWORK_LIST } from 'config/index'
 import MainLogo from 'assets/svg/icon/logo_new.svg'
 import { v4 as uuidv4 } from 'uuid'
 import CloseIcon from '@material-ui/icons/Close'
 import Web3 from 'web3'
 import ERC20ABI from 'assets/abis/erc20.json'
+import ERC20ABIETH from 'assets/abis/erc20ETH.json'
 import { isAddress } from 'utils'
 import { SPHYNX_PAIR_ADDRESS, SPHYNX_TOKEN_ADDRESS, SPHYNX_OLD_TOKEN_ADDRESS } from 'config/constants'
 import { ReactComponent as MenuOpenIcon } from 'assets/svg/icon/MenuOpenIcon.svg'
@@ -26,18 +28,23 @@ import axios from 'axios'
 import { web3Provider } from 'utils/providers'
 import { BITQUERY_API, BITQUERY_API_KEY } from 'config/constants/endpoints'
 import storages from 'config/constants/storages'
+import addresses from 'config/constants/addresses'
+import chainIds from 'config/constants/chainIds'
 import { TOKEN_INTERVAL } from 'config/constants/info'
 import { BalanceNumber } from 'components/BalanceNumber'
 import { useTranslation } from 'contexts/Localization'
-import { simpleRpcProvider } from 'utils/providers'
 import { links } from './config'
 import { Field, replaceSwapState } from '../../state/swap/actions'
 import { getBNBPrice } from 'utils/priceProvider'
 import { useThemeManager } from 'state/user/hooks'
 
-const abi: any = ERC20ABI
-const dataFeedProvider = new Web3.providers.HttpProvider("https://bsc-dataseed.binance.org/")
-const web3 = new Web3(dataFeedProvider)
+const abiBNB: any = ERC20ABI
+const bnbProviderURL = 'https://bsc-dataseed.binance.org/'
+const bnbWeb3 = new Web3(new Web3.providers.HttpProvider(bnbProviderURL))
+
+const abiETH: any = ERC20ABIETH
+const ethProviderURL = 'https://speedy-nodes-nyc.moralis.io/fbb4b2b82993bf507eaaab13/eth/mainnet/archive'
+const ethWeb3 = new Web3(new Web3.providers.HttpProvider(ethProviderURL))
 
 const MenuWrapper = styled.div<{ toggled: boolean }>`
   width: 320px;
@@ -294,10 +301,10 @@ const IconBox = styled.div<{ color?: string }>`
 `
 
 const Menu = () => {
-  const { account } = useWeb3React()
   const { menuToggled, toggleMenu } = useMenuToggle()
   const { removedAssets, setRemovedAssets } = useRemovedAssets()
   const [showAllToken, setShowAllToken] = useState(true)
+  const { chainId, account } = useActiveWeb3React()
 
   const dispatch = useDispatch()
   const { pathname } = useLocation()
@@ -323,7 +330,7 @@ const Menu = () => {
 
   const getDataQuery = `
   {
-    ethereum(network: bsc) {
+    ethereum(network: ${BITQUERY_NETWORK_LIST[chainId]}) {
       address(address: {is: "${account}" }){
         balances {
           value
@@ -340,7 +347,7 @@ const Menu = () => {
 
   const getSphynxQuery = `
   {
-  ethereum(network: bsc) {
+  ethereum(network: ${BITQUERY_NETWORK_LIST[chainId]}) {
       dexTrades(
       options: {desc: ["block.height", "tradeIndex"], limit: 1, offset: 0}
       date: {till: null}
@@ -396,7 +403,8 @@ const Menu = () => {
 
   const fetchData = async () => {
     if (account) {
-      const bnbPrice = await getBNBPrice(simpleRpcProvider)
+      const bnbPrice = await getBNBPrice()
+
       let removedTokens = JSON.parse(localStorage.getItem(storages.LOCAL_REMOVED_TOKENS))
       if (removedTokens === null) {
         removedTokens = []
@@ -421,12 +429,22 @@ const Menu = () => {
           (balance) => balance.currency.address.toLowerCase() !== SPHYNX_OLD_TOKEN_ADDRESS.toLowerCase(),
         )
         if (balances && balances.length > 0) {
+          balances = balances.filter((balance) => balance.value !== 0)
           const promises = balances.map((elem) => {
-            return axios.get(
-              `${process.env.REACT_APP_BACKEND_API_URL}/price/${
-                elem.currency.address === '-' ? '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c' : elem.currency.address
-              }`,
-            )
+            let address = elem.currency.address
+            if (address === '-') {
+              switch (chainId) {
+                case chainIds.BNB_CHAIN_ID:
+                  address = addresses.WBNB_ADDRESS
+                  break
+                case chainIds.ETH_CHAIN_ID:
+                  address = addresses.WETH_ADDRESS
+                  break
+                default:
+                  address = addresses.WBNB_ADDRESS
+              }
+            }
+            return axios.get(`${process.env.REACT_APP_BACKEND_API_URL}/price/${address}/${chainId}`,)
           })
 
           const prices: any = await Promise.all(promises)
@@ -436,12 +454,27 @@ const Menu = () => {
           for (const elem of balances) {
             const result = isAddress(elem.currency.address)
             if (result) {
-              const contract = new web3.eth.Contract(abi, elem.currency.address)
+              let contract
+              switch (chainId) {
+                case chainIds.BNB_CHAIN_ID:
+                  contract = new bnbWeb3.eth.Contract(abiBNB, elem.currency.address)
+                  break
+                case chainIds.ETH_CHAIN_ID:
+                  contract = new ethWeb3.eth.Contract(abiETH, elem.currency.address)
+                  break
+                default:
+                  contract = new bnbWeb3.eth.Contract(abiBNB, elem.currency.address)
+              }
               const tokenBalance = await contract.methods.balanceOf(account).call()
               elem.value = tokenBalance / Math.pow(10, elem.currency.decimals)
-            } else if (elem.currency.symbol === 'BNB') {
-              const bnbBalance = await web3.eth.getBalance(account)
-              elem.value = web3.utils.fromWei(bnbBalance)
+            }
+            else if (elem.currency.symbol === 'BNB') {
+              const bnbBalance = await bnbWeb3.eth.getBalance(account)
+              elem.value = bnbWeb3.utils.fromWei(bnbBalance)
+            }
+            else if (elem.currency.symbol === 'ETH') {
+              const ethBalance = await ethWeb3.eth.getBalance(account)
+              elem.value = ethWeb3.utils.fromWei(ethBalance)
             }
 
             let sphynxPrice
@@ -476,7 +509,6 @@ const Menu = () => {
               if (!flag) dispatch(addToken(token))
             }
           }
-
           balances = balances.filter((balance) => balance.dollarPrice !== 0)
         } else {
           dispatch(deleteTokens())
@@ -510,12 +542,27 @@ const Menu = () => {
       for (const elem of balances) {
         const result = isAddress(elem.currency.address)
         if (result) {
-          const contract = new web3.eth.Contract(abi, elem.currency.address)
+          let contract
+          switch (chainId) {
+            case chainIds.BNB_CHAIN_ID:
+              contract = new bnbWeb3.eth.Contract(abiBNB, elem.currency.address)
+              break
+            case chainIds.ETH_CHAIN_ID:
+              contract = new ethWeb3.eth.Contract(abiETH, elem.currency.address)
+              break
+            default:
+              contract = new bnbWeb3.eth.Contract(abiBNB, elem.currency.address)
+          }
           const tokenBalance = await contract.methods.balanceOf(account).call()
           elem.value = tokenBalance / Math.pow(10, elem.currency.decimals)
-        } else if (elem.currency.symbol === 'BNB') {
-          const bnbBalance = await web3.eth.getBalance(account)
-          elem.value = web3.utils.fromWei(bnbBalance)
+        }
+        else if (elem.currency.symbol === 'BNB') {
+          const bnbBalance = await bnbWeb3.eth.getBalance(account)
+          elem.value = bnbWeb3.utils.fromWei(bnbBalance)
+        }
+        else if (elem.currency.symbol === 'ETH') {
+          const ethBalance = await ethWeb3.eth.getBalance(account)
+          elem.value = ethWeb3.utils.fromWei(ethBalance)
         }
 
         if (sessionData && elem.currency.address === sessionData.input) {
@@ -573,7 +620,7 @@ const Menu = () => {
   useEffect(() => {
     fetchData()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [account])
+  }, [account, chainId])
 
   useEffect(() => {
     updateWallet()
@@ -671,6 +718,10 @@ const Menu = () => {
   }, [menuToggled, toggleMenu])
 
   const handleShowAllToken = useCallback(() => {
+    if(!showAllToken) {
+      localStorage.setItem(storages.LOCAL_REMOVED_TOKENS, null)
+      setRemovedAssets([])
+    }
     setShowAllToken(!showAllToken)
   }, [showAllToken])
 

@@ -1,7 +1,7 @@
 /* eslint-disable */
 import React from 'react'
 import styled from 'styled-components'
-import { useWeb3React } from '@web3-react/core'
+import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import './index.css'
 import {
   ChartingLibraryWidgetOptions,
@@ -75,7 +75,7 @@ let currentResolutions: any
 
 const Chart: React.FC<Partial<ChartContainerProps>> = (props) => {
   const dispatch = useDispatch()
-  const { account } = useWeb3React()
+  const { account, chainId } = useActiveWeb3React()
   const input = props.tokenAddress
   const routerVersion = props.routerVersion
   const customChartType = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.customChartType)
@@ -124,12 +124,14 @@ const Chart: React.FC<Partial<ChartContainerProps>> = (props) => {
       onResultReadyCallback(newSymbols)
     },
     resolveSymbol: async (symbolName: any, onSymbolResolvedCallback: any, onResolveErrorCallback: any) => {
-      const exchange = routerVersion === 'sphynx' ? 'SPHYNX DEX' : 'Pancake ' + routerVersion
+      const exchange = routerVersion === 'sphynx' ? 'SPHYNX DEX' : chainId === 56 ? 'Pancake ' + routerVersion : 'Uniswap ' + routerVersion
+      const quoteSymbol = chainId === 56  ? 'BNB' : 'ETH'
       symbolRef.current = onSymbolResolvedCallback
-      getTokenInfo(input, routerVersion).then((tokenInfo) => {
+      getTokenInfo(input, routerVersion, chainId)
+      .then(tokenInfo => {
         const res = {
           name: tokenInfo.name,
-          pair: `${tokenInfo.symbol}/BNB`,
+          pair: `${tokenInfo.symbol}/${quoteSymbol}`,
           symbol: tokenInfo.symbol,
           version: exchange,
         }
@@ -166,13 +168,7 @@ const Chart: React.FC<Partial<ChartContainerProps>> = (props) => {
       try {
         if (result) {
           if (!firstDataRequest) {
-            const data1 = await makeApiDurationRequest(
-              input,
-              routerVersion,
-              resolution,
-              new Date(to * 1000).toISOString(),
-              countBack,
-            )
+            const data1 = await makeApiDurationRequest(input, routerVersion, resolution, (new Date(to* 1000)).toISOString(), countBack, chainId)
             const noDataFlag = data1.length === 0 ? true : false
             // "noData" should be set if there is no data in the requested period.
             onHistoryCallback(data1, {
@@ -182,7 +178,7 @@ const Chart: React.FC<Partial<ChartContainerProps>> = (props) => {
           }
         }
 
-        const data = await getHistoricalData(input, routerVersion, resolution)
+        const data = await getHistoricalData(input, routerVersion, resolution, chainId)
         let bars = data.map((bar: any, i: any) => {
           return {
             ...bar,

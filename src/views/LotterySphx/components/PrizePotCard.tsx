@@ -121,7 +121,7 @@ export default function PrizePotCard({
   const [enabled, setEnabled] = React.useState(false)
   const [isClaimable, setClaimable] = React.useState(false)
   const [isLoading, setLoading] = React.useState(false)
-  const { account, library } = useActiveWeb3React()
+  const { account, library, chainId } = useActiveWeb3React()
   const signer = library.getSigner()
   const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
   const [toastMessage, setToastMessage] = React.useState({
@@ -130,7 +130,6 @@ export default function PrizePotCard({
   })
   const { toastSuccess, toastError } = useToast();
   const [onPresentViewTicketModal] = useModal(<ViewTickets roundID={roundID} winningCards={winningCards} />)
-
 
   React.useEffect(() => {
     if (toastMessage.title !== '' && toastMessage.title.includes('Error')) {

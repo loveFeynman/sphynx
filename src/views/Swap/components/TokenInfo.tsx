@@ -8,6 +8,7 @@ import { BITQUERY_API, BITQUERY_API_KEY } from 'config/constants/endpoints'
 import axios from 'axios'
 import { AppState, AppDispatch } from '../../../state'
 import { selectCurrency, Field } from '../../../state/swap/actions'
+import useActiveWeb3React from '../../../hooks/useActiveWeb3React'
 import { isAddress, getBscScanLink } from '../../../utils'
 import { useTranslation } from '../../../contexts/Localization'
 
@@ -76,6 +77,8 @@ export default function TokenInfo(props) {
   const { tokenData } = props
   const { t } = useTranslation()
   const result = isAddress(input)
+  const { chainId } = useActiveWeb3React()
+  const network = chainId === 56 ? 'bsc' : 'ethereum'
 
   const dispatch = useDispatch<AppDispatch>()
 
@@ -88,10 +91,11 @@ export default function TokenInfo(props) {
             currencyId: input,
           }),
         )
+        const currencyId = chainId === 56 ? 'BNB' : 'ETH'
         dispatch(
           selectCurrency({
             field: isInput ? Field.INPUT : Field.OUTPUT,
-            currencyId: 'BNB',
+            currencyId
           }),
         )
       }
@@ -99,7 +103,7 @@ export default function TokenInfo(props) {
       // eslint-disable-next-line no-console
       console.log(err)
     }
-  }, [dispatch, input, isInput, result])
+  }, [dispatch, input, isInput, result, chainId])
 
   useEffect(() => {
     const ac = new AbortController();
@@ -118,7 +122,7 @@ export default function TokenInfo(props) {
         }
 
         const queryTx = `{
-          ethereum(network: bsc) {
+          ethereum(network: ${network}) {
             transactions(txTo: {is: "${input}"}) {
               count
             }
@@ -135,7 +139,7 @@ export default function TokenInfo(props) {
 
     const fetchHolder = async () => {
       try {
-        axios.post(`${process.env.REACT_APP_BACKEND_API_URL2}/holders`, { address: input }).then((response) => {
+        axios.post(`${process.env.REACT_APP_BACKEND_API_URL2}/holders`, { address: input, chainId }).then((response) => {
           setHolderNum(Number(response.data.holders))
         })
       } catch (err) {
@@ -151,7 +155,7 @@ export default function TokenInfo(props) {
     }
 
     return () => ac.abort()
-  }, [input])
+  }, [input, chainId, network])
 
   return (
     <TokenInfoContainer>
