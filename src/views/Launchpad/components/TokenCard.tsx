@@ -9,6 +9,7 @@ import ContractHelper from './ContractHelper';
 const CardWrapper = styled.div`
   background: ${({ theme }) => (theme.isDark ? '#040413' : '#2A2E60')};
   border-radius: 8px;
+  cursor: pointer;
 `
 
 const CardHeader = styled.div`
