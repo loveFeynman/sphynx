@@ -528,7 +528,7 @@ export default function Swap({ history }: RouteComponentProps) {
         chainId === ChainId.MAINNET ? new web3.eth.Contract(abi, input) : new web3ETH.eth.Contract(abi, input)
       tokenDecimal = await contract.methods.decimals().call()
     }
-    
+
     setLoading(false)
     const ac = new AbortController()
     let newTransactions = []
@@ -624,8 +624,8 @@ export default function Swap({ history }: RouteComponentProps) {
 
   React.useEffect(() => {
     const ab = new AbortController()
-    if (tokenAddress && tokenAddress !== '') {
-      dispatch(typeInput({ input: tokenAddress }))
+    if (input) {
+      dispatch(typeInput({ input }))
     }
     return () => {
       ab.abort()
@@ -658,7 +658,7 @@ export default function Swap({ history }: RouteComponentProps) {
   }
 
   React.useEffect(() => {
-    if(input === undefined) return
+    if (input === undefined) return
     sessionStorage.removeItem(storages.SESSION_LIVE_PRICE)
     getTokenData(input, chainId)
   }, [pairs, chainId])

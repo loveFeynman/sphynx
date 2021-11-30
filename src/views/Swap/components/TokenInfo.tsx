@@ -79,6 +79,7 @@ export default function TokenInfo(props) {
   const result = isAddress(input)
   const { chainId } = useActiveWeb3React()
   const network = chainId === 56 ? 'bsc' : 'ethereum'
+  const tokenLink = chainId === 56 ? 'https://bscscan.com/token' : 'https://etherscan.io/token'
 
   const dispatch = useDispatch<AppDispatch>()
 
@@ -190,7 +191,7 @@ export default function TokenInfo(props) {
             <CopyHelper toCopy={input}>&nbsp;</CopyHelper>
           </Text>
           <Text>
-            <a href={`https://bscscan.com/token/${input}`} target="_blank" rel="noreferrer">
+            <a href={`${tokenlink}/${input}`} target="_blank" rel="noreferrer">
               {input}
             </a>
           </Text>
@@ -198,7 +199,7 @@ export default function TokenInfo(props) {
         <TextWrapper>
           <Text>{t('Holders')}</Text>
           <Text>
-            <a href={`https://bscscan.com/token/${input}#balances`} target="_blank" rel="noreferrer">
+            <a href={`${tokenlink}/${input}#balances`} target="_blank" rel="noreferrer">
             {holderNum}
             </a>
           </Text>
