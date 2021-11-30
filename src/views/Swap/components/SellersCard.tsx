@@ -6,18 +6,19 @@ import { AppState } from 'state'
 import styled from 'styled-components'
 import { useTranslation } from 'contexts/Localization'
 import { v4 as uuidv4 } from 'uuid'
-import { Spinner } from '../../LotterySphx/components/Spinner'
+import Spinner from 'components/Loader/Spinner'
 import { topTrades } from '../../../utils/apiServices'
 
-const fontSize = window.screen.width > 768 ? "14px" : "10px"
+const fontSize = window.screen.width > 768 ? '14px' : '12px'
 
 const TableWrapper = styled.div`
-  background: ${({ theme }) => theme.isDark ? "#0E0E26": "#2A2E60"};
+  background: ${({ theme }) => (theme.isDark ? '#0E0E26' : '#2A2E60')};
   border-radius: 8px;
   height: 100%;
   max-height: 500px;
   overflow: auto;
   overflow-x: hidden;
+  text-align: center;
   & table {
     background: transparent;
     width: 100%;
@@ -30,11 +31,11 @@ const TableWrapper = styled.div`
     & thead {
       & td {
         color: white;
-        font-size: 16px;
+        font-size: 14px;
         vertical-align: middle;
-        background: ${({ theme }) => theme.isDark ? "#219653": "#77BF3E"};
+        background: transparent;
         padding: 16px 8px;
-        font-weight: 700;
+        font-weight: 600;
         & > div > div {
           font-size: 16px;
           font-weight: 500;
@@ -50,10 +51,10 @@ const TableWrapper = styled.div`
           word-break: break-word;
           font-weight: 600;
           &.success {
-            color: ${({ theme }) => theme.isDark ? "#219653": "#77BF3E"};
+            color: ${({ theme }) => (theme.isDark ? '#219653' : '#77BF3E')};
           }
           &.error {
-            color: ${({ theme }) => theme.isDark ? "#EB5757": "#F84364"};
+            color: ${({ theme }) => (theme.isDark ? '#EB5757' : '#F84364')};
           }
         }
       }
@@ -78,9 +79,9 @@ const SellersCard = (props) => {
     const to = new Date().toISOString()
     try {
       if (result && address && from && to) {
-        const topBuyers = await topTrades(address, 'sell', pair);
+        const topBuyers = await topTrades(address, 'sell', pair)
         if (topBuyers) {
-          setTableData(topBuyers);
+          setTableData(topBuyers)
         }
       }
       setLoading(false)
@@ -109,23 +110,31 @@ const SellersCard = (props) => {
               </tr>
             </thead>
             <tbody>
-              {tableData?.map(item => ({
-                ...item,
-                id: uuidv4()
-              })).map((td) => {
-                return (
-                  <tr key={td.id}>
-                    <td style={{ color: '#fff', width: '80%' }}>
-                      <a href={`https://bscscan.com/token/${input}?a=${td.wallet}`} target="_blank" rel="noreferrer">
-                        {td.wallet}
-                      </a>
-                    </td>
-                    <td style={{ color: '#ea3843', width: '20%' }}>
-                      $ {td.usdAmount.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$&,')}
-                    </td>
-                  </tr>
-                )
-              })}
+              {tableData
+                ?.map((item) => ({
+                  ...item,
+                  id: uuidv4(),
+                }))
+                .map((td) => {
+                  return (
+                    <tr key={td.id}>
+                      <td style={{ color: '#fff', width: '60%' }}>
+                        <h2>
+                          <a
+                            href={`https://bscscan.com/token/${input}?a=${td.wallet}`}
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            {td.wallet}
+                          </a>
+                        </h2>
+                      </td>
+                      <td style={{ color: '#ea3843', width: '40%' }}>
+                        <h2>$ {td.usdAmount.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$&,')}</h2>
+                      </td>
+                    </tr>
+                  )
+                })}
             </tbody>
           </table>
         </TableWrapper>

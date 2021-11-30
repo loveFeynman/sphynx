@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
+import React from 'react'
 import styled from 'styled-components'
-import { Flex, Text } from '@sphynxswap/uikit'
+import { Flex, Text } from '@sphynxdex/uikit'
 import MainLogo from 'assets/svg/icon/logo_new.svg'
 import { useTranslation } from 'contexts/Localization'
 
@@ -8,16 +8,21 @@ const RewardsWrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
+  white-sapce: no-wrap;
 `
 
 const RewardsContent = styled(Flex)`
   align-items: center;
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
+  margin-bottom: 12px;
   img {
     width: 38px;
   }
   ${({ theme }) => theme.mediaQueries.md} {
+    margin-bottom: 0px;
+    justify-content: flex-end;
+    width: max-content;
     img {
       width: 75px;
     }
@@ -27,6 +32,7 @@ const RewardsContent = styled(Flex)`
 const LogoTitle = styled.div`
   display: block;
   width: 100%;
+  white-space: nowrap;
   div:nth-child(1) {
     font-size: 10px;
   }
@@ -49,7 +55,6 @@ const LogoTitleWrapper = styled.div`
 `
 
 const RewardsPanel: React.FC = () => {
-  const [balance, setBalance] = useState(0)
   const { t } = useTranslation()
 
   return (

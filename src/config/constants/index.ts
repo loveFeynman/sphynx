@@ -1,10 +1,14 @@
-import { ChainId, JSBI, Percent, Token, WETH } from '@sphynxswap/sdk'
+import { ChainId, JSBI, Percent, Token, WETH } from '@sphynxdex/sdk-multichain'
 import { BUSD, DAI, USDT, BTCB, CAKE, WBNB, UST, ETH, USDC, SPHYNX } from './tokens'
 
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 export const ROUTER_ADDRESS = '0x0C8094a69e8e44404371676f07B2C32923B5699c' // sphynx router v1 for mainnet
 export const PANCAKE_ROUTER_ADDRESS = '0x10ED43C718714eb63d5aA57B78B54704E256024E'
+export const UNISWAP_ROUTER_ADDRESS = '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D'
 export const FEE_WALLET = '0x074222A8A5b6A155A80C533A54E3ef5ED267AE16'
+export const SPHYNX_OLD_TOKEN_ADDRESS = '0x2e121ed64eeeb58788ddb204627ccb7c7c59884c'
+export const SPHYNX_TOKEN_ADDRESS = '0xd38Ec16cAf3464ca04929E847E4550Dcff25b27a'
+export const SPHYNX_PAIR_ADDRESS = '0x93561354a5a4687c54a64cf0aba56a0a392ae882'
 
 // a list of tokens by chain
 type ChainTokenList = {
@@ -25,6 +29,7 @@ export const BASES_TO_CHECK_TRADES_AGAINST: ChainTokenList = {
     USDC,
   ],
   [ChainId.TESTNET]: [WETH[ChainId.TESTNET], SPHYNX[ChainId.TESTNET], CAKE[ChainId.TESTNET], BUSD[ChainId.TESTNET]],
+  [ChainId.ETHEREUM]: [WETH[ChainId.ETHEREUM]]
 }
 
 /**
@@ -48,12 +53,14 @@ export const CUSTOM_BASES: { [chainId in ChainId]?: { [tokenAddress: string]: To
 export const SUGGESTED_BASES: ChainTokenList = {
   [ChainId.MAINNET]: [BUSD[ChainId.MAINNET], CAKE[ChainId.MAINNET], BTCB],
   [ChainId.TESTNET]: [WETH[ChainId.TESTNET], CAKE[ChainId.TESTNET], BUSD[ChainId.TESTNET]],
+  [ChainId.ETHEREUM]: [WETH[ChainId.ETHEREUM]]
 }
 
 // used to construct the list of all pairs we consider by default in the frontend
 export const BASES_TO_TRACK_LIQUIDITY_FOR: ChainTokenList = {
   [ChainId.MAINNET]: [WETH[ChainId.MAINNET], DAI, BUSD[ChainId.MAINNET], USDT],
   [ChainId.TESTNET]: [WETH[ChainId.TESTNET], CAKE[ChainId.TESTNET], BUSD[ChainId.TESTNET]],
+  [ChainId.ETHEREUM]: [WETH[ChainId.ETHEREUM]]
 }
 
 export const PINNED_PAIRS: { readonly [chainId in ChainId]?: [Token, Token][] } = {

@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react'
 import styled, { css } from 'styled-components'
-import { Flex, Text } from '@sphynxswap/uikit'
+import { Flex, Text } from '@sphynxdex/uikit'
 import { ReactComponent as  ArrowDropDownIcon} from 'assets/svg/icon/DropDownIconSmall.svg'
 
 const DropDownHeader = styled.div`

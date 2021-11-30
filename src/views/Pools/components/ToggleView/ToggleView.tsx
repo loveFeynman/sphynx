@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { ListViewIcon, CardViewIcon, IconButton } from '@sphynxswap/uikit'
+import { ListViewIcon, CardViewIcon, IconButton } from '@sphynxdex/uikit'
 
 export enum ViewMode {
   'TABLE' = 'TABLE',
@@ -18,7 +18,6 @@ const Container = styled.div`
 
   ${({ theme }) => theme.mediaQueries.sm} {
     margin-left: 0;
-    margin-right: 16px;
   }
 `
 

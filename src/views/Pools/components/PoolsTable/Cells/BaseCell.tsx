@@ -1,11 +1,9 @@
-import { Flex, Text } from '@sphynxswap/uikit'
+import { Flex, Text } from '@sphynxdex/uikit'
 import styled from 'styled-components'
 
 const BaseCell = styled.div`
   color: black;
-
   padding: 24px 8px;
-
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -14,7 +12,6 @@ const BaseCell = styled.div`
 export const CellContent = styled(Flex)`
   flex-direction: column;
   justify-content: center;
-  max-height: 40px;
   ${Text} {
     line-height: 1;
   }

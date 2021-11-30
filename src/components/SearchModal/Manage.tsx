@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
-import { Token } from '@sphynxswap/sdk'
-import { ButtonMenu, ButtonMenuItem, ModalBody } from '@sphynxswap/uikit'
+import { Token } from '@sphynxdex/sdk-multichain'
+import { ButtonMenu, ButtonMenuItem, ModalBody } from '@sphynxdex/uikit'
 import styled from 'styled-components'
 import { TokenList } from '@uniswap/token-lists'
 import { useTranslation } from 'contexts/Localization'

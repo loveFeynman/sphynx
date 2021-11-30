@@ -1,5 +1,5 @@
 import React from 'react'
-import { Flex, Text } from '@sphynxswap/uikit'
+import { Flex, Text } from '@sphynxdex/uikit'
 import { useWeb3React } from '@web3-react/core'
 import { useTranslation } from 'contexts/Localization'
 import { usePriceCakeBusd } from 'state/farms/hooks'
@@ -29,7 +29,7 @@ const RecentCakeProfitCountdownRow = () => {
 
   return (
     <Flex alignItems="center" justifyContent="space-between">
-      <Text fontSize="14px">{`${t('Recent SPHYNX profit')}:`}</Text>
+      <Text color='#A7A7CC' fontSize="14px">{`${t('Recent SPHYNX profit')}:`}</Text>
       {hasAutoEarnings && (
         <RecentCakeProfitBalance
           cakeToDisplay={autoCakeToDisplay}

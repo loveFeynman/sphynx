@@ -1,39 +1,37 @@
 import React from 'react'
 import styled from 'styled-components'
-import { ChevronDownIcon, useMatchBreakpoints } from '@sphynxswap/uikit'
+import { ChevronDownIcon, Text } from '@sphynxdex/uikit'
 import { useTranslation } from 'contexts/Localization'
 
 interface DetailsProps {
   actionPanelToggled: boolean
 }
 
-const Container = styled.div`
+const StyledCell = styled.div`
   display: flex;
-  width: 100%;
-  justify-content: flex-end;
-  padding-right: 8px;
-  color: ${({ theme }) => theme.colors.text};
-
-  ${({ theme }) => theme.mediaQueries.sm} {
-    padding-right: 0px;
-  }
+  padding: 24px 8px;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  flex: 1;
 `
 
-const ArrowIcon = styled(ChevronDownIcon)<{ toggled: boolean }>`
-  transform: ${({ toggled }) => (toggled ? 'rotate(180deg)' : 'rotate(0)')};
-  height: 20px;
+const ArrowIcon = styled(ChevronDownIcon) <{ toggled: boolean }>`
+  width: 44px;  
+  height: 44px;
+  margin-bottom: auto;
 `
 
 const Details: React.FC<DetailsProps> = ({ actionPanelToggled }) => {
   const { t } = useTranslation()
-  const { isXl } = useMatchBreakpoints()
-  const isMobile = !isXl
 
   return (
-    <Container>
-      {!isMobile && t('Details')}
-      <ArrowIcon color="white" toggled={actionPanelToggled} />
-    </Container>
+    <StyledCell role="cell">
+      <Text color="#A7A7CC" fontSize='12px'>
+        {actionPanelToggled ? t('Hide') : t('Details')}
+      </Text>
+      <ArrowIcon color={actionPanelToggled ? '#BC29B1' : 'white'} toggled={actionPanelToggled} />
+    </StyledCell>
   )
 }
 

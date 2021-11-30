@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 import { isTradeBetter } from 'utils/trades'
-import { Currency, CurrencyAmount, Pair, Token, Trade } from '@sphynxswap/sdk'
+import { Currency, CurrencyAmount, Pair, Token, Trade } from '@sphynxdex/sdk-multichain'
 import flatMap from 'lodash/flatMap'
 import { useMemo } from 'react'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
@@ -98,7 +98,6 @@ const MAX_HOPS = 3
  */
 export function useTradeExactIn(currencyAmountIn?: CurrencyAmount, currencyOut?: Currency): Trade | null {
   const allowedPairs = useAllCommonPairs(currencyAmountIn?.currency, currencyOut)
-
   const [singleHopOnly] = useUserSingleHopOnly()
 
   return useMemo(() => {

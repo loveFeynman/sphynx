@@ -1,4 +1,4 @@
-import { Token } from '@sphynxswap/sdk'
+import { Token } from '@sphynxdex/sdk-multichain'
 import { SerializedToken } from '../actions'
 
 export function serializeToken(token: Token): SerializedToken {

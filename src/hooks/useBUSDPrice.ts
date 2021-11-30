@@ -1,7 +1,7 @@
-import { ChainId, Currency, currencyEquals, JSBI, Price, WETH } from '@sphynxswap/sdk'
+import { ChainId, Currency, currencyEquals, JSBI, Price, WETH } from '@sphynxdex/sdk-multichain'
 import { useMemo } from 'react'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
-import { BUSD, CAKE } from '../config/constants/tokens'
+import { BUSD, SPHYNX } from '../config/constants/tokens'
 import { PairState, usePairs } from './usePairs'
 import { wrappedCurrency } from '../utils/wrappedCurrency'
 
@@ -70,9 +70,9 @@ export default function useBUSDPrice(currency?: Currency): Price | undefined {
   }, [chainId, currency, ethPair, ethPairState, busdEthPair, busdEthPairState, busdPair, busdPairState, wrapped])
 }
 
-export const useCakeBusdPrice = (): Price | undefined => {
+export const useSphynxBusdPrice = (): Price | undefined => {
   const { chainId } = useActiveWeb3React()
   const currentChaindId = chainId || ChainId.MAINNET
-  const cakeBusdPrice = useBUSDPrice(CAKE[currentChaindId])
+  const cakeBusdPrice = useBUSDPrice(SPHYNX[currentChaindId])
   return cakeBusdPrice
 }

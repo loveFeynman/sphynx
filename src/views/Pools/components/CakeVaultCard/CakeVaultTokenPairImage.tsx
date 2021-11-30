@@ -1,5 +1,5 @@
 import React from 'react'
-import { TokenPairImage, ImageProps } from '@sphynxswap/uikit'
+import { TokenPairImage, ImageProps } from '@sphynxdex/uikit'
 import tokens from 'config/constants/tokens'
 import { getAddress } from 'utils/addressHelpers'
 

@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { useSwapType } from 'state/application/hooks'
-import { Button } from '@sphynxswap/uikit'
+import { Button } from '@sphynxdex/uikit'
 import { useTranslation } from 'contexts/Localization'
 
 const StyledNav = styled.div`

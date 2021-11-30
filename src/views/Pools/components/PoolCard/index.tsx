@@ -1,11 +1,12 @@
 import BigNumber from 'bignumber.js'
 import styled from 'styled-components'
 import React from 'react'
-import { CardBody, Flex, Text, CardRibbon } from '@sphynxswap/uikit'
+import { CardBody, Flex, Text, CardRibbon } from '@sphynxdex/uikit'
 import ConnectWalletButton from 'components/ConnectWalletButton'
 import { useTranslation } from 'contexts/Localization'
 import { BIG_ZERO } from 'utils/bigNumber'
 import { Pool } from 'state/types'
+import { ColorButtonStyle } from 'style/buttonStyle'
 import AprRow from './AprRow'
 import { StyledCard } from './StyledCard'
 import CardFooter from './CardFooter'
@@ -13,7 +14,7 @@ import StyledCardHeader from './StyledCardHeader'
 import CardActions from './CardActions'
 
 const StyledCardBody = styled(CardBody)`
-  background-color: ${({ theme }) => theme.colors.input};
+  background-color: transparent;
 `
 
 const PoolCard: React.FC<{ pool: Pool; account: string }> = ({ pool, account }) => {
@@ -35,15 +36,15 @@ const PoolCard: React.FC<{ pool: Pool; account: string }> = ({ pool, account }) 
       />
       <StyledCardBody>
         <AprRow pool={pool} />
-        <Flex mt="24px" flexDirection="column">
+        <Flex mt="24px" flexDirection="column" alignItems='center' style={{}}>
           {account ? (
             <CardActions pool={pool} stakedBalance={stakedBalance} />
           ) : (
             <>
-              <Text mb="10px" textTransform="uppercase" fontSize="12px" color="textSubtle" bold>
+              <Text mb="10px" textTransform="uppercase" fontSize="14px" color="#A7A7CC">
                 {t('Start earning')}
               </Text>
-              <ConnectWalletButton />
+              <ConnectWalletButton style={ColorButtonStyle}/>
             </>
           )}
         </Flex>

@@ -1,7 +1,7 @@
 /* eslint-disable */
 import React from 'react'
 import styled from 'styled-components'
-import { useWeb3React } from '@web3-react/core'
+import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import './index.css'
 import {
   ChartingLibraryWidgetOptions,
@@ -24,6 +24,9 @@ const ChartContainer = styled.div<{ height: number }>`
   height: ${(props) => props.height}px;
 `
 
+const interval = localStorage.getItem('chart_interval')
+console.log('interval', interval)
+
 // eslint-disable-next-line import/extensions
 
 export interface ChartContainerProps {
@@ -40,14 +43,15 @@ export interface ChartContainerProps {
   autosize: ChartingLibraryWidgetOptions['autosize']
   studiesOverrides: ChartingLibraryWidgetOptions['studies_overrides']
   container: ChartingLibraryWidgetOptions['container']
-  height: number,
-  tokenAddress: string,
+  height: number
+  tokenAddress: string
   priceScale: number
+  routerVersion: string
 }
 
 const ChartContainerProps = {
   symbol: 'AAPL',
-  interval: '15' as ResolutionString,
+  interval: interval ? (interval as ResolutionString) : ('15' as ResolutionString),
   container: 'tv_chart_container',
   datafeedUrl: 'https://demo_feed.tradingview.com',
   libraryPath: '/charting_library/',
@@ -71,9 +75,9 @@ let currentResolutions: any
 
 const Chart: React.FC<Partial<ChartContainerProps>> = (props) => {
   const dispatch = useDispatch()
-  const { account } = useWeb3React()
+  const { account, chainId } = useActiveWeb3React()
   const input = props.tokenAddress
-  const routerVersion = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.routerVersion)
+  const routerVersion = props.routerVersion
   const customChartType = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.customChartType)
   const result = isAddress(input)
   const symbolRef = React.useRef(null)
@@ -120,15 +124,16 @@ const Chart: React.FC<Partial<ChartContainerProps>> = (props) => {
       onResultReadyCallback(newSymbols)
     },
     resolveSymbol: async (symbolName: any, onSymbolResolvedCallback: any, onResolveErrorCallback: any) => {
-      const exchange = routerVersion === 'sphynx' ? 'SPHYNX DEX' : 'Pancake ' + routerVersion
+      const exchange = routerVersion === 'sphynx' ? 'SPHYNX DEX' : chainId === 56 ? 'Pancake ' + routerVersion : 'Uniswap ' + routerVersion
+      const quoteSymbol = chainId === 56  ? 'BNB' : 'ETH'
       symbolRef.current = onSymbolResolvedCallback
-      getTokenInfo(input, routerVersion)
+      getTokenInfo(input, routerVersion, chainId)
       .then(tokenInfo => {
         const res = {
           name: tokenInfo.name,
-          pair: `${tokenInfo.symbol}/BNB`,
+          pair: `${tokenInfo.symbol}/${quoteSymbol}`,
           symbol: tokenInfo.symbol,
-          version: exchange
+          version: exchange,
         }
         setTokenDetails(res)
         const symbolInfo = {
@@ -158,12 +163,12 @@ const Chart: React.FC<Partial<ChartContainerProps>> = (props) => {
       onHistoryCallback: any,
       onErrorCallback: any,
     ) => {
-
+      localStorage.setItem('chart_interval', resolution)
       const { to, countBack, firstDataRequest } = periodParams
       try {
         if (result) {
           if (!firstDataRequest) {
-            const data1 = await makeApiDurationRequest(input, routerVersion, resolution, (new Date(to* 1000)).toISOString(), countBack)
+            const data1 = await makeApiDurationRequest(input, routerVersion, resolution, (new Date(to* 1000)).toISOString(), countBack, chainId)
             const noDataFlag = data1.length === 0 ? true : false
             // "noData" should be set if there is no data in the requested period.
             onHistoryCallback(data1, {
@@ -173,7 +178,7 @@ const Chart: React.FC<Partial<ChartContainerProps>> = (props) => {
           }
         }
 
-        const data = await getHistoricalData(input, routerVersion, resolution)
+        const data = await getHistoricalData(input, routerVersion, resolution, chainId)
         let bars = data.map((bar: any, i: any) => {
           return {
             ...bar,
@@ -182,8 +187,8 @@ const Chart: React.FC<Partial<ChartContainerProps>> = (props) => {
           }
         })
 
-        bars[bars.length - 1].isBarClosed = false;
-        bars[bars.length - 1].isLastBar = true;
+        bars[bars.length - 1].isBarClosed = false
+        bars[bars.length - 1].isLastBar = true
         lastBarsCache = bars[bars.length - 1]
         // eslint-disable-next-line no-console
         onHistoryCallback(bars, {
@@ -193,13 +198,7 @@ const Chart: React.FC<Partial<ChartContainerProps>> = (props) => {
         onErrorCallback(error)
       }
     },
-    getMarks: async (
-      symbolInfo: any,
-      startDate: any,
-      endDate: any,
-      onDataCallback: any,
-      resolution: any
-    ) => {
+    getMarks: async (symbolInfo: any, startDate: any, endDate: any, onDataCallback: any, resolution: any) => {
       try {
         const data = await getAllTransactions(account, input)
         const sessionData = JSON.parse(sessionStorage.getItem(storages.SESSION_LIVE_PRICE))
@@ -211,17 +210,16 @@ const Chart: React.FC<Partial<ChartContainerProps>> = (props) => {
           let price: any
           let curValue: any
           let color: any
-          let date = (new Date(bar.time * 1000)).toLocaleString()
+          let date = new Date(bar.time * 1000).toLocaleString()
 
           if (bar.buyCurrency === symbolInfo.description) {
-            labelText = "Sell"
-            label = "S"
+            labelText = 'Sell'
+            label = 'S'
             amount = bar.buyAmount
             color = 'red'
-          }
-          else {
-            labelText = "Buy"
-            label = "B"
+          } else {
+            labelText = 'Buy'
+            label = 'B'
             amount = bar.sellAmount
             color = 'green'
           }
@@ -250,18 +248,11 @@ const Chart: React.FC<Partial<ChartContainerProps>> = (props) => {
         })
 
         onDataCallback(bars)
-      }
-      catch (error) {
+      } catch (error) {
         console.error(error)
       }
     },
-    getTimescaleMarks: async (
-      symbolInfo: any,
-      startDate: any,
-      endDate: any,
-      onDataCallback: any,
-      resolution: any
-    ) => {
+    getTimescaleMarks: async (symbolInfo: any, startDate: any, endDate: any, onDataCallback: any, resolution: any) => {
       try {
         const data = await getAllTransactions(account, input)
         const sessionData = JSON.parse(sessionStorage.getItem(storages.SESSION_LIVE_PRICE))
@@ -273,17 +264,16 @@ const Chart: React.FC<Partial<ChartContainerProps>> = (props) => {
           let price: any
           let curValue: any
           let color: any
-          let date = (new Date(bar.time * 1000)).toLocaleString()
+          let date = new Date(bar.time * 1000).toLocaleString()
 
           if (bar.buyCurrency === symbolInfo.description) {
-            labelText = "Sell"
-            label = "Sell"
+            labelText = 'Sell'
+            label = 'Sell'
             amount = bar.buyAmount
             color = 'red'
-          }
-          else {
-            labelText = "Buy"
-            label = "Buy"
+          } else {
+            labelText = 'Buy'
+            label = 'Buy'
             amount = bar.sellAmount
             color = 'green'
           }
@@ -303,15 +293,14 @@ const Chart: React.FC<Partial<ChartContainerProps>> = (props) => {
             time: bar.time,
             color: color,
             label: label,
-            tooltip: html
+            tooltip: html,
           }
 
           bars = [...bars, obj]
         })
 
         onDataCallback(bars)
-      }
-      catch (error) {
+      } catch (error) {
         console.error(error)
       }
     },
@@ -390,7 +379,7 @@ const Chart: React.FC<Partial<ChartContainerProps>> = (props) => {
       container: ChartContainerProps.container as ChartingLibraryWidgetOptions['container'],
       locale: getLanguageFromURL() || 'en',
       theme: 'Dark',
-      disabled_features: ['use_localstorage_for_settings'],
+      // disabled_features: ['use_localstorage_for_settings'],
       enabled_features: ['study_templates'],
       charts_storage_url: ChartContainerProps.chartsStorageUrl,
       client_id: ChartContainerProps.clientId,
@@ -400,30 +389,29 @@ const Chart: React.FC<Partial<ChartContainerProps>> = (props) => {
       studies_overrides: ChartContainerProps.studiesOverrides,
       timezone: custom_timezone,
       overrides: {
-        "mainSeriesProperties.style": Number(customChartType),
-      }
+        'mainSeriesProperties.style': Number(customChartType),
+      },
     }
 
     tvWidget = await new widget(widgetOptions)
-    return tvWidget;
+    return tvWidget
   }
 
   React.useEffect(() => {
     let curTime = new Date().getTime()
     sessionStorage.setItem(storages.SESSION_LATEST_TIME, curTime.toString())
     sessionStorage.setItem(storages.SESSION_LIVE_VOLUME, '0')
-    getWidget()
-      .then(widget => {
-        widget.onChartReady(() => {
-          widget.activeChart()
-            .onChartTypeChanged()
-            .subscribe(null, (chartType: SeriesStyle) => {
-              dispatch(setCustomChartType({ customChartType: chartType }));
-            })
-        });
-
+    getWidget().then((widget) => {
+      widget.onChartReady(() => {
+        widget
+          .activeChart()
+          .onChartTypeChanged()
+          .subscribe(null, (chartType: SeriesStyle) => {
+            dispatch(setCustomChartType({ customChartType: chartType }))
+          })
       })
-  }, [input, dispatch])
+    })
+  }, [input, dispatch, routerVersion])
 
   return (
     <ChartContainer height={props.height}>

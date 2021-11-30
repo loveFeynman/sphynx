@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react'
-import { Trade, TradeType } from '@sphynxswap/sdk'
-import { Button, Text, ErrorIcon, ArrowDownIcon } from '@sphynxswap/uikit'
+import { Trade, TradeType } from '@sphynxdex/sdk-multichain'
+import { Button, Text, ErrorIcon, ArrowDownIcon } from '@sphynxdex/uikit'
 import { Field } from 'state/swap/actions'
 import { isAddress, shortenAddress } from 'utils'
 import { computeSlippageAdjustedAmounts, computeTradePriceBreakdown, warningSeverity } from 'utils/prices'

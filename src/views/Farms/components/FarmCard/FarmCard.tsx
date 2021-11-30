@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import BigNumber from 'bignumber.js'
 import styled from 'styled-components'
-import { Card, Flex, Text, Skeleton } from '@sphynxswap/uikit'
+import { Card, Flex, Text, Skeleton } from '@sphynxdex/uikit'
 import { Farm } from 'state/types'
 import { getBscScanLink } from 'utils'
 import { useTranslation } from 'contexts/Localization'
@@ -20,21 +20,51 @@ export interface FarmWithStakedValue extends Farm {
 }
 
 const StyledCard = styled(Card)`
+  max-width: 352px;
+  margin: 0 8px 24px;
+  display: flex;
+  flex-direction: column;
   align-self: baseline;
+  position: relative;
+  background: ${({ theme }) => theme.isDark ? '#1A1A3A' : '#20234E'};
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-sizing: border-box;
+  border-radius: 10px;
+
+  ${({ theme }) => theme.mediaQueries.sm} {
+    margin: 0 12px 46px;
+  }
+  > div {
+    background: transparent;
+  }
 `
 
 const FarmCardInnerContainer = styled(Flex)`
   flex-direction: column;
   justify-content: space-around;
   padding: 24px;
-  background-color: ${({ theme }) => theme.colors.input};
 `
 
 const ExpandingWrapper = styled.div`
-  padding: 24px;
-  border-top: 2px solid ${({ theme }) => theme.colors.cardBorder};
+  padding: 0 24px 24px 24px;
   overflow: hidden;
-  background-color: ${({ theme }) => theme.colors.input};
+`
+
+const LabelText = styled(Text)`
+  font-weight: 600;
+  font-size: 14px;
+  color: #A7A7CC;
+`
+
+const ValueText = styled(Text)`
+  font-weight: 600;
+  font-size: 14px;
+  color: #F2C94C;
+`
+
+const UnderLineFlex = styled(Flex)`
+  border-bottom: 1px solid #21214A;
+  padding: 9px 0;
 `
 
 interface FarmCardProps {
@@ -72,9 +102,9 @@ const FarmCard: React.FC<FarmCardProps> = ({ farm, displayApr, removed, cakePric
           quoteToken={farm.quoteToken}
         />
         {!removed && (
-          <Flex justifyContent="space-between" alignItems="center">
-            <Text>{t('APR')}:</Text>
-            <Text bold style={{ display: 'flex', alignItems: 'center' }}>
+          <UnderLineFlex justifyContent="space-between" alignItems="center">
+            <LabelText>{t('APR')}:</LabelText>
+            <ValueText>
               {farm.apr ? (
                 <>
                   <ApyButton
@@ -89,13 +119,13 @@ const FarmCard: React.FC<FarmCardProps> = ({ farm, displayApr, removed, cakePric
               ) : (
                 <Skeleton height={24} width={80} />
               )}
-            </Text>
-          </Flex>
+            </ValueText>
+          </UnderLineFlex>
         )}
-        <Flex justifyContent="space-between">
-          <Text>{t('Earn')}:</Text>
-          <Text bold>{earnLabel}</Text>
-        </Flex>
+        <UnderLineFlex justifyContent="space-between">
+          <LabelText>{t('Earn')}:</LabelText>
+          <ValueText>{earnLabel}</ValueText>
+        </UnderLineFlex>
         <CardActionsContainer farm={farm} account={account} addLiquidityUrl={addLiquidityUrl} />
       </FarmCardInnerContainer>
 

@@ -1,5 +1,5 @@
 import React from 'react'
-import { ModalProvider, light, dark } from '@sphynxswap/uikit'
+import { ModalProvider, light, dark } from '@sphynxdex/uikit'
 import { Web3ReactProvider } from '@web3-react/core'
 import { HelmetProvider } from 'react-helmet-async'
 import { Provider } from 'react-redux'
@@ -15,6 +15,10 @@ const ThemeProviderWrapper = (props) => {
   const [isDark] = useThemeManager()
   light.modal.background = "#191C41"
   light.colors.text = "white";
+  dark.tooltip.background = "rgba(0, 0, 0, 0.8)";
+  dark.tooltip.text = "white";
+  light.tooltip.background = "rgba(0, 0, 0, 0.8)";
+  light.tooltip.text = "white";
   return <ThemeProvider theme={isDark ? dark : light} {...props} />
 }
 

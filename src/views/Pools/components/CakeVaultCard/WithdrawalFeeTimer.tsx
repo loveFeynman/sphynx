@@ -1,5 +1,5 @@
 import React from 'react'
-import { Text } from '@sphynxswap/uikit'
+import { Text } from '@sphynxdex/uikit'
 import getTimePeriods from 'utils/getTimePeriods'
 import { useTranslation } from 'contexts/Localization'
 

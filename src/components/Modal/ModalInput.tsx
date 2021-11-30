@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Text, Button, Input, InputProps, Flex, Link } from '@sphynxswap/uikit'
+import { Text, Button, Input, InputProps, Flex, Link } from '@sphynxdex/uikit'
 import { useTranslation } from 'contexts/Localization'
 import { BigNumber } from 'bignumber.js'
 
@@ -76,8 +76,8 @@ const ModalInput: React.FC<ModalInputProps> = ({
     <div style={{ position: 'relative' }}>
       <StyledTokenInput isWarning={isBalanceZero}>
         <Flex justifyContent="space-between" pl="16px">
-          <Text fontSize="14px">{inputTitle}</Text>
-          <Text fontSize="14px">{t('Balance: %balance%', { balance: displayBalance(max) })}</Text>
+          <Text color='#A7A7CC' fontSize="14px">{inputTitle}</Text>
+          <Text color='#A7A7CC' fontSize="14px">{t('Balance: %balance%', { balance: displayBalance(max) })}</Text>
         </Flex>
         <Flex alignItems="flex-end" justifyContent="space-around">
           <StyledInput

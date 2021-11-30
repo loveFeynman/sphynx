@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react'
 import BigNumber from 'bignumber.js'
 import { useWeb3React } from '@web3-react/core'
 import styled from 'styled-components'
-import { Modal, Text, Flex, Button, HelpIcon, AutoRenewIcon, useTooltip } from '@sphynxswap/uikit'
+import { Modal, Text, Flex, Button, HelpIcon, AutoRenewIcon, useTooltip } from '@sphynxdex/uikit'
 import { getBalanceNumber } from 'utils/formatBalance'
 import { useCakeVaultContract } from 'hooks/useContract'
 import useTheme from 'hooks/useTheme'
@@ -58,7 +58,7 @@ const BountyModal: React.FC<BountyModalProps> = ({ onDismiss, TooltipComponent }
   const handleConfirmClick = async () => {
     setPendingTx(true)
     try {
-      const tx = await cakeVaultContract.harvest({ gasLimit: 300000 })
+      const tx = await cakeVaultContract.harvest()
       const receipt = await tx.wait()
       if (receipt.status) {
         toastSuccess(t('Bounty collected!'), t('SPHYNX bounty has been sent to your wallet.'))

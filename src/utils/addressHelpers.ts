@@ -1,4 +1,4 @@
-import { ChainId } from '@sphynxswap/sdk'
+import { ChainId } from '@sphynxdex/sdk-multichain'
 import addresses from 'config/constants/contracts'
 import tokens from 'config/constants/tokens'
 import { Address } from 'config/constants/types'
@@ -67,4 +67,13 @@ export const getBunnySpecialPredictionAddress = () => {
 }
 export const getFarmAuctionAddress = () => {
   return getAddress(addresses.farmAuction)
+}
+export const getPresaleAddress = () => {
+  return getAddress(addresses.presale)
+}
+export const getSphynxRouterAddress = () => {
+  return getAddress(addresses.sphynxRouter)
+}
+export const getLockerAddress = () => {
+  return getAddress(addresses.locker)
 }

@@ -1,5 +1,5 @@
 import { nanoid } from '@reduxjs/toolkit'
-import { ChainId } from '@sphynxswap/sdk'
+import { ChainId } from '@sphynxdex/sdk-multichain'
 import { TokenList } from '@uniswap/token-lists'
 import { useCallback } from 'react'
 import { useDispatch } from 'react-redux'

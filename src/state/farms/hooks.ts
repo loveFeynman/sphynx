@@ -37,7 +37,7 @@ export const usePollCoreFarmData = () => {
   const { fastRefresh } = useRefresh()
 
   useEffect(() => {
-    dispatch(fetchFarmsPublicDataAsync([251, 252]))
+    dispatch(fetchFarmsPublicDataAsync([1, 2]))
   }, [dispatch, fastRefresh])
 }
 
@@ -99,7 +99,7 @@ export const usePriceBnbBusd = (): BigNumber => {
 }
 
 export const usePriceCakeBusd = (): BigNumber => {
-  const cakeBnbFarm = useFarmFromPid(251)
+  const cakeBnbFarm = useFarmFromPid(1)
 
   const cakePriceBusdAsString = cakeBnbFarm.token.busdPrice
 

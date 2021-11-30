@@ -1,15 +1,13 @@
 import React from 'react'
-import { CardHeader, Heading, Text, Flex } from '@sphynxswap/uikit'
+import { CardHeader, Heading, Text, Flex } from '@sphynxdex/uikit'
 import styled from 'styled-components'
 import { useTranslation } from 'contexts/Localization'
 import { Token } from 'config/constants/types'
 import { TokenPairImage } from 'components/TokenImage'
 import CakeVaultTokenPairImage from '../CakeVaultCard/CakeVaultTokenPairImage'
 
-const Wrapper = styled(CardHeader)<{ isFinished?: boolean; background?: string }>`
-  background: ${({ isFinished, background, theme }) =>
-    isFinished ? theme.colors.backgroundDisabled : theme.colors.gradients[background]};
-  border-radius: ${({ theme }) => `${theme.radii.card} ${theme.radii.card} 0 0`};
+const Wrapper = styled(CardHeader) <{ isFinished?: boolean; background?: string }>`
+  background: transparent;
 `
 
 const StyledCardHeader: React.FC<{
@@ -48,21 +46,22 @@ const StyledCardHeader: React.FC<{
 
   return (
     <Wrapper isFinished={isFinished} background={background}>
-      <Flex alignItems="center" justifyContent="space-between">
-        <Flex flexDirection="column">
+      <Flex alignItems="center" justifyContent="center" >
+        <Flex flexDirection="column" alignItems="center">
+          {isAutoVault ? (
+            <CakeVaultTokenPairImage width={100} height={100} />
+          ) : (
+            <TokenPairImage primaryToken={earningToken} secondaryToken={stakingToken} width={100} height={100} />
+          )}
           <Heading color={isFinished ? 'textDisabled' : 'body'} scale="lg">
             {`${getHeadingPrefix()} ${earningToken.symbol}`}
           </Heading>
-          <Text color={isFinished ? 'textDisabled' : 'textSubtle'}>{getSubHeading()}</Text>
+          <Text color='#A7A7CC' fontSize='15px'>{getSubHeading()}</Text>
         </Flex>
-        {isAutoVault ? (
-          <CakeVaultTokenPairImage width={64} height={64} />
-        ) : (
-          <TokenPairImage primaryToken={earningToken} secondaryToken={stakingToken} width={64} height={64} />
-        )}
       </Flex>
     </Wrapper>
   )
 }
 
 export default StyledCardHeader
+

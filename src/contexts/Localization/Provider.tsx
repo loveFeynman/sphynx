@@ -1,5 +1,5 @@
 import React, { createContext, useCallback, useEffect, useState } from 'react'
-import { Language } from '@sphynxswap/uikit'
+import { Language } from '@sphynxdex/uikit'
 import { EN, languages } from 'config/localization/languages'
 import translations from 'config/localization/translations.json'
 import { ContextApi, ContextData, ProviderState } from './types'

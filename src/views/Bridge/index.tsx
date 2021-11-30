@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Flex, Text } from '@sphynxswap/uikit'
+import { Flex, Text } from '@sphynxdex/uikit'
 import { useTranslation } from 'contexts/Localization'
 import { ReactComponent as BridgeMarkIcon } from 'assets/svg/icon/BridgeMark.svg'
 import BridgeCard from './components/BridgeCard'

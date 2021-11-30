@@ -1,5 +1,5 @@
 import React from 'react'
-import { Flex, Text, IconButton, AddIcon, MinusIcon, useModal, Skeleton } from '@sphynxswap/uikit'
+import { Flex, Text, IconButton, AddIcon, MinusIcon, useModal, Skeleton } from '@sphynxdex/uikit'
 import BigNumber from 'bignumber.js'
 import { getBalanceNumber } from 'utils/formatBalance'
 import { Pool } from 'state/types'

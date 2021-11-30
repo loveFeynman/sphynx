@@ -1,13 +1,14 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import styled from 'styled-components'
-import { Flex, Text, Link } from '@sphynxswap/uikit'
+import { Flex, Text, Link } from '@sphynxdex/uikit'
 import { ReactComponent as BscscanIcon } from 'assets/svg/icon/Bscscan.svg'
 import CopyHelper from 'components/AccountDetails/Copy'
 import { BITQUERY_API, BITQUERY_API_KEY } from 'config/constants/endpoints'
 import axios from 'axios'
 import { AppState, AppDispatch } from '../../../state'
 import { selectCurrency, Field } from '../../../state/swap/actions'
+import useActiveWeb3React from '../../../hooks/useActiveWeb3React'
 import { isAddress, getBscScanLink } from '../../../utils'
 import { useTranslation } from '../../../contexts/Localization'
 
@@ -76,6 +77,9 @@ export default function TokenInfo(props) {
   const { tokenData } = props
   const { t } = useTranslation()
   const result = isAddress(input)
+  const { chainId } = useActiveWeb3React()
+  const network = chainId === 56 ? 'bsc' : 'ethereum'
+  const tokenLink = chainId === 56 ? 'https://bscscan.com/token' : 'https://etherscan.io/token'
 
   const dispatch = useDispatch<AppDispatch>()
 
@@ -88,10 +92,11 @@ export default function TokenInfo(props) {
             currencyId: input,
           }),
         )
+        const currencyId = chainId === 56 ? 'BNB' : 'ETH'
         dispatch(
           selectCurrency({
             field: isInput ? Field.INPUT : Field.OUTPUT,
-            currencyId: 'BNB',
+            currencyId
           }),
         )
       }
@@ -99,7 +104,7 @@ export default function TokenInfo(props) {
       // eslint-disable-next-line no-console
       console.log(err)
     }
-  }, [dispatch, input, isInput, result])
+  }, [dispatch, input, isInput, result, chainId])
 
   useEffect(() => {
     const ac = new AbortController();
@@ -118,7 +123,7 @@ export default function TokenInfo(props) {
         }
 
         const queryTx = `{
-          ethereum(network: bsc) {
+          ethereum(network: ${network}) {
             transactions(txTo: {is: "${input}"}) {
               count
             }
@@ -135,7 +140,7 @@ export default function TokenInfo(props) {
 
     const fetchHolder = async () => {
       try {
-        axios.post(`${process.env.REACT_APP_BACKEND_API_URL2}/holders`, { address: input }).then((response) => {
+        axios.post(`${process.env.REACT_APP_BACKEND_API_URL2}/holders`, { address: input, chainId }).then((response) => {
           setHolderNum(Number(response.data.holders))
         })
       } catch (err) {
@@ -151,7 +156,7 @@ export default function TokenInfo(props) {
     }
 
     return () => ac.abort()
-  }, [input])
+  }, [input, chainId, network])
 
   return (
     <TokenInfoContainer>
@@ -186,7 +191,7 @@ export default function TokenInfo(props) {
             <CopyHelper toCopy={input}>&nbsp;</CopyHelper>
           </Text>
           <Text>
-            <a href={`https://bscscan.com/token/${input}`} target="_blank" rel="noreferrer">
+            <a href={`${tokenLink}/${input}`} target="_blank" rel="noreferrer">
               {input}
             </a>
           </Text>
@@ -194,7 +199,7 @@ export default function TokenInfo(props) {
         <TextWrapper>
           <Text>{t('Holders')}</Text>
           <Text>
-            <a href={`https://bscscan.com/token/${input}#balances`} target="_blank" rel="noreferrer">
+            <a href={`${tokenLink}/${input}#balances`} target="_blank" rel="noreferrer">
             {holderNum}
             </a>
           </Text>

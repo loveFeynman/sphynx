@@ -1,19 +1,60 @@
 import React, { useState } from 'react'
-import { Button, Heading, Skeleton, Text } from '@sphynxswap/uikit'
+import { Button, Skeleton } from '@sphynxdex/uikit'
 import BigNumber from 'bignumber.js'
 import { useWeb3React } from '@web3-react/core'
 import { FarmWithStakedValue } from 'views/Farms/components/FarmCard/FarmCard'
-import Balance from 'components/Balance'
 import { BIG_ZERO } from 'utils/bigNumber'
 import { getBalanceAmount } from 'utils/formatBalance'
 import { useAppDispatch } from 'state'
 import { fetchFarmUserDataAsync } from 'state/farms'
 import { usePriceCakeBusd } from 'state/farms/hooks'
 import useToast from 'hooks/useToast'
+import styled from 'styled-components'
 import { useTranslation } from 'contexts/Localization'
 import useHarvestFarm from '../../../hooks/useHarvestFarm'
 
-import { ActionContainer, ActionTitles, ActionContent } from './styles'
+export const HarvestActionContainer = styled.div`
+  padding: 16px;
+  flex-grow: 1;
+  flex-basis: 0;
+  flex-direction: column;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+
+  ${({ theme }) => theme.mediaQueries.sm} {
+    margin-left: 12px;
+    margin-right: 12px;
+    height: 130px;
+    max-height: 130px;
+  }
+
+  ${({ theme }) => theme.mediaQueries.xl} {
+    margin-left: 0;
+    margin-right: 32px;
+    height: 130px;
+    max-height: 130px;
+  }
+`
+
+const DarkButton = styled(Button)`
+  border-radius: 5px;
+  border: none;
+  height: 34px;
+  font-size: 13px;
+  background: ${({ theme }) => theme.isDark ? '#0E0E26' : '#2A2E60'};
+  width: 102px;
+  outline: none;
+
+  ${({ theme }) => theme.mediaQueries.sm} {
+    width: 176px;
+  }
+
+  &:disabled {
+    background: ${({ theme }) => theme.isDark ? '#0E0E26' : '#2A2E60'};
+  }
+`
 
 interface HarvestActionProps extends FarmWithStakedValue {
   userDataReady: boolean
@@ -46,7 +87,7 @@ const HarvestAction: React.FunctionComponent<HarvestActionProps> = ({ pid, userD
       await onReward()
       toastSuccess(
         `${t('Harvested')}!`,
-        t('Your %symbol% earnings have been sent to your wallet!', { symbol: 'CAKE' }),
+        t('Your %symbol% earnings have been sent to your wallet!', { symbol: 'SPHYNX' }),
       )
     } catch (e) {
       toastError(
@@ -61,31 +102,14 @@ const HarvestAction: React.FunctionComponent<HarvestActionProps> = ({ pid, userD
   }
 
   return (
-    <ActionContainer>
-      <ActionTitles>
-        <Text bold textTransform="uppercase" color="secondary" fontSize="12px" pr="4px">
-          SPHYNX
-        </Text>
-        <Text bold textTransform="uppercase" color="textSubtle" fontSize="12px">
-          {t('Earned')}
-        </Text>
-      </ActionTitles>
-      <ActionContent>
-        <div>
-          <Heading>{displayBalance}</Heading>
-          {earningsBusd > 0 && (
-            <Balance fontSize="12px" color="textSubtle" decimals={2} value={earningsBusd} unit=" USD" prefix="~" />
-          )}
-        </div>
-        <Button
-          disabled={earnings.eq(0) || pendingTx || !userDataReady}
-          onClick={handleHarvest}
-          ml="4px"
-        >
-          {t('Harvest')}
-        </Button>
-      </ActionContent>
-    </ActionContainer>
+    <HarvestActionContainer>
+      <DarkButton
+        disabled={earnings.eq(0) || pendingTx || !userDataReady}
+        onClick={handleHarvest}
+      >
+        {t('Harvest')}
+      </DarkButton>
+    </HarvestActionContainer>
   )
 }
 

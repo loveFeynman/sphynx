@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDatePicker, { ReactDatePickerProps } from 'react-datepicker'
-import { Input, InputProps } from '@sphynxswap/uikit'
+import { Input, InputProps } from '@sphynxdex/uikit'
 
 import 'react-datepicker/dist/react-datepicker.css'
 

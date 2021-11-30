@@ -1,7 +1,7 @@
-import React, { lazy, Suspense, useState } from 'react'
+import React, { lazy, Suspense } from 'react'
 import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom'
 import styled from 'styled-components'
-import { ResetCSS, Button, useMatchBreakpoints } from '@sphynxswap/uikit'
+import { ResetCSS, Button } from '@sphynxdex/uikit'
 import BigNumber from 'bignumber.js'
 import useEagerConnect from 'hooks/useEagerConnect'
 import { usePollBlockNumber } from 'state/block/hooks'
@@ -27,6 +27,14 @@ import Swap from './views/Swap'
 const NotFound = lazy(() => import('./views/NotFound'))
 const Farms = lazy(() => import('./views/Farms'))
 const Pools = lazy(() => import('./views/Pools'))
+const Launchpad = lazy(() => import('./views/Launchpad'))
+const Presale = lazy(() => import('./views/Launchpad/presale'))
+const Listings = lazy(() => import('./views/Launchpad/Listings'))
+const PresaleLive = lazy(() => import('./views/Launchpad/PresaleLive'))
+const PresaleManage = lazy(() => import('./views/Launchpad/PresaleManage'))
+const Locker = lazy(() => import('./views/Locker'))
+const DetailLocker = lazy(() => import('./views/Locker/DetailLocker'))
+const ManageLocker = lazy(() => import('./views/Locker/ManageLocker'))
 const Lottery = lazy(() => import('./views/LotterySphx'))
 const Bridge = lazy(() => import('./views/Bridge'))
 const FAQ = lazy(() => import('./views/FAQ'))
@@ -35,7 +43,7 @@ const BodyWrapper = styled.div<{ toggled: boolean }>`
   display: flex;
   flex-direction: column;
   width: 100%;
-  padding: 0 12px;
+  padding: 0 20px;
   min-height: calc(100vh - 152px);
   align-items: center;
   flex: 1;
@@ -66,24 +74,24 @@ const BodyOverlay = styled.div<{ toggled: boolean }>`
   }
 `
 
-const FlexWrapper = styled.div<{ gap?: string; mobile?: boolean  }>`
+const FlexWrapper = styled.div<{ gap?: string; mobile?: boolean }>`
   display: flex;
-  justify-content: ${(props) => props.mobile ? '' : 'space-between'};
+  justify-content: ${(props) => (props.mobile ? '' : 'space-between')};
   align-items: center;
   width: 100%;
   padding: 6px 0;
   gap: ${(props) => props.gap};
   div:nth-child(1) {
-    flex: ${(props) => props.mobile ? '1' : ''};
+    flex: ${(props) => (props.mobile ? '1' : '')};
   }
   div:nth-child(2) {
-    flex: ${(props) => props.mobile ? '1' : ''};
+    flex: ${(props) => (props.mobile ? '1' : '')};
     button {
-      width: ${(props) => props.mobile ? '100%' : ''};
+      width: ${(props) => (props.mobile ? '100%' : '')};
     }
   }
   div:nth-child(3) {
-    flex: ${(props) => props.mobile ? '1' : ''};
+    flex: ${(props) => (props.mobile ? '1' : '')};
   }
 `
 
@@ -110,7 +118,7 @@ const AccountWrapper = styled.div<{ mobile?: boolean }>`
     border-radius: 6px;
     height: 34px;
     color: white;
-    background: linear-gradient(90deg, #610D89 0%, #C42BB4 100%);
+    background: linear-gradient(90deg, #610d89 0%, #c42bb4 100%);
     font-size: 16px;
     font-weight: 700;
     margin-right: ${(props) => (props.mobile ? '0px' : '24px')};
@@ -132,7 +140,7 @@ const AccountWrapper = styled.div<{ mobile?: boolean }>`
 const PageContent = styled.div<{ isMobile: boolean }>`
   width: 100%;
   min-height: 100vh;
-  margin-top: ${(props) => (props.isMobile ? '160px' : '57px')};
+  margin-top: ${(props) => (props.isMobile ? '180px' : '57px')};
 `
 
 const MenuOpenButton = styled(Button)`
@@ -140,19 +148,12 @@ const MenuOpenButton = styled(Button)`
   outline: none;
   padding: 0;
   width: 111px;
+  box-shadow: none;
   justify-content: left;
   & svg {
     fill: white;
     width: 32px;
   }
-  ${({ theme }) => theme.mediaQueries.xl} {
-    display: none;
-  }
-`
-
-const TokenBarMobile = styled.div`
-  width: 100%;
-  margin-bottom: 20px;
   ${({ theme }) => theme.mediaQueries.xl} {
     display: none;
   }
@@ -175,18 +176,9 @@ const App: React.FC = () => {
   useEagerConnect()
   usePollCoreFarmData()
   const { account } = useWeb3React()
-  const { isSm, isXs, isMd } = useMatchBreakpoints()
   const { menuToggled, toggleMenu } = useMenuToggle()
-  const [isMobile, setMobile] = useState(false)
+  const isMobile = document.body.clientWidth <= 1024
   const { t } = useTranslation()
-
-  React.useEffect(() => {
-    if (isMd || isSm || isXs) {
-      toggleMenu(true)
-      setMobile(true)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
 
   return (
     <>
@@ -260,6 +252,14 @@ const App: React.FC = () => {
                   <Route exact strict path="/farms/history" component={Farms} />
                   <Route exact strict path="/pools" component={Pools} />
                   <Route exact strict path="/pools/history" component={Pools} />
+                  <Route exact strict path="/launchpad" component={Launchpad} />
+                  <Route exact strict path="/launchpad/presale" component={Presale} />
+                  <Route exact strict path="/launchpad/listing" component={Listings} />
+                  <Route exact strict path="/launchpad/live/:saleId" component={PresaleLive} />
+                  <Route exact strict path="/launchpad/presale/:saleId" component={PresaleManage} />
+                  <Route exact strict path="/locker" component={Locker} />
+                  <Route exact strict path="/locker/tokendetail/:lockId" component={DetailLocker} />
+                  <Route exact strict path="/locker/manage" component={ManageLocker} />
                   <Route exact strict path="/lottery" component={Lottery} />
                   <Route exact strict path="/bridge" component={Bridge} />
                   <Route exact strict path="/faq" component={FAQ} />

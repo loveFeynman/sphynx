@@ -1,4 +1,4 @@
-import { Toast } from '@sphynxswap/uikit'
+import { Toast } from '@sphynxdex/uikit'
 
 type ToastSignature = (title: Toast['title'], description?: Toast['description']) => void
 

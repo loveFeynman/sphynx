@@ -1,6 +1,7 @@
 import React from 'react'
-import { Button, AutoRenewIcon, Skeleton } from '@sphynxswap/uikit'
+import { Button, AutoRenewIcon, Skeleton } from '@sphynxdex/uikit'
 import { useTranslation } from 'contexts/Localization'
+import { ColorButtonStyle } from 'style/buttonStyle'
 import { useVaultApprove } from '../../../hooks/useApprove'
 
 interface ApprovalActionProps {
@@ -23,7 +24,7 @@ const VaultApprovalAction: React.FC<ApprovalActionProps> = ({ isLoading = false,
           endIcon={requestedApproval ? <AutoRenewIcon spin color="currentColor" /> : null}
           disabled={requestedApproval}
           onClick={handleApprove}
-          width="100%"
+          style={ColorButtonStyle}
         >
           {t('Enable')}
         </Button>

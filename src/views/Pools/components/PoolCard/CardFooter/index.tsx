@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
 import { useTranslation } from 'contexts/Localization'
-import { Flex, CardFooter, ExpandableLabel, HelpIcon, useTooltip } from '@sphynxswap/uikit'
+import { Flex, CardFooter, ExpandableLabel, HelpIcon, useTooltip } from '@sphynxdex/uikit'
 import { Pool } from 'state/types'
 import { CompoundingPoolTag, ManualPoolTag } from 'components/Tags'
 import ExpandedFooter from './ExpandedFooter'
@@ -15,12 +15,20 @@ const ExpandableButtonWrapper = styled(Flex)`
   align-items: center;
   justify-content: space-between;
   button {
+    outline: none;
+    color: #A7A7CC!important;
+    flex-flow: column;
+    font-size: 12px;
     padding: 0;
+    svg {
+      margin: 0;
+    }
   }
 `
 
 const CardFooterWrapper = styled(CardFooter)`
-  background-color: ${({ theme }) => theme.colors.input};
+  background-color: transparent;
+  border: 0px;
 `
 
 const Footer: React.FC<FooterProps> = ({ pool, account }) => {
@@ -48,7 +56,7 @@ const Footer: React.FC<FooterProps> = ({ pool, account }) => {
           {isAutoVault ? <CompoundingPoolTag /> : <ManualPoolTag />}
           {tooltipVisible && tooltip}
           <Flex ref={targetRef}>
-            <HelpIcon ml="4px" width="20px" height="20px" color="textSubtle" />
+            <HelpIcon ml="4px" width="14px" height="14px" color="#F9B043" />
           </Flex>
         </Flex>
         <ExpandableLabel expanded={isExpanded} onClick={handleExpand}>

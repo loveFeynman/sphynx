@@ -1,5 +1,5 @@
 import React from 'react'
-import { Flex, Text, TooltipText, useTooltip } from '@sphynxswap/uikit'
+import { Flex, Text, TooltipText, useTooltip } from '@sphynxdex/uikit'
 import { useTranslation } from 'contexts/Localization'
 import { useWeb3React } from '@web3-react/core'
 import useWithdrawalFeeTimer from 'views/Pools/hooks/useWithdrawalFeeTimer'
@@ -61,7 +61,7 @@ const UnstakingFeeCountdownRow: React.FC<UnstakingFeeCountdownRowProps> = ({ isT
       flexDirection={isTableVariant ? 'column' : 'row'}
     >
       {tooltipVisible && tooltip}
-      <TooltipText ref={targetRef} small>
+      <TooltipText ref={targetRef} small color='#A7A7CC'>
         {noFeeToPay ? '0' : feeAsDecimal}% {getRowText()}
       </TooltipText>
       {shouldShowTimer && <WithdrawalFeeTimer secondsRemaining={secondsRemaining} />}

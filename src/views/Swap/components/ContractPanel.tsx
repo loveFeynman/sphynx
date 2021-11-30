@@ -1,12 +1,7 @@
-import React, { useEffect, useState, useCallback } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import styled, { useTheme } from 'styled-components'
-import { Button, IconButton, Link, Text, useMatchBreakpoints } from '@sphynxswap/uikit'
-import { ReactComponent as TwitterIcon } from 'assets/svg/icon/TwitterIcon.svg'
-import { ReactComponent as SocialIcon2 } from 'assets/svg/icon/SocialIcon2.svg'
-import { ReactComponent as TelegramIcon } from 'assets/svg/icon/TelegramIcon.svg'
-import { ReactComponent as BscscanIcon } from 'assets/svg/icon/Bscscan.svg'
-// import { ReactComponent as SearchIcon } from 'assets/svg/icon/SearchIcon.svg'
+import { IconButton, Link, Text, useMatchBreakpoints } from '@sphynxdex/uikit'
 import SearchIcon from "components/Icon/SearchIcon";
 import { PoolData } from 'state/info/types'
 import fetchPoolsForToken from 'state/info/queries/tokens/poolsForToken'
@@ -16,13 +11,10 @@ import CopyHelper from 'components/AccountDetails/Copy'
 import './dropdown.css'
 import axios from 'axios'
 import { MenuItem } from '@material-ui/core'
-import { socialToken } from 'utils/apiServices'
-import ToggleList from './ToggleList'
 import LiveAmountPanel from './LiveAmountPanel'
 import { AppState } from '../../../state'
 import { setIsInput, typeInput } from '../../../state/input/actions'
-import { getBscScanLink, isAddress } from '../../../utils'
-import { useTranslation } from '../../../contexts/Localization'
+import { isAddress } from '../../../utils'
 
 export interface ContractPanelProps {
   value: any
@@ -33,7 +25,7 @@ export interface ContractPanelProps {
 
 const ContractPanelWrapper = styled.div`
   display: flex;
-  background: ${({ theme }) => theme.isDark ?  "#0E0E26": "#2A2E60"};
+  background: ${({ theme }) => theme.isDark ? "#0E0E26" : "#2A2E60"};
   padding: 15px 12px;
   flex-direction: column;
   margin-bottom: 12px;
@@ -139,7 +131,6 @@ const SearchInputDivider = styled.div`
 // {token} : ContractPanelProps)
 export default function ContractPanel({ value, symbol, amount, price }: ContractPanelProps) {
   const [addressSearch, setAddressSearch] = useState('')
-  const [show, setShow] = useState(true)
   const [showDrop, setShowDrop] = useState(false)
   const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
 
@@ -147,40 +138,16 @@ export default function ContractPanel({ value, symbol, amount, price }: Contract
   const [data, setdata] = useState([])
   const dispatch = useDispatch()
 
-  const [social, setSocial] = useState({
-    website: '',
-  })
-
-  const [twitterUrl, setTwitter] = useState('')
-  const [telegramUrl, setTelegram] = useState('')
   const [selectedItemIndex, setSelectedItemIndex] = useState(-1)
 
   const [poolDatas, setPoolDatas] = useState<PoolData[]>([])
-  const { t } = useTranslation()
   const { isXl } = useMatchBreakpoints()
   const isMobile = !isXl
-
-  const getWebsite = useCallback(async () => {
-    const web: any = await socialToken(checksumAddress.toString());
-    const links = web.links || []
-    const twitter = links.find((e) => e.name === 'twitter')
-    const telegram = links.find((e) => e.name === 'telegram')
-
-    if (twitter) {
-      setTwitter(twitter.url)
-    }
-
-    if (telegram) {
-      setTelegram(telegram.url)
-    }
-
-    setSocial(web)
-  }, [checksumAddress])
 
   const handlerChange = (e: any) => {
     try {
       if (e.target.value && e.target.value.length > 0) {
-        axios.get(`https://thesphynx.co/api/search/${e.target.value}`).then((response) => {
+        axios.get(`${process.env.REACT_APP_BACKEND_API_URL2}/${e.target.value}`).then((response) => {
           setdata(response.data)
         })
       } else {
@@ -193,10 +160,8 @@ export default function ContractPanel({ value, symbol, amount, price }: Contract
     const result = isAddress(e.target.value)
     if (result) {
       setAddressSearch(e.target.value)
-      setShow(false)
     } else {
       setAddressSearch(e.target.value)
-      setShow(true)
     }
   }
   const submitFuntioncall = () => {
@@ -241,8 +206,6 @@ export default function ContractPanel({ value, symbol, amount, price }: Contract
     }
     fetchPools()
 
-    getWebsite()
-
     const listener = (event) => {
       if (event.code === 'Enter' || event.code === 'NumpadEnter') {
         // console.log("Enter key was pressed. Run your function.");
@@ -256,11 +219,10 @@ export default function ContractPanel({ value, symbol, amount, price }: Contract
       ac.abort();
     }
 
-  }, [input, checksumAddress, getWebsite])
+  }, [input, checksumAddress])
 
   return (
     <ContractPanelWrapper>
-      <ToggleList poolDatas={poolDatas} />
       <ContractCard>
         <CopyHelper toCopy={value ? value.contractAddress : addressSearch}>&nbsp;</CopyHelper>
         <SearchInputDivider />
@@ -307,7 +269,7 @@ export default function ContractPanel({ value, symbol, amount, price }: Contract
           )}
         </SearchInputWrapper>
         <TransparentIconButton onClick={submitFuntioncall}>
-          <SearchIcon width="22px" height="22px" color={useTheme().colors.primary}/>
+          <SearchIcon width="22px" height="22px" color={useTheme().colors.primary} />
         </TransparentIconButton>
       </ContractCard>
       {isMobile ?

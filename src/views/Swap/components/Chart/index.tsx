@@ -1,11 +1,8 @@
 /* eslint-disable */
-import React, { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
+import React from 'react'
 import styled from 'styled-components'
-
-import TransactionNav from 'components/TransactionNav'
-import { AppState } from 'state'
 import { ReactComponent as UpDownArrow } from 'assets/svg/icon/UpDownArrow.svg'
+import Chart from "./ChartContainer"
 
 const Wrapper = styled.div`
   display: flex;
@@ -32,23 +29,8 @@ const ArrowWrapper = styled.div`
   }
 `
 
-const TransactionNavWrapper = styled.div`
-  display: flex;
-  justify-content: center;
-  margin: 8px 0 0;
-  ${({ theme }) => theme.mediaQueries.md} {
-    position: absolute;
-    left: 0;
-    top: 0;
-    margin: 0;
-  }
-`
-
-const Chart = React.lazy(() => import("./ChartContainer"))
-
-const ChartContainer = ({tokenAddress, tokenData}) => {
+const ChartContainer = ({tokenAddress, tokenData, routerVersion}) => {
   const input = tokenAddress
-  const routerVersion = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.routerVersion)
 
   const draggableArrow = React.useRef<any>(null)
   const [chartHeight, setChartHeight] = React.useState(600)
@@ -68,7 +50,7 @@ const ChartContainer = ({tokenAddress, tokenData}) => {
 
   return (
     <Wrapper>
-      <Chart tokenAddress={input} height={chartHeight} />
+      <Chart tokenAddress={input} height={chartHeight} routerVersion={routerVersion} />
       <UpDownArrowBox>
         <ArrowWrapper
           ref={draggableArrow}
@@ -78,9 +60,6 @@ const ChartContainer = ({tokenAddress, tokenData}) => {
         >
           <UpDownArrow />
         </ArrowWrapper>
-        {/* <TransactionNavWrapper>
-          <TransactionNav tokenAddress={tokenAddress} tokenData={tokenData}/>
-        </TransactionNavWrapper> */}
       </UpDownArrowBox>
     </Wrapper>
   )

@@ -2,15 +2,15 @@
 
 import React, { useState, useCallback, useEffect, useMemo } from 'react'
 import styled from 'styled-components'
-import { Text, Flex, Modal, InjectedModalProps, Button, Input } from '@sphynxswap/uikit'
+import { Text, Flex, Modal, InjectedModalProps, Button, Input } from '@sphynxdex/uikit'
 
 import { useAudioModeManager, useExpertModeManager, useUserSingleHopOnly } from 'state/user/hooks'
 import { useTranslation } from 'contexts/Localization'
 import { useSwapActionHandlers } from 'state/swap/hooks'
 import usePersistState from 'hooks/usePersistState'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
+import Spinner from 'components/Loader/Spinner'
 import { useLotteryBalance, approveCall, buyTickets, getApproveAmount } from '../../../hooks/useLottery'
-import { Spinner } from './Spinner'
 import useToast from 'hooks/useToast'
 import { reverseString } from 'utils'
 

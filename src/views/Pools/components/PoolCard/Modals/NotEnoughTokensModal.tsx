@@ -1,7 +1,7 @@
 import React from 'react'
 import { useTranslation } from 'contexts/Localization'
 import styled from 'styled-components'
-import { Modal, Text, Button, OpenNewIcon, Link } from '@sphynxswap/uikit'
+import { Modal, Text, Button, OpenNewIcon, Link } from '@sphynxdex/uikit'
 import useTheme from 'hooks/useTheme'
 
 interface NotEnoughTokensModalProps {
@@ -32,7 +32,7 @@ const NotEnoughTokensModal: React.FC<NotEnoughTokensModalProps> = ({ tokenSymbol
           symbol: tokenSymbol,
         })}
       </Text>
-      <Button mt="24px" as="a" external href="#/swap">
+      <Button mt="24px" as="a" external href="/swap">
         {t('Buy')} {tokenSymbol}
       </Button>
       <StyledLink href="https://yieldwatch.net" external>

@@ -1,6 +1,6 @@
 import { createGlobalStyle } from 'styled-components'
 // eslint-disable-next-line import/no-unresolved
-import { PancakeTheme } from '@sphynxswap/uikit/dist/theme'
+import { PancakeTheme } from '@sphynxdex/uikit/dist/theme'
 
 declare module 'styled-components' {
   /* eslint-disable @typescript-eslint/no-empty-interface */
@@ -39,15 +39,41 @@ const GlobalStyle = createGlobalStyle`
     overflow: hidden !important;
   }
 
+  .MuiPickersBasePicker-pickerView {
+    max-width: unset !important;
+  }
+  div.MuiDialog-paper {
+    position: unset !important;
+  }
+  div.MuiPickersBasePicker-container {
+    div.MuiPaper-root {
+      top: unset !important;
+      left: unset !important;
+      width: unset !important;
+      button {
+        outline: none;
+      }
+    }
+  }
+  button {
+    outline: none !important;
+  }
   .sc-gInthZ {
-    background: ${({ theme }) => theme.isDark ? '#27262c !important' : '#191c41 !important'};
+    background: ${({ theme }) => (theme.isDark ? '#27262c !important' : '#191c41 !important')};
+  }
+  .eTJGWm {
+    background: ${({ theme }) => (theme.isDark ? '#27262c !important' : '#191c41 !important')};
+    border: ${({ theme }) => (theme.isDark ? '' : '1px solid #2E2E55 !important')}; 
+  }
+  div.gcFUcx, div.ePwqSE, div.gGntUw {
+    background: ${({ theme }) => (theme.isDark ? '#27262c !important' : '#191c41 !important')};
   }
 
   .gJyxrV {
-    border: ${({ theme }) => theme.isDark ? '' : '1px solid #2E2E55 !important'}; 
+    border: ${({ theme }) => (theme.isDark ? '' : '1px solid #2E2E55 !important')}; 
   }
   .gruiCo, .sc-gInthZ {
-    border-bottom: ${({ theme }) => theme.isDark ? '' : '1px solid #2E2E55 !important'}; 
+    border-bottom: ${({ theme }) => (theme.isDark ? '' : '1px solid #2E2E55 !important')}; 
   }
 `
 

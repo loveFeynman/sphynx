@@ -6,14 +6,13 @@ import { AppState } from 'state'
 import { autoSwap } from 'state/flags/actions'
 import styled, { useTheme } from 'styled-components'
 import { useLocation } from 'react-router'
-import { CurrencyAmount, JSBI, Token, Trade, RouterType } from '@sphynxswap/sdk'
-import { Button, Text, ArrowDownIcon, Box, useModal, Flex } from '@sphynxswap/uikit'
+import { CurrencyAmount, JSBI, Token, Trade, RouterType, ChainId } from '@sphynxdex/sdk-multichain'
+import { Button, Text, ArrowDownIcon, Box, useModal, Flex } from '@sphynxdex/uikit'
 import { useIsTransactionUnsupported } from 'hooks/Trades'
 import { RouteComponentProps } from 'react-router-dom'
 import { useTranslation } from 'contexts/Localization'
 import SwapWarningTokens from 'config/constants/swapWarningTokens'
 import { getAddress } from 'utils/addressHelpers'
-import SwapCardNav from 'components/SwapCardNav'
 import AutoCardNav from 'components/AutoCardNav'
 import { FullHeightColumn } from 'components/Column'
 import Column, { AutoColumn } from 'components/Layout/Column'
@@ -21,10 +20,9 @@ import { AutoRow, RowBetween } from 'components/Layout/Row'
 import ConnectWalletButton from 'components/ConnectWalletButton'
 import { AppHeader } from 'components/App'
 import { BalanceNumber } from 'components/BalanceNumber'
-import { useMatchBreakpoints } from '@sphynxswap/uikit'
+import { useMatchBreakpoints } from '@sphynxdex/uikit'
 
-import { useSwapTransCard, useSwapType, useSetRouterType } from 'state/application/hooks'
-import { ReactComponent as DownArrow } from 'assets/svg/icon/DownArrow.svg'
+import { useSetRouterType } from 'state/application/hooks'
 import SwapIcon from 'components/Icon/SwapIcon'
 import { typeInput, marketCap, typeRouterVersion } from 'state/input/actions'
 import { BITQUERY_API, BITQUERY_API_KEY } from 'config/constants/endpoints'
@@ -48,7 +46,7 @@ import LiquidityWidget from '../Pool/LiquidityWidget'
 import ChartContainer from './components/Chart'
 
 import useActiveWeb3React from '../../hooks/useActiveWeb3React'
-import { useAllTokens, useCurrency } from '../../hooks/Tokens'
+import { useAllTokens, useAllUniTokens, useCurrency } from '../../hooks/Tokens'
 import { ApprovalState, useApproveCallbackFromTrade } from '../../hooks/useApproveCallback'
 import { useSwapCallback } from '../../hooks/useSwapCallback'
 import useWrapCallback, { WrapType } from '../../hooks/useWrapCallback'
@@ -67,24 +65,28 @@ import Page from '../Page'
 import BuyersCard from './components/BuyersCard'
 import SellersCard from './components/SellersCard'
 import SwapWarningModal from './components/SwapWarningModal'
-import DividendPanel from './components/DividendPanel'
 import LiveAmountPanel from './components/LiveAmountPanel'
 import { Field, replaceSwapState } from '../../state/swap/actions'
 
 import Web3 from 'web3'
 import ERC20ABI from 'assets/abis/erc20.json'
-import { getPancakePairAddress, getPancakePairAddressV1, getSphynxPairAddress } from 'state/info/ws/priceData'
+import { getPancakePairAddress, getPancakePairAddressV1, getSphynxPairAddress } from 'utils/priceProvider'
 import * as ethers from 'ethers'
-import { getBNBPrice } from 'utils/priceProvider'
-import { simpleRpcProvider } from 'utils/providers'
+import { getBNBPrice, getETHPrice } from 'utils/priceProvider'
+import { simpleRpcProvider, simpleRpcETHProvider } from 'utils/providers'
 import { UNSET_PRICE } from 'config/constants/info'
 import storages from 'config/constants/storages'
-import Row from 'components/Row'
 import RewardsPanel from './components/RewardsPanel'
-import { SwapTabs, SwapTabList, SwapTab, SwapTabPanel } from "../../components/Tab/tab";
+import { SwapTabs, SwapTabList, SwapTab, SwapTabPanel } from '../../components/Tab/tab'
+import { web3ArchiveProvider } from 'utils/providers'
+import { SPHYNX_TOKEN_ADDRESS } from 'config/constants'
+import { WBNB, BUSD } from 'config/constants/tokens'
 
-const wBNBAddr = '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c'
-const sphynxAddr = '0x2e121Ed64EEEB58788dDb204627cCB7C7c59884c'
+const wrappedAddr = {
+  56: '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
+  1: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
+}
+const sphynxAddr = { 56: '0xd38ec16caf3464ca04929e847e4550dcff25b27a', 1: '0x1f9840a85d5af5bf1d1762f925bdaddc4201f984' }
 let tokenDecimal = 18
 
 const abi: any = ERC20ABI
@@ -95,8 +97,11 @@ let config = {
   },
 }
 
-const providerURL = 'https://speedy-nodes-nyc.moralis.io/fbb4b2b82993bf507eaaab13/bsc/mainnet/archive'
-const web3 = new Web3(new Web3.providers.HttpProvider(providerURL))
+const web3 = new Web3(web3ArchiveProvider)
+const dataFeedProvider = new Web3.providers.HttpProvider('https://bsc-dataseed.binance.org/')
+const datafeedWeb3 = new Web3(dataFeedProvider)
+const providerURLETH = 'https://speedy-nodes-nyc.moralis.io/fbb4b2b82993bf507eaaab13/eth/mainnet/archive'
+const web3ETH = new Web3(new Web3.providers.HttpProvider(providerURLETH))
 
 const ArrowContainer = styled(ArrowWrapper)`
   width: 32px;
@@ -104,7 +109,7 @@ const ArrowContainer = styled(ArrowWrapper)`
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #710D89;
+  background-color: #710d89;
   border-radius: 15px;
   margin: 0;
   cursor: pointer;
@@ -121,7 +126,7 @@ const BalanceText = styled.p`
   font-size: 14px;
   font-weight: 500;
   line-height: 12px;
-  color: #F2C94C;
+  color: #f2c94c;
   margin-left: auto;
 `
 
@@ -129,11 +134,8 @@ const SlippageText = styled.p`
   font-size: 12px;
   font-weight: 500;
   line-height: 12px;
-  color: #A7A7CC;
+  color: #a7a7cc;
   margin: 0 8px;
-  & span {
-    // text-decoration: underline;
-  }
 `
 
 const SlippageTextWrapper = styled(Flex)`
@@ -171,9 +173,11 @@ export default function Swap({ history }: RouteComponentProps) {
   const tokenAddress = pathname.substr(6)
   const [swapRouter, setSwapRouter] = useState(SwapRouter.SPHYNX_SWAP)
   const [pairs, setPairs] = useState([])
+  const [stablePairs, setStablePairs] = useState([])
   const [transactionData, setTransactions] = useState([])
   const stateRef = useRef([])
   const pairsRef = useRef([])
+  const stablePairsRef = useRef([])
   const loadingRef = useRef(false)
   const busyRef = useRef(false)
   const [isLoading, setLoading] = useState(false)
@@ -196,8 +200,12 @@ export default function Swap({ history }: RouteComponentProps) {
   const isMobile = !isXl
   const [symbol, setSymbol] = useState('')
   const theme = useTheme()
+  const { account, chainId } = useActiveWeb3React()
+  const BUSDAddr = BUSD[chainId].address
 
-  if (tokenAddress === '' || tokenAddress.toLowerCase() === sphynxAddr.toLowerCase()) {
+  const wrappedCurrencySymbol = chainId === 56 ? 'WBNB' : 'WETH'
+
+  if ((tokenAddress === '' || tokenAddress.toLowerCase() === sphynxAddr[chainId].toLowerCase()) && chainId == 56) {
     if (routerVersion !== 'sphynx') {
       dispatch(typeRouterVersion({ routerVersion: 'sphynx' }))
     }
@@ -209,80 +217,65 @@ export default function Swap({ history }: RouteComponentProps) {
 
   stateRef.current = transactionData
   pairsRef.current = pairs
+  stablePairsRef.current = stablePairs
   loadingRef.current = isLoading
   busyRef.current = isBusy
   let input = tokenAddress
-  if (input === '-' || input === '') input = sphynxAddr
-  const contract: any = new web3.eth.Contract(abi, input)
+  if (input === '-' || input === '') input = sphynxAddr[chainId]
 
-  const getDataQuery = useCallback(
-    (pairAddress: any) => {
-      if (pairAddress === '0xc522ce70f8aeb1205223659156d6c398743e3e7a') {
-        return `
-    {
-    ethereum(network: bsc) {
-        dexTrades(
-        options: {desc: ["block.height", "tradeIndex"], limit: 30, offset: 0}
-        date: {till: null}
-        smartContractAddress: {in: ["0xE4023ee4d957A5391007aE698B3A730B2dc2ba67", "${pairAddress}"]}
-        baseCurrency: {is: "${input}"}
-        quoteCurrency:{is : "${wBNBAddr}"}
-        ) {
-        block {
-          timestamp {
-          time(format: "%Y-%m-%d %H:%M:%S")
-          }
-          height
+  useEffect(() => {
+    const setInitData = async () => {
+      const pair = await getSphynxPairAddress(input, wrappedAddr[chainId], simpleRpcProvider)
+      if (pair !== null) {
+        if (routerVersion !== 'sphynx') {
+          dispatch(typeRouterVersion({ routerVersion: 'sphynx' }))
         }
-        tradeIndex
-        protocol
-        exchange {
-          fullName
+        if (swapRouter !== SwapRouter.SPHYNX_SWAP) {
+          setSwapRouter(SwapRouter.SPHYNX_SWAP)
+          setRouterType(RouterType.sphynx)
         }
-        smartContract {
-          address {
-          address
-          annotation
-          }
-        }
-        baseAmount
-        baseCurrency {
-          address
-          symbol
-        }
-        quoteAmount
-        quoteCurrency {
-          address
-          symbol
-        }
-        transaction {
-          hash
-        }
-        buyCurrency {
-          symbol
-          address
-          name
-        }
-        sellCurrency {
-          symbol
-          address
-          name
-          }
-        price
-        quotePrice
-        }
-      }
-    }`
+        dispatch(
+          replaceSwapState({
+            outputCurrencyId: chainId === 56 ? 'BNB' : 'ETH',
+            inputCurrencyId: input,
+            typedValue: '',
+            field: Field.OUTPUT,
+            recipient: null,
+          }),
+        )
       } else {
-        return `
+        if (routerVersion !== 'v2') {
+          dispatch(typeRouterVersion({ routerVersion: 'v2' }))
+        }
+        if (swapRouter !== SwapRouter.PANCAKE_SWAP) {
+          setSwapRouter(SwapRouter.PANCAKE_SWAP)
+          setRouterType(RouterType.pancake)
+        }
+        dispatch(
+          replaceSwapState({
+            outputCurrencyId: chainId === 56 ? 'BNB' : 'ETH',
+            inputCurrencyId: input,
+            typedValue: '',
+            field: Field.OUTPUT,
+            recipient: null,
+          }),
+        )
+      }
+    }
+
+    setInitData()
+  }, [input])
+
+  const getDataQuery = useCallback(() => {
+    const network = chainId === 1 ? 'ethereum' : 'bsc'
+    return `
     {
-    ethereum(network: bsc) {
+    ethereum(network: ${network}) {
         dexTrades(
         options: {desc: ["block.height", "tradeIndex"], limit: 30, offset: 0}
         date: {till: null}
-        smartContractAddress: {is: "${pairAddress}"}
         baseCurrency: {is: "${input}"}
-        quoteCurrency:{is : "${wBNBAddr}"}
+        quoteCurrency:{in : ["${wrappedAddr[chainId]}", "${BUSDAddr}"]}
         ) {
         block {
           timestamp {
@@ -329,17 +322,14 @@ export default function Swap({ history }: RouteComponentProps) {
         }
       }
     }`
-      }
-    },
-    [input],
-  )
+  }, [input, chainId])
 
   const parseData: any = async (events: any, blockNumber: any) => {
     setBusy(true)
 
     let newTransactions = stateRef.current
     return new Promise(async (resolve) => {
-      const price = await getBNBPrice()
+      const price = chainId === 56 ? await getBNBPrice() : await getETHPrice()
       let curPrice = UNSET_PRICE
       let curAmount = 0
 
@@ -384,25 +374,25 @@ export default function Swap({ history }: RouteComponentProps) {
 
             let tokenAmt, BNBAmt, isBuy
 
-            if (input < wBNBAddr) {
+            if (input < wrappedAddr[chainId]) {
               tokenAmt = Math.abs(
                 parseFloat(ethers.utils.formatUnits(datas.amount0In + '', tokenDecimal)) -
-                parseFloat(ethers.utils.formatUnits(datas.amount0Out + '', tokenDecimal)),
+                  parseFloat(ethers.utils.formatUnits(datas.amount0Out + '', tokenDecimal)),
               )
 
               isBuy = datas.amount1In === '0'
               BNBAmt = Math.abs(
                 parseFloat(ethers.utils.formatUnits(datas.amount1In + '', 18)) -
-                parseFloat(ethers.utils.formatUnits(datas.amount1Out + '', 18)),
+                  parseFloat(ethers.utils.formatUnits(datas.amount1Out + '', 18)),
               )
             } else {
               BNBAmt = Math.abs(
                 parseFloat(ethers.utils.formatUnits(datas.amount0In + '', 18)) -
-                parseFloat(ethers.utils.formatUnits(datas.amount0Out + '', 18)),
+                  parseFloat(ethers.utils.formatUnits(datas.amount0Out + '', 18)),
               )
               tokenAmt = Math.abs(
                 parseFloat(ethers.utils.formatUnits(datas.amount1In + '', tokenDecimal)) -
-                parseFloat(ethers.utils.formatUnits(datas.amount1Out + '', tokenDecimal)),
+                  parseFloat(ethers.utils.formatUnits(datas.amount1Out + '', tokenDecimal)),
               )
               isBuy = datas.amount0In === '0'
             }
@@ -410,23 +400,34 @@ export default function Swap({ history }: RouteComponentProps) {
             let oneData: any = {}
             oneData.amount = tokenAmt
             oneData.value = BNBAmt
-            oneData.price = (BNBAmt / tokenAmt) * price
+            oneData.price =
+              event.quoteCurrency === wrappedCurrencySymbol ? (BNBAmt / tokenAmt) * price : BNBAmt / tokenAmt
             const estimatedDateValue = new Date(new Date().getTime() - (blockNumber - event.blockNumber) * 3000)
             oneData.transactionTime = formatTimeString(
-              `${estimatedDateValue.getUTCFullYear()}-${estimatedDateValue.getUTCMonth() + 1
+              `${estimatedDateValue.getUTCFullYear()}-${
+                estimatedDateValue.getUTCMonth() + 1
               }-${estimatedDateValue.getDate()} ${estimatedDateValue.getUTCHours()}:${estimatedDateValue.getUTCMinutes()}:${estimatedDateValue.getUTCSeconds()}`,
             )
 
             oneData.tx = event.transactionHash
             oneData.isBuy = isBuy
             oneData.usdValue = oneData.amount * oneData.price
+            oneData.quoteCurrency = event.quoteCurrency
             newTransactions.unshift(oneData)
             if (newTransactions.length > 300) {
               newTransactions.pop()
             }
-            curPrice = oneData.price
-            curAmount += oneData.usdValue
-            setTokenPrice(curPrice)
+            if (input.toLowerCase() === SPHYNX_TOKEN_ADDRESS.toLowerCase()) {
+              if (pairsRef.current[1] === event.address.toLowerCase()) {
+                curPrice = oneData.price
+                curAmount += oneData.usdValue
+                setTokenPrice(curPrice)
+              }
+            } else {
+              curPrice = oneData.price
+              curAmount += oneData.usdValue
+              setTokenPrice(curPrice)
+            }
           } catch (err) {
             console.log('error', err)
           }
@@ -438,7 +439,8 @@ export default function Swap({ history }: RouteComponentProps) {
   const getTransactions = async (blockNumber) => {
     let cachedBlockNumber = blockNumber
     try {
-      web3.eth
+      const currentWeb3 = chainId === 56 ? datafeedWeb3 : web3ETH
+      currentWeb3.eth
         .getPastLogs({
           fromBlock: blockNumber,
           toBlock: 'latest',
@@ -449,7 +451,17 @@ export default function Swap({ history }: RouteComponentProps) {
             cachedBlockNumber = info[info.length - 1].blockNumber
           }
           info = info.filter((oneData) => oneData.blockNumber !== cachedBlockNumber)
-          info = info.filter((oneData) => pairsRef.current.indexOf(oneData.address.toLowerCase()) !== -1)
+          info = info.filter(
+            (oneData) =>
+              pairsRef.current.indexOf(oneData.address.toLowerCase()) !== -1 ||
+              stablePairsRef.current.indexOf(oneData.address.toLowerCase()) !== -1,
+          )
+          info = info.map((oneData) =>
+            pairsRef.current.indexOf(oneData.address.toLowerCase()) !== -1
+              ? { ...oneData, quoteCurrency: wrappedCurrencySymbol }
+              : { ...oneData, quoteCurrency: 'BUSD' },
+          )
+
           info = [...new Set(info)]
 
           if (!isBusy) {
@@ -464,13 +476,21 @@ export default function Swap({ history }: RouteComponentProps) {
 
   const startRealTimeData = (blockNumber) => {
     if (blockNumber === null) {
-      web3.eth.getBlockNumber().then((blockNumber) => {
+      const currentWeb3 = chainId === 56 ? datafeedWeb3 : web3ETH
+      currentWeb3.eth.getBlockNumber().then((blockNumber) => {
         setCurrentBlock(blockNumber)
         setBlockFlag(!blockFlag)
       })
     } else {
-      setCurrentBlock(blockNumber)
-      setBlockFlag(!blockFlag)
+      datafeedWeb3.eth.getBlockNumber().then((blockNumberCache) => {
+        if (parseInt(blockNumber) + 50 <= blockNumberCache) {
+          setCurrentBlock(blockNumberCache - 50)
+          setBlockFlag(!blockFlag)
+        } else {
+          setCurrentBlock(blockNumber)
+          setBlockFlag(!blockFlag)
+        }
+      })
     }
   }
 
@@ -504,9 +524,10 @@ export default function Swap({ history }: RouteComponentProps) {
 
   useEffect(() => {
     const fetchDecimals = async () => {
+      const contract: any =
+        chainId === ChainId.MAINNET ? new web3.eth.Contract(abi, input) : new web3ETH.eth.Contract(abi, input)
       tokenDecimal = await contract.methods.decimals().call()
     }
-    fetchDecimals()
 
     setLoading(false)
     const ac = new AbortController()
@@ -514,34 +535,59 @@ export default function Swap({ history }: RouteComponentProps) {
     const fetchData = async () => {
       try {
         let pairs = []
-        if (routerVersion !== 'sphynx') {
-          let wBNBPair = await getPancakePairAddress(input, wBNBAddr, simpleRpcProvider)
+        let stablePairs = []
+        if (chainId === 56) {
+          let wBNBPair = await getPancakePairAddress(input, wrappedAddr[chainId], simpleRpcProvider, chainId)
           if (wBNBPair !== null) pairs.push(wBNBPair.toLowerCase())
-          let wBNBPairV1 = await getPancakePairAddressV1(input, wBNBAddr, simpleRpcProvider)
+          let wBNBPairV1 = await getPancakePairAddressV1(input, wrappedAddr[chainId], simpleRpcProvider)
           if (wBNBPairV1 !== null) pairs.push(wBNBPairV1.toLowerCase())
+          let wBNBPairSphynx = await getSphynxPairAddress(input, wrappedAddr[chainId], simpleRpcProvider)
+          if (wBNBPairSphynx !== null) pairs.push(wBNBPairSphynx.toLowerCase())
+          let BUSDPair = await getPancakePairAddress(input, BUSDAddr, simpleRpcProvider, chainId)
+          if (BUSDPair !== null) stablePairs.push(BUSDPair.toLowerCase())
+          let BUSDPairSphynx = await getSphynxPairAddress(input, BUSDAddr, simpleRpcProvider)
+          if (BUSDPairSphynx !== null) stablePairs.push(BUSDPairSphynx.toLowerCase())
+          setPairs(pairs)
+          setStablePairs(stablePairs)
         }
-        let wBNBPairSphynx = await getSphynxPairAddress(input, wBNBAddr, simpleRpcProvider)
-        if (wBNBPairSphynx !== null) pairs.push(wBNBPairSphynx.toLowerCase())
-        setPairs(pairs)
-        const bnbPrice = await getBNBPrice()
+
+        if (chainId === 1) {
+          let wBNBPair = await getPancakePairAddress(input, wrappedAddr[chainId], simpleRpcETHProvider, chainId)
+          if (wBNBPair !== null) pairs.push(wBNBPair.toLowerCase())
+          setPairs(pairs)
+        }
+        const bnbPrice = chainId === 56 ? await getBNBPrice() : await getETHPrice()
         // pull historical data
-        const queryResult = await axios.post(BITQUERY_API, { query: getDataQuery(pairs[0]) }, config)
+        const queryResult = await axios.post(BITQUERY_API, { query: getDataQuery() }, config)
         if (queryResult.data.data && queryResult.data.data.ethereum.dexTrades) {
+          let dexTrades = queryResult.data.data.ethereum.dexTrades
+          if (input.toLowerCase() === SPHYNX_TOKEN_ADDRESS.toLowerCase()) {
+            dexTrades = dexTrades.filter(
+              (oneData) => oneData.smartContract.address.address.toLowerCase() === pairsRef.current[1].toLowerCase(),
+            )
+          }
           setSymbol(queryResult.data.data.ethereum.dexTrades[0].baseCurrency.symbol)
           newTransactions = queryResult.data.data.ethereum.dexTrades.map((item, index) => {
             return {
               transactionTime: formatTimeString(item.block.timestamp.time),
               amount: item.baseAmount,
               value: item.quoteAmount,
-              price: item.quotePrice * bnbPrice,
-              usdValue: item.baseAmount * item.quotePrice * bnbPrice,
+              quoteCurrency: item.quoteCurrency.symbol,
+              price: item.quoteCurrency.symbol === wrappedCurrencySymbol ? item.quotePrice * bnbPrice : item.quotePrice,
+              usdValue:
+                item.quoteCurrency.symbol === wrappedCurrencySymbol
+                  ? item.baseAmount * item.quotePrice * bnbPrice
+                  : item.baseAmount * item.quotePrice,
               isBuy: item.baseCurrency.symbol === item.buyCurrency.symbol,
               tx: item.transaction.hash,
             }
           })
 
-          if (newTransactions.length > 0) {
-            const curPrice = newTransactions[0].price
+          if (dexTrades.length > 0) {
+            const curPrice =
+              dexTrades[0].quoteCurrency.symbol === wrappedCurrencySymbol
+                ? dexTrades[0].quotePrice * bnbPrice
+                : dexTrades[0].quotePrice
             const sessionData = {
               input,
               price: curPrice,
@@ -556,7 +602,7 @@ export default function Swap({ history }: RouteComponentProps) {
         } else {
           web3.eth.getBlockNumber().then((blockNumber) => {
             setDatas([], blockNumber - 200)
-          })  
+          })
         }
       } catch (err) {
         // eslint-disable-next-line no-console
@@ -569,6 +615,7 @@ export default function Swap({ history }: RouteComponentProps) {
 
     if (input) {
       setTokenPrice(0)
+      fetchDecimals()
       fetchData()
     }
 
@@ -577,31 +624,44 @@ export default function Swap({ history }: RouteComponentProps) {
 
   React.useEffect(() => {
     const ab = new AbortController()
-    if (tokenAddress && tokenAddress !== '') {
-      dispatch(typeInput({ input: tokenAddress }))
+    if (input) {
+      dispatch(typeInput({ input }))
     }
     return () => {
       ab.abort()
     }
   }, [dispatch, tokenAddress])
 
-  const getTokenData = async (tokenAddress) => {
+  const getTokenData = async (tokenAddress, chainId) => {
+    if (tokenAddress === '' || tokenAddress === '-') return
+    if (tokenAddress === undefined || tokenAddress === null) return
     try {
-      axios.post(`${process.env.REACT_APP_BACKEND_API_URL}/tokenStats`, { address: tokenAddress }).then((response) => {
-        setTokenData(response.data)
-        dispatch(marketCap({ marketCapacity: parseFloat(response.data.marketCap) }))
-      })
+      const currentWeb3 = chainId === 56 ? web3 : web3ETH
+      const contract = new currentWeb3.eth.Contract(abi, tokenAddress)
+      let totalSupply = await contract.methods.totalSupply().call()
+      let decimals = await contract.methods.decimals().call()
+      let symbol = await contract.methods.symbol().call()
+      let name = await contract.methods.name().call()
+      totalSupply = totalSupply / 10 ** decimals
+      const data = {
+        marketCap,
+        totalSupply,
+        decimals,
+        symbol: `${name} (${symbol})`,
+      }
+      setTokenData(data)
     } catch (err) {
       // eslint-disable-next-line no-console
       console.log(err)
-      setTimeout(() => getTokenData(tokenAddress), 3000)
+      setTimeout(() => getTokenData(tokenAddress, chainId), 3000)
     }
   }
 
   React.useEffect(() => {
+    if (input === undefined) return
     sessionStorage.removeItem(storages.SESSION_LIVE_PRICE)
-    getTokenData(input)
-  }, [pairs])
+    getTokenData(input, chainId)
+  }, [pairs, chainId])
 
   const loadedUrlParams = useDefaultsFromURLSearch()
 
@@ -618,14 +678,17 @@ export default function Swap({ history }: RouteComponentProps) {
   )
 
   // dismiss warning if all imported tokens are in active lists
-  const defaultTokens = useAllTokens()
+  let defaultTokens = useAllTokens()
+  const uniTokens = useAllUniTokens()
+  if (connectedNetworkID !== ChainId.MAINNET) {
+    defaultTokens = uniTokens
+  }
+
   const importTokensNotInDefault =
     urlLoadedTokens &&
     urlLoadedTokens.filter((token: Token) => {
       return !(token.address in defaultTokens)
     })
-
-  const { account } = useActiveWeb3React()
 
   // for expert mode
   const [isExpertMode] = useExpertModeManager()
@@ -643,19 +706,17 @@ export default function Swap({ history }: RouteComponentProps) {
     inputError: wrapInputError,
   } = useWrapCallback(currencies[Field.INPUT], currencies[Field.OUTPUT], typedValue)
   const showWrap: boolean = wrapType !== WrapType.NOT_APPLICABLE
-  const { swapType } = useSwapType()
-  const { swapTransCard } = useSwapTransCard()
   const trade = showWrap ? undefined : v2Trade
 
   const parsedAmounts = showWrap
     ? {
-      [Field.INPUT]: parsedAmount,
-      [Field.OUTPUT]: parsedAmount,
-    }
+        [Field.INPUT]: parsedAmount,
+        [Field.OUTPUT]: parsedAmount,
+      }
     : {
-      [Field.INPUT]: independentField === Field.INPUT ? parsedAmount : trade?.inputAmount,
-      [Field.OUTPUT]: independentField === Field.OUTPUT ? parsedAmount : trade?.outputAmount,
-    }
+        [Field.INPUT]: independentField === Field.INPUT ? parsedAmount : trade?.inputAmount,
+        [Field.OUTPUT]: independentField === Field.OUTPUT ? parsedAmount : trade?.outputAmount,
+      }
 
   const { onSwitchTokens, onCurrencySelection, onUserInput, onChangeRecipient } = useSwapActionHandlers()
   const isValid = !swapInputError
@@ -705,7 +766,7 @@ export default function Swap({ history }: RouteComponentProps) {
       tokenAddress === null ||
       tokenAddress === '' ||
       tokenAddress === undefined ||
-      tokenAddress.toLowerCase() === sphynxAddr.toLowerCase()
+      tokenAddress.toLowerCase() === sphynxAddr[chainId].toLowerCase()
     ) {
       if (swapRouter !== SwapRouter.SPHYNX_SWAP) {
         setSwapRouter(SwapRouter.SPHYNX_SWAP)
@@ -713,21 +774,29 @@ export default function Swap({ history }: RouteComponentProps) {
       }
       dispatch(
         replaceSwapState({
-          outputCurrencyId: 'BNB',
-          inputCurrencyId: '0x2e121Ed64EEEB58788dDb204627cCB7C7c59884c',
+          outputCurrencyId: chainId === 56 ? 'BNB' : 'ETH',
+          inputCurrencyId: sphynxAddr[chainId],
           typedValue: '',
           field: Field.OUTPUT,
           recipient: null,
         }),
       )
     } else {
-      if (swapRouter !== SwapRouter.PANCAKE_SWAP) {
-        setSwapRouter(SwapRouter.PANCAKE_SWAP)
-        setRouterType(RouterType.pancake)
+      if (
+        (swapRouter !== SwapRouter.PANCAKE_SWAP && chainId === ChainId.MAINNET) ||
+        (swapRouter !== SwapRouter.UNI_SWAP && chainId === ChainId.ETHEREUM)
+      ) {
+        if (chainId === ChainId.MAINNET) {
+          setSwapRouter(SwapRouter.PANCAKE_SWAP)
+          setRouterType(RouterType.pancake)
+        } else {
+          setSwapRouter(SwapRouter.UNI_SWAP)
+          setRouterType(RouterType.uniswap)
+        }
       }
       dispatch(
         replaceSwapState({
-          outputCurrencyId: 'BNB',
+          outputCurrencyId: chainId === 56 ? 'BNB' : 'ETH',
           inputCurrencyId: tokenAddress,
           typedValue: '',
           field: Field.OUTPUT,
@@ -735,7 +804,7 @@ export default function Swap({ history }: RouteComponentProps) {
         }),
       )
     }
-  }, [dispatch, tokenAddress])
+  }, [dispatch, tokenAddress, chainId])
 
   // check whether the user has approved the router on the input token
   const [approval, approveCallback] = useApproveCallbackFromTrade(trade, allowedSlippage)
@@ -998,10 +1067,7 @@ export default function Swap({ history }: RouteComponentProps) {
               price={tokenPrice}
             />
           ) : null}
-          <SwapTabs
-            selectedTabClassName='is-selected'
-            selectedTabPanelClassName='is-selected'
-          >
+          <SwapTabs selectedTabClassName="is-selected" selectedTabPanelClassName="is-selected">
             <SwapTabList>
               <SwapTab>
                 <Text textAlign="center" fontSize="14px" bold color="#A7A7CC">
@@ -1014,7 +1080,7 @@ export default function Swap({ history }: RouteComponentProps) {
                 </Text>
               </SwapTab>
             </SwapTabList>
-            <Card bgColor={theme.isDark ? "#0E0E26" : "#2A2E60"} borderRadius="0 0 3px 3px" padding="20px 10px">
+            <Card bgColor={theme.isDark ? '#0E0E26' : '#2A2E60'} borderRadius="0 0 3px 3px" padding="20px 10px">
               <SwapTabPanel>
                 <Wrapper id="swap-page">
                   <Flex alignItems="center" justifyContent="center">
@@ -1027,7 +1093,9 @@ export default function Swap({ history }: RouteComponentProps) {
                   <AppHeader title={t('Swap')} showAuto />
                   <AutoColumn gap="md">
                     <CurrencyInputPanel
-                      label={independentField === Field.OUTPUT && !showWrap && trade ? t('From (estimated)') : t('From')}
+                      label={
+                        independentField === Field.OUTPUT && !showWrap && trade ? t('From (estimated)') : t('From')
+                      }
                       value={formattedAmounts[Field.INPUT]}
                       showMaxButton={!atMaxAmountInput}
                       currency={currencies[Field.INPUT]}
@@ -1048,7 +1116,7 @@ export default function Swap({ history }: RouteComponentProps) {
                           color={currencies[Field.INPUT] && currencies[Field.OUTPUT] ? 'primary' : 'text'}
                         >
                           {/* <DownArrow /> */}
-                          <SwapIcon color="white" width="14px" height="18px"/>
+                          <SwapIcon color="white" width="14px" height="18px" />
                         </ArrowContainer>
                         {recipient === null && !showWrap && isExpertMode ? (
                           <Button variant="text" id="add-recipient-button" onClick={handleChangeRecipient}>
@@ -1108,7 +1176,9 @@ export default function Swap({ history }: RouteComponentProps) {
                         {t('Unsupported Asset')}
                       </Button>
                     ) : !account ? (
-                      <ConnectWalletButton width="100%" />
+                      <Flex justifyContent="center">
+                        <ConnectWalletButton width="100%" />
+                      </Flex>
                     ) : showWrap ? (
                       <Button width="100%" disabled={Boolean(wrapInputError)} onClick={onWrap}>
                         {wrapInputError ??
@@ -1149,14 +1219,16 @@ export default function Swap({ history }: RouteComponentProps) {
                           width="48%"
                           id="swap-button"
                           disabled={
-                            !isValid || approval !== ApprovalState.APPROVED || (priceImpactSeverity > 3 && !isExpertMode)
+                            !isValid ||
+                            approval !== ApprovalState.APPROVED ||
+                            (priceImpactSeverity > 3 && !isExpertMode)
                           }
                         >
                           {priceImpactSeverity > 3 && !isExpertMode
                             ? t('Price Impact High')
                             : priceImpactSeverity > 2
-                              ? t('Swap Anyway')
-                              : t('Swap')}
+                            ? t('Swap Anyway')
+                            : t('Swap')}
                         </Button>
                       </RowBetween>
                     ) : (
@@ -1171,8 +1243,8 @@ export default function Swap({ history }: RouteComponentProps) {
                           (priceImpactSeverity > 3 && !isExpertMode
                             ? `Price Impact Too High`
                             : priceImpactSeverity > 2
-                              ? t('Swap Anyway')
-                              : t('Swap'))}
+                            ? t('Swap Anyway')
+                            : t('Swap'))}
                       </Button>
                     )}
                     {showApproveFlow && (
@@ -1191,186 +1263,6 @@ export default function Swap({ history }: RouteComponentProps) {
               </SwapTabPanel>
             </Card>
           </SwapTabs>
-          {/* <div style={{ height: 48, marginTop: 16, marginBottom: 25 }}>
-            <Flex alignItems="center" justifyContent="center" style={{ marginBottom: 8 }}>
-              <SwapCardNav />
-            </Flex>
-            <Flex alignItems="center" justifyContent="center">
-              <AutoCardNav
-                swapRouter={swapRouter}
-                setSwapRouter={setSwapRouter}
-                connectedNetworkID={connectedNetworkID}
-              />
-            </Flex>
-          </div> */}
-          {/* <Card bgColor={theme.isDark ? "#0E0E26" : "#2A2E60"} borderRadius="8px" padding="0 10px 20px 10px">
-            {swapType === 'swap' && (
-              <Wrapper id="swap-page">
-                <AppHeader title={t('Swap')} showAuto />
-                <AutoColumn gap="md">
-                  <CurrencyInputPanel
-                    label={independentField === Field.OUTPUT && !showWrap && trade ? t('From (estimated)') : t('From')}
-                    value={formattedAmounts[Field.INPUT]}
-                    showMaxButton={!atMaxAmountInput}
-                    currency={currencies[Field.INPUT]}
-                    onUserInput={handleTypeInput}
-                    onMax={handleMaxInput}
-                    onCurrencySelect={handleInputSelect}
-                    otherCurrency={currencies[Field.OUTPUT]}
-                    id="swap-currency-input"
-                  />
-                  <AutoColumn justify="space-between">
-                    <BalanceText>
-                      <BalanceNumber prefix="" value={Number(inputBalance).toFixed(2)} />
-                    </BalanceText>
-                    <AutoRow justify={isExpertMode ? 'space-between' : 'center'} style={{ padding: '0 1rem' }}>
-                      <ArrowContainer
-                        clickable
-                        onClick={handleArrowContainer}
-                        color={currencies[Field.INPUT] && currencies[Field.OUTPUT] ? 'primary' : 'text'}
-                      >
-                        <DownArrow />
-                      </ArrowContainer>
-                      {recipient === null && !showWrap && isExpertMode ? (
-                        <Button variant="text" id="add-recipient-button" onClick={handleChangeRecipient}>
-                          {t('+ Add a send (optional)')}
-                        </Button>
-                      ) : null}
-                    </AutoRow>
-                  </AutoColumn>
-                  <CurrencyInputPanel
-                    value={formattedAmounts[Field.OUTPUT]}
-                    onUserInput={handleTypeOutput}
-                    label={independentField === Field.INPUT && !showWrap && trade ? t('To (estimated)') : t('To')}
-                    showMaxButton={false}
-                    currency={currencies[Field.OUTPUT]}
-                    onCurrencySelect={handleOutputSelect}
-                    otherCurrency={currencies[Field.INPUT]}
-                    id="swap-currency-output"
-                  />
-                  <BalanceText>
-                    <BalanceNumber prefix="" value={Number(outputBalance).toFixed(2)} />
-                  </BalanceText>
-                  {isExpertMode && recipient !== null && !showWrap ? (
-                    <>
-                      <AutoRow justify="space-between" style={{ padding: '0 1rem' }}>
-                        <ArrowWrapper clickable={false}>
-                          <ArrowDownIcon width="16px" />
-                        </ArrowWrapper>
-                        <Button variant="text" id="remove-recipient-button" onClick={handleRemoveRecipient}>
-                          {t('- Remove send')}
-                        </Button>
-                      </AutoRow>
-                      <AddressInputPanel id="recipient" value={recipient} onChange={onChangeRecipient} />
-                    </>
-                  ) : null}
-                  <Flex justifyContent="space-between" alignItems="center" marginTop="20px">
-                    <Flex alignItems="center">
-                      <SlippageText>
-                        <span>{t('Slippage Tolerance')}</span>
-                        <b>: {allowedSlippage / 100}%</b>
-                      </SlippageText>
-                    </Flex>
-                    {currencies[Field.INPUT] && currencies[Field.OUTPUT] && (
-                      <Flex alignItems="center">
-                        <SlippageText>
-                          <b>
-                            1 {currencies[Field.INPUT]?.symbol} = {trade?.executionPrice.toSignificant(6)}{' '}
-                            {currencies[Field.OUTPUT]?.symbol}
-                          </b>
-                        </SlippageText>
-                      </Flex>
-                    )}
-                  </Flex>
-                </AutoColumn>
-                <BottomGrouping mt="1rem">
-                  {swapIsUnsupported ? (
-                    <Button width="100%" disabled mb="4px">
-                      {t('Unsupported Asset')}
-                    </Button>
-                  ) : !account ? (
-                    <ConnectWalletButton width="100%" />
-                  ) : showWrap ? (
-                    <Button width="100%" disabled={Boolean(wrapInputError)} onClick={onWrap}>
-                      {wrapInputError ??
-                        (wrapType === WrapType.WRAP ? 'Wrap' : wrapType === WrapType.UNWRAP ? 'Unwrap' : null)}
-                    </Button>
-                  ) : noRoute && userHasSpecifiedInputOutput ? (
-                    <GreyCard style={{ textAlign: 'center' }}>
-                      <Text color="textSubtle" mb="4px">
-                        {t('Insufficient liquidity for this trade.')}
-                      </Text>
-                      {singleHopOnly && (
-                        <Text color="textSubtle" mb="4px">
-                          {t('Try enabling multi-hop trades.')}
-                        </Text>
-                      )}
-                    </GreyCard>
-                  ) : showApproveFlow ? (
-                    <RowBetween>
-                      <Button
-                        variant={approval === ApprovalState.APPROVED ? 'success' : 'primary'}
-                        onClick={approveCallback}
-                        disabled={approval !== ApprovalState.NOT_APPROVED || approvalSubmitted}
-                        width="48%"
-                      >
-                        {approval === ApprovalState.PENDING ? (
-                          <AutoRow gap="6px" justify="center">
-                            {t('Enabling')} <CircleLoader stroke="white" />
-                          </AutoRow>
-                        ) : approvalSubmitted && approval === ApprovalState.APPROVED ? (
-                          t('Enabled')
-                        ) : (
-                          t('Enable %asset%', { asset: currencies[Field.INPUT]?.symbol ?? '' })
-                        )}
-                      </Button>
-                      <Button
-                        variant={isValid && priceImpactSeverity > 2 ? 'danger' : 'primary'}
-                        onClick={handleSwapState}
-                        width="48%"
-                        id="swap-button"
-                        disabled={
-                          !isValid || approval !== ApprovalState.APPROVED || (priceImpactSeverity > 3 && !isExpertMode)
-                        }
-                      >
-                        {priceImpactSeverity > 3 && !isExpertMode
-                          ? t('Price Impact High')
-                          : priceImpactSeverity > 2
-                            ? t('Swap Anyway')
-                            : t('Swap')}
-                      </Button>
-                    </RowBetween>
-                  ) : (
-                    <Button
-                      variant={isValid && priceImpactSeverity > 2 && !swapCallbackError ? 'danger' : 'primary'}
-                      onClick={handleSwapState}
-                      id="swap-button"
-                      width="100%"
-                      disabled={!isValid || (priceImpactSeverity > 3 && !isExpertMode) || !!swapCallbackError}
-                    >
-                      {swapInputError ||
-                        (priceImpactSeverity > 3 && !isExpertMode
-                          ? `Price Impact Too High`
-                          : priceImpactSeverity > 2
-                            ? t('Swap Anyway')
-                            : t('Swap'))}
-                    </Button>
-                  )}
-                  {showApproveFlow && (
-                    <Column style={{ marginTop: '1rem' }}>
-                      <ProgressSteps steps={[approval === ApprovalState.APPROVED]} />
-                    </Column>
-                  )}
-                  {isExpertMode && swapErrorMessage ? <SwapCallbackError error={swapErrorMessage} /> : null}
-                </BottomGrouping>
-              </Wrapper>
-            )}
-            {(swapType === 'liquidity' || swapType === 'addLiquidity' || swapType === 'removeLiquidity') && (
-              <Wrapper id="pool-page">
-                <LiquidityWidget />
-              </Wrapper>
-            )}
-          </Card> */}
           <AdvancedSwapDetailsDropdown trade={trade} />
           <TokenInfoWrapper>
             <TokenInfo tokenData={tokenData} tokenAddress={input} />
@@ -1385,11 +1277,8 @@ export default function Swap({ history }: RouteComponentProps) {
               price={tokenPrice}
             />
             <CoinStatsBoard tokenData={tokenData} />
-            <ChartContainer tokenAddress={input} tokenData={tokenData}/>
-            <SwapTabs
-              selectedTabClassName='is-selected'
-              selectedTabPanelClassName='is-selected'
-            >
+            <ChartContainer tokenAddress={input} tokenData={tokenData} routerVersion={routerVersion} />
+            <SwapTabs selectedTabClassName="is-selected" selectedTabPanelClassName="is-selected">
               <SwapTabList>
                 <SwapTab>
                   <Text textAlign="center" fontSize="14px" bold textTransform="capitalize" color="#A7A7CC">
@@ -1406,8 +1295,15 @@ export default function Swap({ history }: RouteComponentProps) {
                     {t('sellers')}
                   </Text>
                 </SwapTab>
+                {isMobile && (
+                  <SwapTab>
+                    <Text textAlign="center" fontSize="14px" bold textTransform="capitalize" color="#A7A7CC">
+                      {t('info')}
+                    </Text>
+                  </SwapTab>
+                )}
               </SwapTabList>
-              <Card bgColor={theme.isDark ? "#0E0E26" : "#2A2E60"} borderRadius="0 0 3px 3px" padding="20px 10px">
+              <Card bgColor={theme.isDark ? '#0E0E26' : '#2A2E60'} borderRadius="0 0 3px 3px" padding="20px 10px">
                 <SwapTabPanel>
                   <TransactionCard transactionData={transactionData} isLoading={isLoading} symbol={symbol} />
                 </SwapTabPanel>
@@ -1417,22 +1313,11 @@ export default function Swap({ history }: RouteComponentProps) {
                 <SwapTabPanel>
                   <SellersCard pairAddress={pairs[0]} />
                 </SwapTabPanel>
+                <SwapTabPanel>
+                  <TokenInfo tokenData={tokenData} tokenAddress={input} />
+                </SwapTabPanel>
               </Card>
             </SwapTabs>
-            {/* <div
-              style={{
-                alignSelf: 'center',
-                textAlign: 'center',
-                width: '100%',
-                marginTop: '25px',
-              }}
-            >
-              {swapTransCard === 'tokenDX' && (
-                <TransactionCard transactionData={transactionData} isLoading={isLoading} symbol={symbol} />
-              )}
-              {swapTransCard === 'buyers' && <BuyersCard pairAddress={pairs[0]} />}
-              {swapTransCard === 'sellers' && <SellersCard pairAddress={pairs[0]} />}
-            </div> */}
           </FullHeightColumn>
         </div>
       </Cards>

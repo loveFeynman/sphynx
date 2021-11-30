@@ -1,7 +1,9 @@
-import { ChainId, Currency, CurrencyAmount, ETHER, Token, TokenAmount, WETH } from '@sphynxswap/sdk'
+import { ChainId, Currency, CurrencyAmount, ETHER, Token, TokenAmount, WETH } from '@sphynxdex/sdk-multichain'
 
 export function wrappedCurrency(currency: Currency | undefined, chainId: ChainId | undefined): Token | undefined {
-  return chainId && currency === ETHER ? WETH[chainId] : currency instanceof Token ? currency : undefined
+  const nativeKeys = Object.keys(ETHER)
+  const nativeCurrencies = nativeKeys.map(key => ETHER[parseInt(key)])
+  return chainId && nativeCurrencies.indexOf(currency) !== -1 ? WETH[chainId] : currency instanceof Token ? currency : undefined
 }
 
 export function wrappedCurrencyAmount(
@@ -13,6 +15,6 @@ export function wrappedCurrencyAmount(
 }
 
 export function unwrappedToken(token: Token): Currency {
-  if (token.equals(WETH[token.chainId])) return ETHER
+  if (token.equals(WETH[token.chainId])) return ETHER[token.chainId]
   return token
 }

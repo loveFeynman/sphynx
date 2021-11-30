@@ -6,10 +6,10 @@ import { AppState } from 'state'
 import styled from 'styled-components'
 import { v4 as uuidv4 } from 'uuid'
 import { useTranslation } from 'contexts/Localization'
-import { Spinner } from '../../LotterySphx/components/Spinner'
+import Spinner from 'components/Loader/Spinner'
 import { topTrades } from '../../../utils/apiServices'
 
-const fontSize = window.screen.width > 768 ? "14px" : "10px"
+const fontSize = window.screen.width > 768 ? "14px" : "12px"
 
 const TableWrapper = styled.div`
   background: ${({ theme }) => theme.isDark ? "#0E0E26": "#2A2E60"};
@@ -18,6 +18,7 @@ const TableWrapper = styled.div`
   max-height: 500px;
   overflow: auto;
   overflow-x: hidden;
+  text-align: center;
   & table {
     background: transparent;
     width: 100%;
@@ -30,11 +31,11 @@ const TableWrapper = styled.div`
     & thead {
       & td {
         color: white;
-        font-size: 16px;
+        font-size: 14px;
         vertical-align: middle;
-        background: ${({ theme }) => theme.isDark ? "#219653": "#77BF3E"};
+        background: transparent;
         padding: 16px 8px;
-        font-weight: 700;
+        font-weight: 600;
         & > div > div {
           font-size: 16px;
           font-weight: 500;
@@ -112,12 +113,12 @@ const BuyersCard = (props) => {
               })).map((td) => {
                 return (
                   <tr key={td.id}>
-                    <td style={{ color: '#fff', width: '80%' }}>
+                    <td style={{ color: '#fff', width: '60%' }}>
                       <a href={`https://bscscan.com/token/${input}?a=${td.wallet}`} target="_blank" rel="noreferrer">
                         <h2>{td.wallet}</h2>
                       </a>
                     </td>
-                    <td style={{ color: '#04ab1d', width: '20%' }}>
+                    <td style={{ color: '#04ab1d', width: '40%' }}>
                       <h2>$ {td.usdAmount.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$&,')}</h2>
                     </td>
                   </tr>

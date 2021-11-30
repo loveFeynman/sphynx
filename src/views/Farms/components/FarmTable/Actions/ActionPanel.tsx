@@ -1,7 +1,8 @@
+
 import React from 'react'
 import styled, { css, keyframes } from 'styled-components'
 import { useTranslation } from 'contexts/Localization'
-import { LinkExternal, Text } from '@sphynxswap/uikit'
+import { LinkExternal, Text, Flex, useMatchBreakpoints } from '@sphynxdex/uikit'
 import { BASE_SWAP_URL } from 'config'
 import { FarmWithStakedValue } from 'views/Farms/components/FarmCard/FarmCard'
 import { getAddress } from 'utils/addressHelpers'
@@ -9,10 +10,11 @@ import { getBscScanLink } from 'utils'
 import { CommunityTag, CoreTag, DualTag } from 'components/Tags'
 
 import HarvestAction from './HarvestAction'
+import TokenLogo from './TokenLogo'
 import StakedAction from './StakedAction'
-import Apr, { AprProps } from '../Apr'
-import Multiplier, { MultiplierProps } from '../Multiplier'
-import Liquidity, { LiquidityProps } from '../Liquidity'
+import { AprProps } from '../Apr'
+import { MultiplierProps } from '../Multiplier'
+import { LiquidityProps } from '../Liquidity'
 
 export interface ActionPanelProps {
   apr: AprProps
@@ -41,58 +43,57 @@ const collapseAnimation = keyframes`
   }
 `
 
-const Container = styled.div<{ expanded }>`
+const Container = styled.div<{ expanded, isMobile: boolean }>`
   animation: ${({ expanded }) =>
     expanded
       ? css`
-          ${expandAnimation} 300ms linear forwards
-        `
+      ${expandAnimation} 300ms linear forwards
+    `
       : css`
-          ${collapseAnimation} 300ms linear forwards
-        `};
+      ${collapseAnimation} 300ms linear forwards
+    `};
   overflow: hidden;
-  background: ${({ theme }) => theme.colors.input};
-  border-bottom: 1px solid ${({ theme }) => theme.colors.cardBorder};
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  background: ${({ theme }) => theme.isDark ? "#1A1A3A" : "#20234E"};
   display: flex;
-  width: 100%;
-  flex-direction: column-reverse;
-  padding: 24px;
+  flex-direction: ${({ isMobile }) => isMobile ? "column" : "row"};
+  justify-content: center;
+  padding: 5px;
 
+  ${({ theme }) => theme.mediaQueries.xs} {
+    padding: 12px;
+  }
   ${({ theme }) => theme.mediaQueries.lg} {
-    flex-direction: row;
     padding: 16px 32px;
   }
 `
 
 const StyledLinkExternal = styled(LinkExternal)`
+  font-size: 8px;
   font-weight: 400;
-`
-
-const StakeContainer = styled.div`
-  color: ${({ theme }) => theme.colors.text};
-  align-items: center;
-  display: flex;
-  justify-content: space-between;
+  flex-flow: row-reverse;
+  > svg {
+    width: 15px;
+    margin-right: 3px;
+    margin-left: 0px;
+  }
 
   ${({ theme }) => theme.mediaQueries.sm} {
-    justify-content: flex-start;
+    font-size: 10px;
   }
 `
-
 const TagsContainer = styled.div`
   display: flex;
   align-items: center;
-  margin-top: 25px;
-  ${({ theme }) => theme.mediaQueries.sm} {
-    margin-top: 16px;
-  }
-
+  
   > div {
+    border: 0px;
     height: 24px;
     padding: 0 6px;
-    font-size: 14px;
+    font-size: 12px;
     margin-right: 4px;
-
+    color: #F9B043;
     svg {
       width: 14px;
     }
@@ -101,7 +102,7 @@ const TagsContainer = styled.div`
 
 const ActionContainer = styled.div`
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
 
   ${({ theme }) => theme.mediaQueries.sm} {
     flex-direction: row;
@@ -112,72 +113,91 @@ const ActionContainer = styled.div`
 `
 
 const InfoContainer = styled.div`
-  min-width: 200px;
+  // min-width: 200px;
 `
 
-const ValueContainer = styled.div`
-  display: block;
+const DetailContainer = styled(Flex)`
+  display: flex;
+  gap: 10px;
+  flex-direction: row;
+  align-items: center;
 
-  ${({ theme }) => theme.mediaQueries.lg} {
-    display: none;
+  ${({ theme }) => theme.mediaQueries.sm} {
+    flex-direction: row;
+    flex-grow: 2;
+    flex-basis: 0;
   }
 `
 
-const ValueWrapper = styled.div`
-  display: flex;
+const BorderFlex = styled(Flex)`
+  color: #A7A7CC;
+  border-radius: 5px;
+  border: 1px solid #2E2E55;
+  padding: 3px;
+  ${({ theme }) => theme.mediaQueries.xs} {
+    padding: 8px;
+  }
+`
+
+const TokenLogoSection = styled(Flex)`
+  justify-content: center;
   align-items: center;
-  justify-content: space-between;
-  margin: 4px 0px;
+  display: flex;
+  flex-grow: 1;
+`
+
+const ViewGroupWrapper = styled(Flex)`
+  display: flex;
+  flex-direction: column;
+  margin-bottom: unset;
+  gap: 10px;
+  ${({ theme }) => theme.mediaQueries.md} {
+    flex-direction: row;
+    margin-bottom: 8px;
+  }
 `
 
 const ActionPanel: React.FunctionComponent<ActionPanelProps> = ({
   details,
-  apr,
-  multiplier,
-  liquidity,
   userDataReady,
   expanded,
 }) => {
   const farm = details
 
   const { t } = useTranslation()
-  const isActive = farm.multiplier !== '0X'
+  const { isXl } = useMatchBreakpoints()
+  const isMobile = !isXl
   const { dual } = farm
   const lpLabel = farm.lpSymbol && farm.lpSymbol.toUpperCase().replace('PANCAKE', '')
+  const farmLabel = lpLabel && lpLabel.replace(' LP', '')
   const lpAddress = getAddress(farm.lpAddresses)
   const bsc = getBscScanLink(lpAddress, 'address')
   const info = `${BASE_SWAP_URL}/pool/${lpAddress}`
-  const addLiquidityUrl = `${BASE_SWAP_URL}`
 
   return (
-    <Container expanded={expanded}>
-      <InfoContainer>
-        {isActive && (
-          <StakeContainer>
-            <StyledLinkExternal href={addLiquidityUrl}>{t('Get %symbol%', { symbol: lpLabel })}</StyledLinkExternal>
-          </StakeContainer>
-        )}
-        <StyledLinkExternal href={bsc}>{t('View Contract')}</StyledLinkExternal>
-        <StyledLinkExternal href={info}>{t('See Pair Info')}</StyledLinkExternal>
-        <TagsContainer>
-          {farm.isCommunity ? <CommunityTag /> : <CoreTag />}
-          {dual ? <DualTag /> : null}
-        </TagsContainer>
-      </InfoContainer>
-      <ValueContainer>
-        <ValueWrapper>
-          <Text>{t('APR')}</Text>
-          <Apr {...apr} />
-        </ValueWrapper>
-        <ValueWrapper>
-          <Text>{t('Multiplier')}</Text>
-          <Multiplier {...multiplier} />
-        </ValueWrapper>
-        <ValueWrapper>
-          <Text>{t('Liquidity')}</Text>
-          <Liquidity {...liquidity} />
-        </ValueWrapper>
-      </ValueContainer>
+    <Container expanded={expanded} isMobile={isMobile}>
+      <DetailContainer>
+        <InfoContainer>
+          <Flex mb='5px'>
+            <Text bold>{farmLabel}</Text>
+            <TagsContainer>
+              {farm.isCommunity ? <CommunityTag /> : <CoreTag />}
+              {dual ? <DualTag /> : null}
+            </TagsContainer>
+          </Flex>
+          <ViewGroupWrapper>
+            <BorderFlex mr={isMobile ? '0' : '2px'}>
+              <StyledLinkExternal href={bsc}>{t('View Contract')}</StyledLinkExternal>
+            </BorderFlex>
+            <BorderFlex ml={isMobile ? '0' : '2px'}>
+              <StyledLinkExternal href={bsc}>{t('See Pair Info')}</StyledLinkExternal>
+            </BorderFlex>
+          </ViewGroupWrapper>
+        </InfoContainer>
+        <TokenLogoSection>
+          <TokenLogo {...farm} userDataReady={userDataReady} />
+        </TokenLogoSection>
+      </DetailContainer>
       <ActionContainer>
         <HarvestAction {...farm} userDataReady={userDataReady} />
         <StakedAction {...farm} userDataReady={userDataReady} />

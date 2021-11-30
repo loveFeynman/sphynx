@@ -1,13 +1,12 @@
 /* eslint-disable */
 import React from 'react'
 import styled from 'styled-components'
-import { Spinner } from '../../LotterySphx/components/Spinner'
+import Spinner from 'components/Loader/Spinner'
 import { useTranslation } from 'contexts/Localization'
+import useActiveWeb3React from '../../../hooks/useActiveWeb3React'
 import { formatPrice } from '../../../utils'
-import { ReactComponent as ClockIcon } from 'assets/svg/icon/ClockIcon.svg'
-import { ReactComponent as CalenderIcon } from 'assets/svg/icon/CalenderIcon.svg'
 
-const fontSize = window.screen.width > 768 ? "14px" : "10px"
+const fontSize = window.screen.width > 768 ? "14px" : "12px"
 
 const TableWrapper = styled.div`
   background: ${({ theme }) => theme.isDark ? "#0E0E26": "#2A2E60"};
@@ -28,12 +27,12 @@ const TableWrapper = styled.div`
     & thead {
       & td {
         color: white;
-        font-size: 16px;
+        font-size: 14px;
         text-align: left;
         vertical-align: middle;
-        background: ${({ theme }) => theme.isDark ? "#219653": "#77BF3E"};
+        background: transparent;
         padding: 16px 8px;
-        font-weight: 700;
+        font-weight: 600;
         & > div > div {
           font-size: 16px;
           font-weight: 500;
@@ -69,6 +68,9 @@ interface TransactionProps {
 
 const TransactionCard: React.FC<TransactionProps> = (props) => {
   const { t } = useTranslation()
+  const { chainId } = useActiveWeb3React()
+  const nativeSymbol = chainId === 56 ? "BNB" : "ETH"
+  const txLink = chainId === 56 ? "https://bscscan.com/tx/" : "https://etherscan.io/tx/"
   // eslint-disable-next-line no-console
   return (
     <>
@@ -88,13 +90,12 @@ const TransactionCard: React.FC<TransactionProps> = (props) => {
                 return (
                   <tr key={key}>
                     <td style={{ width: '30%' }}>
-                      <a href={'https://bscscan.com/tx/' + data.tx} target="_blank" rel="noreferrer">
-                        <h2 className={!data.isBuy ? 'success' : 'error'} style={{marginLeft: '8px', padding: '4px'}}><CalenderIcon />&nbsp;&nbsp;{data.transactionTime.slice(0, 15)}</h2>
-                        <h2 className={!data.isBuy ? 'success' : 'error'} style={{marginLeft: '8px', padding: '4px'}}><ClockIcon />&nbsp;&nbsp;{data.transactionTime.slice(16, 24)}</h2>
+                      <a href={txLink + data.tx} target="_blank" rel="noreferrer">
+                        <h2 className={!data.isBuy ? 'success' : 'error'}>{data.transactionTime}</h2>
                       </a>
                     </td>
                     <td style={{ width: '19%' }}>
-                      <a href={'https://bscscan.com/tx/' + data.tx} target="_blank" rel="noreferrer">
+                      <a href={txLink + data.tx} target="_blank" rel="noreferrer">
                         <h2 className={!data.isBuy ? 'success' : 'error'}>
                           {Number(data.amount)
                             .toFixed(4)
@@ -105,7 +106,7 @@ const TransactionCard: React.FC<TransactionProps> = (props) => {
                       </a>
                     </td>
                     <td style={{ width: '19%' }}>
-                      <a href={'https://bscscan.com/tx/' + data.tx} target="_blank" rel="noreferrer">
+                      <a href={txLink + data.tx} target="_blank" rel="noreferrer">
                         <h2 className={!data.isBuy ? 'success' : 'error'}>
                           $
                           {data.price < 1
@@ -117,13 +118,13 @@ const TransactionCard: React.FC<TransactionProps> = (props) => {
                       </a>
                     </td>
                     <td style={{ width: '32%' }}>
-                      <a href={'https://bscscan.com/tx/' + data.tx} target="_blank" rel="noreferrer">
+                      <a href={txLink + data.tx} target="_blank" rel="noreferrer">
                         <h2 className={!data.isBuy ? 'success' : 'error'}>
                           ${(data.price * data.amount).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$&,')}
                           <br/>
                           {Number(data.value)
                             .toFixed(4)
-                            .replace(/(\d)(?=(\d{3})+\.)/g, '$&,')} BNB
+                            .replace(/(\d)(?=(\d{3})+\.)/g, '$&,')} {data.quoteCurrency}
                         </h2>
                       </a>
                     </td>

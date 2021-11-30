@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Skeleton, Text, useTooltip, HelpIcon, Flex, Box, useModal, useMatchBreakpoints } from '@sphynxswap/uikit'
+import { Skeleton, Text, useTooltip, HelpIcon, Flex, Box, useModal, useMatchBreakpoints } from '@sphynxdex/uikit'
 import { Pool } from 'state/types'
 import BigNumber from 'bignumber.js'
 import { PoolCategory } from 'config/constants/types'
@@ -20,9 +20,8 @@ interface EarningsCellProps {
 }
 
 const StyledCell = styled(BaseCell)`
-  flex: 4.5;
+  flex: 1;
   ${({ theme }) => theme.mediaQueries.sm} {
-    flex: 1 0 120px;
   }
 `
 
@@ -97,7 +96,7 @@ const EarningsCell: React.FC<EarningsCellProps> = ({ pool, account, userDataLoad
   return (
     <StyledCell role="cell">
       <CellContent>
-        <Text fontSize="12px" color="textSubtle" textAlign="left">
+        <Text fontSize="12px" color="#A7A7CC" textAlign="left" mb='4px'>
           {labelText}
         </Text>
         {!userDataLoaded && account ? (
@@ -115,7 +114,7 @@ const EarningsCell: React.FC<EarningsCellProps> = ({ pool, account, userDataLoad
                   decimals={hasEarnings ? 5 : 1}
                   value={hasEarnings ? earningTokenBalance : 0}
                 />
-                {hasEarnings ? (
+                {/* {hasEarnings ? (
                   <>
                     {earningTokenPrice > 0 && (
                       <Balance
@@ -133,7 +132,7 @@ const EarningsCell: React.FC<EarningsCellProps> = ({ pool, account, userDataLoad
                   <Text mt="4px" fontSize="12px" color="textDisabled">
                     0 USD
                   </Text>
-                )}
+                )} */}
               </Box>
               {isAutoVault && hasEarnings && !isXs && !isSm && (
                 <HelpIconWrapper ref={targetRef}>

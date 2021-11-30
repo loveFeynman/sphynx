@@ -1,20 +1,16 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Box } from '@sphynxswap/uikit'
+import { Box } from '@sphynxdex/uikit'
 import Container from '../Layout/Container'
 
 const Outer = styled(Box)<{ background?: string }>`
-  background: rgba(0, 0, 0, 0.2);
+  background: transparent;
   border-radius: 8px;
-
-  ${({ theme }) => theme.mediaQueries.sm} {
-    padding-top: 16px;
-    padding-bottom: 16px;
-  }
-
-  ${({ theme }) => theme.mediaQueries.lg} {
-    padding-top: 24px;
-    padding-bottom: 24px;
+  width: 100%;
+  margin: 0px;
+  max-width: none;
+  > div {
+    max-width: none;
   }
 `
 

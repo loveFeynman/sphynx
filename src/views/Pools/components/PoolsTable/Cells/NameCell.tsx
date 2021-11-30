@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import BigNumber from 'bignumber.js'
-import { Text, useMatchBreakpoints } from '@sphynxswap/uikit'
+import { Text, useMatchBreakpoints } from '@sphynxdex/uikit'
 import { useTranslation } from 'contexts/Localization'
 import { useCakeVault } from 'state/pools/hooks'
 import { Pool } from 'state/types'
@@ -14,19 +14,18 @@ interface NameCellProps {
   pool: Pool
 }
 
-const StyledCell = styled(BaseCell)`
-  flex: 5;
-  flex-direction: row;
-  padding-left: 12px;
+const StyledCell = styled(BaseCell)<{ isMobile?: boolean }>`
+  align-items:  ${({ isMobile }) => isMobile? 'flex-start' : 'center'};
+  flex-direction: ${({ isMobile }) => isMobile? 'column' : 'row'};
+  flex: 2;
   ${({ theme }) => theme.mediaQueries.sm} {
-    flex: 1 0 150px;
-    padding-left: 32px;
   }
 `
 
 const NameCell: React.FC<NameCellProps> = ({ pool }) => {
   const { t } = useTranslation()
-  const { isXs, isSm } = useMatchBreakpoints()
+  const { isXs, isXl, isSm } = useMatchBreakpoints()
+  const isMobile = !isXl
   const { sousId, stakingToken, earningToken, userData, isFinished, isAutoVault } = pool
   const {
     userData: { userShares },
@@ -55,23 +54,23 @@ const NameCell: React.FC<NameCellProps> = ({ pool }) => {
   }
 
   return (
-    <StyledCell role="cell">
-      {isAutoVault ? (
-        <CakeVaultTokenPairImage mr="8px" width={40} height={40} />
-      ) : (
-        <TokenPairImage primaryToken={earningToken} secondaryToken={stakingToken} mr="8px" width={40} height={40} />
-      )}
+    <StyledCell role="cell" isMobile={isMobile}>
+        {isAutoVault ? (
+          <CakeVaultTokenPairImage mr="8px" width={isMobile? 50: 70} height={isMobile? 50: 70} />
+        ) : (
+          <TokenPairImage primaryToken={earningToken} secondaryToken={stakingToken} mr="8px" width={isMobile? 50: 70} height={isMobile? 50: 70} />
+        )}
       <CellContent>
         {showStakedTag && (
           <Text fontSize="12px" bold color={isFinished ? 'failure' : 'secondary'} textTransform="uppercase">
             {t('Staked')}
           </Text>
         )}
-        <Text bold={!isXs && !isSm} small={isXs || isSm}>
+        <Text bold={!isXs && !isSm} small={isXs || isSm} mb='5px'>
           {title}
         </Text>
         {showSubtitle && (
-          <Text fontSize="12px" color="textSubtle">
+          <Text fontSize={isMobile? "12px": "15px"} color="#777777">
             {subtitle}
           </Text>
         )}

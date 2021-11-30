@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Modal, Text, LinkExternal, Flex, Box } from '@sphynxswap/uikit'
+import { Modal, Text, LinkExternal, Flex, Box } from '@sphynxdex/uikit'
 import { useTranslation } from 'contexts/Localization'
 import { tokenEarnedPerThousandDollarsCompounding, getRoi } from 'utils/compoundApyHelpers'
 
@@ -59,7 +59,7 @@ const ApyCalculatorModal: React.FC<ApyCalculatorModalProps> = ({
   displayApr,
   linkLabel,
   linkHref,
-  earningTokenSymbol = 'CAKE',
+  earningTokenSymbol = 'SPHYNX',
   roundingDecimals = 2,
   compoundFrequency = 1,
   performanceFee = 0,
@@ -223,7 +223,7 @@ const ApyCalculatorModal: React.FC<ApyCalculatorModalProps> = ({
             {isFarm && (
               <li>
                 <Text fontSize="12px" textAlign="center" color="textSubtle" display="inline">
-                  {t('LP rewards: 0.17% trading fees, distributed proportionally among LP token holders.')}
+                  {t('LP rewards: 0.0575% trading fees, distributed proportionally among LP token holders.')}
                 </Text>
               </li>
             )}

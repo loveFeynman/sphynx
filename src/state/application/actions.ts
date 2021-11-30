@@ -1,5 +1,5 @@
 import { createAction } from '@reduxjs/toolkit'
-import { RouterType } from '@sphynxswap/sdk'
+import { RouterType } from '@sphynxdex/sdk-multichain'
 
 export const updateBlockNumber = createAction<{ chainId: number; blockNumber: number }>('application/updateBlockNumber')
 

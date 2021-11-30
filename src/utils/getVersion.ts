@@ -1,5 +1,5 @@
 import Web3 from 'web3'
-import { RouterType, SPHYNX_FACTORY_ADDRESS } from '@sphynxswap/sdk'
+import { RouterType, SPHYNX_FACTORY_ADDRESS } from '@sphynxdex/sdk-multichain'
 import { AbiItem } from 'web3-utils'
 import { web3Provider } from './providers'
 import factoryAbi from '../config/abi/factoryAbi.json'

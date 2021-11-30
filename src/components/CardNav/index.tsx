@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { Link } from 'react-router-dom'
-import { ButtonMenu, ButtonMenuItem } from '@sphynxswap/uikit'
+import { ButtonMenu, ButtonMenuItem } from '@sphynxdex/uikit'
 import { useTranslation } from 'contexts/Localization'
 
 const StyledNav = styled.div`

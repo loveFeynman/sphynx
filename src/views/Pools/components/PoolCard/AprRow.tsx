@@ -1,5 +1,5 @@
 import React from 'react'
-import { Flex, TooltipText, IconButton, useModal, CalculateIcon, Skeleton, useTooltip } from '@sphynxswap/uikit'
+import { Flex, TooltipText, IconButton, useModal, CalculateIcon, Skeleton, useTooltip } from '@sphynxdex/uikit'
 import { useTranslation } from 'contexts/Localization'
 import Balance from 'components/Balance'
 import ApyCalculatorModal from 'components/ApyCalculatorModal'
@@ -39,15 +39,16 @@ const AprRow: React.FC<AprRowProps> = ({ pool, performanceFee = 0 }) => {
   )
 
   return (
-    <Flex alignItems="center" justifyContent="space-between">
+    <Flex alignItems="center" justifyContent="space-between" style={{borderBottom: '1px solid #21214A', paddingBottom: '10px'}}>
       {tooltipVisible && tooltip}
-      <TooltipText ref={targetRef}>{isAutoVault ? `${t('APY')}:` : `${t('APR')}:`}</TooltipText>
+      <TooltipText fontSize="14px" color='#A7A7CC' ref={targetRef}>{isAutoVault ? `${t('APY')}:` : `${t('APR')}:`}</TooltipText>
       {isFinished || !apr ? (
         <Skeleton width="82px" height="32px" />
       ) : (
         <Flex alignItems="center">
           <Balance
-            fontSize="16px"
+            color='#F2C94C'
+            fontSize="14px"
             isDisabled={isFinished}
             value={earningsPercentageToDisplay}
             decimals={2}

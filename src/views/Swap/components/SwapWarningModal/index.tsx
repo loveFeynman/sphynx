@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import styled from 'styled-components'
-import { ModalBody, ModalContainer, Message, ModalHeader, Box, Heading } from '@sphynxswap/uikit'
+import { ModalBody, ModalContainer, Message, ModalHeader, Box, Heading } from '@sphynxdex/uikit'
 import useTheme from 'hooks/useTheme'
 import { getAddress } from 'utils/addressHelpers'
 import { useTranslation } from 'contexts/Localization'

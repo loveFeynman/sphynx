@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Tag, Flex, Heading } from '@sphynxswap/uikit'
+import { Flex, Heading } from '@sphynxdex/uikit'
 import { CommunityTag, CoreTag } from 'components/Tags'
 import { Token } from 'config/constants/types'
 import { TokenPairImage } from 'components/TokenImage'
@@ -19,24 +19,38 @@ const Wrapper = styled(Flex)`
   }
 `
 
-const MultiplierTag = styled(Tag)`
-  margin-left: 4px;
+const TagsContainer = styled.div`
+  display: flex;
+  align-items: center;
+  
+  > div {
+    border: 0px;
+    height: 24px;
+    padding: 0 6px;
+    font-size: 12px;
+    margin-right: 4px;
+    color: #F9B043;
+    svg {
+      width: 14px;
+    }
+  }
 `
 
-const CardHeading: React.FC<ExpandableSectionProps> = ({ lpLabel, multiplier, isCommunityFarm, token, quoteToken }) => {
+const CardHeading: React.FC<ExpandableSectionProps> = ({ lpLabel, isCommunityFarm, token, quoteToken }) => {
   return (
     <Wrapper justifyContent="space-between" alignItems="center" mb="12px">
-      <TokenPairImage variant="inverted" primaryToken={token} secondaryToken={quoteToken} width={64} height={64} />
-      <Flex flexDirection="column" alignItems="flex-end">
-        <Heading mb="4px" style={{ color: '#F3841E' }}>
-          {lpLabel.split(' ')[0]}
-        </Heading>
-        <Flex justifyContent="center">
-          {isCommunityFarm ? <CommunityTag /> : <CoreTag />}
-          <MultiplierTag variant="secondary">{multiplier}</MultiplierTag>
+      <Flex flexDirection="column" alignItems="center" justifyContent="center" width='100%'>
+        <TokenPairImage variant="inverted" primaryToken={token} secondaryToken={quoteToken} width={64} height={64} />
+        <Flex mb="10px" flexDirection="row" alignItems="flex-end">
+          <Heading style={{ color: 'white' }}>
+            {lpLabel.split(' ')[0]}
+          </Heading>
+          <TagsContainer>
+            {isCommunityFarm ? <CommunityTag /> : <CoreTag />}
+          </TagsContainer>
         </Flex>
       </Flex>
-    </Wrapper>
+    </Wrapper >
   )
 }
 

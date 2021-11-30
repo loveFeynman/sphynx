@@ -2,9 +2,7 @@ import React, { useEffect, useState, useRef, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { utils } from 'ethers'
 import styled from 'styled-components'
-import Column from 'components/Column'
 import { isAddress } from 'utils'
-import { useTranslation } from 'contexts/Localization'
 import { marketCap } from 'state/input/actions'
 import { ReactComponent as PriceIcon } from 'assets/svg/icon/PriceIcon.svg'
 import { ReactComponent as ChangeIcon } from 'assets/svg/icon/ChangeIcon.svg'
@@ -13,8 +11,48 @@ import { ReactComponent as LiquidityIcon } from 'assets/svg/icon/LiquidityIcon.s
 import DefaultImg from 'assets/images/MainLogo.png'
 import storages from 'config/constants/storages'
 import { getChartStats } from 'utils/apiServices'
+import useActiveWeb3React from '../../../hooks/useActiveWeb3React'
 import { AppState } from '../../../state'
 import TokenStateCard from './TokenStateCard'
+
+const ContainerExtra = styled.div`
+  display: flex;
+  width: 100%;
+  margin-bottom: 24px;
+  gap: 12px;
+  flex-wrap: nowrap;
+  & > div:first-child {
+    width: unset;
+  }
+  & > div:nth-child(2) {
+    width: unset;
+    div {
+      white-space: nowrap;
+      width: 90%;
+    }
+  }
+  & > div:nth-child(3) {
+    width: unset;
+    div {
+      white-space: nowrap;
+      width: 90%;
+    }
+  }
+  & > div:nth-child(4) {
+    width: unset;
+    div {
+      white-space: nowrap;
+      width: 90%;
+    }
+  }
+  & > div:nth-child(5) {
+    width: unset;
+    div {
+      white-space: nowrap;
+      width: 90%;
+    }
+  }
+`
 
 const Container = styled.div`
   display: flex;
@@ -25,66 +63,46 @@ const Container = styled.div`
   &>div:first-child {
     width: 100%;
   }
-  div:nth-child(2) {
+  &>div:nth-child(2) {
     width: 47%;
     div {
       white-space: nowrap;
       width: 90%;
     }
   }
-  div:nth-child(3) {
+  &>div:nth-child(3) {
     width: 47%;
     div {
       white-space: nowrap;
       width: 90%;
     }
   }
-  div:nth-child(4) {
+  &>div:nth-child(4) {
     width: 13%;
     div {
       white-space: nowrap;
       width: 90%;
     }
   }
-  div:nth-child(5) {
+  &>div:nth-child(5) {
     width: 13%;
     div {
       white-space: nowrap;
       width: 90%;
     }
   }
-
-  ${({ theme }) => theme.mediaQueries.lg} {
-    flex-wrap: nowrap;
-    div:first-child {
-      width: unset;
-    }
-    div:nth-child(2) {
-      width: unset;
-    }
-    div:nth-child(3) {
-      width: unset;
-    }
-    div:nth-child(4) {
-      width: unset;
-    }
-    div:nth-child(5) {
-      width: unset;
-    }
-  }
-}
-`
+}`
 
 export default function CoinStatsBoard(props) {
   const dispatch = useDispatch()
   const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
+  const { chainId } = useActiveWeb3React()
   const routerVersion = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.routerVersion)
   const marketCapacity = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.marketCapacity)
   const result = isAddress(input)
   const interval = useRef(null)
   const tokenAddress = useRef(null)
   tokenAddress.current = input
-  const { t } = useTranslation()
 
   const [alldata, setalldata] = useState({
     address: '',
@@ -99,37 +117,37 @@ export default function CoinStatsBoard(props) {
   const [price, setPrice] = useState<any>(null)
   const [scale, setScale] = useState(2)
 
-  const [linkIcon, setLinkIcon] = useState(
-    DefaultImg,
-  )
+  const [linkIcon, setLinkIcon] = useState(DefaultImg)
   const changedecimal: any = parseFloat(alldata.change).toFixed(3)
   const volumedecimal = parseFloat(alldata.volume).toFixed(3)
   const liquidityV2decimal = parseFloat(alldata.liquidityV2).toFixed(3)
   const liquidityV2BNBdecimal = parseFloat(alldata.liquidityV2BNB).toFixed(3)
+  const isExtra = document.body.clientWidth > 1500
+
+  const RealContainer = isExtra ? ContainerExtra : Container
 
   const getTableData = useCallback(async () => {
     try {
       if (result) {
-        const chartStats: any = await getChartStats(input, routerVersion)
+        const chartStats: any = await getChartStats(input, routerVersion, chainId)
         setalldata(chartStats)
         setPrice(chartStats.price)
         setLinkIcon(
-          `https://r.poocoin.app/smartchain/assets/${
-            input ? utils.getAddress(input) : '0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82'
+          `https://r.poocoin.app/smartchain/assets/${input ? utils.getAddress(input) : '0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82'
           }/logo.png`,
         )
       }
     } catch (err) {
       setTimeout(() => getTableData(), 3000)
     }
-  }, [input, result, routerVersion])
+  }, [input, result, routerVersion, chainId])
 
   useEffect(() => {
     const ac = new AbortController()
     getTableData()
     interval.current = setInterval(() => {
       const sessionData = JSON.parse(sessionStorage.getItem(storages.SESSION_LIVE_PRICE))
-      if (sessionData === null) return
+      if (!sessionData) return
       if (sessionData.input.toLowerCase() !== tokenAddress.current.toLowerCase()) return
       setPrice(sessionData.price)
     }, 2000)
@@ -142,7 +160,7 @@ export default function CoinStatsBoard(props) {
   useEffect(() => {
     if (tokenData) dispatch(marketCap({ marketCapacity: Number(parseInt(tokenData.totalSupply) * parseFloat(price)) }))
     const realPrice = parseFloat(price)
-    if(realPrice > 1) {
+    if (realPrice > 1) {
       setScale(2)
     } else {
       const lg10 = Math.round(Math.abs(Math.log10(realPrice)))
@@ -152,12 +170,50 @@ export default function CoinStatsBoard(props) {
   }, [tokenData, price])
 
   return (
-    <Container>
-      <TokenStateCard tokenImg={linkIcon} cardTitle={tokenData?.symbol?? ''} cardValue={`$ ${marketCapacity.toLocaleString()}`} variantFill flexGrow={2} fillColor='#F75183'/>
-      <TokenStateCard CardIcon={PriceIcon} cardTitle='Price' cardValue={price? `$ ${Number(price).toFixed(scale).toLocaleString()}` : ''} variantFill={false} flexGrow={1} fillColor='#9B51E0' />
-      <TokenStateCard CardIcon={ChangeIcon} cardTitle='24h Change' cardValue={changedecimal? `${changedecimal}%`:''} valueActive variantFill={false} flexGrow={1} fillColor='#77BF3E' />
-      <TokenStateCard CardIcon={VolumeIcon} cardTitle='24h Volume' cardValue={volumedecimal? `$ ${Number(volumedecimal).toLocaleString()}` : ''} variantFill={false} flexGrow={1.5} fillColor='#21C2CC' />
-      <TokenStateCard CardIcon={LiquidityIcon} cardTitle='Liquidity' cardValue={`${Number(liquidityV2BNBdecimal).toLocaleString()} BNB`} fillColor='#2F80ED' subPriceValue={liquidityV2decimal? `($ ${Number(liquidityV2decimal).toLocaleString()})` : ''} variantFill={false} flexGrow={1.5} />
-    </Container>
+    <RealContainer>
+      <TokenStateCard
+        tokenImg={linkIcon}
+        cardTitle={tokenData?.symbol ?? ''}
+        cardValue={`$ ${marketCapacity.toLocaleString()}`}
+        variantFill
+        flexGrow={2}
+        fillColor="#F75183"
+        tokenAddress={tokenAddress.current}
+      />
+      <TokenStateCard
+        CardIcon={PriceIcon}
+        cardTitle="Price"
+        cardValue={price ? `$ ${Number(price).toFixed(scale).toLocaleString()}` : ''}
+        variantFill={false}
+        flexGrow={1}
+        fillColor="#9B51E0"
+      />
+      <TokenStateCard
+        CardIcon={ChangeIcon}
+        cardTitle="24h Change"
+        cardValue={changedecimal ? `${changedecimal}%` : ''}
+        valueActive
+        variantFill={false}
+        flexGrow={1}
+        fillColor="#77BF3E"
+      />
+      <TokenStateCard
+        CardIcon={VolumeIcon}
+        cardTitle="24h Volume"
+        cardValue={volumedecimal ? `$ ${Number(volumedecimal).toLocaleString()}` : ''}
+        variantFill={false}
+        flexGrow={1.5}
+        fillColor="#21C2CC"
+      />
+      <TokenStateCard
+        CardIcon={LiquidityIcon}
+        cardTitle="Liquidity"
+        cardValue={`${Number(liquidityV2BNBdecimal).toLocaleString()} BNB`}
+        fillColor="#2F80ED"
+        subPriceValue={liquidityV2decimal ? `($ ${Number(liquidityV2decimal).toLocaleString()})` : ''}
+        variantFill={false}
+        flexGrow={1.5}
+      />
+    </RealContainer>
   )
 }

@@ -1,4 +1,4 @@
-import { Currency, currencyEquals, ETHER, WETH } from '@sphynxswap/sdk'
+import { Currency, currencyEquals, ETHER, WETH } from '@sphynxdex/sdk-multichain'
 import { useMemo } from 'react'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import { tryParseAmount } from '../state/swap/hooks'
@@ -27,16 +27,18 @@ export default function useWrapCallback(
   const { chainId, account } = useActiveWeb3React()
   const wethContract = useWETHContract()
   const balance = useCurrencyBalance(account ?? undefined, inputCurrency)
+
   // we can always parse the amount typed as the input currency, since wrapping is 1:1
   const inputAmount = useMemo(() => tryParseAmount(typedValue, inputCurrency), [inputCurrency, typedValue])
   const addTransaction = useTransactionAdder()
+  const nativeCurrency = ETHER[chainId]
 
   return useMemo(() => {
     if (!wethContract || !chainId || !inputCurrency || !outputCurrency) return NOT_APPLICABLE
 
     const sufficientBalance = inputAmount && balance && !balance.lessThan(inputAmount)
 
-    if (inputCurrency === ETHER && currencyEquals(WETH[chainId], outputCurrency)) {
+    if (inputCurrency === nativeCurrency && currencyEquals(WETH[chainId], outputCurrency)) {
       return {
         wrapType: WrapType.WRAP,
         execute:
@@ -53,7 +55,7 @@ export default function useWrapCallback(
         inputError: sufficientBalance ? undefined : 'Insufficient BNB balance',
       }
     }
-    if (currencyEquals(WETH[chainId], inputCurrency) && outputCurrency === ETHER) {
+    if (currencyEquals(WETH[chainId], inputCurrency) && outputCurrency === nativeCurrency) {
       return {
         wrapType: WrapType.UNWRAP,
         execute:
@@ -70,6 +72,7 @@ export default function useWrapCallback(
         inputError: sufficientBalance ? undefined : 'Insufficient WBNB balance',
       }
     }
+
     return NOT_APPLICABLE
-  }, [wethContract, chainId, inputCurrency, outputCurrency, inputAmount, balance, addTransaction])
+  }, [wethContract, chainId, inputCurrency, outputCurrency, inputAmount, balance, addTransaction, nativeCurrency])
 }

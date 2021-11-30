@@ -10,14 +10,25 @@ import {
   ButtonMenuItem,
   HelpIcon,
   useTooltip,
-} from '@sphynxswap/uikit'
+} from '@sphynxdex/uikit'
+import styled from 'styled-components'
 import { useTranslation } from 'contexts/Localization'
 import useTheme from 'hooks/useTheme'
 import useToast from 'hooks/useToast'
 import { Token } from 'config/constants/types'
+import { DarkButtonStyle, ColorButtonStyle } from 'style/buttonStyle'
 import { formatNumber } from 'utils/formatBalance'
 import useHarvestPool from '../../../hooks/useHarvestPool'
 import useStakePool from '../../../hooks/useStakePool'
+
+const CustomModal = styled(Modal)`
+  border-radius: 20px;
+  background: #1A1A3A;
+`
+
+const TooltipText = styled(Text)`
+  color: 'white';
+`
 
 interface CollectModalProps {
   formattedBalance: string
@@ -49,8 +60,8 @@ const CollectModal: React.FC<CollectModalProps> = ({
   const [shouldCompound, setShouldCompound] = useState(isCompoundPool)
   const { targetRef, tooltip, tooltipVisible } = useTooltip(
     <>
-      <Text mb="12px">{t('Compound: collect and restake CAKE into pool.')}</Text>
-      <Text>{t('Harvest: collect CAKE and send to wallet')}</Text>
+      <TooltipText mb="12px">{t('Compound: collect and restake Sphynx into pool.')}</TooltipText>
+      <TooltipText>{t('Harvest: collect Sphynx and send to wallet')}</TooltipText>
     </>,
     { placement: 'bottom-end', tooltipOffset: [20, 10] },
   )
@@ -91,10 +102,10 @@ const CollectModal: React.FC<CollectModalProps> = ({
   }
 
   return (
-    <Modal
+    <CustomModal
       title={`${earningToken.symbol} ${isCompoundPool ? t('Collect') : t('Harvest')}`}
       onDismiss={onDismiss}
-      headerBackground={theme.colors.gradients.cardHeader}
+      headerBackground='#0E0E26'
     >
       {isCompoundPool && (
         <Flex justifyContent="center" alignItems="center" mb="24px">
@@ -115,29 +126,31 @@ const CollectModal: React.FC<CollectModalProps> = ({
       )}
 
       <Flex justifyContent="space-between" alignItems="center" mb="24px">
-        <Text>{shouldCompound ? t('Compounding') : t('Harvesting')}:</Text>
+        <Text color='#A7A7CC' fontSize='14px' mr='5px'>{shouldCompound ? t('Compounding') : t('Harvesting')}:</Text>
         <Flex flexDirection="column">
-          <Heading>
+          <Text fontSize='16px'>
             {formattedBalance} {earningToken.symbol}
-          </Heading>
+          </Text>
           {earningsDollarValue > 0 && (
             <Text fontSize="12px" color="textSubtle">{`~${formatNumber(earningsDollarValue)} USD`}</Text>
           )}
         </Flex>
       </Flex>
-
-      <Button
-        mt="8px"
-        onClick={handleHarvestConfirm}
-        isLoading={pendingTx}
-        endIcon={pendingTx ? <AutoRenewIcon spin color="currentColor" /> : null}
-      >
-        {pendingTx ? t('Confirming') : t('Confirm')}
-      </Button>
-      <Button variant="text" onClick={onDismiss} pb="0px">
-        {t('Close Window')}
-      </Button>
-    </Modal>
+      <Flex alignItems='center' flexDirection='column'>
+        <Button
+          mt="8px" mb="8px"
+          onClick={handleHarvestConfirm}
+          isLoading={pendingTx}
+          style={ColorButtonStyle}
+          endIcon={pendingTx ? <AutoRenewIcon spin color="currentColor" /> : null}
+        >
+          {pendingTx ? t('Confirming') : t('Confirm')}
+        </Button>
+        <Button variant="text" onClick={onDismiss} mt="8px" mb="8px" style={DarkButtonStyle}>
+          {t('Close Window')}
+        </Button>
+      </Flex>
+    </CustomModal>
   )
 }
 

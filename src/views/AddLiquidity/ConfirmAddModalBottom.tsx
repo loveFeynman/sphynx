@@ -1,6 +1,6 @@
-import { Currency, CurrencyAmount, Fraction, Percent } from '@sphynxswap/sdk'
+import { Currency, CurrencyAmount, Fraction, Percent } from '@sphynxdex/sdk-multichain'
 import React from 'react'
-import { Button, Text } from '@sphynxswap/uikit'
+import { Button, Text } from '@sphynxdex/uikit'
 import { useTranslation } from 'contexts/Localization'
 import { RowBetween, RowFixed } from '../../components/Layout/Row'
 import { CurrencyLogo } from '../../components/Logo'

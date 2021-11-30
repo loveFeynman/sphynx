@@ -9,11 +9,10 @@ import {
   UserRejectedRequestError as UserRejectedRequestErrorWalletConnect,
   WalletConnectConnector,
 } from '@web3-react/walletconnect-connector'
-import { ConnectorNames, connectorLocalStorageKey } from '@sphynxswap/uikit'
+import { ConnectorNames, connectorLocalStorageKey } from '@sphynxdex/uikit'
 import { connectorsByName } from 'utils/web3React'
 import { setupNetwork } from 'utils/wallet'
 import useToast from 'hooks/useToast'
-import { profileClear } from 'state/profile'
 import { useAppDispatch } from 'state'
 import { useTranslation } from 'contexts/Localization'
 
@@ -60,14 +59,13 @@ const useAuth = () => {
 
   const logout = useCallback(() => {
     window.localStorage.removeItem(connectorLocalStorageKey)
-    dispatch(profileClear())
     deactivate()
     // This localStorage key is set by @web3-react/walletconnect-connector
     if (window.localStorage.getItem('walletconnect')) {
       connectorsByName.walletconnect.disconnect()
       connectorsByName.walletconnect.walletConnectProvider = null
     }
-  }, [deactivate, dispatch])
+  }, [deactivate])
 
   return { login, logout }
 }
