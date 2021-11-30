@@ -1,4 +1,4 @@
-import { Currency, CurrencyAmount, ETHER, JSBI, Pair, Percent, Price, TokenAmount } from '@sphynxswap/sdk'
+import { Currency, CurrencyAmount, ETHER, JSBI, Pair, Percent, Price, TokenAmount } from '@sphynxdex/sdk-multichain'
 import { useCallback, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
@@ -104,7 +104,7 @@ export function useDerivedBridgeInfo(
           dependentField === Field.BRIDGE_TOKENOTH
             ? pair.priceOf(tokenA).quote(wrappedIndependentAmount)
             : pair.priceOf(tokenB).quote(wrappedIndependentAmount)
-        return dependentCurrency === ETHER ? CurrencyAmount.ether(dependentTokenAmount.raw) : dependentTokenAmount
+        return dependentCurrency === ETHER[chainId] ? CurrencyAmount.ether(dependentTokenAmount.raw) : dependentTokenAmount
       }
       return undefined
     }

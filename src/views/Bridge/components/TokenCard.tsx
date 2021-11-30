@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react'
 import styled from 'styled-components'
 import { useTranslation } from 'contexts/Localization'
-import { Text, Box, Flex } from '@sphynxswap/uikit'
+import { Text, Box, Flex } from '@sphynxdex/uikit'
 import { useWeb3React } from '@web3-react/core'
 import BSCIcon from 'assets/svg/icon/BSCTokenIcon.svg'
 import ETHIcon from 'assets/svg/icon/ETHTokenIcon.svg'
