@@ -1,22 +1,19 @@
 import React, { useState, useRef, useEffect } from 'react'
 import styled, { css } from 'styled-components'
-import { ArrowDropDownIcon, Text } from '@sphynxdex/uikit'
+import { Flex, Text } from '@sphynxdex/uikit'
+import { ReactComponent as  ArrowDropDownIcon} from 'assets/svg/icon/DropDownIconSmall.svg'
 
 const DropDownHeader = styled.div`
-  margin-top: 20px;
   width: 100%;
   height: 32px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0px 16px;
-  box-shadow: ${({ theme }) => theme.shadows.inset};
-  border: 1px solid ${({ theme }) => theme.colors.inputSecondary};
-  background: rgba(0, 0, 0, 0.4);
+  padding: 0px 8px;
 `
 
 const DropDownListContainer = styled.div`
-  min-width: 110px;
+  min-width: 73px;
   height: 0;
   position: absolute;
   overflow: hidden;
@@ -26,10 +23,10 @@ const DropDownListContainer = styled.div`
   transform: scaleY(0);
   transform-origin: top;
   opacity: 0;
-  width: 100%;
+  width: 73px;
 
   ${({ theme }) => theme.mediaQueries.sm} {
-    min-width: 110px;
+    min-width: 73px;
   }
 `
 
@@ -41,9 +38,10 @@ const DropDownContainer = styled.div<{ isOpen: boolean; width: number; height: n
   height: 32px;
   min-width: 110px;
   user-select: none;
-
+  border: 1px solid #2E2E55;
+  border-radius:5px;
   ${({ theme }) => theme.mediaQueries.sm} {
-    min-width: 110px;
+    min-width: 73px;
   }
 
   ${(props) =>
@@ -81,15 +79,17 @@ const DropDownList = styled.ul`
 
 const ListItem = styled.li`
   list-style: none;
-  padding: 8px 16px;
+  padding: 8px 8px;
   &:hover {
-    background: rgba(0, 0, 0, 0.4);
+    background: rgba(160, 160, 255, 0.8);
   }
 `
 
 export interface SelectProps {
   options: OptionProps[]
   onChange?: (option: OptionProps) => void
+  network: string
+  chainId: number
 }
 
 export interface OptionProps {
@@ -97,19 +97,32 @@ export interface OptionProps {
   value: any
 }
 
-const Select: React.FunctionComponent<SelectProps> = ({ options, onChange }) => {
+const Select: React.FunctionComponent<SelectProps> = ({ options, onChange, network, chainId }) => {
   const containerRef = useRef(null)
   const dropdownRef = useRef(null)
   const [isOpen, setIsOpen] = useState(false)
   const [selectedOptionIndex, setSelectedOptionIndex] = useState(0)
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 })
 
+  React.useEffect(()=>{
+    if (network === 'bsc') {
+      setSelectedOptionIndex(0);
+    } else {
+      setSelectedOptionIndex(1);
+    }
+  }, [network])
   const toggling = (event: React.MouseEvent<HTMLDivElement>) => {
     setIsOpen(!isOpen)
     event.stopPropagation()
   }
 
   const onOptionClicked = (selectedIndex: number) => () => {
+    if (chainId === 56 && options[selectedIndex].value === 'bsc') {
+      return
+    }
+    if (chainId === 1 && options[selectedIndex].value === 'eth') {
+      return
+    }
     setSelectedOptionIndex(selectedIndex)
     setIsOpen(false)
 
@@ -136,18 +149,22 @@ const Select: React.FunctionComponent<SelectProps> = ({ options, onChange }) => 
 
   return (
     <DropDownContainer isOpen={isOpen} ref={containerRef} {...containerSize}>
-      {containerSize.width !== 0 && (
-        <DropDownHeader onClick={toggling}>
-          <Text>{options[selectedOptionIndex].label}</Text>
-        </DropDownHeader>
-      )}
-      <ArrowDropDownIcon color="text" onClick={toggling} />
+      <Flex>
+        {containerSize.width !== 0 && (
+          <DropDownHeader onClick={toggling}>
+            <Text fontSize="13px" fontWeight="600">{options[selectedOptionIndex].label}</Text>
+          </DropDownHeader>
+        )}
+        <Flex onClick={toggling}>
+          <ArrowDropDownIcon />
+        </Flex>
+      </Flex>
       <DropDownListContainer>
         <DropDownList ref={dropdownRef}>
           {options.map((option, index) =>
             index !== selectedOptionIndex ? (
               <ListItem onClick={onOptionClicked(index)} key={option.label}>
-                <Text>{option.label}</Text>
+                <Text fontSize="13px" fontWeight="600">{option.label}</Text>
               </ListItem>
             ) : null,
           )}

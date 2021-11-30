@@ -1,34 +1,59 @@
 import React, { useCallback, useState } from 'react'
-import styled from 'styled-components'
-import { Button } from '@sphynxdex/uikit'
-import { Currency, TokenAmount } from '@sphynxdex/sdk-multichain'
-import { ReactComponent as ArrowRightIcon } from 'assets/svg/icon/ArrowRight.svg'
-import { Field } from '../../../state/mint/actions'
+import styled, { css } from 'styled-components'
+import { ethers } from 'ethers'
+import { useSelector, useDispatch } from 'react-redux'
+import { useWeb3React } from '@web3-react/core'
+import { Button, useWalletModal, Flex, Text } from '@sphynxdex/uikit'
+import { Currency, TokenAmount, ChainId } from '@sphynxdex/sdk-multichain'
+import { ReactComponent as ArrowRightIcon } from 'assets/svg/icon/ArrowRightBridge.svg'
+import Web3 from 'web3'
+import getRpcUrl from 'utils/getRpcUrl'
+import useAuth from 'hooks/useAuth'
+import { AutoRow } from 'components/Layout/Row'
+import { setConnectedNetworkID } from 'state/input/actions'
+import { switchNetwork } from 'utils/wallet'
+import { AppState } from 'state'
+import useActiveWeb3React from 'hooks/useActiveWeb3React'
+import MainLogo from 'assets/svg/icon/logo_new.svg'
+import BridgeOtherToken from 'assets/svg/icon/BridgeOtherToken.svg'
 
-import CurrencyInputPanel from '../../../components/CurrencyInputPanel'
 import { useCurrency } from '../../../hooks/Tokens'
-import { useDerivedMintInfo, useMintActionHandlers, useMintState } from '../../../state/mint/hooks'
-import { useLiquidityPairA, useLiquidityPairB } from '../../../state/application/hooks'
+import { useBridgeActionHandlers, useBridgeState, useDerivedBridgeInfo } from '../../../state/bridge/hooks'
 import { maxAmountSpend } from '../../../utils/maxAmountSpend'
 import { currencyId } from '../../../utils/currencyId'
-
+import { Field } from '../../../state/bridge/actions'
 import Tokencard from './TokenCard'
+import CurrencyInputPanel from '../../../components/CurrencyInputPanel'
+
+
+import {
+  onUseRegister,
+  onUseBSCApprove,
+  onUseEthApprove,
+  onUseSwapBSC2ETH,
+  onUseSwapETH2BSC,
+  onUseSwapFee,
+  onUseBscSwapFee,
+} from '../../../hooks/useBridge'
+
 
 const Container = styled.div`
   color: white;
   background: rgba(0, 0, 0, 0.4);
-  width: 340px;
-  height: 624px;
+  width: 372px;
+  height: fit-content;
   margin: 0px 60px 20px;
   border-radius: 16px;
+  padding: 0px 20px;
 `
 const CardHeader = styled.div`
   text-align: center;
   font-style: normal;
-  font-weight: bold;
-  font-size: 16px;
+  font-weight: 600;
+  font-size: 20px;
   line-height: 19px;
-  margin: 20px;
+  
+  margin: 8px;
 `
 const Grid = styled.div`
   display: grid;
@@ -36,89 +61,155 @@ const Grid = styled.div`
   margin-bottom: 12px;
 `
 const AmountContainer = styled.div`
-  margin: 24px 16px 24px 24px;
+  margin-top: 12px;
+  padding-right: 10px;
   position: relative;
-  height: 120px;
-`
-const Label = styled.div`
-  display: flex;
-  position: absolute;
-  left: 20px;
-  top: 20px;
-  font-style: normal;
-  font-weight: 600;
-  font-size: 16px;
-  line-height: 19px;
+  height: 84px;
+  border-bottom: 1px solid ${({ theme }) => theme.isDark ? "#21214A" : "#4A5187"};
 `
 const BottomLabel = styled.div`
   position: absolute;
-  left: 16px;
-  bottom: 20px;
+  bottom: 7px;
   font-style: normal;
   font-weight: 600;
-  font-size: 16px;
+  font-size: 14px;
   line-height: 19px;
-`
-const CurrencyContainer = styled.div`
-  position: absolute;
-  top: 40px;
-  left: 12px;
-  width: 90%;
+  color: #A7A7CC;
 `
 
 const MinMaxContainger = styled.div<{ isMin: boolean }>`
   display: flex;
   justify-content: space-between;
-  margin: ${(props) => (props.isMin ? '8px 16px 16px 24px' : '24px 16px 8px 24px')};
+  padding: 15px 0;
   font-style: normal;
   font-weight: 600;
-  font-size: 16px;
+  font-size: 14px;
   line-height: 19px;
+  color: #A7A7CC;
+  border-bottom: 1px solid ${({ theme }) => theme.isDark ? "#21214A" : "#4A5187"};
 `
 
 const ErrorArea = styled.div`
-  margin: 16px 14px 11px 26px;
   font-weight: 400;
   font-style: normal;
   font-weight: 500;
   font-size: 14px;
   line-height: 16px;
-  color: #ea3943;
+  color: #A7A7CC;
   text-align: -webkit-center;
 `
 
-const ConnectWalletButton = styled.div`
-  text-align: -webkit-center;
+const ArrowWrapper = styled.div<{ clickable: boolean }>`
+  border-radius: 12px;
+  padding: 2px;
+  ${({ clickable }) =>
+    clickable
+      ? css`
+          :hover {
+            cursor: pointer;
+            opacity: 0.8;
+            padding: 3px;
+
+          }
+        `
+      : null}
 `
-export default function BridgeCard({ label, isSpynx = false }) {
-  const { liquidityPairA } = useLiquidityPairA()
-  const { liquidityPairB } = useLiquidityPairB()
 
-  const [currencyA1, setCurrencyA1] = useState(liquidityPairA || 'ETH')
-  const [currencyB1, setCurrencyB1] = useState(liquidityPairB || 'ETH')
+const Divider = styled.div`
+  background-color: #21214A;
+  height: 1px;
+  margin: 24px 0px 10px;
+  width: 100%;
+`
 
-  const currencyA = useCurrency(currencyA1)
-  const currencyB = useCurrency(currencyB1)
+export default function BridgeCard({ label, isSphynx = false }) {
 
-  const { independentField, typedValue, otherTypedValue } = useMintState()
+  const { account, library } = useActiveWeb3React()
+  const signer = library.getSigner();
+  const dispatch = useDispatch()
+
+  const { login, logout } = useAuth();
+  const [currencyA1, setCurrencyA1] = useState('USDT')
+  const { independentField, typedValue } = useBridgeState();
+  const { onPresentConnectModal } = useWalletModal(login, logout)
+
+  const [networkFromName, setNetworkFromName] = React.useState('bsc');
+  const [networkToName, setNetworkToName] = React.useState('eth');
+  const [chainId, setChainId] = React.useState(56);
+  const [minAmount, setMinAmount] = React.useState(10000);
+  const [maxAmount, setMaxAmount] = React.useState(1000000);
+  const web3 = new Web3(Web3.givenProvider || 'ws://some.local-or-remote.node:8546');
+
+  React.useEffect(() => {
+    web3.eth.getChainId().then((response) => setChainId(response));
+  }, [web3.eth])
+
+  const isNetworkError = React.useMemo(() =>
+    !((networkFromName === 'bsc' && chainId === ChainId.MAINNET) ||
+      (networkFromName === 'eth' && chainId === 1))
+    , [networkFromName, chainId])
+
+  const handleFromChange = useCallback((value) => {
+    setNetworkFromName(value.value);
+  }, []);
+
+  const handleToChange = useCallback((value) => {
+    setNetworkToName(value.value);
+  }, []);
+
+  const exchangeNetwork = () => {
+    setNetworkFromName(networkToName);
+    setNetworkToName(networkFromName);
+  }
+
+  const handleSwitch = () => {
+    if (chainId !== ChainId.MAINNET) {
+      switchNetwork('0x'.concat(ChainId.MAINNET.toString(16)));
+      dispatch(setConnectedNetworkID({ connectedNetworkID: ChainId.MAINNET }));
+    } else {
+      switchNetwork('0x'.concat(Number(1).toString(16)));
+      dispatch(setConnectedNetworkID({ connectedNetworkID: 1 }));
+    }
+  }
+
+  const handleNext = async () => {
+    // onUseRegister(testSigner);
+    // await onUseSwapFee(testSigner);
+    // await onUseEthApprove(signer, '1000')
+    // await onUseSwapETH2BSC(signer, '1000');
+
+    // await onUseBscSwapFee(signer);
+    await onUseBSCApprove(signer, '1000')
+    await onUseSwapBSC2ETH(signer, '1000');
+    // onUseSwapETH2BSC(testSigner);
+    console.log();
+  }
+
+  const currency = useCurrency(currencyA1);
+  const sphynxCurrency = useCurrency('0x2e121Ed64EEEB58788dDb204627cCB7C7c59884c');
+
+  const handleCurrencyASelect = (currencyA_: Currency) => {
+    const newCurrencyIdA = currencyId(currencyA_)
+    setCurrencyA1(newCurrencyIdA)
+  }
+
+  const { onFieldSpxInput, onFieldOthInput } = useBridgeActionHandlers()
 
   const {
     dependentField,
     currencies,
+    pair,
+    pairState,
     currencyBalances,
     parsedAmounts,
+    price,
     noLiquidity,
-  } = useDerivedMintInfo(currencyA ?? undefined, currencyB ?? undefined)
+    liquidityMinted,
+    poolTokenPercentage,
+    error,
+  } = useDerivedBridgeInfo(sphynxCurrency ?? undefined, currency ?? undefined)
 
-  const formattedAmounts = {
-    [independentField]: typedValue,
-    [dependentField]: noLiquidity ? otherTypedValue : parsedAmounts[dependentField]?.toSignificant(6) ?? '',
-  }
-
-  const { onFieldAInput } = useMintActionHandlers(noLiquidity)
-
-  // get the max amounts user can add
-  const maxAmounts: { [field in Field]?: TokenAmount } = [Field.CURRENCY_A, Field.CURRENCY_B].reduce(
+  const maxAmounts: { [field in Field]?: TokenAmount } = [Field.BRIDGE_TOKENSPX].reduce(
     (accumulator, field) => {
       return {
         ...accumulator,
@@ -128,40 +219,58 @@ export default function BridgeCard({ label, isSpynx = false }) {
     {},
   )
 
-  const atMaxAmounts: { [field in Field]?: TokenAmount } = [Field.CURRENCY_A, Field.CURRENCY_B].reduce(
+  const maxOthAmounts: { [field in Field]?: TokenAmount } = [Field.BRIDGE_TOKENOTH].reduce(
     (accumulator, field) => {
       return {
         ...accumulator,
-        [field]: maxAmounts[field]?.equalTo(parsedAmounts[field] ?? '0'),
+        [field]: maxAmountSpend(currencyBalances[field]),
       }
     },
     {},
   )
+  const handleMax = () => {
+    if (isSphynx)
+      onFieldSpxInput(maxAmounts[Field.BRIDGE_TOKENSPX]?.toFixed(4) ?? '')
+    else
+      onFieldOthInput(maxOthAmounts[Field.BRIDGE_TOKENOTH]?.toFixed(4) ?? '')
+  }
 
-  const handleCurrencyASelect = useCallback(
-    (currencyA_: Currency) => {
-      const newCurrencyIdA = currencyId(currencyA_)
-      if (newCurrencyIdA === currencyB1) {
-        setCurrencyA1(currencyB1)
-        setCurrencyB1(currencyA1 || 'ETH')
-      } else {
-        setCurrencyA1(newCurrencyIdA)
-        setCurrencyB1(currencyB1 || 'ETH')
-      }
-    },
-    [currencyB1, currencyA1],
-  )
+  const formattedAmounts = {
+    [independentField]: typedValue,
+    [dependentField]: parsedAmounts[dependentField]?.toSignificant(6) ?? '',
+  }
+
+  const isNextClickable = React.useMemo(() => {
+    const formattedAmount = {
+      [independentField]: typedValue,
+      [dependentField]: parsedAmounts[dependentField]?.toSignificant(6) ?? '',
+    }
+    const amount = isSphynx ? formattedAmount[Field.BRIDGE_TOKENSPX] : formattedAmount[Field.BRIDGE_TOKENOTH];
+    console.log(amount);
+  }, [dependentField, independentField, isSphynx, parsedAmounts, typedValue])
+
 
   return (
     <Container>
+      <Flex justifyContent='center' pt="22px">
+        <img width="60px" height="57px" src={isSphynx? MainLogo: BridgeOtherToken} alt="Logo" />
+      </Flex>
       <CardHeader>{label}</CardHeader>
-      <Grid>
-        <Tokencard isFrom />
-        <ArrowRightIcon style={{ alignSelf: 'center' }} />
-        <Tokencard isFrom={false} />
-      </Grid>
-      <AmountContainer>
-        <Label>Sphynx to Bridge</Label>
+      <Divider />
+      <Flex justifyContent="space-between" mt="20px">
+        <Tokencard isFrom networkName={networkFromName} chainId={chainId} handleChange={handleFromChange} />
+        <Flex pt="6px" height="fit-content">
+          <ArrowWrapper clickable onClick={exchangeNetwork} >
+            <ArrowRightIcon style={{ alignSelf: 'center' }} />
+          </ArrowWrapper>
+        </Flex>
+        <Tokencard isFrom={false} networkName={networkToName} chainId={chainId} handleChange={handleToChange} />
+      </Flex>
+      <Flex justifyContent="space-between" alignItems="center" mt="12px" mr="10px">
+        <Flex alignItems="center">
+          <img width="35px" height="31px" src={isSphynx? MainLogo: BridgeOtherToken} alt="Logo" />
+          <Text fontSize="14px" fontWeight="600" color="#A7A7CC"> {isSphynx ? 'Sphynx' : 'Token'} to Bridge</Text>
+        </Flex>
         <Button
           variant="tertiary"
           style={{
@@ -169,87 +278,113 @@ export default function BridgeCard({ label, isSpynx = false }) {
             fontWeight: 'bold',
             fontSize: '12px',
             lineHeight: '14px',
-            position: 'absolute',
-            top: '8px',
-            right: '16px',
-            backgroundColor: '#ED79D8',
-            width: '40px',
+            backgroundColor: '#1A1A3A',
+            width: '73px',
             height: '30px',
             color: 'white',
             borderRadius: '4px',
           }}
+          onClick={handleMax}
         >
           Max
         </Button>
-        <CurrencyContainer>
-          <CurrencyInputPanel
-            value={formattedAmounts[Field.CURRENCY_A]}
-            onUserInput={onFieldAInput}
-            onMax={() => {
-              onFieldAInput(maxAmounts[Field.CURRENCY_A]?.toExact() ?? '')
-            }}
-            onCurrencySelect={handleCurrencyASelect}
-            showMaxButton={!atMaxAmounts[Field.CURRENCY_A]}
-            currency={currencies[Field.CURRENCY_A]}
-            id="add-liquidity-input-tokena"
-            showCommonBases
-            disableCurrencySelect={isSpynx}
-            isBridge
-          />
-        </CurrencyContainer>
-        <BottomLabel>Balance on Sphynx</BottomLabel>
+      </Flex>
+      <AmountContainer>
+        <CurrencyInputPanel
+          value={isSphynx ? formattedAmounts[Field.BRIDGE_TOKENSPX] : formattedAmounts[Field.BRIDGE_TOKENOTH]}
+          onUserInput={isSphynx ? onFieldSpxInput : onFieldOthInput}
+          onMax={null}
+          onCurrencySelect={handleCurrencyASelect}
+          showMaxButton={false}
+          currency={isSphynx ? sphynxCurrency : currency}
+          id="bridge-asset-token"
+          showCommonBases
+          disableCurrencySelect={isSphynx}
+          isBridge
+        />
+        <BottomLabel>Balance on {isSphynx ? 'Sphynx' : currency !== undefined && currency !== null ? currency.symbol : 'Token'}</BottomLabel>
       </AmountContainer>
       <MinMaxContainger isMin={false}>
         <div>Max Bridge Amount</div>
-        <div>11000SPX</div>
+        <Text fontSize="14px" color="#F2C94C" fontWeight="600">{maxAmount} {isSphynx ? 'SPX' : currency !== undefined && currency !== null ? currency.symbol : 'Token'}</Text>
       </MinMaxContainger>
       <MinMaxContainger isMin>
         <div>Min Bridge Amount</div>
-        <div>65SPX</div>
+        <Text fontSize="14px" color="#F2C94C" fontWeight="600">{minAmount} {isSphynx ? 'SPX' : currency !== undefined && currency !== null ? currency.symbol : 'Token'}</Text>
       </MinMaxContainger>
       <ErrorArea>
-        <div style={{ textAlign: 'left' }}>Please connect your wallet to the chain you wish to bridge from!</div>
-        <Button
-          variant="tertiary"
-          style={{
-            marginTop: '11px',
-            fontStyle: 'normal',
-            fontSize: '12px',
-            lineHeight: '14px',
-            backgroundColor: '#ED79D8',
-            width: '148px',
-            height: '32px',
-            color: 'white',
-            borderRadius: '8px',
-            padding: '8px',
-          }}
-        >
-          Click Here to Switch
-        </Button>
+        {!account ? (
+          <>
+            <Text fontSize="14px" color="#A7A7CC" style={{ textAlign: 'center', margin: '24px 0px' }}>Please connect your wallet to the chain you wish to bridge from!</Text>
+            <Flex style={{ columnGap: '10px' }} mb="34px" mx="-8px">
+              <Button
+                variant="tertiary"
+                style={{
+                  fontStyle: 'normal',
+                  fontSize: '12px',
+                  lineHeight: '14px',
+                  background: 'linear-gradient(90deg, #610D89 0%, #C42BB4 100%)',
+                  height: '34px',
+                  color: 'white',
+                  width: '166px',
+                  borderRadius: '8px',
+                }}
+                onClick={handleSwitch}
+              >
+                Click Here to Switch
+              </Button>
+              <Button
+                variant="tertiary"
+                height="40px"
+                style={{
+                  background: 'linear-gradient(90deg, #610D89 0%, #C42BB4 100%)',
+                  fontSize: '13px',
+                  color: 'white',
+                  borderRadius: '8px',
+                  height: '34px',
+                  width: '166px',
+                }}
+                onClick={!account ? onPresentConnectModal : handleNext}
+              >
+                {!account ? 'Connect Wallet' : 'Next'}
+              </Button>
+            </Flex>
+          </>
+        ) :
+          <Flex my="34px" mx="-8px" style={{columnGap: '10px'}}>
+            <Button
+              variant="tertiary"
+              height="40px"
+              style={{
+                background: 'linear-gradient(90deg, #610D89 0%, #C42BB4 100%)',
+                fontSize: '13px',
+                color: 'white',
+                borderRadius: '8px',
+                height: '34px',
+                width: '166px',
+              }}
+              onClick={!account ? onPresentConnectModal : handleNext}
+            >
+              Approve
+            </Button>
+            <Button
+              variant="tertiary"
+              height="40px"
+              style={{
+                background: 'linear-gradient(90deg, #610D89 0%, #C42BB4 100%)',
+                fontSize: '13px',
+                color: 'white',
+                borderRadius: '8px',
+                height: '34px',
+                width: '166px',
+              }}
+              onClick={!account ? onPresentConnectModal : handleNext}
+            >
+              {!account ? 'Connect Wallet' : 'Next'}
+            </Button>
+          </Flex>
+        }
       </ErrorArea>
-      <ConnectWalletButton>
-        <Button
-          variant="tertiary"
-          style={{
-            marginTop: '20px',
-            fontStyle: 'normal',
-            fontSize: '14px',
-            lineHeight: '14px',
-            backgroundColor: '#8B2A9B',
-            width: '300px',
-            height: '40px',
-            color: 'white',
-            borderRadius: '8px',
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'center',
-            alignItems: 'center',
-            padding: '8px',
-          }}
-        >
-          Connect Wallet
-        </Button>
-      </ConnectWalletButton>
     </Container>
   )
 }

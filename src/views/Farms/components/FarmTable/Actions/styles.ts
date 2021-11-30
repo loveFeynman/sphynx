@@ -4,7 +4,7 @@ export const ActionContainer = styled.div`
   padding: 16px;
   flex-grow: 1;
   flex-basis: 0;
-  flex-direction: row;
+  flex-direction: column;
   display: flex;
   justify-content: center;
   height: 110px;
@@ -19,8 +19,8 @@ export const ActionContainer = styled.div`
   }
 
   ${({ theme }) => theme.mediaQueries.xl} {
-    margin-left: 32px;
-    margin-right: 0;
+    margin-left: 0;
+    margin-right: 32px;
     height: 130px;
     max-height: 130px;
   }
