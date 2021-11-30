@@ -75,9 +75,8 @@ const InputPanel = styled.div<{ hideInput?: boolean; isBridge?: boolean }>`
   display: flex;
   flex-flow: column nowrap;
   position: relative;
-  // border-radius: ${({ hideInput }) => (hideInput ? '8px' : '20px')};
   border-top: 1px solid ${({ theme }) => theme.isDark ? "#21214A" : "#4A5187"};
-  border-bottom: ${({ isBridge }) => (isBridge ? 'none' : `1px solid ${({ theme }) => theme.isDark ? "#21214A" : "#4A5187"}`)};
+  border-bottom: ${({ isBridge, theme }) => isBridge ? 'none' : theme.isDark ? "1px solid #21214A" : "1px solid #4A5187"};
   background-color: transparent;
 `
 
