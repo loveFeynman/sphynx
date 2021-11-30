@@ -1,4 +1,4 @@
-import { ChainId } from '@sphynxswap/sdk'
+import { ChainId } from '@sphynxdex/sdk-multichain'
 import BigNumber from 'bignumber.js/bignumber'
 import { BIG_TEN } from 'utils/bigNumber'
 

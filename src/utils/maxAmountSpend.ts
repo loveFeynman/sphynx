@@ -1,4 +1,4 @@
-import { CurrencyAmount, ETHER, JSBI } from '@sphynxswap/sdk'
+import { CurrencyAmount, ETHER, JSBI } from '@sphynxdex/sdk-multichain'
 import { MIN_BNB } from '../config/constants'
 
 /**

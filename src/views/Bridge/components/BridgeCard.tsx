@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react'
 import styled from 'styled-components'
 import { Button } from '@sphynxdex/uikit'
-import { Currency, TokenAmount } from '@sphynxswap/sdk'
+import { Currency, TokenAmount } from '@sphynxdex/sdk-multichain'
 import { ReactComponent as ArrowRightIcon } from 'assets/svg/icon/ArrowRight.svg'
 import { Field } from '../../../state/mint/actions'
 

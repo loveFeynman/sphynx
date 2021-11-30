@@ -1,5 +1,5 @@
 import React from 'react'
-import { Trade, TradeType } from '@sphynxswap/sdk'
+import { Trade, TradeType } from '@sphynxdex/sdk-multichain'
 import { Text } from '@sphynxdex/uikit'
 import { Field } from 'state/swap/actions'
 import { useUserSlippageTolerance } from 'state/user/hooks'

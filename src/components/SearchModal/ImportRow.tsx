@@ -1,5 +1,5 @@
 import React, { CSSProperties } from 'react'
-import { Token } from '@sphynxswap/sdk'
+import { Token } from '@sphynxdex/sdk-multichain'
 import { Button, Text, CheckmarkCircleIcon } from '@sphynxdex/uikit'
 import { AutoRow, RowFixed } from 'components/Layout/Row'
 import { AutoColumn } from 'components/Layout/Column'

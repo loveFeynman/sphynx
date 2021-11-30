@@ -1,4 +1,4 @@
-import { ChainId } from '@sphynxswap/sdk'
+import { ChainId } from '@sphynxdex/sdk-multichain'
 import MULTICALL_ABI from './abi.json'
 
 const MULTICALL_NETWORKS: { [chainId in ChainId]: string } = {

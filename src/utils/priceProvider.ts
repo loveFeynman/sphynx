@@ -1,7 +1,7 @@
 import Web3 from 'web3'
 import * as ethers from 'ethers'
 import { Contract, utils } from 'ethers'
-import { PANCAKE_FACTORY_ADDRESS, SPHYNX_FACTORY_ADDRESS } from '@sphynxswap/sdk'
+import { PANCAKE_FACTORY_ADDRESS, SPHYNX_FACTORY_ADDRESS } from '@sphynxdex/sdk-multichain'
 import pancakeFactoryAbi from 'config/abi/pancakeSwapFactory.json'
 import bscTokenAbi from 'config/abi/erc20.json'
 import { PANCAKE_ROUTER_ADDRESS, ROUTER_ADDRESS, SPHYNX_TOKEN_ADDRESS, ZERO_ADDRESS } from 'config/constants'

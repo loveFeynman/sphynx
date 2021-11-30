@@ -1,4 +1,4 @@
-import { SPHYNX_FACTORY_ADDRESS, PANCAKE_FACTORY_ADDRESS } from '@sphynxswap/sdk'
+import { SPHYNX_FACTORY_ADDRESS, PANCAKE_FACTORY_ADDRESS } from '@sphynxdex/sdk-multichain'
 import { UNISWAP_FACTORY_ADDRESS, WBNB_ADDRESS, WETH_ADDRESS } from 'config/constants/addresses'
 import factoryAbi from 'config/abi/factoryAbi.json'
 import Web3 from 'web3'

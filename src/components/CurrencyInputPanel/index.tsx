@@ -1,5 +1,5 @@
 import React from 'react'
-import { Currency, Pair } from '@sphynxswap/sdk'
+import { Currency, Pair } from '@sphynxdex/sdk-multichain'
 import { Button, ChevronDownIcon, Text, useModal, Flex } from '@sphynxdex/uikit'
 import styled from 'styled-components'
 import { useTranslation } from 'contexts/Localization'

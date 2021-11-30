@@ -1,6 +1,6 @@
 import React, { CSSProperties, MutableRefObject, useCallback, useMemo } from 'react'
-import { Currency, CurrencyAmount, currencyEquals, ETHER, Token, ChainId } from '@sphynxswap/sdk'
-import { Text } from '@sphynxswap/uikit'
+import { Currency, CurrencyAmount, currencyEquals, ETHER, Token, ChainId } from '@sphynxdex/sdk-multichain'
+import { Text } from '@sphynxdex/uikit'
 import styled from 'styled-components'
 import { FixedSizeList } from 'react-window'
 import { wrappedCurrency } from 'utils/wrappedCurrency'

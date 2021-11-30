@@ -1,7 +1,7 @@
 /* eslint-disable */
 import React, { useEffect } from 'react'
 import styled from 'styled-components'
-import { RouterType, ChainId } from '@sphynxswap/sdk'
+import { RouterType, ChainId } from '@sphynxdex/sdk-multichain'
 import { useTranslation } from 'contexts/Localization'
 import { useSetRouterType } from 'state/application/hooks'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'

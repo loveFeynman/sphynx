@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react'
-import { Currency, Token } from '@sphynxswap/sdk'
+import { Currency, Token } from '@sphynxdex/sdk-multichain'
 import {
   ModalContainer,
   ModalHeader,

@@ -1,4 +1,4 @@
-import { TokenAmount, Pair, Currency } from '@sphynxswap/sdk'
+import { TokenAmount, Pair, Currency } from '@sphynxdex/sdk-multichain'
 import { useMemo } from 'react'
 import { abi as ISphynxPair } from '@sphynxswap/swap-core/build/ISphynxPair.json'
 import { Interface } from '@ethersproject/abi'

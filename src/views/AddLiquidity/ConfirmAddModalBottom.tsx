@@ -1,4 +1,4 @@
-import { Currency, CurrencyAmount, Fraction, Percent } from '@sphynxswap/sdk'
+import { Currency, CurrencyAmount, Fraction, Percent } from '@sphynxdex/sdk-multichain'
 import React from 'react'
 import { Button, Text } from '@sphynxdex/uikit'
 import { useTranslation } from 'contexts/Localization'

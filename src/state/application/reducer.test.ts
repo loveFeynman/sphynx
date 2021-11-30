@@ -1,4 +1,4 @@
-import { ChainId } from '@sphynxswap/sdk'
+import { ChainId } from '@sphynxdex/sdk-multichain'
 import { createStore, Store } from 'redux'
 import { updateBlockNumber } from './actions'
 import reducer, { ApplicationState } from './reducer'

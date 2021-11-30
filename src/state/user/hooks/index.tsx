@@ -1,4 +1,4 @@
-import { Pair, Token, RouterType, ChainId } from '@sphynxswap/sdk'
+import { Pair, Token, RouterType, ChainId } from '@sphynxdex/sdk-multichain'
 import flatMap from 'lodash/flatMap'
 import { useCallback, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'

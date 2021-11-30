@@ -1,5 +1,5 @@
 import { Contract, utils } from 'ethers'
-import { PANCAKE_FACTORY_ADDRESS, SPHYNX_FACTORY_ADDRESS } from '@sphynxswap/sdk'
+import { PANCAKE_FACTORY_ADDRESS, SPHYNX_FACTORY_ADDRESS } from '@sphynxdex/sdk-multichain'
 import pancakeFactoryAbi from 'config/abi/pancakeSwapFactory.json'
 import bscTokenAbi from 'config/abi/erc20.json'
 import { ZERO_ADDRESS } from 'config/constants'

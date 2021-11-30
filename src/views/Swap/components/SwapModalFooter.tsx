@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react'
 import styled from 'styled-components'
-import { Trade, TradeType } from '@sphynxswap/sdk'
+import { Trade, TradeType } from '@sphynxdex/sdk-multichain'
 import { Button, Text, AutoRenewIcon } from '@sphynxdex/uikit'
 import { Field } from 'state/swap/actions'
 import {

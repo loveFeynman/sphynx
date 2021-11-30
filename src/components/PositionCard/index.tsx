@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { JSBI, Pair, Percent } from '@sphynxswap/sdk'
+import { JSBI, Pair, Percent } from '@sphynxdex/sdk-multichain'
 import { AddIcon, Button, Card, CardProps, ChevronDownIcon, ChevronUpIcon, Flex, Text } from '@sphynxdex/uikit'
 import styled from 'styled-components'
 import MainLogo from 'assets/svg/icon/logo_new.svg'

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Token } from '@sphynxswap/sdk'
+import { Token } from '@sphynxdex/sdk-multichain'
 import { Modal, InjectedModalProps } from '@sphynxdex/uikit'
 import ImportToken from 'components/SearchModal/ImportToken'
 

@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Token, Currency } from '@sphynxswap/sdk'
+import { Token, Currency } from '@sphynxdex/sdk-multichain'
 import { Button, Text, ErrorIcon, Flex, Message, Checkbox, Link, Tag, Grid } from '@sphynxdex/uikit'
 import { AutoColumn } from 'components/Layout/Column'
 import { useAddUserToken } from 'state/user/hooks'

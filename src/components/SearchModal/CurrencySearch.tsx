@@ -1,6 +1,6 @@
 import React, { KeyboardEvent, RefObject, useCallback, useMemo, useRef, useState, useEffect } from 'react'
-import { Currency, ETHER, Token, ChainId } from '@sphynxswap/sdk'
-import { Text, Input, Box } from '@sphynxswap/uikit'
+import { Currency, ETHER, Token, ChainId } from '@sphynxdex/sdk-multichain'
+import { Text, Input, Box } from '@sphynxdex/uikit'
 import { useTranslation } from 'contexts/Localization'
 import { FixedSizeList } from 'react-window'
 import { useSelector } from 'react-redux'

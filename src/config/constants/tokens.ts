@@ -1,4 +1,4 @@
-import { ChainId, Token } from '@sphynxswap/sdk'
+import { ChainId, Token } from '@sphynxdex/sdk-multichain'
 
 export const SPHYNX: { [chainId: number]: Token } = {
   [ChainId.MAINNET]: new Token(

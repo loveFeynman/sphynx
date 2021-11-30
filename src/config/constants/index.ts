@@ -1,4 +1,4 @@
-import { ChainId, JSBI, Percent, Token, WETH } from '@sphynxswap/sdk'
+import { ChainId, JSBI, Percent, Token, WETH } from '@sphynxdex/sdk-multichain'
 import { BUSD, DAI, USDT, BTCB, CAKE, WBNB, UST, ETH, USDC, SPHYNX } from './tokens'
 
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'

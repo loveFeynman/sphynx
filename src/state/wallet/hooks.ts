@@ -1,4 +1,4 @@
-import { Currency, CurrencyAmount, ETHER, JSBI, Token, TokenAmount, ChainId } from '@sphynxswap/sdk'
+import { Currency, CurrencyAmount, ETHER, JSBI, Token, TokenAmount, ChainId } from '@sphynxdex/sdk-multichain'
 import { useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import { AppState } from 'state'

@@ -1,4 +1,4 @@
-import { ChainId, Currency, currencyEquals, JSBI, Price, WETH } from '@sphynxswap/sdk'
+import { ChainId, Currency, currencyEquals, JSBI, Price, WETH } from '@sphynxdex/sdk-multichain'
 import { useMemo } from 'react'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import { BUSD, SPHYNX } from '../config/constants/tokens'

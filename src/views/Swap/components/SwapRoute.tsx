@@ -1,5 +1,5 @@
 import React, { Fragment, memo } from 'react'
-import { Trade } from '@sphynxswap/sdk'
+import { Trade } from '@sphynxdex/sdk-multichain'
 import { Text, Flex, ChevronRightIcon } from '@sphynxdex/uikit'
 import { unwrappedToken } from 'utils/wrappedCurrency'
 

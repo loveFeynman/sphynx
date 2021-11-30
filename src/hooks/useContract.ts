@@ -28,7 +28,7 @@ import {
 
 // Imports below migrated from Exchange useContract.ts
 import { Contract } from '@ethersproject/contracts'
-import { ChainId, WETH, RouterType, UNISWAP_FACTORY_ADDRESS } from '@sphynxswap/sdk'
+import { ChainId, WETH, RouterType, UNISWAP_FACTORY_ADDRESS } from '@sphynxdex/sdk-multichain'
 import { abi as ISphynxPair } from '@sphynxswap/swap-core/build/ISphynxPair.json'
 import ENS_PUBLIC_RESOLVER_ABI from '../config/abi/ens-public-resolver.json'
 import ENS_ABI from '../config/abi/ens-registrar.json'

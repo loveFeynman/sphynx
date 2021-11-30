@@ -1,5 +1,5 @@
 import { Interface } from '@ethersproject/abi'
-import { ChainId } from '@sphynxswap/sdk'
+import { ChainId } from '@sphynxdex/sdk-multichain'
 import PANCAKE_FACTORY_ABI from '../../abi/pancakeSwapFactory.json'
 
 const PANCAKE_FACTORY_ADDRESSES: { [chainId in ChainId]: string } = {

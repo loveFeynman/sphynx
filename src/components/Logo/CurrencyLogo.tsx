@@ -1,4 +1,4 @@
-import { Currency, ETHER, Token } from '@sphynxswap/sdk'
+import { Currency, ETHER, Token } from '@sphynxdex/sdk-multichain'
 import { BinanceIcon } from '@sphynxdex/uikit'
 import React, { useMemo } from 'react'
 import styled from 'styled-components'

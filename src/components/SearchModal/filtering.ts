@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { Token } from '@sphynxswap/sdk'
+import { Token } from '@sphynxdex/sdk-multichain'
 import { isAddress } from '../../utils'
 
 export function filterTokens(tokens: Token[], search: string): Token[] {

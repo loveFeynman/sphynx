@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from 'react'
-import { currencyEquals, Trade } from '@sphynxswap/sdk'
+import { currencyEquals, Trade } from '@sphynxdex/sdk-multichain'
 import { InjectedModalProps } from '@sphynxdex/uikit'
 import { useTranslation } from 'contexts/Localization'
 import TransactionConfirmationModal, {

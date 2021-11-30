@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from 'react'
-import { Pair } from '@sphynxswap/sdk'
+import { Pair } from '@sphynxdex/sdk-multichain'
 import { Text, CardBody, CardFooter, Button, AddIcon } from '@sphynxdex/uikit'
 import { useTranslation } from 'contexts/Localization'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'

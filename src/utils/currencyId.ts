@@ -1,4 +1,4 @@
-import { ChainId, Currency, ETHER, Token } from '@sphynxswap/sdk'
+import { ChainId, Currency, ETHER, Token } from '@sphynxdex/sdk-multichain'
 
 export function currencyId(currency: Currency): string {
   if (currency === ETHER[ChainId.MAINNET]) return 'BNB'

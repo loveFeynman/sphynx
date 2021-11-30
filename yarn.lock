@@ -3571,6 +3571,20 @@
   resolved "https://registry.yarnpkg.com/@solidity-parser/parser/-/parser-0.8.2.tgz#a6a5e93ac8dca6884a99a532f133beba59b87b69"
   integrity sha512-8LySx3qrNXPgB5JiULfG10O3V7QTxI/TLzSw5hFQhXWSkVxZBAv4rZQ0sYgLEbc8g3L2lmnujj1hKul38Eu5NQ==
 
+"@sphynxdex/sdk-multichain@^0.1.1":
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/@sphynxdex/sdk-multichain/-/sdk-multichain-0.1.1.tgz#c6714c0325c268f83ff0fa75796fb43fdb0785f4"
+  integrity sha512-9WFaOdTZVWFpVvDHIreqNAkP3oAlAPfDfBxWP2xsSFPQosAsBoz1JgUhXESXPyZicNToZgkchu1l9PrNuRQ0BQ==
+  dependencies:
+    "@pancakeswap-libs/pancake-swap-core" "^0.1.0"
+    "@sphynxswap/swap-core" "^0.1.0"
+    big.js "^5.2.2"
+    decimal.js-light "^2.5.0"
+    jsbi "^3.1.1"
+    tiny-invariant "^1.1.0"
+    tiny-warning "^1.0.3"
+    toformat "^2.0.0"
+
 "@sphynxdex/uikit@^0.1.0":
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/@sphynxdex/uikit/-/uikit-0.1.0.tgz#836a88c9aafa1aee2754e4bcc65c61b52f647f2a"
@@ -3583,20 +3597,6 @@
     react-popper "^2.2.5"
     react-transition-group "^4.4.1"
     styled-system "^5.1.5"
-
-"@sphynxswap/sdk@^0.1.6":
-  version "0.1.6"
-  resolved "https://registry.yarnpkg.com/@sphynxswap/sdk/-/sdk-0.1.6.tgz#cdef231f92b0a8a5fc95da932cb57852236cb1e2"
-  integrity sha512-G2oR3wq37bm5ZYIqRpacPKiaLhTNIZU+aSuqjmYmG/dohHbQYkJRBpQ2mwME/cxVlbz+zBUMTJgT+B+FgiJ9MA==
-  dependencies:
-    "@pancakeswap-libs/pancake-swap-core" "^0.1.0"
-    "@sphynxswap/swap-core" "^0.1.0"
-    big.js "^5.2.2"
-    decimal.js-light "^2.5.0"
-    jsbi "^3.1.1"
-    tiny-invariant "^1.1.0"
-    tiny-warning "^1.0.3"
-    toformat "^2.0.0"
 
 "@sphynxswap/sphynx-swap-lib@^0.0.2":
   version "0.0.2"

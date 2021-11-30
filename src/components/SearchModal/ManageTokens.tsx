@@ -1,5 +1,5 @@
 import React, { useRef, RefObject, useCallback, useState, useMemo } from 'react'
-import { Token } from '@sphynxswap/sdk'
+import { Token } from '@sphynxdex/sdk-multichain'
 import { Text, Button, CloseIcon, IconButton, LinkExternal, Input, Link } from '@sphynxdex/uikit'
 import styled from 'styled-components'
 import Row, { RowBetween, RowFixed } from 'components/Layout/Row'

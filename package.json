@@ -42,7 +42,7 @@
     "@material-ui/lab": "^4.0.0-alpha.60",
     "@material-ui/pickers": "^3.3.10",
     "@reduxjs/toolkit": "^1.5.0",
-    "@sphynxswap/sdk": "^0.1.6",
+    "@sphynxdex/sdk-multichain": "^0.1.1",
     "@sphynxswap/swap-core": "^0.1.0",
     "@sphynxswap/swap-periphery": "^0.1.0",
     "@sphynxdex/uikit": "^0.1.0",
