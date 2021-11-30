@@ -56,8 +56,8 @@ export default function AddLiquidityWidget() {
 
   const { liquidityPairB } = useLiquidityPairB()
 
-  const [currencyA1, setCurrencyA1] = useState(liquidityPairA || 'ETH')
-  const [currencyB1, setCurrencyB1] = useState(liquidityPairB || 'ETH')
+  const [currencyA1, setCurrencyA1] = useState(liquidityPairA || '')
+  const [currencyB1, setCurrencyB1] = useState(liquidityPairB || '')
   const { t } = useTranslation()
 
   const currencyA = useCurrency(currencyA1)
@@ -152,8 +152,8 @@ export default function AddLiquidityWidget() {
     let method: (...args: any) => Promise<TransactionResponse>
     let args: Array<string | string[] | number>
     let value: BigNumber | null
-    if (currencyA === ETHER || currencyB === ETHER) {
-      const tokenBIsETH = currencyB === ETHER
+    if (currencyA === ETHER[chainId] || currencyB === ETHER[chainId]) {
+      const tokenBIsETH = currencyB === ETHER[chainId]
       estimate = router.estimateGas.addLiquidityETH
       method = router.addLiquidityETH
       args = [
@@ -271,10 +271,10 @@ export default function AddLiquidityWidget() {
       const newCurrencyIdA = currencyId(currencyA_)
       if (newCurrencyIdA === currencyB1) {
         setCurrencyA1(currencyB1)
-        setCurrencyB1(currencyA1 || 'ETH')
+        setCurrencyB1(currencyA1 || '')
       } else {
         setCurrencyA1(newCurrencyIdA)
-        setCurrencyB1(currencyB1 || 'ETH')
+        setCurrencyB1(currencyB1 || '')
       }
     },
     [currencyB1, currencyA1],
@@ -288,10 +288,10 @@ export default function AddLiquidityWidget() {
           setCurrencyB1(newCurrencyIdB)
         } else {
           setCurrencyA1(newCurrencyIdB)
-          setCurrencyB1('ETH')
+          setCurrencyB1('')
         }
       } else {
-        setCurrencyA1(currencyA1 || 'ETH')
+        setCurrencyA1(currencyA1 || '')
         setCurrencyB1(newCurrencyIdB)
       }
     },

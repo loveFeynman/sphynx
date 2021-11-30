@@ -3,6 +3,7 @@ import React from 'react'
 import styled from 'styled-components'
 import Spinner from 'components/Loader/Spinner'
 import { useTranslation } from 'contexts/Localization'
+import useActiveWeb3React from '../../../hooks/useActiveWeb3React'
 import { formatPrice } from '../../../utils'
 
 const fontSize = window.screen.width > 768 ? "14px" : "12px"
@@ -67,6 +68,9 @@ interface TransactionProps {
 
 const TransactionCard: React.FC<TransactionProps> = (props) => {
   const { t } = useTranslation()
+  const { chainId } = useActiveWeb3React()
+  const nativeSymbol = chainId === 56 ? "BNB" : "ETH"
+  const txLink = chainId === 56 ? "https://bscscan.com/tx/" : "https://etherscan.io/tx/"
   // eslint-disable-next-line no-console
   return (
     <>
@@ -86,12 +90,12 @@ const TransactionCard: React.FC<TransactionProps> = (props) => {
                 return (
                   <tr key={key}>
                     <td style={{ width: '30%' }}>
-                      <a href={'https://bscscan.com/tx/' + data.tx} target="_blank" rel="noreferrer">
-                        <h2 className={!data.isBuy ? 'success' : 'error'} style={{marginLeft: '8px', padding: '4px'}}>{data.transactionTime}</h2>
+                      <a href={txLink + data.tx} target="_blank" rel="noreferrer">
+                        <h2 className={!data.isBuy ? 'success' : 'error'}>{data.transactionTime}</h2>
                       </a>
                     </td>
                     <td style={{ width: '19%' }}>
-                      <a href={'https://bscscan.com/tx/' + data.tx} target="_blank" rel="noreferrer">
+                      <a href={txLink + data.tx} target="_blank" rel="noreferrer">
                         <h2 className={!data.isBuy ? 'success' : 'error'}>
                           {Number(data.amount)
                             .toFixed(4)
@@ -102,7 +106,7 @@ const TransactionCard: React.FC<TransactionProps> = (props) => {
                       </a>
                     </td>
                     <td style={{ width: '19%' }}>
-                      <a href={'https://bscscan.com/tx/' + data.tx} target="_blank" rel="noreferrer">
+                      <a href={txLink + data.tx} target="_blank" rel="noreferrer">
                         <h2 className={!data.isBuy ? 'success' : 'error'}>
                           $
                           {data.price < 1
@@ -114,7 +118,7 @@ const TransactionCard: React.FC<TransactionProps> = (props) => {
                       </a>
                     </td>
                     <td style={{ width: '32%' }}>
-                      <a href={'https://bscscan.com/tx/' + data.tx} target="_blank" rel="noreferrer">
+                      <a href={txLink + data.tx} target="_blank" rel="noreferrer">
                         <h2 className={!data.isBuy ? 'success' : 'error'}>
                           ${(data.price * data.amount).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$&,')}
                           <br/>

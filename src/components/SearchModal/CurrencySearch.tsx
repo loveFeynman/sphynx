@@ -1,12 +1,14 @@
 import React, { KeyboardEvent, RefObject, useCallback, useMemo, useRef, useState, useEffect } from 'react'
-import { Currency, ETHER, Token } from '@sphynxswap/sdk'
-import { Text, Input, Box } from '@sphynxdex/uikit'
+import { Currency, ETHER, Token, ChainId } from '@sphynxswap/sdk'
+import { Text, Input, Box } from '@sphynxswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 import { FixedSizeList } from 'react-window'
+import { useSelector } from 'react-redux'
+import { AppState } from 'state'
 import { useAudioModeManager } from 'state/user/hooks'
 import useDebounce from 'hooks/useDebounce'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
-import { useAllTokens, useToken, useIsUserAddedToken, useFoundOnInactiveList } from '../../hooks/Tokens'
+import { useAllTokens, useToken, useIsUserAddedToken, useFoundOnInactiveList, useAllUniTokens } from '../../hooks/Tokens'
 import { isAddress } from '../../utils'
 import Column, { AutoColumn } from '../Layout/Column'
 import Row from '../Layout/Row'
@@ -46,8 +48,13 @@ function CurrencySearch({
   const debouncedQuery = useDebounce(searchQuery, 200)
 
   const [invertSearchOrder] = useState<boolean>(false)
+  const connectedNetworkID = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.connectedNetworkID)
 
-  const allTokens = useAllTokens()
+  let allTokens = useAllTokens();
+  const uniTokens = useAllUniTokens()
+  if (connectedNetworkID !== ChainId.MAINNET) {
+    allTokens = uniTokens;
+  }
 
   // if they input an address, use it
   const searchToken = useToken(debouncedQuery)
@@ -100,8 +107,10 @@ function CurrencySearch({
     (e: KeyboardEvent<HTMLInputElement>) => {
       if (e.key === 'Enter') {
         const s = debouncedQuery.toLowerCase().trim()
-        if (s === 'bnb') {
-          handleCurrencySelect(ETHER)
+        if (s === 'bnb' && chainId === ChainId.MAINNET) {
+          handleCurrencySelect(ETHER[ChainId.MAINNET])
+        } else if (s === 'eth' && chainId === ChainId.ETHEREUM) {
+          handleCurrencySelect(ETHER[ChainId.ETHEREUM])
         } else if (filteredSortedTokens.length > 0) {
           if (
             filteredSortedTokens[0].symbol?.toLowerCase() === debouncedQuery.trim().toLowerCase() ||
@@ -112,7 +121,7 @@ function CurrencySearch({
         }
       }
     },
-    [filteredSortedTokens, handleCurrencySelect, debouncedQuery],
+    [filteredSortedTokens, handleCurrencySelect, debouncedQuery, chainId],
   )
 
   // if no results on main list, show option to expand into inactive

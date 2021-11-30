@@ -29,30 +29,3 @@ export const getMinTokenInfo = async (address, provider): Promise<TokenInfo> => 
     return null
   }
 }
-
-export const getSphynxPairAddress = async (quoteToken, baseToken, provider) => {
-  const sphynxFactoryContract = new Contract(SPHYNX_FACTORY_ADDRESS, pancakeFactoryAbi, provider)
-  const pairAddress = await sphynxFactoryContract.getPair(quoteToken, baseToken)
-  if (pairAddress === ZERO_ADDRESS) {
-    return null
-  }
-  return pairAddress
-}
-
-export const getPancakePairAddress = async (quoteToken, baseToken, provider) => {
-  const pancakeFactoryContract = new Contract(PANCAKE_FACTORY_ADDRESS, pancakeFactoryAbi, provider)
-  const pairAddress = await pancakeFactoryContract.getPair(quoteToken, baseToken)
-  if (pairAddress === ZERO_ADDRESS) {
-    return null
-  }
-  return pairAddress
-}
-
-export const getPancakePairAddressV1 = async (quoteToken, baseToken, provider) => {
-  const pancakeFactoryContract = new Contract("0xbcfccbde45ce874adcb698cc183debcf17952812", pancakeFactoryAbi, provider)
-  const pairAddress = await pancakeFactoryContract.getPair(quoteToken, baseToken)
-  if (pairAddress === ZERO_ADDRESS) {
-    return null
-  }
-  return pairAddress
-}

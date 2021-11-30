@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import { RouterType, ChainId } from '@sphynxswap/sdk'
 import { useTranslation } from 'contexts/Localization'
 import { useSetRouterType } from 'state/application/hooks'
+import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import { Button } from '@sphynxdex/uikit'
 import SwapRouter from 'config/constants/swaps'
 
@@ -59,12 +60,17 @@ const AutoNav = (props) => {
   const { setRouterType } = useSetRouterType()
   const { swapRouter, setSwapRouter, connectedNetworkID } = props
 
+  const { chainId } = useActiveWeb3React()
+
   useEffect(() => {
     setTimeout(() => {
       if(swapRouter === SwapRouter.SPHYNX_SWAP) {
         setRouterType(RouterType.sphynx)
       } else {
-        setRouterType(RouterType.pancake)
+        if(chainId === ChainId.MAINNET)
+          setRouterType(RouterType.pancake)
+        if(chainId === ChainId.ETHEREUM)
+          setRouterType(RouterType.uniswap)
       }
     })
   }, [swapRouter])
@@ -94,14 +100,20 @@ const AutoNav = (props) => {
         {t('SPHYNX-LP')}
       </Button>
       <Button
-        className={swapRouter === SwapRouter.PANCAKE_SWAP ? 'active' : ''}
+        className={swapRouter === SwapRouter.PANCAKE_SWAP || swapRouter === SwapRouter.UNI_SWAP ? 'active' : ''}
         id="pcv-nav-link"
         onClick={() => {
-          setRouterType(RouterType.pancake)
-          setSwapRouter(SwapRouter.PANCAKE_SWAP)
+          if(chainId === ChainId.MAINNET) {
+            setRouterType(RouterType.pancake)
+            setSwapRouter(SwapRouter.PANCAKE_SWAP)
+          }
+          if(chainId === ChainId.ETHEREUM) {
+            setRouterType(RouterType.uniswap)
+            setSwapRouter(SwapRouter.UNI_SWAP)
+          }
         }}
       >
-        {t(Number(connectedNetworkID) === ChainId.MAINNET? 'PCV2': 'PCV2')}
+        {t(Number(connectedNetworkID) === ChainId.MAINNET? 'PCV2': 'UNV2')}
       </Button>
     </StyledNav>
   )

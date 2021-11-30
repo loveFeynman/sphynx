@@ -3,13 +3,15 @@ import { AbiItem } from 'web3-utils'
 import { ethers } from 'ethers'
 import axios from 'axios'
 import { PANCAKE_FACTORY_ADDRESS, SPHYNX_FACTORY_ADDRESS, RouterType } from '@sphynxswap/sdk'
+import { WBNB_ADDRESS, WETH_ADDRESS, BUSD_ADDRESS, PANCAKE_V2_ROUTER, DAI_ADDRESS, UNISWAP_FACTORY_ADDRESS } from 'config/constants/addresses'
 import abi from '../config/abi/erc20ABI.json'
 import factoryAbi from '../config/abi/factoryAbi.json'
 import { BITQUERY_API_KEY } from '../config/constants/endpoints'
-import { web3Provider } from './providers'
-import { getBNBPrice } from './priceProvider'
+import { web3Provider, ethWeb3Provider } from './providers'
+import { getBNBPrice, getETHPrice } from './priceProvider'
 
 const web3 = new Web3(web3Provider)
+const web3ETH = new Web3(ethWeb3Provider)
 
 const config = {
   headers: {
@@ -35,43 +37,21 @@ async function getTokenDetails(
   return { name, symbol, pair: `${symbol}/BNB`, version: routerVersion }
 }
 
-async function getTokenInfoForChart(input: any, pair: any, routerVersion: any) {
+async function getTokenInfoForChart(input: any, pair: any, routerVersion: any, chainId = 56) {
   let query
   const minutes = 5
+  const network = chainId === 56 ? 'bsc' : 'ethereum'
+  const quoteAddress = chainId === 56 ? WBNB_ADDRESS : WETH_ADDRESS
+  const exchangeName = chainId === 56 ? `Pancake ${routerVersion}` : 'Uniswap'
   if (routerVersion === 'sphynx') {
-    if (pair === '0xc522CE70F8aeb1205223659156D6C398743E3e7a') {
-      const pairs = ['0xE4023ee4d957A5391007aE698B3A730B2dc2ba67', pair]
-      query = `{
-        ethereum(network: bsc) {
-          dexTrades(
-            options: {limit: 1, desc: "timeInterval.minute"}
-            smartContractAddress: {in: ["${pairs[0]}", "${pairs[1]}"]}
-            protocol: {is: "Uniswap v2"}
-            baseCurrency: {is: "${input}"}
-            quoteCurrency: {is: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"}
-          ) {
-            timeInterval {
-              minute(count: ${minutes})
-            }
-            baseCurrency {
-              symbol
-              name
-              address
-            }
-            open_price: minimum(of: time, get: quote_price)
-          }
-        }
-      }
-      `
-    } else {
-      query = `{
-        ethereum(network: bsc) {
+    query = `{
+        ethereum(network: ${network}) {
           dexTrades(
             options: {limit: 1, desc: "timeInterval.minute"}
             smartContractAddress: {is: "${pair}"}
             protocol: {is: "Uniswap v2"}
             baseCurrency: {is: "${input}"}
-            quoteCurrency: {is: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"}
+            quoteCurrency: {is: "${quoteAddress}"}
           ) {
             timeInterval {
               minute(count: ${minutes})
@@ -86,16 +66,15 @@ async function getTokenInfoForChart(input: any, pair: any, routerVersion: any) {
         }
       }
       `
-    }
   } else {
     query = `{
-      ethereum(network: bsc) {
+      ethereum(network: ${network}) {
         dexTrades(
           options: {limit: 1, desc: "timeInterval.minute"}
           protocol: {is: "Uniswap v2"}
-          exchangeName: {is: "Pancake ${routerVersion}"}
+          exchangeName: {is: "${exchangeName}"}
           baseCurrency: {is: "${input}"}
-          quoteCurrency: {is: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"}
+          quoteCurrency: {is: "${quoteAddress}"}
         ) {
           timeInterval {
             minute(count: ${minutes})
@@ -160,7 +139,7 @@ async function getTokenInfoForChart(input: any, pair: any, routerVersion: any) {
   })
 }
 
-async function getChartData(input: any, pair: any, resolution: any, routerVersion: any) {
+async function getChartData(input: any, pair: any, resolution: any, routerVersion: any, chainId = 56) {
   const resolutionMap = {
     1: 1,
     5: 5,
@@ -174,16 +153,19 @@ async function getChartData(input: any, pair: any, resolution: any, routerVersio
     '1M': 1440 * 30,
   }
   const minutes = resolutionMap[resolution]
+  const network = chainId === 56 ? 'bsc' : 'ethereum'
+  const quoteAddress = chainId === 56 ? WBNB_ADDRESS : WETH_ADDRESS
+  const exchangeName = chainId === 56 ? `Pancake ${routerVersion}` : 'Uniswap'
   let query
   if (routerVersion === 'sphynx') {
     query = `{
-        ethereum(network: bsc) {
+        ethereum(network: ${network}) {
           dexTrades(
             options: {limit: 320, desc: "timeInterval.minute"}
             smartContractAddress: {is: "${pair}"}
             protocol: {is: "Uniswap v2"}
             baseCurrency: {is: "${input}"}
-            quoteCurrency: {is: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"}
+            quoteCurrency: {is: "${quoteAddress}"}
           ) {
             exchange {
               name
@@ -213,13 +195,13 @@ async function getChartData(input: any, pair: any, resolution: any, routerVersio
       `
   } else {
     query = `{
-      ethereum(network: bsc) {
+      ethereum(network: ${network}) {
         dexTrades(
           options: {limit: 320, desc: "timeInterval.minute"}
           protocol: {is: "Uniswap v2"}
-          exchangeName: {is: "Pancake ${routerVersion}"}
+          exchangeName: {is: "${exchangeName}"}
           baseCurrency: {is: "${input}"}
-          quoteCurrency: {is: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"}
+          quoteCurrency: {is: "${quoteAddress}"}
         ) {
           exchange {
             name
@@ -260,7 +242,7 @@ async function getChartData(input: any, pair: any, resolution: any, routerVersio
 
   dexTrades = dexTrades.reverse()
 
-  const bnbPrice = await getBNBPrice()
+  const bnbPrice = chainId === 56 ? await getBNBPrice() : await getETHPrice()
 
   return new Promise((resolve, reject) => {
     try {
@@ -288,8 +270,187 @@ async function getChartData(input: any, pair: any, resolution: any, routerVersio
   })
 }
 
-async function getChartStats(address: string, routerVersion: string) {
-  const wBNBContract = new web3.eth.Contract(abi as AbiItem[], '0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c')
+async function getChartStats(address: string, routerVersion: string, chainId = 56) {
+  if (chainId === 1) {
+    const wETHContract = new web3ETH.eth.Contract(abi as AbiItem[], WETH_ADDRESS)
+    try {
+      if (!address) {
+        return {
+          error: true,
+          message: 'Invalid address!',
+        }
+      }
+      const till = new Date().toISOString()
+      const since = new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString()
+
+      const baseAddress = address
+      const quoteAddress =
+        baseAddress === WETH_ADDRESS
+          ? DAI_ADDRESS
+          : WETH_ADDRESS
+
+      const factoryAddress = routerVersion === RouterType.sphynx ? SPHYNX_FACTORY_ADDRESS : UNISWAP_FACTORY_ADDRESS
+      const factory = new web3ETH.eth.Contract(factoryAbi as AbiItem[], factoryAddress)
+      const pairAddress = await factory.methods.getPair(baseAddress, quoteAddress).call()
+      let query =
+        routerVersion === RouterType.sphynx
+          ? `{
+        ethereum(network: ethereum) {
+          dexTrades(
+            date: {since: "${since}", till: "${till}"}
+            smartContractAddress: {is: ["0xE4023ee4d957A5391007aE698B3A730B2dc2ba67", "${pairAddress}"]}
+            baseCurrency: {is: "${baseAddress}"}
+            quoteCurrency: {is: "${quoteAddress}"}
+          ) {
+            baseCurrency {
+              symbol
+            }
+            quoteCurrency {
+              symbol
+            }
+            open_price: minimum(of: block, get: quote_price)
+            close_price: maximum(of: block, get: quote_price)
+            tradeAmount(in: USD, calculate: sum)
+          }
+        }
+      }
+      `
+          : `{
+                ethereum(network: ethereum) {
+                  dexTrades(
+                    date: {since: "${since}", till: "${till}"}
+                    baseCurrency: {is: "${baseAddress}"}
+                    quoteCurrency: {is: "${quoteAddress}"}
+                    exchangeName: {in: ["Uniswap"]}
+                  ) {
+                    baseCurrency {
+                      symbol
+                    }
+                    quoteCurrency {
+                      symbol
+                    }
+                    open_price: minimum(of: block, get: quote_price)
+                    close_price: maximum(of: block, get: quote_price)
+                    tradeAmount(in: USD, calculate: sum)
+                  }
+                }
+              }
+              `
+      const url = `https://graphql.bitquery.io/`
+      const {
+        data: {
+          data: {
+            ethereum: { dexTrades },
+          },
+        },
+      } = await axios.post(url, { query }, config)
+
+      if (!dexTrades) {
+        return {
+          error: true,
+          message: 'Invalid dexTrades!',
+        }
+      }
+
+      const baseContract = new web3ETH.eth.Contract(abi as AbiItem[], baseAddress)
+      const quoteContract = new web3ETH.eth.Contract(abi as AbiItem[], quoteAddress)
+
+      let baseBalance = await baseContract.methods.balanceOf(pairAddress).call()
+      const baseDecimals = await baseContract.methods.decimals().call()
+
+      let quoteBalance = await quoteContract.methods.balanceOf(pairAddress).call()
+      const quoteDecimals = await quoteContract.methods.decimals().call()
+
+      baseBalance /= 10 ** baseDecimals
+      quoteBalance /= 10 ** quoteDecimals
+
+      let price
+      let liquidityV2
+      let liquidityV2BNB
+      if (baseAddress !== WETH_ADDRESS) {
+        query = `{
+                  ethereum(network: ethereum) {
+                    dexTrades(
+                      date: {since: "${since}", till: "${till}"}
+                      baseCurrency: {is: "${WETH_ADDRESS}"}
+                      quoteCurrency: {is: "${DAI_ADDRESS}"}
+                      exchangeName: {in: ["Uniswap"]}
+                    ) {
+                      baseCurrency {
+                        symbol
+                      }
+                      quoteCurrency {
+                        symbol
+                      }
+                      close_price: maximum(of: block, get: quote_price)
+                    }
+                  }
+                }
+              `
+        const {
+          data: {
+            data: {
+              ethereum: { dexTrades: newDexTrades },
+            },
+          },
+        } = await axios.post(url, { query }, config)
+        if (!newDexTrades) {
+          return {
+            error: true,
+            message: 'No data found of this address',
+          }
+        }
+        price = parseFloat(dexTrades[0].close_price) * parseFloat(newDexTrades[0].close_price)
+        liquidityV2 = quoteBalance * parseFloat(newDexTrades[0].close_price)
+        liquidityV2BNB = quoteBalance
+        if (price.toString().includes('e')) {
+          price = price.toFixed(12)
+        }
+      } else {
+        price = dexTrades[0].close_price
+        liquidityV2 = baseBalance * price
+        liquidityV2BNB = baseBalance
+      }
+      const percDiff =
+        100 *
+        Math.abs(
+          (parseFloat(dexTrades[0].open_price) - parseFloat(dexTrades[0].close_price)) /
+            ((parseFloat(dexTrades[0].open_price) + parseFloat(dexTrades[0].close_price)) / 2),
+        )
+      const sign = dexTrades[0].open_price > dexTrades[0].close_price ? '-' : '+'
+
+      liquidityV2BNB = await wETHContract.methods.balanceOf(pairAddress).call()
+      liquidityV2BNB = ethers.utils.formatUnits(liquidityV2BNB, 18)
+      return {
+        volume: dexTrades[0].tradeAmount,
+        change: sign + percDiff,
+        price,
+        liquidityV2,
+        liquidityV2BNB,
+      }
+    } catch (error) {
+      console.log('error', error)
+      const baseAddress = address
+      const quoteAddress =
+        baseAddress === WETH_ADDRESS
+          ? DAI_ADDRESS
+          : WETH_ADDRESS
+
+      const factoryAddress = routerVersion === RouterType.sphynx ? SPHYNX_FACTORY_ADDRESS : UNISWAP_FACTORY_ADDRESS
+      const factory = new web3ETH.eth.Contract(factoryAbi as AbiItem[], factoryAddress)
+      const pairAddress = await factory.methods.getPair(baseAddress, quoteAddress).call()
+      let liquidityV2BNB = await wETHContract.methods.balanceOf(pairAddress).call()
+      liquidityV2BNB = ethers.utils.formatUnits(liquidityV2BNB, 18)
+      return {
+        volume: '',
+        change: '',
+        price: '',
+        liquidityV2: '',
+        liquidityV2BNB,
+      }
+    }
+  }
+  const wBNBContract = new web3.eth.Contract(abi as AbiItem[], `${WBNB_ADDRESS}`)
   try {
     if (!address) {
       return {
@@ -302,9 +463,9 @@ async function getChartStats(address: string, routerVersion: string) {
 
     const baseAddress = address
     const quoteAddress =
-      baseAddress === '0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c'
+      baseAddress === WBNB_ADDRESS
         ? '0xe9e7cea3dedca5984780bafc599bd69add087d56'
-        : '0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c'
+        : WBNB_ADDRESS
 
     const factoryAddress = routerVersion === RouterType.sphynx ? SPHYNX_FACTORY_ADDRESS : PANCAKE_FACTORY_ADDRESS
     const factory = new web3.eth.Contract(factoryAbi as AbiItem[], factoryAddress)
@@ -384,13 +545,13 @@ async function getChartStats(address: string, routerVersion: string) {
     let price
     let liquidityV2
     let liquidityV2BNB
-    if (baseAddress !== '0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c') {
+    if (baseAddress !== WBNB_ADDRESS) {
       query = `{
                 ethereum(network: bsc) {
                   dexTrades(
                     date: {since: "${since}", till: "${till}"}
-                    baseCurrency: {is: "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c"}
-                    quoteCurrency: {is: "0xe9e7cea3dedca5984780bafc599bd69add087d56"}
+                    baseCurrency: {is: "${WBNB_ADDRESS}"}
+                    quoteCurrency: {is: "${BUSD_ADDRESS}"}
                     exchangeName: {in: ["Pancake v2"]}
                   ) {
                     baseCurrency {
@@ -448,9 +609,9 @@ async function getChartStats(address: string, routerVersion: string) {
   } catch (error) {
     const baseAddress = address
     const quoteAddress =
-      baseAddress === '0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c'
-        ? '0xe9e7cea3dedca5984780bafc599bd69add087d56'
-        : '0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c'
+      baseAddress === WBNB_ADDRESS
+        ? BUSD_ADDRESS
+        : WBNB_ADDRESS
 
     const factoryAddress = routerVersion === RouterType.sphynx ? SPHYNX_FACTORY_ADDRESS : PANCAKE_FACTORY_ADDRESS
     const factory = new web3.eth.Contract(factoryAbi as AbiItem[], factoryAddress)
@@ -489,9 +650,9 @@ const getPancakePairAddress = async (quoteToken, baseToken) => {
 }
 
 const getPriceInfo = async (input, decimals) => {
-  const pancakeV2 = '0x10ED43C718714eb63d5aA57B78B54704E256024E'
-  const busdAddr = '0xe9e7cea3dedca5984780bafc599bd69add087d56'
-  const wBNBAddr = '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c'
+  const pancakeV2 = PANCAKE_V2_ROUTER
+  const busdAddr = BUSD_ADDRESS
+  const wBNBAddr = WBNB_ADDRESS
   const routerABI = [
     {
       inputs: [
@@ -526,12 +687,12 @@ const getPriceInfo = async (input, decimals) => {
 
 const getPrice = async (tokenAddr) => {
   try {
-    if (tokenAddr === '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c') {
+    if (tokenAddr === WBNB_ADDRESS) {
       const query = `{
         ethereum(network: bsc) {
           dexTrades(
-            baseCurrency: {is: "0xe9e7cea3dedca5984780bafc599bd69add087d56"}
-            quoteCurrency: {is: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"}
+            baseCurrency: {is: "${BUSD_ADDRESS}"}
+            quoteCurrency: {is: "${WBNB_ADDRESS}"}
             options: {desc: ["block.height"], limit: 1}
           ) {
             block {
@@ -560,7 +721,7 @@ const getPrice = async (tokenAddr) => {
           options: {limit: 1, desc: "block.height"}
           exchangeName: {in: ["Pancake", "Pancake v2"]}
           baseCurrency: {is: "${tokenAddr}"}
-          quoteCurrency: {is: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"}
+          quoteCurrency: {is: "${WBNB_ADDRESS}"}
         ) {
           block {
             height
@@ -621,7 +782,7 @@ async function topTrades(address: string, type: 'buy' | 'sell', pairAddress) {
         date: {since: "${since}", till: "${till}"}
         smartContractAddress: {is: "${pairAddress}"}
         baseCurrency: {is: "${address}"}
-        quoteCurrency: {is: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"}
+        quoteCurrency: {is: "${WBNB_ADDRESS}"}
       ) {
         block {
           height
@@ -698,7 +859,7 @@ async function getMarksData(account: any, input: any) {
     ethereum(network: bsc) {
       dexTrades(
         options: {desc: "block.height"}
-        baseCurrency: {in: ["0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c", "0x55d398326f99059ff775485246999027b3197955", "0xe9e7cea3dedca5984780bafc599bd69add087d56", "0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d"]}
+        baseCurrency: {in: ["${WBNB_ADDRESS}", "0x55d398326f99059ff775485246999027b3197955", "0xe9e7cea3dedca5984780bafc599bd69add087d56", "0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d"]}
         quoteCurrency: {is: "${input}"}
         txSender: {is: "${account}"}
       ) {
@@ -800,7 +961,7 @@ async function getChartDurationData(input: any, pair: any, resolution: any, to: 
           smartContractAddress: {is: "${pair}"}
           protocol: {is: "Uniswap v2"}
           baseCurrency: {is: "${input}"}
-          quoteCurrency: {is: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"}
+          quoteCurrency: {is: "${WBNB_ADDRESS}"}
           time: {before: "${to}"}
         ) {
           exchange {
@@ -889,7 +1050,7 @@ async function getChartDurationPanData(input: any, routerVersion: any, resolutio
       dexTrades(
         options: {limit: ${countBack}, desc: "timeInterval.minute"}
         baseCurrency: {is: "${input}"}
-        quoteCurrency: {is: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"}
+        quoteCurrency: {is: "${WBNB_ADDRESS}"}
         exchangeName: {is: "Pancake ${routerVersion}"}
         time: {before: "${to}"}
       ) {
