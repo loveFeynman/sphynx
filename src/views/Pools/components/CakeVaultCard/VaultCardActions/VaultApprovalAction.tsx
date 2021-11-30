@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button, AutoRenewIcon, Skeleton } from '@sphynxswap/uikit'
+import { Button, AutoRenewIcon, Skeleton } from '@sphynxdex/uikit'
 import { useTranslation } from 'contexts/Localization'
 import { ColorButtonStyle } from 'style/buttonStyle'
 import { useVaultApprove } from '../../../hooks/useApprove'

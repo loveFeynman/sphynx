@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import styled, { useTheme } from 'styled-components'
-import { IconButton, Link, Text, useMatchBreakpoints } from '@sphynxswap/uikit'
+import { IconButton, Link, Text, useMatchBreakpoints } from '@sphynxdex/uikit'
 import SearchIcon from "components/Icon/SearchIcon";
 import { PoolData } from 'state/info/types'
 import fetchPoolsForToken from 'state/info/queries/tokens/poolsForToken'
@@ -147,7 +147,7 @@ export default function ContractPanel({ value, symbol, amount, price }: Contract
   const handlerChange = (e: any) => {
     try {
       if (e.target.value && e.target.value.length > 0) {
-        axios.get(`https://thesphynx.co/api/search/${e.target.value}`).then((response) => {
+        axios.get(`${process.env.REACT_APP_BACKEND_API_URL2}/${e.target.value}`).then((response) => {
           setdata(response.data)
         })
       } else {

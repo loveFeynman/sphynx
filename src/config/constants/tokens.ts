@@ -1,4 +1,4 @@
-import { ChainId, Token } from '@sphynxswap/sdk'
+import { ChainId, Token } from '@sphynxdex/sdk-multichain'
 
 export const SPHYNX: { [chainId: number]: Token } = {
   [ChainId.MAINNET]: new Token(
@@ -47,6 +47,13 @@ export const BUSD: { [chainId: number]: Token } = {
     'BUSD',
     'Binance USD',
   ),
+  [ChainId.ETHEREUM]: new Token(
+    ChainId.ETHEREUM,
+    '0x4fabb145d64652a948d72533023f6e7a623c7c53',
+    18,
+    'BUSD',
+    'Binance USD',
+  )
 }
 
 export const WBNB = new Token(ChainId.MAINNET, '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c', 18, 'WBNB', 'Wrapped BNB')

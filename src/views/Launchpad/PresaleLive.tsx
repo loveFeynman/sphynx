@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react'
 import styled from 'styled-components'
 import { useHistory } from 'react-router-dom'
-import { Button, Text, Flex, Link } from '@sphynxswap/uikit'
+import { Button, Text, Flex, Link } from '@sphynxdex/uikit'
 import { useTranslation } from 'contexts/Localization'
 import { useMenuToggle } from 'state/application/hooks'
 import { ERC20_ABI } from 'config/abi/erc20'

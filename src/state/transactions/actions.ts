@@ -1,5 +1,5 @@
 import { createAction } from '@reduxjs/toolkit'
-import { ChainId } from '@sphynxswap/sdk'
+import { ChainId } from '@sphynxdex/sdk-multichain'
 
 export interface SerializableTransactionReceipt {
   to: string

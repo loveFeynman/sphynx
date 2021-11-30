@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
-import { Text, Toggle, Flex, Modal, InjectedModalProps, Button } from '@sphynxswap/uikit'
+import { Text, Toggle, Flex, Modal, InjectedModalProps, Button } from '@sphynxdex/uikit'
 import { useAudioModeManager, useExpertModeManager, useUserSingleHopOnly } from 'state/user/hooks'
 import { useTranslation } from 'contexts/Localization'
 import { useSwapActionHandlers } from 'state/swap/hooks'

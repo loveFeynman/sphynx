@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Flex, Text } from '@sphynxswap/uikit'
+import { Flex, Text } from '@sphynxdex/uikit'
 import MainLogo from 'assets/svg/icon/logo_new.svg'
 import { useTranslation } from 'contexts/Localization'
 

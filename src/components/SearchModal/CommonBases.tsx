@@ -1,6 +1,6 @@
 import React from 'react'
-import { ChainId, Currency, currencyEquals, ETHER, Token } from '@sphynxswap/sdk'
-import { Text } from '@sphynxswap/uikit'
+import { ChainId, Currency, currencyEquals, ETHER, Token } from '@sphynxdex/sdk-multichain'
+import { Text } from '@sphynxdex/uikit'
 import styled from 'styled-components'
 import { useTranslation } from 'contexts/Localization'
 
@@ -38,9 +38,14 @@ export default function CommonBases({
   const { t } = useTranslation()
 
   const handleSelectCurrency = () => {
-    if (!selectedCurrency || !currencyEquals(selectedCurrency, ETHER)) {
-      onSelect(ETHER)
+    if (!selectedCurrency || !currencyEquals(selectedCurrency, ETHER[chainId])) {
+      onSelect(ETHER[chainId])
     }
+  }
+
+  const nativeCurrencyText = {
+    1: 'ETH',
+    56: 'BNB'
   }
 
   return (
@@ -52,10 +57,10 @@ export default function CommonBases({
       <AutoRow gap="auto">
         <BaseWrapper
           onClick={handleSelectCurrency}
-          disable={selectedCurrency === ETHER}
+          disable={selectedCurrency === ETHER[chainId]}
         >
-          <CurrencyLogo currency={ETHER} style={{ marginRight: 8 }} />
-          <Text>BNB</Text>
+          <CurrencyLogo currency={ETHER[chainId]} style={{ marginRight: 8 }} />
+          <Text>{nativeCurrencyText[chainId]}</Text>
         </BaseWrapper>
         {(chainId ? SUGGESTED_BASES[chainId] : []).map((token: Token) => {
           const selected = selectedCurrency instanceof Token && selectedCurrency.address === token.address

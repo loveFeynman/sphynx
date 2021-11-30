@@ -1,6 +1,6 @@
 import React, { Fragment, memo } from 'react'
-import { Trade } from '@sphynxswap/sdk'
-import { Text, Flex, ChevronRightIcon } from '@sphynxswap/uikit'
+import { Trade } from '@sphynxdex/sdk-multichain'
+import { Text, Flex, ChevronRightIcon } from '@sphynxdex/uikit'
 import { unwrappedToken } from 'utils/wrappedCurrency'
 
 export default memo(function SwapRoute({ trade }: { trade: Trade }) {

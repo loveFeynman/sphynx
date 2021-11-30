@@ -1,5 +1,5 @@
 import { ReactText } from 'react'
-import { Language } from '@sphynxswap/uikit'
+import { Language } from '@sphynxdex/uikit'
 
 export type ContextData = {
   [key: string]: ReactText

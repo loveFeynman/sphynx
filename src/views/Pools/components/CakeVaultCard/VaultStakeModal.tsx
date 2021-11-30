@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
-import { Modal, Text, Flex, Image, Button, BalanceInput, AutoRenewIcon } from '@sphynxswap/uikit'
+import { Modal, Text, Flex, Image, Button, BalanceInput, AutoRenewIcon } from '@sphynxdex/uikit'
 import Slider from 'react-rangeslider'
 import { useTranslation } from 'contexts/Localization'
 import { useWeb3React } from '@web3-react/core'

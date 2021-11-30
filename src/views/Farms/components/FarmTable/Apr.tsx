@@ -4,7 +4,7 @@ import ApyButton from 'views/Farms/components/FarmCard/ApyButton'
 import { Address } from 'config/constants/types'
 import BigNumber from 'bignumber.js'
 import { BASE_SWAP_URL } from 'config'
-import { Skeleton, Flex, Text } from '@sphynxswap/uikit'
+import { Skeleton, Flex, Text } from '@sphynxdex/uikit'
 import { useTranslation } from 'contexts/Localization'
 
 const Container = styled.div`

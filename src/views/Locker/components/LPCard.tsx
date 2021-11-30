@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Text } from '@sphynxswap/uikit';
+import { Text } from '@sphynxdex/uikit';
 import { useHistory } from 'react-router-dom'
 import TimerComponent from 'components/Timer/TimerComponent';
 

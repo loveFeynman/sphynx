@@ -8,7 +8,7 @@ import {
   TimerIcon,
   BlockIcon,
   VoteIcon,
-} from '@sphynxswap/uikit'
+} from '@sphynxdex/uikit'
 import { useTranslation } from 'contexts/Localization'
 
 const CoreTag: React.FC<TagProps> = (props) => {

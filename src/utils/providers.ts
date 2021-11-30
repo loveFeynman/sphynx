@@ -1,11 +1,15 @@
 import { ethers } from 'ethers'
 import Web3 from 'web3'
 import getRpcUrl from 'utils/getRpcUrl'
+import chainIds from 'config/constants/chainIds'
 
-const RPC_URL = getRpcUrl()
+const BNB_RPC_URL = getRpcUrl(chainIds.BNB_CHAIN_ID)
+const ETH_RPC_URL = getRpcUrl(chainIds.ETH_CHAIN_ID)
 
-export const simpleRpcProvider = new ethers.providers.JsonRpcProvider(RPC_URL)
-export const web3Provider = new Web3.providers.HttpProvider(RPC_URL);
+export const simpleRpcProvider = new ethers.providers.JsonRpcProvider(BNB_RPC_URL)
+export const simpleRpcETHProvider = new ethers.providers.JsonRpcProvider(ETH_RPC_URL)
+export const web3Provider = new Web3.providers.HttpProvider(BNB_RPC_URL);
+export const ethWeb3Provider = new Web3.providers.HttpProvider(ETH_RPC_URL);
 
 // export const web3ArchiveProvider = new Web3.providers.HttpProvider("https://bsc.getblock.io/mainnet/?api_key=249a480d-6030-4050-9bcc-cf35941da929");
 // export const web3ArchiveProvider = new Web3.providers.HttpProvider("https://speedy-nodes-nyc.moralis.io/fbb4b2b82993bf507eaaab13/bsc/mainnet/archive")

@@ -10,7 +10,7 @@ import {
   ButtonMenuItem,
   HelpIcon,
   useTooltip,
-} from '@sphynxswap/uikit'
+} from '@sphynxdex/uikit'
 import styled from 'styled-components'
 import { useTranslation } from 'contexts/Localization'
 import useTheme from 'hooks/useTheme'
@@ -27,7 +27,7 @@ const CustomModal = styled(Modal)`
 `
 
 const TooltipText = styled(Text)`
-  color: ${({ theme }) => theme.isDark ? 'white' : 'black'}
+  color: 'white';
 `
 
 interface CollectModalProps {

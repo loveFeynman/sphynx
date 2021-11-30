@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components';
-import {  Flex } from '@sphynxswap/uikit'
+import {  Flex } from '@sphynxdex/uikit'
 
 const CardWrapper = styled.div<{color: string}>`
     display: flex;

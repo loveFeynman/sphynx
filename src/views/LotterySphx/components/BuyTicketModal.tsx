@@ -2,7 +2,7 @@
 
 import React, { useState, useCallback, useEffect, useMemo } from 'react'
 import styled from 'styled-components'
-import { Text, Flex, Modal, InjectedModalProps, Button, Input } from '@sphynxswap/uikit'
+import { Text, Flex, Modal, InjectedModalProps, Button, Input } from '@sphynxdex/uikit'
 
 import { useAudioModeManager, useExpertModeManager, useUserSingleHopOnly } from 'state/user/hooks'
 import { useTranslation } from 'contexts/Localization'

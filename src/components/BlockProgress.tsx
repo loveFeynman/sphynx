@@ -1,5 +1,5 @@
 import React from 'react'
-import { Progress, ProgressProps } from '@sphynxswap/uikit'
+import { Progress, ProgressProps } from '@sphynxdex/uikit'
 import { useBlock } from 'state/block/hooks'
 
 interface BlockProgressProps extends ProgressProps {

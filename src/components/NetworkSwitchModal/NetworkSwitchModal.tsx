@@ -9,7 +9,7 @@ import {
   Heading,
   Text,
   Box,
-} from '@sphynxswap/uikit'
+} from '@sphynxdex/uikit'
 import styled from 'styled-components'
 import { AutoRow } from 'components/Row'
 import { useSelector, useDispatch } from 'react-redux'

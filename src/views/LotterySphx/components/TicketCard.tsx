@@ -2,11 +2,12 @@
 import React from 'react'
 import styled from 'styled-components'
 import axios from 'axios'
-import { Text, Link, Flex, useModal } from '@sphynxswap/uikit'
+import { Text, Link, Flex, useModal } from '@sphynxdex/uikit'
 import { useTranslation } from 'contexts/Localization'
 import MainLogo from 'assets/svg/icon/logo_new.svg'
 import LinkIcon from 'assets/svg/icon/LinkYellow.svg'
 import { useWeb3React } from '@web3-react/core'
+import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import TicketContentTable from './TicketContentTable'
 import moment from 'moment'
 import ViewTickets from './ViewTickets'
@@ -57,6 +58,8 @@ export default function TicketCard({ lastLoteryInfo, roundID }) {
 
   const [showDetail, setShowDetail] = React.useState(false)
   const { account } = useWeb3React()
+  const { chainId } = useActiveWeb3React()
+
   React.useEffect(() => {
     const ac = new AbortController();
     if (lastLoteryInfo !== null) {

@@ -14,7 +14,7 @@ import {
   useModal,
   Box,
   useTooltip,
-} from '@sphynxswap/uikit'
+} from '@sphynxdex/uikit'
 import { useTranslation } from 'contexts/Localization'
 import { getBalanceNumber } from 'utils/formatBalance'
 import { usePriceCakeBusd } from 'state/farms/hooks'

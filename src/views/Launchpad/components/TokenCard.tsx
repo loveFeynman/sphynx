@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Text } from '@sphynxswap/uikit'
+import { Text } from '@sphynxdex/uikit'
 import { useHistory } from 'react-router-dom'
 import { useWeb3React } from '@web3-react/core'
 import TimerComponent from 'components/Timer/TimerComponent'
@@ -96,7 +96,7 @@ const Progress = styled.div<{ state }>`
   width: ${(props) => `${props.state}%`};
   height: 12px;
   background: linear-gradient(90deg, #610d89 0%, #c42bb4 100%);
-  border-radius: 8px 0px 0px 8px;
+  border-radius: 8px;
   padding: 1px;
   display: flex;
   justify-content: center;

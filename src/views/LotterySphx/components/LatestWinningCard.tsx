@@ -1,6 +1,6 @@
 /* eslint-disable */
 import styled, { ThemeConsumer, useTheme } from 'styled-components'
-import { Text, Flex, Box } from '@sphynxswap/uikit'
+import { Text, Flex, Box } from '@sphynxdex/uikit'
 import LotteryLatestMark from 'assets/svg/icon/LotteryLatestMark.svg'
 
 const Container = styled.div`

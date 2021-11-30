@@ -1,4 +1,4 @@
-import { Token, TokenAmount } from '@sphynxswap/sdk'
+import { Token, TokenAmount } from '@sphynxdex/sdk-multichain'
 import { useMemo } from 'react'
 
 import { useTokenContract } from './useContract'

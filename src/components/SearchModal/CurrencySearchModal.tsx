@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react'
-import { Currency, Token } from '@sphynxswap/sdk'
+import { Currency, Token } from '@sphynxdex/sdk-multichain'
 import {
   ModalContainer,
   ModalHeader,
@@ -10,7 +10,7 @@ import {
   InjectedModalProps,
   Heading,
   Button,
-} from '@sphynxswap/uikit'
+} from '@sphynxdex/uikit'
 import styled from 'styled-components'
 import usePrevious from 'hooks/usePreviousValue'
 import { TokenList } from '@uniswap/token-lists'

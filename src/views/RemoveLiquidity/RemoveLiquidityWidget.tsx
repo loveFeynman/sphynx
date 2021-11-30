@@ -3,8 +3,8 @@ import styled from 'styled-components'
 import { splitSignature } from '@ethersproject/bytes'
 import { Contract } from '@ethersproject/contracts'
 import { TransactionResponse } from '@ethersproject/providers'
-import { Currency, currencyEquals, ETHER, Percent, WETH, RouterType } from '@sphynxswap/sdk'
-import { Button, Text, AddIcon, ArrowDownIcon, Box, Flex, useModal } from '@sphynxswap/uikit'
+import { Currency, currencyEquals, ETHER, Percent, WETH, RouterType } from '@sphynxdex/sdk-multichain'
+import { Button, Text, AddIcon, ArrowDownIcon, Box, Flex, useModal } from '@sphynxdex/uikit'
 import Slider from 'react-rangeslider'
 import 'react-rangeslider/lib/index.css'
 import { BigNumber } from '@ethersproject/bignumber'
@@ -228,8 +228,8 @@ export default function RemoveLiquidityWidget({
     const liquidityAmount = parsedAmounts[Field.LIQUIDITY]
     if (!liquidityAmount) throw new Error('missing liquidity amount')
 
-    const currencyBIsETH = currencyB === ETHER
-    const oneCurrencyIsETH = currencyA === ETHER || currencyBIsETH
+    const currencyBIsETH = currencyB === ETHER[chainId]
+    const oneCurrencyIsETH = currencyA === ETHER[chainId] || currencyBIsETH
 
     if (!tokenA || !tokenB) throw new Error('could not wrap')
 
@@ -430,7 +430,7 @@ export default function RemoveLiquidityWidget({
     [onUserInput],
   )
 
-  const oneCurrencyIsETH = currencyA === ETHER || currencyB === ETHER
+  const oneCurrencyIsETH = currencyA === ETHER[chainId] || currencyB === ETHER[chainId]
   const oneCurrencyIsWETH = Boolean(
     chainId &&
       ((currencyA && currencyEquals(WETH[chainId], currencyA)) ||
@@ -575,8 +575,8 @@ export default function RemoveLiquidityWidget({
                     <RowBetween style={{ justifyContent: 'flex-end', fontSize: '14px' }}>
                       {oneCurrencyIsETH ? (
                         <StyledInternalLink
-                          to={`/remove/${currencyA === ETHER ? WETH[chainId].address : currencyIdA}/${
-                            currencyB === ETHER ? WETH[chainId].address : currencyIdB
+                          to={`/remove/${currencyA === ETHER[chainId] ? WETH[chainId].address : currencyIdA}/${
+                            currencyB === ETHER[chainId] ? WETH[chainId].address : currencyIdB
                           }`}
                         >
                           {t('Receive WBNB')}

@@ -2,10 +2,12 @@ import 'date-fns'
 import React, { useEffect, useState } from 'react'
 import { MuiPickersUtilsProvider } from '@material-ui/pickers'
 import DateFnsUtils from '@date-io/date-fns'
-import { Text, Button } from '@sphynxswap/uikit'
+import { Text, Button } from '@sphynxdex/uikit'
 import { ReactComponent as CheckList } from 'assets/svg/icon/CheckList.svg'
+import { useTranslation } from 'contexts/Localization'
 import useToast from 'hooks/useToast'
 import styled from 'styled-components'
+import Select from 'components/Select/Select'
 import axios from 'axios'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import { useParams } from 'react-router'
@@ -39,6 +41,9 @@ const Wrapper = styled.div`
   }
   p.w80 {
     width: 80px;
+  }
+  p.w140 {
+    width: 140px;
   }
   div.MuiTextField-root {
     margin-left: 16px;
@@ -93,6 +98,11 @@ const Title = styled.p`
   font-weight: 700;
 `
 
+const FlexWrapper = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+`
+
 const NoteWrapper = styled.div`
   background: ${({ theme }) => (theme.isDark ? '#0E0E26' : '#2A2E60')};
   border-radius: 10px;
@@ -121,6 +131,23 @@ const InlineWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: start;
+  & > div > div {
+    background: ${({ theme }) => (theme.isDark ? '#0E0E26' : '#2A2E60')};
+  }
+  & > div.MuiFormControl-root {
+    background: ${({ theme }) => (theme.isDark ? '#0E0E26' : '#2A2E60')};
+  }
+`
+
+const MarginWrapper = styled.div`
+  margin-top: 32px;
+  margin-left: 0px;
+  width: 100%;
+  ${({ theme }) => theme.mediaQueries.xl} {
+    margin-left: 32px;
+    margin-top: 0px;
+    width: 0%;
+  }
 `
 
 const MyInput = styled.input`
@@ -219,6 +246,7 @@ const DarkButton = styled(Button)`
 `
 
 const PresaleManage: React.FC = () => {
+  const { t } = useTranslation()
   const param: any = useParams()
   const { chainId, library } = useActiveWeb3React()
   const signer = library.getSigner()
@@ -230,10 +258,10 @@ const PresaleManage: React.FC = () => {
   const [telegramLink, setTelegramLink] = useState('')
   const [projectDec, setProjectDec] = useState('')
   const [updateDec, setUpdateDec] = useState('')
-  const [certikAudit, setCertikAudit] = useState('')
-  const [doxxedTeam, setDoxxedTeam] = useState('')
-  const [utility, setUtility] = useState('')
-  const [kyc, setKYC] = useState('')
+  const [certikAudit, setCertikAudit] = useState(false)
+  const [doxxedTeam, setDoxxedTeam] = useState(false)
+  const [utility, setUtility] = useState(false)
+  const [kyc, setKYC] = useState(false)
   const [raise, setRaise] = useState(0)
   const [tokenData, setTokenData] = useState(null)
   const { toastSuccess, toastError } = useToast()
@@ -540,17 +568,81 @@ const PresaleManage: React.FC = () => {
               <p className="description">Any update you want to provide to participants</p>
               <MyInput onChange={(e) => setUpdateDec(e.target.value)} value={updateDec} style={{ width: '100%' }} />
               <Sperate />
-              <p className="description">Certik audit</p>
-              <MyInput onChange={(e) => setCertikAudit(e.target.value)} value={certikAudit} style={{ width: '100%' }} />
+              <FlexWrapper>
+                <InlineWrapper>
+                  <p className="description w140">Certik audit</p>
+                  <Select
+                    options={[
+                      {
+                        label: t('No'),
+                        value: false,
+                      },
+                      {
+                        label: t('Yes'),
+                        value: true,
+                      },
+                    ]}
+                    defaultValue={!certikAudit ? 1 : 0}
+                    onChange={(option: any) => setCertikAudit(option.value)}
+                  />
+                </InlineWrapper>
+                <MarginWrapper />
+                <InlineWrapper>
+                  <p className="description w140">Doxxed team</p>
+                  <Select
+                    options={[
+                      {
+                        label: t('No'),
+                        value: false,
+                      },
+                      {
+                        label: t('Yes'),
+                        value: true,
+                      },
+                    ]}
+                    defaultValue={!doxxedTeam ? 1 : 0}
+                    onChange={(option: any) => setDoxxedTeam(option.value)}
+                  />
+                </InlineWrapper>
+              </FlexWrapper>
               <Sperate />
-              <p className="description">Doxxed team</p>
-              <MyInput onChange={(e) => setDoxxedTeam(e.target.value)} value={doxxedTeam} style={{ width: '100%' }} />
-              <Sperate />
-              <p className="description">Utility information</p>
-              <MyInput onChange={(e) => setUtility(e.target.value)} value={utility} style={{ width: '100%' }} />
-              <Sperate />
-              <p className="description">KYC</p>
-              <MyInput onChange={(e) => setKYC(e.target.value)} value={kyc} style={{ width: '100%' }} />
+              <FlexWrapper>
+                <InlineWrapper>
+                  <p className="description w140">Utility information</p>
+                  <Select
+                    options={[
+                      {
+                        label: t('No'),
+                        value: false,
+                      },
+                      {
+                        label: t('Yes'),
+                        value: true,
+                      },
+                    ]}
+                    defaultValue={!utility ? 1 : 0}
+                    onChange={(option: any) => setUtility(option.value)}
+                  />
+                </InlineWrapper>
+                <MarginWrapper />
+                <InlineWrapper>
+                  <p className="description w140">KYC</p>
+                  <Select
+                    options={[
+                      {
+                        label: t('No'),
+                        value: false,
+                      },
+                      {
+                        label: t('Yes'),
+                        value: true,
+                      },
+                    ]}
+                    defaultValue={!kyc ? 1 : 0}
+                    onChange={(option: any) => setKYC(option.value)}
+                  />
+                </InlineWrapper>
+              </FlexWrapper>
               <Sperate />
               <ColorButton onClick={handleUpdate}>Update</ColorButton>
             </StepContainer>

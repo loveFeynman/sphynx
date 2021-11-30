@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { Card } from '@sphynxswap/uikit'
+import { Card } from '@sphynxdex/uikit'
 
 export const StyledCard = styled(Card) <{ isFinished?: boolean }>`
   max-width: 352px;

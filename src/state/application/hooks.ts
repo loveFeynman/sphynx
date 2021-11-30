@@ -1,6 +1,6 @@
 import { useSelector, useDispatch } from 'react-redux'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
-import { RouterType } from '@sphynxswap/sdk'
+import { RouterType } from '@sphynxdex/sdk-multichain'
 import {
   toggleMenu as _toggleMenu,
   setRouterType as _setRouterType,

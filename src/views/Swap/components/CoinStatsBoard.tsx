@@ -11,6 +11,7 @@ import { ReactComponent as LiquidityIcon } from 'assets/svg/icon/LiquidityIcon.s
 import DefaultImg from 'assets/images/MainLogo.png'
 import storages from 'config/constants/storages'
 import { getChartStats } from 'utils/apiServices'
+import useActiveWeb3React from '../../../hooks/useActiveWeb3React'
 import { AppState } from '../../../state'
 import TokenStateCard from './TokenStateCard'
 
@@ -95,6 +96,7 @@ const Container = styled.div`
 export default function CoinStatsBoard(props) {
   const dispatch = useDispatch()
   const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
+  const { chainId } = useActiveWeb3React()
   const routerVersion = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.routerVersion)
   const marketCapacity = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.marketCapacity)
   const result = isAddress(input)
@@ -127,7 +129,7 @@ export default function CoinStatsBoard(props) {
   const getTableData = useCallback(async () => {
     try {
       if (result) {
-        const chartStats: any = await getChartStats(input, routerVersion)
+        const chartStats: any = await getChartStats(input, routerVersion, chainId)
         setalldata(chartStats)
         setPrice(chartStats.price)
         setLinkIcon(
@@ -138,14 +140,14 @@ export default function CoinStatsBoard(props) {
     } catch (err) {
       setTimeout(() => getTableData(), 3000)
     }
-  }, [input, result, routerVersion])
+  }, [input, result, routerVersion, chainId])
 
   useEffect(() => {
     const ac = new AbortController()
     getTableData()
     interval.current = setInterval(() => {
       const sessionData = JSON.parse(sessionStorage.getItem(storages.SESSION_LIVE_PRICE))
-      if (sessionData === null) return
+      if (!sessionData) return
       if (sessionData.input.toLowerCase() !== tokenAddress.current.toLowerCase()) return
       setPrice(sessionData.price)
     }, 2000)

@@ -1,7 +1,7 @@
 /* eslint-disable */
 import React from 'react'
 import styled, {useTheme} from 'styled-components'
-import { Box } from '@sphynxswap/uikit'
+import { Box } from '@sphynxdex/uikit'
 import { useTranslation } from 'contexts/Localization'
 import {FormattedNumber} from './FormattedNumber'
 

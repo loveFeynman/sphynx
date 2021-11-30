@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { HelpIcon, Skeleton, useTooltip, Flex, Text } from '@sphynxswap/uikit'
+import { HelpIcon, Skeleton, useTooltip, Flex, Text } from '@sphynxdex/uikit'
 import { useTranslation } from 'contexts/Localization'
 
 const ReferenceElement = styled.div`

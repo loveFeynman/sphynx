@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { useWeb3React } from '@web3-react/core'
-import { Text } from '@sphynxswap/uikit'
+import { Text } from '@sphynxdex/uikit'
 import useAuth from 'hooks/useAuth'
 import ConnectWalletButton from 'components/ConnectWalletButton'
 import { ReactComponent as UserIcon } from 'assets/svg/icon/UserIcon.svg'

@@ -4,10 +4,10 @@ import { AddressZero } from '@ethersproject/constants'
 import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers'
 import { BigNumber } from '@ethersproject/bignumber'
 import { abi as ISphynxRouter02 } from '@sphynxswap/swap-periphery/build/ISphynxRouter02.json'
-import { ChainId, JSBI, Percent, Token, CurrencyAmount, Currency, ETHER, RouterType } from '@sphynxswap/sdk'
-import { ROUTER_ADDRESS, PANCAKE_ROUTER_ADDRESS } from '../config/constants'
+import { ChainId, JSBI, Percent, Token, CurrencyAmount, Currency, ETHER, RouterType } from '@sphynxdex/sdk-multichain'
+import { ROUTER_ADDRESS, PANCAKE_ROUTER_ADDRESS, UNISWAP_ROUTER_ADDRESS } from '../config/constants'
 import { BASE_BSC_SCAN_URLS } from '../config'
-import { TokenAddressMap } from '../state/lists/hooks'
+import { TokenAddressMap, UniTokenAddressMap } from '../state/lists/hooks'
 
 // returns the checksummed address if the address is valid, otherwise returns false
 export function isAddress(value: any): string | false {
@@ -100,6 +100,9 @@ export function getRouterContract(
   if (routerType === RouterType.pancake) {
     return getContract(PANCAKE_ROUTER_ADDRESS, ISphynxRouter02, library, account)
   }
+  if (routerType === RouterType.uniswap) {
+    return getContract(UNISWAP_ROUTER_ADDRESS, ISphynxRouter02, library, account)
+  }
   return getContract(ROUTER_ADDRESS, ISphynxRouter02, library, account) // todo
 }
 
@@ -107,8 +110,10 @@ export function escapeRegExp(string: string): string {
   return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') // $& means the whole matched string
 }
 
-export function isTokenOnList(defaultTokens: TokenAddressMap, currency?: Currency): boolean {
-  if (currency === ETHER) return true
+export function isTokenOnList(defaultTokens: TokenAddressMap | UniTokenAddressMap, currency?: Currency): boolean {
+  const nativeKeys = Object.keys(ETHER)
+  const nativeCurrencies = nativeKeys.map(key => ETHER[parseInt(key)])
+  if (nativeCurrencies.indexOf(currency) !== -1) return true
   return Boolean(currency instanceof Token && defaultTokens[currency.chainId]?.[currency.address])
 }
 

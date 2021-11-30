@@ -1,6 +1,6 @@
 import React, { CSSProperties } from 'react'
-import { Token } from '@sphynxswap/sdk'
-import { Button, Text, CheckmarkCircleIcon } from '@sphynxswap/uikit'
+import { Token } from '@sphynxdex/sdk-multichain'
+import { Button, Text, CheckmarkCircleIcon } from '@sphynxdex/uikit'
 import { AutoRow, RowFixed } from 'components/Layout/Row'
 import { AutoColumn } from 'components/Layout/Column'
 import CurrencyLogo from 'components/Logo/CurrencyLogo'

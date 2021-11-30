@@ -1,5 +1,5 @@
 import { parseUnits } from '@ethersproject/units'
-import { Currency, CurrencyAmount, ETHER, JSBI, Token, TokenAmount, Trade } from '@sphynxswap/sdk'
+import { Currency, CurrencyAmount, ETHER, JSBI, Token, TokenAmount, Trade } from '@sphynxdex/sdk-multichain'
 import { ParsedQs } from 'qs'
 import { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -27,17 +27,18 @@ export function useSwapActionHandlers(): {
   onUserInput: (field: Field, typedValue: string) => void
   onChangeRecipient: (recipient: string | null) => void
 } {
+  const { chainId } = useActiveWeb3React()
   const dispatch = useDispatch<AppDispatch>()
   const onCurrencySelection = useCallback(
     (field: Field, currency: Currency) => {
       dispatch(
         selectCurrency({
           field,
-          currencyId: currency instanceof Token ? currency.address : currency === ETHER ? 'BNB' : '',
+          currencyId: currency instanceof Token ? currency.address : currency === ETHER[chainId] ? chainId === 56 ? 'BNB' : 'ETH' : '',
         }),
       )
     },
-    [dispatch],
+    [dispatch, chainId],
   )
 
   const onSwitchTokens = useCallback(() => {
@@ -74,9 +75,12 @@ export function tryParseAmount(value?: string, currency?: Currency): CurrencyAmo
   try {
     const typedValueParsed = parseUnits(value, currency.decimals).toString()
     if (typedValueParsed !== '0') {
-      return currency instanceof Token
-        ? new TokenAmount(currency, JSBI.BigInt(typedValueParsed))
-        : CurrencyAmount.ether(JSBI.BigInt(typedValueParsed))
+      if (currency instanceof Token) {
+        return new TokenAmount(currency, JSBI.BigInt(typedValueParsed))
+      }
+      const returnValue: any = CurrencyAmount.ether(JSBI.BigInt(typedValueParsed))
+      returnValue.currency = currency
+      return returnValue
     }
   } catch (error) {
     // should fail if the user specifies too many decimal places of precision (or maybe exceed max uint?)
@@ -203,6 +207,7 @@ function parseCurrencyFromURLParameter(urlParam: any): string {
     const valid = isAddress(urlParam)
     if (valid) return valid
     if (urlParam.toUpperCase() === 'BNB') return 'BNB'
+    if (urlParam.toUpperCase() === 'ETH') return 'ETH'
     if (valid === false) return 'BNB'
   }
   return 'BNB' ?? ''

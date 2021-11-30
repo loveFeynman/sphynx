@@ -2,7 +2,7 @@ import React, { useState, useCallback, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { AppState } from 'state'
 import { autoSwap } from 'state/flags/actions'
-import { ChainId, Currency, Token } from '@sphynxswap/sdk'
+import { ChainId, Currency, Token } from '@sphynxdex/sdk-multichain'
 import styled from 'styled-components'
 import MainLogo from 'assets/svg/icon/logo_new.svg'
 import {
@@ -16,7 +16,7 @@ import {
   Link,
   Modal,
   InjectedModalProps,
-} from '@sphynxswap/uikit'
+} from '@sphynxdex/uikit'
 import { registerToken } from 'utils/wallet'
 import { useTranslation } from 'contexts/Localization'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'

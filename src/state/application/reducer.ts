@@ -1,5 +1,5 @@
 import { createReducer } from '@reduxjs/toolkit'
-import { RouterType } from '@sphynxswap/sdk'
+import { RouterType } from '@sphynxdex/sdk-multichain'
 import {
   updateBlockNumber,
   toggleMenu,

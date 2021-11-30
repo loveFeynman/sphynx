@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react'
 import styled, { useTheme } from 'styled-components'
-import { Flex, Text } from '@sphynxswap/uikit'
+import { Flex, Text } from '@sphynxdex/uikit'
 import { useTranslation } from 'contexts/Localization'
 import WatchIcon from 'components/Icon/WatchIcon'
 
