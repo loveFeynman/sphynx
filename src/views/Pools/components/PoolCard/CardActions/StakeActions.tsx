@@ -1,5 +1,5 @@
 import React from 'react'
-import { Flex, Text, Button, IconButton, AddIcon, useMatchBreakpoints, MinusIcon, useModal, Skeleton, useTooltip } from '@sphynxswap/uikit'
+import { Flex, Text, Button, IconButton, AddIcon, useMatchBreakpoints, MinusIcon, useModal, Skeleton, useTooltip } from '@sphynxdex/uikit'
 import BigNumber from 'bignumber.js'
 import styled from 'styled-components'
 import { useTranslation } from 'contexts/Localization'

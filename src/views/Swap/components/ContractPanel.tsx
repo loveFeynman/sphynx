@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import styled, { useTheme } from 'styled-components'
-import { IconButton, Link, Text, useMatchBreakpoints } from '@sphynxswap/uikit'
+import { IconButton, Link, Text, useMatchBreakpoints } from '@sphynxdex/uikit'
 import SearchIcon from "components/Icon/SearchIcon";
 import { PoolData } from 'state/info/types'
 import fetchPoolsForToken from 'state/info/queries/tokens/poolsForToken'

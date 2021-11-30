@@ -2,7 +2,7 @@
 
 import React, { useState, useCallback, useEffect, useMemo } from 'react'
 import styled from 'styled-components'
-import { Text, Flex, Modal, InjectedModalProps, Button, Input } from '@sphynxswap/uikit'
+import { Text, Flex, Modal, InjectedModalProps, Button, Input } from '@sphynxdex/uikit'
 import { useTranslation } from 'contexts/Localization'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import Spinner from 'components/Loader/Spinner'

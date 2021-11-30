@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { ChevronDownIcon, Text } from '@sphynxswap/uikit'
+import { ChevronDownIcon, Text } from '@sphynxdex/uikit'
 import { useTranslation } from 'contexts/Localization'
 
 interface DetailsProps {

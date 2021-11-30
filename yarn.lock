@@ -3571,6 +3571,19 @@
   resolved "https://registry.yarnpkg.com/@solidity-parser/parser/-/parser-0.8.2.tgz#a6a5e93ac8dca6884a99a532f133beba59b87b69"
   integrity sha512-8LySx3qrNXPgB5JiULfG10O3V7QTxI/TLzSw5hFQhXWSkVxZBAv4rZQ0sYgLEbc8g3L2lmnujj1hKul38Eu5NQ==
 
+"@sphynxdex/uikit@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@sphynxdex/uikit/-/uikit-0.1.0.tgz#836a88c9aafa1aee2754e4bcc65c61b52f647f2a"
+  integrity sha512-g5/adbdimkRNxgPQDA0yBkx0FXRdAGQQOAsy3WUp3pqa/JtAHhfhboTZc0VoEfqKMi7gf0KQqTHPR77DgjydHg==
+  dependencies:
+    "@popperjs/core" "^2.9.2"
+    "@types/lodash" "^4.14.168"
+    "@types/styled-system" "^5.1.10"
+    lodash "^4.17.20"
+    react-popper "^2.2.5"
+    react-transition-group "^4.4.1"
+    styled-system "^5.1.5"
+
 "@sphynxswap/sdk@^0.1.6":
   version "0.1.6"
   resolved "https://registry.yarnpkg.com/@sphynxswap/sdk/-/sdk-0.1.6.tgz#cdef231f92b0a8a5fc95da932cb57852236cb1e2"
@@ -3611,19 +3624,6 @@
     "@uniswap/v2-core" "^1.0.1"
     truffle-hdwallet-provider "^1.0.17"
     truffle-plugin-verify "^0.5.4"
-
-"@sphynxswap/uikit@^0.1.0":
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/@sphynxswap/uikit/-/uikit-0.1.0.tgz#2df603a1d085da00b2851588d79d2d5de2e1fe7b"
-  integrity sha512-KQcmjE1bLwJYYGR4UBa7gRPigSaygvOopQO4vUJuUr3bJIVw9vE64Xkyi3/HO8kr0r9RX+ukVUXzqygKtUfakA==
-  dependencies:
-    "@popperjs/core" "^2.9.2"
-    "@types/lodash" "^4.14.168"
-    "@types/styled-system" "^5.1.10"
-    lodash "^4.17.20"
-    react-popper "^2.2.5"
-    react-transition-group "^4.4.1"
-    styled-system "^5.1.5"
 
 "@styled-system/background@^5.1.2":
   version "5.1.2"

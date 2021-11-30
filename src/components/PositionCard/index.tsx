@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { JSBI, Pair, Percent } from '@sphynxswap/sdk'
-import { AddIcon, Button, Card, CardProps, ChevronDownIcon, ChevronUpIcon, Flex, Text } from '@sphynxswap/uikit'
+import { AddIcon, Button, Card, CardProps, ChevronDownIcon, ChevronUpIcon, Flex, Text } from '@sphynxdex/uikit'
 import styled from 'styled-components'
 import MainLogo from 'assets/svg/icon/logo_new.svg'
 import { useTranslation } from 'contexts/Localization'

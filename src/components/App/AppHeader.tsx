@@ -13,7 +13,7 @@ import {
   Button,
   CogIcon,
   useModal,
-} from '@sphynxswap/uikit'
+} from '@sphynxdex/uikit'
 import SettingsModal from 'components/Menu/GlobalSettings/SettingsModal'
 import { useTranslation } from 'contexts/Localization'
 import { useSwapType } from 'state/application/hooks'

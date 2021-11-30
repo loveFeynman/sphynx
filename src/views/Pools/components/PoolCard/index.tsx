@@ -1,7 +1,7 @@
 import BigNumber from 'bignumber.js'
 import styled from 'styled-components'
 import React from 'react'
-import { CardBody, Flex, Text, CardRibbon } from '@sphynxswap/uikit'
+import { CardBody, Flex, Text, CardRibbon } from '@sphynxdex/uikit'
 import ConnectWalletButton from 'components/ConnectWalletButton'
 import { useTranslation } from 'contexts/Localization'
 import { BIG_ZERO } from 'utils/bigNumber'

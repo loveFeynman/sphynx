@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'contexts/Localization'
-import { Text, Flex, useMatchBreakpoints } from '@sphynxswap/uikit'
+import { Text, Flex, useMatchBreakpoints } from '@sphynxdex/uikit'
 import { ReactComponent as MainLogo } from 'assets/svg/icon/logo_new.svg'
 import styled from 'styled-components'
 import Spinner from 'components/Loader/Spinner'

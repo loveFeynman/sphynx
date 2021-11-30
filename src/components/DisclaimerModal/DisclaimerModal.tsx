@@ -10,7 +10,7 @@ import {
   Checkbox,
   Button,
   Link,
-} from '@sphynxswap/uikit'
+} from '@sphynxdex/uikit'
 import styled from 'styled-components'
 import { TERMS_LIST } from './config'
 

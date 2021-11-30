@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react'
 import styled from 'styled-components'
-import { Button, useModal, IconButton, AddIcon, MinusIcon, Skeleton, Text, Flex, useMatchBreakpoints } from '@sphynxswap/uikit'
+import { Button, useModal, IconButton, AddIcon, MinusIcon, Skeleton, Text, Flex, useMatchBreakpoints } from '@sphynxdex/uikit'
 import { useLocation } from 'react-router-dom'
 import { BigNumber } from 'bignumber.js'
 import ConnectWalletButton from 'components/ConnectWalletButton'

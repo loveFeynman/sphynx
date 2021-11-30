@@ -1,6 +1,6 @@
 import React from 'react'
 import styled, { useTheme } from 'styled-components'
-import { Flex, Text } from '@sphynxswap/uikit'
+import { Flex, Text } from '@sphynxdex/uikit'
 import { useTranslation } from 'contexts/Localization'
 import { BalanceNumber } from 'components/BalanceNumber'
 import Card from 'components/Card'

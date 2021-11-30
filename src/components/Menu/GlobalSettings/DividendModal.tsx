@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react'
 import styled from 'styled-components'
-import { Text, Flex, Modal, Button } from '@sphynxswap/uikit'
+import { Text, Flex, Modal, Button } from '@sphynxdex/uikit'
 import { useTranslation } from 'contexts/Localization'
 
 declare type Handler = () => void

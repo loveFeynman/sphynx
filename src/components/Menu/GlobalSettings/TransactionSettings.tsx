@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
-import { Text, Button, Input, Flex, Box } from '@sphynxswap/uikit'
+import { Text, Button, Input, Flex, Box } from '@sphynxdex/uikit'
 import { useTranslation } from 'contexts/Localization'
 import { useUserSlippageTolerance, useUserTransactionTTL } from 'state/user/hooks'
 import { INITIAL_ALLOWED_SLIPPAGE } from 'config/constants/index'

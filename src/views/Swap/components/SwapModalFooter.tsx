@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { Trade, TradeType } from '@sphynxswap/sdk'
-import { Button, Text, AutoRenewIcon } from '@sphynxswap/uikit'
+import { Button, Text, AutoRenewIcon } from '@sphynxdex/uikit'
 import { Field } from 'state/swap/actions'
 import {
   computeSlippageAdjustedAmounts,

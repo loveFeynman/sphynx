@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button, Text, useModal, Flex, TooltipText, useTooltip, Skeleton, Heading, useMatchBreakpoints } from '@sphynxswap/uikit'
+import { Button, Text, useModal, Flex, TooltipText, useTooltip, Skeleton, Heading, useMatchBreakpoints } from '@sphynxdex/uikit'
 import BigNumber from 'bignumber.js'
 import { useWeb3React } from '@web3-react/core'
 import { getCakeVaultEarnings } from 'views/Pools/helpers'

@@ -1,6 +1,6 @@
 import React from 'react'
 import { Price } from '@sphynxswap/sdk'
-import { Text, AutoRenewIcon } from '@sphynxswap/uikit'
+import { Text, AutoRenewIcon } from '@sphynxdex/uikit'
 import { StyledBalanceMaxMini } from './styleds'
 
 interface TradePriceProps {

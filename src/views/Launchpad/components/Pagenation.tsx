@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Button, Text } from '@sphynxswap/uikit';
+import { Button, Text } from '@sphynxdex/uikit';
 import { ReactComponent as ArrowLeftIcon} from 'assets/svg/icon/ArrowLeftIcon.svg'
 import { ReactComponent as ArrowRightIcon} from 'assets/svg/icon/ArrowRightIcon.svg'
 

@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Text } from '@sphynxswap/uikit';
+import { Text } from '@sphynxdex/uikit';
 import { useHistory } from 'react-router-dom'
 import { useWeb3React } from '@web3-react/core'
 import TimerComponent from 'components/Timer/TimerComponent';

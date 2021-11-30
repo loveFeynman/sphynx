@@ -1,5 +1,5 @@
 import React from 'react'
-import { useMatchBreakpoints, Flex, Text } from '@sphynxswap/uikit'
+import { useMatchBreakpoints, Flex, Text } from '@sphynxdex/uikit'
 import BigNumber from 'bignumber.js'
 import { FarmWithStakedValue } from 'views/Farms/components/FarmCard/FarmCard'
 import Balance from 'components/Balance'

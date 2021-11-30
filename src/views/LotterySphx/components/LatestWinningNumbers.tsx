@@ -1,5 +1,5 @@
 import React from 'react'
-import { Flex, Text } from '@sphynxswap/uikit'
+import { Flex, Text } from '@sphynxdex/uikit'
 import LotteryLatestMark from 'assets/svg/icon/LotteryLatestMarkSmall.svg'
 
 const BackgroundColors = {

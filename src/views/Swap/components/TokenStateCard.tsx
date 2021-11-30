@@ -2,7 +2,7 @@ import React from 'react'
 import { ReactComponent as BscscanIcon } from 'assets/svg/icon/Bscscan.svg'
 import Column from 'components/Column'
 import styled, { useTheme } from 'styled-components'
-import { Flex, Text, useMatchBreakpoints } from '@sphynxswap/uikit'
+import { Flex, Text, useMatchBreakpoints } from '@sphynxdex/uikit'
 import { useTranslation } from 'contexts/Localization'
 import DefaultImg from 'assets/images/MainLogo.png'
 

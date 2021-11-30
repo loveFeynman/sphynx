@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Flex } from '@sphynxswap/uikit'
+import { Flex } from '@sphynxdex/uikit'
 import SwapFeeRewards from './SwapFeeRewards'
 import TotalTransactionCollected from './TotalTransactionCollected'
 import SphynxByBack from './SphynxByBack'
