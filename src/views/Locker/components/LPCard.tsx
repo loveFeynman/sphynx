@@ -2,7 +2,6 @@ import React from 'react'
 import styled from 'styled-components'
 import { Text } from '@sphynxdex/uikit';
 import { useHistory } from 'react-router-dom'
-import { useWeb3React } from '@web3-react/core'
 import TimerComponent from 'components/Timer/TimerComponent';
 
 const CardWrapper = styled.div`
@@ -77,6 +76,15 @@ const SaleInfoValue = styled.div`
     font-size: 14px;
 `
 
+const AddressInfo = styled(SaleInfoValue)`
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 200px;
+    ${({ theme }) => theme.mediaQueries.sm} {
+        width: unset;
+    }
+`
+
 const Divider = styled.div`
     height: 1px;
     background: rgba(255, 255, 255, 0.1);
@@ -85,14 +93,6 @@ const Divider = styled.div`
 const SaleInfoWrapper = styled.div`
     padding: 24px 0px;
     width: calc(100% - 42px);
-`
-
-const TokenImg = styled.div`
-    img {
-        width: 64px;
-        height: 64px;
-        max-width: unset;
-    }
 `
 
 const TokenWrapper = styled.div`
@@ -114,10 +114,9 @@ interface TokenCardProps {
 
 const LPCard: React.FC<TokenCardProps> = ({ id, tokenSymbol1, tokenSymbol2, startTime, endTime, tokenAddress }: TokenCardProps) => {
     const history = useHistory()
-    const { account } = useWeb3React()
 
     const handleClicked = () => {
-        history.push(`/locker/detail/${id}`)
+        history.push(`/locker/tokendetail/${id}`)
     }
 
     return (
@@ -148,9 +147,9 @@ const LPCard: React.FC<TokenCardProps> = ({ id, tokenSymbol1, tokenSymbol2, star
                         <SaleInfoTitle style={{marginRight: '10px'}}>
                             Address:
                         </SaleInfoTitle>
-                        <SaleInfoValue style={{overflow: 'hidden', textOverflow: 'ellipsis'}}>
+                        <AddressInfo style={{overflow: 'hidden', textOverflow: 'ellipsis'}}>
                             {tokenAddress}
-                        </SaleInfoValue>
+                        </AddressInfo>
                     </SaleInfo>
                     <Divider/>
                 </SaleInfoWrapper>

@@ -74,3 +74,6 @@ export const getPresaleAddress = () => {
 export const getSphynxRouterAddress = () => {
   return getAddress(addresses.sphynxRouter)
 }
+export const getLockerAddress = () => {
+  return getAddress(addresses.locker)
+}

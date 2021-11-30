@@ -17,11 +17,15 @@ const Wrapper = styled.div`
   margin-top: 24px;
   text-align: center;
   font-weight: bold;
+  padding: 0px;
   p {
     line-height: 24px;
   }
-  ${({ theme }) => theme.mediaQueries.xs} {
-    padding: 24px;
+  ${({ theme }) => theme.mediaQueries.sm} {
+    padding: 5px;
+  }
+  ${({ theme }) => theme.mediaQueries.sm} {
+    padding: 14px;
   }
 `
 
@@ -61,17 +65,6 @@ const Card = styled(Box) <{
 const Locker: React.FC = () => {
     const { t } = useTranslation()
     const theme = useTheme()
-    const { isXl } = useMatchBreakpoints()
-    const isMobile = !isXl
-
-    const selectedTab = (tabIndex: number): void => {
-        if (tabIndex === 0) {
-            // location.pathname = "/lock/"
-        }
-        else {
-            // location.pathname = "/pools/history"
-        }
-    }
 
     return (
         <Wrapper>
@@ -88,7 +81,6 @@ const Locker: React.FC = () => {
             <SwapTabs
                 selectedTabClassName='is-selected'
                 selectedTabPanelClassName='is-selected'
-                onSelect={(tabIndex) => selectedTab(tabIndex)}
                 style={{ width: '100%' }}
             >
                 <SwapTabList>

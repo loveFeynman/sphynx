@@ -1,8 +1,14 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'contexts/Localization'
 import { Flex, useMatchBreakpoints } from '@sphynxdex/uikit'
 import styled from 'styled-components'
 import Spinner from 'components/Loader/Spinner'
+import axios from 'axios'
+import { useWeb3React } from '@web3-react/core'
+import { useMenuToggle } from 'state/application/hooks'
+import Pagination from '@material-ui/lab/Pagination'
+import { PaginationWrapper } from 'views/Launchpad/ListingsStyles'
+import { LOCK_NUM_PER_PAGE } from 'config/constants/lock'
 import SearchPannel from './SearchPannel'
 import TokenCard from './TokenCard'
 
@@ -19,7 +25,7 @@ const Wrapper = styled.div`
   p {
     line-height: 24px;
   }
-  ${({ theme }) => theme.mediaQueries.xs} {
+  ${({ theme }) => theme.mediaQueries.sm} {
     padding: 24px;
   }
 `
@@ -42,7 +48,7 @@ const SaleInfoValue = styled.div`
     font-size: 14px;
 `
 
-const TokenListContainder = styled.div`
+const TokenListContainder = styled.div<{ toggled: boolean }>`
   margin-top: 24px;
   display: grid;
   grid-gap: 20px;
@@ -50,114 +56,90 @@ const TokenListContainder = styled.div`
   ${({ theme }) => theme.mediaQueries.xs} {
     grid-template-columns: repeat(1, 1fr);
   }
-  ${({ theme }) => theme.mediaQueries.md} {
-    grid-template-columns: repeat(1, 1fr);
-  }
   ${({ theme }) => theme.mediaQueries.lg} {
-    grid-template-columns: repeat(1, 1fr);
-  }
-  ${({ theme }) => theme.mediaQueries.xl} {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: ${(props) => (props.toggled ? 'repeat(2, 1fr)' : 'repeat(1, 1fr)')};
   }
   @media screen and (min-width: 1600px) {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: ${(props) => (props.toggled ? 'repeat(3, 1fr)' : 'repeat(2, 1fr)')};
   }
   @media screen and (min-width: 1920px) {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: ${(props) => (props.toggled ? 'repeat(4, 1fr)' : 'repeat(3, 1fr)')};
   }
 `
 
 const TokenLocker: React.FC = () => {
   const { t } = useTranslation()
-  const { isXl } = useMatchBreakpoints()
-  const isMobile = !isXl
-  const tokenList = [
-    {
-      id: 0,
-      tokenLogo: "https://sphynxtoken.co/static/media/Sphynx-Token-Transparent-1.020aae53.png",
-      tokenName: "Sphynx Token",
-      tokenSymbol: "SPHYNX",
-      startTime: "1637691698",
-      endTime: "1637791698",
-      amount: 1000000000,
-      vestingRate: 70,
-      tokenAddress: "0xEE0C0E647d6E78d74C42E3747e0c38Cef41d6C88"
-    },
-    {
-      id: 1,
-      tokenLogo: "https://sphynxtoken.co/static/media/Sphynx-Token-Transparent-1.020aae53.png",
-      tokenName: "Sphynx Token",
-      tokenSymbol: "SPHYNX",
-      startTime: "1637691698",
-      endTime: "1637791698",
-      amount: 1000000000,
-      vestingRate: 70,
-      tokenAddress: "0xEE0C0E647d6E78d74C42E3747e0c38Cef41d6C88"
-    },
-    {
-      id: 2,
-      tokenLogo: "https://sphynxtoken.co/static/media/Sphynx-Token-Transparent-1.020aae53.png",
-      tokenName: "Sphynx Token",
-      tokenSymbol: "SPHYNX",
-      startTime: "1637691698",
-      endTime: "1637791698",
-      amount: 1000000000,
-      vestingRate: 70,
-      tokenAddress: "0xEE0C0E647d6E78d74C42E3747e0c38Cef41d6C88"
-    },
-    {
-      id: 3,
-      tokenLogo: "https://sphynxtoken.co/static/media/Sphynx-Token-Transparent-1.020aae53.png",
-      tokenName: "Sphynx Token",
-      tokenSymbol: "SPHYNX",
-      startTime: "1637691698",
-      endTime: "1637791698",
-      amount: 1000000000,
-      vestingRate: 70,
-      tokenAddress: "0xEE0C0E647d6E78d74C42E3747e0c38Cef41d6C88"
-    },
-    {
-      id: 4,
-      tokenLogo: "https://sphynxtoken.co/static/media/Sphynx-Token-Transparent-1.020aae53.png",
-      tokenName: "Sphynx Token",
-      tokenSymbol: "SPHYNX",
-      startTime: "1637691698",
-      endTime: "1637791698",
-      amount: 1000000000,
-      vestingRate: 70,
-      tokenAddress: "0xEE0C0E647d6E78d74C42E3747e0c38Cef41d6C88"
+  const { menuToggled } = useMenuToggle()
+  const { chainId } = useWeb3React()
+  const [tokenList, setTokenList] = useState(null)
+  const [searchKey, setSearchKey] = useState('')
+  const [pageIndex, setPageIndex] = useState(0)
+  const [pageCount, setPageCount] = useState(1)
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = {
+        chain_id: chainId,
+        type: false, /* token lock type */
+        key: searchKey,
+        page_index: pageIndex,
+        num_per_page: LOCK_NUM_PER_PAGE,
+      }
+      axios.post(`${process.env.REACT_APP_BACKEND_API_URL2}/getAllTokenLockInfo`, { data }).then(async (response) => {
+        if (response.data) {
+          let pages = 1
+          if(response.data.length > 0)
+           pages = Math.ceil(parseInt(response.data[0].count) / LOCK_NUM_PER_PAGE)
+          setPageCount(pages)
+          setTokenList(response.data)
+        }
+      })
     }
-  ]
+
+    if (chainId)
+      fetchData()
+  }, [chainId, searchKey, pageIndex])
+
+  const handlePageIndex = (e, page) => {
+    setPageIndex(page - 1)
+  }
 
   return (
     <Wrapper>
-      <SearchPannel />
-      {!tokenList.length && <Flex justifyContent="center" mb="4px">
+      <SearchPannel setSearchKey={setSearchKey} setPageIndex={setPageIndex} />
+      {!tokenList && (<Flex justifyContent="center" mb="4px">
         <Spinner />
-      </Flex>}
-      <SaleInfo>
+      </Flex>)}
+      {tokenList && (<SaleInfo>
         <SaleInfoTitle>
           Total Token Locks:
         </SaleInfoTitle>
         <SaleInfoValue>
-          {tokenList.length}
+          {!tokenList ? 0 : tokenList.length}
         </SaleInfoValue>
-      </SaleInfo>
-      <TokenListContainder>
+      </SaleInfo>)}
+      <TokenListContainder toggled={menuToggled}>
         {tokenList && tokenList.map((cell) => (
           <TokenCard
-            id={cell.id}
-            tokenLogo={cell.tokenLogo}
-            tokenName={cell.tokenName}
-            tokenSymbol={cell.tokenSymbol}
-            startTime={cell.startTime}
-            endTime={cell.endTime}
-            amount={cell.amount}
-            vestingRate={cell.vestingRate}
-            tokenAddress={cell.tokenAddress}
+            id={cell.lock_id}
+            tokenLogo={cell.logo_link}
+            tokenName={cell.token_name}
+            tokenSymbol={cell.token_symbol}
+            startTime={cell.start_time}
+            endTime={cell.end_time}
+            amount={cell.lock_supply}
+            vestingRate={100 / cell.vest_num}
+            tokenAddress={cell.lock_address}
           />
         ))}
       </TokenListContainder>
+      <PaginationWrapper>
+        <Pagination
+          count={pageCount}
+          siblingCount={0}
+          onChange={handlePageIndex}
+        />
+      </PaginationWrapper>
     </Wrapper>
   )
 }

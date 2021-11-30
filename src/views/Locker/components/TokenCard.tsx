@@ -2,7 +2,6 @@ import React from 'react'
 import styled from 'styled-components'
 import { Text } from '@sphynxdex/uikit';
 import { useHistory } from 'react-router-dom'
-import { useWeb3React } from '@web3-react/core'
 import TimerComponent from 'components/Timer/TimerComponent';
 
 const CardWrapper = styled.div`
@@ -77,6 +76,15 @@ const SaleInfoValue = styled.div`
     font-size: 14px;
 `
 
+const AddressInfo = styled(SaleInfoValue)`
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 200px;
+    ${({ theme }) => theme.mediaQueries.sm} {
+        width: unset;
+    }
+`
+
 const Divider = styled.div`
     height: 1px;
     background: rgba(255, 255, 255, 0.1);
@@ -117,10 +125,9 @@ interface TokenCardProps {
 
 const TokenCard: React.FC<TokenCardProps> = ({ id, tokenLogo, tokenName, tokenSymbol, startTime, endTime, amount, vestingRate, tokenAddress }: TokenCardProps) => {
     const history = useHistory()
-    const { account } = useWeb3React()
 
     const handleClicked = () => {
-        history.push(`/locker/detail/${id}`)
+        history.push(`/locker/tokendetail/${id}`)
     }
 
     return (
@@ -165,7 +172,7 @@ const TokenCard: React.FC<TokenCardProps> = ({ id, tokenLogo, tokenName, tokenSy
                             Vesting Percent:
                         </SaleInfoTitle>
                         <SaleInfoValue>
-                            {vestingRate}
+                            {vestingRate}%
                         </SaleInfoValue>
                     </SaleInfo>
                     <Divider />
@@ -173,9 +180,9 @@ const TokenCard: React.FC<TokenCardProps> = ({ id, tokenLogo, tokenName, tokenSy
                         <SaleInfoTitle style={{ marginRight: '10px' }}>
                             Address:
                         </SaleInfoTitle>
-                        <SaleInfoValue style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        <AddressInfo>
                             {tokenAddress}
-                        </SaleInfoValue>
+                        </AddressInfo>
                     </SaleInfo>
                     <Divider />
                 </SaleInfoWrapper>
