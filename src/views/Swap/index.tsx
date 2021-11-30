@@ -201,19 +201,9 @@ export default function Swap({ history }: RouteComponentProps) {
   const [symbol, setSymbol] = useState('')
   const theme = useTheme()
   const { account, chainId } = useActiveWeb3React()
-  const BUSDAddr = BUSD[chainId].address
+  const BUSDAddr = BUSD[chainId]?.address
 
   const wrappedCurrencySymbol = chainId === 56 ? 'WBNB' : 'WETH'
-
-  if ((tokenAddress === '' || tokenAddress.toLowerCase() === sphynxAddr[chainId].toLowerCase()) && chainId == 56) {
-    if (routerVersion !== 'sphynx') {
-      dispatch(typeRouterVersion({ routerVersion: 'sphynx' }))
-    }
-  } else {
-    if (routerVersion !== 'v2') {
-      dispatch(typeRouterVersion({ routerVersion: 'v2' }))
-    }
-  }
 
   stateRef.current = transactionData
   pairsRef.current = pairs
@@ -227,6 +217,7 @@ export default function Swap({ history }: RouteComponentProps) {
     const setInitData = async () => {
       const pair = await getSphynxPairAddress(input, wrappedAddr[chainId], simpleRpcProvider)
       if (pair !== null) {
+        console.log("HELOEO")
         if (routerVersion !== 'sphynx') {
           dispatch(typeRouterVersion({ routerVersion: 'sphynx' }))
         }
@@ -247,9 +238,17 @@ export default function Swap({ history }: RouteComponentProps) {
         if (routerVersion !== 'v2') {
           dispatch(typeRouterVersion({ routerVersion: 'v2' }))
         }
-        if (swapRouter !== SwapRouter.PANCAKE_SWAP) {
-          setSwapRouter(SwapRouter.PANCAKE_SWAP)
-          setRouterType(RouterType.pancake)
+        if (
+          (swapRouter !== SwapRouter.PANCAKE_SWAP && chainId === ChainId.MAINNET) ||
+          (swapRouter !== SwapRouter.UNI_SWAP && chainId === ChainId.ETHEREUM)
+        ) {
+          if (chainId === ChainId.MAINNET) {
+            setSwapRouter(SwapRouter.PANCAKE_SWAP)
+            setRouterType(RouterType.pancake)
+          } else {
+            setSwapRouter(SwapRouter.UNI_SWAP)
+            setRouterType(RouterType.uniswap)
+          }
         }
         dispatch(
           replaceSwapState({
@@ -760,51 +759,6 @@ export default function Swap({ history }: RouteComponentProps) {
     currencies[Field.INPUT] && currencies[Field.OUTPUT] && parsedAmounts[independentField]?.greaterThan(JSBI.BigInt(0)),
   )
   const noRoute = !route
-
-  useEffect(() => {
-    if (
-      tokenAddress === null ||
-      tokenAddress === '' ||
-      tokenAddress === undefined ||
-      tokenAddress.toLowerCase() === sphynxAddr[chainId].toLowerCase()
-    ) {
-      if (swapRouter !== SwapRouter.SPHYNX_SWAP) {
-        setSwapRouter(SwapRouter.SPHYNX_SWAP)
-        setRouterType(RouterType.sphynx)
-      }
-      dispatch(
-        replaceSwapState({
-          outputCurrencyId: chainId === 56 ? 'BNB' : 'ETH',
-          inputCurrencyId: sphynxAddr[chainId],
-          typedValue: '',
-          field: Field.OUTPUT,
-          recipient: null,
-        }),
-      )
-    } else {
-      if (
-        (swapRouter !== SwapRouter.PANCAKE_SWAP && chainId === ChainId.MAINNET) ||
-        (swapRouter !== SwapRouter.UNI_SWAP && chainId === ChainId.ETHEREUM)
-      ) {
-        if (chainId === ChainId.MAINNET) {
-          setSwapRouter(SwapRouter.PANCAKE_SWAP)
-          setRouterType(RouterType.pancake)
-        } else {
-          setSwapRouter(SwapRouter.UNI_SWAP)
-          setRouterType(RouterType.uniswap)
-        }
-      }
-      dispatch(
-        replaceSwapState({
-          outputCurrencyId: chainId === 56 ? 'BNB' : 'ETH',
-          inputCurrencyId: tokenAddress,
-          typedValue: '',
-          field: Field.OUTPUT,
-          recipient: null,
-        }),
-      )
-    }
-  }, [dispatch, tokenAddress, chainId])
 
   // check whether the user has approved the router on the input token
   const [approval, approveCallback] = useApproveCallbackFromTrade(trade, allowedSlippage)

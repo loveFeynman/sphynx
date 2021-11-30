@@ -439,13 +439,14 @@ async function getChartStats(address: string, routerVersion: string, chainId = 5
       const factoryAddress = routerVersion === RouterType.sphynx ? SPHYNX_FACTORY_ADDRESS : UNISWAP_FACTORY_ADDRESS
       const factory = new web3ETH.eth.Contract(factoryAbi as AbiItem[], factoryAddress)
       const pairAddress = await factory.methods.getPair(baseAddress, quoteAddress).call()
+      const ethPrice = await getETHPrice()
       let liquidityV2BNB = await wETHContract.methods.balanceOf(pairAddress).call()
       liquidityV2BNB = ethers.utils.formatUnits(liquidityV2BNB, 18)
       return {
         volume: '',
         change: '',
         price: '',
-        liquidityV2: '',
+        liquidityV2: ethPrice * liquidityV2BNB,
         liquidityV2BNB,
       }
     }
@@ -607,6 +608,7 @@ async function getChartStats(address: string, routerVersion: string, chainId = 5
       liquidityV2BNB,
     }
   } catch (error) {
+    console.log("error", error)
     const baseAddress = address
     const quoteAddress =
       baseAddress === WBNB_ADDRESS
@@ -616,13 +618,14 @@ async function getChartStats(address: string, routerVersion: string, chainId = 5
     const factoryAddress = routerVersion === RouterType.sphynx ? SPHYNX_FACTORY_ADDRESS : PANCAKE_FACTORY_ADDRESS
     const factory = new web3.eth.Contract(factoryAbi as AbiItem[], factoryAddress)
     const pairAddress = await factory.methods.getPair(baseAddress, quoteAddress).call()
+    const bnbPrice = await getBNBPrice()
     let liquidityV2BNB = await wBNBContract.methods.balanceOf(pairAddress).call()
     liquidityV2BNB = ethers.utils.formatUnits(liquidityV2BNB, 18)
     return {
       volume: '',
       change: '',
       price: '',
-      liquidityV2: '',
+      liquidityV2: liquidityV2BNB * bnbPrice,
       liquidityV2BNB,
     }
   }
