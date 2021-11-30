@@ -6,7 +6,7 @@ import SearchIcon from "components/Icon/SearchIcon";
 import { PoolData } from 'state/info/types'
 import fetchPoolsForToken from 'state/info/queries/tokens/poolsForToken'
 import { fetchPoolData } from 'state/info/queries/pools/poolData'
-
+import useActiveWeb3React from 'hooks/useActiveWeb3React';
 import CopyHelper from 'components/AccountDetails/Copy'
 import './dropdown.css'
 import axios from 'axios'
@@ -130,6 +130,7 @@ const SearchInputDivider = styled.div`
 
 // {token} : ContractPanelProps)
 export default function ContractPanel({ value, symbol, amount, price }: ContractPanelProps) {
+  const { chainId } = useActiveWeb3React()
   const [addressSearch, setAddressSearch] = useState('')
   const [showDrop, setShowDrop] = useState(false)
   const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
@@ -147,7 +148,7 @@ export default function ContractPanel({ value, symbol, amount, price }: Contract
   const handlerChange = (e: any) => {
     try {
       if (e.target.value && e.target.value.length > 0) {
-        axios.get(`${process.env.REACT_APP_BACKEND_API_URL2}/${e.target.value}`).then((response) => {
+        axios.get(`${process.env.REACT_APP_BACKEND_API_URL2}/search/${e.target.value}/${chainId}`).then((response) => {
           setdata(response.data)
         })
       } else {
