@@ -21,8 +21,54 @@ import useStakeFarms from '../../../hooks/useStakeFarms'
 import useApproveFarm from '../../../hooks/useApproveFarm'
 import { ActionContainer, StakeActionTitles, ActionContent } from './styles'
 
+const StakedActionContainer = styled.div`
+  padding: 0px;
+  flex-grow: 1;
+  flex-basis: 0;
+  margin-bottom: 0;
+  flex-direction: column;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  position: relative;
+
+  ${({ theme }) => theme.mediaQueries.sm} {
+    margin-bottom: 0;
+    height: 130px;
+    max-height: 130px;
+    margin-bottom: 16px;
+  }
+
+  ${({ theme }) => theme.mediaQueries.md} {
+    padding: 16px;
+  }
+
+  ${({ theme }) => theme.mediaQueries.xl} {
+    margin-right: 0;
+    margin-bottom: 0;
+    height: 130px;
+    max-height: 130px;
+  }
+`
+
+const StakeActionTitlesWrapper = styled.div`
+  font-weight: 600;
+  font-size: 12px;
+  top: 20px;
+  display: flex;
+  flex-direction: column;
+  ${({ theme }) => theme.mediaQueries.md} {
+    flex-direction: row;
+  }
+`
+
 const IconButtonWrapper = styled.div`
   display: flex;
+  gap: 5px;
+  flex-direction: column;
+  ${({ theme }) => theme.mediaQueries.sm} {
+    flex-direction: unset;
+  }
 `
 
 const ColorButton = styled(Button)`
@@ -46,20 +92,20 @@ const ButtonSkeleton = styled(Skeleton)`
   }
 `
 
-const AddIconButton = styled(IconButton)`
-  width: 30px;
-  height: 30px;
+const AddButton = styled(Button)`
   border-radius: 9px;
+  width: 112px;
   ${({ theme }) => theme.mediaQueries.sm} {
-    width: 40px;
-    height: 40px;
     border-radius: 12px;
   }
   ${({ theme }) => theme.mediaQueries.md} {
-    width: 48px;
-    height: 48px;
     border-radius: 16px;
   }
+`
+
+const StackedActionContent = styled(ActionContent)`
+  flex-direction: column;
+  gap: 8px;
 `
 
 const StackedFlex = styled(Flex)`
@@ -164,16 +210,16 @@ const Staked: React.FunctionComponent<StackedActionProps> = ({
   if (isApproved) {
     if (stakedBalance.gt(0)) {
       return (
-        <ActionContainer>
-          <StakeActionTitles>
-            <Text bold textTransform="uppercase" color="#A7A7CC" fontSize="12px" pr="4px">
+        <StakedActionContainer>
+          <StakeActionTitlesWrapper>
+            <Text bold textAlign="center" textTransform="uppercase" color="#A7A7CC" fontSize="12px" pr={isMobile ? "0" : "4px"}>
               {lpSymbol}
             </Text>
-            <Text bold textTransform="uppercase" color="#A7A7CC" fontSize="12px">
+            <Text bold textAlign="center" textTransform="uppercase" color="#A7A7CC" fontSize="12px">
               {t('Staked')}
             </Text>
-          </StakeActionTitles>
-          <ActionContent>
+          </StakeActionTitlesWrapper>
+          <StackedActionContent>
             <StackedFlex>
               <Text fontSize={isMobile ? "12px" : "16px"}>{displayBalance()}</Text>
               {/* {stakedBalance.gt(0) && lpPrice.gt(0) && (
@@ -188,19 +234,19 @@ const Staked: React.FunctionComponent<StackedActionProps> = ({
               )} */}
             </StackedFlex>
             <IconButtonWrapper>
-              <AddIconButton variant="secondary" onClick={onPresentWithdraw} mr="6px">
-                <MinusIcon color="primary" width="14px" />
-              </AddIconButton>
-              <AddIconButton
+              <AddButton variant="secondary" onClick={onPresentWithdraw} mr={isMobile ? "0" : "6px"}>
+                <Text color="primary" fontSize="14px">Remove</Text>
+              </AddButton>
+              <AddButton
                 variant="secondary"
                 onClick={onPresentDeposit}
                 disabled={['history', 'archived'].some((item) => location.pathname.includes(item))}
               >
-                <AddIcon color="primary" width="14px" />
-              </AddIconButton>
+                <Text color="primary" fontSize="14px">Add</Text>
+              </AddButton>
             </IconButtonWrapper>
-          </ActionContent>
-        </ActionContainer>
+          </StackedActionContent>
+        </StakedActionContainer>
       )
     }
 
