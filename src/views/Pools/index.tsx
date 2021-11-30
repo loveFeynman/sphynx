@@ -312,63 +312,6 @@ const Pools: React.FC = () => {
             setSortOption={setSortOption}
             setSearchQuery={setSearchQuery}
           />
-          {/* <PoolControls>
-            <PoolTabButtons
-              stakedOnly={stakedOnly}
-              setStakedOnly={setStakedOnly}
-              hasStakeInFinishedPools={hasStakeInFinishedPools}
-              viewMode={viewMode}
-              setViewMode={setViewMode}
-            />
-            <FilterContainer>
-              <LabelWrapper>
-                <Text fontSize="12px" bold color="textSubtle" textTransform="uppercase">
-                  {t('Sort by')}
-                </Text>
-                <ControlStretch>
-                  <Select
-                    options={[
-                      {
-                        label: t('Hot'),
-                        value: 'hot',
-                      },
-                      {
-                        label: t('APR'),
-                        value: 'apr',
-                      },
-                      {
-                        label: t('Earned'),
-                        value: 'earned',
-                      },
-                      {
-                        label: t('Total staked'),
-                        value: 'totalStaked',
-                      },
-                    ]}
-                    onChange={handleSortOptionChange}
-                  />
-                </ControlStretch>
-              </LabelWrapper>
-              <LabelWrapper style={{ marginLeft: 16 }}>
-                <Text fontSize="12px" bold color="textSubtle" textTransform="uppercase">
-                  {t('Search')}
-                </Text>
-                <SearchInput onChange={handleChangeSearchQuery} placeholder="Search Pools" />
-              </LabelWrapper>
-            </FilterContainer>
-          </PoolControls>
-          {showFinishedPools && (
-            <Text fontSize="20px" color="failure" pb="32px">
-              {t('These pools are no longer distributing rewards. Please unstake your tokens.')}
-            </Text>
-          )}
-          {account && !userDataLoaded && stakedOnly && (
-            <Flex justifyContent="center" mb="4px">
-              <Loading />
-            </Flex>
-          )}
-          {viewMode === ViewMode.CARD ? cardLayout : tableLayout}
-          <div ref={loadMoreRef} /> */}
           <SwapTabs
             selectedTabClassName='is-selected'
             selectedTabPanelClassName='is-selected'
