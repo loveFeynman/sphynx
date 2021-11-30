@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import styled from 'styled-components'
-import { Flex, Text, Link } from '@sphynxswap/uikit'
+import { Flex, Text, Link } from '@sphynxdex/uikit'
 import { ReactComponent as BscscanIcon } from 'assets/svg/icon/Bscscan.svg'
 import CopyHelper from 'components/AccountDetails/Copy'
 import { BITQUERY_API, BITQUERY_API_KEY } from 'config/constants/endpoints'

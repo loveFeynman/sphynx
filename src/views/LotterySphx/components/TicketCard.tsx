@@ -2,7 +2,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import axios from 'axios'
-import { Text, Link, Flex, useModal } from '@sphynxswap/uikit'
+import { Text, Link, Flex, useModal } from '@sphynxdex/uikit'
 import { useTranslation } from 'contexts/Localization'
 import MainLogo from 'assets/svg/icon/logo_new.svg'
 import LinkIcon from 'assets/svg/icon/LinkYellow.svg'

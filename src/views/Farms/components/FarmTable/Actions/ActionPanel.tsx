@@ -2,7 +2,7 @@
 import React from 'react'
 import styled, { css, keyframes } from 'styled-components'
 import { useTranslation } from 'contexts/Localization'
-import { LinkExternal, Text, Flex, useMatchBreakpoints } from '@sphynxswap/uikit'
+import { LinkExternal, Text, Flex, useMatchBreakpoints } from '@sphynxdex/uikit'
 import { BASE_SWAP_URL } from 'config'
 import { FarmWithStakedValue } from 'views/Farms/components/FarmCard/FarmCard'
 import { getAddress } from 'utils/addressHelpers'

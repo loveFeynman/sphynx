@@ -7,7 +7,7 @@ import { autoSwap } from 'state/flags/actions'
 import styled, { useTheme } from 'styled-components'
 import { useLocation } from 'react-router'
 import { CurrencyAmount, JSBI, Token, Trade, RouterType, ChainId } from '@sphynxswap/sdk'
-import { Button, Text, ArrowDownIcon, Box, useModal, Flex } from '@sphynxswap/uikit'
+import { Button, Text, ArrowDownIcon, Box, useModal, Flex } from '@sphynxdex/uikit'
 import { useIsTransactionUnsupported } from 'hooks/Trades'
 import { RouteComponentProps } from 'react-router-dom'
 import { useTranslation } from 'contexts/Localization'
@@ -20,7 +20,7 @@ import { AutoRow, RowBetween } from 'components/Layout/Row'
 import ConnectWalletButton from 'components/ConnectWalletButton'
 import { AppHeader } from 'components/App'
 import { BalanceNumber } from 'components/BalanceNumber'
-import { useMatchBreakpoints } from '@sphynxswap/uikit'
+import { useMatchBreakpoints } from '@sphynxdex/uikit'
 
 import { useSetRouterType } from 'state/application/hooks'
 import SwapIcon from 'components/Icon/SwapIcon'
@@ -136,9 +136,6 @@ const SlippageText = styled.p`
   line-height: 12px;
   color: #a7a7cc;
   margin: 0 8px;
-  & span {
-    // text-decoration: underline;
-  }
 `
 
 const SlippageTextWrapper = styled(Flex)`

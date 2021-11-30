@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Heading } from '@sphynxswap/uikit'
+import { Heading } from '@sphynxdex/uikit'
 import PageHeader from 'components/PageHeader'
 import { useTranslation } from 'contexts/Localization'
 import BridgeCard from './components/BridgeCard'

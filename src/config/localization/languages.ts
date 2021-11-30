@@ -1,4 +1,4 @@
-import { Language } from '@sphynxswap/uikit'
+import { Language } from '@sphynxdex/uikit'
 
 export const AR: Language = { locale: 'ar-SA', language: 'العربية', code: 'ar' }
 export const BN: Language = { locale: 'bn-BD', language: 'বাংলা', code: 'bn' }

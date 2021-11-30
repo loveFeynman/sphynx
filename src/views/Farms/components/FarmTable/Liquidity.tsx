@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { HelpIcon, Text, Skeleton, useTooltip, Flex } from '@sphynxswap/uikit'
+import { HelpIcon, Text, Skeleton, useTooltip, Flex } from '@sphynxdex/uikit'
 import { useTranslation } from 'contexts/Localization'
 import BigNumber from 'bignumber.js'
 

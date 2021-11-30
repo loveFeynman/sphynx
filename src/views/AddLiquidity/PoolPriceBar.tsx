@@ -1,6 +1,6 @@
 import { Currency, Percent, Price } from '@sphynxswap/sdk'
 import React from 'react'
-import { Text } from '@sphynxswap/uikit'
+import { Text } from '@sphynxdex/uikit'
 import { useTranslation } from 'contexts/Localization'
 import { AutoColumn } from '../../components/Layout/Column'
 import { AutoRow } from '../../components/Layout/Row'

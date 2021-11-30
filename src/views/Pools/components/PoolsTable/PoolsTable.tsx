@@ -1,6 +1,6 @@
 import React, { useRef } from 'react'
 import styled from 'styled-components'
-import { Button, ChevronUpIcon, useMatchBreakpoints } from '@sphynxswap/uikit'
+import { Button, ChevronUpIcon, useMatchBreakpoints } from '@sphynxdex/uikit'
 import { useTranslation } from 'contexts/Localization'
 import { Pool } from 'state/types'
 import PoolRow from './PoolRow'

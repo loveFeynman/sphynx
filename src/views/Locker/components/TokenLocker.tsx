@@ -1,6 +1,6 @@
 import React from 'react'
 import { useTranslation } from 'contexts/Localization'
-import { Flex, useMatchBreakpoints } from '@sphynxswap/uikit'
+import { Flex, useMatchBreakpoints } from '@sphynxdex/uikit'
 import styled from 'styled-components'
 import Spinner from 'components/Loader/Spinner'
 import SearchPannel from './SearchPannel'

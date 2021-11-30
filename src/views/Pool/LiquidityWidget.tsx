@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from 'react'
 import { Pair } from '@sphynxswap/sdk'
-import { Text, CardBody, CardFooter, Button, AddIcon } from '@sphynxswap/uikit'
+import { Text, CardBody, CardFooter, Button, AddIcon } from '@sphynxdex/uikit'
 import { useTranslation } from 'contexts/Localization'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import AddLiquidityWidget from 'views/AddLiquidity/AddLiquidityWidget'

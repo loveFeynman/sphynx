@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'contexts/Localization'
-import { Button, Text, Flex, Box, useMatchBreakpoints } from '@sphynxswap/uikit'
+import { Button, Text, Flex, Box, useMatchBreakpoints } from '@sphynxdex/uikit'
 import { ReactComponent as MainLogo } from 'assets/svg/icon/logo_new.svg'
 import { ReactComponent as BinanceIcon1 } from 'assets/svg/icon/BinanceIcon1.svg'
 import { ReactComponent as BinanceIcon2 } from 'assets/svg/icon/BinanceIcon2.svg'

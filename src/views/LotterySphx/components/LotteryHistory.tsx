@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Text } from '@sphynxswap/uikit'
+import { Text } from '@sphynxdex/uikit'
 import { useTranslation } from 'contexts/Localization'
 import { AreaChart, XAxis, YAxis, Area } from 'recharts'
 

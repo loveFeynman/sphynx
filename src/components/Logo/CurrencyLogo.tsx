@@ -1,5 +1,5 @@
 import { Currency, ETHER, Token } from '@sphynxswap/sdk'
-import { BinanceIcon } from '@sphynxswap/uikit'
+import { BinanceIcon } from '@sphynxdex/uikit'
 import React, { useMemo } from 'react'
 import styled from 'styled-components'
 import useHttpLocations from '../../hooks/useHttpLocations'

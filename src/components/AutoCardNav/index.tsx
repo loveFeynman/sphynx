@@ -5,7 +5,7 @@ import { RouterType, ChainId } from '@sphynxswap/sdk'
 import { useTranslation } from 'contexts/Localization'
 import { useSetRouterType } from 'state/application/hooks'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
-import { Button } from '@sphynxswap/uikit'
+import { Button } from '@sphynxdex/uikit'
 import SwapRouter from 'config/constants/swaps'
 
 const StyledNav = styled.div`

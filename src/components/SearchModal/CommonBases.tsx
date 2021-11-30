@@ -1,6 +1,6 @@
 import React from 'react'
 import { ChainId, Currency, currencyEquals, ETHER, Token } from '@sphynxswap/sdk'
-import { Text } from '@sphynxswap/uikit'
+import { Text } from '@sphynxdex/uikit'
 import styled from 'styled-components'
 import { useTranslation } from 'contexts/Localization'
 

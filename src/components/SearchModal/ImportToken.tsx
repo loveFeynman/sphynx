@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Token, Currency } from '@sphynxswap/sdk'
-import { Button, Text, ErrorIcon, Flex, Message, Checkbox, Link, Tag, Grid } from '@sphynxswap/uikit'
+import { Button, Text, ErrorIcon, Flex, Message, Checkbox, Link, Tag, Grid } from '@sphynxdex/uikit'
 import { AutoColumn } from 'components/Layout/Column'
 import { useAddUserToken } from 'state/user/hooks'
 import { getBscScanLink } from 'utils'

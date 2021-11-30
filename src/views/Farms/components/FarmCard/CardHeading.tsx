@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Flex, Heading } from '@sphynxswap/uikit'
+import { Flex, Heading } from '@sphynxdex/uikit'
 import { CommunityTag, CoreTag } from 'components/Tags'
 import { Token } from 'config/constants/types'
 import { TokenPairImage } from 'components/TokenImage'

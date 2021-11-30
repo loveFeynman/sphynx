@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Text } from '@sphynxswap/uikit'
+import { Text } from '@sphynxdex/uikit'
 
 export const Wrapper = styled.div`
   display: flex;

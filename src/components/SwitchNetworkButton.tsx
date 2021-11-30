@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react'
 import styled from 'styled-components'
-import { Button, Text, Flex, useModal } from '@sphynxswap/uikit'
+import { Button, Text, Flex, useModal } from '@sphynxdex/uikit'
 import { useTranslation } from 'contexts/Localization'
 import { ChainId } from '@sphynxswap/sdk'
 import { useSelector, useDispatch } from 'react-redux'

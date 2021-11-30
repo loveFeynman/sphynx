@@ -1,7 +1,7 @@
 /* eslint-disable */
 import React, { useCallback } from 'react'
 import styled, { ThemeConsumer, useTheme } from 'styled-components'
-import { useModal, Flex, Box } from '@sphynxswap/uikit'
+import { useModal, Flex, Box } from '@sphynxdex/uikit'
 import axios from 'axios'
 import { useSelector } from 'react-redux'
 import Spinner from 'components/Loader/Spinner'

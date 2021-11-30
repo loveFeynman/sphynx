@@ -16,7 +16,7 @@ import {
   Link,
   Modal,
   InjectedModalProps,
-} from '@sphynxswap/uikit'
+} from '@sphynxdex/uikit'
 import { registerToken } from 'utils/wallet'
 import { useTranslation } from 'contexts/Localization'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'

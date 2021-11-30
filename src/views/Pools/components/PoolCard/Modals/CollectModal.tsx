@@ -10,7 +10,7 @@ import {
   ButtonMenuItem,
   HelpIcon,
   useTooltip,
-} from '@sphynxswap/uikit'
+} from '@sphynxdex/uikit'
 import styled from 'styled-components'
 import { useTranslation } from 'contexts/Localization'
 import useTheme from 'hooks/useTheme'

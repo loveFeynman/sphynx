@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import styled, { useTheme } from 'styled-components'
-import { IconButton, Toggle, Text, Flex, useMatchBreakpoints } from '@sphynxswap/uikit'
+import { IconButton, Toggle, Text, Flex, useMatchBreakpoints } from '@sphynxdex/uikit'
 import Select, { OptionProps } from 'components/Select/Select'
 import { useTranslation } from 'contexts/Localization'
 import SearchIcon from "components/Icon/SearchIcon";

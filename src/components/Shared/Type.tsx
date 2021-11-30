@@ -1,5 +1,5 @@
 import React from 'react'
-import { Text } from '@sphynxswap/uikit'
+import { Text } from '@sphynxdex/uikit'
 
 export const TYPE = {
   main(props: any) {
