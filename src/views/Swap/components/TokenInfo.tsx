@@ -191,7 +191,7 @@ export default function TokenInfo(props) {
             <CopyHelper toCopy={input}>&nbsp;</CopyHelper>
           </Text>
           <Text>
-            <a href={`${tokenlink}/${input}`} target="_blank" rel="noreferrer">
+            <a href={`${tokenLink}/${input}`} target="_blank" rel="noreferrer">
               {input}
             </a>
           </Text>
@@ -199,7 +199,7 @@ export default function TokenInfo(props) {
         <TextWrapper>
           <Text>{t('Holders')}</Text>
           <Text>
-            <a href={`${tokenlink}/${input}#balances`} target="_blank" rel="noreferrer">
+            <a href={`${tokenLink}/${input}#balances`} target="_blank" rel="noreferrer">
             {holderNum}
             </a>
           </Text>
