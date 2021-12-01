@@ -69,8 +69,8 @@ interface TransactionProps {
 const TransactionCard: React.FC<TransactionProps> = (props) => {
   const { t } = useTranslation()
   const { chainId } = useActiveWeb3React()
-  const nativeSymbol = chainId === 56 ? "BNB" : "ETH"
-  const txLink = chainId === 56 ? "https://bscscan.com/tx/" : "https://etherscan.io/tx/"
+  const nativeSymbol = chainId === 1 ? "ETH" : "BNB"
+  const txLink = chainId === 1 ? "https://etherscan.io/tx/" : "https://bscscan.com/tx/"
   // eslint-disable-next-line no-console
   return (
     <>
