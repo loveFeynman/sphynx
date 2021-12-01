@@ -200,7 +200,7 @@ const Chart: React.FC<Partial<ChartContainerProps>> = (props) => {
     },
     getMarks: async (symbolInfo: any, startDate: any, endDate: any, onDataCallback: any, resolution: any) => {
       try {
-        const data = await getAllTransactions(account, input)
+        const data = await getAllTransactions(account, input, chainId)
         const sessionData = JSON.parse(sessionStorage.getItem(storages.SESSION_LIVE_PRICE))
         let bars: any = []
         data.forEach((bar: any, i: any) => {

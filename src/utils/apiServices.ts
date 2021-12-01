@@ -2,8 +2,8 @@ import Web3 from 'web3'
 import { AbiItem } from 'web3-utils'
 import { ethers } from 'ethers'
 import axios from 'axios'
-import { PANCAKE_FACTORY_ADDRESS, SPHYNX_FACTORY_ADDRESS, RouterType } from '@sphynxdex/sdk-multichain'
-import { WBNB_ADDRESS, WETH_ADDRESS, BUSD_ADDRESS, PANCAKE_V2_ROUTER, DAI_ADDRESS, UNISWAP_FACTORY_ADDRESS } from 'config/constants/addresses'
+import { PANCAKE_FACTORY_ADDRESS, SPHYNX_FACTORY_ADDRESS, RouterType, UNISWAP_FACTORY_ADDRESS, SPHYNX_ETH_FACTORY_ADDRESS, ChainId } from '@sphynxdex/sdk-multichain'
+import { WBNB_ADDRESS, WETH_ADDRESS, BUSD_ADDRESS, PANCAKE_V2_ROUTER, DAI_ADDRESS } from 'config/constants/addresses'
 import abi from '../config/abi/erc20ABI.json'
 import factoryAbi from '../config/abi/factoryAbi.json'
 import { BITQUERY_API_KEY } from '../config/constants/endpoints'
@@ -22,19 +22,16 @@ const config = {
 async function getTokenDetails(
   address: string,
   routerVersion: string,
-): Promise<{
-  name: string
-  symbol: string
-  pair: string
-  version: string
-}> {
+  chainId = 56
+) {
   if (!address) {
     return null
   }
-  const token = new web3.eth.Contract(abi as AbiItem[], address)
-  const name = await token.methods.name().call()
-  const symbol = await token.methods.symbol().call()
-  return { name, symbol, pair: `${symbol}/BNB`, version: routerVersion }
+  const tokenContract = chainId === ChainId.MAINNET ?  new web3.eth.Contract(abi as AbiItem[], address) : new web3ETH.eth.Contract(abi as AbiItem[], address)
+  const name = await tokenContract.methods.name().call()
+  const symbol = await tokenContract.methods.symbol().call()
+  const nativeCurrentySymbol = chainId === ChainId.MAINNET ? 'BNB' : 'ETH'
+  return { name, symbol, pair: `${symbol}/${nativeCurrentySymbol}`, version: routerVersion }
 }
 
 async function getTokenInfoForChart(input: any, pair: any, routerVersion: any, chainId = 56) {
@@ -100,7 +97,7 @@ async function getTokenInfoForChart(input: any, pair: any, routerVersion: any, c
     },
   } = await axios.post(url, { query }, config)
 
-  const bnbPrice = await getBNBPrice()
+  const bnbPrice = chainId === ChainId.MAINNET ? await getBNBPrice() : await getETHPrice()
 
   return new Promise((resolve, reject) => {
     try {
@@ -128,7 +125,7 @@ async function getTokenInfoForChart(input: any, pair: any, routerVersion: any, c
         })
       }
     } catch (error) {
-      getTokenDetails(input, routerVersion)
+      getTokenDetails(input, routerVersion, chainId)
         .then(data => {
           resolve(data)
         })
@@ -289,7 +286,7 @@ async function getChartStats(address: string, routerVersion: string, chainId = 5
           ? DAI_ADDRESS
           : WETH_ADDRESS
 
-      const factoryAddress = routerVersion === RouterType.sphynx ? SPHYNX_FACTORY_ADDRESS : UNISWAP_FACTORY_ADDRESS
+      const factoryAddress = routerVersion === RouterType.sphynxeth ? SPHYNX_ETH_FACTORY_ADDRESS : UNISWAP_FACTORY_ADDRESS
       const factory = new web3ETH.eth.Contract(factoryAbi as AbiItem[], factoryAddress)
       const pairAddress = await factory.methods.getPair(baseAddress, quoteAddress).call()
       let query =
@@ -436,7 +433,7 @@ async function getChartStats(address: string, routerVersion: string, chainId = 5
           ? DAI_ADDRESS
           : WETH_ADDRESS
 
-      const factoryAddress = routerVersion === RouterType.sphynx ? SPHYNX_FACTORY_ADDRESS : UNISWAP_FACTORY_ADDRESS
+      const factoryAddress = routerVersion === RouterType.sphynxeth ? SPHYNX_ETH_FACTORY_ADDRESS : UNISWAP_FACTORY_ADDRESS
       const factory = new web3ETH.eth.Contract(factoryAbi as AbiItem[], factoryAddress)
       const pairAddress = await factory.methods.getPair(baseAddress, quoteAddress).call()
       const ethPrice = await getETHPrice()
@@ -857,9 +854,10 @@ async function topTrades(address: string, type: 'buy' | 'sell', pairAddress) {
   return returnData
 }
 
-async function getMarksData(account: any, input: any) {
+async function getMarksData(account: any, input: any, chainId = 56) {
+  const network = chainId === 1 ? 'ethereum' : 'bsc'
   const query = `{
-    ethereum(network: bsc) {
+    ethereum(network: ${network}) {
       dexTrades(
         options: {desc: "block.height"}
         baseCurrency: {in: ["${WBNB_ADDRESS}", "0x55d398326f99059ff775485246999027b3197955", "0xe9e7cea3dedca5984780bafc599bd69add087d56", "0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d"]}

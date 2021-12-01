@@ -5,7 +5,7 @@ import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers'
 import { BigNumber } from '@ethersproject/bignumber'
 import { abi as ISphynxRouter02 } from '@sphynxswap/swap-periphery/build/ISphynxRouter02.json'
 import { ChainId, JSBI, Percent, Token, CurrencyAmount, Currency, ETHER, RouterType } from '@sphynxdex/sdk-multichain'
-import { ROUTER_ADDRESS, PANCAKE_ROUTER_ADDRESS, UNISWAP_ROUTER_ADDRESS } from '../config/constants'
+import { ROUTER_ADDRESS, PANCAKE_ROUTER_ADDRESS, UNISWAP_ROUTER_ADDRESS, ROUTER_ETH_ADDRESS } from '../config/constants'
 import { BASE_BSC_SCAN_URLS } from '../config'
 import { TokenAddressMap, UniTokenAddressMap } from '../state/lists/hooks'
 
@@ -102,6 +102,9 @@ export function getRouterContract(
   }
   if (routerType === RouterType.uniswap) {
     return getContract(UNISWAP_ROUTER_ADDRESS, ISphynxRouter02, library, account)
+  }
+  if (routerType === RouterType.sphynxeth) {
+    return getContract(ROUTER_ETH_ADDRESS, ISphynxRouter02, library, account)
   }
   return getContract(ROUTER_ADDRESS, ISphynxRouter02, library, account) // todo
 }

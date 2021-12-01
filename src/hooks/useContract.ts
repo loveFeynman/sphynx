@@ -28,7 +28,7 @@ import {
 
 // Imports below migrated from Exchange useContract.ts
 import { Contract } from '@ethersproject/contracts'
-import { ChainId, WETH, RouterType, UNISWAP_FACTORY_ADDRESS } from '@sphynxdex/sdk-multichain'
+import { ChainId, WETH, RouterType } from '@sphynxdex/sdk-multichain'
 import { abi as ISphynxPair } from '@sphynxswap/swap-core/build/ISphynxPair.json'
 import ENS_PUBLIC_RESOLVER_ABI from '../config/abi/ens-public-resolver.json'
 import ENS_ABI from '../config/abi/ens-registrar.json'
@@ -37,7 +37,7 @@ import ERC20_ABI from '../config/abi/erc20.json'
 import WETH_ABI from '../config/abi/weth.json'
 import { MULTICALL_ABI, MULTICALL_NETWORKS } from '../config/constants/multicall'
 import { PANCAKE_FACTORY_ADDRESSES, PANCAKE_FACTORY_ABI } from '../config/constants/pancakeswap'
-import { ROUTER_ADDRESS, PANCAKE_ROUTER_ADDRESS } from '../config/constants'
+import { ROUTER_ADDRESS, PANCAKE_ROUTER_ADDRESS, ROUTER_ETH_ADDRESS, UNISWAP_ROUTER_ADDRESS } from '../config/constants'
 import { getContract } from '../utils'
 import { useSetRouterType } from '../state/application/hooks'
 
@@ -193,7 +193,13 @@ function useContract(address: string | undefined, ABI: any, withSignerIfPossible
 
 export function useRouterAddress() {
   const { routerType } = useSetRouterType()
-  return routerType === RouterType.pancake ? PANCAKE_ROUTER_ADDRESS : routerType === RouterType.uniswap ? UNISWAP_FACTORY_ADDRESS : ROUTER_ADDRESS
+  return routerType === RouterType.pancake
+    ? PANCAKE_ROUTER_ADDRESS
+    : routerType === RouterType.uniswap
+    ? UNISWAP_ROUTER_ADDRESS
+    : routerType === RouterType.sphynxeth
+    ? ROUTER_ETH_ADDRESS
+    : ROUTER_ADDRESS
 }
 
 export function usePcsFactoryContract(): Contract | null {

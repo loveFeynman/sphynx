@@ -64,8 +64,11 @@ const AutoNav = (props) => {
 
   useEffect(() => {
     setTimeout(() => {
-      if(swapRouter === SwapRouter.SPHYNX_SWAP) {
-        setRouterType(RouterType.sphynx)
+      if(swapRouter === SwapRouter.SPHYNX_SWAP || swapRouter === SwapRouter.SPHYNX_ETH_SWAP) {
+        if(chainId === ChainId.MAINNET)
+          setRouterType(RouterType.sphynx)
+        if(chainId === ChainId.ETHEREUM)
+          setRouterType(RouterType.sphynxeth)
       } else {
         if(chainId === ChainId.MAINNET)
           setRouterType(RouterType.pancake)
@@ -90,11 +93,17 @@ const AutoNav = (props) => {
         {t('AUTO')}
       </Button> */}
       <Button
-        className={swapRouter === SwapRouter.SPHYNX_SWAP ? 'active' : ''}
+        className={swapRouter === SwapRouter.SPHYNX_SWAP || swapRouter === SwapRouter.SPHYNX_ETH_SWAP ? 'active' : ''}
         id="dgsn-nav-link"
         onClick={() => {
-          setRouterType(RouterType.sphynx)
-          setSwapRouter(SwapRouter.SPHYNX_SWAP)
+          if(chainId === ChainId.MAINNET) {
+            setRouterType(RouterType.sphynx)
+            setSwapRouter(SwapRouter.SPHYNX_SWAP)
+          }
+          if(chainId === ChainId.ETHEREUM) {
+            setRouterType(RouterType.sphynxeth)
+            setSwapRouter(SwapRouter.SPHYNX_ETH_SWAP)
+          }
         }}
       >
         {t('SPHYNX-LP')}

@@ -1,7 +1,7 @@
 import Web3 from 'web3'
 import * as ethers from 'ethers'
 import { Contract, utils } from 'ethers'
-import { PANCAKE_FACTORY_ADDRESS, SPHYNX_FACTORY_ADDRESS } from '@sphynxdex/sdk-multichain'
+import { PANCAKE_FACTORY_ADDRESS, SPHYNX_FACTORY_ADDRESS, UNISWAP_FACTORY_ADDRESS, SPHYNX_ETH_FACTORY_ADDRESS, ChainId } from '@sphynxdex/sdk-multichain'
 import pancakeFactoryAbi from 'config/abi/pancakeSwapFactory.json'
 import bscTokenAbi from 'config/abi/erc20.json'
 import { PANCAKE_ROUTER_ADDRESS, ROUTER_ADDRESS, SPHYNX_TOKEN_ADDRESS, ZERO_ADDRESS } from 'config/constants'
@@ -88,8 +88,9 @@ export const getMinTokenInfo = async (address, provider): Promise<TokenInfo> => 
   }
 }
 
-export const getSphynxPairAddress = async (quoteToken, baseToken, provider) => {
-  const sphynxFactoryContract = new Contract(SPHYNX_FACTORY_ADDRESS, pancakeFactoryAbi, provider)
+export const getSphynxPairAddress = async (quoteToken, baseToken, provider, chainId) => {
+  const factoryAddress = chainId === ChainId.MAINNET ? SPHYNX_FACTORY_ADDRESS : SPHYNX_ETH_FACTORY_ADDRESS
+  const sphynxFactoryContract = new Contract(factoryAddress, pancakeFactoryAbi, provider)
   const pairAddress = await sphynxFactoryContract.getPair(quoteToken, baseToken)
   if (pairAddress === ZERO_ADDRESS) {
     return null
@@ -98,7 +99,7 @@ export const getSphynxPairAddress = async (quoteToken, baseToken, provider) => {
 }
 
 export const getPancakePairAddress = async (quoteToken, baseToken, provider, chainId) => {
-  if (chainId === 56) {
+  if (chainId === ChainId.MAINNET) {
     const pancakeFactoryContract = new Contract(PANCAKE_FACTORY_ADDRESS, pancakeFactoryAbi, provider)
     const pairAddress = await pancakeFactoryContract.getPair(quoteToken, baseToken)
     if (pairAddress === ZERO_ADDRESS) {
@@ -107,8 +108,7 @@ export const getPancakePairAddress = async (quoteToken, baseToken, provider, cha
     return pairAddress
   }
 
-  if (chainId === 1) {
-    const UNISWAP_FACTORY_ADDRESS = '0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f'
+  if (chainId === ChainId.ETHEREUM) {
     const uniswapFactoryContract = new Contract(UNISWAP_FACTORY_ADDRESS, pancakeFactoryAbi, provider)
     const pairAddress = await uniswapFactoryContract.getPair(quoteToken, baseToken)
     if (pairAddress === ZERO_ADDRESS) {

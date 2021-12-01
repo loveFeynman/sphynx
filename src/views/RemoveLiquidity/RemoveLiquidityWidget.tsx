@@ -177,8 +177,6 @@ export default function RemoveLiquidityWidget({
       message,
     })
 
-    console.log("data", data)
-
     library
       .send('eth_signTypedData_v4', [account, data])
       .then(splitSignature)

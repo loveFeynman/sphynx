@@ -15,6 +15,7 @@ const SwapRouter = {
     SPHYNX_SWAP: 1,
     PANCAKE_SWAP: 2,
     UNI_SWAP:3,
+    SPHYNX_ETH_SWAP:4,
 }
 
 export default SwapRouter

@@ -207,7 +207,7 @@ export default function Swap({ history }: RouteComponentProps) {
   const [symbol, setSymbol] = useState('')
   const theme = useTheme()
   let { account, chainId } = useActiveWeb3React()
-  if(account === undefined) {
+  if (chainId === undefined) {
     chainId = 56
   }
 
@@ -224,14 +224,20 @@ export default function Swap({ history }: RouteComponentProps) {
 
   useEffect(() => {
     const setInitData = async () => {
-      const pair = await getSphynxPairAddress(input, wrappedAddr[chainId], simpleRpcProvider)
+      const provider = chainId === ChainId.MAINNET ? simpleRpcProvider : simpleRpcETHProvider
+      const pair = await getSphynxPairAddress(input, wrappedAddr[chainId], provider, chainId)
       if (pair !== null) {
         if (routerVersion !== 'sphynx') {
           dispatch(typeRouterVersion({ routerVersion: 'sphynx' }))
         }
-        if (swapRouter !== SwapRouter.SPHYNX_SWAP) {
-          setSwapRouter(SwapRouter.SPHYNX_SWAP)
-          setRouterType(RouterType.sphynx)
+        if (swapRouter !== SwapRouter.SPHYNX_SWAP || swapRouter !== SwapRouter.SPHYNX_ETH_SWAP) {
+          if (chainId === ChainId.MAINNET) {
+            setSwapRouter(SwapRouter.SPHYNX_SWAP)
+            setRouterType(RouterType.sphynx)
+          } else {
+            setSwapRouter(SwapRouter.SPHYNX_ETH_SWAP)
+            setRouterType(RouterType.sphynxeth)
+          }
         }
         dispatch(
           replaceSwapState({
@@ -548,11 +554,11 @@ export default function Swap({ history }: RouteComponentProps) {
           if (wBNBPair !== null) pairs.push(wBNBPair.toLowerCase())
           let wBNBPairV1 = await getPancakePairAddressV1(input, wrappedAddr[chainId], simpleRpcProvider)
           if (wBNBPairV1 !== null) pairs.push(wBNBPairV1.toLowerCase())
-          let wBNBPairSphynx = await getSphynxPairAddress(input, wrappedAddr[chainId], simpleRpcProvider)
+          let wBNBPairSphynx = await getSphynxPairAddress(input, wrappedAddr[chainId], simpleRpcProvider, chainId)
           if (wBNBPairSphynx !== null) pairs.push(wBNBPairSphynx.toLowerCase())
           let BUSDPair = await getPancakePairAddress(input, BUSDAddr, simpleRpcProvider, chainId)
           if (BUSDPair !== null) stablePairs.push(BUSDPair.toLowerCase())
-          let BUSDPairSphynx = await getSphynxPairAddress(input, BUSDAddr, simpleRpcProvider)
+          let BUSDPairSphynx = await getSphynxPairAddress(input, BUSDAddr, simpleRpcProvider, chainId)
           if (BUSDPairSphynx !== null) stablePairs.push(BUSDPairSphynx.toLowerCase())
           setPairs(pairs)
           setStablePairs(stablePairs)
@@ -1017,9 +1023,8 @@ export default function Swap({ history }: RouteComponentProps) {
     }
   }, [handleSwap, isExpertMode, onPresentConfirmModal, trade])
 
-  return (
-    supportedChainID.indexOf(chainId) !== -1 ? (
-      <SwapPage>
+  return supportedChainID.indexOf(chainId) !== -1 ? (
+    <SwapPage>
       <RewardsPanel />
       <Cards>
         <div>
@@ -1228,7 +1233,7 @@ export default function Swap({ history }: RouteComponentProps) {
                       connectedNetworkID={connectedNetworkID}
                     />
                   </Flex>
-                  <p style={{color: 'white', fontSize: '14x', textAlign: 'center', lineHeight: '24px'}}>
+                  <p style={{ color: 'white', fontSize: '14x', textAlign: 'center', lineHeight: '24px' }}>
                     {swapRouter === SwapRouter.SPHYNX_SWAP
                       ? 'You are on SphynxSwap!'
                       : swapRouter === SwapRouter.PANCAKE_SWAP
@@ -1299,10 +1304,9 @@ export default function Swap({ history }: RouteComponentProps) {
         </div>
       </Cards>
     </SwapPage>
-    ) : (
-      <Flex justifyContent="center" alignItems="center" style={{height: 'calc(100vh - 57px)', color: 'red'}}>
-        <h3>Please switch to BSC mainnet!</h3>
-      </Flex>
-    )   
+  ) : (
+    <Flex justifyContent="center" alignItems="center" style={{ height: 'calc(100vh - 57px)', color: 'red' }}>
+      <h3>Please switch to BSC mainnet!</h3>
+    </Flex>
   )
 }
