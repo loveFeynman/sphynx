@@ -537,12 +537,12 @@ const ManageLocker: React.FC = () => {
             {t('Submit')}
           </Button>
           <Sperate />
-          <Text color='#E93F33'>For tokens with special transfers burns, tax or other fees make sure the DxLock address is whitelisted(excludeFromFee) before you deposit or you won&apos;t be able to withdraw!
-          </Text>
-          <InlineWrapper style={{ justifyContent: 'center' }}>
+          {/* <Text color='#E93F33'>For tokens with special transfers burns, tax or other fees make sure the DxLock address is whitelisted(excludeFromFee) before you deposit or you won&apos;t be able to withdraw!
+          </Text> */}
+          {/* <InlineWrapper style={{ justifyContent: 'center' }}>
             <p className="description w110">DxLock Address:</p>
             <p className="description w120">0xbB93f97fB792e9ebb81768d71a1b8998639cEA35</p>
-          </InlineWrapper>
+          </InlineWrapper> */}
         </PageBody>
       </MuiPickersUtilsProvider>
     </Wrapper>
