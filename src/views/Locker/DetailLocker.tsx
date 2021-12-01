@@ -235,7 +235,6 @@ const DetailLocker: React.FC = () => {
     const [isOwner, setIsOwner] = useState(false)
     const [lockCount, setLockCount] = useState(0)
     const [isDisabled, setIsDisabled] = useState(false)
-    const isMobile = !isXl
 
     useEffect(() => {
         const fetchData = async () => {

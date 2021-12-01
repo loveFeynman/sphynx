@@ -236,7 +236,7 @@ const ManageLocker: React.FC = () => {
     const fetchData = async () => {
       try {
         const abi: any = ERC20_ABI
-        const tokenContract = new ethers.Contract(tokenAddress, abi, simpleRpcProvider)
+        const tokenContract = new ethers.Contract(tokenAddress, abi, library)
         const allowance = await tokenContract.allowance(account, getLockerAddress())
         const value = parseFloat(ethers.utils.formatUnits(allowance, tokenDecimals))
 
@@ -263,7 +263,7 @@ const ManageLocker: React.FC = () => {
       setIsApprove(false)
     }
 
-  }, [totalSupply, percent, account, tokenAddress, tokenDecimals])
+  }, [totalSupply, percent, account, tokenAddress, tokenDecimals, library])
 
   const isLPTokenAddress = async (address) => {
     try {

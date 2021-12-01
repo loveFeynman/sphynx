@@ -217,7 +217,7 @@ export default function Swap({ history }: RouteComponentProps) {
     const setInitData = async () => {
       const pair = await getSphynxPairAddress(input, wrappedAddr[chainId], simpleRpcProvider)
       if (pair !== null) {
-        console.log("HELOEO")
+        console.log('HELOEO')
         if (routerVersion !== 'sphynx') {
           dispatch(typeRouterVersion({ routerVersion: 'sphynx' }))
         }
@@ -1212,6 +1212,20 @@ export default function Swap({ history }: RouteComponentProps) {
               </SwapTabPanel>
               <SwapTabPanel>
                 <Wrapper id="pool-page">
+                  <Flex alignItems="center" justifyContent="center">
+                    <AutoCardNav
+                      swapRouter={swapRouter}
+                      setSwapRouter={setSwapRouter}
+                      connectedNetworkID={connectedNetworkID}
+                    />
+                  </Flex>
+                  <p style={{color: 'white', fontSize: '14x', textAlign: 'center', lineHeight: '24px'}}>
+                    {swapRouter === SwapRouter.SPHYNX_SWAP
+                      ? 'You are on SphynxSwap!'
+                      : swapRouter === SwapRouter.PANCAKE_SWAP
+                      ? 'You are on PancakeSwap V2!'
+                      : 'You are on Uniswap V2!'}
+                  </p>
                   <LiquidityWidget />
                 </Wrapper>
               </SwapTabPanel>
