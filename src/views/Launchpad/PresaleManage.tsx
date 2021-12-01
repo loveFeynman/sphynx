@@ -341,7 +341,7 @@ const PresaleManage: React.FC = () => {
       await tx.wait()
       const tx1 = await presaleContract.depositToken(param.saleId)
       await tx1.wait()
-      toastSuccess('Success!', 'Your token is finialized successfully.')
+      toastSuccess('Success!', 'Your token is deposited successfully.')
     }
   }
 

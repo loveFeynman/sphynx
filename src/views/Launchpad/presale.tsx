@@ -488,6 +488,7 @@ const Presale: React.FC = () => {
     //   return;
     // }
 
+    console.log("presaleContract", presaleContract)
     const presaleId = (await presaleContract.currentPresaleId()).toString()
     const routerAddress = getSphynxRouterAddress()
     const startTime = Math.floor(new Date(presaleStart).getTime() / 1000)
