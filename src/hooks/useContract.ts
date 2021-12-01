@@ -193,7 +193,7 @@ function useContract(address: string | undefined, ABI: any, withSignerIfPossible
 
 export function useRouterAddress() {
   const { routerType } = useSetRouterType()
-  return routerType === RouterType.pancake ? PANCAKE_ROUTER_ADDRESS : RouterType.uniswap ? UNISWAP_FACTORY_ADDRESS : ROUTER_ADDRESS
+  return routerType === RouterType.pancake ? PANCAKE_ROUTER_ADDRESS : routerType === RouterType.uniswap ? UNISWAP_FACTORY_ADDRESS : ROUTER_ADDRESS
 }
 
 export function usePcsFactoryContract(): Contract | null {
