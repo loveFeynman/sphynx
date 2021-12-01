@@ -207,11 +207,11 @@ export default function Swap({ history }: RouteComponentProps) {
   const [symbol, setSymbol] = useState('')
   const theme = useTheme()
   let { account, chainId } = useActiveWeb3React()
-  const BUSDAddr = BUSD[chainId]?.address
-
   if(account === undefined) {
     chainId = 56
   }
+
+  const BUSDAddr = BUSD[chainId]?.address
 
   const wrappedCurrencySymbol = chainId === 56 ? 'WBNB' : 'WETH'
   stateRef.current = transactionData
@@ -226,7 +226,6 @@ export default function Swap({ history }: RouteComponentProps) {
     const setInitData = async () => {
       const pair = await getSphynxPairAddress(input, wrappedAddr[chainId], simpleRpcProvider)
       if (pair !== null) {
-        console.log('HELOEO')
         if (routerVersion !== 'sphynx') {
           dispatch(typeRouterVersion({ routerVersion: 'sphynx' }))
         }
