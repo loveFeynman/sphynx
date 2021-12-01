@@ -161,6 +161,7 @@ const ManageLocker: React.FC = () => {
   const [lpName1, setLpName1] = useState('')
   const [tokenSymbol, setSymbol] = useState('')
   const [totalSupply, setTotalSupply] = useState(0)
+  const [userBalance, setUserBalance] = useState(0)
   const [tokenDecimals, setDecimals] = useState(18)
   const lockContract = getLockerContract(signer)
   const [isLPToken, setIsLPToken] = useState(false)
@@ -290,9 +291,12 @@ const ManageLocker: React.FC = () => {
           const lpContract = new ethers.Contract(value, lpAbi, signer)
           const decimals = await lpContract.decimals()
           const bgSupply = await lpContract.totalSupply()
+          const uBalance = await lpContract.getBalanceOf(account)
           const supply = parseFloat(ethers.utils.formatUnits(bgSupply, decimals))
+          const balance = parseFloat(ethers.utils.formatUnits(uBalance, decimals))
           setTotalSupply(supply)
           setDecimals(decimals)
+          setUserBalance(balance)
 
           const address0 = await lpContract.token0()
           const address1 = await lpContract.token1()
@@ -316,10 +320,13 @@ const ManageLocker: React.FC = () => {
           const symbol = await tokenContract.symbol()
           const decimals = await tokenContract.decimals()
           const bgSupply = await tokenContract.totalSupply()
+          const uBalance = await tokenContract.balanceOf(account)
           const supply = parseFloat(ethers.utils.formatUnits(bgSupply, decimals))
+          const balance = parseFloat(ethers.utils.formatUnits(uBalance, decimals))
           setName(name)
           setSymbol(symbol)
           setTotalSupply(supply)
+          setUserBalance(balance)
           setDecimals(decimals)
           setIsLPToken(false)
         }
@@ -328,6 +335,7 @@ const ManageLocker: React.FC = () => {
         setName('')
         setSymbol('')
         setTotalSupply(0)
+        setUserBalance(0)
         setToken0('')
         setToken1('')
         setLpName0('')
@@ -338,6 +346,7 @@ const ManageLocker: React.FC = () => {
       setName('')
       setSymbol('')
       setTotalSupply(0)
+      setUserBalance(0)
       setToken0('')
       setToken1('')
       setLpName0('')
@@ -518,7 +527,7 @@ const ManageLocker: React.FC = () => {
           <Sperate />
           <InlineWrapper>
             <p className="description w110">Your Tokens to be Locked:</p>
-            <p className="description w120">{totalSupply * percent / 100}/{totalSupply}</p>
+            <p className="description w120">{userBalance * percent / 100}/{userBalance}</p>
           </InlineWrapper>
           <Sperate />
           <Button

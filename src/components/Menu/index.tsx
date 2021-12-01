@@ -444,7 +444,7 @@ const Menu = () => {
                   address = addresses.WBNB_ADDRESS
               }
             }
-            return axios.get(`${process.env.REACT_APP_BACKEND_API_URL}/price/${address}/${chainId}`,)
+            return axios.get(`${process.env.REACT_APP_BACKEND_API_URL}/price/${address}/${chainId}`)
           })
 
           const prices: any = await Promise.all(promises)
@@ -467,12 +467,10 @@ const Menu = () => {
               }
               const tokenBalance = await contract.methods.balanceOf(account).call()
               elem.value = tokenBalance / Math.pow(10, elem.currency.decimals)
-            }
-            else if (elem.currency.symbol === 'BNB') {
+            } else if (elem.currency.symbol === 'BNB') {
               const bnbBalance = await bnbWeb3.eth.getBalance(account)
               elem.value = bnbWeb3.utils.fromWei(bnbBalance)
-            }
-            else if (elem.currency.symbol === 'ETH') {
+            } else if (elem.currency.symbol === 'ETH') {
               const ethBalance = await ethWeb3.eth.getBalance(account)
               elem.value = ethWeb3.utils.fromWei(ethBalance)
             }
@@ -555,12 +553,10 @@ const Menu = () => {
           }
           const tokenBalance = await contract.methods.balanceOf(account).call()
           elem.value = tokenBalance / Math.pow(10, elem.currency.decimals)
-        }
-        else if (elem.currency.symbol === 'BNB') {
+        } else if (elem.currency.symbol === 'BNB') {
           const bnbBalance = await bnbWeb3.eth.getBalance(account)
           elem.value = bnbWeb3.utils.fromWei(bnbBalance)
-        }
-        else if (elem.currency.symbol === 'ETH') {
+        } else if (elem.currency.symbol === 'ETH') {
           const ethBalance = await ethWeb3.eth.getBalance(account)
           elem.value = ethWeb3.utils.fromWei(ethBalance)
         }
@@ -718,7 +714,7 @@ const Menu = () => {
   }, [menuToggled, toggleMenu])
 
   const handleShowAllToken = useCallback(() => {
-    if(!showAllToken) {
+    if (!showAllToken) {
       localStorage.setItem(storages.LOCAL_REMOVED_TOKENS, null)
       setRemovedAssets([])
     }
@@ -786,53 +782,51 @@ const Menu = () => {
             const Icon = link.icon
             return (
               <div key={link.id}>
-                <ReactLink to={link.href.indexOf('https') !== 0 ? link.href : window.location.pathname}>
-                  {link.href.indexOf('https') === 0 ? (
-                    <>
-                      <MenuItem
-                        className={window.location.pathname == link.href && link.href !== '/' ? 'active' : ''}
-                        target={link.newTab ? '_blank' : ''}
-                        href={link.href}
-                        style={menuToggled ? { justifyContent: 'center' } : {}}
-                        rel="noreferrer"
-                        toggled={menuToggled}
-                      >
-                        <Icon />
-                        {!menuToggled && <p>{t(`${link.label}`)}</p>}
-                      </MenuItem>
-                      <MenuItemMobile
-                        className={window.location.pathname == link.href && link.href !== '/' ? 'active' : ''}
-                        href={link.href}
-                        target={link.newTab ? '_blank' : ''}
-                        onClick={handleMobileMenuItem}
-                      >
-                        <Icon />
-                        <p>{t(`${link.label}`)}</p>
-                      </MenuItemMobile>
-                    </>
-                  ) : (
-                    <>
-                      <MenuItem
-                        className={window.location.pathname == link.href && link.href !== '/' ? 'active' : ''}
-                        target={link.newTab ? '_blank' : ''}
-                        style={menuToggled ? { justifyContent: 'center' } : {}}
-                        rel="noreferrer"
-                        toggled={menuToggled}
-                      >
-                        <Icon />
-                        {!menuToggled && <p>{t(`${link.label}`)}</p>}
-                      </MenuItem>
-                      <MenuItemMobile
-                        className={window.location.pathname == link.href && link.href !== '/' ? 'active' : ''}
-                        target={link.newTab ? '_blank' : ''}
-                        onClick={handleMobileMenuItem}
-                      >
-                        <Icon />
-                        <p>{t(`${link.label}`)}</p>
-                      </MenuItemMobile>
-                    </>
-                  )}
-                </ReactLink>
+                {link.href.indexOf('https') === 0 ? (
+                  <>
+                    <MenuItem
+                      className={window.location.pathname == link.href && link.href !== '/' ? 'active' : ''}
+                      target={link.newTab ? '_blank' : ''}
+                      href={link.href}
+                      style={menuToggled ? { justifyContent: 'center' } : {}}
+                      rel="noreferrer"
+                      toggled={menuToggled}
+                    >
+                      <Icon />
+                      {!menuToggled && <p>{t(`${link.label}`)}</p>}
+                    </MenuItem>
+                    <MenuItemMobile
+                      className={window.location.pathname == link.href && link.href !== '/' ? 'active' : ''}
+                      href={link.href}
+                      target={link.newTab ? '_blank' : ''}
+                      onClick={handleMobileMenuItem}
+                    >
+                      <Icon />
+                      <p>{t(`${link.label}`)}</p>
+                    </MenuItemMobile>
+                  </>
+                ) : (
+                  <ReactLink to={link.href.indexOf('https') !== 0 ? link.href : window.location.pathname}>
+                    <MenuItem
+                      className={window.location.pathname == link.href && link.href !== '/' ? 'active' : ''}
+                      target={link.newTab ? '_blank' : ''}
+                      style={menuToggled ? { justifyContent: 'center' } : {}}
+                      rel="noreferrer"
+                      toggled={menuToggled}
+                    >
+                      <Icon />
+                      {!menuToggled && <p>{t(`${link.label}`)}</p>}
+                    </MenuItem>
+                    <MenuItemMobile
+                      className={window.location.pathname == link.href && link.href !== '/' ? 'active' : ''}
+                      target={link.newTab ? '_blank' : ''}
+                      onClick={handleMobileMenuItem}
+                    >
+                      <Icon />
+                      <p>{t(`${link.label}`)}</p>
+                    </MenuItemMobile>
+                  </ReactLink>
+                )}
               </div>
             )
           })}

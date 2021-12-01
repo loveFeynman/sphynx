@@ -40,14 +40,14 @@ export const links = [
     href: '/launchpad/listing',
   },
   {
-    label: 'Sphynx lockers (coming soon)',
-    icon: LockIcon,
-    href: '/locker',
-  },
-  {
-    label: 'Sphynx lock (coming soon)',
+    label: 'Sphynx Lock (coming soon)',
     icon: PredictionIcon,
     href: '/locker/manage',
+  },
+  {
+    label: 'Sphynx Lockers (coming soon)',
+    icon: LockIcon,
+    href: '/locker',
   },
   {
     label: 'Lottery (coming soon)',
@@ -62,12 +62,14 @@ export const links = [
   {
     label: 'CoinMarketCap',
     icon: CoinMarketCapsIcon,
-    href: '/'
+    href: 'https://coinmarketcap.com/',
+    newTab: true
   },
   {
     label: 'CoinGecko',
     icon: CoingeckoIcon,
-    href: '/'
+    href: 'https://www.coingecko.com/en',
+    newTab: true
   },
   {
     label: 'Learning Hub',
