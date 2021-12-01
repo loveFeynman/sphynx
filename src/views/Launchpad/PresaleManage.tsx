@@ -219,8 +219,12 @@ const Progress = styled.div<{ state }>`
   width: ${(props) => `${props.state}%`};
   height: 12px;
   background: linear-gradient(90deg, #610d89 0%, #c42bb4 100%);
-  border-radius: 8px 0px 0px 8px;
+  border-radius: 8px;
   padding: 1px;
+  display: flex;
+  justify-content: center;
+  font-size: 9px;
+  font-weight: bold;
 `
 
 const ColorButton = styled(Button)`
@@ -266,7 +270,6 @@ const PresaleManage: React.FC = () => {
   const [tokenData, setTokenData] = useState(null)
   const { toastSuccess, toastError } = useToast()
   const presaleContract = getPresaleContract(signer)
-  const [presaleStatus, setPresaleStatus] = useState('')
   const [softCap, setSoftCap] = useState('')
   const [isDeposit, setIsDeposit] = useState(false)
   const [isFinalize, setIsFinalize] = useState(false)
@@ -338,17 +341,49 @@ const PresaleManage: React.FC = () => {
       await tx.wait()
       const tx1 = await presaleContract.depositToken(param.saleId)
       await tx1.wait()
+      toastSuccess('Success!', 'Your token is finialized successfully.')
     }
   }
 
   const handleFinalize = async () => {
     const tx = await presaleContract.finalize(param.saleId)
-    await tx.wait()
+    const receipt = await tx.wait()
+    if (receipt.status === 1) {
+      if (raise > parseFloat(softCap)) {
+        axios
+          .post(`${process.env.REACT_APP_BACKEND_API_URL2}/inserttoken`, {
+            name: tokenData.token_name,
+            address: tokenData.token_address,
+            symbol: tokenData.token_symbol,
+            chainId,
+          })
+          .then((response) => {
+            if (response.data) {
+              toastSuccess('Success!', 'Your presale is finialized successfully.')
+              axios.post(`${process.env.REACT_APP_BACKEND_API_URL2}/setPresaleLiquidity`, {
+                saleId: param.saleId,
+                liquidity: raise,
+                chainId,
+              })
+            }
+          })
+      }
+    }
   }
 
   const handleWithdraw = async () => {
     const tx = await presaleContract.withdrawLiquidity(param.saleId)
-    await tx.wait()
+    const receipt = await tx.wait()
+    if (receipt.status === 1) {
+      axios.post(`${process.env.REACT_APP_BACKEND_API_URL2}/unlockPresaleLiquidty`, {
+        saleId: param.saleId,
+        chainId,
+      }).then((response) => {
+        if (response.data) {
+          toastSuccess('Success!', 'Liquidity is withdrawn successfully.')
+        }
+      })
+    }
   }
 
   const enableWhiteList = async () => {
@@ -476,11 +511,6 @@ const PresaleManage: React.FC = () => {
                   style={{ width: '80%' }}
                 />
               </InlineWrapper>
-              <Sperate />
-              {/* <InlineWrapper>
-                <p className="description w110">Status</p>
-                <MyInput className="ml16" value={presaleStatus} readOnly style={{ width: '80%' }} />
-              </InlineWrapper> */}
               <Sperate />
               <WhitelistTitle>
                 Raised: {raise}/{tokenData && tokenData.hard_cap}

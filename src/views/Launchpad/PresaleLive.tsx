@@ -495,8 +495,12 @@ const Progress = styled.div<{ state }>`
   width: ${(props) => `${props.state}%`};
   height: 12px;
   background: linear-gradient(90deg, #610d89 0%, #c42bb4 100%);
-  border-radius: 8px 0px 0px 8px;
+  border-radius: 8px;
   padding: 1px;
+  display: flex;
+  justify-content: center;
+  font-size: 9px;
+  font-weight: bold;
 `
 
 const PresaleLive: React.FC = () => {
@@ -688,7 +692,13 @@ const PresaleLive: React.FC = () => {
     if (isValue && parseFloat(contribute) > 0 && tokenData) {
       const value = ethers.utils.parseEther(contribute)
       const tx = await presaleContract.contribute(param.saleId, { value })
-      await tx.wait()
+      const receipt = await tx.wait()
+      if(receipt.status === 1) {
+        axios.post(`${process.env.REACT_APP_BACKEND_API_URL2}/contribute`, {saleId: param.saleId, chainId})
+        .then((res) => {
+          console.log("response", res)
+        })
+      }
     }
   }
 

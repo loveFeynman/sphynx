@@ -381,10 +381,8 @@ const Presale: React.FC = () => {
 
   const handleChecked = (value) => {
     if (value) {
-      setSelectedCount(c => c + 1)
-    }
-    else if (selectedCount > 0)
-      setSelectedCount(c => c - 1)
+      setSelectedCount((c) => c + 1)
+    } else if (selectedCount > 0) setSelectedCount((c) => c - 1)
   }
 
   const handleChange = async (e) => {
@@ -501,28 +499,28 @@ const Presale: React.FC = () => {
     const value: any = {
       saleId: presaleId,
       token: tokenAddress,
-      minContributeRate: new BigNumber(minBuy).times(BIG_TEN.pow(18)).toString(),
-      maxContributeRate: new BigNumber(maxBuy).times(BIG_TEN.pow(18)).toString(),
+      minContributeRate: ethers.utils.parseEther(minBuy),
+      maxContributeRate: ethers.utils.parseEther(maxBuy),
       startTime: startTime.toString(),
       tier1Time: tierOneTime.toString(),
       tier2Time: tierTwoTime.toString(),
       endTime: endTime.toString(),
       liquidityLockTime: liquidityLockTime.toString(),
       routerId: routerAddress,
-      tier1Rate: new BigNumber(tier1).times(BIG_TEN.pow(tokenDecimal)).toString(),
-      tier2Rate: new BigNumber(tier2).times(BIG_TEN.pow(tokenDecimal)).toString(),
-      publicRate: new BigNumber(tier3).times(BIG_TEN.pow(tokenDecimal)).toString(),
-      liquidityRate: new BigNumber(listingRate).times(BIG_TEN.pow(tokenDecimal)),
-      softCap: new BigNumber(softCap).times(BIG_TEN.pow(18)).toString(),
-      hardCap: new BigNumber(hardCap).times(BIG_TEN.pow(18)).toString(),
+      tier1Rate: ethers.utils.parseUnits(tier1, tokenDecimal),
+      tier2Rate: ethers.utils.parseUnits(tier2, tokenDecimal),
+      publicRate: ethers.utils.parseUnits(tier3, tokenDecimal),
+      liquidityRate: ethers.utils.parseUnits(listingRate, tokenDecimal),
+      softCap: ethers.utils.parseEther(softCap),
+      hardCap: ethers.utils.parseEther(hardCap),
       routerRate: pancakeLiquidityRate,
       defaultRouterRate: sphynxLiquidityRate,
       isGold: kyc && utility && doxxedTeam && certikAudit,
     }
 
-    const fee = new BigNumber('0.001').times(BIG_TEN.pow(18)).toString()
+    const fee = ethers.utils.parseEther('0.00001')
 
-    let tokenLevel: number 
+    let tokenLevel: number
     switch (selectedCount) {
       case 0:
         tokenLevel = SEARCH_OPTION.OTHER
@@ -539,7 +537,6 @@ const Presale: React.FC = () => {
         tokenLevel = SEARCH_OPTION.GOLD
         break
     }
-
 
     presaleContract.createPresale(value, { value: fee }).then((res) => {
       /* if presale created successfully */
@@ -830,7 +827,10 @@ const Presale: React.FC = () => {
                         value: true,
                       },
                     ]}
-                    onChange={(option: any) => handleChecked(option.value)}
+                    onChange={(option: any) => {
+                      setCertikAudit(option.value)
+                      handleChecked(option.value)
+                    }}
                   />
                 </InlineWrapper>
                 <MarginWrapper />
@@ -847,7 +847,10 @@ const Presale: React.FC = () => {
                         value: true,
                       },
                     ]}
-                    onChange={(option: any) => handleChecked(option.value)}
+                    onChange={(option: any) => {
+                      setDoxxedTeam(option.value)
+                      handleChecked(option.value)
+                    }}
                   />
                 </InlineWrapper>
               </FlexWrapper>
@@ -866,7 +869,10 @@ const Presale: React.FC = () => {
                         value: true,
                       },
                     ]}
-                    onChange={(option: any) => handleChecked(option.value)}
+                    onChange={(option: any) => {
+                      setUtility(option.value)
+                      handleChecked(option.value)
+                    }}
                   />
                 </InlineWrapper>
                 <MarginWrapper />
@@ -883,7 +889,10 @@ const Presale: React.FC = () => {
                         value: true,
                       },
                     ]}
-                    onChange={(option: any) => handleChecked(option.value)}
+                    onChange={(option: any) => {
+                      setKYC(option.value)
+                      handleChecked(option.value)
+                    }}
                   />
                 </InlineWrapper>
               </FlexWrapper>

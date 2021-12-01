@@ -11,6 +11,7 @@ import { ReactComponent as CoingeckoIcon } from 'assets/svg/icon/Coingecko.svg'
 import { ReactComponent as CoinMarketCapsIcon } from 'assets/svg/icon/CoinMarketCaps.svg'
 import { ReactComponent as LearningHubIcon } from 'assets/svg/icon/LearningHub.svg'
 import { ReactComponent as FAQIcon } from 'assets/svg/icon/HelpIcon.svg'
+import { ReactComponent as LockIcon } from 'assets/svg/icon/LockIcon.svg'
 
 export const links = [
   {
@@ -40,7 +41,7 @@ export const links = [
   },
   {
     label: 'Sphynx lockers (coming soon)',
-    icon: LaunchPadIcon,
+    icon: LockIcon,
     href: '/locker',
   },
   {

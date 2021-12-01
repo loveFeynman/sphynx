@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 import Pagination from '@material-ui/lab/Pagination'
 import { useTranslation } from 'contexts/Localization'
 import styled from 'styled-components'
 import axios from 'axios'
 import * as ethers from 'ethers'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
-import { simpleRpcProvider } from 'utils/providers'
 import { getPresaleContract } from 'utils/contractHelpers'
 import ListIcon from 'assets/svg/icon/ListIcon.svg'
 import { useMenuToggle } from 'state/application/hooks'
@@ -24,8 +23,6 @@ import {
   PaginationWrapper,
 } from './ListingsStyles'
 
-const presaleContract = getPresaleContract(simpleRpcProvider)
-
 const LoadingWrapper = styled.div`
   display: flex;
   justify-content: center;
@@ -34,7 +31,8 @@ const LoadingWrapper = styled.div`
 `
 
 const Presale: React.FC = () => {
-  const { chainId } = useActiveWeb3React()
+  const { chainId, library } = useActiveWeb3React()
+  const presaleContract = useMemo(() => getPresaleContract(library), [library])
   const { t } = useTranslation()
   const { menuToggled } = useMenuToggle()
   const [tokenList, setTokenList] = useState(null)
@@ -112,12 +110,14 @@ const Presale: React.FC = () => {
             console.log('error', error)
             setIsLoading(false)
           }
+        } else {
+          setIsLoading(false)
         }
       })
     }
 
     if (chainId && searchOption !== undefined) fetchData()
-  }, [chainId, searchOption, searchKey, pageIndex])
+  }, [chainId, searchOption, searchKey, pageIndex, presaleContract])
 
   const handlePageIndex = (e, page) => {
     setPageIndex(page - 1)

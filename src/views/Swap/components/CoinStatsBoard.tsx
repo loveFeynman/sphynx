@@ -122,6 +122,7 @@ export default function CoinStatsBoard(props) {
   const volumedecimal = parseFloat(alldata.volume).toFixed(3)
   const liquidityV2decimal = parseFloat(alldata.liquidityV2).toFixed(3)
   const liquidityV2BNBdecimal = parseFloat(alldata.liquidityV2BNB).toFixed(3)
+  const nativeCurrencySymbol = chainId === 1 ? 'ETH' : 'BNB'
   const isExtra = document.body.clientWidth > 1500
 
   const RealContainer = isExtra ? ContainerExtra : Container
@@ -208,7 +209,7 @@ export default function CoinStatsBoard(props) {
       <TokenStateCard
         CardIcon={LiquidityIcon}
         cardTitle="Liquidity"
-        cardValue={`${Number(liquidityV2BNBdecimal).toLocaleString()} BNB`}
+        cardValue={`${Number(liquidityV2BNBdecimal).toLocaleString()} ${nativeCurrencySymbol}`}
         fillColor="#2F80ED"
         subPriceValue={liquidityV2decimal ? `($ ${Number(liquidityV2decimal).toLocaleString()})` : ''}
         variantFill={false}
