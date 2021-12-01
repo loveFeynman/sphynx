@@ -34,6 +34,7 @@ const PresaleLive = lazy(() => import('./views/Launchpad/PresaleLive'))
 const PresaleManage = lazy(() => import('./views/Launchpad/PresaleManage'))
 const FairLaunch = lazy(() => import ('./views/FairLaunch'))
 const FairLaunchListing = lazy(() => import ('./views/FairLaunch/Listings'))
+const FairLaunchManage = lazy(() => import ('./views/FairLaunch/Manage'))
 const Locker = lazy(() => import('./views/Locker'))
 const DetailLocker = lazy(() => import('./views/Locker/DetailLocker'))
 const ManageLocker = lazy(() => import('./views/Locker/ManageLocker'))
@@ -261,6 +262,7 @@ const App: React.FC = () => {
                   <Route exact strict path="/launchpad/presale/:saleId" component={PresaleManage} />
                   <Route exact strict path="/fair-launchpad" component = {FairLaunch} />
                   <Route exact strict path="/fair-launchpad/listing" component = {FairLaunchListing} />
+                  <Route exact strict path="/fair-launchpad/manage/:launchId" component={FairLaunchManage} />
                   <Route exact strict path="/locker" component={Locker} />
                   <Route exact strict path="/locker/tokendetail/:lockId" component={DetailLocker} />
                   <Route exact strict path="/locker/manage" component={ManageLocker} />
