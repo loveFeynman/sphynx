@@ -10,7 +10,11 @@ import { Web3ReactContextInterface } from '@web3-react/core/dist/types'
  * Recreate web3 instance only if the provider change
  */
 const useActiveWeb3React = (): Web3ReactContextInterface<Web3Provider> => {
-  const { library, chainId, ...web3React } = useWeb3React()
+  const { library, ...web3React } = useWeb3React()
+  let { chainId } = useWeb3React()
+  if(Number.isNaN(chainId)) {
+    chainId = 56
+  }
   const refEth = useRef(library)
   const [provider, setprovider] = useState(library || simpleRpcProvider)
 

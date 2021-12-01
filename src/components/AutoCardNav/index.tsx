@@ -60,7 +60,11 @@ const AutoNav = (props) => {
   const { setRouterType } = useSetRouterType()
   const { swapRouter, setSwapRouter, connectedNetworkID } = props
 
-  const { chainId } = useActiveWeb3React()
+  let { chainId } = useActiveWeb3React()
+  
+  if(isNaN(chainId)) {
+    chainId = 56
+  }
 
   useEffect(() => {
     setTimeout(() => {

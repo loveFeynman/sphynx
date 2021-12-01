@@ -78,8 +78,8 @@ export default function TokenInfo(props) {
   const { t } = useTranslation()
   const result = isAddress(input)
   const { chainId } = useActiveWeb3React()
-  const network = chainId === 56 ? 'bsc' : 'ethereum'
-  const tokenLink = chainId === 56 ? 'https://bscscan.com/token' : 'https://etherscan.io/token'
+  const network = chainId === 1 ? 'ethereum' : 'bsc'
+  const tokenLink = chainId === 1 ? 'https://etherscan.io/token' : 'https://bscscan.com/token'
 
   const dispatch = useDispatch<AppDispatch>()
 
@@ -92,7 +92,7 @@ export default function TokenInfo(props) {
             currencyId: input,
           }),
         )
-        const currencyId = chainId === 56 ? 'BNB' : 'ETH'
+        const currencyId = chainId === 1 ? 'ETH' : 'BNB'
         dispatch(
           selectCurrency({
             field: isInput ? Field.INPUT : Field.OUTPUT,
