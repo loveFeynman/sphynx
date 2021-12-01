@@ -206,8 +206,12 @@ export default function Swap({ history }: RouteComponentProps) {
   const isMobile = !isXl
   const [symbol, setSymbol] = useState('')
   const theme = useTheme()
-  const { account, chainId } = useActiveWeb3React()
+  let { account, chainId } = useActiveWeb3React()
   const BUSDAddr = BUSD[chainId]?.address
+
+  if(account === undefined) {
+    chainId = 56
+  }
 
   const wrappedCurrencySymbol = chainId === 56 ? 'WBNB' : 'WETH'
   stateRef.current = transactionData
