@@ -166,6 +166,12 @@ const SwapPage = styled(Page)`
   padding: 0;
 `
 
+/*
+declare support chainID for swap Page
+*/
+
+const supportedChainID = [56]
+
 export default function Swap({ history }: RouteComponentProps) {
   const dispatch = useDispatch()
   const { setRouterType } = useSetRouterType()
@@ -204,7 +210,6 @@ export default function Swap({ history }: RouteComponentProps) {
   const BUSDAddr = BUSD[chainId]?.address
 
   const wrappedCurrencySymbol = chainId === 56 ? 'WBNB' : 'WETH'
-
   stateRef.current = transactionData
   pairsRef.current = pairs
   stablePairsRef.current = stablePairs
@@ -1010,7 +1015,8 @@ export default function Swap({ history }: RouteComponentProps) {
   }, [handleSwap, isExpertMode, onPresentConfirmModal, trade])
 
   return (
-    <SwapPage>
+    supportedChainID.indexOf(chainId) !== -1 ? (
+      <SwapPage>
       <RewardsPanel />
       <Cards>
         <div>
@@ -1290,5 +1296,10 @@ export default function Swap({ history }: RouteComponentProps) {
         </div>
       </Cards>
     </SwapPage>
+    ) : (
+      <Flex justifyContent="center" alignItems="center" style={{height: 'calc(100vh - 57px)', color: 'red'}}>
+        <h3>Please switch to BSC mainnet!</h3>
+      </Flex>
+    )   
   )
 }
