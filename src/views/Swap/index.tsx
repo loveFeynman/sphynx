@@ -78,6 +78,7 @@ import { SPHYNX_TOKEN_ADDRESS } from 'config/constants'
 import { BUSD } from 'config/constants/tokens'
 import formatTimeString from 'utils/formatTimeString'
 import { sphynxAddress, wrappedAddr } from 'config/constants/tokenHelper'
+import { isUndefined } from 'lodash'
 
 let tokenDecimal = 18
 
@@ -198,7 +199,8 @@ export default function Swap({ history }: RouteComponentProps) {
   const [symbol, setSymbol] = useState('')
   const theme = useTheme()
   let { account, chainId } = useActiveWeb3React()
-  if (Number.isNaN(chainId)) {
+  console.log("chainId", chainId)
+  if (Number.isNaN(chainId) || isUndefined(chainId)) {
     chainId = 56
   }
 

@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import styled, { useTheme } from 'styled-components'
 import { IconButton, Link, Text, useMatchBreakpoints } from '@sphynxdex/uikit'
-import SearchIcon from "components/Icon/SearchIcon";
+import SearchIcon from "components/Icon/SearchIcon"
+import { ChainId } from '@sphynxdex/sdk-multichain'
 import { PoolData } from 'state/info/types'
 import fetchPoolsForToken from 'state/info/queries/tokens/poolsForToken'
 import { fetchPoolData } from 'state/info/queries/pools/poolData'
@@ -11,6 +12,7 @@ import CopyHelper from 'components/AccountDetails/Copy'
 import './dropdown.css'
 import axios from 'axios'
 import { MenuItem } from '@material-ui/core'
+import { isUndefined } from 'lodash'
 import LiveAmountPanel from './LiveAmountPanel'
 import { AppState } from '../../../state'
 import { setIsInput, typeInput } from '../../../state/input/actions'
@@ -130,7 +132,7 @@ const SearchInputDivider = styled.div`
 
 // {token} : ContractPanelProps)
 export default function ContractPanel({ value, symbol, amount, price }: ContractPanelProps) {
-  const { chainId } = useActiveWeb3React()
+  let { chainId } = useActiveWeb3React()
   const [addressSearch, setAddressSearch] = useState('')
   const [showDrop, setShowDrop] = useState(false)
   const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
@@ -144,6 +146,10 @@ export default function ContractPanel({ value, symbol, amount, price }: Contract
   const [poolDatas, setPoolDatas] = useState<PoolData[]>([])
   const { isXl } = useMatchBreakpoints()
   const isMobile = !isXl
+
+  if(Number.isNaN(chainId) || isUndefined(chainId)) {
+    chainId = ChainId.MAINNET
+  }
 
   const handlerChange = (e: any) => {
     try {
