@@ -15,8 +15,6 @@ import { ERC20_ABI } from 'config/abi/erc20'
 import { useModal } from '@sphynxdex/uikit'
 import DisclaimerModal from 'components/DisclaimerModal/DisclaimerModal'
 import Select from 'components/Select/Select'
-import BigNumber from 'bignumber.js'
-import { BIG_TEN } from 'utils/bigNumber'
 import axios from 'axios'
 import { getPresaleContract } from 'utils/contractHelpers'
 import { useWeb3React } from '@web3-react/core'
@@ -419,7 +417,7 @@ const Presale: React.FC = () => {
 
   const validate = async () => {
     if (!tokenAddress || !tokenName || !tokenSymbol) {
-      toastError('Oops, we can not parse token data, please inpute correct token address!')
+      toastError('Oops, we can not parse token data, please input correct token address!')
       setStep(1)
       return
     }
