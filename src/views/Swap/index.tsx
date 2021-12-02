@@ -387,7 +387,10 @@ export default function Swap({ history }: RouteComponentProps) {
 
             let tokenAmt, BNBAmt, isBuy
 
-            if (input < wrappedAddr[chainId]) {
+            if (
+              (event.quoteCurrency === wrappedCurrencySymbol && input < wrappedAddr[chainId]) ||
+              (event.quoteCurrency !== wrappedCurrencySymbol && input < BUSDAddr[chainId])
+            ) {
               tokenAmt = Math.abs(
                 parseFloat(ethers.utils.formatUnits(datas.amount0In + '', tokenDecimal)) -
                   parseFloat(ethers.utils.formatUnits(datas.amount0Out + '', tokenDecimal)),
