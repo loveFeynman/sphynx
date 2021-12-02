@@ -213,7 +213,7 @@ export default function Swap({ history }: RouteComponentProps) {
 
   const BUSDAddr = BUSD[chainId]?.address
 
-  const wrappedCurrencySymbol = chainId === 56 ? 'WBNB' : 'WETH'
+  const wrappedCurrencySymbol = chainId === ChainId.ETHEREUM ? 'WETH' : 'WBNB'
   stateRef.current = transactionData
   pairsRef.current = pairs
   stablePairsRef.current = stablePairs
@@ -241,7 +241,7 @@ export default function Swap({ history }: RouteComponentProps) {
         }
         dispatch(
           replaceSwapState({
-            outputCurrencyId: chainId === 56 ? 'BNB' : 'ETH',
+            outputCurrencyId: chainId === ChainId.ETHEREUM ? 'ETH' : 'BNB',
             inputCurrencyId: input,
             typedValue: '',
             field: Field.OUTPUT,
@@ -266,7 +266,7 @@ export default function Swap({ history }: RouteComponentProps) {
         }
         dispatch(
           replaceSwapState({
-            outputCurrencyId: chainId === 56 ? 'BNB' : 'ETH',
+            outputCurrencyId: chainId === ChainId.ETHEREUM ? 'ETH' : 'BNB',
             inputCurrencyId: input,
             typedValue: '',
             field: Field.OUTPUT,
@@ -342,7 +342,7 @@ export default function Swap({ history }: RouteComponentProps) {
 
     let newTransactions = stateRef.current
     return new Promise(async (resolve) => {
-      const price = chainId === 56 ? await getBNBPrice() : await getETHPrice()
+      const price = chainId === ChainId.ETHEREUM ? await getETHPrice() : await getBNBPrice()
       let curPrice = UNSET_PRICE
       let curAmount = 0
 
@@ -452,7 +452,7 @@ export default function Swap({ history }: RouteComponentProps) {
   const getTransactions = async (blockNumber) => {
     let cachedBlockNumber = blockNumber
     try {
-      const currentWeb3 = chainId === 56 ? datafeedWeb3 : web3ETH
+      const currentWeb3 = chainId === ChainId.ETHEREUM ? web3ETH : datafeedWeb3
       currentWeb3.eth
         .getPastLogs({
           fromBlock: blockNumber,
@@ -489,13 +489,14 @@ export default function Swap({ history }: RouteComponentProps) {
 
   const startRealTimeData = (blockNumber) => {
     if (blockNumber === null) {
-      const currentWeb3 = chainId === 56 ? datafeedWeb3 : web3ETH
+      const currentWeb3 = chainId === ChainId.ETHEREUM ? web3ETH : datafeedWeb3
       currentWeb3.eth.getBlockNumber().then((blockNumber) => {
         setCurrentBlock(blockNumber)
         setBlockFlag(!blockFlag)
       })
     } else {
-      datafeedWeb3.eth.getBlockNumber().then((blockNumberCache) => {
+      const currentWeb3 = chainId === ChainId.ETHEREUM ? web3ETH : datafeedWeb3
+      currentWeb3.eth.getBlockNumber().then((blockNumberCache) => {
         if (parseInt(blockNumber) + 50 <= blockNumberCache) {
           setCurrentBlock(blockNumberCache - 50)
           setBlockFlag(!blockFlag)
@@ -549,7 +550,7 @@ export default function Swap({ history }: RouteComponentProps) {
       try {
         let pairs = []
         let stablePairs = []
-        if (chainId === 56) {
+        if (chainId === ChainId.MAINNET) {
           let wBNBPair = await getPancakePairAddress(input, wrappedAddr[chainId], simpleRpcProvider, chainId)
           if (wBNBPair !== null) pairs.push(wBNBPair.toLowerCase())
           let wBNBPairV1 = await getPancakePairAddressV1(input, wrappedAddr[chainId], simpleRpcProvider)
@@ -564,12 +565,12 @@ export default function Swap({ history }: RouteComponentProps) {
           setStablePairs(stablePairs)
         }
 
-        if (chainId === 1) {
+        if (chainId === ChainId.ETHEREUM) {
           let wBNBPair = await getPancakePairAddress(input, wrappedAddr[chainId], simpleRpcETHProvider, chainId)
           if (wBNBPair !== null) pairs.push(wBNBPair.toLowerCase())
           setPairs(pairs)
         }
-        const bnbPrice = chainId === 56 ? await getBNBPrice() : await getETHPrice()
+        const bnbPrice = chainId === ChainId.ETHEREUM ? await getETHPrice() : await getBNBPrice()
         // pull historical data
         const queryResult = await axios.post(BITQUERY_API, { query: getDataQuery() }, config)
         if (queryResult.data.data && queryResult.data.data.ethereum.dexTrades) {
@@ -649,7 +650,7 @@ export default function Swap({ history }: RouteComponentProps) {
     if (tokenAddress === '' || tokenAddress === '-') return
     if (tokenAddress === undefined || tokenAddress === null) return
     try {
-      const currentWeb3 = chainId === 56 ? web3 : web3ETH
+      const currentWeb3 = chainId === ChainId.ETHEREUM ? web3ETH : web3
       const contract = new currentWeb3.eth.Contract(abi, tokenAddress)
       let totalSupply = await contract.methods.totalSupply().call()
       let decimals = await contract.methods.decimals().call()
