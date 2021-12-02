@@ -77,3 +77,6 @@ export const getSphynxRouterAddress = () => {
 export const getLockerAddress = () => {
   return getAddress(addresses.locker)
 }
+export const getFairLaunchAddress = () => {
+  return getAddress(addresses.fairLaunch)
+}

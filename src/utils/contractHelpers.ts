@@ -29,6 +29,7 @@ import {
   getFarmAuctionAddress,
   getPresaleAddress,
   getLockerAddress,
+  getFairLaunchAddress,
 } from 'utils/addressHelpers'
 
 // ABI
@@ -60,6 +61,8 @@ import bunnySpecialPredictionAbi from 'config/abi/bunnySpecialPrediction.json'
 import farmAuctionAbi from 'config/abi/farmAuction.json'
 import presaleAbi from 'config/abi/presaleABI.json'
 import lockerAbi from 'config/abi/lockerABI.json'
+import fairLaunchAbi from 'config/abi/fairLaunchAbi.json'
+
 import { ChainLinkOracleContract, FarmAuctionContract, PredictionsContract } from './types'
 
 const getContract = (abi: any, address: string, signer?: ethers.Signer | ethers.providers.Provider) => {
@@ -156,4 +159,6 @@ export const getPresaleContract = (signer?: ethers.Signer | ethers.providers.Pro
 export const getLockerContract = (signer?: ethers.Signer | ethers.providers.Provider) => {
   return getContract(lockerAbi, getLockerAddress(), signer)
 }
-
+export const getFairLaunchContract = (signer?: ethers.Signer | ethers.providers.Provider) => {
+  return getContract(fairLaunchAbi, getFairLaunchAddress(), signer)
+}
