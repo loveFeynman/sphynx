@@ -14,6 +14,7 @@ import styled from 'styled-components'
 import { ERC20_ABI } from 'config/abi/erc20'
 import { useModal } from '@sphynxdex/uikit'
 import DisclaimerModal from 'components/DisclaimerModal/DisclaimerModal'
+import Select from 'components/Select/Select'
 import BigNumber from 'bignumber.js'
 import { BIG_TEN } from 'utils/bigNumber'
 import axios from 'axios'
@@ -346,6 +347,7 @@ const Presale: React.FC = () => {
   const [telegramLink, setTelegramLink] = useState('')
   const [projectDec, setProjectDec] = useState('')
   const [updateDec, setUpdateDec] = useState('')
+  const [liquidityType, setLiquidityType] = useState('');
   const [certikAudit, setCertikAudit] = useState(false)
   const [doxxedTeam, setDoxxedTeam] = useState(false)
   const [utility, setUtility] = useState(false)
@@ -610,7 +612,28 @@ const Presale: React.FC = () => {
               </InlineWrapper>
             </StepWrapper>
             <Sperate />
-            <StepWrapper number="3" stepName="Timing" step={step} onClick={() => setStep(3)}>
+            <StepWrapper number="3" stepName="Router" step={step} onClick={() => setStep(3)}>
+              <InlineWrapper>
+                <p className="description w140">Liquidity</p>
+                <Select
+                  options={[
+                    {
+                      label: t('SphynxSwap'),
+                      value: 'sphynxswap',
+                    },
+                    {
+                      label: t('Pancakeswap'),
+                      value: 'pancakeswap',
+                    },
+                  ]}
+                  onChange={(option: any) => {
+                    setLiquidityType(option.value)
+                  }}
+                />
+              </InlineWrapper>
+            </StepWrapper>
+            <Sperate />
+            <StepWrapper number="4" stepName="Timing" step={step} onClick={() => setStep(4)}>
               <Sperate />
               <p className="description">
                 Please set the start time for your launch and the liquidity lock time!
@@ -637,14 +660,14 @@ const Presale: React.FC = () => {
               </FlexWrapper>
               <Sperate />
               <InlineWrapper>
-                <LineBtn onClick={() => setStep(2)}>Back</LineBtn>
-                <FillBtn className="ml16" onClick={() => setStep(4)}>
+                <LineBtn onClick={() => setStep(3)}>Back</LineBtn>
+                <FillBtn className="ml16" onClick={() => setStep(5)}>
                   Finish
                 </FillBtn>
               </InlineWrapper>
             </StepWrapper>
             <Sperate />
-            <StepWrapper number="4" stepName="Additional Information" step={step} onClick={() => setStep(4)}>
+            <StepWrapper number="5" stepName="Additional Information" step={step} onClick={() => setStep(5)}>
               <p className="description">
                 Note the information in this section can be updated 
                 at any time by the presale creator while the presale is active. 
@@ -682,14 +705,14 @@ const Presale: React.FC = () => {
               <MyInput onChange={(e) => setUpdateDec(e.target.value)} value={updateDec} style={{ width: '100%' }} />
               <Sperate />
               <InlineWrapper>
-                <LineBtn onClick={() => setStep(3)}>Back</LineBtn>
-                <FillBtn className="ml16" onClick={() => setStep(5)}>
+                <LineBtn onClick={() => setStep(4)}>Back</LineBtn>
+                <FillBtn className="ml16" onClick={() => setStep(6)}>
                   Next
                 </FillBtn>
               </InlineWrapper>
             </StepWrapper>
             <Sperate />
-            <StepWrapper number="5" stepName="Finalize" step={step} onClick={() => setStep(5)}>
+            <StepWrapper number="6" stepName="Finalize" step={step} onClick={() => setStep(6)}>
               <NoteWrapper style={{ maxWidth: 'unset' }}>
                 <FlexWrapper>
                   <p className="description w220">Token Name</p>
