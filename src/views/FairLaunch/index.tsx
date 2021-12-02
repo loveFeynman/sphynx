@@ -204,11 +204,11 @@ const FeeCard = () => {
       <Sperate />
       <FeeWrapper>
         <p>
-          Current Fee: <span>2BNB</span>
+          Current Fee: <span>1BNB</span>
         </p>
         <VerticalSperator />
         <p>
-          Tokens Sold: <span>2%</span>
+          Tokens Listed: <span>2%</span>
         </p>
         <VerticalSperator />
         {/* <p>
@@ -330,6 +330,7 @@ const Presale: React.FC = () => {
   const [tier1, setTier1] = useState('')
   const [tokenAmount, setTokenAmount] = useState('')
   const [bnbAmount, setBnbAmount] = useState('')
+  const [balanceAmount, setBalanceAmount] = useState('');
   const [softCap, setSoftCap] = useState('')
   const [hardCap, setHardCap] = useState('')
   const [minBuy, setMinBuy] = useState('')
@@ -372,10 +373,12 @@ const Presale: React.FC = () => {
         const symbol = await tokenContract.symbol()
         const decimals = await tokenContract.decimals()
         const total = await tokenContract.totalSupply()
+        const balance = await tokenContract.balanceOf(account);
         setName(name)
         setSymbol(symbol)
         setDecimal(decimals)
-        setTotalSupply(`${Number(total)/(10 ** 6)}`)
+        setBalanceAmount(ethers.utils.formatUnits(balance));
+        setTotalSupply(ethers.utils.formatUnits(total, decimals))
       } catch (err) {
         console.log('error', err.message)
       }
@@ -586,7 +589,7 @@ const Presale: React.FC = () => {
             <Sperate />
             <StepWrapper number="2" stepName="Launch Rate" step={step} onClick={() => setStep(2)}>
               <p className="description">
-                Your wallet balance: 0
+                Your wallet balance: {balanceAmount}
               </p>
               <Sperate />
               <p className="description">
