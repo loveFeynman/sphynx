@@ -9,7 +9,6 @@ import ContractHelper from 'components/ContractHelper';
 const CardWrapper = styled.div`
   background: ${({ theme }) => (theme.isDark ? '#040413' : '#2A2E60')};
   border-radius: 8px;
-  cursor: pointer;
 `
 
 const CardHeader = styled.div`
@@ -161,8 +160,6 @@ interface ImgCardProps {
   hardCap?: number
   minContribution?: number
   maxContribution?: number
-  startTime?: string
-  endTime?: string
   tokenState?: string
 }
 
@@ -178,8 +175,6 @@ const TokenCard: React.FC<ImgCardProps> = ({
   totalCap,
   minContribution,
   maxContribution,
-  startTime,
-  endTime,
   tokenState,
 }: ImgCardProps) => {
   const history = useHistory()
@@ -206,22 +201,9 @@ const TokenCard: React.FC<ImgCardProps> = ({
             <Text>{tokenName}</Text>
           </TokenSymbolWrapper>
         </TokenWrapper>
-        <EndTimeWrapper>
-          {now >= parseInt(startTime) ? (
-            <>
-              <Text>Sale end in:</Text>
-              <TimerComponent time={endTime} />
-            </>
-          ) : (
-            <>
-              <Text>Sale start in:</Text>
-              <TimerComponent time={startTime} />
-            </>
-          )}
-        </EndTimeWrapper>
       </CardHeader>
       <CardBody>
-        <ActiveSaleText state={tokenState}>{`${tokenState} Sale`}</ActiveSaleText>
+        <ActiveSaleText state={tokenState}>Launch Failed</ActiveSaleText>
         <ProgressBarWrapper>
           <ProgressBar>
             <Progress state={activeSale}>{activeSale.toFixed(2)}%</Progress>
@@ -229,25 +211,11 @@ const TokenCard: React.FC<ImgCardProps> = ({
         </ProgressBarWrapper>
         <SaleInfoWrapper>
           <SaleInfo>
-            <SaleInfoTitle>Raised:</SaleInfoTitle>
+            <SaleInfoTitle>Liquidity:</SaleInfoTitle>
             <SaleInfoValue>
-              {totalCap}/{hardCap}
+              0.01 BNB
             </SaleInfoValue>
-          </SaleInfo>
-          <Divider />
-          <SaleInfo>
-            <SaleInfoTitle>Soft Cap / Hard Cap:</SaleInfoTitle>
-            <SaleInfoValue>
-              {softCap}/{hardCap} BNB
-            </SaleInfoValue>
-          </SaleInfo>
-          <Divider />
-          <SaleInfo>
-            <SaleInfoTitle>Min/Max Contribution:</SaleInfoTitle>
-            <SaleInfoValue>
-              {minContribution}/{maxContribution} BNB
-            </SaleInfoValue>
-          </SaleInfo>
+          </SaleInfo> 
           <Divider />
         </SaleInfoWrapper>
       </CardBody>

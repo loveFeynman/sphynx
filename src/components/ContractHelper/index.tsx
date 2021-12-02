@@ -1,7 +1,6 @@
 import React from 'react'
 import { useTooltip, Box, BoxProps } from '@sphynxdex/uikit'
 import styled from 'styled-components'
-import NuclearIcon from 'assets/svg/icon/NuclearIcon.svg'
 import GearIcon from 'assets/svg/icon/GearIcon.svg'
 
 interface Props extends BoxProps {

@@ -129,7 +129,7 @@ interface PropsFunction {
 }
 
 
-const SearchPannel: React.FC<PropsFunction> = ({ setSearchOption, setSearchKey, setPageIndex }) => {
+const SearchPanel: React.FC<PropsFunction> = ({ setSearchOption, setSearchKey, setPageIndex }) => {
   const { t } = useTranslation()
   const { isXl } = useMatchBreakpoints()
   const isMobile = !isXl
@@ -200,4 +200,4 @@ const SearchPannel: React.FC<PropsFunction> = ({ setSearchOption, setSearchKey, 
   )
 }
 
-export default SearchPannel
+export default SearchPanel
