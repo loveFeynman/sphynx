@@ -11,7 +11,6 @@ import { ReactComponent as LiquidityIcon } from 'assets/svg/icon/LiquidityIcon.s
 import DefaultImg from 'assets/images/MainLogo.png'
 import storages from 'config/constants/storages'
 import { getChartStats } from 'utils/apiServices'
-import useActiveWeb3React from '../../../hooks/useActiveWeb3React'
 import { AppState } from '../../../state'
 import TokenStateCard from './TokenStateCard'
 
@@ -95,11 +94,9 @@ const Container = styled.div`
 
 export default function CoinStatsBoard(props) {
   const dispatch = useDispatch()
-  const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
-  const { chainId } = useActiveWeb3React()
   const routerVersion = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.routerVersion)
   const marketCapacity = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.marketCapacity)
-  const result = isAddress(input)
+  const { tokenData, chainId, input } = props
   const interval = useRef(null)
   const tokenAddress = useRef(null)
   tokenAddress.current = input
@@ -113,7 +110,6 @@ export default function CoinStatsBoard(props) {
     liquidityV2BNB: '0',
   })
 
-  const { tokenData } = props
   const [price, setPrice] = useState<any>(null)
   const [scale, setScale] = useState(2)
 
@@ -129,19 +125,18 @@ export default function CoinStatsBoard(props) {
 
   const getTableData = useCallback(async () => {
     try {
-      if (result) {
-        const chartStats: any = await getChartStats(input, routerVersion, chainId)
-        setalldata(chartStats)
-        setPrice(chartStats.price)
-        setLinkIcon(
-          `https://r.poocoin.app/smartchain/assets/${input ? utils.getAddress(input) : '0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82'
-          }/logo.png`,
-        )
-      }
+      const chartStats: any = await getChartStats(input, routerVersion, chainId)
+      setalldata(chartStats)
+      setPrice(chartStats.price)
+      setLinkIcon(
+        `https://r.poocoin.app/smartchain/assets/${
+          input ? utils.getAddress(input) : '0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82'
+        }/logo.png`,
+      )
     } catch (err) {
       setTimeout(() => getTableData(), 3000)
     }
-  }, [input, result, routerVersion, chainId])
+  }, [input, routerVersion, chainId])
 
   useEffect(() => {
     const ac = new AbortController()
