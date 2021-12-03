@@ -407,12 +407,12 @@ const Presale: React.FC = () => {
 
     fairLaunchContract.createFairLaunch(
       tokenAddress,
-      tokenAmount,
-      bnbAmount,
+      ethers.utils.parseUnits(tokenAmount, tokenDecimal),
+      ethers.utils.parseEther(bnbAmount),
       launchTimeStamp,
       router,
       lockTimeStamp,
-      { value: fee }
+      { value: fee.add(ethers.utils.parseEther(bnbAmount)) }
     ).then(res => {
       const data = {
         chain_id: chainId,
