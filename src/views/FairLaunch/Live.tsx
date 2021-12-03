@@ -476,7 +476,7 @@ const FairLaunchLive: React.FC = () => {
       <FlexWrapper style={{ marginTop: '32px' }}>
         <DefiFlex>
           <WarningTitle>Token Dump Warning</WarningTitle>
-          <WarningSubTitle style={{ opacity: '0.8' }}>
+          <WarningSubTitle style={{ fontSize: '14px', opacity: '0.9' }}>
             Too many tokens are held outside this sale. 
             Make sure these tokens are burned, locked or the owner has a valid reason to hold them. 
             Tokens held by teams can be sold to pull out liquidity and should be carefully examined.
