@@ -394,7 +394,7 @@ const ManageLocker: React.FC = () => {
     try {
       const lockId = (await lockContract.currentLockId()).toString()
       const lockTime = Math.floor((new Date(unLock).getTime() / 1000))
-      const lockAmount = ethers.utils.parseUnits((totalSupply * percent / 100).toString(), tokenDecimals)
+      const lockAmount = ethers.utils.parseUnits(( userBalance * percent / 100).toString(), tokenDecimals)
 
       const fee = ethers.utils.parseEther(isLPToken ? LP_LOCK_PAYABLE_BNB : TOKEN_LOCK_PAYABLE_BNB)
       lockContract.createLock(lockTime.toString(), vestId, lockAmount, tokenAddress, isLPToken, { value: fee })

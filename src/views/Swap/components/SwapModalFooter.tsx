@@ -85,9 +85,12 @@ export default function SwapModalFooter({
                 : slippageAdjustedAmounts[Field.INPUT]?.toSignificant(4) ?? '-'}
             </Text>
             <Text fontSize="14px" marginLeft="4px">
-              {trade.tradeType === TradeType.EXACT_INPUT
+              {/* {trade.tradeType === TradeType.EXACT_INPUT
                 ? trade.outputAmount.currency.symbol
-                : trade.inputAmount.currency.symbol}
+                : trade.inputAmount.currency.symbol} */}
+                {trade.tradeType === TradeType.EXACT_INPUT
+                ? trade.route.output.symbol
+                : trade.route.input.symbol}
             </Text>
           </RowFixed>
         </RowBetween>
@@ -114,7 +117,8 @@ export default function SwapModalFooter({
             />
           </RowFixed>
           <Text fontSize="14px">
-            {realizedLPFee ? `${realizedLPFee?.toSignificant(6)} ${trade.inputAmount.currency.symbol}` : '-'}
+            {/* {realizedLPFee ? `${realizedLPFee?.toSignificant(6)} ${trade.inputAmount.currency.symbol}` : '-'} */}
+            {realizedLPFee ? `${realizedLPFee?.toSignificant(6)} ${trade.route.input.symbol}` : '-'}
           </Text>
         </RowBetween>
       </SwapModalFooterContainer>

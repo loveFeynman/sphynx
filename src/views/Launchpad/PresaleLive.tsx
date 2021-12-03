@@ -22,6 +22,13 @@ import * as ethers from 'ethers'
 import { getPresaleAddress } from 'utils/addressHelpers'
 import TimerComponent from 'components/Timer/TimerComponent'
 
+
+import { ReactComponent as TwitterIcon } from 'assets/svg/icon/TwitterIcon.svg'
+import { ReactComponent as SocialIcon2 } from 'assets/svg/icon/SocialIcon2.svg'
+import { ReactComponent as TelegramIcon } from 'assets/svg/icon/TelegramIcon.svg'
+import { ReactComponent as DiscordIcon } from 'assets/svg/icon/DiscordIcon.svg'
+
+
 const Wrapper = styled.div`
   display: flex;
   justify-content: center;
@@ -61,7 +68,7 @@ const HeaderTitleText = styled(Text)`
 const WarningTitleText = styled(HeaderTitleText)`
   font-size: 15px;
   ${({ theme }) => theme.mediaQueries.sm} {
-    font-size: 20px;
+    font-size: 22px;
   }
 `
 
@@ -142,7 +149,7 @@ const LiquidityFlex = styled(Flex)`
 `
 
 const WarningTitle = styled.div`
-  font-size: 15px;
+  font-size: 18px;
   font-weight: 600;
   color: white;
   padding-bottom: 4px;
@@ -151,7 +158,7 @@ const WarningTitle = styled.div`
 `
 
 const WarningSubTitle = styled(Text)`
-  font-size: 12px;
+  font-size: 14px;
   text-align: left;
   font-weight: 500;
 `
@@ -176,14 +183,15 @@ const TokenContainer = styled.div`
 
 const TokenSymbol = styled.div`
   font-weight: 600;
-  font-size: 22px;
+  font-size: 25px;
   text-align: left;
 `
 
 const TokenName = styled.div`
   font-weight: 600;
-  font-size: 14px;
-  color: white;
+  font-size: 15px;
+  color: #a7a7cc;
+  text-align: left;
 `
 
 const TokenSymbolWrapper = styled.div`
@@ -222,7 +230,7 @@ const AddressWrapper = styled.div`
   }
   div:last-child {
     color: #f2c94c;
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 600;
     word-break: break-word;
     text-align: left;
@@ -235,11 +243,11 @@ const AddressWrapper = styled.div`
 const AddressSendError = styled.div`
   margin-top: -8px;
   font-style: italic;
-  font-weight: normal;
-  font-size: 11px;
+  font-weight: bold;
+  font-size: 14px;
   line-height: 16px;
   letter-spacing: 0.15em;
-  color: #e93f33;
+  color: #ff2f21;
   text-align: left;
 `
 
@@ -399,8 +407,8 @@ const DataItem = styled.div`
       padding: 5px 20px;
     }
     text-align: start;
-    font-size: 12px;
-    color: white;
+    font-size: 14px;
+    color: #a7a7cc;
     font-style: normal;
     font-weight: 600;
     border-bottom: 1px solid ${({ theme }) => (theme.isDark ? '#5E2B60' : '#4A5187')};
@@ -412,7 +420,7 @@ const DataItem = styled.div`
     display: flex;
     padding: 5px 20px;
     text-align: start;
-    font-size: 12px;
+    font-size: 14px;
     color: #f2c94c;
     font-style: normal;
     font-weight: 600;
@@ -459,8 +467,8 @@ const ThinkItem = styled.div`
   div {
     margin-top: 5px;
     font-weight: 500;
-    font-size: 12px;
-    color: white;
+    font-size: 14px;
+    color: #a7a7cc;
   }
 `
 
@@ -501,6 +509,22 @@ const Progress = styled.div<{ state }>`
   justify-content: center;
   font-size: 9px;
   font-weight: bold;
+`
+
+const SocialIconsWrapper = styled.div`
+  display: flex;
+  gap: 10px;
+  flex-direction: row;
+  align-items: center;
+`
+
+const IconBox = styled.div<{ color?: string }>`
+  background: ${({ color }) => color};
+  padding: 10px;
+  border-radius: 3px;
+  display: flex;
+  width: fit-content;
+  align-items: center;
 `
 
 const PresaleLive: React.FC = () => {
@@ -545,10 +569,9 @@ const PresaleLive: React.FC = () => {
     },
     {
       presaleItem: 'Tokens For Liquidity:',
-      presaleValue: `${
-        tokenData &&
+      presaleValue: `${tokenData &&
         (tokenData.listing_rate * tokenData.hard_cap * (tokenData.router_rate + tokenData.default_router_rate)) / 100
-      } ${tokenData && tokenData.token_symbol}`,
+        } ${tokenData && tokenData.token_symbol}`,
     },
     {
       presaleItem: 'Soft Cap:',
@@ -693,11 +716,11 @@ const PresaleLive: React.FC = () => {
       const value = ethers.utils.parseEther(contribute)
       const tx = await presaleContract.contribute(param.saleId, { value })
       const receipt = await tx.wait()
-      if(receipt.status === 1) {
-        axios.post(`${process.env.REACT_APP_BACKEND_API_URL2}/contribute`, {saleId: param.saleId, chainId})
-        .then((res) => {
-          console.log("response", res)
-        })
+      if (receipt.status === 1) {
+        axios.post(`${process.env.REACT_APP_BACKEND_API_URL2}/contribute`, { saleId: param.saleId, chainId })
+          .then((res) => {
+            console.log("response", res)
+          })
       }
     }
   }
@@ -724,9 +747,6 @@ const PresaleLive: React.FC = () => {
             <MainLogo width="40" height="40" />
             <Flex flexDirection="column" ml="10px">
               <HeaderTitleText>{t('SphynxSale Automated Warning System')}</HeaderTitleText>
-              <Text fontSize="12px" color="white" bold textAlign="left">
-                {t('Lorem ipsum dolor sit amet, consectetur adipiscing elit')}
-              </Text>
             </Flex>
           </Flex>
         </Flex>
@@ -744,7 +764,7 @@ const PresaleLive: React.FC = () => {
       <FlexWrapper style={{ marginTop: '32px' }}>
         <DefiFlex>
           <WarningTitle>DeFi Zone Warning</WarningTitle>
-          <WarningSubTitle style={{ opacity: '0.8' }}>
+          <WarningSubTitle>
             This sale is listed in the DeFi Zone. Presales in this area use custom contracts that are not vetted by the
             DxSale team. Developers of tokens in this area can block transfers, can stop users from claiming tokens, can
             stop trading on exchanges and requires extra vetting. Participate at your own risk!
@@ -752,10 +772,10 @@ const PresaleLive: React.FC = () => {
         </DefiFlex>
         <SoftFlex>
           <WarningTitle>Soft Cap Warning</WarningTitle>
-          <WarningSubTitle style={{ opacity: '0.8' }}>The softcap of this sale is very low.</WarningSubTitle>
+          <WarningSubTitle>The softcap of this sale is very low.</WarningSubTitle>
         </SoftFlex>
         <LiquidityFlex>
-          <WarningTitle style={{ opacity: '0.8', color: '#1A1A3A' }}>Liquidity Percentage Warning</WarningTitle>
+          <WarningTitle style={{ color: '#1A1A3A' }}>Liquidity Percentage Warning</WarningTitle>
           <WarningSubTitle color="#1A1A3A" style={{ opacity: '0.7' }}>
             This sale has a very low liquidity percentage.
           </WarningSubTitle>
@@ -772,7 +792,7 @@ const PresaleLive: React.FC = () => {
               </TokenSymbolWrapper>
             </TokenContainer>
             <TokenDescription>
-              <Text fontSize="12px" textAlign="left" color="white">
+              <Text fontSize="14px" textAlign="left" color="white">
                 ${tokenData && tokenData.token_symbol} is a new reflection protocol on the Binance Smart Chain with a
                 deflationary burn mechanism that offers reflections to holders with 0% buy and sell tax.
               </Text>
@@ -845,16 +865,16 @@ const PresaleLive: React.FC = () => {
                           {privateSale1
                             ? 'Private sale 1 ends in'
                             : privateSale2
-                            ? 'Private sale 2 ends in'
-                            : 'Public sale ends in'}{' '}
+                              ? 'Private sale 2 ends in'
+                              : 'Public sale ends in'}{' '}
                         </Text>
                         <TimerComponent
                           time={
                             tokenData && privateSale1
                               ? tokenData?.tier1_time
                               : privateSale2
-                              ? tokenData?.tier2_time
-                              : tokenData?.end_time
+                                ? tokenData?.tier2_time
+                                : tokenData?.end_time
                           }
                         />
                       </Flex>
@@ -881,18 +901,18 @@ const PresaleLive: React.FC = () => {
                   )
                 ) : (
                   <>
-                    <Text textAlign="left" fontSize="12px" fontWeight="500" color="white">
+                    <Text textAlign="left" fontSize="14px" fontWeight="500" color="white">
                       This presale has ended. Go back to the dashboard to view others!
                     </Text>
-                    <Link external href="https://pancakeswap.finance/swap" style={{ width: '100%' }}>
+                    {/* <Link external href="https://pancakeswap.finance/swap" style={{ width: '100%' }}>
                       <DarkButton style={{ width: '100%', textDecoration: 'none' }} mt="16px">
                         Trade on PancakeSwap
                       </DarkButton>
-                    </Link>
+                    </Link> */}
                     <DarkButton onClick={toSphynxSwap} style={{ width: '100%' }} mt="16px">
                       Trade on SphynxSwap
                     </DarkButton>
-                    <Text textAlign="left" fontSize="12px" fontWeight="500" mt="16px" color="white">
+                    <Text textAlign="left" fontSize="14px" fontWeight="500" mt="16px" color="white">
                       If you participated in the presale click the claim button below to claim your tokens!
                     </Text>
                     <ColorButton
@@ -907,19 +927,19 @@ const PresaleLive: React.FC = () => {
                   </>
                 )}
                 <TokenAmountView>
-                  <Text fontSize="12px" fontWeight="600" color="white">
+                  <Text fontSize="14px" fontWeight="600" color="white">
                     Your Contributed Account:
                   </Text>
-                  <Text fontSize="12px" fontWeight="600" textAlign="center" color="#F2C94C">
+                  <Text fontSize="14px" fontWeight="600" textAlign="center" color="#F2C94C">
                     {userContributeBNB}BNB
                   </Text>
                 </TokenAmountView>
                 <UnderLine />
                 <TokenAmountView>
-                  <Text fontSize="12px" fontWeight="600" color="white">
+                  <Text fontSize="14px" fontWeight="600" color="white">
                     Your Reserved Tokens:
                   </Text>
-                  <Text fontSize="12px" fontWeight="600" textAlign="center" color="#F2C94C">
+                  <Text fontSize="14px" fontWeight="600" textAlign="center" color="#F2C94C">
                     {userContributeToken} {tokenData && tokenData.token_symbol}
                   </Text>
                 </TokenAmountView>
@@ -949,6 +969,28 @@ const PresaleLive: React.FC = () => {
                 ),
               )}
             </ContributeWrapper>
+            {/* <SocialIconsWrapper>
+            <Link external href="https://sphynxtoken.co" aria-label="social2">
+              <IconBox color="#710D89">
+                <SocialIcon2 width="15px" height="15px" />
+              </IconBox>
+            </Link>
+            <Link external href="https://discord.gg/ZEuDaFk4qz" aria-label="discord">
+              <IconBox color="#2260DA">
+                <DiscordIcon width="15px" height="15px" />
+              </IconBox>
+            </Link>
+            <Link external href="https://twitter.com/sphynxswap?s=21" aria-label="twitter">
+              <IconBox color="#33AAED">
+                <TwitterIcon width="15px" height="15px" />
+              </IconBox>
+            </Link>
+            <Link external href="https://t.me/sphynxswap" aria-label="telegram">
+              <IconBox color="#3E70D1">
+                <TelegramIcon width="15px" height="15px" />
+              </IconBox>
+            </Link>
+          </SocialIconsWrapper> */}
           </MainCardWrapper>
           <SubCardWrapper>
             <ThinkCardWrapper>
@@ -977,7 +1019,11 @@ const PresaleLive: React.FC = () => {
                 </ItemWrapper>
               </ItemContainer>
               <Separate />
-              <ColorButton style={{ width: '95%' }}>Join Community</ColorButton>
+              <Link external href="https://discord.gg/ZEuDaFk4qz" aria-label="discord">
+                <ColorButton style={{width: '180px'}}>
+                  Join Community
+                </ColorButton>
+              </Link>
             </ThinkCardWrapper>
           </SubCardWrapper>
         </TokenPresaleContainder>

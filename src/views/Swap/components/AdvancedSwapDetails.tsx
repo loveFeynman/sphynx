@@ -32,10 +32,14 @@ function TradeSummary({ trade, allowedSlippage }: { trade: Trade; allowedSlippag
         </RowFixed>
         <RowFixed>
           <Text color="white" fontSize="14px">
-            {isExactIn
+            {/* {isExactIn
               ? `${slippageAdjustedAmounts[Field.OUTPUT]?.toSignificant(4)} ${trade.outputAmount.currency.symbol}` ??
                 '-'
-              : `${slippageAdjustedAmounts[Field.INPUT]?.toSignificant(4)} ${trade.inputAmount.currency.symbol}` ?? '-'}
+              : `${slippageAdjustedAmounts[Field.INPUT]?.toSignificant(4)} ${trade.inputAmount.currency.symbol}` ?? '-'} */}
+              {isExactIn
+              ? `${slippageAdjustedAmounts[Field.OUTPUT]?.toSignificant(4)} ${trade.route.output.symbol}` ??
+                '-'
+              : `${slippageAdjustedAmounts[Field.INPUT]?.toSignificant(4)} ${trade.route.input.symbol}` ?? '-'}
           </Text>
         </RowFixed>
       </RowBetween>
@@ -70,7 +74,8 @@ function TradeSummary({ trade, allowedSlippage }: { trade: Trade; allowedSlippag
           />
         </RowFixed>
         <Text color="white" fontSize="14px">
-          {realizedLPFee ? `${realizedLPFee.toSignificant(4)} ${trade.inputAmount.currency.symbol}` : '-'}
+          {/* {realizedLPFee ? `${realizedLPFee.toSignificant(4)} ${trade.inputAmount.currency.symbol}` : '-'} */}
+          {realizedLPFee ? `${realizedLPFee.toSignificant(4)} ${trade.route.input.symbol}` : '-'}
         </Text>
       </RowBetween>
     </AutoColumn>

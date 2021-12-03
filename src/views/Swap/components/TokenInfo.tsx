@@ -6,9 +6,9 @@ import { ReactComponent as BscscanIcon } from 'assets/svg/icon/Bscscan.svg'
 import CopyHelper from 'components/AccountDetails/Copy'
 import { BITQUERY_API, BITQUERY_API_KEY } from 'config/constants/endpoints'
 import axios from 'axios'
+import { ChainId } from '@sphynxdex/sdk-multichain'
 import { AppState, AppDispatch } from '../../../state'
 import { selectCurrency, Field } from '../../../state/swap/actions'
-import useActiveWeb3React from '../../../hooks/useActiveWeb3React'
 import { isAddress, getBscScanLink } from '../../../utils'
 import { useTranslation } from '../../../contexts/Localization'
 
@@ -68,7 +68,7 @@ const TokenInfoContainer = styled.div`
 `
 
 export default function TokenInfo(props) {
-  const {tokenAddress} = props;
+  const {tokenAddress, chainId} = props;
   const input = tokenAddress;
   const isInput = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.isInput)
   const marketCapacity = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.marketCapacity)
@@ -77,9 +77,8 @@ export default function TokenInfo(props) {
   const { tokenData } = props
   const { t } = useTranslation()
   const result = isAddress(input)
-  const { chainId } = useActiveWeb3React()
-  const network = chainId === 1 ? 'ethereum' : 'bsc'
-  const tokenLink = chainId === 1 ? 'https://etherscan.io/token' : 'https://bscscan.com/token'
+  const network = chainId === ChainId.ETHEREUM ? 'ethereum' : 'bsc'
+  const tokenLink = chainId === ChainId.ETHEREUM ? 'https://etherscan.io/token' : 'https://bscscan.com/token'
 
   const dispatch = useDispatch<AppDispatch>()
 

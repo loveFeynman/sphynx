@@ -5,6 +5,7 @@ import { useHistory } from 'react-router-dom'
 import { useWeb3React } from '@web3-react/core'
 import TimerComponent from 'components/Timer/TimerComponent'
 import ContractHelper from 'components/ContractHelper';
+import DefaultLogoIcon from 'assets/images/defaultTokenIcon.png'
 
 const CardWrapper = styled.div`
   background: ${({ theme }) => (theme.isDark ? '#040413' : '#2A2E60')};
@@ -48,7 +49,6 @@ const EndTimeWrapper = styled.div`
   }
   div:last-child {
     font-weight: 600;
-    font-size: 11px;
     white-space: nowrap;
     color: white;
   }
@@ -77,7 +77,7 @@ const ActiveSaleText = styled.span<{ state }>`
   color: ${(props) => (props.state === 'active' ? '#00AC1C' : props.state === 'pending' ? '#FFC700' : '#D91A00')};
   text-transform: uppercase;
   font-weight: 600;
-  font-size: 10px;
+  font-size: 12px;
   letter-spacing: 0.2em;
 `
 
@@ -100,7 +100,7 @@ const Progress = styled.div<{ state }>`
   padding: 1px;
   display: flex;
   justify-content: center;
-  font-size: 9px;
+  font-size: 12px;
   font-weight: bold;
 `
 
@@ -199,7 +199,7 @@ const TokenCard: React.FC<ImgCardProps> = ({
       <CardHeader>
         <TokenWrapper>
           <TokenImg>
-            <img src={tokenLogo} alt="token icon" />
+            <img src={tokenLogo === '' ? DefaultLogoIcon : tokenLogo } alt="token icon" />
           </TokenImg>
           <TokenSymbolWrapper>
             <Text>{tokenSymbole}</Text>

@@ -113,16 +113,16 @@ export async function makeApiDurationRequest(
       const pairAddress = await factoryContract.methods.getPair(path, WETH_ADDRESS).call()
       const data: any =
         routerVersion === 'sphynx'
-          ? await getChartDurationData(path, pairAddress, resolution, to, countBack)
-          : await getChartDurationPanData(path, routerVersion, resolution, to, countBack)
+          ? await getChartDurationData(path, pairAddress, resolution, to, countBack, chainId)
+          : await getChartDurationPanData(path, routerVersion, resolution, to, countBack, chainId)
       return data
     }
     const factoryContract = routerVersion === 'sphynx' ? sphynxFactoryContract : pancakeFactoryContract
     const pairAddress = await factoryContract.methods.getPair(path, WBNB.address).call()
     const data: any =
       routerVersion === 'sphynx'
-        ? await getChartDurationData(path, pairAddress, resolution, to, countBack)
-        : await getChartDurationPanData(path, routerVersion, resolution, to, countBack)
+        ? await getChartDurationData(path, pairAddress, resolution, to, countBack, chainId)
+        : await getChartDurationPanData(path, routerVersion, resolution, to, countBack, chainId)
     return data
   } catch (error) {
     console.log('error', error)

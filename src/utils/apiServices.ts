@@ -239,7 +239,7 @@ async function getChartData(input: any, pair: any, resolution: any, routerVersio
 
   dexTrades = dexTrades.reverse()
 
-  const bnbPrice = chainId === 56 ? await getBNBPrice() : await getETHPrice()
+  const bnbPrice = chainId === ChainId.ETHEREUM ? await getETHPrice() : await getBNBPrice()
 
   return new Promise((resolve, reject) => {
     try {
@@ -268,6 +268,9 @@ async function getChartData(input: any, pair: any, resolution: any, routerVersio
 }
 
 async function getChartStats(address: string, routerVersion: string, chainId = 56) {
+  console.log("addresss", address)
+  console.log("routerVersion", routerVersion)
+  console.log("chainId", chainId)
   if (chainId === 1) {
     const wETHContract = new web3ETH.eth.Contract(abi as AbiItem[], WETH_ADDRESS)
     try {
@@ -286,16 +289,16 @@ async function getChartStats(address: string, routerVersion: string, chainId = 5
           ? DAI_ADDRESS
           : WETH_ADDRESS
 
-      const factoryAddress = routerVersion === RouterType.sphynxeth ? SPHYNX_ETH_FACTORY_ADDRESS : UNISWAP_FACTORY_ADDRESS
+      const factoryAddress = routerVersion === 'sphynx' ? SPHYNX_ETH_FACTORY_ADDRESS : UNISWAP_FACTORY_ADDRESS
       const factory = new web3ETH.eth.Contract(factoryAbi as AbiItem[], factoryAddress)
       const pairAddress = await factory.methods.getPair(baseAddress, quoteAddress).call()
       let query =
-        routerVersion === RouterType.sphynx
+        routerVersion === 'sphynx'
           ? `{
         ethereum(network: ethereum) {
           dexTrades(
             date: {since: "${since}", till: "${till}"}
-            smartContractAddress: {is: ["0xE4023ee4d957A5391007aE698B3A730B2dc2ba67", "${pairAddress}"]}
+            smartContractAddress: {is: "${pairAddress}"}
             baseCurrency: {is: "${baseAddress}"}
             quoteCurrency: {is: "${quoteAddress}"}
           ) {
@@ -433,7 +436,7 @@ async function getChartStats(address: string, routerVersion: string, chainId = 5
           ? DAI_ADDRESS
           : WETH_ADDRESS
 
-      const factoryAddress = routerVersion === RouterType.sphynxeth ? SPHYNX_ETH_FACTORY_ADDRESS : UNISWAP_FACTORY_ADDRESS
+      const factoryAddress = routerVersion === 'sphynx' ? SPHYNX_ETH_FACTORY_ADDRESS : UNISWAP_FACTORY_ADDRESS
       const factory = new web3ETH.eth.Contract(factoryAbi as AbiItem[], factoryAddress)
       const pairAddress = await factory.methods.getPair(baseAddress, quoteAddress).call()
       const ethPrice = await getETHPrice()
@@ -465,11 +468,11 @@ async function getChartStats(address: string, routerVersion: string, chainId = 5
         ? '0xe9e7cea3dedca5984780bafc599bd69add087d56'
         : WBNB_ADDRESS
 
-    const factoryAddress = routerVersion === RouterType.sphynx ? SPHYNX_FACTORY_ADDRESS : PANCAKE_FACTORY_ADDRESS
+    const factoryAddress = routerVersion === 'sphynx' ? SPHYNX_FACTORY_ADDRESS : PANCAKE_FACTORY_ADDRESS
     const factory = new web3.eth.Contract(factoryAbi as AbiItem[], factoryAddress)
     const pairAddress = await factory.methods.getPair(baseAddress, quoteAddress).call()
     let query =
-      routerVersion === RouterType.sphynx
+      routerVersion === 'sphynx'
         ? `{
       ethereum(network: bsc) {
         dexTrades(
@@ -612,7 +615,7 @@ async function getChartStats(address: string, routerVersion: string, chainId = 5
         ? BUSD_ADDRESS
         : WBNB_ADDRESS
 
-    const factoryAddress = routerVersion === RouterType.sphynx ? SPHYNX_FACTORY_ADDRESS : PANCAKE_FACTORY_ADDRESS
+    const factoryAddress = routerVersion === 'sphynx' ? SPHYNX_FACTORY_ADDRESS : PANCAKE_FACTORY_ADDRESS
     const factory = new web3.eth.Contract(factoryAbi as AbiItem[], factoryAddress)
     const pairAddress = await factory.methods.getPair(baseAddress, quoteAddress).call()
     const bnbPrice = await getBNBPrice()
@@ -941,7 +944,7 @@ async function getMarksData(account: any, input: any, chainId = 56) {
   })
 }
 
-async function getChartDurationData(input: any, pair: any, resolution: any, to: any, countBack: any) {
+async function getChartDurationData(input: any, pair: any, resolution: any, to: any, countBack: any, chainId = 56) {
   const resolutionMap = {
     1: 1,
     5: 5,
@@ -955,14 +958,16 @@ async function getChartDurationData(input: any, pair: any, resolution: any, to: 
     '1M': 1440 * 30,
   }
   const minutes = resolutionMap[resolution]
+  const network = chainId === ChainId.ETHEREUM ? 'ethereum' : 'bsc'
+  const nativeCurrency = chainId === ChainId.ETHEREUM ? WETH_ADDRESS : WBNB_ADDRESS
   const query = `{
-      ethereum(network: bsc) {
+      ethereum(network: ${network}) {
         dexTrades(
           options: {limit: ${countBack}, desc: "timeInterval.minute"}
           smartContractAddress: {is: "${pair}"}
           protocol: {is: "Uniswap v2"}
           baseCurrency: {is: "${input}"}
-          quoteCurrency: {is: "${WBNB_ADDRESS}"}
+          quoteCurrency: {is: "${nativeCurrency}"}
           time: {before: "${to}"}
         ) {
           exchange {
@@ -1031,7 +1036,7 @@ async function getChartDurationData(input: any, pair: any, resolution: any, to: 
   })
 }
 
-async function getChartDurationPanData(input: any, routerVersion: any, resolution: any, to: any, countBack: any) {
+async function getChartDurationPanData(input: any, routerVersion: any, resolution: any, to: any, countBack: any, chainId = 56) {
   const resolutionMap = {
     1: 1,
     5: 5,
@@ -1045,14 +1050,17 @@ async function getChartDurationPanData(input: any, routerVersion: any, resolutio
     '1M': 1440 * 30,
   }
 
+  const network = chainId === ChainId.ETHEREUM ? 'ethereum' : 'bsc'
+  const nativeCurrency = chainId === ChainId.ETHEREUM ? WETH_ADDRESS : WBNB_ADDRESS
+  const exchangeName = chainId === ChainId.ETHEREUM ? 'Uniswap' : `Pancake ${routerVersion}`
   const minutes = resolutionMap[resolution]
   const query = `{
-    ethereum(network: bsc) {
+    ethereum(network: ${network}) {
       dexTrades(
         options: {limit: ${countBack}, desc: "timeInterval.minute"}
         baseCurrency: {is: "${input}"}
-        quoteCurrency: {is: "${WBNB_ADDRESS}"}
-        exchangeName: {is: "Pancake ${routerVersion}"}
+        quoteCurrency: {is: "${nativeCurrency}"}
+        exchangeName: {is: "${exchangeName}"}
         time: {before: "${to}"}
       ) {
         exchange {

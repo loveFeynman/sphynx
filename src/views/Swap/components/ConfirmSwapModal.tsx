@@ -83,9 +83,11 @@ const ConfirmSwapModal: React.FC<InjectedModalProps & ConfirmSwapModalProps> = (
   // text to show while loading
   const pendingText = t('Swapping %amountA% %symbolA% for %amountB% %symbolB%', {
     amountA: trade?.inputAmount?.toSignificant(6) ?? '',
-    symbolA: trade?.inputAmount?.currency?.symbol ?? '',
+    // symbolA: trade?.inputAmount?.currency?.symbol ?? '',
+    symbolA: trade?.route?.input?.symbol ?? '',
     amountB: trade?.outputAmount?.toSignificant(6) ?? '',
-    symbolB: trade?.outputAmount?.currency?.symbol ?? '',
+    // symbolB: trade?.outputAmount?.currency?.symbol ?? '',
+    symbolB: trade?.route?.output?.symbol ?? '',
   })
 
   const confirmationContent = useCallback(
@@ -107,7 +109,8 @@ const ConfirmSwapModal: React.FC<InjectedModalProps & ConfirmSwapModalProps> = (
       hash={txHash}
       content={confirmationContent}
       pendingText={pendingText}
-      currencyToAdd={trade?.outputAmount.currency}
+      // currencyToAdd={trade?.outputAmount.currency}
+      currencyToAdd={trade?.route.output}
     />
   )
 }

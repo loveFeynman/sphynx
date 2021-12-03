@@ -21,7 +21,6 @@ import ConnectWalletButton from 'components/ConnectWalletButton'
 import { AppHeader } from 'components/App'
 import { BalanceNumber } from 'components/BalanceNumber'
 import { useMatchBreakpoints } from '@sphynxdex/uikit'
-
 import { useSetRouterType } from 'state/application/hooks'
 import SwapIcon from 'components/Icon/SwapIcon'
 import { typeInput, marketCap, typeRouterVersion } from 'state/input/actions'
@@ -41,10 +40,8 @@ import Cards from './components/Layout'
 import CoinStatsBoard from './components/CoinStatsBoard'
 import TransactionCard from './components/TransactionCard'
 import ContractPanel from './components/ContractPanel'
-
 import LiquidityWidget from '../Pool/LiquidityWidget'
 import ChartContainer from './components/Chart'
-
 import useActiveWeb3React from '../../hooks/useActiveWeb3React'
 import { useAllTokens, useAllUniTokens, useCurrency } from '../../hooks/Tokens'
 import { ApprovalState, useApproveCallbackFromTrade } from '../../hooks/useApproveCallback'
@@ -61,13 +58,11 @@ import { maxAmountSpend } from '../../utils/maxAmountSpend'
 import { computeTradePriceBreakdown, warningSeverity } from '../../utils/prices'
 import CircleLoader from '../../components/Loader/CircleLoader'
 import Page from '../Page'
-
 import BuyersCard from './components/BuyersCard'
 import SellersCard from './components/SellersCard'
 import SwapWarningModal from './components/SwapWarningModal'
 import LiveAmountPanel from './components/LiveAmountPanel'
 import { Field, replaceSwapState } from '../../state/swap/actions'
-
 import Web3 from 'web3'
 import ERC20ABI from 'assets/abis/erc20.json'
 import { getPancakePairAddress, getPancakePairAddressV1, getSphynxPairAddress } from 'utils/priceProvider'
@@ -80,13 +75,11 @@ import RewardsPanel from './components/RewardsPanel'
 import { SwapTabs, SwapTabList, SwapTab, SwapTabPanel } from '../../components/Tab/tab'
 import { web3ArchiveProvider } from 'utils/providers'
 import { SPHYNX_TOKEN_ADDRESS } from 'config/constants'
-import { WBNB, BUSD } from 'config/constants/tokens'
+import { BUSD } from 'config/constants/tokens'
+import formatTimeString from 'utils/formatTimeString'
+import { sphynxAddress, wrappedAddr } from 'config/constants/tokenHelper'
+import { isUndefined } from 'lodash'
 
-const wrappedAddr = {
-  56: '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
-  1: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
-}
-const sphynxAddr = { 56: '0xd38ec16caf3464ca04929e847e4550dcff25b27a', 1: '0x1f9840a85d5af5bf1d1762f925bdaddc4201f984' }
 let tokenDecimal = 18
 
 const abi: any = ERC20ABI
@@ -169,7 +162,6 @@ const SwapPage = styled(Page)`
 /*
 declare support chainID for swap Page
 */
-
 const supportedChainID = [56]
 
 export default function Swap({ history }: RouteComponentProps) {
@@ -207,7 +199,8 @@ export default function Swap({ history }: RouteComponentProps) {
   const [symbol, setSymbol] = useState('')
   const theme = useTheme()
   let { account, chainId } = useActiveWeb3React()
-  if (account === undefined) {
+  console.log("chainId", chainId)
+  if (Number.isNaN(chainId) || isUndefined(chainId)) {
     chainId = 56
   }
 
@@ -220,7 +213,7 @@ export default function Swap({ history }: RouteComponentProps) {
   loadingRef.current = isLoading
   busyRef.current = isBusy
   let input = tokenAddress
-  if (input === '-' || input === '') input = sphynxAddr[chainId]
+  if (input === '-' || input === '') input = sphynxAddress[chainId]
 
   useEffect(() => {
     const setInitData = async () => {
@@ -280,7 +273,7 @@ export default function Swap({ history }: RouteComponentProps) {
   }, [input])
 
   const getDataQuery = useCallback(() => {
-    const network = chainId === 1 ? 'ethereum' : 'bsc'
+    const network = chainId === ChainId.ETHEREUM ? 'ethereum' : 'bsc'
     return `
     {
     ethereum(network: ${network}) {
@@ -387,7 +380,10 @@ export default function Swap({ history }: RouteComponentProps) {
 
             let tokenAmt, BNBAmt, isBuy
 
-            if (input < wrappedAddr[chainId]) {
+            if (
+              (event.quoteCurrency === wrappedCurrencySymbol && input < wrappedAddr[chainId]) ||
+              (event.quoteCurrency !== wrappedCurrencySymbol && input < BUSDAddr[chainId])
+            ) {
               tokenAmt = Math.abs(
                 parseFloat(ethers.utils.formatUnits(datas.amount0In + '', tokenDecimal)) -
                   parseFloat(ethers.utils.formatUnits(datas.amount0Out + '', tokenDecimal)),
@@ -516,13 +512,7 @@ export default function Swap({ history }: RouteComponentProps) {
     }
   }, [blockFlag])
 
-  const formatTimeString = (timeString) => {
-    let dateArray = timeString.split(/[- :\/]/)
-    let date = new Date(
-      `${dateArray[1]}/${dateArray[2]}/${dateArray[0]} ${dateArray[3]}:${dateArray[4]}:${dateArray[5]} UTC`,
-    )
-    return date.toString().split('GMT')[0]
-  }
+  
 
   const setDatas = (transactions, blockNumber) => {
     if (busyRef.current === false) {
@@ -1248,7 +1238,7 @@ export default function Swap({ history }: RouteComponentProps) {
           </SwapTabs>
           <AdvancedSwapDetailsDropdown trade={trade} />
           <TokenInfoWrapper>
-            <TokenInfo tokenData={tokenData} tokenAddress={input} />
+            <TokenInfo tokenData={tokenData} tokenAddress={input} chainId={chainId}/>
           </TokenInfoWrapper>
         </div>
         <div>
@@ -1259,7 +1249,7 @@ export default function Swap({ history }: RouteComponentProps) {
               amount={tokenAmount}
               price={tokenPrice}
             />
-            <CoinStatsBoard tokenData={tokenData} />
+            <CoinStatsBoard tokenData={tokenData} chainId={chainId} input={input} />
             <ChartContainer tokenAddress={input} tokenData={tokenData} routerVersion={routerVersion} />
             <SwapTabs selectedTabClassName="is-selected" selectedTabPanelClassName="is-selected">
               <SwapTabList>
