@@ -5,6 +5,7 @@ import { useHistory } from 'react-router-dom'
 import { useWeb3React } from '@web3-react/core'
 import TimerComponent from 'components/Timer/TimerComponent'
 import ContractHelper from 'components/ContractHelper';
+import DefaultLogoIcon from 'assets/images/defaultTokenIcon.png'
 
 const CardWrapper = styled.div`
   background: ${({ theme }) => (theme.isDark ? '#040413' : '#2A2E60')};
@@ -48,7 +49,6 @@ const EndTimeWrapper = styled.div`
   }
   div:last-child {
     font-weight: 600;
-    font-size: 11px;
     white-space: nowrap;
     color: #a7a7cc;
   }
@@ -199,7 +199,7 @@ const TokenCard: React.FC<ImgCardProps> = ({
       <CardHeader>
         <TokenWrapper>
           <TokenImg>
-            <img src={tokenLogo} alt="token icon" />
+            <img src={tokenLogo === '' ? DefaultLogoIcon : tokenLogo } alt="token icon" />
           </TokenImg>
           <TokenSymbolWrapper>
             <Text>{tokenSymbole}</Text>

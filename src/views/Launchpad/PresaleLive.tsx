@@ -22,6 +22,13 @@ import * as ethers from 'ethers'
 import { getPresaleAddress } from 'utils/addressHelpers'
 import TimerComponent from 'components/Timer/TimerComponent'
 
+
+import { ReactComponent as TwitterIcon } from 'assets/svg/icon/TwitterIcon.svg'
+import { ReactComponent as SocialIcon2 } from 'assets/svg/icon/SocialIcon2.svg'
+import { ReactComponent as TelegramIcon } from 'assets/svg/icon/TelegramIcon.svg'
+import { ReactComponent as DiscordIcon } from 'assets/svg/icon/DiscordIcon.svg'
+
+
 const Wrapper = styled.div`
   display: flex;
   justify-content: center;
@@ -400,7 +407,7 @@ const DataItem = styled.div`
       padding: 5px 20px;
     }
     text-align: start;
-    font-size: 12px;
+    font-size: 14px;
     color: #a7a7cc;
     font-style: normal;
     font-weight: 600;
@@ -413,7 +420,7 @@ const DataItem = styled.div`
     display: flex;
     padding: 5px 20px;
     text-align: start;
-    font-size: 12px;
+    font-size: 14px;
     color: #f2c94c;
     font-style: normal;
     font-weight: 600;
@@ -502,6 +509,22 @@ const Progress = styled.div<{ state }>`
   justify-content: center;
   font-size: 9px;
   font-weight: bold;
+`
+
+const SocialIconsWrapper = styled.div`
+  display: flex;
+  gap: 10px;
+  flex-direction: row;
+  align-items: center;
+`
+
+const IconBox = styled.div<{ color?: string }>`
+  background: ${({ color }) => color};
+  padding: 10px;
+  border-radius: 3px;
+  display: flex;
+  width: fit-content;
+  align-items: center;
 `
 
 const PresaleLive: React.FC = () => {
@@ -741,7 +764,7 @@ const PresaleLive: React.FC = () => {
       <FlexWrapper style={{ marginTop: '32px' }}>
         <DefiFlex>
           <WarningTitle>DeFi Zone Warning</WarningTitle>
-          <WarningSubTitle style={{ opacity: '0.8' }}>
+          <WarningSubTitle>
             This sale is listed in the DeFi Zone. Presales in this area use custom contracts that are not vetted by the
             DxSale team. Developers of tokens in this area can block transfers, can stop users from claiming tokens, can
             stop trading on exchanges and requires extra vetting. Participate at your own risk!
@@ -749,10 +772,10 @@ const PresaleLive: React.FC = () => {
         </DefiFlex>
         <SoftFlex>
           <WarningTitle>Soft Cap Warning</WarningTitle>
-          <WarningSubTitle style={{ opacity: '0.8' }}>The softcap of this sale is very low.</WarningSubTitle>
+          <WarningSubTitle>The softcap of this sale is very low.</WarningSubTitle>
         </SoftFlex>
         <LiquidityFlex>
-          <WarningTitle style={{ opacity: '0.8', color: '#1A1A3A' }}>Liquidity Percentage Warning</WarningTitle>
+          <WarningTitle style={{ color: '#1A1A3A' }}>Liquidity Percentage Warning</WarningTitle>
           <WarningSubTitle color="#1A1A3A" style={{ opacity: '0.7' }}>
             This sale has a very low liquidity percentage.
           </WarningSubTitle>
@@ -946,6 +969,28 @@ const PresaleLive: React.FC = () => {
                 ),
               )}
             </ContributeWrapper>
+            {/* <SocialIconsWrapper>
+            <Link external href="https://sphynxtoken.co" aria-label="social2">
+              <IconBox color="#710D89">
+                <SocialIcon2 width="15px" height="15px" />
+              </IconBox>
+            </Link>
+            <Link external href="https://discord.gg/ZEuDaFk4qz" aria-label="discord">
+              <IconBox color="#2260DA">
+                <DiscordIcon width="15px" height="15px" />
+              </IconBox>
+            </Link>
+            <Link external href="https://twitter.com/sphynxswap?s=21" aria-label="twitter">
+              <IconBox color="#33AAED">
+                <TwitterIcon width="15px" height="15px" />
+              </IconBox>
+            </Link>
+            <Link external href="https://t.me/sphynxswap" aria-label="telegram">
+              <IconBox color="#3E70D1">
+                <TelegramIcon width="15px" height="15px" />
+              </IconBox>
+            </Link>
+          </SocialIconsWrapper> */}
           </MainCardWrapper>
           <SubCardWrapper>
             <ThinkCardWrapper>
