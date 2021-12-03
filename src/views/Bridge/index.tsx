@@ -43,7 +43,7 @@ export default function Bridge() {
           <Text fontSize="26px" fontWeight="600" color="white" lineHeight="110%">
             {t('Bridge')}
           </Text>
-          <Text fontSize="15px" fontWeight="600" color="#777777" lineHeight="130%" mt="12px">
+          <Text fontSize="15px" fontWeight="600" color="white" lineHeight="130%" mt="12px">
             {t('Transfer funds to other Blockchain Networks')}
           </Text>
         </Flex>

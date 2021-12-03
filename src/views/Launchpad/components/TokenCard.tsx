@@ -29,7 +29,7 @@ const TokenSymbolWrapper = styled.div`
     font-weight: 600;
     font-size: 14px;
     white-space: nowrap;
-    color: #a7a7cc;
+    color: white;
     text-transform: capitalize;
   }
 `
@@ -50,7 +50,7 @@ const EndTimeWrapper = styled.div`
     font-weight: 600;
     font-size: 11px;
     white-space: nowrap;
-    color: #a7a7cc;
+    color: white;
   }
 `
 
@@ -69,7 +69,7 @@ const CardFooter = styled.div`
   div:last-child {
     text-align: center;
     font-size: 14px;
-    color: #a7a7cc;
+    color: white;
   }
 `
 
@@ -112,7 +112,7 @@ const SaleInfo = styled.div`
 `
 
 const SaleInfoTitle = styled.div`
-  color: #a7a7cc;
+  color: white;
   font-weight: 600;
   font-size: 14px;
 `

@@ -16,7 +16,7 @@ const ExpandableButtonWrapper = styled(Flex)`
   justify-content: space-between;
   button {
     outline: none;
-    color: #A7A7CC!important;
+    color: white!important;
     flex-flow: column;
     font-size: 12px;
     padding: 0;

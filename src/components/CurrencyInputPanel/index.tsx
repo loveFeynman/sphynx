@@ -49,7 +49,7 @@ const CurrencySelectButton = styled(Button).attrs({ variant: 'text', scale: 'xs'
       font-weight: 600;
       font-size: 10px;
       letter-spacing: -0.02em;
-      color: #A7A7CC;
+      color: white;
     }
     & > svg > path {
       fill: white;

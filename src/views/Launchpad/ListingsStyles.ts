@@ -55,7 +55,7 @@ export const TitleWrapper = styled.div`
 export const Title = styled.div`
   span {
     font-size: 12px;
-    color: #777777;
+    color: white;
   }
 `
 
@@ -167,6 +167,9 @@ export const PaginationWrapper = styled.div`
     .MuiPagination-ul {
       flex-wrap: nowrap;
       li {
+        > .MuiPaginationItem-ellipsis {
+          color: white;
+        }
         &:first-child {
           flex-basis: 100%;
           display: flex;
@@ -174,13 +177,16 @@ export const PaginationWrapper = styled.div`
           align-items: center;
           > button::after {
             content: 'Previous';
-            color: #7F1696;
+            color: #BF36B6;
           }
           > button {
             border: none;
           }
+          > .MuiPaginationItem-page.Mui-disabled {
+            opacity: 1;
+          }
           > button.Mui-disabled::after {
-            color: #888888;
+            color: #AAAAAA;
           }
         }
         &:last-child {
@@ -191,13 +197,16 @@ export const PaginationWrapper = styled.div`
           border: none;
           > button::before {
             content: 'Next';
-            color: #7F1696;
+            color: #BF36B6;
           }
           > button {
             border: none;
           }
+          > .MuiPaginationItem-page.Mui-disabled {
+            opacity: 1;
+          }
           > button.Mui-disabled::before {
-            color: #888888;
+            color: #AAAAAA;
           }
         }
         & .MuiPaginationItem-icon {

@@ -68,7 +68,7 @@ const TimerComponent: React.FC<TimeProps> = ({ time }) => {
 
 
     return (
-        <Text color='#A7A7CC' fontSize='12px' bold>{day}:{hour}:{min}:{sec}</Text>
+        <Text color='white' fontSize='12px' bold>{day}:{hour}:{min}:{sec}</Text>
     )
 }
 

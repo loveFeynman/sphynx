@@ -122,7 +122,7 @@ const TransparentIconButton = styled(IconButton)`
 `
 
 const SearchInputDivider = styled.div`
-  border-left: 1px solid ${({ theme }) => theme.isDark ? "#A7A7CC" : "#4A5187"};
+  border-left: 1px solid ${({ theme }) => theme.isDark ? "white" : "#4A5187"};
   margin-left: 2px;
   margin-right: 8px;
   height: 20px;

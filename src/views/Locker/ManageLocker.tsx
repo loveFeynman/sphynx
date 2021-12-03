@@ -91,7 +91,7 @@ const PageBody = styled.div`
     font-size: 14px;
   }
   p.w110{
-    color: #A7A7CC;
+    color: white;
   }
   p.w120{
     color: white;
@@ -139,7 +139,7 @@ const ControlStretch = styled(Flex) <{ isMobile?: boolean }>`
             height: 47px;
             background: ${({ theme }) => theme.isDark ? "#0E0E26" : "#2A2E60"};
             > div {
-                color: #A7A7CC;
+                color: white;
             }
         }
   }

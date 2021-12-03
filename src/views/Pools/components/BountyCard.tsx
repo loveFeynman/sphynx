@@ -121,7 +121,7 @@ const BountyCard = () => {
                   <Flex flexDirection="column" alignItems={isMobile ? 'center' : 'star-flex'}>
                     <Heading>
                       {hasFetchedCakeBounty ? (
-                        <Balance fontSize={isMobile ? '13px' : '15px'} color="#777777" value={cakeBountyToDisplay} decimals={3} />
+                        <Balance fontSize={isMobile ? '13px' : '15px'} color="white" value={cakeBountyToDisplay} decimals={3} />
                       ) : (
                         <Skeleton height={20} width={96} mb="2px" />
                       )}

@@ -118,7 +118,7 @@ const TokenSymbolWrapper = styled.div`
         font-weight: 600;
         font-size: 14px;
         white-space: nowrap;
-        color: #A7A7CC;
+        color: white;
         text-transform: capitalize;
     }
 `
@@ -152,7 +152,7 @@ const SaleInfo = styled.div`
 `
 
 const SaleInfoTitle = styled.div`
-    color: #A7A7CC;
+    color: white;
     font-weight: 600;
     font-size: 14px;
 `
@@ -329,7 +329,7 @@ const DetailLocker: React.FC = () => {
                             </TokenWrapper>
                         </CardHeader>
                         <AddressWrapper>
-                            <Text color="#A7A7CC" bold>
+                            <Text color="white" bold>
                                 {tokenInfo.token_type&&'LP '}Token Address:
                             </Text>
                             <Text>{tokenInfo.lock_address}</Text>
@@ -409,13 +409,13 @@ const DetailLocker: React.FC = () => {
                                         return (
                                             <tr key="key">
                                                 <td style={{ width: '15%' }}>
-                                                    <Text fontSize='12px' color='#A7A7CC' style={{ textAlign: 'center' }}>{index + 1}</Text>
+                                                    <Text fontSize='12px' color='white' style={{ textAlign: 'center' }}>{index + 1}</Text>
                                                 </td>
                                                 <td style={{ width: '50%' }}>
-                                                    <Text fontSize='12px' color='#A7A7CC' style={{ textAlign: 'left' }}>{new Date(parseInt(cell.date) * 1000).toLocaleString()}</Text>
+                                                    <Text fontSize='12px' color='white' style={{ textAlign: 'left' }}>{new Date(parseInt(cell.date) * 1000).toLocaleString()}</Text>
                                                 </td>
                                                 <td style={{ width: '35%' }}>
-                                                    <Text fontSize='12px' color='#A7A7CC' style={{ textAlign: 'left' }}> {cell.amount}</Text>
+                                                    <Text fontSize='12px' color='white' style={{ textAlign: 'left' }}> {cell.amount}</Text>
                                                 </td>
                                             </tr>
                                         )

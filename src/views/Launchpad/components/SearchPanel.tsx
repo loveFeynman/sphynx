@@ -46,7 +46,7 @@ const ControlStretch = styled(Flex) <{ isMobile?: boolean }>`
             height: 47px;
             background: ${({ theme }) => theme.isDark ? "#0E0E26" : "#2A2E60"};
             > div {
-                color: #A7A7CC;
+                color: white;
             }
         }
   }
@@ -66,10 +66,10 @@ const SearchInputWrapper = styled.div`
     width: 100%;
     box-shadow: none;
     outline: none;
-    color: #A7A7CC;
+    color: white;
     font-size: 16px;
     &::placeholder {
-      color: #A7A7CC;
+      color: white;
     }
   }
 `
