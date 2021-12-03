@@ -179,7 +179,7 @@ const TokenCard: React.FC<ImgCardProps> = ({
 
   const handleClicked = () => {
     if (account === ownerAddress) {
-      history.push(`/fair-launchpad/presale/${launchId}`)
+      history.push(`/fair-launchpad/manage/${launchId}`)
     } else {
       history.push(`/fair-launchpad/live/${launchId}`)
     }
