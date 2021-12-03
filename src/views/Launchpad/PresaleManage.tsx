@@ -252,7 +252,7 @@ const DarkButton = styled(Button)`
 const PresaleManage: React.FC = () => {
   const { t } = useTranslation()
   const param: any = useParams()
-  const { chainId, library } = useActiveWeb3React()
+  const { chainId, library, account } = useActiveWeb3React()
   const signer = library.getSigner()
   const [logoLink, setLogoLink] = useState('')
   const [webSiteLink, setWebSiteLink] = useState('')
@@ -337,8 +337,12 @@ const PresaleManage: React.FC = () => {
     if (tokenData) {
       const abi: any = ERC20_ABI
       const tokenContract = new ethers.Contract(tokenData.token_address, abi, signer)
-      const tx = await tokenContract.approve(getPresaleAddress(), '0xfffffffffffffffffffffffffffffffff')
-      await tx.wait()
+      const approvedAmount = await tokenContract.allowance(account, getPresaleAddress())
+      const depositAmount = await presaleContract.getDepositAmount(param.saleId)
+      if(approvedAmount < depositAmount) {
+        const tx = await tokenContract.approve(getPresaleAddress(), '0xfffffffffffffffffffffffffffffffff')
+        await tx.wait()
+      }
       const tx1 = await presaleContract.depositToken(param.saleId)
       await tx1.wait()
       toastSuccess('Success!', 'Your token is deposited successfully.')
