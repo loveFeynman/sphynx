@@ -10,19 +10,27 @@ import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import { useTranslation } from 'contexts/Localization'
 import { isAddress } from '@ethersproject/address'
 import useToast from 'hooks/useToast'
-import styled from 'styled-components'
+import styled, { keyframes } from 'styled-components'
 import { ERC20_ABI } from 'config/abi/erc20'
-import { useModal } from '@sphynxdex/uikit'
+import { useModal, AutoRenewIcon } from '@sphynxdex/uikit'
 import DisclaimerModal from 'components/DisclaimerModal/DisclaimerModal'
 import Select from 'components/Select/Select'
-import BigNumber from 'bignumber.js'
-import { BIG_TEN } from 'utils/bigNumber'
 import axios from 'axios'
 import { getPresaleContract } from 'utils/contractHelpers'
 import { useWeb3React } from '@web3-react/core'
 import { getSphynxRouterAddress } from 'utils/addressHelpers'
 import { useHistory } from 'react-router-dom'
 import { SEARCH_OPTION } from 'config/constants/launchpad'
+
+const rotate = keyframes`
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+`;
 
 const Wrapper = styled.div`
   display: flex;
@@ -80,6 +88,9 @@ const Wrapper = styled.div`
   }
   ${({ theme }) => theme.mediaQueries.xl} {
     align-items: flex-start;
+  }
+  .pendingTx {
+    animation: ${rotate} 2s linear infinite;
   }
 `
 
@@ -279,13 +290,17 @@ const FillBtn = styled.button`
   border-radius: 5px;
   cursor: pointer;
   outline: none;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
   &:hover {
     background: linear-gradient(90deg, #722da9 0%, #e44bd4 100%);
     border: 1px solid #9b3aab;
   }
   &:disabled {
-    background: linear-gradient(90deg, #222 0%, #fff 100%);
+    background: linear-gradient(90deg, #722da9 0%, #e44bd4 100%);
     border: 1px solid #444;
+    cursor: not-allowed;
   }
 `
 
@@ -362,6 +377,7 @@ const Presale: React.FC = () => {
   const [projectDec, setProjectDec] = useState('')
   const [updateDec, setUpdateDec] = useState('')
   const [certikAudit, setCertikAudit] = useState(false)
+  const [pendingTx, setPendingTx] = useState(false)
 
   const [selectedCount, setSelectedCount] = useState(0)
 
@@ -419,7 +435,7 @@ const Presale: React.FC = () => {
 
   const validate = async () => {
     if (!tokenAddress || !tokenName || !tokenSymbol) {
-      toastError('Oops, we can not parse token data, please inpute correct token address!')
+      toastError('Oops, we can not parse token data, please input correct token address!')
       setStep(1)
       return
     }
@@ -488,7 +504,7 @@ const Presale: React.FC = () => {
     //   return;
     // }
 
-    console.log("presaleContract", presaleContract)
+    setPendingTx(true)
     const presaleId = (await presaleContract.currentPresaleId()).toString()
     const routerAddress = getSphynxRouterAddress()
     const startTime = Math.floor(new Date(presaleStart).getTime() / 1000)
@@ -574,6 +590,8 @@ const Presale: React.FC = () => {
         tier2_time: tierTwoTime,
         lock_time: liquidityLockTime,
       }
+
+      setPendingTx(false)
       axios.post(`${process.env.REACT_APP_BACKEND_API_URL2}/insertPresaleInfo`, { data }).then((response) => {
         if (response.data) {
           toastSuccess('Pushed!', 'Your presale info is saved successfully.')
@@ -582,6 +600,8 @@ const Presale: React.FC = () => {
           toastError('Failed!', 'Your action is failed.')
         }
       })
+    }).catch((err) => {
+      setPendingTx(false)
     })
   }
 
@@ -1016,8 +1036,9 @@ const Presale: React.FC = () => {
                 <Sperate />
                 <InlineWrapper>
                   <LineBtn onClick={() => setStep(1)}>Edit</LineBtn>
-                  <FillBtn className="ml16" onClick={validate}>
+                  <FillBtn disabled={pendingTx} className="ml16" onClick={validate}>
                     Submit
+                    {pendingTx && <AutoRenewIcon className="pendingTx" />}
                   </FillBtn>
                 </InlineWrapper>
               </NoteWrapper>

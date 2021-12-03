@@ -4,6 +4,7 @@ import { IconButton, Text, Flex, useMatchBreakpoints } from '@sphynxdex/uikit'
 import Select, { OptionProps } from 'components/Select/Select'
 import { useTranslation } from 'contexts/Localization'
 import SearchIcon from "components/Icon/SearchIcon";
+import { FILTER_OPTION } from 'config/constants/fairlaunch'
 
 const ViewControls = styled.div`
   flex-wrap: wrap;
@@ -45,7 +46,7 @@ const ControlStretch = styled(Flex) <{ isMobile?: boolean }>`
             height: 47px;
             background: ${({ theme }) => theme.isDark ? "#0E0E26" : "#2A2E60"};
             > div {
-                color: #A7A7CC;
+                color: white;
             }
         }
   }
@@ -65,10 +66,10 @@ const SearchInputWrapper = styled.div`
     width: 100%;
     box-shadow: none;
     outline: none;
-    color: #A7A7CC;
+    color: white;
     font-size: 16px;
     &::placeholder {
-      color: #A7A7CC;
+      color: white;
     }
   }
 `
@@ -121,32 +122,38 @@ const TransparentIconButton = styled(IconButton)`
 }
 `
 
-const SearchPanel = () => {
+interface PropsFunction {
+  setSearchOption: (o) => void
+  setSearchKey: (k) => void
+  setPageIndex: (i) => void
+}
+
+
+const SearchPanel: React.FC<PropsFunction> = ({ setSearchOption, setSearchKey, setPageIndex }) => {
   const { t } = useTranslation()
   const { isXl } = useMatchBreakpoints()
   const isMobile = !isXl
-  const [showDrop, setShowDrop] = useState(false)
-  const [data, setdata] = useState([])
-
-  const setSortOption = (value: string) => {
-    return value;
-  }
-
-  const setQuery = (value: string) => {
-    return value;
-  }
+  const [query, setQuery] = useState('')
 
   const handleSortOptionChange = (option: OptionProps): void => {
-    setSortOption(option.value)
+    setPageIndex(0)
+    setSearchOption(option.value)
   }
 
   const handlerChange = (e: any) => {
     setQuery(e.target.value)
   }
 
+  const handleKeyDown = (e: any) => {
+    if (e.key === 'Enter') {
+      setPageIndex(0)
+      setSearchKey(query)
+    }
+  }
+
   const submitFuntioncall = () => {
-    console.log('search')
-  }  
+    setSearchKey(query)
+  }
 
   return (
     <ViewControls>
@@ -154,17 +161,21 @@ const SearchPanel = () => {
         <Select
           options={[
             {
+              label: t('ALL'),
+              value: FILTER_OPTION.ALL,
+            },
+            {
               label: t('Upcoming'),
-              value: 'upcoming',
+              value: FILTER_OPTION.UPCOMING,
             },
             {
               label: t('Success'),
-              value: 'success',
+              value: FILTER_OPTION.SUCCESS,
             },
             {
               label: t('Failed'),
-              value: 'failed',
-            }
+              value: FILTER_OPTION.FAILED,
+            },
           ]}
           onChange={handleSortOptionChange}
         />
@@ -174,19 +185,8 @@ const SearchPanel = () => {
           <input
             placeholder="Search"
             onChange={handlerChange}
+            onKeyDown={handleKeyDown}
           />
-          {showDrop && (
-            <MenuWrapper>
-              {data.length > 0 ? (
-                <span>
-                  ddd
-                </span>
-              ) : (
-                null
-                // <span style={{ padding: '0 16px' }}>no pool</span>
-              )}
-            </MenuWrapper>
-          )}
         </SearchInputWrapper>
         <TransparentIconButton onClick={submitFuntioncall}>
           <SearchIcon width="22px" height="22px" color={useTheme().colors.primary} />

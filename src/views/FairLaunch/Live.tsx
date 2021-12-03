@@ -1,6 +1,10 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
+import { useParams } from 'react-router'
+import { useHistory } from 'react-router-dom'
+import { useWeb3React } from '@web3-react/core'
 import { Button, Text, Flex } from '@sphynxdex/uikit'
+import axios from 'axios'
 import { useTranslation } from 'contexts/Localization'
 import { useMenuToggle } from 'state/application/hooks'
 import { ReactComponent as MainLogo } from 'assets/svg/icon/WarningIcon.svg'
@@ -167,7 +171,7 @@ const TokenSymbol = styled.div`
 const TokenName = styled.div`
   font-weight: 600;
   font-size: 14px;
-  color: #a7a7cc;
+  color: white;
 `
 
 const TokenSymbolWrapper = styled.div`
@@ -232,7 +236,7 @@ const CustomContract = styled.div`
     text-align: center;
     font-weight: 600;
     font-size: 14px;
-    color: #a7a7cc;
+    color: white;
   }
 `
 
@@ -279,7 +283,7 @@ const DataItem = styled.div`
     }
     text-align: start;
     font-size: 12px;
-    color: #a7a7cc;
+    color: white;
     font-style: normal;
     font-weight: 600;
     border-bottom: 1px solid ${({ theme }) => (theme.isDark ? '#5E2B60' : '#4A5187')};
@@ -339,7 +343,7 @@ const ThinkItem = styled.div`
     margin-top: 5px;
     font-weight: 500;
     font-size: 12px;
-    color: #a7a7cc;
+    color: white;
   }
 `
 
@@ -365,43 +369,58 @@ const LaunchNotifyText = styled(Text)`
 
 const FairLaunchLive: React.FC = () => {
   const { t } = useTranslation()
+  const param: any = useParams();
+  const { chainId } = useWeb3React()
   const { menuToggled } = useMenuToggle()
-  const [tokenData, setTokenData] = useState(null)
-  const [totalTokenSupply, setTotalTokenSupply] = useState(0)
-  const presaleAddress = getPresaleAddress()
-  const LAUNCH_DATA = [
-    {
-      launchItem: 'Sale ID:',
-      launchValue: 36,
-    },
-    {
-      launchItem: 'Total Supply:',
-      launchValue: `${totalTokenSupply} ${tokenData && tokenData.token_symbol}`,
-    },
-    {
-      launchItem: 'Tokens For Launch:',
-      launchValue: `${tokenData && tokenData.hard_cap * tokenData.tier3} ${tokenData && tokenData.token_symbol}`,
-    },
-    {
-      launchItem: 'Initial Liquidity:',
-      launchValue: `${
-        tokenData &&
-        (tokenData.listing_rate * tokenData.hard_cap * (tokenData.router_rate + tokenData.default_router_rate)) / 100
-      } BNB`,
-    },
-    {
-      launchItem: 'Listing Rate:',
-      launchValue: `${tokenData && tokenData.hard_cap * tokenData.tier3} ${tokenData && tokenData.token_symbol} / BNB`
-    },
-    {
-      launchItem: 'Launch Time:',
-      launchValue: `${new Date(tokenData && tokenData.start_time * 1000).toString()}`,
-    },
-    {
-      launchItem: 'Liquidity Unlock Date:',
-      launchValue: `${new Date(tokenData && tokenData.lock_time * 1000).toString()}`,
-    },
-  ]
+  const [ statusDescription, setStatusDescription ] = useState("")
+  const history = useHistory()
+  
+  const [fairLaunchData, setFairLaunchData] = useState({
+    logo_link: "",
+    token_name: "",
+    token_symbol: "",
+    token_address: "",
+    launch_id: "",
+    total_supply: 0,
+    token_amount: 0,
+    native_amount: 0,
+    listing_rate: 0,
+    launch_time: "",
+    lock_time: ""
+  })
+
+  const handleClickTrade = () => {
+    history.push(`/swap/${fairLaunchData.token_address}`)
+  }
+
+  useEffect(() => {
+    (async function fetchData() {
+      const RetrieverDataProcess = async () => {
+        const launchId = param.launchId;
+        axios.get(`${process.env.REACT_APP_BACKEND_API_URL2}/getFairLaunchInfo/${launchId}/${chainId}`)
+        .then(response => {
+          const data = response.data;
+          if(data) {
+            setFairLaunchData({
+              ...fairLaunchData,
+              logo_link: data.logo_link,
+              token_name: data.token_name,
+              token_symbol: data.token_symbol,
+              token_address: data.token_address,
+              launch_id: data.launch_id,
+              total_supply: data.total_supply,
+              token_amount: data.token_amount,
+              native_amount: data.native_amount,
+              listing_rate: data.token_amount / data.native_amount,
+              launch_time: data.launch_time,
+              lock_time: data.lock_time
+            })
+          }
+        })
+      }
+      await RetrieverDataProcess();
+    })();
+  }, [param])
 
   return (
     <Wrapper>
@@ -411,7 +430,7 @@ const FairLaunchLive: React.FC = () => {
             <MainLogo width="40" height="40" />
             <Flex flexDirection="column" ml="10px">
               <HeaderTitleText>{t('SphynxSale Automated Warning System')}</HeaderTitleText>
-              <Text fontSize="12px" color="#777777" bold textAlign="left">
+              <Text fontSize="12px" color="white" bold textAlign="left">
                 {t('Lorem ipsum dolor sit amet, consectetur adipiscing elit')}
               </Text>
             </Flex>
@@ -437,34 +456,24 @@ const FairLaunchLive: React.FC = () => {
             Tokens held by teams can be sold to pull out liquidity and should be carefully examined.
           </WarningSubTitle>
         </DefiFlex>
-        <SoftFlex>
-          <WarningTitle>Soft Cap Warning</WarningTitle>
-          <WarningSubTitle style={{ opacity: '0.8' }}>The softcap of this sale is very low.</WarningSubTitle>
-        </SoftFlex>
-        <LiquidityFlex>
-          <WarningTitle style={{ opacity: '0.8', color: '#1A1A3A' }}>Liquidity Time Warning</WarningTitle>
-          <WarningSubTitle color="#1A1A3A" style={{ opacity: '0.7' }}>
-            This sale has a very low liquidity percentage.
-          </WarningSubTitle>
-        </LiquidityFlex>
       </FlexWrapper>
       <TokenPresaleBody>
         <TokenPresaleContainder toggled={menuToggled}>
           <MainCardWrapper>
             <TokenContainer>
-              <img src={tokenData && tokenData.logo_link} width="64px" height="64px" alt="token icon" />
+              <img src={fairLaunchData && fairLaunchData.logo_link} width="64px" height="64px" alt="token icon" />
               <TokenSymbolWrapper>
-                <TokenSymbol>{tokenData && tokenData.token_symbol}</TokenSymbol>
-                <TokenName>{tokenData && tokenData.token_name}</TokenName>
+                <TokenSymbol>{fairLaunchData && fairLaunchData.token_symbol}</TokenSymbol>
+                <TokenName>{fairLaunchData && fairLaunchData.token_name}</TokenName>
               </TokenSymbolWrapper>
             </TokenContainer>
             <TokenAddressContainer>
               <AddressFlex>
                 <AddressWrapper>
-                  <Text color="#A7A7CC" bold>
+                  <Text color="white" bold>
                     Token Address:
                   </Text>
-                  <Text>{presaleAddress}</Text>
+                  <Text>{fairLaunchData.token_address}</Text>
                 </AddressWrapper>
               </AddressFlex>
               <AddressSendError>Do not send BNB to the token address!</AddressSendError>
@@ -475,24 +484,40 @@ const FairLaunchLive: React.FC = () => {
             </TokenAddressContainer>
             <Separate />
             <LaunchNotifyText color="#A7A7CC" bold >
-              This token has already launched! Use the links below to trade the token.
+              {statusDescription}
             </LaunchNotifyText>
             <Separate />
+            <ColorButton style={{ width: '100%' }} onClick={handleClickTrade}>Trade</ColorButton>
             <Separate />
             <ContributeWrapper>
-              {LAUNCH_DATA.map((item, index) =>
-                index === LAUNCH_DATA.length - 1 ? (
-                  <DataLatestItem>
-                    <Text>{item.launchItem}</Text>
-                    <Text>{item.launchValue}</Text>
-                  </DataLatestItem>
-                ) : (
-                  <DataItem>
-                    <Text>{item.launchItem}</Text>
-                    <Text>{item.launchValue}</Text>
-                  </DataItem>
-                ),
-              )}
+              <DataItem>
+                <Text>Sale ID</Text>
+                <Text>{fairLaunchData.launch_id}</Text>
+              </DataItem>
+              <DataItem>
+                <Text>Total Supply</Text>
+                <Text>{`${fairLaunchData.total_supply} ${fairLaunchData.token_name}`}</Text>
+              </DataItem>
+              <DataItem>
+                <Text>Tokens For Launch</Text>
+                <Text>{`${fairLaunchData.token_amount} ${fairLaunchData.token_name}`}</Text>
+              </DataItem>
+              <DataItem>
+                <Text>Initial Liquidity</Text>
+                <Text>{fairLaunchData.native_amount} BNB</Text>
+              </DataItem>
+              <DataItem>
+                <Text>Listing Rate</Text>
+                <Text>{fairLaunchData.token_amount / fairLaunchData.native_amount} BNB</Text>
+              </DataItem>
+              <DataItem>
+                <Text>Launch Time</Text>
+                <Text>{`${new Date(fairLaunchData && Number(fairLaunchData.launch_time) * 1000).toString()}`}</Text>
+              </DataItem>
+              <DataLatestItem>
+                <Text>Liquidity Unlock Date</Text>
+                <Text>{`${new Date(fairLaunchData && Number(fairLaunchData.lock_time) * 1000).toString()}`}</Text>
+              </DataLatestItem>
             </ContributeWrapper>
           </MainCardWrapper>
           <SubCardWrapper>

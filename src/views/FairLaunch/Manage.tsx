@@ -1,10 +1,17 @@
 import 'date-fns'
-import React, { useState } from 'react'
+import React, { useCallback, useEffect, useState, useMemo } from 'react'
+import { useParams } from 'react-router'
+import { useWeb3React } from '@web3-react/core'
+import * as ethers from 'ethers'
 import { MuiPickersUtilsProvider } from '@material-ui/pickers'
 import DateFnsUtils from '@date-io/date-fns'
 import { Button } from '@sphynxdex/uikit'
+import useActiveWeb3React from 'hooks/useActiveWeb3React'
+import axios from 'axios'
+import { getFairLaunchContract } from 'utils/contractHelpers'
 import { ReactComponent as CheckList } from 'assets/svg/icon/CheckList.svg'
 import { useTranslation } from 'contexts/Localization'
+import useToast from 'hooks/useToast'
 import styled from 'styled-components'
 
 const Wrapper = styled.div`
@@ -163,14 +170,167 @@ const ColorButton = styled(Button)`
 
 const FairLaunchManage: React.FC = () => {
   const { t } = useTranslation()
+  const param: any = useParams();
+  const { library } = useActiveWeb3React()
+  const signer = library.getSigner()
+  const [launchData, setLaunchData] = useState({})
+  const { chainId } = useWeb3React()
+  const [tokenName, setTokenName] = useState('')
+  const [tokenSymbol, setTokenSymbol] = useState('')
+  const [tokenAddress, setTokenAddress] = useState('')
   const [logoLink, setLogoLink] = useState('')
   const [webSiteLink, setWebSiteLink] = useState('')
   const [gitLink, setGitLink] = useState('')
   const [twitterLink, setTwitterLink] = useState('')
   const [redditLink, setRedditLink] = useState('')
   const [telegramLink, setTelegramLink] = useState('')
+  const [launchTime, setLaunchTime] = useState('');
   const [projectDec, setProjectDec] = useState('')
   const [updateDec, setUpdateDec] = useState('')
+  const [isLaunched, setIsLaunched] = useState(false)
+  const [launchStatus, setLaunchStatus] = useState('');
+  const [routerAddress, setRouterAddress] = useState('');
+  const [isClickedCancel, setIsClickedCancel] = useState(false);
+  const [isAvailableLaunch, setIsAvailableLaunch] = useState(false);
+  const [successfulLaunched, setSuccessfulLaunched] = useState(false);
+  const [isCanceled, setIsCanceled] = useState(false);
+  const [isWithdrawToken, setIsWithdrawToken] = useState(false);
+  const [isWithdrawBNB, setIsWithdrawBNB] = useState(false);
+  const { toastSuccess, toastError } = useToast()
+
+  const fairLaunchContract = useMemo(() => getFairLaunchContract(signer), [signer])
+
+  const handleCancelLaunch = () => {
+    fairLaunchContract.calcel(parseInt(param.launchId))
+    .then(response => {
+      setIsClickedCancel(true)
+      setIsCanceled(true);
+    })
+  }
+
+  const handleWithdrawToken = () => {
+    fairLaunchContract.tokenWithdraw(parseInt(param.launchId))
+    .then(response => {
+      setIsWithdrawToken(true)
+    })
+  }
+
+  const handleWithdrawBNB = () => {
+    fairLaunchContract.nativeCurrencyWithdraw(parseInt(param.launchId))
+    .then(response => {
+      setIsWithdrawBNB(true)
+    })
+  }
+
+  const handleLaunchToken = () => {
+    const fee = ethers.utils.parseEther('0.00001')
+    fairLaunchContract.launch(parseInt(param.launchId), { value: fee })
+    .then(response => {
+      setIsLaunched(true)
+    })
+  }
+
+  const handleUpdateInfo = () => {
+    const data = {
+      ...launchData,
+      logo_link: logoLink,
+      website_link: webSiteLink,
+      github_link: gitLink,
+      twitter_link: twitterLink,
+      reddit_link: redditLink,
+      telegram_link: telegramLink,
+      project_dec: projectDec,
+      update_dec: updateDec
+    }
+    axios.post(`${process.env.REACT_APP_BACKEND_API_URL2}/updateFairLaunchInfo`, data).then((response) => {
+      if (response.data) {
+        toastSuccess('Pushed!', 'Your fairlaunch info is saved successfully.')
+      } else {
+        toastError('Failed!', 'Your action is failed.')
+      }
+    })
+  }
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const now = Math.floor(new Date().getTime() / 1000)
+      let item = '';
+      if (parseInt(launchTime) > now) {
+        item = 'Upcoming'
+        setIsAvailableLaunch(false)
+      } else if (isLaunched) {
+        item = 'Success'
+      } else if (now > parseInt(launchTime) && now < parseInt(launchTime) + 600) {
+        item = 'Active';
+        setIsAvailableLaunch(true)
+      } else {
+        item = 'Failed'
+        setIsAvailableLaunch(false)
+      }
+      setLaunchStatus(item)
+      fairLaunchContract.isCanceled(parseInt(param.launchId))
+      .then(response => {
+        setIsCanceled(response);
+      })
+
+      fairLaunchContract.withdrawToken(parseInt(param.launchId))
+      .then(response => {
+        setIsWithdrawToken(response);
+      })
+
+      fairLaunchContract.withdrawNativeCurrency(parseInt(param.launchId))
+      .then(response => {
+        setIsWithdrawBNB(response);
+      })
+
+      fairLaunchContract.isLaunched(parseInt(param.launchId))
+      .then(response => {
+        setIsLaunched(response);
+      })
+    }
+
+    fetchData()
+    // const interval = setInterval(() => {
+    //   checkAvaiableLaunch();
+    // }, 1000);
+    // return () => clearInterval(interval);
+  }, [launchTime, fairLaunchContract, isLaunched, param.launchId])
+
+  useEffect(() => {
+    (async function fetchData() {
+      const RetrieverDataProcess = async () => {
+        const launchId = param.launchId;
+        axios.get(`${process.env.REACT_APP_BACKEND_API_URL2}/getFairLaunchInfo/${launchId}/${chainId}`)
+        .then(response => {
+          const data = response.data;
+          setLaunchData(data)
+          if(data) {
+            setLogoLink(data.logo_link)
+            setWebSiteLink(data.website_link)
+            setGitLink(data.github_link)
+            setTwitterLink(data.twitter_link)
+            setTelegramLink(data.telegram_link)
+            setRedditLink(data.reddit_link)
+            setProjectDec(data.project_dec)
+            setUpdateDec(data.update_dec)
+            setTokenName(data.token_name)
+            setTokenSymbol(data.token_symbol)
+            setTokenAddress(data.token_address)
+            setLaunchTime(data.launch_time)
+          }
+          const fetchContractData = async () => {
+            const isLaunchedFromContract = await fairLaunchContract.isLaunched(launchId.toString())
+            const routerAddressFromContract = await fairLaunchContract.router(launchId.toString())
+            setIsLaunched(isLaunchedFromContract)
+            setRouterAddress(routerAddressFromContract);
+          }
+
+          fetchContractData();
+        })
+      }
+      await RetrieverDataProcess();
+    })();
+  }, [param, chainId, fairLaunchContract])
 
   return (
     <Wrapper>
@@ -193,7 +353,7 @@ const FairLaunchManage: React.FC = () => {
           </p>
           <Sperate />
           <Notification>
-            SphynxSwap Router Address: 0x7519f576E666cD80c83BEF74Bc6a390aDDfb8e1C
+            SphynxSwap Router Address: {routerAddress}
             <Sperate />
             - The launch button will become available once your listing countdown ends.
             <br />
@@ -204,17 +364,39 @@ const FairLaunchManage: React.FC = () => {
             Here is a summary of your fair launch (more details on the fair launch view page):
           </Notification>
           <Sperate />
-          <Notification>Name: DogeCola Coin</Notification>
-          <Notification>Symbol: DogeCola</Notification>
-          <Notification>Token Address: 0x6917714C40166Bfb5d6C54Ab103f1990171ce90f</Notification>
-          <Notification>Status: Pending Launch</Notification>
+          <Notification>Name: {tokenName}</Notification>
+          <Notification>Symbol: {tokenSymbol}</Notification>
+          <Notification>Token Address: {tokenAddress}</Notification>
+          <Notification>Status: {launchStatus} Launch</Notification>
           <Sperate />
-          <Button disabled mr="20px" mt="20px">
-            LAUNCH TOKEN
-          </Button>
-          <Button mt="20px">
-            CANCEL LAUNCH
-          </Button>
+          {
+            isCanceled ?
+            (
+              <>  
+                <Button disabled={isWithdrawToken} mr="20px" mt="20px" onClick={handleWithdrawToken}>
+                  WITHDRAW TOKEN
+                </Button>
+                <Button disabled={isWithdrawBNB} mt="20px" onClick={handleWithdrawBNB}>
+                  WITHDRAW BNB
+                </Button>
+              </>
+            ) 
+            : 
+            isLaunched ? 
+            <Notification> Successful Launched! </Notification>
+            :
+            (
+              <>  
+                {/* <Button disabled={!isAvailableLaunch} onClick={handleLaunchToken} mr="20px" mt="20px"> */}
+                <Button disabled={!isAvailableLaunch} onClick={handleLaunchToken} mr="20px" mt="20px">
+                  LAUNCH TOKEN
+                </Button>
+                <Button mt="20px" onClick={handleCancelLaunch}>
+                  CANCEL LAUNCH
+                </Button>
+              </>
+            )
+          }
           <Sperate />
           <Notification>If you have trouble with launching please ensure the required addresses are whitelisted or your special transfer functions are disabled!</Notification>
           <Notification>If you still cannot launch then please cancel your sale and test your contract throughly on our supported test nets!</Notification>
@@ -253,7 +435,7 @@ const FairLaunchManage: React.FC = () => {
               <p className="description">Any update you want to provide to participants</p>
               <MyInput onChange={(e) => setUpdateDec(e.target.value)} value={updateDec} style={{ width: '100%' }} />
               <Sperate />
-              <ColorButton>Update</ColorButton>
+              <ColorButton onClick={handleUpdateInfo}>Update</ColorButton>
             </StepContainer>
           </div>
         </ContentWrapper>

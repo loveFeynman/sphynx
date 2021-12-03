@@ -260,7 +260,7 @@ const CustomContract = styled.div`
     text-align: center;
     font-weight: 600;
     font-size: 14px;
-    color: #a7a7cc;
+    color: white;
   }
 `
 
@@ -298,7 +298,7 @@ const WhitelistTitle = styled(Text)`
 const WhitelistSubText = styled(Text)`
   font-weight: 600;
   font-size: 12px;
-  color: #a7a7cc;
+  color: white;
   ${({ theme }) => theme.mediaQueries.sm} {
     font-size: 15px;
   }
@@ -320,7 +320,7 @@ const WalletAddressError = styled.div`
     text-align: center;
     font-weight: 600;
     font-size: 12px;
-    color: #a7a7cc;
+    color: white;
   }
 `
 
@@ -356,10 +356,10 @@ const InputWrapper = styled.div`
     border: none;
     box-shadow: none;
     outline: none;
-    color: #a7a7cc;
+    color: white;
     font-size: 13px;
     &::placeholder {
-      color: #a7a7cc;
+      color: white;
     }
   }
 `
@@ -792,7 +792,7 @@ const PresaleLive: React.FC = () => {
               </TokenSymbolWrapper>
             </TokenContainer>
             <TokenDescription>
-              <Text fontSize="14px" textAlign="left">
+              <Text fontSize="14px" textAlign="left" color="white">
                 ${tokenData && tokenData.token_symbol} is a new reflection protocol on the Binance Smart Chain with a
                 deflationary burn mechanism that offers reflections to holders with 0% buy and sell tax.
               </Text>
@@ -800,13 +800,13 @@ const PresaleLive: React.FC = () => {
             <TokenAddressContainer>
               <AddressFlex>
                 <AddressWrapper>
-                  <Text color="#A7A7CC" bold>
+                  <Text color="white" bold>
                     Presale Address:
                   </Text>
                   <Text>{presaleAddress}</Text>
                 </AddressWrapper>
                 <AddressWrapper>
-                  <Text color="#A7A7CC" bold>
+                  <Text color="white" bold>
                     Token Address:
                   </Text>
                   <Text>{tokenData && tokenData.token_address}</Text>
@@ -849,7 +849,7 @@ const PresaleLive: React.FC = () => {
                         </ProgressBar>
                       </ProgressBarWrapper>
                       <TokenRateView>
-                        <Text fontSize="14px" fontWeight="600" color="#777777" textAlign="left">
+                        <Text fontSize="14px" fontWeight="600" color="white" textAlign="left">
                           1 BNB = {tokenData && tokenData.tier3} {tokenData && tokenData.token_symbol}{' '}
                         </Text>
                       </TokenRateView>
@@ -882,10 +882,10 @@ const PresaleLive: React.FC = () => {
                     </>
                   ) : (
                     <>
-                      <Text textAlign="left" fontSize="12px" fontWeight="500" color="#777777">
+                      <Text textAlign="left" fontSize="12px" fontWeight="500" color="white">
                         This presale has failed!
                       </Text>
-                      <Text textAlign="left" fontSize="12px" fontWeight="500" mt="16px" color="#777777">
+                      <Text textAlign="left" fontSize="12px" fontWeight="500" mt="16px" color="white">
                         If you participated in the presale click the claim button below to claim your BNB!
                       </Text>
                       <ColorButton
@@ -901,7 +901,7 @@ const PresaleLive: React.FC = () => {
                   )
                 ) : (
                   <>
-                    <Text textAlign="left" fontSize="14px" fontWeight="500">
+                    <Text textAlign="left" fontSize="14px" fontWeight="500" color="white">
                       This presale has ended. Go back to the dashboard to view others!
                     </Text>
                     {/* <Link external href="https://pancakeswap.finance/swap" style={{ width: '100%' }}>
@@ -912,7 +912,7 @@ const PresaleLive: React.FC = () => {
                     <DarkButton onClick={toSphynxSwap} style={{ width: '100%' }} mt="16px">
                       Trade on SphynxSwap
                     </DarkButton>
-                    <Text textAlign="left" fontSize="14px" fontWeight="500" mt="16px">
+                    <Text textAlign="left" fontSize="14px" fontWeight="500" mt="16px" color="white">
                       If you participated in the presale click the claim button below to claim your tokens!
                     </Text>
                     <ColorButton
@@ -927,7 +927,7 @@ const PresaleLive: React.FC = () => {
                   </>
                 )}
                 <TokenAmountView>
-                  <Text fontSize="14px" fontWeight="600" color="#A7A7CC">
+                  <Text fontSize="14px" fontWeight="600" color="white">
                     Your Contributed Account:
                   </Text>
                   <Text fontSize="14px" fontWeight="600" textAlign="center" color="#F2C94C">
@@ -936,7 +936,7 @@ const PresaleLive: React.FC = () => {
                 </TokenAmountView>
                 <UnderLine />
                 <TokenAmountView>
-                  <Text fontSize="14px" fontWeight="600" color="#A7A7CC">
+                  <Text fontSize="14px" fontWeight="600" color="white">
                     Your Reserved Tokens:
                   </Text>
                   <Text fontSize="14px" fontWeight="600" textAlign="center" color="#F2C94C">

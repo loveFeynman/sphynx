@@ -39,7 +39,7 @@ const TotalStakedCell: React.FC<TotalStakedCellProps> = ({ pool }) => {
   return (
     <StyledCell role="cell">
       <CellContent>
-        <Text fontSize="12px" color="#A7A7CC" textAlign="left" mb='4px'>
+        <Text fontSize="12px" color="white" textAlign="left" mb='4px'>
           {t('Total staked')}
         </Text>
         {totalStaked && totalStaked.gte(0) ? (

@@ -74,7 +74,7 @@ const BottomLabel = styled.div`
   font-weight: 600;
   font-size: 14px;
   line-height: 19px;
-  color: #A7A7CC;
+  color: white;
 `
 
 const MinMaxContainger = styled.div<{ isMin: boolean }>`
@@ -85,7 +85,7 @@ const MinMaxContainger = styled.div<{ isMin: boolean }>`
   font-weight: 600;
   font-size: 14px;
   line-height: 19px;
-  color: #A7A7CC;
+  color: white;
   border-bottom: 1px solid ${({ theme }) => theme.isDark ? "#21214A" : "#4A5187"};
 `
 
@@ -95,7 +95,7 @@ const ErrorArea = styled.div`
   font-weight: 500;
   font-size: 14px;
   line-height: 16px;
-  color: #A7A7CC;
+  color: white;
   text-align: -webkit-center;
 `
 
@@ -269,7 +269,7 @@ export default function BridgeCard({ label, isSphynx = false }) {
       <Flex justifyContent="space-between" alignItems="center" mt="12px" mr="10px">
         <Flex alignItems="center">
           <img width="35px" height="31px" src={isSphynx? MainLogo: BridgeOtherToken} alt="Logo" />
-          <Text fontSize="14px" fontWeight="600" color="#A7A7CC"> {isSphynx ? 'Sphynx' : 'Token'} to Bridge</Text>
+          <Text fontSize="14px" fontWeight="600" color="white"> {isSphynx ? 'Sphynx' : 'Token'} to Bridge</Text>
         </Flex>
         <Button
           variant="tertiary"
@@ -315,7 +315,7 @@ export default function BridgeCard({ label, isSphynx = false }) {
       <ErrorArea>
         {!account ? (
           <>
-            <Text fontSize="14px" color="#A7A7CC" style={{ textAlign: 'center', margin: '24px 0px' }}>Please connect your wallet to the chain you wish to bridge from!</Text>
+            <Text fontSize="14px" color="white" style={{ textAlign: 'center', margin: '24px 0px' }}>Please connect your wallet to the chain you wish to bridge from!</Text>
             <Flex style={{ columnGap: '10px' }} mb="34px" mx="-8px">
               <Button
                 variant="tertiary"

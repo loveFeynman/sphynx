@@ -36,7 +36,7 @@ const BarIntro = styled.div`
   background-color: transparent;
   border-radius: 8px 0px 0px 8px;
   & span {
-    color: #a7a7cc;
+    color: white;
     font-size: 12px;
     font-weight: bold;
     line-height: 14px;

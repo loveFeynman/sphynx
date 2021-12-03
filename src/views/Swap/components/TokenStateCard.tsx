@@ -105,7 +105,7 @@ export default function TokenStateCard(props: TokenStateProps) {
         <TokenDescription style={{ width: '100%' }}>
           <Text
             textAlign={tokenImg === undefined ? 'center' : 'unset'}
-            color={tokenImg === undefined ? '#A7A7CC' : 'white'}
+            color={tokenImg === undefined ? 'white' : 'white'}
             fontSize={isMobile ? '12px' : '13px'}
             bold
           >

@@ -113,7 +113,7 @@ const ExpandedFooter: React.FC<ExpandedFooterProps> = ({ pool, account }) => {
   return (
     <ExpandedWrapper flexDirection="column">
       <Flex mb="2px" justifyContent="space-between" alignItems="center" style={{borderBottom: '1px solid #21214A', paddingBottom: '10px'}}>
-        <Text fontSize='10px' color='#A7A7CC'>{t('Total staked')}:</Text>
+        <Text fontSize='10px' color='white'>{t('Total staked')}:</Text>
         <Flex>
           <img src={SphynxTokenLogo} style={{ height: '40px', marginLeft: '4px' }} alt="token" />
           <Flex alignItems="flex-start" flexDirection='column'>
@@ -171,13 +171,13 @@ const ExpandedFooter: React.FC<ExpandedFooterProps> = ({ pool, account }) => {
       )}
       <LinkContainer  mt='17px'>
         <ItemLink mb="6px" justifyContent="flex-end">
-          <LinkExternal href={`https://bscscan.com/token/${getAddress(earningToken.address)}`} color='#A7A7CC' fontSize='10px'>
+          <LinkExternal href={`https://bscscan.com/token/${getAddress(earningToken.address)}`} color='white' fontSize='10px'>
             {t('See Token Info')}
           </LinkExternal>
         </ItemLink>
         <Flex width='100%'>
           <ItemLink mr="6px" mb="2px" justifyContent="flex-end">
-            <LinkExternal href={earningToken.projectLink} color='#A7A7CC' fontSize='10px'>
+            <LinkExternal href={earningToken.projectLink} color='white' fontSize='10px'>
               {t('View Project Site')}
             </LinkExternal>
           </ItemLink>
@@ -185,7 +185,7 @@ const ExpandedFooter: React.FC<ExpandedFooterProps> = ({ pool, account }) => {
             <ItemLink mb="2px" justifyContent="flex-end">
               <LinkExternal
                 href={`${BASE_BSC_SCAN_URL}/address/${isAutoVault ? cakeVaultContractAddress : poolContractAddress}`}
-                color='#A7A7CC' fontSize='10px'
+                color='white' fontSize='10px'
               >
                 {t('View Contract')}
               </LinkExternal>
