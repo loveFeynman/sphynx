@@ -130,7 +130,7 @@ const DetailContainer = styled(Flex)`
 `
 
 const BorderFlex = styled(Flex)`
-  color: #A7A7CC;
+  color: white;
   border-radius: 5px;
   border: 1px solid #2E2E55;
   padding: 3px;

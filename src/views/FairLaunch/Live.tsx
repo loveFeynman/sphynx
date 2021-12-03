@@ -167,7 +167,7 @@ const TokenSymbol = styled.div`
 const TokenName = styled.div`
   font-weight: 600;
   font-size: 14px;
-  color: #a7a7cc;
+  color: white;
 `
 
 const TokenSymbolWrapper = styled.div`
@@ -232,7 +232,7 @@ const CustomContract = styled.div`
     text-align: center;
     font-weight: 600;
     font-size: 14px;
-    color: #a7a7cc;
+    color: white;
   }
 `
 
@@ -279,7 +279,7 @@ const DataItem = styled.div`
     }
     text-align: start;
     font-size: 12px;
-    color: #a7a7cc;
+    color: white;
     font-style: normal;
     font-weight: 600;
     border-bottom: 1px solid ${({ theme }) => (theme.isDark ? '#5E2B60' : '#4A5187')};
@@ -339,7 +339,7 @@ const ThinkItem = styled.div`
     margin-top: 5px;
     font-weight: 500;
     font-size: 12px;
-    color: #a7a7cc;
+    color: white;
   }
 `
 
@@ -411,7 +411,7 @@ const FairLaunchLive: React.FC = () => {
             <MainLogo width="40" height="40" />
             <Flex flexDirection="column" ml="10px">
               <HeaderTitleText>{t('SphynxSale Automated Warning System')}</HeaderTitleText>
-              <Text fontSize="12px" color="#777777" bold textAlign="left">
+              <Text fontSize="12px" color="white" bold textAlign="left">
                 {t('Lorem ipsum dolor sit amet, consectetur adipiscing elit')}
               </Text>
             </Flex>
@@ -451,7 +451,7 @@ const FairLaunchLive: React.FC = () => {
             <TokenAddressContainer>
               <AddressFlex>
                 <AddressWrapper>
-                  <Text color="#A7A7CC" bold>
+                  <Text color="white" bold>
                     Token Address:
                   </Text>
                   <Text>{presaleAddress}</Text>
@@ -464,7 +464,7 @@ const FairLaunchLive: React.FC = () => {
               </CustomContract>
             </TokenAddressContainer>
             <Separate />
-            <LaunchNotifyText color="#A7A7CC" bold >
+            <LaunchNotifyText color="white" bold >
               This token has already launched! Use the links below to trade the token.
             </LaunchNotifyText>
             <Separate />

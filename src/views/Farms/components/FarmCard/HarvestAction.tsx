@@ -55,9 +55,9 @@ const HarvestAction: React.FC<FarmCardActionsProps> = ({ earnings, pid }) => {
   return (
     <UnderLineFlex mb="8px" justifyContent="space-between" alignItems="center">
       <Flex flexDirection="column" alignItems="flex-start">
-        <Text fontSize="14px" color='#A7A7CC'>{displayBalance}</Text>
+        <Text fontSize="14px" color='white'>{displayBalance}</Text>
         {/* {earningsBusd > 0 && (
-          <Balance fontSize="14px" color="#A7A7CC" decimals={3} value={earningsBusd} prefix="$" />
+          <Balance fontSize="14px" color="white" decimals={3} value={earningsBusd} prefix="$" />
         )}  */}
       </Flex>
       <Button

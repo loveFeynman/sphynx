@@ -218,7 +218,7 @@ const Staked: React.FunctionComponent<StackedActionProps> = ({ pool, userDataLoa
     return (
       <ActionContainer>
         <StakeActionTitles>
-          <Text fontSize="12px" bold color="#A7A7CC" as="span" textTransform="uppercase">
+          <Text fontSize="12px" bold color="white" as="span" textTransform="uppercase">
             {t('Start staking')}
           </Text>
         </StakeActionTitles>
@@ -233,7 +233,7 @@ const Staked: React.FunctionComponent<StackedActionProps> = ({ pool, userDataLoa
     return (
       <ActionContainer>
         <StakeActionTitles>
-          <Text fontSize="12px" bold color="#A7A7CC" as="span" textTransform="uppercase">
+          <Text fontSize="12px" bold color="white" as="span" textTransform="uppercase">
             {t('Start staking')}
           </Text>
         </StakeActionTitles>
@@ -248,7 +248,7 @@ const Staked: React.FunctionComponent<StackedActionProps> = ({ pool, userDataLoa
     return (
       <ActionContainer>
         <StakeActionTitles>
-          <Text fontSize="12px" bold color="#A7A7CC" as="span" textTransform="uppercase">
+          <Text fontSize="12px" bold color="white" as="span" textTransform="uppercase">
             {t('Enable pool')}
           </Text>
         </StakeActionTitles>
@@ -267,10 +267,10 @@ const Staked: React.FunctionComponent<StackedActionProps> = ({ pool, userDataLoa
     return (
       <ActionContainer>
         <Flex mb='5px' flexDirection='column'>
-          <Text fontSize="12px" bold color="#A7A7CC" as="span" textTransform="uppercase" textAlign="center">
+          <Text fontSize="12px" bold color="white" as="span" textTransform="uppercase" textAlign="center">
             {stakingToken.symbol}{' '}
           </Text>
-          <Text fontSize="12px" bold color="#A7A7CC" as="span" textTransform="uppercase" textAlign="center">
+          <Text fontSize="12px" bold color="white" as="span" textTransform="uppercase" textAlign="center">
             {isAutoVault ? t('Staked (compounding)') : t('Staked')}
           </Text>
         </Flex>
@@ -322,10 +322,10 @@ const Staked: React.FunctionComponent<StackedActionProps> = ({ pool, userDataLoa
   return (
     <ActionContainer>
       <StakeActionTitles>
-        <Text fontSize="12px" bold color="#A7A7CC" as="span" textTransform="uppercase">
+        <Text fontSize="12px" bold color="white" as="span" textTransform="uppercase">
           {t('Stake')}{' '}
         </Text>
-        <Text fontSize="12px" bold color="#A7A7CC" as="span" textTransform="uppercase">
+        <Text fontSize="12px" bold color="white" as="span" textTransform="uppercase">
           {stakingToken.symbol}
         </Text>
       </StakeActionTitles>

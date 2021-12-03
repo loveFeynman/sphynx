@@ -55,7 +55,7 @@ export const TitleWrapper = styled.div`
 export const Title = styled.div`
   span {
     font-size: 12px;
-    color: #777777;
+    color: white;
   }
 `
 

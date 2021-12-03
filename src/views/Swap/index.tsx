@@ -134,7 +134,7 @@ const SlippageText = styled.p`
   font-size: 12px;
   font-weight: 500;
   line-height: 12px;
-  color: #a7a7cc;
+  color: white;
   margin: 0 8px;
 `
 
@@ -1039,12 +1039,12 @@ export default function Swap({ history }: RouteComponentProps) {
           <SwapTabs selectedTabClassName="is-selected" selectedTabPanelClassName="is-selected">
             <SwapTabList>
               <SwapTab>
-                <Text textAlign="center" fontSize="14px" bold color="#A7A7CC">
+                <Text textAlign="center" fontSize="14px" bold color="white">
                   {t('Swap')}
                 </Text>
               </SwapTab>
               <SwapTab>
-                <Text textAlign="center" fontSize="14px" bold color="#A7A7CC">
+                <Text textAlign="center" fontSize="14px" bold color="white">
                   {t('Liquidity')}
                 </Text>
               </SwapTab>
@@ -1264,23 +1264,23 @@ export default function Swap({ history }: RouteComponentProps) {
             <SwapTabs selectedTabClassName="is-selected" selectedTabPanelClassName="is-selected">
               <SwapTabList>
                 <SwapTab>
-                  <Text textAlign="center" fontSize="14px" bold textTransform="capitalize" color="#A7A7CC">
+                  <Text textAlign="center" fontSize="14px" bold textTransform="capitalize" color="white">
                     {t('tokenDX')}
                   </Text>
                 </SwapTab>
                 <SwapTab>
-                  <Text textAlign="center" fontSize="14px" bold textTransform="capitalize" color="#A7A7CC">
+                  <Text textAlign="center" fontSize="14px" bold textTransform="capitalize" color="white">
                     {t('buyers')}
                   </Text>
                 </SwapTab>
                 <SwapTab>
-                  <Text textAlign="center" fontSize="14px" bold textTransform="capitalize" color="#A7A7CC">
+                  <Text textAlign="center" fontSize="14px" bold textTransform="capitalize" color="white">
                     {t('sellers')}
                   </Text>
                 </SwapTab>
                 {isMobile && (
                   <SwapTab>
-                    <Text textAlign="center" fontSize="14px" bold textTransform="capitalize" color="#A7A7CC">
+                    <Text textAlign="center" fontSize="14px" bold textTransform="capitalize" color="white">
                       {t('info')}
                     </Text>
                   </SwapTab>

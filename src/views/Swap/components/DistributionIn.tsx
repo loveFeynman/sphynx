@@ -95,7 +95,7 @@ const RewardsPanel: React.FC = () => {
     <DistributionWrapper>
       <Flex justifyContent="flex-end" alignItems="center">
         {/* <img src={StopwatchIcon} alt="stopwatch icon" width="90" height="90" /> */}
-        <WatchIcon width="61px" height="72px" color={theme.isDark ? "#A7A7CC":"#F2C94C"}/>
+        <WatchIcon width="61px" height="72px" color={theme.isDark ? "white":"#F2C94C"}/>
         <DistributionContent>
           <Text color={theme.isDark ? "#C32BB4" : "#F2C94C"} bold className="titleString">
             {t('Distribution In:')}
@@ -108,7 +108,7 @@ const RewardsPanel: React.FC = () => {
                   useGrouping: false
                 })}
               </Text>
-              <Text color="#A7A7CC" textTransform="uppercase" className="dateString">{t('days')}</Text>
+              <Text color="white" textTransform="uppercase" className="dateString">{t('days')}</Text>
             </TimeSpan>
             <Text>:</Text>
             <TimeSpan>
@@ -117,7 +117,7 @@ const RewardsPanel: React.FC = () => {
                   minimumIntegerDigits: 2,
                   useGrouping: false
                 })}</Text>
-              <Text color="#A7A7CC" textTransform="uppercase" className="dateString">{t('hrs')}</Text>
+              <Text color="white" textTransform="uppercase" className="dateString">{t('hrs')}</Text>
             </TimeSpan>
             <Text color="white">:</Text>
             <TimeSpan>
@@ -126,7 +126,7 @@ const RewardsPanel: React.FC = () => {
                   minimumIntegerDigits: 2,
                   useGrouping: false
                 })}</Text>
-              <Text color="#A7A7CC" textTransform="uppercase" className="dateString">{t('min')}</Text>
+              <Text color="white" textTransform="uppercase" className="dateString">{t('min')}</Text>
             </TimeSpan>
             <Text color="white">:</Text>
             <TimeSpan>
@@ -135,7 +135,7 @@ const RewardsPanel: React.FC = () => {
                   minimumIntegerDigits: 2,
                   useGrouping: false
                 })}</Text>
-              <Text color="#A7A7CC" textTransform="uppercase" className="dateString">{t('sec')}</Text>
+              <Text color="white" textTransform="uppercase" className="dateString">{t('sec')}</Text>
             </TimeSpan>
           </TimeContent>
         </DistributionContent>

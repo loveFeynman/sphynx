@@ -16,7 +16,7 @@ const Container = styled.div`
 
 const TitleText = styled(Text)`
   font-size: 12px;
-  color: #A7A7CC;
+  color: white;
   text-align: left;
   margin-right: 5px;
 `

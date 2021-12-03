@@ -85,19 +85,19 @@ const CardActions: React.FC<FarmCardActionsProps> = ({ farm, account, addLiquidi
   return (
     <Action>
       <UnderLineFlex>
-        <Text bold textTransform="uppercase" color="#A7A7CC" fontSize="14px" pr="4px">
+        <Text bold textTransform="uppercase" color="white" fontSize="14px" pr="4px">
           Sphynx
         </Text>
-        <Text bold textTransform="uppercase" color="#A7A7CC" fontSize="14px">
+        <Text bold textTransform="uppercase" color="white" fontSize="14px">
           {t('Earned')}
         </Text>
       </UnderLineFlex>
       <HarvestAction earnings={earnings} pid={pid} />
       <Flex justifyContent='center'>
-        <Text bold textTransform="uppercase" color="#A7A7CC" fontSize="14px" pr="4px">
+        <Text bold textTransform="uppercase" color="white" fontSize="14px" pr="4px">
           {farm.lpSymbol}
         </Text>
-        <Text bold textTransform="uppercase" color="#A7A7CC" fontSize="14px">
+        <Text bold textTransform="uppercase" color="white" fontSize="14px">
           {t('Staked')}
         </Text>
       </Flex>
