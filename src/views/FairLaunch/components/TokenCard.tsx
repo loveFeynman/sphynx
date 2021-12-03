@@ -2,9 +2,10 @@ import React from 'react'
 import styled from 'styled-components'
 import { Text } from '@sphynxdex/uikit'
 import { useHistory } from 'react-router-dom'
-import { useWeb3React } from '@web3-react/core'
 import TimerComponent from 'components/Timer/TimerComponent'
-import ContractHelper from 'components/ContractHelper';
+import ContractHelper from 'components/ContractHelper'
+import useActiveWeb3React from 'hooks/useActiveWeb3React'
+import { ChainId } from '@sphynxdex/sdk-multichain'
 
 const CardWrapper = styled.div`
   background: ${({ theme }) => (theme.isDark ? '#040413' : '#2A2E60')};
@@ -149,43 +150,38 @@ const TokenWrapper = styled.div`
 `
 
 interface ImgCardProps {
-  saleId: number
+  launchId: number
   ownerAddress: string
-  tokenSymbole?: string
+  tokenSymbol?: string
   tokenName?: string
   tokenLogo?: string
-  activeSale?: number
-  totalCap?: number
-  softCap?: number
-  hardCap?: number
-  minContribution?: number
-  maxContribution?: number
+  nativeAmount?: number
+  tokenAmount?: number
   tokenState?: string
+  launchTime?: string
 }
 
 const TokenCard: React.FC<ImgCardProps> = ({
-  saleId,
+  launchId,
   ownerAddress,
-  tokenSymbole,
+  tokenSymbol,
   tokenName,
   tokenLogo,
-  activeSale,
-  softCap,
-  hardCap,
-  totalCap,
-  minContribution,
-  maxContribution,
+  nativeAmount,
+  tokenAmount,
   tokenState,
+  launchTime,
 }: ImgCardProps) => {
   const history = useHistory()
-  const { account } = useWeb3React()
-  const now = Math.floor(new Date().getTime() / 1000)
+  const { account, chainId } = useActiveWeb3React()
+
+  const nativeCurrency = chainId === ChainId.ETHEREUM ? 'ETH' : 'BNB'
 
   const handleClicked = () => {
     if (account === ownerAddress) {
-      history.push(`/launchpad/presale/${saleId}`)
+      history.push(`/fair-launchpad/presale/${launchId}`)
     } else {
-      history.push(`/launchpad/live/${saleId}`)
+      history.push(`/fair-launchpad/live/${launchId}`)
     }
   }
 
@@ -197,25 +193,22 @@ const TokenCard: React.FC<ImgCardProps> = ({
             <img src={tokenLogo} alt="token icon" />
           </TokenImg>
           <TokenSymbolWrapper>
-            <Text>{tokenSymbole}</Text>
+            <Text>{tokenSymbol}</Text>
             <Text>{tokenName}</Text>
           </TokenSymbolWrapper>
         </TokenWrapper>
+        <EndTimeWrapper>
+          <Text>Launch start in:</Text>
+          <TimerComponent time={launchTime} />
+        </EndTimeWrapper>
       </CardHeader>
       <CardBody>
-        <ActiveSaleText state={tokenState}>Launch Failed</ActiveSaleText>
-        <ProgressBarWrapper>
-          <ProgressBar>
-            <Progress state={activeSale}>{activeSale.toFixed(2)}%</Progress>
-          </ProgressBar>
-        </ProgressBarWrapper>
+        <ActiveSaleText state={tokenState}>{`${tokenState} Launch`}</ActiveSaleText>
         <SaleInfoWrapper>
           <SaleInfo>
             <SaleInfoTitle>Liquidity:</SaleInfoTitle>
-            <SaleInfoValue>
-              0.01 BNB
-            </SaleInfoValue>
-          </SaleInfo> 
+            <SaleInfoValue>{`${tokenAmount}${tokenSymbol}/${nativeAmount}${nativeCurrency}`}</SaleInfoValue>
+          </SaleInfo>
           <Divider />
         </SaleInfoWrapper>
       </CardBody>

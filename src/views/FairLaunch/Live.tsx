@@ -437,16 +437,6 @@ const FairLaunchLive: React.FC = () => {
             Tokens held by teams can be sold to pull out liquidity and should be carefully examined.
           </WarningSubTitle>
         </DefiFlex>
-        <SoftFlex>
-          <WarningTitle>Soft Cap Warning</WarningTitle>
-          <WarningSubTitle style={{ opacity: '0.8' }}>The softcap of this sale is very low.</WarningSubTitle>
-        </SoftFlex>
-        <LiquidityFlex>
-          <WarningTitle style={{ opacity: '0.8', color: '#1A1A3A' }}>Liquidity Time Warning</WarningTitle>
-          <WarningSubTitle color="#1A1A3A" style={{ opacity: '0.7' }}>
-            This sale has a very low liquidity percentage.
-          </WarningSubTitle>
-        </LiquidityFlex>
       </FlexWrapper>
       <TokenPresaleBody>
         <TokenPresaleContainder toggled={menuToggled}>
