@@ -193,25 +193,32 @@ const FairLaunchManage: React.FC = () => {
   const [isClickedCancel, setIsClickedCancel] = useState(false);
   const [isAvailableLaunch, setIsAvailableLaunch] = useState(false);
   const [successfulLaunched, setSuccessfulLaunched] = useState(false);
+  const [isCanceled, setIsCanceled] = useState(false);
+  const [isWithdrawToken, setIsWithdrawToken] = useState(false);
+  const [isWithdrawBNB, setIsWithdrawBNB] = useState(false);
   const { toastSuccess, toastError } = useToast()
 
   const fairLaunchContract = getFairLaunchContract(signer);
 
   const handleCancelLaunch = () => {
-    setIsClickedCancel(true)
+    fairLaunchContract.calcel(parseInt(param.launchId))
+    .then(response => {
+      setIsClickedCancel(true)
+      setIsCanceled(true);
+    })
   }
 
   const handleWithdrawToken = () => {
     fairLaunchContract.tokenWithdraw(parseInt(param.launchId))
     .then(response => {
-      console.log(response, '--------- response from handlewithdraw token -------')
+      setIsWithdrawToken(true)
     })
   }
 
   const handleWithdrawBNB = () => {
     fairLaunchContract.nativeCurrencyWithdraw(parseInt(param.launchId))
     .then(response => {
-      console.log(response, '--------- response from handle withdraw bnb --------')
+      setIsWithdrawBNB(true)
     })
   }
 
@@ -219,19 +226,55 @@ const FairLaunchManage: React.FC = () => {
     const fee = ethers.utils.parseEther('0.00001')
     fairLaunchContract.launch(parseInt(param.launchId), { value: fee })
     .then(response => {
-      console.log(response, '---------- response from handle launch token --------')
-      // setSuccessfulLaunched(true)
+      setIsLaunched(true)
     })
   }
 
-  const checkAvaiableLaunch = useCallback(() => {
+  const checkAvaiableLaunch = () => {
     const now = Math.floor(new Date().getTime() / 1000)
-    if(now > parseInt(launchTime) && now < parseInt(launchTime) + 600) {
+    let item = '';
+    if (parseInt(launchTime) > now) {
+      item = 'Upcoming'
+      setIsAvailableLaunch(false)
+    } else if (isLaunched) {
+      item = 'Success'
+    } else if (now > parseInt(launchTime) && now < parseInt(launchTime) + 600) {
+      item = 'Active';
       setIsAvailableLaunch(true)
     } else {
+      item = 'Failed'
       setIsAvailableLaunch(false)
     }
-  }, [launchTime]);
+    setLaunchStatus(item)
+  };
+
+  const checkIsCanceled = () => {
+    fairLaunchContract.isCanceled(parseInt(param.launchId))
+    .then(response => {
+      setIsCanceled(response);
+    })
+  }
+
+  const checkIsWithdrawToken = () => {
+    fairLaunchContract.withdrawToken(parseInt(param.launchId))
+    .then(response => {
+      setIsWithdrawToken(response);
+    })
+  }
+
+  const checkIsWithdrawBNB = () => {
+    fairLaunchContract.withdrawNativeCurrency(parseInt(param.launchId))
+    .then(response => {
+      setIsWithdrawBNB(response);
+    })
+  }
+
+  const checkIsLaunched = () => {
+    fairLaunchContract.isLaunched(parseInt(param.launchId))
+    .then(response => {
+      setIsLaunched(response);
+    })
+  }
 
   const handleUpdateInfo = () => {
     const data = {
@@ -255,12 +298,16 @@ const FairLaunchManage: React.FC = () => {
   }
 
   useEffect(() => {
+    checkIsCanceled();
+    checkIsWithdrawToken();
+    checkIsWithdrawBNB();
+    checkIsLaunched();
     checkAvaiableLaunch();
     const interval = setInterval(() => {
       checkAvaiableLaunch();
-    }, 60000);
+    }, 1000);
     return () => clearInterval(interval);
-  }, [checkAvaiableLaunch])
+  }, [launchTime])
 
   useEffect(() => {
     (async function fetchData() {
@@ -297,22 +344,6 @@ const FairLaunchManage: React.FC = () => {
       await RetrieverDataProcess();
     })();
   }, [param])
-
-  useEffect(() => {
-    const now = Math.floor(new Date().getTime() / 1000)
-    let item = '';
-    if (parseInt(launchTime) > now) {
-      item = 'Upcoming'
-    } else if (isLaunched) {
-      item = 'Success'
-    } else if (now < parseInt(launchTime) && now > parseInt(launchTime) + 600) {
-      item = 'Active'
-    } else {
-      item = 'Failed'
-    }
-    setLaunchStatus(item)
-    
-  }, [isLaunched, launchTime])
 
   return (
     <Wrapper>
@@ -352,23 +383,24 @@ const FairLaunchManage: React.FC = () => {
           <Notification>Status: {launchStatus} Launch</Notification>
           <Sperate />
           {
-            successfulLaunched ?
-            <Notification> Successful Launched! </Notification>
-            :
-            isClickedCancel ?
+            isCanceled ?
             (
               <>  
-                <Button mr="20px" mt="20px" onClick={handleWithdrawToken}>
+                <Button disabled={isWithdrawToken} mr="20px" mt="20px" onClick={handleWithdrawToken}>
                   WITHDRAW TOKEN
                 </Button>
-                <Button mt="20px" onClick={handleWithdrawBNB}>
+                <Button disabled={isWithdrawBNB} mt="20px" onClick={handleWithdrawBNB}>
                   WITHDRAW BNB
                 </Button>
               </>
-            )
+            ) 
+            : 
+            isLaunched ? 
+            <Notification> Successful Launched! </Notification>
             :
             (
               <>  
+                {/* <Button disabled={!isAvailableLaunch} onClick={handleLaunchToken} mr="20px" mt="20px"> */}
                 <Button disabled={!isAvailableLaunch} onClick={handleLaunchToken} mr="20px" mt="20px">
                   LAUNCH TOKEN
                 </Button>
