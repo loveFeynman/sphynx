@@ -1,12 +1,14 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import styled from 'styled-components'
 import { useParams } from 'react-router'
 import { useHistory } from 'react-router-dom'
 import { useWeb3React } from '@web3-react/core'
 import { Button, Text, Flex } from '@sphynxdex/uikit'
+import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import axios from 'axios'
 import { useTranslation } from 'contexts/Localization'
 import { useMenuToggle } from 'state/application/hooks'
+import { getFairLaunchContract } from 'utils/contractHelpers'
 import { ReactComponent as MainLogo } from 'assets/svg/icon/WarningIcon.svg'
 import { ReactComponent as WarningIcon2 } from 'assets/svg/icon/WarningIcon2.svg'
 import { ReactComponent as SettingIcon } from 'assets/svg/icon/SettingIcon.svg'
@@ -371,8 +373,12 @@ const FairLaunchLive: React.FC = () => {
   const { t } = useTranslation()
   const param: any = useParams();
   const { chainId } = useWeb3React()
+  const { library } = useActiveWeb3React()
+  const signer = library.getSigner()
   const { menuToggled } = useMenuToggle()
   const [ statusDescription, setStatusDescription ] = useState("")
+  const [ isLaunched, setIsLaunched ] = useState(false);
+  const fairLaunchContract = useMemo(() => getFairLaunchContract(signer), [signer])
   const history = useHistory()
   
   const [fairLaunchData, setFairLaunchData] = useState({
@@ -415,12 +421,32 @@ const FairLaunchLive: React.FC = () => {
               launch_time: data.launch_time,
               lock_time: data.lock_time
             })
+            fairLaunchContract.isLaunched(parseInt(param.launchId))
+            .then(res => {
+              setIsLaunched(res);
+            })
           }
         })
       }
       await RetrieverDataProcess();
     })();
   }, [param])
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const now = Math.floor(new Date().getTime() / 1000)
+      if (parseInt(fairLaunchData.launch_time) > now) {
+        setStatusDescription("FairLaunch is upcoming!");
+      } else if (isLaunched) {
+        setStatusDescription("FairLaunch has already launched! Use the links below to trade the token.");
+      } else if (now > parseInt(fairLaunchData.launch_time) && now < parseInt(fairLaunchData.launch_time) + 600) {
+        setStatusDescription("FairLaunch is active!");
+      } else {
+        setStatusDescription("FairLaunch is failed!");
+      }
+    }
+    fetchData()
+  }, [isLaunched])
 
   return (
     <Wrapper>
@@ -487,7 +513,10 @@ const FairLaunchLive: React.FC = () => {
               {statusDescription}
             </LaunchNotifyText>
             <Separate />
-            <ColorButton style={{ width: '100%' }} onClick={handleClickTrade}>Trade</ColorButton>
+            {
+              isLaunched &&
+              <ColorButton style={{ width: '100%' }} onClick={handleClickTrade}>Trade</ColorButton>
+            }
             <Separate />
             <ContributeWrapper>
               <DataItem>
