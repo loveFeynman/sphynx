@@ -174,10 +174,11 @@ export const PaginationWrapper = styled.div`
           align-items: center;
           > button::after {
             content: 'Previous';
-            color: #7F1696;
+            color: white;
           }
           > button {
             border: none;
+            opacity: 1;
           }
           > button.Mui-disabled::after {
             color: #888888;
@@ -191,10 +192,11 @@ export const PaginationWrapper = styled.div`
           border: none;
           > button::before {
             content: 'Next';
-            color: #7F1696;
+            color: white;
           }
           > button {
             border: none;
+            opacity: 1;
           }
           > button.Mui-disabled::before {
             color: #888888;

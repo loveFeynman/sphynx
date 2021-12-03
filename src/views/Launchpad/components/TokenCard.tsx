@@ -77,7 +77,7 @@ const ActiveSaleText = styled.span<{ state }>`
   color: ${(props) => (props.state === 'active' ? '#00AC1C' : props.state === 'pending' ? '#FFC700' : '#D91A00')};
   text-transform: uppercase;
   font-weight: 600;
-  font-size: 10px;
+  font-size: 12px;
   letter-spacing: 0.2em;
 `
 
@@ -100,7 +100,7 @@ const Progress = styled.div<{ state }>`
   padding: 1px;
   display: flex;
   justify-content: center;
-  font-size: 9px;
+  font-size: 12px;
   font-weight: bold;
 `
 
