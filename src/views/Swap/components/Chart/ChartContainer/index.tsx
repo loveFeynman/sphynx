@@ -127,7 +127,7 @@ const Chart: React.FC<Partial<ChartContainerProps>> = (props) => {
     },
     resolveSymbol: async (symbolName: any, onSymbolResolvedCallback: any, onResolveErrorCallback: any) => {
       const exchange = routerVersion === 'sphynx' ? 'SPHYNX DEX' : chainId === ChainId.ETHEREUM ? 'Uniswap ' + routerVersion : 'Pancake ' + routerVersion
-      const quoteSymbol = chainId === ChainId.MAINNET  ? 'ETH' : 'BNB'
+      const quoteSymbol = chainId === ChainId.ETHEREUM  ? 'ETH' : 'BNB'
       symbolRef.current = onSymbolResolvedCallback
       getTokenInfo(input, routerVersion, chainId)
       .then(tokenInfo => {
