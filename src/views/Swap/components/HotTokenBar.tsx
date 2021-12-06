@@ -234,7 +234,7 @@ export default function HotTokenBar() {
                       style={{ color: 'white', padding: '12', paddingInlineEnd: '24px' }}
                     >
                       <a href={`/swap/${elem.currency.address}`} style={{ marginRight: 20, textDecoration: 'none' }}>
-                        <span style={{ color: index === 0 ? 'yellow' : 'white', fontSize: '14px' }}>{`${
+                        <span style={{ color: index === 0 ? 'yellow' : index === 1 ? 'grey' : 'white', fontSize: '14px', fontWeight: 'bold' }}>{`${
                           index + 1
                         }. `}</span>
                         {`${elem.currency.symbol}`}
@@ -245,7 +245,7 @@ export default function HotTokenBar() {
                       key={`${index + 1}.${elem.currency.symbol}`}
                       style={{ color: 'white', padding: '12', paddingInlineEnd: '24px' }}
                     >
-                      <span style={{ color: index === 0 ? 'yellow' : 'white', fontSize: '14px' }}>{`${
+                      <span style={{ color: index === 0 ? 'yellow' : index === 1 ? 'sliver' : 'white', fontSize: '14px' }}>{`${
                         index + 1
                       }. `}</span>
                       {`${elem.currency.symbol}`}
