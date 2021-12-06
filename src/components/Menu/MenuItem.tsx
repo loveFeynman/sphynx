@@ -133,6 +133,13 @@ const useStyles = makeStyles(theme =>
     },
     menuItemWithSub: {
       backgroundColor: '#710d89 !important',
+      '&.active': {
+        backgroundColor: '#710d89 !important',
+        '& .MuiTypography-root': {
+          color: 'white',
+          fontWeight: 'bold'
+        }
+      },
       '&.MuiListItem-root': {
         paddingTop: 0,
         paddingBottom: 0,

@@ -24,6 +24,7 @@ const MenuItemExternal = styled.a`
     background: #710d89;
     p {
       color: white;
+      font-weight: bold;
     }
   }
 `
