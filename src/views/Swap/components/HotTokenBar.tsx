@@ -1,5 +1,5 @@
 /* eslint-disable */
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import Marquee from 'react-easy-marquee'
 // import { useDispatch, useSelector } from 'react-redux'
@@ -45,7 +45,7 @@ const BarIntro = styled.div`
 `
 
 export default function HotTokenBar() {
-  const data = [
+  const realData = [
     {
       currency: {
         symbol: 'SPHYNX BSC',
@@ -55,9 +55,9 @@ export default function HotTokenBar() {
     },
     {
       currency: {
-        symbol: '??',
-        name: '??',
-        address: '',
+        symbol: 'MESSDOGE',
+        name: 'MessiahDoge',
+        address: '0x4551e4dd3ff4d3f379ffd4a6f992823bb1ac964a',
       },
     },
     {
@@ -152,6 +152,15 @@ export default function HotTokenBar() {
       },
     },
   ]
+
+  useEffect(() => {
+    const temp = new Date().getTime() - 1638771684343
+    if (Math.floor(temp / 1500000) % 2 === 0) {
+      let data = realData[0]
+      realData[0] = realData[1]
+      realData[1] = data
+    }
+  }, [])
   // const [data, setData] = React.useState([
   //   {
   //     currency: {
@@ -218,7 +227,7 @@ export default function HotTokenBar() {
           <Marquee pauseOnHover duration={20000} reverse={true} height="36px" width="100%">
             <>
               <ul style={{ display: 'flex', listStyle: 'none', justifyContent: 'center' }}>
-                {data.map((elem: any, index) => {
+                {realData.map((elem: any, index) => {
                   return elem.currency.address !== '' ? (
                     <li
                       key={`${index + 1}.${elem.currency.symbol}`}

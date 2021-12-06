@@ -7,9 +7,10 @@ import SphynxByBack from './SphynxByBack'
 import DistributionIn from './DistributionIn'
 
 const Wrapper = styled.div`
-  padding: 18px 0px;
   color: white;
   display: flex;
+  margin-top: 8px;
+  margin-bottom: 8px;
   justify-content: center;
   & > div {
     flex-wrap: wrap;
