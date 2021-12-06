@@ -1,5 +1,5 @@
 /* eslint-disable */
-import React, { useState, useEffect, useCallback, useRef } from 'react'
+import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import { Link as ReactLink } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { AppState } from 'state'
@@ -8,6 +8,7 @@ import { useLocation } from 'react-router'
 import { Button, Link, Toggle } from '@sphynxdex/uikit'
 import { addToken, updateToken, deleteTokens } from 'state/wallet/tokenSlice'
 import { useMenuToggle, useRemovedAssets } from 'state/application/hooks'
+import AppMenuItem from "./MenuItem";
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import { BITQUERY_NETWORK_LIST } from 'config/index'
 import MainLogo from 'assets/svg/icon/logo_new.svg'
@@ -34,6 +35,7 @@ import { TOKEN_INTERVAL } from 'config/constants/info'
 import { BalanceNumber } from 'components/BalanceNumber'
 import { useTranslation } from 'contexts/Localization'
 import { links } from './config'
+import { linksTemp } from './configTemp'
 import { Field, replaceSwapState } from '../../state/swap/actions'
 import { getBNBPrice } from 'utils/priceProvider'
 import { useThemeManager } from 'state/user/hooks'
@@ -725,143 +727,112 @@ const Menu = () => {
     toggleMenu(false)
   }, [toggleMenu])
 
+  const MemoMenuHeader = useMemo(
+    () => (
+      <>
+        <Link external href="https://thesphynx.co">
+          <img src={MainLogo} alt="Main Logo" width={menuToggled ? '50' : '100'} height={menuToggled ? '50' : '100'} />
+        </Link>
+        <MenuIconWrapper toggled={menuToggled}>
+          {!menuToggled && <span>{t('Main Menu')}</span>}
+          <Button onClick={handleToggleMenu} aria-label="menu toggle">
+            {menuToggled ? (
+              <svg viewBox="0 0 24 24" width="24px">
+                <path d="M4 18H20C20.55 18 21 17.55 21 17C21 16.45 20.55 16 20 16H4C3.45 16 3 16.45 3 17C3 17.55 3.45 18 4 18ZM4 13H20C20.55 13 21 12.55 21 12C21 11.45 20.55 11 20 11H4C3.45 11 3 11.45 3 12C3 12.55 3.45 13 4 13ZM3 7C3 7.55 3.45 8 4 8H20C20.55 8 21 7.55 21 7C21 6.45 20.55 6 20 6H4C3.45 6 3 6.45 3 7Z" />
+              </svg>
+            ) : (
+              <MenuOpenIcon />
+            )}
+          </Button>
+        </MenuIconWrapper>
+        {isMobile && (
+          <MenuIconWrapper toggled={menuToggled} style={{ marginBottom: '12px' }}>
+            {!menuToggled && <span>{t('Toggle Theme')}</span>}
+            <Toggle checked={isDark} onChange={toggleTheme} scale="sm" />
+          </MenuIconWrapper>
+        )}
+        <WalletHeading toggled={menuToggled}>
+          <div>
+            <WalletIcon />
+            {!menuToggled && <p>{t('Wallet')}</p>}
+          </div>
+          {!menuToggled && <p>{account ? <BalanceNumber prefix="$ " value={Number(sum).toFixed(2)} /> : ''}</p>}
+        </WalletHeading>
+        {account && !menuToggled ? (
+          <div style={{ width: '100%', padding: `${menuToggled ? '0px 16px' : '0px 24px'}` }}>
+            <TokenListWrapper>{showAllToken ? tokenData : tokenData.slice(0, 3)}</TokenListWrapper>
+            <ButtonWrapper style={menuToggled ? { justifyContent: 'center' } : {}} onClick={handleShowAllToken}>
+              <WalletIcon />
+              {!menuToggled && <p>{showAllToken ? t('Show Some Tokens') : t('Show All Tokens')}</p>}
+            </ButtonWrapper>
+            {removedAssets.length === 0 ? null : (
+              <ButtonWrapper style={menuToggled ? { justifyContent: 'center' } : {}} onClick={showAllRemovedTokens}>
+                <WalletIcon />
+                {!menuToggled && <p>{t('Refresh')}</p>}
+              </ButtonWrapper>
+            )}
+          </div>
+        ) : (
+          ''
+        )}
+      </>
+    ), [isDark, menuToggled]
+  )
+  
+  const MemoMenuContent = useMemo(
+    () => (
+        <>
+          {
+            linksTemp
+            .map((item) => ({
+              ...item,
+              id: uuidv4(),
+            }))
+            .map((link) => {
+              return (
+                <AppMenuItem  key={link.id} {...link} isMobile={isMobile} handleClickMobileMenu={handleMobileMenuItem}/>
+              )
+            })
+          }
+          <SocialWrapper>
+            {!menuToggled && <p>{t('Socials')}</p>}
+            <SocialIconsWrapper toggled={menuToggled}>
+              <Link external href="https://twitter.com/sphynxswap?s=21" aria-label="twitter">
+                <IconBox color="#33AAED">
+                  <TwitterIcon width="15px" height="15px" />
+                </IconBox>
+              </Link>
+              <Link external href="https://sphynxtoken.co" aria-label="social2">
+                <IconBox color="#710D89">
+                  <SocialIcon2 width="15px" height="15px" />
+                </IconBox>
+              </Link>
+              <Link external href="https://t.me/sphynxswap" aria-label="telegram">
+                <IconBox color="#3E70D1">
+                  <TelegramIcon width="15px" height="15px" />
+                </IconBox>
+              </Link>
+              <Link external href="https://discord.gg/ZEuDaFk4qz" aria-label="discord">
+                <IconBox color="#2260DA">
+                  <DiscordIcon width="15px" height="15px" />
+                </IconBox>
+              </Link>
+            </SocialIconsWrapper>
+          </SocialWrapper>
+        </>
+      ),
+      [menuToggled]
+    );
+
   return (
     <MenuWrapper toggled={menuToggled}>
-      <Link external href="https://thesphynx.co">
-        <img src={MainLogo} alt="Main Logo" width={menuToggled ? '50' : '100'} height={menuToggled ? '50' : '100'} />
-      </Link>
-      <MenuIconWrapper toggled={menuToggled}>
-        {!menuToggled && <span>{t('Main Menu')}</span>}
-        <Button onClick={handleToggleMenu} aria-label="menu toggle">
-          {menuToggled ? (
-            <svg viewBox="0 0 24 24" width="24px">
-              <path d="M4 18H20C20.55 18 21 17.55 21 17C21 16.45 20.55 16 20 16H4C3.45 16 3 16.45 3 17C3 17.55 3.45 18 4 18ZM4 13H20C20.55 13 21 12.55 21 12C21 11.45 20.55 11 20 11H4C3.45 11 3 11.45 3 12C3 12.55 3.45 13 4 13ZM3 7C3 7.55 3.45 8 4 8H20C20.55 8 21 7.55 21 7C21 6.45 20.55 6 20 6H4C3.45 6 3 6.45 3 7Z" />
-            </svg>
-          ) : (
-            <MenuOpenIcon />
-          )}
-        </Button>
-      </MenuIconWrapper>
-      {isMobile && (
-        <MenuIconWrapper toggled={menuToggled} style={{ marginBottom: '12px' }}>
-          {!menuToggled && <span>{t('Toggle Theme')}</span>}
-          <Toggle checked={isDark} onChange={toggleTheme} scale="sm" />
-        </MenuIconWrapper>
-      )}
-      <WalletHeading toggled={menuToggled}>
-        <div>
-          <WalletIcon />
-          {!menuToggled && <p>{t('Wallet')}</p>}
-        </div>
-        {!menuToggled && <p>{account ? <BalanceNumber prefix="$ " value={Number(sum).toFixed(2)} /> : ''}</p>}
-      </WalletHeading>
-      {account && !menuToggled ? (
-        <div style={{ width: '100%', padding: `${menuToggled ? '0px 16px' : '0px 24px'}` }}>
-          <TokenListWrapper>{showAllToken ? tokenData : tokenData.slice(0, 3)}</TokenListWrapper>
-          <ButtonWrapper style={menuToggled ? { justifyContent: 'center' } : {}} onClick={handleShowAllToken}>
-            <WalletIcon />
-            {!menuToggled && <p>{showAllToken ? t('Show Some Tokens') : t('Show All Tokens')}</p>}
-          </ButtonWrapper>
-          {removedAssets.length === 0 ? null : (
-            <ButtonWrapper style={menuToggled ? { justifyContent: 'center' } : {}} onClick={showAllRemovedTokens}>
-              <WalletIcon />
-              {!menuToggled && <p>{t('Refresh')}</p>}
-            </ButtonWrapper>
-          )}
-        </div>
-      ) : (
-        ''
-      )}
+      {MemoMenuHeader}
       <MenuContentWrapper toggled={menuToggled}>
-        {links
-          .map((item) => ({
-            ...item,
-            id: uuidv4(),
-          }))
-          .map((link) => {
-            const Icon = link.icon
-            return (
-              <div key={link.id}>
-                {link.href.indexOf('https') === 0 ? (
-                  <>
-                    <MenuItem
-                      className={window.location.pathname == link.href && link.href !== '/' ? 'active' : ''}
-                      target={link.newTab ? '_blank' : ''}
-                      href={link.href}
-                      style={menuToggled ? { justifyContent: 'center' } : {}}
-                      rel="noreferrer"
-                      toggled={menuToggled}
-                    >
-                      <Icon />
-                      {!menuToggled && <p>{t(`${link.label}`)}</p>}
-                    </MenuItem>
-                    <MenuItemMobile
-                      className={window.location.pathname == link.href && link.href !== '/' ? 'active' : ''}
-                      href={link.href}
-                      target={link.newTab ? '_blank' : ''}
-                      onClick={handleMobileMenuItem}
-                    >
-                      <Icon />
-                      <p>{t(`${link.label}`)}</p>
-                    </MenuItemMobile>
-                  </>
-                ) : (
-                  <ReactLink to={link.href.indexOf('https') !== 0 ? link.href : window.location.pathname}>
-                    <MenuItem
-                      className={window.location.pathname == link.href && link.href !== '/' ? 'active' : ''}
-                      target={link.newTab ? '_blank' : ''}
-                      style={menuToggled ? { justifyContent: 'center' } : {}}
-                      rel="noreferrer"
-                      toggled={menuToggled}
-                    >
-                      <Icon />
-                      {!menuToggled && <p>{t(`${link.label}`)}</p>}
-                    </MenuItem>
-                    <MenuItemMobile
-                      className={window.location.pathname == link.href && link.href !== '/' ? 'active' : ''}
-                      target={link.newTab ? '_blank' : ''}
-                      onClick={handleMobileMenuItem}
-                    >
-                      <Icon />
-                      <p>{t(`${link.label}`)}</p>
-                    </MenuItemMobile>
-                  </ReactLink>
-                )}
-              </div>
-            )
-          })}
-        <SocialWrapper>
-          {!menuToggled && <p>{t('Socials')}</p>}
-          <SocialIconsWrapper toggled={menuToggled}>
-            <Link external href="https://twitter.com/sphynxswap?s=21" aria-label="twitter">
-              <IconBox color="#33AAED">
-                <TwitterIcon width="15px" height="15px" />
-              </IconBox>
-            </Link>
-            <Link external href="https://sphynxtoken.co" aria-label="social2">
-              <IconBox color="#710D89">
-                <SocialIcon2 width="15px" height="15px" />
-              </IconBox>
-            </Link>
-            <Link external href="https://t.me/sphynxswap" aria-label="telegram">
-              <IconBox color="#3E70D1">
-                <TelegramIcon width="15px" height="15px" />
-              </IconBox>
-            </Link>
-            <Link external href="https://discord.gg/ZEuDaFk4qz" aria-label="discord">
-              <IconBox color="#2260DA">
-                <DiscordIcon width="15px" height="15px" />
-              </IconBox>
-            </Link>
-            {/* <Link external href="https://instagram.com/sphynxswap?utm_medium=copy_link">
-                <img src={InstaIcon} alt="insta" style={{height: "45px", width: "45px", padding: "8px"}} />
-              </Link> */}
-          </SocialIconsWrapper>
-        </SocialWrapper>
+        {MemoMenuContent}  
         {!isMobile && <Toggle checked={isDark} onChange={toggleTheme} scale="sm" />}
       </MenuContentWrapper>
     </MenuWrapper>
-  )
+  );
 }
 
 export default Menu
