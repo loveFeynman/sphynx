@@ -18,6 +18,7 @@ import { AppState } from 'state'
 import { isAddress } from 'utils'
 import storages from 'config/constants/storages'
 import { setCustomChartType } from 'state/input/actions'
+import { ChainId } from '@sphynxdex/sdk-multichain'
 
 const ChartContainer = styled.div<{ height: number }>`
   position: relative;
@@ -124,8 +125,8 @@ const Chart: React.FC<Partial<ChartContainerProps>> = (props) => {
       onResultReadyCallback(newSymbols)
     },
     resolveSymbol: async (symbolName: any, onSymbolResolvedCallback: any, onResolveErrorCallback: any) => {
-      const exchange = routerVersion === 'sphynx' ? 'SPHYNX DEX' : chainId === 56 ? 'Pancake ' + routerVersion : 'Uniswap ' + routerVersion
-      const quoteSymbol = chainId === 56  ? 'BNB' : 'ETH'
+      const exchange = routerVersion === 'sphynx' ? 'SPHYNX DEX' : chainId === ChainId.ETHEREUM ? 'Uniswap ' + routerVersion : 'Pancake ' + routerVersion
+      const quoteSymbol = chainId === ChainId.MAINNET  ? 'ETH' : 'BNB'
       symbolRef.current = onSymbolResolvedCallback
       getTokenInfo(input, routerVersion, chainId)
       .then(tokenInfo => {
