@@ -65,7 +65,7 @@ const TotalTransactionCollected: React.FC = () => {
           .toFixed(3)
           .replace(/(\d)(?=(\d{3})+\.)/g, '$&,')
         if(new Date().getTime() > 1638792000000) {
-          bnb = parseFloat(bnb) - 0.692
+          bnb = parseFloat(bnb) - 0.694
           if (bnb < 0) {
             bnb = 0
           }
