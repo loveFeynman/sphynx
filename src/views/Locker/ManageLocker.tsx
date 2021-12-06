@@ -128,7 +128,7 @@ const ControlStretch = styled(Flex) <{ isMobile?: boolean }>`
     margin: 12px 0;
     width: 100%;
     max-width: 1000px;
-    background: ${({ theme }) => theme.isDark ? "#0E0E26" : "#2A2E60"};
+    background: ${({ theme }) => theme.isDark ? "#1a1a3a" : "#20234e"};
     > div {
         flex: 1;
         height: 47px;
