@@ -321,6 +321,7 @@ const Menu = () => {
   const { t } = useTranslation()
 
   const isMobile = document.body.clientWidth < 768
+  const isTablet = document.body.clientWidth > 1080
 
   useEffect(() => {
     if (isMobile && !menuToggled) {
@@ -783,14 +784,34 @@ const Menu = () => {
     () => (
         <>
           {
-            linksTemp
-            .map((item) => ({
-              ...item,
-              id: uuidv4(),
-            }))
-            .map((link) => {
-              return (
-                <AppMenuItem  key={link.id} {...link} isMobile={isMobile} handleClickMobileMenu={handleMobileMenuItem}/>
+            (menuToggled && isTablet) ?
+              linksTemp
+              .map((item) => ({
+                ...item,
+                id: uuidv4(),
+              }))
+              .map((link) => {
+                const Icon = link.Icon
+                return (
+                  <MenuItem
+                    className={window.location.pathname == link.link && link.link !== '/' ? 'active' : ''}
+                    href={link.link}
+                    style={menuToggled ? { justifyContent: 'center' } : {}}
+                    rel="noreferrer"
+                    toggled={menuToggled}
+                  >
+                    <Icon />
+                  </MenuItem>
+                )
+              }) :
+              linksTemp
+              .map((item) => ({
+                ...item,
+                id: uuidv4(),
+              }))
+              .map((link) => {
+                return (
+                  <AppMenuItem  key={link.id} {...link} isMobile={isMobile} handleClickMobileMenu={handleMobileMenuItem}/>
               )
             })
           }
