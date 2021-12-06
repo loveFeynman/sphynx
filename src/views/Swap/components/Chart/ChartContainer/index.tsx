@@ -48,6 +48,7 @@ export interface ChartContainerProps {
   tokenAddress: string
   priceScale: number
   routerVersion: string
+  chainId: number
 }
 
 const ChartContainerProps = {
@@ -76,9 +77,9 @@ let currentResolutions: any
 
 const Chart: React.FC<Partial<ChartContainerProps>> = (props) => {
   const dispatch = useDispatch()
-  const { account, chainId } = useActiveWeb3React()
+  const { account } = useActiveWeb3React()
   const input = props.tokenAddress
-  const routerVersion = props.routerVersion
+  const {routerVersion, chainId} = props
   const customChartType = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.customChartType)
   const result = isAddress(input)
   const symbolRef = React.useRef(null)
@@ -412,7 +413,7 @@ const Chart: React.FC<Partial<ChartContainerProps>> = (props) => {
           })
       })
     })
-  }, [input, dispatch, routerVersion])
+  }, [input, dispatch, routerVersion, chainId])
 
   return (
     <ChartContainer height={props.height}>

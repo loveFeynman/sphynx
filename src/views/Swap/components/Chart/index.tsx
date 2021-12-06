@@ -29,7 +29,7 @@ const ArrowWrapper = styled.div`
   }
 `
 
-const ChartContainer = ({tokenAddress, tokenData, routerVersion}) => {
+const ChartContainer = ({tokenAddress, tokenData, routerVersion, chainId}) => {
   const input = tokenAddress
 
   const draggableArrow = React.useRef<any>(null)
@@ -50,7 +50,7 @@ const ChartContainer = ({tokenAddress, tokenData, routerVersion}) => {
 
   return (
     <Wrapper>
-      <Chart tokenAddress={input} height={chartHeight} routerVersion={routerVersion} />
+      <Chart tokenAddress={input} height={chartHeight} routerVersion={routerVersion} chainId={chainId} />
       <UpDownArrowBox>
         <ArrowWrapper
           ref={draggableArrow}
