@@ -32,6 +32,7 @@ const GridHeaderItem = styled.div`
 `
 
 const BulletList = styled.ul`
+  text-align: left;
   list-style-type: none;
   margin: 0;
   padding: 0;
@@ -39,11 +40,6 @@ const BulletList = styled.ul`
   li {
     margin: 0;
     padding: 0;
-  }
-
-  li::before {
-    content: '•';
-    margin-right: 4px;
   }
 
   li::marker {

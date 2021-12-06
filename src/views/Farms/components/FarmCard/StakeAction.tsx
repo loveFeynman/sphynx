@@ -2,6 +2,7 @@ import React, { useCallback } from 'react'
 import { useWeb3React } from '@web3-react/core'
 import styled from 'styled-components'
 import BigNumber from 'bignumber.js'
+import { ColorButtonStyle } from 'style/buttonStyle'
 import { Button, Flex, Heading, IconButton, AddIcon, MinusIcon, useModal } from '@sphynxdex/uikit'
 import { useLocation } from 'react-router-dom'
 import Balance from 'components/Balance'
@@ -28,6 +29,10 @@ const IconButtonWrapper = styled.div`
   svg {
     width: 20px;
   }
+`
+
+const Wrapper = styled.div`
+  margin-left: 12px;
 `
 
 const StakeAction: React.FC<FarmCardActionsProps> = ({
@@ -78,6 +83,7 @@ const StakeAction: React.FC<FarmCardActionsProps> = ({
       <Button
         onClick={onPresentDeposit}
         disabled={['history', 'archived'].some((item) => location.pathname.includes(item))}
+        style={ColorButtonStyle}
       >
         {t('Stake LP')}
       </Button>
@@ -112,7 +118,9 @@ const StakeAction: React.FC<FarmCardActionsProps> = ({
           />
         )}
       </Flex>
+      <Wrapper>
       {renderStakingButtons()}
+      </Wrapper>
     </Flex>
   )
 }
