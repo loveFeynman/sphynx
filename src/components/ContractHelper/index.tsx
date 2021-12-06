@@ -15,8 +15,7 @@ const ImageWrapper = styled.div`
 `
 
 const ContractHelper: React.FC<Props> = ({ text, ...props }) => {
-  const { width } = window.screen;
-  const { targetRef, tooltip, tooltipVisible } = useTooltip(text, { placement: width > 768 ? 'top-start' : 'top-end', trigger: 'hover' })
+  const { targetRef, tooltip, tooltipVisible } = useTooltip(text, { placement: document.body.clientWidth > 768 ? 'top-start' : 'top-end', trigger: 'hover' })
 
   return (
     <Box {...props}>

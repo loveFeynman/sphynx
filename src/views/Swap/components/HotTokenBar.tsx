@@ -253,7 +253,7 @@ export default function HotTokenBar() {
                   )
                 })}
               </ul>
-              <div style={{ width: window.screen.width > 1080 ? '720px' : window.screen.width * 0.7 + 'px' }} />
+              <div style={{ width: document.body.clientWidth > 1080 ? '720px' : document.body.clientWidth * 0.7 + 'px' }} />
             </>
           </Marquee>
           {/* {loader ? (
