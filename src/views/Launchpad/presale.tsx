@@ -932,7 +932,7 @@ const Presale: React.FC = () => {
                 <InlineWrapper>
                   <p className="description w110">Presale Start Time</p>
                   <KeyboardDateTimePicker
-                    format="yyyy-MM-dd hh:mm:ss"
+                    format="yyyy-MM-dd HH:mm:ss"
                     value={presaleStart}
                     onChange={(date, value) => setPresaleStart(date)}
                   />
@@ -941,7 +941,7 @@ const Presale: React.FC = () => {
                 <InlineWrapper>
                   <p className="description w110">Presale End Time</p>
                   <KeyboardDateTimePicker
-                    format="yyyy-MM-dd hh:mm:ss"
+                    format="yyyy-MM-dd HH:mm:ss"
                     value={presaleEnd}
                     onChange={(date, value) => setPresaleEnd(date)}
                   />
@@ -952,7 +952,7 @@ const Presale: React.FC = () => {
                 <InlineWrapper>
                   <p className="description w110">Tier1 Time</p>
                   <KeyboardDateTimePicker
-                    format="yyyy-MM-dd hh:mm:ss"
+                    format="yyyy-MM-dd HH:mm:ss"
                     value={tier1Time}
                     onChange={(date, value) => setTier1Time(date)}
                   />
@@ -961,7 +961,7 @@ const Presale: React.FC = () => {
                 <InlineWrapper>
                   <p className="description w110">Tier2 Time</p>
                   <KeyboardDateTimePicker
-                    format="yyyy-MM-dd hh:mm:ss"
+                    format="yyyy-MM-dd HH:mm:ss"
                     value={tier2Time}
                     onChange={(date, value) => setTier2Time(date)}
                   />
@@ -972,7 +972,7 @@ const Presale: React.FC = () => {
                 <InlineWrapper>
                   <p className="description w110">Liquidity Lockup Time</p>
                   <KeyboardDateTimePicker
-                    format="yyyy-MM-dd hh:mm:ss"
+                    format="yyyy-MM-dd HH:mm:ss"
                     value={liquidityLock}
                     onChange={(date, value) => setLiquidityLock(date)}
                   />

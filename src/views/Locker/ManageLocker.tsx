@@ -508,7 +508,7 @@ const ManageLocker: React.FC = () => {
           <InlineWrapper>
             <p className="description w110">UnLockup Time</p>
             <KeyboardDateTimePicker
-              format="yyyy-MM-dd hh:mm:ss"
+              format="yyyy-MM-dd HH:mm:ss"
               value={unLock}
               onChange={(date, value) => setUnLock(date)}
             />

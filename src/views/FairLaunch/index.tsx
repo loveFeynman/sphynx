@@ -596,7 +596,7 @@ const Presale: React.FC = () => {
                 <InlineWrapper>
                   <p className="description w110">Fair Launch Start Time</p>
                   <KeyboardDateTimePicker
-                    format="yyyy-MM-dd hh:mm:ss"
+                    format="yyyy-MM-dd HH:mm:ss"
                     value={launchTime}
                     onChange={(date, value) => setLaunchTime(date)}
                   />
@@ -605,7 +605,7 @@ const Presale: React.FC = () => {
                 <InlineWrapper>
                   <p className="description w110">Liquidity Unlock Time</p>
                   <KeyboardDateTimePicker
-                    format="yyyy-MM-dd hh:mm:ss"
+                    format="yyyy-MM-dd HH:mm:ss"
                     value={unlockTime}
                     onChange={(date, value) => setUnlockTime(date)}
                   />
