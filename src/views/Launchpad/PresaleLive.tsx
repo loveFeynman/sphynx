@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react'
-import styled from 'styled-components'
+import styled, { keyframes } from 'styled-components'
 import { useHistory } from 'react-router-dom'
-import { Button, Text, Flex, Link } from '@sphynxdex/uikit'
+import { Button, Text, Flex, Link, AutoRenewIcon } from '@sphynxdex/uikit'
 import { useTranslation } from 'contexts/Localization'
 import { useMenuToggle } from 'state/application/hooks'
 import { ERC20_ABI } from 'config/abi/erc20'
@@ -10,6 +10,7 @@ import { ReactComponent as WarningIcon2 } from 'assets/svg/icon/WarningIcon2.svg
 import { ReactComponent as SettingIcon } from 'assets/svg/icon/SettingIcon.svg'
 import { ReactComponent as StopwatchIcon } from 'assets/svg/icon/StopwatchIcon1.svg'
 import { ReactComponent as LightIcon } from 'assets/svg/icon/LightIcon.svg'
+import useToast from 'hooks/useToast'
 import LikeIcon from 'assets/images/LikeIcon.png'
 import DislikeIcon from 'assets/images/DislikeIcon.png'
 import HillariousIcon from 'assets/images/HillariousIcon.png'
@@ -22,12 +23,20 @@ import * as ethers from 'ethers'
 import { getPresaleAddress } from 'utils/addressHelpers'
 import TimerComponent from 'components/Timer/TimerComponent'
 
-
 import { ReactComponent as TwitterIcon } from 'assets/svg/icon/TwitterIcon.svg'
 import { ReactComponent as SocialIcon2 } from 'assets/svg/icon/SocialIcon2.svg'
 import { ReactComponent as TelegramIcon } from 'assets/svg/icon/TelegramIcon.svg'
 import { ReactComponent as DiscordIcon } from 'assets/svg/icon/DiscordIcon.svg'
 
+const rotate = keyframes`
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+`
 
 const Wrapper = styled.div`
   display: flex;
@@ -43,6 +52,9 @@ const Wrapper = styled.div`
   }
   ${({ theme }) => theme.mediaQueries.sm} {
     padding: 24px;
+  }
+  .pendingTx {
+    animation: ${rotate} 2s linear infinite;
   }
 `
 
@@ -531,6 +543,7 @@ const PresaleLive: React.FC = () => {
   const param: any = useParams()
   const { t } = useTranslation()
   const history = useHistory()
+  const { toastSuccess, toastError } = useToast()
   const { menuToggled } = useMenuToggle()
   const [presaleStatus, setPresaleStatus] = useState(false)
   const { library, account, chainId } = useActiveWeb3React()
@@ -552,6 +565,9 @@ const PresaleLive: React.FC = () => {
   const [publicSale, setPublicSale] = useState(false)
   const [endSale, setendSale] = useState(false)
   const [failedSale, setFailedSale] = useState(false)
+  const [pendingContribute, setPendingContribute] = useState(false)
+  const [pendingClaim, setPendingClaim] = useState(false)
+  const [pendingWithdraw, setPendingWithdraw] = useState(false)
   const presaleAddress = getPresaleAddress()
   const timerRef = useRef<NodeJS.Timeout>()
   const PRESALE_DATA = [
@@ -569,9 +585,10 @@ const PresaleLive: React.FC = () => {
     },
     {
       presaleItem: 'Tokens For Liquidity:',
-      presaleValue: `${tokenData &&
+      presaleValue: `${
+        tokenData &&
         (tokenData.listing_rate * tokenData.hard_cap * (tokenData.router_rate + tokenData.default_router_rate)) / 100
-        } ${tokenData && tokenData.token_symbol}`,
+      } ${tokenData && tokenData.token_symbol}`,
     },
     {
       presaleItem: 'Soft Cap:',
@@ -710,29 +727,66 @@ const PresaleLive: React.FC = () => {
     setContribute(e.target.value)
   }
 
-  const handleComponent = async () => {
-    const isValue = !Number.isNaN(parseInt(param.saleId))
-    if (isValue && parseFloat(contribute) > 0 && tokenData) {
-      const value = ethers.utils.parseEther(contribute)
-      const tx = await presaleContract.contribute(param.saleId, { value })
-      const receipt = await tx.wait()
-      if (receipt.status === 1) {
-        axios.post(`${process.env.REACT_APP_BACKEND_API_URL2}/contribute`, { saleId: param.saleId, chainId })
-          .then((res) => {
-            console.log("response", res)
-          })
+  const handleContribute = async () => {
+    try {
+      const isValue = !Number.isNaN(parseInt(param.saleId))
+      if (isValue && parseFloat(contribute) > 0 && tokenData) {
+        const value = ethers.utils.parseEther(contribute)
+        setPendingContribute(true)
+        const tx = await presaleContract.contribute(param.saleId, { value })
+        const receipt = await tx.wait()
+        if (receipt.status === 1) {
+          axios
+            .post(`${process.env.REACT_APP_BACKEND_API_URL2}/contribute`, { saleId: param.saleId, chainId })
+            .then((res) => {
+              console.log('response', res)
+            })
+        }
+        setPendingContribute(false)
+        toastSuccess("Success", "Operation successfully!")
+      }
+    } catch (err) {
+      setPendingContribute(false)
+      if (err.data) {
+        toastError('Failed', err.data.message)
+      } else {
+        toastError('Failed', err.message)
       }
     }
   }
 
   const handleClaimToken = async () => {
-    const tx = await presaleContract.claimToken(param.saleId)
-    await tx.wait()
+    try {
+      setPendingClaim(true)
+      const tx = await presaleContract.claimToken(param.saleId)
+      await tx.wait()
+      setPendingClaim(false)
+      toastSuccess("Success", "Operation successfully!")
+    } catch (err) {
+      setPendingClaim(false)
+      if (err.data) {
+        toastError('Failed', err.data.message)
+      } else {
+        toastError('Failed', err.message)
+      }
+    }
   }
 
   const handleEmergencyWithdraw = async () => {
-    const tx = await presaleContract.emergencyWithdraw(param.saleId)
-    await tx.wait()
+    try {
+      setPendingWithdraw(true)
+      const tx = await presaleContract.emergencyWithdraw(param.saleId)
+      await tx.wait()
+      setPendingWithdraw(false)
+      toastSuccess("Success", "Operation successfully!")
+    } catch (err) {
+      setPendingWithdraw(false)
+      if (err.data) {
+        toastError('Failed', err.data.message)
+      } else {
+        toastError('Failed', err.message)
+      }
+    }
   }
 
   const toSphynxSwap = () => {
@@ -857,7 +911,10 @@ const PresaleLive: React.FC = () => {
                         <InputWrapper>
                           <input placeholder="" onChange={handlerChange} />
                         </InputWrapper>
-                        <ColorButton onClick={handleComponent}>Contribute</ColorButton>
+                        <ColorButton onClick={handleContribute} disabled={pendingContribute}>
+                          Contribute
+                          {pendingContribute && <AutoRenewIcon className="pendingTx" />}
+                        </ColorButton>
                       </ContributeFlex>
                       <Flex alignItems="center" style={{ width: '100%' }}>
                         <StopwatchIcon />
@@ -865,16 +922,16 @@ const PresaleLive: React.FC = () => {
                           {privateSale1
                             ? 'Private sale 1 ends in'
                             : privateSale2
-                              ? 'Private sale 2 ends in'
-                              : 'Public sale ends in'}{' '}
+                            ? 'Private sale 2 ends in'
+                            : 'Public sale ends in'}{' '}
                         </Text>
                         <TimerComponent
                           time={
                             tokenData && privateSale1
                               ? tokenData?.tier1_time
                               : privateSale2
-                                ? tokenData?.tier2_time
-                                : tokenData?.end_time
+                              ? tokenData?.tier2_time
+                              : tokenData?.end_time
                           }
                         />
                       </Flex>
@@ -893,9 +950,10 @@ const PresaleLive: React.FC = () => {
                         mt="16px"
                         mb="16px"
                         onClick={handleClaimToken}
-                        disabled={isClaimed}
+                        disabled={isClaimed || pendingClaim}
                       >
                         Claim BNB
+                        {pendingClaim && <AutoRenewIcon className="pendingTx" />}
                       </ColorButton>
                     </>
                   )
@@ -920,8 +978,9 @@ const PresaleLive: React.FC = () => {
                       mt="16px"
                       mb="16px"
                       onClick={handleClaimToken}
-                      disabled={isClaimed}
+                      disabled={isClaimed || pendingClaim}
                     >
+                      {pendingClaim && <AutoRenewIcon className="pendingTx" />}
                       Claim Token
                     </ColorButton>
                   </>
@@ -946,7 +1005,10 @@ const PresaleLive: React.FC = () => {
                 {!presaleStatus && !failedSale ? (
                   <>
                     <Separate />
-                    <DarkButton onClick={handleEmergencyWithdraw}>Emergency Withdraw</DarkButton>
+                    <DarkButton onClick={handleEmergencyWithdraw} disabled={pendingWithdraw} >
+                      Emergency Withdraw
+                      {pendingWithdraw && <AutoRenewIcon className="pendingTx" />}
+                    </DarkButton>
                   </>
                 ) : (
                   ''
@@ -1020,9 +1082,7 @@ const PresaleLive: React.FC = () => {
               </ItemContainer>
               <Separate />
               <Link external href="https://discord.gg/ZEuDaFk4qz" aria-label="discord">
-                <ColorButton style={{width: '180px'}}>
-                  Join Community
-                </ColorButton>
+                <ColorButton style={{ width: '180px' }}>Join Community</ColorButton>
               </Link>
             </ThinkCardWrapper>
           </SubCardWrapper>

@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'contexts/Localization'
-import { Text, Flex, useMatchBreakpoints, Button } from '@sphynxdex/uikit'
+import { Text, Flex, useMatchBreakpoints, Button, AutoRenewIcon } from '@sphynxdex/uikit'
 import { ReactComponent as MainLogo } from 'assets/svg/icon/logo_new.svg'
 import { KeyboardDateTimePicker, MuiPickersUtilsProvider } from '@material-ui/pickers'
 import DateFnsUtils from '@date-io/date-fns'
-import styled from 'styled-components'
+import styled, { keyframes } from 'styled-components'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import * as ethers from 'ethers'
 import { ERC20_ABI } from 'config/abi/erc20'
 import { isAddress } from '@ethersproject/address'
 import axios from 'axios'
-import { simpleRpcProvider } from 'utils/providers'
 import { MaxUint256 } from '@ethersproject/constants'
 import { getLockerContract } from 'utils/contractHelpers'
 import { useHistory } from 'react-router-dom'
@@ -22,6 +21,16 @@ import { DarkButtonStyle, ColorButtonStyle } from 'style/buttonStyle'
 import { getLockerAddress } from 'utils/addressHelpers'
 /* eslint-disable camelcase */
 import LPToken_ABI from 'config/abi/lpToken.json'
+
+const rotate = keyframes`
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+`
 
 const Wrapper = styled.div`
   display: flex;
@@ -62,6 +71,9 @@ const Wrapper = styled.div`
   }
   ${({ theme }) => theme.mediaQueries.xs} {
     padding: 24px;
+  }
+  .pendingTx {
+    animation: ${rotate} 2s linear infinite;
   }
 `
 
@@ -171,6 +183,8 @@ const ManageLocker: React.FC = () => {
   const [percent, setPercent] = useState(0)
   const [isApprove, setIsApprove] = useState(false)
   const [isSubmit, setIsSubmit] = useState(false)
+  const [pendingApprove, setPendingApprove] = useState(false)
+  const [pendingSubmit, setPendingSubmit] = useState(false)
   const options = [
     {
       label: t('No vesting, all tokens will be released at unlock time!'),
@@ -372,15 +386,20 @@ const ManageLocker: React.FC = () => {
 
   const handleApproveClick = async () => {
     try {
+      setPendingApprove(true)
       const abi: any = ERC20_ABI
       const tokenContract = new ethers.Contract(tokenAddress, abi, signer)
       tokenContract.approve(getLockerAddress(), MaxUint256)
         .then((res) => {
           setIsApprove(false)
           setIsSubmit(true)
+          setPendingApprove(false)
+          toastSuccess("Success", "Operation successfully!")
         })
 
     } catch (err) {
+      setPendingApprove(false)
+      toastError("Failed", err.message)
       console.log('error', err.message)
       setName('')
       setSymbol('')
@@ -392,6 +411,7 @@ const ManageLocker: React.FC = () => {
 
   const handleSubmitClick = async () => {
     try {
+      setPendingSubmit(true)
       const lockId = (await lockContract.currentLockId()).toString()
       const lockTime = Math.floor((new Date(unLock).getTime() / 1000))
       const lockAmount = ethers.utils.parseUnits(( userBalance * percent / 100).toString(), tokenDecimals)
@@ -424,10 +444,13 @@ const ManageLocker: React.FC = () => {
               toastError('Failed!', 'Your action is failed.')
             }
           })
+          setPendingSubmit(false)
         })
     }
     catch (err) {
       console.log('error', err)
+      setPendingSubmit(false)
+      toastError('Failed!', 'Your action is failed.')
     }
   }
 
@@ -532,18 +555,20 @@ const ManageLocker: React.FC = () => {
           <Sperate />
           <Button
             onClick={handleApproveClick}
-            disabled={!isApprove}
+            disabled={!isApprove || pendingApprove}
             mr="20px"
             style={DarkButtonStyle}
           >
             {t('Approve')}
+            {pendingApprove && <AutoRenewIcon className="pendingTx" />}
           </Button>
           <Button
             onClick={handleSubmitClick}
-            disabled={!isSubmit}
+            disabled={!isSubmit || pendingSubmit}
             style={ColorButtonStyle}
           >
             {t('Submit')}
+            {pendingSubmit && <AutoRenewIcon className="pendingTx" />}
           </Button>
           <Sperate />
           {/* <Text color='#E93F33'>For tokens with special transfers burns, tax or other fees make sure the DxLock address is whitelisted(excludeFromFee) before you deposit or you won&apos;t be able to withdraw!
