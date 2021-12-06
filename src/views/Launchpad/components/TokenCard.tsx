@@ -5,7 +5,7 @@ import { useHistory } from 'react-router-dom'
 import { useWeb3React } from '@web3-react/core'
 import TimerComponent from 'components/Timer/TimerComponent'
 import ContractHelper from 'components/ContractHelper';
-import DefaultLogoIcon from 'assets/images/defaultTokenIcon.png'
+import DefaultLogoIcon from 'assets/images/MainLogo.png'
 
 const CardWrapper = styled.div`
   background: ${({ theme }) => (theme.isDark ? '#040413' : '#2A2E60')};
