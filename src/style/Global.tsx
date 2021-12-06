@@ -58,9 +58,6 @@ const GlobalStyle = createGlobalStyle`
   button {
     outline: none !important;
   }
-  .sc-gInthZ {
-    background: ${({ theme }) => (theme.isDark ? '#27262c !important' : '#191c41 !important')};
-  }
   .eTJGWm {
     background: ${({ theme }) => (theme.isDark ? '#27262c !important' : '#191c41 !important')};
     border: ${({ theme }) => (theme.isDark ? '' : '1px solid #2E2E55 !important')}; 
