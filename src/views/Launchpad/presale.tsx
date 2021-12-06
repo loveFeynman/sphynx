@@ -751,8 +751,8 @@ const Presale: React.FC = () => {
               <MyInput
                 onChange={(e) => setSphynxLiquidityRate(e.target.value)}
                 value={sphynxLiquidityRate}
-                style={{ width: '100%' }}
               />
+              &nbsp; %
               <Sperate />
               <InlineWrapper>
                 <LineBtn onClick={() => setStep(4)}>Back</LineBtn>
@@ -770,8 +770,8 @@ const Presale: React.FC = () => {
               <MyInput
                 onChange={(e) => setPancakeLiquidityRate(e.target.value)}
                 value={pancakeLiquidityRate}
-                style={{ width: '100%' }}
               />
+              &nbsp; %
               <Sperate />
               <InlineWrapper>
                 <LineBtn onClick={() => setStep(5)}>Back</LineBtn>
@@ -783,10 +783,10 @@ const Presale: React.FC = () => {
             <Sperate />
             <StepWrapper number="7" stepName="Sphynx/Pancake Listing Rate" step={step} onClick={() => setStep(7)}>
               <p className="description">
-                Enter the SphynxSwap listing price: (If I buy 1 BNB worth on SphynxSwap how many tokens do I get?
-                Usually this amount is lower than presale rate to allow for a higher listing price on SphynxSwap)
+                Enter the SphynxSwap listing price: (If I buy 1 BNB worth on Swap how many tokens do I get?
+                Usually this amount is lower than presale rate to allow for a higher listing price on Swap)
               </p>
-              <MyInput onChange={(e) => setListingRate(e.target.value)} value={listingRate} style={{ width: '100%' }} />
+              <MyInput onChange={(e) => setListingRate(e.target.value)} value={listingRate} />
               <Sperate />
               <InlineWrapper>
                 <LineBtn onClick={() => setStep(6)}>Back</LineBtn>
