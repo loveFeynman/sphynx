@@ -58,6 +58,9 @@ const GlobalStyle = createGlobalStyle`
   button {
     outline: none !important;
   }
+  div.jHeWKE {
+    background: ${({ theme }) => (theme.isDark ? '#27262c !important' : '#191c41 !important')};
+  }
   div.gaKhZj {
     background: ${({ theme }) => (theme.isDark ? '#27262c !important' : '#191c41 !important')};
   }

@@ -1,6 +1,6 @@
 import React from 'react'
 import { useTranslation } from 'contexts/Localization'
-import { Text, Flex, Box, useMatchBreakpoints } from '@sphynxdex/uikit'
+import { Text, Flex, Box } from '@sphynxdex/uikit'
 import { ReactComponent as MainLogo } from 'assets/svg/icon/logo_new.svg'
 import styled, { useTheme } from 'styled-components'
 import { SwapTabs, SwapTabList, SwapTab, SwapTabPanel } from "components/Tab/tab";
