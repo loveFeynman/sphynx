@@ -380,7 +380,7 @@ const Presale: React.FC = () => {
         setName(name)
         setSymbol(symbol)
         setDecimal(decimals)
-        setBalanceAmount(ethers.utils.formatUnits(balance))
+        setBalanceAmount(ethers.utils.formatUnits(balance, decimals))
         setTotalSupply(ethers.utils.formatUnits(total, decimals))
       } catch (err) {
         console.log('error', err.message)

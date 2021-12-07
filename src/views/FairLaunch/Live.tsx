@@ -439,14 +439,14 @@ const FairLaunchLive: React.FC = () => {
         setStatusDescription("FairLaunch is upcoming!");
       } else if (isLaunched) {
         setStatusDescription("FairLaunch has already launched! Use the links below to trade the token.");
-      } else if (now > parseInt(fairLaunchData.launch_time) && now < parseInt(fairLaunchData.launch_time) + 600) {
+      } else if (parseInt(fairLaunchData.launch_time) <= now && now <= parseInt(fairLaunchData.launch_time) + 600) {
         setStatusDescription("FairLaunch is active!");
       } else {
         setStatusDescription("FairLaunch is failed!");
       }
     }
     fetchData()
-  }, [isLaunched])
+  }, [isLaunched, fairLaunchData])
 
   return (
     <Wrapper>
@@ -509,7 +509,7 @@ const FairLaunchLive: React.FC = () => {
               </CustomContract>
             </TokenAddressContainer>
             <Separate />
-            <LaunchNotifyText color="#A7A7CC" bold >
+            <LaunchNotifyText bold >
               {statusDescription}
             </LaunchNotifyText>
             <Separate />
@@ -537,7 +537,7 @@ const FairLaunchLive: React.FC = () => {
               </DataItem>
               <DataItem>
                 <Text>Listing Rate</Text>
-                <Text>{fairLaunchData.token_amount / fairLaunchData.native_amount} BNB</Text>
+                <Text>{fairLaunchData.token_amount / fairLaunchData.native_amount} {fairLaunchData.token_symbol}/BNB</Text>
               </DataItem>
               <DataItem>
                 <Text>Launch Time</Text>

@@ -198,12 +198,15 @@ const FairLaunchManage: React.FC = () => {
   const [redditLink, setRedditLink] = useState('')
   const [telegramLink, setTelegramLink] = useState('')
   const [launchTime, setLaunchTime] = useState('')
+  const [unlockTime, setUnlockTime] = useState('')
   const [projectDec, setProjectDec] = useState('')
   const [updateDec, setUpdateDec] = useState('')
   const [isLaunched, setIsLaunched] = useState(false)
   const [launchStatus, setLaunchStatus] = useState('')
   const [routerAddress, setRouterAddress] = useState('')
   const [isAvailableLaunch, setIsAvailableLaunch] = useState(false)
+  const [isUnlocked, setIsUnlocked] = useState(false)
+  const [pendingLiquidity, setPendingLiquidity] = useState(false)
   const [isCanceled, setIsCanceled] = useState(false)
   const [isWithdrawToken, setIsWithdrawToken] = useState(false)
   const [isWithdrawBNB, setIsWithdrawBNB] = useState(false)
@@ -212,6 +215,7 @@ const FairLaunchManage: React.FC = () => {
   const [pendingWithdrawToken, setPendingWithdrawToken] = useState(false)
   const [pendingWithdrawNative, setPendingWithdrawNative] = useState(false)
   const { toastSuccess, toastError } = useToast()
+  const now = Math.floor(new Date().getTime() / 1000)
 
   const fairLaunchContract = useMemo(() => getFairLaunchContract(signer), [signer])
 
@@ -257,6 +261,20 @@ const FairLaunchManage: React.FC = () => {
     }
   }
 
+  const handleWithdrawLiquidity = async () => {
+    setPendingLiquidity(true)
+    try {
+      const tx = await fairLaunchContract.unlock(parseInt(param.launchId))
+      await tx.wait()
+      setIsUnlocked(true)
+      setPendingLiquidity(false)
+      toastSuccess('Success', 'Operation successfully!')
+    } catch (err) {
+      setPendingLiquidity(false)
+      toastSuccess('Failed', 'Your action is failed!')
+    }
+  }
+
   const handleLaunchToken = async () => {
     setPendingLaunch(true)
     try {
@@ -295,7 +313,6 @@ const FairLaunchManage: React.FC = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const now = Math.floor(new Date().getTime() / 1000)
       let item = ''
       if (parseInt(launchTime) > now) {
         item = 'Upcoming'
@@ -325,6 +342,9 @@ const FairLaunchManage: React.FC = () => {
       fairLaunchContract.isLaunched(parseInt(param.launchId)).then((response) => {
         setIsLaunched(response)
       })
+      fairLaunchContract.isUnlocked(parseInt(param.launchId)).then((response) => {
+        setIsUnlocked(response)
+      })
     }
 
     fetchData()
@@ -351,6 +371,7 @@ const FairLaunchManage: React.FC = () => {
             setTokenSymbol(data.token_symbol)
             setTokenAddress(data.token_address)
             setLaunchTime(data.launch_time)
+            setUnlockTime(data.lock_time)
           }
           const fetchContractData = async () => {
             const isLaunchedFromContract = await fairLaunchContract.isLaunched(launchId.toString())
@@ -386,7 +407,7 @@ const FairLaunchManage: React.FC = () => {
           </p>
           <Sperate />
           <Notification>
-            SphynxSwap Router Address: {routerAddress}
+            Router Address: {routerAddress}
             <Sperate />
             - The launch button will become available once your listing countdown ends.
             <br />
@@ -420,7 +441,14 @@ const FairLaunchManage: React.FC = () => {
               </Button>
             </>
           ) : isLaunched ? (
-            <Notification> Successful Launched! </Notification>
+            <Button
+              disabled={isUnlocked || pendingLiquidity || parseInt(unlockTime) >= now}
+              mt="20px"
+              onClick={handleWithdrawLiquidity}
+            >
+              WITHDRAW Liquidity
+              {pendingLiquidity && <AutoRenewIcon className="pendingTx" />}
+            </Button>
           ) : (
             <>
               {/* <Button disabled={!isAvailableLaunch} onClick={handleLaunchToken} mr="20px" mt="20px"> */}
