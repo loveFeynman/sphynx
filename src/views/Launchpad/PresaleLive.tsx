@@ -23,8 +23,12 @@ import * as ethers from 'ethers'
 import { getPresaleAddress } from 'utils/addressHelpers'
 import TimerComponent from 'components/Timer/TimerComponent'
 
+import DefaultLogoIcon from 'assets/images/MainLogo.png'
 import { ReactComponent as TwitterIcon } from 'assets/svg/icon/TwitterIcon.svg'
 import { ReactComponent as SocialIcon2 } from 'assets/svg/icon/SocialIcon2.svg'
+import GitIcon from 'assets/images/githubIcon.png'
+import { ReactComponent as TwitterIcon } from 'assets/svg/icon/TwitterIcon.svg'
+import RedditIcon from 'assets/images/redditIcon.png'
 import { ReactComponent as TelegramIcon } from 'assets/svg/icon/TelegramIcon.svg'
 import { ReactComponent as DiscordIcon } from 'assets/svg/icon/DiscordIcon.svg'
 
@@ -528,6 +532,7 @@ const SocialIconsWrapper = styled.div`
   gap: 10px;
   flex-direction: row;
   align-items: center;
+  justify-content: center;
 `
 
 const IconBox = styled.div<{ color?: string }>`
@@ -846,7 +851,7 @@ const PresaleLive: React.FC = () => {
         <TokenPresaleContainder toggled={menuToggled}>
           <MainCardWrapper>
             <TokenContainer>
-              <img src={tokenData && tokenData.logo_link} width="64px" height="64px" alt="token icon" />
+              <img src={tokenData && (tokenData.logo_link === "" ? DefaultLogoIcon : tokenData.logo_link)} width="64px" height="64px" alt="token icon" />
               <TokenSymbolWrapper>
                 <TokenSymbol>{tokenData && tokenData.token_symbol}</TokenSymbol>
                 <TokenName>{tokenData && tokenData.token_name}</TokenName>
@@ -1042,28 +1047,34 @@ const PresaleLive: React.FC = () => {
                 ),
               )}
             </ContributeWrapper>
-            {/* <SocialIconsWrapper>
-            <Link external href="https://sphynxtoken.co" aria-label="social2">
-              <IconBox color="#710D89">
-                <SocialIcon2 width="15px" height="15px" />
-              </IconBox>
-            </Link>
-            <Link external href="https://discord.gg/ZEuDaFk4qz" aria-label="discord">
-              <IconBox color="#2260DA">
-                <DiscordIcon width="15px" height="15px" />
-              </IconBox>
-            </Link>
-            <Link external href="https://twitter.com/sphynxswap?s=21" aria-label="twitter">
-              <IconBox color="#33AAED">
-                <TwitterIcon width="15px" height="15px" />
-              </IconBox>
-            </Link>
-            <Link external href="https://t.me/sphynxswap" aria-label="telegram">
-              <IconBox color="#3E70D1">
-                <TelegramIcon width="15px" height="15px" />
-              </IconBox>
-            </Link>
-          </SocialIconsWrapper> */}
+            <Separate />
+            <SocialIconsWrapper>
+              <Link external href={tokenData&&tokenData.website_link} aria-label="social2">
+                <IconBox color="#710D89">
+                  <SocialIcon2 width="15px" height="15px" />
+                </IconBox>
+              </Link>
+              <Link external href={tokenData&&tokenData.github_link} aria-label="social2">
+                <IconBox color="#3f4492">
+                  <img src={GitIcon} alt='Git Logo' width="15px" height="15px" />
+                </IconBox>
+              </Link>
+              <Link external href={tokenData&&tokenData.twitter_link} aria-label="twitter">
+                <IconBox color="#33AAED">
+                  <TwitterIcon width="15px" height="15px" />
+                </IconBox>
+              </Link>
+              <Link external href={tokenData&&tokenData.reddit_link} aria-label="discord">
+                <IconBox color="#2260DA">
+                <img src={RedditIcon} alt='Git Logo' width="15px" height="15px" />
+                </IconBox>
+              </Link>
+              <Link external href={tokenData&&tokenData.telegram_link} aria-label="telegram">
+                <IconBox color="#3E70D1">
+                  <TelegramIcon width="15px" height="15px" />
+                </IconBox>
+              </Link>
+            </SocialIconsWrapper>
           </MainCardWrapper>
           <SubCardWrapper>
             <ThinkCardWrapper>
@@ -1093,7 +1104,9 @@ const PresaleLive: React.FC = () => {
               </ItemContainer>
               <Separate />
               <Link external href="https://discord.gg/ZEuDaFk4qz" aria-label="discord">
-                <ColorButton style={{ width: '180px' }}>Join Community</ColorButton>
+                <ColorButton style={{ width: '180px' }}>
+                  Join Community
+                </ColorButton>
               </Link>
             </ThinkCardWrapper>
           </SubCardWrapper>
