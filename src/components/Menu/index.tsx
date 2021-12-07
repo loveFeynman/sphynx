@@ -811,7 +811,7 @@ const Menu = () => {
               }))
               .map((link) => {
                 return (
-                  <AppMenuItem  key={link.id} {...link} isMobile={isMobile} handleClickMobileMenu={handleMobileMenuItem}/>
+                  <AppMenuItem  key={link.id} {...link} isMobile={!isTablet} handleClickMobileMenu={handleMobileMenuItem}/>
               )
             })
           }
