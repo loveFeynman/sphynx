@@ -25,6 +25,7 @@ export const AppMenuItemPropTypes = {
   Icon: PropTypes.elementType,
   items: PropTypes.array,
   isMobile: PropTypes.bool,
+  clickedBaseUrl: PropTypes.string,
   handleClickMobileMenu: PropTypes.func,
 }
 
@@ -39,7 +40,7 @@ export type AppMenuItemProps = AppMenuItemPropsWithoutItems & {
 }
 
 const AppMenuItem: React.FC<AppMenuItemProps> = props => {
-  const { baseurl, name, link, Icon, items = [], isMobile, handleClickMobileMenu } = props
+  const { baseurl, name, link, Icon, items = [], isMobile, clickedBaseUrl, handleClickMobileMenu } = props
   const classes = useStyles()
   const isExpandable = items && items.length > 0
   const [open, setOpen] = useState(false)
@@ -51,10 +52,10 @@ const AppMenuItem: React.FC<AppMenuItemProps> = props => {
   }
 
   useEffect(() => {
-    if(isClickedSubMenu) {
+    if(isClickedSubMenu || baseurl.includes(clickedBaseUrl)) {
       setOpen(true)
     }
-  }, [isClickedSubMenu])
+  }, [isClickedSubMenu, clickedBaseUrl, baseurl])
 
   return (
     <>

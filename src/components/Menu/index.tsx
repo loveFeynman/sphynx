@@ -1,5 +1,5 @@
 /* eslint-disable */
-import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react'
+import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import { Link as ReactLink } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { AppState } from 'state'
@@ -26,7 +26,6 @@ import { ReactComponent as SocialIcon2 } from 'assets/svg/icon/SocialIcon2.svg'
 import { ReactComponent as TelegramIcon } from 'assets/svg/icon/TelegramIcon.svg'
 import { ReactComponent as DiscordIcon } from 'assets/svg/icon/DiscordIcon.svg'
 import axios from 'axios'
-import { web3Provider } from 'utils/providers'
 import { BITQUERY_API, BITQUERY_API_KEY } from 'config/constants/endpoints'
 import storages from 'config/constants/storages'
 import addresses from 'config/constants/addresses'
@@ -212,33 +211,6 @@ const MenuItem = styled.a<{ toggled: boolean }>`
   }
 `
 
-const MenuItemMobile = styled.a`
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 5px 16px;
-  margin: 5px 0;
-  border-radius: 5px;
-  text-decoration: none !important;
-  & p {
-    width: calc(100% - 32px);
-    font-size: 14px;
-    font-weight: 600;
-    color: #a7a7cc;
-  }
-  &:hover,
-  &.active {
-    background: #710d89;
-    p {
-      color: white;
-    }
-  }
-  ${({ theme }) => theme.mediaQueries.xl} {
-    display: none;
-  }
-`
-
 const SocialWrapper = styled.div`
   margin: 10px 0 32px;
   & p {
@@ -260,14 +232,6 @@ const SocialIconsWrapper = styled.div<{ toggled: boolean }>`
   flex-direction: ${(props) => (props.toggled ? 'column' : 'row')};
   margin-left: ${(props) => (props.toggled ? '0px' : '12px')};
   align-items: center;
-`
-
-const IllustrationWrapper = styled.div`
-  width: 100%;
-  margin-left: -24px;
-  & img {
-    width: 100%;
-  }
 `
 
 const RemoveIconWrapper = styled.div`
@@ -310,12 +274,12 @@ const Menu = () => {
 
   const dispatch = useDispatch()
   const { pathname } = useLocation()
-  const realPath = `/#${pathname}`
 
   const [sum, setSum] = useState(0)
   const [getAllToken, setAllTokens] = useState([])
   const [updateFlag, setUpdateFlag] = useState(false)
   const [isDark, toggleTheme] = useThemeManager()
+  const [clickedBaseUrl, setClickedBaseUrl] = useState('');
   const tokens = useSelector<AppState, AppState['tokens']>((state) => state.tokens)
 
   const { t } = useTranslation()
@@ -716,6 +680,11 @@ const Menu = () => {
     toggleMenu(!menuToggled)
   }, [menuToggled, toggleMenu])
 
+  const handleClickMainMenuItem = useCallback((baseurl) => {
+    setClickedBaseUrl(baseurl);
+    handleToggleMenu();
+  }, [])
+
   const handleShowAllToken = useCallback(() => {
     if (!showAllToken) {
       localStorage.setItem(storages.LOCAL_REMOVED_TOKENS, null)
@@ -779,77 +748,104 @@ const Menu = () => {
       </>
     ), [isDark, menuToggled]
   )
-  
-  const MemoMenuContent = useMemo(
+
+  const MemoMenuCollapsed = useMemo(
     () => (
-        <>
-          {
-            (menuToggled && isTablet) ?
-              linksTemp
-              .map((item) => ({
-                ...item,
-                id: uuidv4(),
-              }))
-              .map((link) => {
-                const Icon = link.Icon
-                return (
+      <>
+        {
+          linksTemp
+          .map((item) => ({
+            ...item,
+            id: uuidv4(),
+          }))
+          .map((link) => {
+            const Icon = link.Icon
+            const href = link.link;
+            if(href) {
+              return (
+                <ReactLink to={link.link?.indexOf('https') !== 0 ? link.link : window.location.pathname}>
                   <MenuItem
                     className={window.location.pathname == link.link && link.link !== '/' ? 'active' : ''}
-                    href={link.link}
                     style={menuToggled ? { justifyContent: 'center' } : {}}
                     rel="noreferrer"
                     toggled={menuToggled}
                   >
                     <Icon />
                   </MenuItem>
-                )
-              }) :
-              linksTemp
-              .map((item) => ({
-                ...item,
-                id: uuidv4(),
-              }))
-              .map((link) => {
-                return (
-                  <AppMenuItem  key={link.id} {...link} isMobile={!isTablet} handleClickMobileMenu={handleMobileMenuItem}/>
+                </ReactLink>
               )
-            })
-          }
-          <SocialWrapper>
-            {!menuToggled && <p>{t('Socials')}</p>}
-            <SocialIconsWrapper toggled={menuToggled}>
-              <Link external href="https://twitter.com/sphynxswap?s=21" aria-label="twitter">
-                <IconBox color="#33AAED">
-                  <TwitterIcon width="15px" height="15px" />
-                </IconBox>
-              </Link>
-              <Link external href="https://sphynxtoken.co" aria-label="social2">
-                <IconBox color="#710D89">
-                  <SocialIcon2 width="15px" height="15px" />
-                </IconBox>
-              </Link>
-              <Link external href="https://t.me/sphynxswap" aria-label="telegram">
-                <IconBox color="#3E70D1">
-                  <TelegramIcon width="15px" height="15px" />
-                </IconBox>
-              </Link>
-              <Link external href="https://discord.gg/ZEuDaFk4qz" aria-label="discord">
-                <IconBox color="#2260DA">
-                  <DiscordIcon width="15px" height="15px" />
-                </IconBox>
-              </Link>
-            </SocialIconsWrapper>
-          </SocialWrapper>
-        </>
-      ),
-      [menuToggled]
-    );
+            } else {
+              return (
+                <MenuItem
+                  className={window.location.pathname.includes(link.baseurl) && link.link !== '/' ? 'active' : ''}
+                  style={menuToggled ? { justifyContent: 'center' } : {}}
+                  rel="noreferrer"
+                  toggled={menuToggled}
+                  onClick={() => handleClickMainMenuItem(link.baseurl)}
+                >
+                  <Icon />
+                </MenuItem>
+              )
+            }
+          })
+        }
+      </>
+    ), [menuToggled, pathname]
+  );
 
+  const MemoMenuExpanded = useMemo(
+    () => (
+      <>
+        {
+          linksTemp
+          .map((item) => ({
+            ...item,
+            id: uuidv4(),
+          }))
+          .map((link) => {
+            return (
+              <AppMenuItem  key={link.id} {...link} isMobile={!isTablet} handleClickMobileMenu={handleMobileMenuItem} clickedBaseUrl={clickedBaseUrl}/>
+            )
+          })
+        }
+      </>
+    ), [menuToggled]
+  );
+  
   return (
     <MenuWrapper toggled={menuToggled}>
       {MemoMenuHeader}
       <MenuContentWrapper toggled={menuToggled}>
-        {MemoMenuContent}  
+        {
+          (menuToggled && isTablet) ?
+          MemoMenuCollapsed :
+          MemoMenuExpanded
+        }
+        <SocialWrapper>
+          {!menuToggled && <p>{t('Socials')}</p>}
+          <SocialIconsWrapper toggled={menuToggled}>
+            <Link external href="https://twitter.com/sphynxswap?s=21" aria-label="twitter">
+              <IconBox color="#33AAED">
+                <TwitterIcon width="15px" height="15px" />
+              </IconBox>
+            </Link>
+            <Link external href="https://sphynxtoken.co" aria-label="social2">
+              <IconBox color="#710D89">
+                <SocialIcon2 width="15px" height="15px" />
+              </IconBox>
+            </Link>
+            <Link external href="https://t.me/sphynxswap" aria-label="telegram">
+              <IconBox color="#3E70D1">
+                <TelegramIcon width="15px" height="15px" />
+              </IconBox>
+            </Link>
+            <Link external href="https://discord.gg/ZEuDaFk4qz" aria-label="discord">
+              <IconBox color="#2260DA">
+                <DiscordIcon width="15px" height="15px" />
+              </IconBox>
+            </Link>
+          </SocialIconsWrapper>
+        </SocialWrapper>
         {!isMobile && <Toggle checked={isDark} onChange={toggleTheme} scale="sm" />}
       </MenuContentWrapper>
     </MenuWrapper>
