@@ -563,6 +563,7 @@ const PresaleLive: React.FC = () => {
   const [privateSale1, setPrivateSale1] = useState(false)
   const [privateSale2, setPrivateSale2] = useState(false)
   const [publicSale, setPublicSale] = useState(false)
+  const [pendingSale, setPendingSale] = useState(false)
   const [endSale, setendSale] = useState(false)
   const [failedSale, setFailedSale] = useState(false)
   const [pendingContribute, setPendingContribute] = useState(false)
@@ -640,16 +641,22 @@ const PresaleLive: React.FC = () => {
     timerRef.current = setInterval(() => {
       if (tokenData) {
         const now = Math.floor(new Date().getTime() / 1000)
-        if (parseInt(tokenData.start_time) < now && now < parseInt(tokenData.tier1_time)) {
+        if (parseInt(tokenData.start_time) > now) {
+          setPendingSale(true)
+        } else if (parseInt(tokenData.start_time) < now && now < parseInt(tokenData.tier1_time)) {
+          setPendingSale(false)
           setPrivateSale1(true)
         } else if (parseInt(tokenData.tier1_time) < now && now < parseInt(tokenData.tier2_time)) {
+          setPendingSale(false)
           setPrivateSale1(false)
           setPrivateSale2(true)
         } else if (parseInt(tokenData.tier2_time) < now && now < parseInt(tokenData.end_time)) {
+          setPendingSale(false)
           setPrivateSale1(false)
           setPrivateSale2(false)
           setPublicSale(true)
         } else if (now >= parseInt(tokenData.end_time)) {
+          setPendingSale(false)
           setendSale(true)
         }
       }
@@ -743,7 +750,7 @@ const PresaleLive: React.FC = () => {
             })
         }
         setPendingContribute(false)
-        toastSuccess("Success", "Operation successfully!")
+        toastSuccess('Success', 'Operation successfully!')
       }
     } catch (err) {
       setPendingContribute(false)
@@ -761,7 +768,7 @@ const PresaleLive: React.FC = () => {
       const tx = await presaleContract.claimToken(param.saleId)
       await tx.wait()
       setPendingClaim(false)
-      toastSuccess("Success", "Operation successfully!")
+      toastSuccess('Success', 'Operation successfully!')
     } catch (err) {
       setPendingClaim(false)
       if (err.data) {
@@ -778,7 +785,7 @@ const PresaleLive: React.FC = () => {
       const tx = await presaleContract.emergencyWithdraw(param.saleId)
       await tx.wait()
       setPendingWithdraw(false)
-      toastSuccess("Success", "Operation successfully!")
+      toastSuccess('Success', 'Operation successfully!')
     } catch (err) {
       setPendingWithdraw(false)
       if (err.data) {
@@ -891,8 +898,35 @@ const PresaleLive: React.FC = () => {
                 )}
               </WhitelistCard>
               <WhitelistCard>
-                {!presaleStatus ? (
-                  !failedSale ? (
+                {!failedSale ? (
+                  presaleStatus ? (
+                    <>
+                      <Text textAlign="left" fontSize="14px" fontWeight="500" color="white">
+                        This presale has ended. Go back to the dashboard to view others!
+                      </Text>
+                      {/* <Link external href="https://pancakeswap.finance/swap" style={{ width: '100%' }}>
+                      <DarkButton style={{ width: '100%', textDecoration: 'none' }} mt="16px">
+                        Trade on PancakeSwap
+                      </DarkButton>
+                    </Link> */}
+                      <DarkButton onClick={toSphynxSwap} style={{ width: '100%' }} mt="16px">
+                        Trade on SphynxSwap
+                      </DarkButton>
+                      <Text textAlign="left" fontSize="14px" fontWeight="500" mt="16px" color="white">
+                        If you participated in the presale click the claim button below to claim your tokens!
+                      </Text>
+                      <ColorButton
+                        style={{ width: '100%' }}
+                        mt="16px"
+                        mb="16px"
+                        onClick={handleClaimToken}
+                        disabled={isClaimed || pendingClaim}
+                      >
+                        {pendingClaim && <AutoRenewIcon className="pendingTx" />}
+                        Claim Token
+                      </ColorButton>
+                    </>
+                  ) : (
                     <>
                       <WhitelistTitle>
                         Raised: {raise}/{tokenData?.hard_cap}
@@ -923,6 +957,8 @@ const PresaleLive: React.FC = () => {
                             ? 'Private sale 1 ends in'
                             : privateSale2
                             ? 'Private sale 2 ends in'
+                            : pendingSale
+                            ? 'Sale starts in'
                             : 'Public sale ends in'}{' '}
                         </Text>
                         <TimerComponent
@@ -931,47 +967,22 @@ const PresaleLive: React.FC = () => {
                               ? tokenData?.tier1_time
                               : privateSale2
                               ? tokenData?.tier2_time
+                              : pendingSale
+                              ? tokenData?.start_time
                               : tokenData?.end_time
                           }
                         />
                       </Flex>
                       <UnderLine />
                     </>
-                  ) : (
-                    <>
-                      <Text textAlign="left" fontSize="12px" fontWeight="500" color="white">
-                        This presale has failed!
-                      </Text>
-                      <Text textAlign="left" fontSize="12px" fontWeight="500" mt="16px" color="white">
-                        If you participated in the presale click the claim button below to claim your BNB!
-                      </Text>
-                      <ColorButton
-                        style={{ width: '100%' }}
-                        mt="16px"
-                        mb="16px"
-                        onClick={handleClaimToken}
-                        disabled={isClaimed || pendingClaim}
-                      >
-                        Claim BNB
-                        {pendingClaim && <AutoRenewIcon className="pendingTx" />}
-                      </ColorButton>
-                    </>
                   )
                 ) : (
                   <>
-                    <Text textAlign="left" fontSize="14px" fontWeight="500" color="white">
-                      This presale has ended. Go back to the dashboard to view others!
+                    <Text textAlign="left" fontSize="12px" fontWeight="500" color="white">
+                      This presale has failed!
                     </Text>
-                    {/* <Link external href="https://pancakeswap.finance/swap" style={{ width: '100%' }}>
-                      <DarkButton style={{ width: '100%', textDecoration: 'none' }} mt="16px">
-                        Trade on PancakeSwap
-                      </DarkButton>
-                    </Link> */}
-                    <DarkButton onClick={toSphynxSwap} style={{ width: '100%' }} mt="16px">
-                      Trade on SphynxSwap
-                    </DarkButton>
-                    <Text textAlign="left" fontSize="14px" fontWeight="500" mt="16px" color="white">
-                      If you participated in the presale click the claim button below to claim your tokens!
+                    <Text textAlign="left" fontSize="12px" fontWeight="500" mt="16px" color="white">
+                      If you participated in the presale click the claim button below to claim your BNB!
                     </Text>
                     <ColorButton
                       style={{ width: '100%' }}
@@ -980,8 +991,8 @@ const PresaleLive: React.FC = () => {
                       onClick={handleClaimToken}
                       disabled={isClaimed || pendingClaim}
                     >
+                      Claim BNB
                       {pendingClaim && <AutoRenewIcon className="pendingTx" />}
-                      Claim Token
                     </ColorButton>
                   </>
                 )}
@@ -1005,7 +1016,7 @@ const PresaleLive: React.FC = () => {
                 {!presaleStatus && !failedSale ? (
                   <>
                     <Separate />
-                    <DarkButton onClick={handleEmergencyWithdraw} disabled={pendingWithdraw} >
+                    <DarkButton onClick={handleEmergencyWithdraw} disabled={pendingWithdraw}>
                       Emergency Withdraw
                       {pendingWithdraw && <AutoRenewIcon className="pendingTx" />}
                     </DarkButton>

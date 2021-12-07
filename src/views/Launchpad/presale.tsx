@@ -602,6 +602,7 @@ const Presale: React.FC = () => {
       })
     }).catch((err) => {
       setPendingTx(false)
+      toastError('Failed!', 'Your action is failed.')
     })
   }
 
