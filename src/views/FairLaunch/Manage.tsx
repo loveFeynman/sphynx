@@ -5,14 +5,24 @@ import { useWeb3React } from '@web3-react/core'
 import * as ethers from 'ethers'
 import { MuiPickersUtilsProvider } from '@material-ui/pickers'
 import DateFnsUtils from '@date-io/date-fns'
-import { Button } from '@sphynxdex/uikit'
+import { Button, AutoRenewIcon } from '@sphynxdex/uikit'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import axios from 'axios'
 import { getFairLaunchContract } from 'utils/contractHelpers'
 import { ReactComponent as CheckList } from 'assets/svg/icon/CheckList.svg'
 import { useTranslation } from 'contexts/Localization'
 import useToast from 'hooks/useToast'
-import styled from 'styled-components'
+import styled, { keyframes } from 'styled-components'
+
+const rotate = keyframes`
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+`
 
 const Wrapper = styled.div`
   display: flex;
@@ -42,6 +52,9 @@ const Wrapper = styled.div`
   }
   p.w140 {
     width: 140px;
+  }
+  .pendingTx {
+    animation: ${rotate} 2s linear infinite;
   }
   div.MuiTextField-root {
     margin-left: 16px;
@@ -170,7 +183,7 @@ const ColorButton = styled(Button)`
 
 const FairLaunchManage: React.FC = () => {
   const { t } = useTranslation()
-  const param: any = useParams();
+  const param: any = useParams()
   const { library } = useActiveWeb3React()
   const signer = library.getSigner()
   const [launchData, setLaunchData] = useState({})
@@ -184,50 +197,97 @@ const FairLaunchManage: React.FC = () => {
   const [twitterLink, setTwitterLink] = useState('')
   const [redditLink, setRedditLink] = useState('')
   const [telegramLink, setTelegramLink] = useState('')
-  const [launchTime, setLaunchTime] = useState('');
+  const [launchTime, setLaunchTime] = useState('')
+  const [unlockTime, setUnlockTime] = useState('')
   const [projectDec, setProjectDec] = useState('')
   const [updateDec, setUpdateDec] = useState('')
   const [isLaunched, setIsLaunched] = useState(false)
-  const [launchStatus, setLaunchStatus] = useState('');
-  const [routerAddress, setRouterAddress] = useState('');
-  const [isClickedCancel, setIsClickedCancel] = useState(false);
-  const [isAvailableLaunch, setIsAvailableLaunch] = useState(false);
-  const [successfulLaunched, setSuccessfulLaunched] = useState(false);
-  const [isCanceled, setIsCanceled] = useState(false);
-  const [isWithdrawToken, setIsWithdrawToken] = useState(false);
-  const [isWithdrawBNB, setIsWithdrawBNB] = useState(false);
+  const [launchStatus, setLaunchStatus] = useState('')
+  const [routerAddress, setRouterAddress] = useState('')
+  const [isAvailableLaunch, setIsAvailableLaunch] = useState(false)
+  const [isUnlocked, setIsUnlocked] = useState(false)
+  const [pendingLiquidity, setPendingLiquidity] = useState(false)
+  const [isCanceled, setIsCanceled] = useState(false)
+  const [isWithdrawToken, setIsWithdrawToken] = useState(false)
+  const [isWithdrawBNB, setIsWithdrawBNB] = useState(false)
+  const [pendingCancel, setPendingCancel] = useState(false)
+  const [pendingLaunch, setPendingLaunch] = useState(false)
+  const [pendingWithdrawToken, setPendingWithdrawToken] = useState(false)
+  const [pendingWithdrawNative, setPendingWithdrawNative] = useState(false)
   const { toastSuccess, toastError } = useToast()
+  const now = Math.floor(new Date().getTime() / 1000)
 
   const fairLaunchContract = useMemo(() => getFairLaunchContract(signer), [signer])
 
-  const handleCancelLaunch = () => {
-    fairLaunchContract.calcel(parseInt(param.launchId))
-    .then(response => {
-      setIsClickedCancel(true)
-      setIsCanceled(true);
-    })
+  const handleCancelLaunch = async () => {
+    setPendingCancel(true)
+    try {
+      const tx = await fairLaunchContract.calcel(parseInt(param.launchId))
+      await tx.wait()
+      setIsCanceled(true)
+      setPendingCancel(false)
+      toastSuccess('Success', 'Fair launch is cancled!')
+    } catch (err) {
+      setPendingCancel(false)
+      toastSuccess('Failed', 'Your action is failed!')
+    }
   }
 
-  const handleWithdrawToken = () => {
-    fairLaunchContract.tokenWithdraw(parseInt(param.launchId))
-    .then(response => {
+  const handleWithdrawToken = async () => {
+    setPendingWithdrawToken(true)
+    try {
+      const tx = await fairLaunchContract.tokenWithdraw(parseInt(param.launchId))
+      await tx.wait()
       setIsWithdrawToken(true)
-    })
+      setPendingWithdrawToken(false)
+      toastSuccess('Success', 'Operation successfully!')
+    } catch (err) {
+      setPendingWithdrawToken(false)
+      toastSuccess('Failed', 'Your action is failed!')
+    }
   }
 
-  const handleWithdrawBNB = () => {
-    fairLaunchContract.nativeCurrencyWithdraw(parseInt(param.launchId))
-    .then(response => {
+  const handleWithdrawBNB = async () => {
+    setPendingWithdrawNative(true)
+    try {
+      const tx = await fairLaunchContract.nativeCurrencyWithdraw(parseInt(param.launchId))
+      await tx.wait()
       setIsWithdrawBNB(true)
-    })
+      setPendingWithdrawNative(false)
+      toastSuccess('Success', 'Operation successfully!')
+    } catch (err) {
+      setPendingWithdrawNative(false)
+      toastSuccess('Failed', 'Your action is failed!')
+    }
   }
 
-  const handleLaunchToken = () => {
-    const fee = ethers.utils.parseEther('0.00001')
-    fairLaunchContract.launch(parseInt(param.launchId), { value: fee })
-    .then(response => {
+  const handleWithdrawLiquidity = async () => {
+    setPendingLiquidity(true)
+    try {
+      const tx = await fairLaunchContract.unlock(parseInt(param.launchId))
+      await tx.wait()
+      setIsUnlocked(true)
+      setPendingLiquidity(false)
+      toastSuccess('Success', 'Operation successfully!')
+    } catch (err) {
+      setPendingLiquidity(false)
+      toastSuccess('Failed', 'Your action is failed!')
+    }
+  }
+
+  const handleLaunchToken = async () => {
+    setPendingLaunch(true)
+    try {
+      const fee = ethers.utils.parseEther('0.00001')
+      const tx = await fairLaunchContract.launch(parseInt(param.launchId), { value: fee })
+      await tx.wait()
       setIsLaunched(true)
-    })
+      setPendingLaunch(false)
+      toastSuccess('Success', 'Operation successfully!')
+    } catch (err) {
+      setPendingLaunch(false)
+      toastSuccess('Failed', 'Your action is failed!')
+    }
   }
 
   const handleUpdateInfo = () => {
@@ -240,7 +300,7 @@ const FairLaunchManage: React.FC = () => {
       reddit_link: redditLink,
       telegram_link: telegramLink,
       project_dec: projectDec,
-      update_dec: updateDec
+      update_dec: updateDec,
     }
     axios.post(`${process.env.REACT_APP_BACKEND_API_URL2}/updateFairLaunchInfo`, data).then((response) => {
       if (response.data) {
@@ -253,58 +313,52 @@ const FairLaunchManage: React.FC = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const now = Math.floor(new Date().getTime() / 1000)
-      let item = '';
+      let item = ''
       if (parseInt(launchTime) > now) {
         item = 'Upcoming'
         setIsAvailableLaunch(false)
       } else if (isLaunched) {
         item = 'Success'
       } else if (now > parseInt(launchTime) && now < parseInt(launchTime) + 600) {
-        item = 'Active';
+        item = 'Active'
         setIsAvailableLaunch(true)
       } else {
         item = 'Failed'
         setIsAvailableLaunch(false)
       }
       setLaunchStatus(item)
-      fairLaunchContract.isCanceled(parseInt(param.launchId))
-      .then(response => {
-        setIsCanceled(response);
+      fairLaunchContract.isCanceled(parseInt(param.launchId)).then((response) => {
+        setIsCanceled(response)
       })
 
-      fairLaunchContract.withdrawToken(parseInt(param.launchId))
-      .then(response => {
-        setIsWithdrawToken(response);
+      fairLaunchContract.withdrawToken(parseInt(param.launchId)).then((response) => {
+        setIsWithdrawToken(response)
       })
 
-      fairLaunchContract.withdrawNativeCurrency(parseInt(param.launchId))
-      .then(response => {
-        setIsWithdrawBNB(response);
+      fairLaunchContract.withdrawNativeCurrency(parseInt(param.launchId)).then((response) => {
+        setIsWithdrawBNB(response)
       })
 
-      fairLaunchContract.isLaunched(parseInt(param.launchId))
-      .then(response => {
-        setIsLaunched(response);
+      fairLaunchContract.isLaunched(parseInt(param.launchId)).then((response) => {
+        setIsLaunched(response)
+      })
+      fairLaunchContract.isUnlocked(parseInt(param.launchId)).then((response) => {
+        setIsUnlocked(response)
       })
     }
 
     fetchData()
-    // const interval = setInterval(() => {
-    //   checkAvaiableLaunch();
-    // }, 1000);
-    // return () => clearInterval(interval);
   }, [launchTime, fairLaunchContract, isLaunched, param.launchId])
 
   useEffect(() => {
-    (async function fetchData() {
-      const RetrieverDataProcess = async () => {
-        const launchId = param.launchId;
-        axios.get(`${process.env.REACT_APP_BACKEND_API_URL2}/getFairLaunchInfo/${launchId}/${chainId}`)
-        .then(response => {
-          const data = response.data;
+    const fetchData = async () => {
+      const launchId = param.launchId
+      axios
+        .get(`${process.env.REACT_APP_BACKEND_API_URL2}/getFairLaunchInfo/${launchId}/${chainId}`)
+        .then((response) => {
+          const data = response.data
           setLaunchData(data)
-          if(data) {
+          if (data) {
             setLogoLink(data.logo_link)
             setWebSiteLink(data.website_link)
             setGitLink(data.github_link)
@@ -317,19 +371,19 @@ const FairLaunchManage: React.FC = () => {
             setTokenSymbol(data.token_symbol)
             setTokenAddress(data.token_address)
             setLaunchTime(data.launch_time)
+            setUnlockTime(data.lock_time)
           }
           const fetchContractData = async () => {
             const isLaunchedFromContract = await fairLaunchContract.isLaunched(launchId.toString())
             const routerAddressFromContract = await fairLaunchContract.router(launchId.toString())
             setIsLaunched(isLaunchedFromContract)
-            setRouterAddress(routerAddressFromContract);
+            setRouterAddress(routerAddressFromContract)
           }
 
-          fetchContractData();
+          fetchContractData()
         })
-      }
-      await RetrieverDataProcess();
-    })();
+    }
+    fetchData()
   }, [param, chainId, fairLaunchContract])
 
   return (
@@ -347,19 +401,20 @@ const FairLaunchManage: React.FC = () => {
           <Notification>Congratulations your Fair Launch is scheduled!</Notification>
           <Sperate />
           <p style={{ color: '#D91A00' }}>
-            If your token contains special transfers such as burn, rebase or something else you must ensure the SphynxSwap
-            Router Address is excluded from these features! Or you must set fees, burns or
-            whatever else to be 0 or disabled for the duration of the presale and until the finalize button is clicked!
+            If your token contains special transfers such as burn, rebase or something else you must ensure the
+            SphynxSwap Router Address is excluded from these features! Or you must set fees, burns or whatever else to
+            be 0 or disabled for the duration of the presale and until the finalize button is clicked!
           </p>
           <Sperate />
           <Notification>
-            SphynxSwap Router Address: {routerAddress}
+            Router Address: {routerAddress}
             <Sperate />
             - The launch button will become available once your listing countdown ends.
             <br />
             - You must list your token within 10 minutes of this time or your launch will fail!
             <br />
-            - Clicking the launch button will list your token on PancakeSwap immediately. Liquidity will be locked by SphynxLock.
+            - Clicking the launch button will list your token on PancakeSwap immediately. Liquidity will be locked by
+            SphynxLock.
             <Sperate />
             Here is a summary of your fair launch (more details on the fair launch view page):
           </Notification>
@@ -369,37 +424,53 @@ const FairLaunchManage: React.FC = () => {
           <Notification>Token Address: {tokenAddress}</Notification>
           <Notification>Status: {launchStatus} Launch</Notification>
           <Sperate />
-          {
-            isCanceled ?
-            (
-              <>  
-                <Button disabled={isWithdrawToken} mr="20px" mt="20px" onClick={handleWithdrawToken}>
-                  WITHDRAW TOKEN
-                </Button>
-                <Button disabled={isWithdrawBNB} mt="20px" onClick={handleWithdrawBNB}>
-                  WITHDRAW BNB
-                </Button>
-              </>
-            ) 
-            : 
-            isLaunched ? 
-            <Notification> Successful Launched! </Notification>
-            :
-            (
-              <>  
-                {/* <Button disabled={!isAvailableLaunch} onClick={handleLaunchToken} mr="20px" mt="20px"> */}
-                <Button disabled={!isAvailableLaunch} onClick={handleLaunchToken} mr="20px" mt="20px">
-                  LAUNCH TOKEN
-                </Button>
-                <Button mt="20px" onClick={handleCancelLaunch}>
-                  CANCEL LAUNCH
-                </Button>
-              </>
-            )
-          }
+          {isCanceled ? (
+            <>
+              <Button
+                disabled={isWithdrawToken || pendingWithdrawToken}
+                mr="20px"
+                mt="20px"
+                onClick={handleWithdrawToken}
+              >
+                WITHDRAW TOKEN
+                {pendingWithdrawToken && <AutoRenewIcon className="pendingTx" />}
+              </Button>
+              <Button disabled={isWithdrawBNB || pendingWithdrawNative} mt="20px" onClick={handleWithdrawBNB}>
+                WITHDRAW BNB
+                {pendingWithdrawNative && <AutoRenewIcon className="pendingTx" />}
+              </Button>
+            </>
+          ) : isLaunched ? (
+            <Button
+              disabled={isUnlocked || pendingLiquidity || parseInt(unlockTime) >= now}
+              mt="20px"
+              onClick={handleWithdrawLiquidity}
+            >
+              WITHDRAW Liquidity
+              {pendingLiquidity && <AutoRenewIcon className="pendingTx" />}
+            </Button>
+          ) : (
+            <>
+              {/* <Button disabled={!isAvailableLaunch} onClick={handleLaunchToken} mr="20px" mt="20px"> */}
+              <Button disabled={!isAvailableLaunch || pendingLaunch} onClick={handleLaunchToken} mr="20px" mt="20px">
+                LAUNCH TOKEN
+                {pendingLaunch && <AutoRenewIcon className="pendingTx" />}
+              </Button>
+              <Button mt="20px" disabled={pendingCancel} onClick={handleCancelLaunch}>
+                CANCEL LAUNCH
+                {pendingCancel && <AutoRenewIcon className="pendingTx" />}
+              </Button>
+            </>
+          )}
           <Sperate />
-          <Notification>If you have trouble with launching please ensure the required addresses are whitelisted or your special transfer functions are disabled!</Notification>
-          <Notification>If you still cannot launch then please cancel your sale and test your contract throughly on our supported test nets!</Notification>
+          <Notification>
+            If you have trouble with launching please ensure the required addresses are whitelisted or your special
+            transfer functions are disabled!
+          </Notification>
+          <Notification>
+            If you still cannot launch then please cancel your sale and test your contract throughly on our supported
+            test nets!
+          </Notification>
         </NoteWrapper>
         <Sperate />
         <ContentWrapper>

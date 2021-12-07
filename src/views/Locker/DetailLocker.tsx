@@ -1,15 +1,26 @@
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'contexts/Localization'
-import { Text, Flex, useMatchBreakpoints, Button } from '@sphynxdex/uikit'
+import { Text, Flex, useMatchBreakpoints, Button, AutoRenewIcon } from '@sphynxdex/uikit'
 import { getLockerContract } from 'utils/contractHelpers'
 import { ReactComponent as MainLogo } from 'assets/svg/icon/logo_new.svg'
-import styled from 'styled-components'
+import styled, { keyframes } from 'styled-components'
+import useToast from 'hooks/useToast'
 import Spinner from 'components/Loader/Spinner'
 import TimerComponent from 'components/Timer/TimerComponent'
 import { useWeb3React } from '@web3-react/core'
 import { useParams } from 'react-router'
 import axios from 'axios'
 import { ColorButtonStyle } from 'style/buttonStyle'
+
+const rotate = keyframes`
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+`
 
 const Wrapper = styled.div`
   display: flex;
@@ -26,6 +37,9 @@ const Wrapper = styled.div`
   }
   ${({ theme }) => theme.mediaQueries.xs} {
     padding: 24px;
+  }
+  .pendingTx {
+    animation: ${rotate} 2s linear infinite;
   }
 `
 
@@ -227,6 +241,7 @@ const DetailLocker: React.FC = () => {
     const param: any = useParams()
     const { account, chainId, library } = useWeb3React()
     const signer = library&&library.getSigner()
+    const { toastSuccess, toastError } = useToast()
     const lockContract = getLockerContract(signer)
     const { t } = useTranslation()
     const { isXl } = useMatchBreakpoints()
@@ -235,6 +250,7 @@ const DetailLocker: React.FC = () => {
     const [isOwner, setIsOwner] = useState(false)
     const [lockCount, setLockCount] = useState(0)
     const [isDisabled, setIsDisabled] = useState(false)
+    const [pendingUnlock, setPendingUnlock] = useState(false)
 
     useEffect(() => {
         const fetchData = async () => {
@@ -291,12 +307,20 @@ const DetailLocker: React.FC = () => {
     }, [chainId, tokenInfo])
 
     const handleUnlockClick = async () => {
-        const availableBalance = (await lockContract.getAvailableBalance(tokenInfo.lock_id)).toString()
-        if (availableBalance !== '0'){
-            lockContract.withdrawToken(tokenInfo.lock_id)
-        }
-        else if(Math.floor(new Date().getTime()/1000) > parseInt(tokenInfo.end_time) && availableBalance === '0'){
-            setIsDisabled(true)
+        try {
+            const availableBalance = (await lockContract.getAvailableBalance(tokenInfo.lock_id)).toString()
+            if (availableBalance !== '0'){
+                setPendingUnlock(true)
+                await lockContract.withdrawToken(tokenInfo.lock_id)
+                setPendingUnlock(false)
+                toastSuccess("Success", "Unlock successfully!")
+            }
+            else if(Math.floor(new Date().getTime()/1000) > parseInt(tokenInfo.end_time) && availableBalance === '0'){
+                setIsDisabled(true)
+            }
+        } catch (err) {
+            toastError("Failed", "Your action is failed")
+            setPendingUnlock(false)
         }
     }
 
@@ -383,11 +407,12 @@ const DetailLocker: React.FC = () => {
                         {
                             isOwner &&
                             <Button
-                                disabled={isDisabled}
+                                disabled={isDisabled || pendingUnlock}
                                 onClick={handleUnlockClick}
                                 style={ColorButtonStyle}
                             >
                                 {t('Unlock')}
+                                {pendingUnlock && <AutoRenewIcon className="pendingTx" />}
                             </Button>
                         }
                     </MainCardWrapper>

@@ -46,7 +46,7 @@ const EndsInCell: React.FC<FinishCellProps> = ({ pool }) => {
       </Flex>
     </Flex>
   ) : (
-    <Text fontSize='16px'>$0</Text>
+    <Text fontSize='16px'>-</Text>
   )
 
   // A bit hacky way to determine if public data is loading relying on totalStaked
@@ -57,7 +57,7 @@ const EndsInCell: React.FC<FinishCellProps> = ({ pool }) => {
   return (
     <StyledCell role="cell">
       <CellContent>
-        <Text fontSize="12px" color="white" textAlign="left" mb='4px'>
+        <Text fontSize="14px" color="white" textAlign="left" mb='4px'>
           {hasPoolStarted || !shouldShowBlockCountdown ? t('Ends in') : t('Starts in')}
         </Text>
         {showLoading ? <Skeleton width="80px" height="16px" /> : renderBlocks}

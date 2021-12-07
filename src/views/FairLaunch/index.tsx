@@ -10,9 +10,9 @@ import { useTranslation } from 'contexts/Localization'
 import { isAddress } from '@ethersproject/address'
 import moment from 'moment'
 import useToast from 'hooks/useToast'
-import styled from 'styled-components'
+import styled, { keyframes } from 'styled-components'
 import { ERC20_ABI } from 'config/abi/erc20'
-import { useModal } from '@sphynxdex/uikit'
+import { useModal, AutoRenewIcon } from '@sphynxdex/uikit'
 import DisclaimerModal from 'components/DisclaimerModal/DisclaimerModal'
 import Select from 'components/Select/Select'
 import axios from 'axios'
@@ -20,6 +20,16 @@ import { getFairLaunchContract } from 'utils/contractHelpers'
 import { useWeb3React } from '@web3-react/core'
 import { getFairLaunchAddress } from 'utils/addressHelpers'
 import { useHistory } from 'react-router-dom'
+
+const rotate = keyframes`
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+`
 
 const Wrapper = styled.div`
   display: flex;
@@ -50,6 +60,9 @@ const Wrapper = styled.div`
   }
   p.w140 {
     width: 140px;
+  }
+  .pendingTx {
+    animation: ${rotate} 2s linear infinite;
   }
   div.MuiTextField-root {
     margin-left: 16px;
@@ -261,13 +274,17 @@ const FillBtn = styled.button`
   border-radius: 5px;
   cursor: pointer;
   outline: none;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
   &:hover {
     background: linear-gradient(90deg, #722da9 0%, #e44bd4 100%);
     border: 1px solid #9b3aab;
   }
   &:disabled {
-    background: linear-gradient(90deg, #222 0%, #fff 100%);
+    background: linear-gradient(90deg, #722da9 0%, #e44bd4 100%);
     border: 1px solid #444;
+    cursor: not-allowed;
   }
 `
 
@@ -328,7 +345,7 @@ const Presale: React.FC = () => {
   const [totalSupply, setTotalSupply] = useState('')
   const [tokenAmount, setTokenAmount] = useState('')
   const [bnbAmount, setBnbAmount] = useState('')
-  const [balanceAmount, setBalanceAmount] = useState('');
+  const [balanceAmount, setBalanceAmount] = useState('')
   const [logoLink, setLogoLink] = useState('')
   const [webSiteLink, setWebSiteLink] = useState('')
   const [gitLink, setGitLink] = useState('')
@@ -337,13 +354,14 @@ const Presale: React.FC = () => {
   const [telegramLink, setTelegramLink] = useState('')
   const [projectDec, setProjectDec] = useState('')
   const [updateDec, setUpdateDec] = useState('')
-  const [liquidityType, setLiquidityType] = useState('');
+  const [liquidityType, setLiquidityType] = useState('')
   const [launchTime, setLaunchTime] = useState(new Date())
   const [unlockTime, setUnlockTime] = useState(new Date())
   const [step, setStep] = useState(1)
   const [disclaimerModalShow, setDisclaimerModalShow] = useState(true)
   const { toastSuccess, toastError } = useToast()
-  const fairLaunchContract = getFairLaunchContract(signer);
+  const [pendingTx, setPendingTx] = useState(false)
+  const fairLaunchContract = getFairLaunchContract(signer)
   const history = useHistory()
 
   const handleChange = async (e) => {
@@ -358,11 +376,11 @@ const Presale: React.FC = () => {
         const symbol = await tokenContract.symbol()
         const decimals = await tokenContract.decimals()
         const total = await tokenContract.totalSupply()
-        const balance = await tokenContract.balanceOf(account);
+        const balance = await tokenContract.balanceOf(account)
         setName(name)
         setSymbol(symbol)
         setDecimal(decimals)
-        setBalanceAmount(ethers.utils.formatUnits(balance));
+        setBalanceAmount(ethers.utils.formatUnits(balance, decimals))
         setTotalSupply(ethers.utils.formatUnits(total, decimals))
       } catch (err) {
         console.log('error', err.message)
@@ -393,27 +411,34 @@ const Presale: React.FC = () => {
     const launchId = (await fairLaunchContract.currentLaunchId()).toString()
 
     const launchTimeStamp = Math.floor(new Date(launchTime).getTime() / 1000)
-    const lockTimeStamp = Math.floor(new Date(unlockTime).getTime() / 1000)   
+    const lockTimeStamp = Math.floor(new Date(unlockTime).getTime() / 1000)
 
-    const router = liquidityType === 'sphynxswap' ? 
-      "0xE32374f7032006f412fCc3E9e0ee02a3C34f032A" : 
-      "0xD99D1c33F9fC3444f8101754aBC46c52416550D1"
+    const router =
+      liquidityType === 'sphynxswap'
+        ? '0xE32374f7032006f412fCc3E9e0ee02a3C34f032A'
+        : '0xD99D1c33F9fC3444f8101754aBC46c52416550D1'
 
-    const fee = ethers.utils.parseEther('0.00001')
-    const abi: any = ERC20_ABI
-    const tokenContract = new ethers.Contract(tokenAddress, abi, signer)
-    const tx = await tokenContract.approve(getFairLaunchAddress(), '0xfffffffffffffffffffffffffffffffff')
-    await tx.wait()
+    try {
+      setPendingTx(true)
+      const fee = ethers.utils.parseEther('0.00001')
+      const abi: any = ERC20_ABI
+      const tokenContract = new ethers.Contract(tokenAddress, abi, signer)
+      const allowance = await tokenContract.allowance(account, getFairLaunchAddress())
+      if (allowance < tokenAmount) {
+        const tx = await tokenContract.approve(getFairLaunchAddress(), '0xfffffffffffffffffffffffffffffffff')
+        await tx.wait()
+      }
 
-    fairLaunchContract.createFairLaunch(
-      tokenAddress,
-      ethers.utils.parseUnits(tokenAmount, tokenDecimal),
-      ethers.utils.parseEther(bnbAmount),
-      launchTimeStamp,
-      router,
-      lockTimeStamp,
-      { value: fee.add(ethers.utils.parseEther(bnbAmount)) }
-    ).then(res => {
+      const tx = await fairLaunchContract.createFairLaunch(
+        tokenAddress,
+        ethers.utils.parseUnits(tokenAmount, tokenDecimal),
+        ethers.utils.parseEther(bnbAmount),
+        launchTimeStamp,
+        router,
+        lockTimeStamp,
+        { value: fee.add(ethers.utils.parseEther(bnbAmount)) },
+      )
+      const receipt = await tx.wait()
       const data = {
         chain_id: chainId,
         launch_id: launchId,
@@ -434,17 +459,24 @@ const Presale: React.FC = () => {
         reddit_link: redditLink,
         telegram_link: telegramLink,
         project_dec: projectDec,
-        update_dec: updateDec
+        update_dec: updateDec,
       }
-      axios.post(`${process.env.REACT_APP_BACKEND_API_URL2}/insertFairLaunchInfo`, data).then((response) => {
-        if (response.data) {
-          toastSuccess('Pushed!', 'Your fairlaunch info is saved successfully.')
-          history.push(`/fair-launchpad/manage/${launchId}`)
-        } else {
-          toastError('Failed!', 'Your action is failed.')
-        }
-      })
-    })
+      setPendingTx(false)
+      if (receipt.status === 1) {
+        axios.post(`${process.env.REACT_APP_BACKEND_API_URL2}/insertFairLaunchInfo`, data).then((response) => {
+          if (response.data) {
+            toastSuccess('Pushed!', 'Your fairlaunch info is saved successfully.')
+            history.push(`/fair-launchpad/manage/${launchId}`)
+          } else {
+            toastError('Failed!', 'Your action is failed.')
+          }
+        })
+      }
+    } catch (err) {
+      console.log('error', err)
+      setPendingTx(false)
+      toastError('Failed!', 'Your action is failed.')
+    }
   }
 
   const [onDisclaimerModal] = useModal(<DisclaimerModal />, false)
@@ -467,11 +499,10 @@ const Presale: React.FC = () => {
           <Notification>Get started in just a few simple steps!</Notification>
           <Sperate />
           <Notification>
-            Disclaimer: This process is entirely decentralized, we cannot be held 
-            responsible for incorrect entry of information or be held liable for 
-            anything related to your use of our platform. Please ensure you enter 
-            all your details to the best accuracy possible and that you are in 
-            compliance with your local laws and regulations.
+            Disclaimer: This process is entirely decentralized, we cannot be held responsible for incorrect entry of
+            information or be held liable for anything related to your use of our platform. Please ensure you enter all
+            your details to the best accuracy possible and that you are in compliance with your local laws and
+            regulations.
           </Notification>
           <Sperate />
           <WarningPanel>
@@ -520,19 +551,13 @@ const Presale: React.FC = () => {
             </StepWrapper>
             <Sperate />
             <StepWrapper number="2" stepName="Launch Rate" step={step} onClick={() => setStep(2)}>
-              <p className="description">
-                Your wallet balance: {balanceAmount}
-              </p>
+              <p className="description">Your wallet balance: {balanceAmount}</p>
               <Sperate />
-              <p className="description">
-                Please enter the amount of tokens for listing:
-              </p>
-              <MyInput value={tokenAmount} type="number" onChange={handleTokenAmount} style={{ width: '100%' }}/>
+              <p className="description">Please enter the amount of tokens for listing:</p>
+              <MyInput value={tokenAmount} type="number" onChange={handleTokenAmount} style={{ width: '100%' }} />
               <Sperate />
-              <p className="description">
-                Please enter the amount of BNB you will add:
-              </p>
-              <MyInput value={bnbAmount} type="number" onChange={handleBnbAmount} style={{ width: '100%' }}/>
+              <p className="description">Please enter the amount of BNB you will add:</p>
+              <MyInput value={bnbAmount} type="number" onChange={handleBnbAmount} style={{ width: '100%' }} />
               <Sperate />
               <InlineWrapper>
                 <LineBtn onClick={() => setStep(1)}>Back</LineBtn>
@@ -565,24 +590,22 @@ const Presale: React.FC = () => {
             <Sperate />
             <StepWrapper number="4" stepName="Timing" step={step} onClick={() => setStep(4)}>
               <Sperate />
-              <p className="description">
-                Please set the start time for your launch and the liquidity lock time!
-              </p>
+              <p className="description">Please set the start time for your launch and the liquidity lock time!</p>
               <Sperate />
               <FlexWrapper>
                 <InlineWrapper>
                   <p className="description w110">Fair Launch Start Time</p>
                   <KeyboardDateTimePicker
-                    format="yyyy-MM-dd hh:mm:ss"
+                    format="yyyy-MM-dd HH:mm:ss"
                     value={launchTime}
                     onChange={(date, value) => setLaunchTime(date)}
                   />
                 </InlineWrapper>
                 <MarginWrapper />
                 <InlineWrapper>
-                  <p className="description w110">Liquidity Lockup Time</p>
+                  <p className="description w110">Liquidity Unlock Time</p>
                   <KeyboardDateTimePicker
-                    format="yyyy-MM-dd hh:mm:ss"
+                    format="yyyy-MM-dd HH:mm:ss"
                     value={unlockTime}
                     onChange={(date, value) => setUnlockTime(date)}
                   />
@@ -599,9 +622,8 @@ const Presale: React.FC = () => {
             <Sperate />
             <StepWrapper number="5" stepName="Additional Information" step={step} onClick={() => setStep(5)}>
               <p className="description">
-                Note the information in this section can be updated 
-                at any time by the presale creator while the presale is active. 
-                Any links left blank will not be displayed on your sale.
+                Note the information in this section can be updated at any time by the presale creator while the presale
+                is active. Any links left blank will not be displayed on your sale.
               </p>
               <Sperate />
               <p className="description">
@@ -670,14 +692,15 @@ const Presale: React.FC = () => {
                 </FlexWrapper>
                 <Sperate />
                 <FlexWrapper>
-                  <p className="description w220">Lockup Time</p>
+                  <p className="description w220">Unlock Time</p>
                   <p className="description w220">{moment(unlockTime).format('MMMM Do YYYY, h:mm a')}</p>
                 </FlexWrapper>
                 <Sperate />
                 <InlineWrapper>
                   <LineBtn onClick={() => setStep(1)}>Edit</LineBtn>
-                  <FillBtn className="ml16" onClick={validate}>
+                  <FillBtn className="ml16" onClick={validate} disabled={pendingTx}>
                     Submit
+                    {pendingTx && <AutoRenewIcon className="pendingTx" />}
                   </FillBtn>
                 </InlineWrapper>
               </NoteWrapper>

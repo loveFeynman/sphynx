@@ -320,7 +320,7 @@ const Launchpad: React.FC = () => {
           <CommunityCard desc="Follow us on Twitter">
             <TwitterIcon />
           </CommunityCard>
-          <CommunityCard desc="Join Community on Telegram">
+          <CommunityCard desc="Join us on Telegram">
             <TelegramIcon />
           </CommunityCard>
           <CommunityCard desc="Read our Document">
