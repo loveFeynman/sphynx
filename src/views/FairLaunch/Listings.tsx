@@ -1,12 +1,11 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 import Pagination from '@material-ui/lab/Pagination'
 import { useTranslation } from 'contexts/Localization'
 import styled from 'styled-components'
 import axios from 'axios'
-import * as ethers from 'ethers'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
-import { simpleRpcProvider } from 'utils/providers'
-import { getPresaleContract } from 'utils/contractHelpers'
+import { FILTER_OPTION, FAIRLAUNCH_NUM_PER_PAGE } from 'config/constants/fairlaunch'
+import { getFairLaunchContract } from 'utils/contractHelpers'
 import ListIcon from 'assets/svg/icon/ListIcon.svg'
 import { useMenuToggle } from 'state/application/hooks'
 import Spinner from 'components/Loader/Spinner'
@@ -23,8 +22,6 @@ import {
   PaginationWrapper,
 } from './ListingsStyles'
 
-const presaleContract = getPresaleContract(simpleRpcProvider)
-
 const LoadingWrapper = styled.div`
   display: flex;
   justify-content: center;
@@ -33,56 +30,58 @@ const LoadingWrapper = styled.div`
 `
 
 const FairLaunchListing: React.FC = () => {
-  const { chainId } = useActiveWeb3React()
+  const { chainId, library } = useActiveWeb3React()
   const { t } = useTranslation()
   const { menuToggled } = useMenuToggle()
   const [tokenList, setTokenList] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [filterOption, setFilterOption] = useState(FILTER_OPTION.ALL)
+  const [searchKey, setSearchKey] = useState('')
+  const [pageIndex, setPageIndex] = useState(0)
+  const [pageCount, setPageCount] = useState(1)
+  const fairLaunchContract = useMemo(() => getFairLaunchContract(library), [library])
 
   useEffect(() => {
     const fetchData = async () => {
-      axios.get(`${process.env.REACT_APP_BACKEND_API_URL2}/getAllPresaleInfo/${chainId}`).then(async (response) => {
+      const data = {
+        filter: filterOption,
+        chain_id: chainId,
+        key: searchKey,
+        page_index: pageIndex,
+        num_per_page: FAIRLAUNCH_NUM_PER_PAGE,
+      }
+
+      axios.post(`${process.env.REACT_APP_BACKEND_API_URL2}/getAllFairLaunchInfo`, data).then(async (response) => {
         if (response.data) {
+          let pages = 1
+          if (response.data.length > 0) pages = Math.ceil(parseInt(response.data[0].count) / FAIRLAUNCH_NUM_PER_PAGE)
+          setPageCount(pages)
           try {
             const list = await Promise.all(
               response.data.map(async (cell) => {
                 const item = {
-                  saleId: cell.sale_id,
+                  launch_id: cell.launch_id,
                   ownerAddress: cell.owner_address,
                   tokenName: cell.token_name,
-                  tokenSymbole: cell.token_symbol,
+                  tokenSymbol: cell.token_symbol,
                   tokenLogo: cell.logo_link,
-                  activeSale: 0,
-                  totalCap: 0,
-                  softCap: cell.soft_cap,
-                  hardCap: cell.hard_cap,
-                  minContribution: cell.min_buy,
-                  maxContribution: cell.max_buy,
-                  startTime: cell.start_time,
-                  endTime: cell.end_time,
+                  launchTime: cell.launch_time,
+                  tokenAmount: cell.token_amount,
+                  nativeAmount: cell.native_amount,
                   tokenState: 'active',
                 }
-                let temp = (await presaleContract.totalContributionBNB(cell.sale_id)).toString()
-                const value = parseFloat(ethers.utils.formatUnits(temp, cell.decimal))
-                item.totalCap = value
-                item.activeSale = value / cell.hard_cap
 
-                temp = await presaleContract.isDeposited(cell.sale_id.toString())
-                temp = true
-                if (temp) {
-                  /* is deposited */
-                  const now = Math.floor(new Date().getTime() / 1000)
-                  if (parseInt(cell.start_time) < now && parseInt(cell.end_time) > now) {
-                    item.tokenState = 'active'
-                  } else if (now > parseInt(cell.end_time)) {
-                    if (item.totalCap < item.softCap) {
-                      item.tokenState = 'failed'
-                    } else {
-                      item.tokenState = 'ended'
-                    }
-                  } else if (now < parseInt(cell.start_time)) {
-                    item.tokenState = 'pending'
-                  }
+                const isLaunched = await fairLaunchContract.isLaunched(cell.launch_id.toString())
+                /* is deposited */
+                const now = Math.floor(new Date().getTime() / 1000)
+                if (parseInt(cell.launch_time) > now) {
+                  item.tokenState = 'upcoming'
+                } else if (isLaunched) {
+                  item.tokenState = 'success'
+                } else if (now >= parseInt(cell.launch_time) && now <= (parseInt(cell.launch_time) + 600)) {
+                  item.tokenState = 'active'
+                } else {
+                  item.tokenState = 'failed'
                 }
                 return item
               }),
@@ -98,7 +97,11 @@ const FairLaunchListing: React.FC = () => {
     }
 
     if (chainId) fetchData()
-  }, [chainId])
+  }, [chainId, filterOption, pageIndex, searchKey, fairLaunchContract])
+
+  const handlePageIndex = (e, page) => {
+    setPageIndex(page - 1)
+  }
 
   return (
     <Wrapper>
@@ -110,7 +113,7 @@ const FairLaunchListing: React.FC = () => {
           </Title>
         </TitleWrapper>
       </HeaderWrapper>
-      <SearchPannel />
+      <SearchPannel setSearchOption={setFilterOption} setSearchKey={setSearchKey} setPageIndex={setPageIndex} />
       {isLoading && (
         <LoadingWrapper>
           <Spinner />
@@ -120,25 +123,22 @@ const FairLaunchListing: React.FC = () => {
         {tokenList &&
           tokenList.map((item) => (
             <TokenCard
-              saleId={item.saleId}
+              launchId={item.launch_id}
               ownerAddress={item.ownerAddress}
               tokenName={item.tokenName}
-              tokenSymbole={item.tokenSymbole}
+              tokenSymbol={item.tokenSymbol}
               tokenLogo={item.tokenLogo}
-              activeSale={item.activeSale * 100}
-              totalCap={item.totalCap}
-              softCap={item.softCap}
-              hardCap={item.hardCap}
-              minContribution={item.minContribution}
-              maxContribution={item.maxContribution}
+              tokenAmount={item.tokenAmount}
+              nativeAmount={item.nativeAmount}
               tokenState={item.tokenState}
+              launchTime={item.launchTime}
             >
               <img src={item.tokenLogo} alt="token icon" />
             </TokenCard>
           ))}
       </TokenListContainder>
       <PaginationWrapper>
-        <Pagination count={5} siblingCount={0} />
+        <Pagination count={pageCount} siblingCount={0} onChange={handlePageIndex} />
       </PaginationWrapper>
     </Wrapper>
   )

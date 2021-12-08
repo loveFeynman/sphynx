@@ -327,10 +327,10 @@ export default function Lottery() {
             <Text fontSize="26px" fontWeight="600" color="white" lineHeight="110%">
               {t('Lottery')}
             </Text>
-            <Text fontSize="15px" fontWeight="600" color="#777777" lineHeight="130%" mt="12px">
+            <Text fontSize="15px" fontWeight="600" color="white" lineHeight="130%" mt="12px">
               {t('Win Lottery if 2, 3, 4, 5 or 6 of your ticket')}
             </Text>
-            <Text fontSize="15px" fontWeight="600" color="#777777" lineHeight="130%" >
+            <Text fontSize="15px" fontWeight="600" color="white" lineHeight="130%" >
               {t('numbers matched')}
             </Text>
           </Flex>
@@ -352,12 +352,12 @@ export default function Lottery() {
       <CustomTabs selectedTabClassName="is-selected" selectedTabPanelClassName="is-selected">
         <SwapTabList>
           <SwapTab>
-            <Text textAlign="center" fontSize="14px" bold textTransform="capitalize" color="#A7A7CC">
+            <Text textAlign="center" fontSize="14px" bold textTransform="capitalize" color="white">
               {t('Next Draw')}
             </Text>
           </SwapTab>
           <SwapTab>
-            <Text textAlign="center" fontSize="14px" bold textTransform="capitalize" color="#A7A7CC">
+            <Text textAlign="center" fontSize="14px" bold textTransform="capitalize" color="white">
               {t('Past Draw')}
             </Text>
           </SwapTab>
@@ -422,7 +422,7 @@ export default function Lottery() {
                       <span>
                         {data?.map((item: any, index: number) => {
                           return (
-                            <Link href={`#/swap/${item.address}`}>
+                            <Link href={`/swap/${item.address}`}>
                               <MenuItem className={index === selectedItemIndex ? 'selectedItem' : ''}>
                                 {item.name}
                                 <br />

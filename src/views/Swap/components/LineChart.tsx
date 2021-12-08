@@ -108,7 +108,6 @@ const LineChart: React.FC<LineChartProps> = ({ data = [], width = 500, height = 
   useEffect(() => {
     const fetchData = async () => {
       if (input) {
-        // console.log('in here:::::::')
         setLoader(true)
         const config = {
           headers: {

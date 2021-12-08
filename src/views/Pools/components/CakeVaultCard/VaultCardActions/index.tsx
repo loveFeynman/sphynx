@@ -29,14 +29,14 @@ const CakeVaultCardActions: React.FC<{
       <Flex flexDirection="column" alignItems='center'>
         <Box display="inline" mb="10px">
           <InlineText
-            color='#A7A7CC'
+            color='white'
             textTransform="uppercase"
             fontSize="14px"
           >
             {accountHasSharesStaked ? stakingToken.symbol : t('Stake')}{' '}
           </InlineText>
           <InlineText
-            color='#A7A7CC'
+            color='white'
             textTransform="uppercase"
             fontSize="14px"
           >

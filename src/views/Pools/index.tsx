@@ -79,7 +79,7 @@ const PoolText = styled(Text)`
 `
 
 const PoolDetailText = styled(Text)`
-  color: #777777;
+  color: white;
   font-size: 12px;
   ${({ theme }) => theme.mediaQueries.xs} {
     font-size: 13px;

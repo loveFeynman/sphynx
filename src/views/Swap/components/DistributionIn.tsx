@@ -112,32 +112,27 @@ const RewardsPanel: React.FC = () => {
                   useGrouping: false,
                 })}
               </Text>
-              <Text color="#A7A7CC" textTransform="uppercase" className="dateString">
-                {t('days')}
-              </Text>
+              <Text color="white" textTransform="uppercase" className="dateString">{t('days')}</Text>
             </TimeSpan>
             <Text>:</Text>
             <TimeSpan>
               <Text color="white" textAlign="center" bold className="timeString">
                 {Math.floor((time % 86400000) / 3600000).toLocaleString('en-US', {
                   minimumIntegerDigits: 2,
-                  useGrouping: false,
-                })}
-              </Text>
-              <Text color="#A7A7CC" textTransform="uppercase" className="dateString">
-                {t('hrs')}
-              </Text>
+                  useGrouping: false
+                })}</Text>
+              <Text color="white" textTransform="uppercase" className="dateString">{t('hrs')}</Text>
             </TimeSpan>
             <Text color="white">:</Text>
             <TimeSpan>
               <Text color="white" textAlign="center" bold className="timeString">
                 {Math.floor((time % 3600000) / 60000).toLocaleString('en-US', {
                   minimumIntegerDigits: 2,
+                  useGrouping: false
+                })}</Text>
+              <Text color="white" textTransform="uppercase" className="dateString">{t('min')}</Text>
                   useGrouping: false,
                 })}
-              </Text>
-              <Text color="#A7A7CC" textTransform="uppercase" className="dateString">
-                {t('min')}
               </Text>
             </TimeSpan>
             <Text color="white">:</Text>
@@ -145,12 +140,9 @@ const RewardsPanel: React.FC = () => {
               <Text color="white" textAlign="center" bold className="timeString">
                 {Math.floor((time % 60000) / 1000).toLocaleString('en-US', {
                   minimumIntegerDigits: 2,
-                  useGrouping: false,
-                })}
-              </Text>
-              <Text color="#A7A7CC" textTransform="uppercase" className="dateString">
-                {t('sec')}
-              </Text>
+                  useGrouping: false
+                })}</Text>
+              <Text color="white" textTransform="uppercase" className="dateString">{t('sec')}</Text>
             </TimeSpan>
           </TimeContent>
         </DistributionContent>

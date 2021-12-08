@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react'
-import styled from 'styled-components'
+import styled, { keyframes } from 'styled-components'
 import { useHistory } from 'react-router-dom'
-import { Button, Text, Flex, Link } from '@sphynxdex/uikit'
+import { Button, Text, Flex, Link, AutoRenewIcon } from '@sphynxdex/uikit'
 import { useTranslation } from 'contexts/Localization'
 import { useMenuToggle } from 'state/application/hooks'
 import { ERC20_ABI } from 'config/abi/erc20'
@@ -10,6 +10,7 @@ import { ReactComponent as WarningIcon2 } from 'assets/svg/icon/WarningIcon2.svg
 import { ReactComponent as SettingIcon } from 'assets/svg/icon/SettingIcon.svg'
 import { ReactComponent as StopwatchIcon } from 'assets/svg/icon/StopwatchIcon1.svg'
 import { ReactComponent as LightIcon } from 'assets/svg/icon/LightIcon.svg'
+import useToast from 'hooks/useToast'
 import LikeIcon from 'assets/images/LikeIcon.png'
 import DislikeIcon from 'assets/images/DislikeIcon.png'
 import HillariousIcon from 'assets/images/HillariousIcon.png'
@@ -21,6 +22,24 @@ import axios from 'axios'
 import * as ethers from 'ethers'
 import { getPresaleAddress } from 'utils/addressHelpers'
 import TimerComponent from 'components/Timer/TimerComponent'
+
+import DefaultLogoIcon from 'assets/images/MainLogo.png'
+import { ReactComponent as TwitterIcon } from 'assets/svg/icon/TwitterIcon.svg'
+import { ReactComponent as SocialIcon2 } from 'assets/svg/icon/SocialIcon2.svg'
+import GitIcon from 'assets/images/githubIcon.png'
+import RedditIcon from 'assets/images/redditIcon.png'
+import { ReactComponent as TelegramIcon } from 'assets/svg/icon/TelegramIcon.svg'
+import { ReactComponent as DiscordIcon } from 'assets/svg/icon/DiscordIcon.svg'
+
+const rotate = keyframes`
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+`
 
 const Wrapper = styled.div`
   display: flex;
@@ -36,6 +55,9 @@ const Wrapper = styled.div`
   }
   ${({ theme }) => theme.mediaQueries.sm} {
     padding: 24px;
+  }
+  .pendingTx {
+    animation: ${rotate} 2s linear infinite;
   }
 `
 
@@ -61,7 +83,7 @@ const HeaderTitleText = styled(Text)`
 const WarningTitleText = styled(HeaderTitleText)`
   font-size: 15px;
   ${({ theme }) => theme.mediaQueries.sm} {
-    font-size: 20px;
+    font-size: 22px;
   }
 `
 
@@ -142,7 +164,7 @@ const LiquidityFlex = styled(Flex)`
 `
 
 const WarningTitle = styled.div`
-  font-size: 15px;
+  font-size: 18px;
   font-weight: 600;
   color: white;
   padding-bottom: 4px;
@@ -151,7 +173,7 @@ const WarningTitle = styled.div`
 `
 
 const WarningSubTitle = styled(Text)`
-  font-size: 12px;
+  font-size: 14px;
   text-align: left;
   font-weight: 500;
 `
@@ -176,14 +198,15 @@ const TokenContainer = styled.div`
 
 const TokenSymbol = styled.div`
   font-weight: 600;
-  font-size: 22px;
+  font-size: 25px;
   text-align: left;
 `
 
 const TokenName = styled.div`
   font-weight: 600;
-  font-size: 14px;
+  font-size: 15px;
   color: #a7a7cc;
+  text-align: left;
 `
 
 const TokenSymbolWrapper = styled.div`
@@ -206,7 +229,6 @@ const TokenAddressContainer = styled.div`
 const AddressFlex = styled(Flex)`
   flex-wrap: wrap;
   padding-bottom: 10px;
-  border-bottom: 1px solid #31314e;
   justify-content: space-between;
 `
 
@@ -222,7 +244,7 @@ const AddressWrapper = styled.div`
   }
   div:last-child {
     color: #f2c94c;
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 600;
     word-break: break-word;
     text-align: left;
@@ -233,13 +255,12 @@ const AddressWrapper = styled.div`
 `
 
 const AddressSendError = styled.div`
-  margin-top: -8px;
-  font-style: italic;
-  font-weight: normal;
-  font-size: 11px;
+  margin-top: -28px;
+  font-weight: bold;
+  font-size: 14px;
   line-height: 16px;
   letter-spacing: 0.15em;
-  color: #e93f33;
+  color: #ff2f21;
   text-align: left;
 `
 
@@ -252,7 +273,7 @@ const CustomContract = styled.div`
     text-align: center;
     font-weight: 600;
     font-size: 14px;
-    color: #a7a7cc;
+    color: white;
   }
 `
 
@@ -260,7 +281,7 @@ const WhitelistCard = styled.div`
   display: flex;
   align-items: center;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-evenly;
   border: 1px solid ${({ theme }) => (theme.isDark ? '#5E2B60' : '#4A5187')};
   box-sizing: border-box;
   border-radius: 5px;
@@ -281,7 +302,7 @@ const WhitelistCard = styled.div`
 const WhitelistTitle = styled(Text)`
   font-weight: 600;
   font-size: 15px;
-  margin-bottom: 20px;
+  margin-top: 16px;
   ${({ theme }) => theme.mediaQueries.sm} {
     font-size: 20px;
   }
@@ -290,7 +311,7 @@ const WhitelistTitle = styled(Text)`
 const WhitelistSubText = styled(Text)`
   font-weight: 600;
   font-size: 12px;
-  color: #a7a7cc;
+  color: white;
   ${({ theme }) => theme.mediaQueries.sm} {
     font-size: 15px;
   }
@@ -299,10 +320,8 @@ const WhitelistSubText = styled(Text)`
 const WalletAddressError = styled.div`
   display: flex;
   justify-content: center;
-  position: absolute;
   align-items: center;
-  bottom: 30px;
-  padding: 17px;
+  margin-bottom: 24px;
   img {
     width: 20px;
     height: 20px;
@@ -312,7 +331,7 @@ const WalletAddressError = styled.div`
     text-align: center;
     font-weight: 600;
     font-size: 12px;
-    color: #a7a7cc;
+    color: white;
   }
 `
 
@@ -320,6 +339,16 @@ const ContributeWrapper = styled.div`
   width: 100%;
   border: 1px solid ${({ theme }) => (theme.isDark ? '#5E2B60' : '#4A5187')};
   border-radius: 5px;
+  & > div > div {
+    font-size: 12px;
+  }
+  ${({ theme }) => theme.mediaQueries.xl} {
+    width: 49%;
+    margin: 0;
+    & > div > div {
+      font-size: 12px;
+    }
+  }
 `
 
 const TokenRateView = styled.div`
@@ -348,10 +377,10 @@ const InputWrapper = styled.div`
     border: none;
     box-shadow: none;
     outline: none;
-    color: #a7a7cc;
+    color: white;
     font-size: 13px;
     &::placeholder {
-      color: #a7a7cc;
+      color: white;
     }
   }
 `
@@ -399,7 +428,6 @@ const DataItem = styled.div`
       padding: 5px 20px;
     }
     text-align: start;
-    font-size: 12px;
     color: #a7a7cc;
     font-style: normal;
     font-weight: 600;
@@ -412,7 +440,6 @@ const DataItem = styled.div`
     display: flex;
     padding: 5px 20px;
     text-align: start;
-    font-size: 12px;
     color: #f2c94c;
     font-style: normal;
     font-weight: 600;
@@ -459,7 +486,7 @@ const ThinkItem = styled.div`
   div {
     margin-top: 5px;
     font-weight: 500;
-    font-size: 12px;
+    font-size: 14px;
     color: #a7a7cc;
   }
 `
@@ -503,10 +530,28 @@ const Progress = styled.div<{ state }>`
   font-weight: bold;
 `
 
+const SocialIconsWrapper = styled.div`
+  display: flex;
+  gap: 10px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+`
+
+const IconBox = styled.div<{ color?: string }>`
+  background: ${({ color }) => color};
+  padding: 10px;
+  border-radius: 3px;
+  display: flex;
+  width: fit-content;
+  align-items: center;
+`
+
 const PresaleLive: React.FC = () => {
   const param: any = useParams()
   const { t } = useTranslation()
   const history = useHistory()
+  const { toastSuccess, toastError } = useToast()
   const { menuToggled } = useMenuToggle()
   const [presaleStatus, setPresaleStatus] = useState(false)
   const { library, account, chainId } = useActiveWeb3React()
@@ -526,8 +571,12 @@ const PresaleLive: React.FC = () => {
   const [privateSale1, setPrivateSale1] = useState(false)
   const [privateSale2, setPrivateSale2] = useState(false)
   const [publicSale, setPublicSale] = useState(false)
+  const [pendingSale, setPendingSale] = useState(false)
   const [endSale, setendSale] = useState(false)
   const [failedSale, setFailedSale] = useState(false)
+  const [pendingContribute, setPendingContribute] = useState(false)
+  const [pendingClaim, setPendingClaim] = useState(false)
+  const [pendingWithdraw, setPendingWithdraw] = useState(false)
   const presaleAddress = getPresaleAddress()
   const timerRef = useRef<NodeJS.Timeout>()
   const PRESALE_DATA = [
@@ -600,16 +649,22 @@ const PresaleLive: React.FC = () => {
     timerRef.current = setInterval(() => {
       if (tokenData) {
         const now = Math.floor(new Date().getTime() / 1000)
-        if (parseInt(tokenData.start_time) < now && now < parseInt(tokenData.tier1_time)) {
+        if (parseInt(tokenData.start_time) > now) {
+          setPendingSale(true)
+        } else if (parseInt(tokenData.start_time) < now && now < parseInt(tokenData.tier1_time)) {
+          setPendingSale(false)
           setPrivateSale1(true)
         } else if (parseInt(tokenData.tier1_time) < now && now < parseInt(tokenData.tier2_time)) {
+          setPendingSale(false)
           setPrivateSale1(false)
           setPrivateSale2(true)
         } else if (parseInt(tokenData.tier2_time) < now && now < parseInt(tokenData.end_time)) {
+          setPendingSale(false)
           setPrivateSale1(false)
           setPrivateSale2(false)
           setPublicSale(true)
         } else if (now >= parseInt(tokenData.end_time)) {
+          setPendingSale(false)
           setendSale(true)
         }
       }
@@ -687,29 +742,66 @@ const PresaleLive: React.FC = () => {
     setContribute(e.target.value)
   }
 
-  const handleComponent = async () => {
-    const isValue = !Number.isNaN(parseInt(param.saleId))
-    if (isValue && parseFloat(contribute) > 0 && tokenData) {
-      const value = ethers.utils.parseEther(contribute)
-      const tx = await presaleContract.contribute(param.saleId, { value })
-      const receipt = await tx.wait()
-      if(receipt.status === 1) {
-        axios.post(`${process.env.REACT_APP_BACKEND_API_URL2}/contribute`, {saleId: param.saleId, chainId})
-        .then((res) => {
-          console.log("response", res)
-        })
+  const handleContribute = async () => {
+    try {
+      const isValue = !Number.isNaN(parseInt(param.saleId))
+      if (isValue && parseFloat(contribute) > 0 && tokenData) {
+        const value = ethers.utils.parseEther(contribute)
+        setPendingContribute(true)
+        const tx = await presaleContract.contribute(param.saleId, { value })
+        const receipt = await tx.wait()
+        if (receipt.status === 1) {
+          axios
+            .post(`${process.env.REACT_APP_BACKEND_API_URL2}/contribute`, { saleId: param.saleId, chainId })
+            .then((res) => {
+              console.log('response', res)
+            })
+        }
+        setPendingContribute(false)
+        toastSuccess('Success', 'Operation successfully!')
+      }
+    } catch (err) {
+      setPendingContribute(false)
+      if (err.data) {
+        toastError('Failed', err.data.message)
+      } else {
+        toastError('Failed', err.message)
       }
     }
   }
 
   const handleClaimToken = async () => {
-    const tx = await presaleContract.claimToken(param.saleId)
-    await tx.wait()
+    try {
+      setPendingClaim(true)
+      const tx = await presaleContract.claimToken(param.saleId)
+      await tx.wait()
+      setPendingClaim(false)
+      toastSuccess('Success', 'Operation successfully!')
+    } catch (err) {
+      setPendingClaim(false)
+      if (err.data) {
+        toastError('Failed', err.data.message)
+      } else {
+        toastError('Failed', err.message)
+      }
+    }
   }
 
   const handleEmergencyWithdraw = async () => {
-    const tx = await presaleContract.emergencyWithdraw(param.saleId)
-    await tx.wait()
+    try {
+      setPendingWithdraw(true)
+      const tx = await presaleContract.emergencyWithdraw(param.saleId)
+      await tx.wait()
+      setPendingWithdraw(false)
+      toastSuccess('Success', 'Operation successfully!')
+    } catch (err) {
+      setPendingWithdraw(false)
+      if (err.data) {
+        toastError('Failed', err.data.message)
+      } else {
+        toastError('Failed', err.message)
+      }
+    }
   }
 
   const toSphynxSwap = () => {
@@ -724,9 +816,6 @@ const PresaleLive: React.FC = () => {
             <MainLogo width="40" height="40" />
             <Flex flexDirection="column" ml="10px">
               <HeaderTitleText>{t('SphynxSale Automated Warning System')}</HeaderTitleText>
-              <Text fontSize="12px" color="#777777" bold textAlign="left">
-                {t('Lorem ipsum dolor sit amet, consectetur adipiscing elit')}
-              </Text>
             </Flex>
           </Flex>
         </Flex>
@@ -744,18 +833,18 @@ const PresaleLive: React.FC = () => {
       <FlexWrapper style={{ marginTop: '32px' }}>
         <DefiFlex>
           <WarningTitle>DeFi Zone Warning</WarningTitle>
-          <WarningSubTitle style={{ opacity: '0.8' }}>
+          <WarningSubTitle>
             This sale is listed in the DeFi Zone. Presales in this area use custom contracts that are not vetted by the
-            DxSale team. Developers of tokens in this area can block transfers, can stop users from claiming tokens, can
-            stop trading on exchanges and requires extra vetting. Participate at your own risk!
+            SphynxSale team. Developers of tokens in this area can block transfers, can stop users from claiming tokens,
+            can stop trading on exchanges and requires extra vetting. Participate at your own risk!
           </WarningSubTitle>
         </DefiFlex>
         <SoftFlex>
           <WarningTitle>Soft Cap Warning</WarningTitle>
-          <WarningSubTitle style={{ opacity: '0.8' }}>The softcap of this sale is very low.</WarningSubTitle>
+          <WarningSubTitle>The softcap of this sale is very low.</WarningSubTitle>
         </SoftFlex>
         <LiquidityFlex>
-          <WarningTitle style={{ opacity: '0.8', color: '#1A1A3A' }}>Liquidity Percentage Warning</WarningTitle>
+          <WarningTitle style={{ color: '#1A1A3A' }}>Liquidity Percentage Warning</WarningTitle>
           <WarningSubTitle color="#1A1A3A" style={{ opacity: '0.7' }}>
             This sale has a very low liquidity percentage.
           </WarningSubTitle>
@@ -764,29 +853,36 @@ const PresaleLive: React.FC = () => {
       <TokenPresaleBody>
         <TokenPresaleContainder toggled={menuToggled}>
           <MainCardWrapper>
+            <Link style={{ marginBottom: '16px' }} href="/launchpad/listing">
+              Back to list
+            </Link>
             <TokenContainer>
-              <img src={tokenData && tokenData.logo_link} width="64px" height="64px" alt="token icon" />
+              <img
+                src={tokenData && (tokenData.logo_link === '' ? DefaultLogoIcon : tokenData.logo_link)}
+                width="64px"
+                height="64px"
+                alt="token icon"
+              />
               <TokenSymbolWrapper>
                 <TokenSymbol>{tokenData && tokenData.token_symbol}</TokenSymbol>
                 <TokenName>{tokenData && tokenData.token_name}</TokenName>
               </TokenSymbolWrapper>
             </TokenContainer>
             <TokenDescription>
-              <Text fontSize="12px" textAlign="left" color="#A7A7CC">
-                ${tokenData && tokenData.token_symbol} is a new reflection protocol on the Binance Smart Chain with a
-                deflationary burn mechanism that offers reflections to holders with 0% buy and sell tax.
+              <Text fontSize="14px" textAlign="left" color="white">
+                {tokenData && tokenData.project_dec}
               </Text>
             </TokenDescription>
             <TokenAddressContainer>
               <AddressFlex>
                 <AddressWrapper>
-                  <Text color="#A7A7CC" bold>
+                  <Text color="white" bold>
                     Presale Address:
                   </Text>
                   <Text>{presaleAddress}</Text>
                 </AddressWrapper>
                 <AddressWrapper>
-                  <Text color="#A7A7CC" bold>
+                  <Text color="white" bold>
                     Token Address:
                   </Text>
                   <Text>{tokenData && tokenData.token_address}</Text>
@@ -800,14 +896,56 @@ const PresaleLive: React.FC = () => {
             </TokenAddressContainer>
             <Separate />
             <FlexWrapper>
-              <WhitelistCard style={{ padding: '75px 15px' }}>
-                <WhitelistTitle mb="16px">Whitelist {isWhiteList ? 'Enabled' : 'Public'} Sale</WhitelistTitle>
-                <WhitelistSubText mb="28px">
+              <ContributeWrapper>
+                {PRESALE_DATA.map((item, index) =>
+                  index === PRESALE_DATA.length - 1 ? (
+                    <DataLatestItem>
+                      <Text>{item.presaleItem}</Text>
+                      <Text>{item.presaleValue}</Text>
+                    </DataLatestItem>
+                  ) : (
+                    <DataItem>
+                      <Text>{item.presaleItem}</Text>
+                      <Text>{item.presaleValue}</Text>
+                    </DataItem>
+                  ),
+                )}
+              </ContributeWrapper>
+              <WhitelistCard>
+                <SocialIconsWrapper>
+                  <Link external href={tokenData && tokenData.website_link} aria-label="social2">
+                    <IconBox color="#710D89">
+                      <SocialIcon2 width="15px" height="15px" />
+                    </IconBox>
+                  </Link>
+                  <Link external href={tokenData && tokenData.github_link} aria-label="social2">
+                    <IconBox color="#3f4492">
+                      <img src={GitIcon} alt="Git Logo" width="15px" height="15px" />
+                    </IconBox>
+                  </Link>
+                  <Link external href={tokenData && tokenData.twitter_link} aria-label="twitter">
+                    <IconBox color="#33AAED">
+                      <TwitterIcon width="15px" height="15px" />
+                    </IconBox>
+                  </Link>
+                  <Link external href={tokenData && tokenData.reddit_link} aria-label="discord">
+                    <IconBox color="#2260DA">
+                      <img src={RedditIcon} alt="Git Logo" width="15px" height="15px" />
+                    </IconBox>
+                  </Link>
+                  <Link external href={tokenData && tokenData.telegram_link} aria-label="telegram">
+                    <IconBox color="#3E70D1">
+                      <TelegramIcon width="15px" height="15px" />
+                    </IconBox>
+                  </Link>
+                </SocialIconsWrapper>
+                <WhitelistTitle>{isWhiteList ? 'WhiteList Enabled' : 'Public'} Sale</WhitelistTitle>
+                <WhitelistSubText mb={isWhiteList ? '12px' : '28px'}>
                   {isWhiteList
                     ? 'Only Whitelisted Wallets can Purchase This Token!'
                     : 'Anybody can Purchase This Token!'}
                 </WhitelistSubText>
-                {isWhiteList && whiteList1 && <Text>Your wallet address is on the whitelist1!</Text>}
+                {isWhiteList && whiteList1 && <Text mb="24px">Your wallet address is on the whitelist1!</Text>}
                 {isWhiteList && whiteList2 && <Text>Your wallet address is on the whitelist2!</Text>}
                 {isWhiteList && !whiteList1 && !whiteList2 && (
                   <WalletAddressError>
@@ -815,10 +953,35 @@ const PresaleLive: React.FC = () => {
                     <Text>Your wallet address is not whitelisted</Text>
                   </WalletAddressError>
                 )}
-              </WhitelistCard>
-              <WhitelistCard>
-                {!presaleStatus ? (
-                  !failedSale ? (
+                {!failedSale ? (
+                  presaleStatus ? (
+                    <>
+                      <Text textAlign="left" fontSize="14px" fontWeight="500" color="white">
+                        This presale has ended. Go back to the dashboard to view others!
+                      </Text>
+                      {/* <Link external href="https://pancakeswap.finance/swap" style={{ width: '100%' }}>
+                      <DarkButton style={{ width: '100%', textDecoration: 'none' }} mt="16px">
+                        Trade on PancakeSwap
+                      </DarkButton>
+                    </Link> */}
+                      <DarkButton onClick={toSphynxSwap} style={{ width: '100%' }} mt="16px">
+                        Trade on SphynxSwap
+                      </DarkButton>
+                      <Text textAlign="left" fontSize="14px" fontWeight="500" mt="16px" color="white">
+                        If you participated in the presale click the claim button below to claim your tokens!
+                      </Text>
+                      <ColorButton
+                        style={{ width: '100%' }}
+                        mt="16px"
+                        mb="16px"
+                        onClick={handleClaimToken}
+                        disabled={isClaimed || pendingClaim}
+                      >
+                        {pendingClaim && <AutoRenewIcon className="pendingTx" />}
+                        Claim Token
+                      </ColorButton>
+                    </>
+                  ) : (
                     <>
                       <WhitelistTitle>
                         Raised: {raise}/{tokenData?.hard_cap}
@@ -829,7 +992,7 @@ const PresaleLive: React.FC = () => {
                         </ProgressBar>
                       </ProgressBarWrapper>
                       <TokenRateView>
-                        <Text fontSize="14px" fontWeight="600" color="#777777" textAlign="left">
+                        <Text fontSize="14px" fontWeight="600" color="white" textAlign="left">
                           1 BNB = {tokenData && tokenData.tier3} {tokenData && tokenData.token_symbol}{' '}
                         </Text>
                       </TokenRateView>
@@ -837,7 +1000,10 @@ const PresaleLive: React.FC = () => {
                         <InputWrapper>
                           <input placeholder="" onChange={handlerChange} />
                         </InputWrapper>
-                        <ColorButton onClick={handleComponent}>Contribute</ColorButton>
+                        <ColorButton onClick={handleContribute} disabled={pendingContribute}>
+                          Contribute
+                          {pendingContribute && <AutoRenewIcon className="pendingTx" />}
+                        </ColorButton>
                       </ContributeFlex>
                       <Flex alignItems="center" style={{ width: '100%' }}>
                         <StopwatchIcon />
@@ -846,6 +1012,8 @@ const PresaleLive: React.FC = () => {
                             ? 'Private sale 1 ends in'
                             : privateSale2
                             ? 'Private sale 2 ends in'
+                            : pendingSale
+                            ? 'Sale starts in'
                             : 'Public sale ends in'}{' '}
                         </Text>
                         <TimerComponent
@@ -854,79 +1022,59 @@ const PresaleLive: React.FC = () => {
                               ? tokenData?.tier1_time
                               : privateSale2
                               ? tokenData?.tier2_time
+                              : pendingSale
+                              ? tokenData?.start_time
                               : tokenData?.end_time
                           }
                         />
                       </Flex>
                       <UnderLine />
                     </>
-                  ) : (
-                    <>
-                      <Text textAlign="left" fontSize="12px" fontWeight="500" color="#777777">
-                        This presale has failed!
-                      </Text>
-                      <Text textAlign="left" fontSize="12px" fontWeight="500" mt="16px" color="#777777">
-                        If you participated in the presale click the claim button below to claim your BNB!
-                      </Text>
-                      <ColorButton
-                        style={{ width: '100%' }}
-                        mt="16px"
-                        mb="16px"
-                        onClick={handleClaimToken}
-                        disabled={isClaimed}
-                      >
-                        Claim BNB
-                      </ColorButton>
-                    </>
                   )
                 ) : (
                   <>
-                    <Text textAlign="left" fontSize="12px" fontWeight="500" color="#777777">
-                      This presale has ended. Go back to the dashboard to view others!
+                    <Text textAlign="left" fontSize="12px" fontWeight="500" color="white">
+                      This presale has failed!
                     </Text>
-                    <Link external href="https://pancakeswap.finance/swap" style={{ width: '100%' }}>
-                      <DarkButton style={{ width: '100%', textDecoration: 'none' }} mt="16px">
-                        Trade on PancakeSwap
-                      </DarkButton>
-                    </Link>
-                    <DarkButton onClick={toSphynxSwap} style={{ width: '100%' }} mt="16px">
-                      Trade on SphynxSwap
-                    </DarkButton>
-                    <Text textAlign="left" fontSize="12px" fontWeight="500" mt="16px" color="#777777">
-                      If you participated in the presale click the claim button below to claim your tokens!
+                    <Text textAlign="left" fontSize="12px" fontWeight="500" mt="16px" color="white">
+                      If you participated in the presale click the claim button below to claim your BNB!
                     </Text>
                     <ColorButton
                       style={{ width: '100%' }}
                       mt="16px"
                       mb="16px"
                       onClick={handleClaimToken}
-                      disabled={isClaimed}
+                      disabled={isClaimed || pendingClaim}
                     >
-                      Claim Token
+                      Claim BNB
+                      {pendingClaim && <AutoRenewIcon className="pendingTx" />}
                     </ColorButton>
                   </>
                 )}
                 <TokenAmountView>
-                  <Text fontSize="12px" fontWeight="600" color="#A7A7CC">
+                  <Text fontSize="14px" fontWeight="600" color="white">
                     Your Contributed Account:
                   </Text>
-                  <Text fontSize="12px" fontWeight="600" textAlign="center" color="#F2C94C">
+                  <Text fontSize="14px" fontWeight="600" textAlign="center" color="#F2C94C">
                     {userContributeBNB}BNB
                   </Text>
                 </TokenAmountView>
                 <UnderLine />
                 <TokenAmountView>
-                  <Text fontSize="12px" fontWeight="600" color="#A7A7CC">
+                  <Text fontSize="14px" fontWeight="600" color="white">
                     Your Reserved Tokens:
                   </Text>
-                  <Text fontSize="12px" fontWeight="600" textAlign="center" color="#F2C94C">
+                  <Text fontSize="14px" fontWeight="600" textAlign="center" color="#F2C94C">
                     {userContributeToken} {tokenData && tokenData.token_symbol}
                   </Text>
                 </TokenAmountView>
                 {!presaleStatus && !failedSale ? (
                   <>
                     <Separate />
-                    <DarkButton onClick={handleEmergencyWithdraw}>Emergency Withdraw</DarkButton>
+                    <DarkButton onClick={handleEmergencyWithdraw} disabled={pendingWithdraw}>
+                      Emergency Withdraw
+                      {pendingWithdraw && <AutoRenewIcon className="pendingTx" />}
+                    </DarkButton>
                   </>
                 ) : (
                   ''
@@ -934,21 +1082,6 @@ const PresaleLive: React.FC = () => {
               </WhitelistCard>
             </FlexWrapper>
             <Separate />
-            <ContributeWrapper>
-              {PRESALE_DATA.map((item, index) =>
-                index === PRESALE_DATA.length - 1 ? (
-                  <DataLatestItem>
-                    <Text>{item.presaleItem}</Text>
-                    <Text>{item.presaleValue}</Text>
-                  </DataLatestItem>
-                ) : (
-                  <DataItem>
-                    <Text>{item.presaleItem}</Text>
-                    <Text>{item.presaleValue}</Text>
-                  </DataItem>
-                ),
-              )}
-            </ContributeWrapper>
           </MainCardWrapper>
           <SubCardWrapper>
             <ThinkCardWrapper>
@@ -977,7 +1110,9 @@ const PresaleLive: React.FC = () => {
                 </ItemWrapper>
               </ItemContainer>
               <Separate />
-              <ColorButton style={{ width: '95%' }}>Join Community</ColorButton>
+              <Link external href="https://discord.gg/ZEuDaFk4qz" aria-label="discord">
+                <ColorButton style={{ width: '180px' }}>Join Community</ColorButton>
+              </Link>
             </ThinkCardWrapper>
           </SubCardWrapper>
         </TokenPresaleContainder>

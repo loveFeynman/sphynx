@@ -268,9 +268,6 @@ async function getChartData(input: any, pair: any, resolution: any, routerVersio
 }
 
 async function getChartStats(address: string, routerVersion: string, chainId = 56) {
-  console.log("addresss", address)
-  console.log("routerVersion", routerVersion)
-  console.log("chainId", chainId)
   if (chainId === 1) {
     const wETHContract = new web3ETH.eth.Contract(abi as AbiItem[], WETH_ADDRESS)
     try {

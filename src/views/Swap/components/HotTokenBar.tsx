@@ -36,7 +36,7 @@ const BarIntro = styled.div`
   background-color: transparent;
   border-radius: 8px 0px 0px 8px;
   & span {
-    color: #a7a7cc;
+    color: white;
     font-size: 12px;
     font-weight: bold;
     line-height: 14px;
@@ -272,7 +272,7 @@ export default function HotTokenBar() {
                   return (
                     <li key={`${index + 1}.${elem.currency.symbol}`} style={{ color: 'white', padding: '12' }}>
                       <a
-                        href={`#/swap/${elem.currency.address}`}
+                        href={`/swap/${elem.currency.address}`}
                         style={{ marginRight: 20, textDecoration: 'none' }}
                         onClick={() => {
                           dispatch(setIsInput({ isInput: true }))

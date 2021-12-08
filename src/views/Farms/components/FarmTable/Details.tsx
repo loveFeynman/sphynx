@@ -27,7 +27,7 @@ const Details: React.FC<DetailsProps> = ({ actionPanelToggled }) => {
 
   return (
     <StyledCell role="cell">
-      <Text color="#A7A7CC" fontSize='12px'>
+      <Text color="white" fontSize='14px'>
         {actionPanelToggled ? t('Hide') : t('Details')}
       </Text>
       <ArrowIcon color={actionPanelToggled ? '#BC29B1' : 'white'} toggled={actionPanelToggled} />

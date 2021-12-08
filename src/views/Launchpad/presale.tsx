@@ -10,19 +10,27 @@ import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import { useTranslation } from 'contexts/Localization'
 import { isAddress } from '@ethersproject/address'
 import useToast from 'hooks/useToast'
-import styled from 'styled-components'
+import styled, { keyframes } from 'styled-components'
 import { ERC20_ABI } from 'config/abi/erc20'
-import { useModal } from '@sphynxdex/uikit'
+import { useModal, AutoRenewIcon } from '@sphynxdex/uikit'
 import DisclaimerModal from 'components/DisclaimerModal/DisclaimerModal'
 import Select from 'components/Select/Select'
-import BigNumber from 'bignumber.js'
-import { BIG_TEN } from 'utils/bigNumber'
 import axios from 'axios'
 import { getPresaleContract } from 'utils/contractHelpers'
 import { useWeb3React } from '@web3-react/core'
 import { getSphynxRouterAddress } from 'utils/addressHelpers'
 import { useHistory } from 'react-router-dom'
 import { SEARCH_OPTION } from 'config/constants/launchpad'
+
+const rotate = keyframes`
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+`;
 
 const Wrapper = styled.div`
   display: flex;
@@ -80,6 +88,9 @@ const Wrapper = styled.div`
   }
   ${({ theme }) => theme.mediaQueries.xl} {
     align-items: flex-start;
+  }
+  .pendingTx {
+    animation: ${rotate} 2s linear infinite;
   }
 `
 
@@ -279,13 +290,17 @@ const FillBtn = styled.button`
   border-radius: 5px;
   cursor: pointer;
   outline: none;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
   &:hover {
     background: linear-gradient(90deg, #722da9 0%, #e44bd4 100%);
     border: 1px solid #9b3aab;
   }
   &:disabled {
-    background: linear-gradient(90deg, #222 0%, #fff 100%);
+    background: linear-gradient(90deg, #722da9 0%, #e44bd4 100%);
     border: 1px solid #444;
+    cursor: not-allowed;
   }
 `
 
@@ -362,6 +377,7 @@ const Presale: React.FC = () => {
   const [projectDec, setProjectDec] = useState('')
   const [updateDec, setUpdateDec] = useState('')
   const [certikAudit, setCertikAudit] = useState(false)
+  const [pendingTx, setPendingTx] = useState(false)
 
   const [selectedCount, setSelectedCount] = useState(0)
 
@@ -419,7 +435,7 @@ const Presale: React.FC = () => {
 
   const validate = async () => {
     if (!tokenAddress || !tokenName || !tokenSymbol) {
-      toastError('Oops, we can not parse token data, please inpute correct token address!')
+      toastError('Oops, we can not parse token data, please input correct token address!')
       setStep(1)
       return
     }
@@ -488,7 +504,7 @@ const Presale: React.FC = () => {
     //   return;
     // }
 
-    console.log("presaleContract", presaleContract)
+    setPendingTx(true)
     const presaleId = (await presaleContract.currentPresaleId()).toString()
     const routerAddress = getSphynxRouterAddress()
     const startTime = Math.floor(new Date(presaleStart).getTime() / 1000)
@@ -574,6 +590,8 @@ const Presale: React.FC = () => {
         tier2_time: tierTwoTime,
         lock_time: liquidityLockTime,
       }
+
+      setPendingTx(false)
       axios.post(`${process.env.REACT_APP_BACKEND_API_URL2}/insertPresaleInfo`, { data }).then((response) => {
         if (response.data) {
           toastSuccess('Pushed!', 'Your presale info is saved successfully.')
@@ -582,6 +600,9 @@ const Presale: React.FC = () => {
           toastError('Failed!', 'Your action is failed.')
         }
       })
+    }).catch((err) => {
+      setPendingTx(false)
+      toastError('Failed!', 'Your action is failed.')
     })
   }
 
@@ -725,14 +746,14 @@ const Presale: React.FC = () => {
             <Sperate />
             <StepWrapper number="5" stepName="SphynxSwap Liquidity" step={step} onClick={() => setStep(5)}>
               <p className="description">
-                Enter the percentage of raised funds that should be allocated to Liquidity on SphynxSwap (Min 5%, Max
+                Enter the percentage of raised funds that should be allocated to Liquidity on SphynxSwap (Min 0%, Max
                 100%, We recommend &gt; 70%)
               </p>
               <MyInput
                 onChange={(e) => setSphynxLiquidityRate(e.target.value)}
                 value={sphynxLiquidityRate}
-                style={{ width: '100%' }}
               />
+              &nbsp; %
               <Sperate />
               <InlineWrapper>
                 <LineBtn onClick={() => setStep(4)}>Back</LineBtn>
@@ -750,8 +771,8 @@ const Presale: React.FC = () => {
               <MyInput
                 onChange={(e) => setPancakeLiquidityRate(e.target.value)}
                 value={pancakeLiquidityRate}
-                style={{ width: '100%' }}
               />
+              &nbsp; %
               <Sperate />
               <InlineWrapper>
                 <LineBtn onClick={() => setStep(5)}>Back</LineBtn>
@@ -761,12 +782,12 @@ const Presale: React.FC = () => {
               </InlineWrapper>
             </StepWrapper>
             <Sperate />
-            <StepWrapper number="7" stepName="Sphynx/Pancake Listing Rate" step={step} onClick={() => setStep(7)}>
+            <StepWrapper number="7" stepName="SphynxSwap/PancakeSwap Listing Rate" step={step} onClick={() => setStep(7)}>
               <p className="description">
-                Enter the SphynxSwap listing price: (If I buy 1 BNB worth on SphynxSwap how many tokens do I get?
-                Usually this amount is lower than presale rate to allow for a higher listing price on SphynxSwap)
+                Enter the SphynxSwap listing price: (If I buy 1 BNB worth on Swap how many tokens do I get?
+                Usually this amount is lower than presale rate to allow for a higher listing price on Swap)
               </p>
-              <MyInput onChange={(e) => setListingRate(e.target.value)} value={listingRate} style={{ width: '100%' }} />
+              <MyInput onChange={(e) => setListingRate(e.target.value)} value={listingRate} />
               <Sperate />
               <InlineWrapper>
                 <LineBtn onClick={() => setStep(6)}>Back</LineBtn>
@@ -912,7 +933,7 @@ const Presale: React.FC = () => {
                 <InlineWrapper>
                   <p className="description w110">Presale Start Time</p>
                   <KeyboardDateTimePicker
-                    format="yyyy-MM-dd hh:mm:ss"
+                    format="yyyy-MM-dd HH:mm:ss"
                     value={presaleStart}
                     onChange={(date, value) => setPresaleStart(date)}
                   />
@@ -921,7 +942,7 @@ const Presale: React.FC = () => {
                 <InlineWrapper>
                   <p className="description w110">Presale End Time</p>
                   <KeyboardDateTimePicker
-                    format="yyyy-MM-dd hh:mm:ss"
+                    format="yyyy-MM-dd HH:mm:ss"
                     value={presaleEnd}
                     onChange={(date, value) => setPresaleEnd(date)}
                   />
@@ -932,7 +953,7 @@ const Presale: React.FC = () => {
                 <InlineWrapper>
                   <p className="description w110">Tier1 Time</p>
                   <KeyboardDateTimePicker
-                    format="yyyy-MM-dd hh:mm:ss"
+                    format="yyyy-MM-dd HH:mm:ss"
                     value={tier1Time}
                     onChange={(date, value) => setTier1Time(date)}
                   />
@@ -941,7 +962,7 @@ const Presale: React.FC = () => {
                 <InlineWrapper>
                   <p className="description w110">Tier2 Time</p>
                   <KeyboardDateTimePicker
-                    format="yyyy-MM-dd hh:mm:ss"
+                    format="yyyy-MM-dd HH:mm:ss"
                     value={tier2Time}
                     onChange={(date, value) => setTier2Time(date)}
                   />
@@ -952,7 +973,7 @@ const Presale: React.FC = () => {
                 <InlineWrapper>
                   <p className="description w110">Liquidity Lockup Time</p>
                   <KeyboardDateTimePicker
-                    format="yyyy-MM-dd hh:mm:ss"
+                    format="yyyy-MM-dd HH:mm:ss"
                     value={liquidityLock}
                     onChange={(date, value) => setLiquidityLock(date)}
                   />
@@ -1016,8 +1037,9 @@ const Presale: React.FC = () => {
                 <Sperate />
                 <InlineWrapper>
                   <LineBtn onClick={() => setStep(1)}>Edit</LineBtn>
-                  <FillBtn className="ml16" onClick={validate}>
+                  <FillBtn disabled={pendingTx} className="ml16" onClick={validate}>
                     Submit
+                    {pendingTx && <AutoRenewIcon className="pendingTx" />}
                   </FillBtn>
                 </InlineWrapper>
               </NoteWrapper>

@@ -126,7 +126,7 @@ const CollectModal: React.FC<CollectModalProps> = ({
       )}
 
       <Flex justifyContent="space-between" alignItems="center" mb="24px">
-        <Text color='#A7A7CC' fontSize='14px' mr='5px'>{shouldCompound ? t('Compounding') : t('Harvesting')}:</Text>
+        <Text color='white' fontSize='14px' mr='5px'>{shouldCompound ? t('Compounding') : t('Harvesting')}:</Text>
         <Flex flexDirection="column">
           <Text fontSize='16px'>
             {formattedBalance} {earningToken.symbol}

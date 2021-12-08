@@ -127,7 +127,7 @@ const StepCard: React.FC<{ step: Step }> = ({ step }) => {
         <Text mb="8px" mt="11px" fontSize="20px" bold color="white" textAlign="center">
           {step.title}
         </Text>
-        <Text color="#777777" px={step.img === LotteryStep2 ? "10%" : "25%"} textAlign="center">{step.subtitle}</Text>
+        <Text color="white" px={step.img === LotteryStep2 ? "10%" : "25%"} textAlign="center">{step.subtitle}</Text>
       </Flex>
     </StyledStepCard>
   )
@@ -147,7 +147,7 @@ const HowtoplayText = styled(Text)`
     padding: 0 23%;
     font-size: 15px;
     font-weight: 500;
-    color: #A7A7CC;
+    color: white;
     line-height: 146%;
     margin-top: 12px;
     text-align: center;
@@ -242,7 +242,7 @@ const HowToPlay: React.FC = () => {
               <Text fontSize="26px" color="white" fontWeight="600">
                 {t('Winning Criteria')}
               </Text>
-              <Text fontSize="15px" color="#A7A7CC" fontWeight="500">
+              <Text fontSize="15px" color="white" fontWeight="500">
                 {t('The digits on your ticket must match in the correct order to win.')}
               </Text>
               <Text mt="8px" color="#B928AF">
@@ -254,7 +254,7 @@ const HowToPlay: React.FC = () => {
                     <Box maxWidth="18px" >
                       <ListMaker />
                     </Box>
-                    <Text display="inline" fontSize="14px" color="#A7A7CC" >
+                    <Text display="inline" fontSize="14px" color="white" >
                       {t(
                         'Ticket A: The first 3 digits and the last 2 digits match, but the 4th digit is wrong, so this ticket only wins a “Match first 3” prize.',
                       )}
@@ -266,7 +266,7 @@ const HowToPlay: React.FC = () => {
                     <Box maxWidth="18px">
                       <ListMaker />
                     </Box>
-                    <Text display="inline" fontSize="14px" color="#A7A7CC">
+                    <Text display="inline" fontSize="14px" color="white">
                       {t(
                         'Ticket B: Even though the last 5 digits match, the first digit is wrong, so this ticket doesn’t win a prize.',
                       )}
@@ -274,7 +274,7 @@ const HowToPlay: React.FC = () => {
                   </TicketFlex>
                 </li>
               </BulletList>
-              <Text mt="16px" fontSize="14px" color="#A7A7CC">
+              <Text mt="16px" fontSize="14px" color="white">
                 {t(
                   'Prize brackets don’t ‘stack’: if you match the first 3 digits in order, you’ll only win prizes from the ‘Match 3’ bracket, and not from ‘Match 1’ and ‘Match 2’.',
                 )}
@@ -299,19 +299,19 @@ const HowToPlay: React.FC = () => {
                 <Heading mb="13px" scale="lg" color="white">
                   {t('Prize Funds')}
                 </Heading>
-                <Text color="#A7A7CC" fontSize="15px" lineHeight="142%">
+                <Text color="white" fontSize="15px" lineHeight="142%">
                   {t('The prizes for each lottery round come from three sources:')}
                 </Text>
                 <Text m="16px 0px 4px" fontSize="15px" lineHeight="142%">
                   {t('Ticket Purchases')}
                 </Text>
-                <Text display="inline" color="#A7A7CC" lineHeight="142%">
+                <Text display="inline" color="white" lineHeight="142%">
                   {t('100% of the Sphynx paid by people buying tickets that round goes back into the prize pools.')}
                 </Text>
                 <Text m="16px 0px 4px" fontSize="15px" lineHeight="142%" >
                   {t('Rollover Prizes')}
                 </Text>
-                <Text display="inline" color="#A7A7CC" lineHeight="142%">
+                <Text display="inline" color="white" lineHeight="142%">
                   {t(
                     'After every round, if nobody wins in one of the prize brackets, the unclaimed Sphynx for that bracket rolls over into the next round and are redistributed among the prize pools.',
                   )}
@@ -319,7 +319,7 @@ const HowToPlay: React.FC = () => {
                 <Text m="16px 0px 4px" lineHeight="142%" >
                   {t('Sphynx Injections')}
                 </Text>
-                <Text display="inline" color="#A7A7CC" lineHeight="142%">
+                <Text display="inline" color="white" lineHeight="142%">
                   {t(
                     'Sphynx tokens from the contract is added to the lottery each and every day. This Sphynx is of course also included in rollovers! Read more in our guide to ',
                   )}
@@ -347,7 +347,7 @@ const HowToPlay: React.FC = () => {
           <Text mt="15px" fontSize="20px">
             {t('Still got questions?')}
           </Text>
-          <Text fontSize="12px" mt="11px" color="#A7A7CC">
+          <Text fontSize="12px" mt="11px" color="white">
             {t('Check our in-depth guide on')}{' '}
             <InlineLink href="/Lottery.pdf" target="_blank" fontSize="12px">
               {t('how to play the Sphynx lottery!')}

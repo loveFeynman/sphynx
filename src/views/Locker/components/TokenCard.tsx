@@ -26,7 +26,7 @@ const TokenSymbolWrapper = styled.div`
         font-weight: 600;
         font-size: 14px;
         white-space: nowrap;
-        color: #A7A7CC;
+        color: white;
         text-transform: capitalize;
     }
 `
@@ -47,7 +47,7 @@ const EndTimeWrapper = styled.div`
         font-weight: 600;
         font-size: 11px;
         white-space: nowrap;
-        color: #A7A7CC;
+        color: white;
     }
 `
 
@@ -65,7 +65,7 @@ const SaleInfo = styled.div`
 `
 
 const SaleInfoTitle = styled.div`
-    color: #A7A7CC;
+    color: white;
     font-weight: 600;
     font-size: 14px;
 `
@@ -127,7 +127,7 @@ const TokenCard: React.FC<TokenCardProps> = ({ id, tokenLogo, tokenName, tokenSy
     const history = useHistory()
 
     const handleClicked = () => {
-        history.push(`/locker/tokendetail/${id}`)
+        history.push(`/launchpad/locker/tokendetail/${id}`)
     }
 
     return (
