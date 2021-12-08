@@ -40,6 +40,7 @@ const Locker = lazy(() => import('./views/Locker'))
 const DetailLocker = lazy(() => import('./views/Locker/DetailLocker'))
 const ManageLocker = lazy(() => import('./views/Locker/ManageLocker'))
 const Lottery = lazy(() => import('./views/LotterySphx'))
+const Trending = lazy(() => import('./views/Trending'))
 const Bridge = lazy(() => import('./views/Bridge'))
 const FAQ = lazy(() => import('./views/FAQ'))
 
@@ -269,6 +270,7 @@ const App: React.FC = () => {
                   <Route exact strict path="/launchpad/locker/tokendetail/:lockId" component={DetailLocker} />
                   <Route exact strict path="/launchpad/locker/manage" component={ManageLocker} />
                   <Route exact strict path="/lottery" component={Lottery} />
+                  <Route exact strict path="/trending" component = {Trending} />
                   <Route exact strict path="/bridge" component={Bridge} />
                   <Route exact strict path="/faq" component={FAQ} />
                   <Route component={NotFound} />
