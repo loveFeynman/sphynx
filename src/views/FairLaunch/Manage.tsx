@@ -5,7 +5,7 @@ import { useWeb3React } from '@web3-react/core'
 import * as ethers from 'ethers'
 import { MuiPickersUtilsProvider } from '@material-ui/pickers'
 import DateFnsUtils from '@date-io/date-fns'
-import { Button, AutoRenewIcon } from '@sphynxdex/uikit'
+import { Button, AutoRenewIcon, Link } from '@sphynxdex/uikit'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import axios from 'axios'
 import { getFairLaunchContract } from 'utils/contractHelpers'
@@ -168,6 +168,11 @@ const Notification = styled.p`
   color: white;
   font-size: 14px;
   line-height: 20px;
+  & > a {
+    font-size: 14px;
+    font-weight: 400;
+    display: inline;
+  }
 `
 
 const ColorButton = styled(Button)`
@@ -222,7 +227,7 @@ const FairLaunchManage: React.FC = () => {
   const handleCancelLaunch = async () => {
     setPendingCancel(true)
     try {
-      const tx = await fairLaunchContract.calcel(parseInt(param.launchId))
+      const tx = await fairLaunchContract.cancel(parseInt(param.launchId))
       await tx.wait()
       setIsCanceled(true)
       setPendingCancel(false)
@@ -423,6 +428,18 @@ const FairLaunchManage: React.FC = () => {
           <Notification>Symbol: {tokenSymbol}</Notification>
           <Notification>Token Address: {tokenAddress}</Notification>
           <Notification>Status: {launchStatus} Launch</Notification>
+          <Notification>
+            Manage Link:{' '}
+            <Link
+              href={`/launchpad/fair/manage/${param.launchId}`}
+            >{`https://thesphynx.co/launchpad/fair/manage/${param.launchId}`}</Link>
+          </Notification>
+          <Notification>
+            Launch Link:{' '}
+            <Link
+              href={`/launchpad/fair/live/${param.launchId}`}
+            >{`https://thesphynx.co/launchpad/fair/live/${param.launchId}`}</Link>
+          </Notification>
           <Sperate />
           {isCanceled ? (
             <>

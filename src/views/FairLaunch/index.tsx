@@ -217,7 +217,7 @@ const FeeCard = () => {
       <Sperate />
       <FeeWrapper>
         <p>
-          Current Fee: <span>1BNB</span>
+          Current Fee: <span>0.1BNB</span>
         </p>
         <VerticalSperator />
         <p>
@@ -411,14 +411,25 @@ const Presale: React.FC = () => {
 
     const launchId = (await fairLaunchContract.currentLaunchId()).toString()
 
+    const now = Math.floor(new Date().getTime() / 1000)
     const launchTimeStamp = Math.floor(new Date(launchTime).getTime() / 1000)
     const lockTimeStamp = Math.floor(new Date(unlockTime).getTime() / 1000)
 
+    if((now + 600) >= launchTimeStamp) {
+      toastError('Launch time should be greater than 10 minutes from now!')
+      setStep(4)
+      return
+    }
+    if((launchTimeStamp + 60 * 24 * 180) >= lockTimeStamp) {
+      toastError('Lock time should be greater than 6 months from launch time!')
+      setStep(4)
+      return
+    }
     const router = liquidityType === 'sphynxswap' ? SPHYNX_ROUTER[chainId] : V2_ROUTER[chainId]
 
     try {
       setPendingTx(true)
-      const fee = ethers.utils.parseEther('0.00001')
+      const fee = ethers.utils.parseEther('0.1')
       const abi: any = ERC20_ABI
       const tokenContract = new ethers.Contract(tokenAddress, abi, signer)
       const allowance = await tokenContract.allowance(account, getFairLaunchAddress())
