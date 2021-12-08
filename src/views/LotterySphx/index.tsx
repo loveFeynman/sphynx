@@ -422,7 +422,7 @@ export default function Lottery() {
                       <span>
                         {data?.map((item: any, index: number) => {
                           return (
-                            <Link href={`#/swap/${item.address}`}>
+                            <Link href={`/swap/${item.address}`}>
                               <MenuItem className={index === selectedItemIndex ? 'selectedItem' : ''}>
                                 {item.name}
                                 <br />

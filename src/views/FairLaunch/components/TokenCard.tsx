@@ -179,11 +179,13 @@ const TokenCard: React.FC<ImgCardProps> = ({
 
   const handleClicked = () => {
     if (account === ownerAddress) {
-      history.push(`/fair-launchpad/manage/${launchId}`)
+      history.push(`/launchpad/fair/manage/${launchId}`)
     } else {
-      history.push(`/fair-launchpad/live/${launchId}`)
+      history.push(`/launchpad/fair/live/${launchId}`)
     }
   }
+
+  console.log("tokenState", tokenState)
 
   return (
     <CardWrapper onClick={handleClicked}>

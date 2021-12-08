@@ -438,7 +438,7 @@ const ManageLocker: React.FC = () => {
           axios.post(`${process.env.REACT_APP_BACKEND_API_URL2}/insertTokenLockInfo`, { data }).then((response) => {
             if (response.data) {
               toastSuccess('Pushed!', 'Your lock info is saved successfully.')
-              history.push(`/locker/tokendetail/${lockId}`)
+              history.push(`/launchpad/locker/tokendetail/${lockId}`)
             }
             else {
               toastError('Failed!', 'Your action is failed.')

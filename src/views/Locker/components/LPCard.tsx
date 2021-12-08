@@ -116,7 +116,7 @@ const LPCard: React.FC<TokenCardProps> = ({ id, tokenSymbol1, tokenSymbol2, star
     const history = useHistory()
 
     const handleClicked = () => {
-        history.push(`/locker/tokendetail/${id}`)
+        history.push(`/launchpad/locker/tokendetail/${id}`)
     }
 
     return (

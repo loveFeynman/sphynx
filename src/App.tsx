@@ -252,22 +252,22 @@ const App: React.FC = () => {
                     <Redirect to="/swap" />
                   </Route>
                   <Route path="/swap" component={Swap} />
-                  <Route exact strict path="/farms" component={Farms} />
-                  <Route exact strict path="/farms/history" component={Farms} />
-                  <Route exact strict path="/pools" component={Pools} />
-                  <Route exact strict path="/pools/history" component={Pools} />
+                  <Route exact strict path="/earn/farms" component={Farms} />
+                  <Route exact strict path="/earn/farms/history" component={Farms} />
+                  <Route exact strict path="/earn/pools" component={Pools} />
+                  <Route exact strict path="/earn/pools/history" component={Pools} />
                   <Route exact strict path="/launchpad" component={Launchpad} />
                   <Route exact strict path="/launchpad/presale" component={Presale} />
                   <Route exact strict path="/launchpad/listing" component={Listings} />
                   <Route exact strict path="/launchpad/live/:saleId" component={PresaleLive} />
                   <Route exact strict path="/launchpad/presale/:saleId" component={PresaleManage} />
-                  <Route exact strict path="/fair-launchpad" component = {FairLaunch} />
-                  <Route exact strict path="/fair-launchpad/listing" component = {FairLaunchListing} />
-                  <Route exact strict path="/fair-launchpad/manage/:launchId" component={FairLaunchManage} />
-                  <Route exact strict path="/fair-launchpad/live/:launchId" component={FairLaunchLive} />
-                  <Route exact strict path="/locker" component={Locker} />
-                  <Route exact strict path="/locker/tokendetail/:lockId" component={DetailLocker} />
-                  <Route exact strict path="/locker/manage" component={ManageLocker} />
+                  <Route exact strict path="/launchpad/fair" component = {FairLaunch} />
+                  <Route exact strict path="/launchpad/fair/listing" component = {FairLaunchListing} />
+                  <Route exact strict path="/launchpad/fair/manage/:launchId" component={FairLaunchManage} />
+                  <Route exact strict path="/launchpad/fair/live/:launchId" component={FairLaunchLive} />
+                  <Route exact strict path="/launchpad/locker" component={Locker} />
+                  <Route exact strict path="/launchpad/locker/tokendetail/:lockId" component={DetailLocker} />
+                  <Route exact strict path="/launchpad/locker/manage" component={ManageLocker} />
                   <Route exact strict path="/lottery" component={Lottery} />
                   <Route exact strict path="/bridge" component={Bridge} />
                   <Route exact strict path="/faq" component={FAQ} />

@@ -272,7 +272,7 @@ export default function HotTokenBar() {
                   return (
                     <li key={`${index + 1}.${elem.currency.symbol}`} style={{ color: 'white', padding: '12' }}>
                       <a
-                        href={`#/swap/${elem.currency.address}`}
+                        href={`/swap/${elem.currency.address}`}
                         style={{ marginRight: 20, textDecoration: 'none' }}
                         onClick={() => {
                           dispatch(setIsInput({ isInput: true }))

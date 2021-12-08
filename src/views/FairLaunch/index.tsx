@@ -464,7 +464,7 @@ const Presale: React.FC = () => {
         axios.post(`${process.env.REACT_APP_BACKEND_API_URL2}/insertFairLaunchInfo`, data).then((response) => {
           if (response.data) {
             toastSuccess('Pushed!', 'Your fairlaunch info is saved successfully.')
-            history.push(`/fair-launchpad/manage/${launchId}`)
+            history.push(`/launchpad/fair/manage/${launchId}`)
           } else {
             toastError('Failed!', 'Your action is failed.')
           }

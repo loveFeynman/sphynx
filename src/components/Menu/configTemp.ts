@@ -17,7 +17,7 @@ import { PredictionsIcon } from '@sphynxdex/uikit'
 export const linksTemp = [
   {
     baseurl: 'swap',
-    name: 'Swap',
+    name: 'DEX & Charts',
     Icon: ChartIcon,
     link: '/swap',
   },
@@ -32,7 +32,7 @@ export const linksTemp = [
       },
       {
         name: 'Staking',
-        link: '/earn/stake'
+        link: '/earn/pools'
       },
     ]
   },
@@ -42,15 +42,23 @@ export const linksTemp = [
     Icon: LaunchPadIcon,
     items: [
       {
-        name: 'Projects on Sphynx Swap',
-        link: '/launchpad/listing'
-      },
-      {
         name: 'Sphynx Pad',
         link: '/launchpad'
       },
       {
-        name: 'Sphynx Lock',
+        name: 'Projects on Sphynx Swap',
+        link: '/launchpad/listing'
+      },
+      {
+        name: 'Fair Launch',
+        link: '/launchpad/fair'
+      },
+      {
+        name: 'Fair Launch List',
+        link: '/launchpad/fair/listing'
+      },
+      {
+        name: 'Sphynx Locks',
         link: '/launchpad/locker'
       },
       {
@@ -66,14 +74,16 @@ export const linksTemp = [
     link: '/lottery'
   },
   {
+    baseurl: 'bridge',
+    name: 'Bridge',
+    Icon: BridgeIcon,
+    link: '/bridge'
+  },
+  {
     baseurl: 'coming-soon',
     name: 'Coming Soon',
-    Icon: BridgeIcon,
+    Icon: PredictionIcon,
     items:[
-      {
-        name: 'Bridge',
-        link: '/coming-soon/bridge'
-      },
       {
         name: 'NFT marketplace',
         link: '/'

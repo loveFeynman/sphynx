@@ -78,7 +78,7 @@ const FairLaunchListing: React.FC = () => {
                   item.tokenState = 'upcoming'
                 } else if (isLaunched) {
                   item.tokenState = 'success'
-                } else if (now >= parseInt(cell.launch_time) && now <= parseInt(cell.launch_time + 600)) {
+                } else if (now >= parseInt(cell.launch_time) && now <= (parseInt(cell.launch_time) + 600)) {
                   item.tokenState = 'active'
                 } else {
                   item.tokenState = 'failed'
