@@ -456,9 +456,6 @@ const FairLaunchLive: React.FC = () => {
             <MainLogo width="40" height="40" />
             <Flex flexDirection="column" ml="10px">
               <HeaderTitleText>{t('SphynxSale Automated Warning System')}</HeaderTitleText>
-              <Text fontSize="12px" color="white" bold textAlign="left">
-                {t('Lorem ipsum dolor sit amet, consectetur adipiscing elit')}
-              </Text>
             </Flex>
           </Flex>
         </Flex>
@@ -468,7 +465,7 @@ const FairLaunchLive: React.FC = () => {
           <Flex alignItems="center">
             <WarningIcon2 width="40" height="40" />
             <Flex flexDirection="column" ml="10px">
-              <WarningTitleText>{t('3 Warnings Detected')}</WarningTitleText>
+              <WarningTitleText>{t('1 Warnings Detected')}</WarningTitleText>
             </Flex>
           </Flex>
         </Flex>
