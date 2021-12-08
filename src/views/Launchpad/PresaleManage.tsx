@@ -565,13 +565,13 @@ const PresaleManage: React.FC = () => {
           <Notification>Congratulations your presale is created successfully.</Notification>
           <Sperate />
           <p style={{ color: '#D91A00' }}>
-            If your token contains special transfers such as burn, rebase or something else you must ensure the DxSale
+            If your token contains special transfers such as burn, rebase or something else you must ensure the SphynxSale
             LP Router Address and the Presale Address are excluded from these features! Or you must set fees, burns or
             whatever else to be 0 or disabled for the duration of the presale and until the finalize button is clicked!
           </p>
           <Sperate />
           <Notification>
-            DxSale LP Router Address: 0x7519f576E666cD80c83BEF74Bc6a390aDDfb8e1C
+            Sphynx LP Router Address: 0x7519f576E666cD80c83BEF74Bc6a390aDDfb8e1C
             <br />
             Presale Address: 0x919Ce88872737b49FB861E68BeC43880DA824E6b
             <br />
