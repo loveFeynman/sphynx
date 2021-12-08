@@ -252,10 +252,10 @@ const App: React.FC = () => {
                     <Redirect to="/swap" />
                   </Route>
                   <Route path="/swap" component={Swap} />
-                  <Route exact strict path="/earn/farms" component={Farms} />
-                  <Route exact strict path="/earn/farms/history" component={Farms} />
-                  <Route exact strict path="/earn/pools" component={Pools} />
-                  <Route exact strict path="/earn/pools/history" component={Pools} />
+                  <Route exact strict path="/farms" component={Farms} />
+                  <Route exact strict path="/farms/history" component={Farms} />
+                  <Route exact strict path="/pools" component={Pools} />
+                  <Route exact strict path="/pools/history" component={Pools} />
                   <Route exact strict path="/launchpad" component={Launchpad} />
                   <Route exact strict path="/launchpad/presale" component={Presale} />
                   <Route exact strict path="/launchpad/listing" component={Listings} />

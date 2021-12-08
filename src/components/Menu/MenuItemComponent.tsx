@@ -12,7 +12,10 @@ const MenuItemExternal = styled.a`
   margin: 5px 0;
   border-radius: 5px;
   text-decoration: none !important;
-  padding-left: 48px;
+  padding-left: 16px;
+  & > .MuiListItemIcon-root  {
+    min-width: 32px;
+  }
   & p {
     width: calc(100% - 32px);
     font-size: 14px;
@@ -33,7 +36,7 @@ export interface AppMenuItemComponentProps {
   className?: string
   link?: string | null // because the InferProps props allows alows null value
   onClick?: (event: React.MouseEvent<HTMLElement>) => void
-  handleClickMobileMenu?: (event: React.MouseEvent<HTMLElement>) => void
+  handleClickMobileMenu?: any
 }
 
 const AppMenuItemComponent: React.FC<AppMenuItemComponentProps> = props => {
@@ -62,7 +65,7 @@ const AppMenuItemComponent: React.FC<AppMenuItemComponentProps> = props => {
         target='_blank'
         href={link}
         rel="noreferrer"
-        onClick={handleClickMobileMenu}
+        onClick={handleClickMobileMenu !== false ? handleClickMobileMenu : undefined}
       >
         {children}
       </MenuItemExternal>

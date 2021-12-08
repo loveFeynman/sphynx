@@ -7,8 +7,6 @@ import { ReactComponent as LaunchPadIcon } from 'assets/svg/icon/LaunchIcon.svg'
 import { ReactComponent as PredictionIcon } from 'assets/svg/icon/PredictionIcon.svg'
 import { ReactComponent as IFOIcon } from 'assets/svg/icon/IFOIcon.svg'
 import { ReactComponent as ChartIcon } from 'assets/svg/icon/chart-swap.svg'
-import { ReactComponent as CoingeckoIcon } from 'assets/svg/icon/Coingecko.svg'
-import { ReactComponent as CoinMarketCapsIcon } from 'assets/svg/icon/CoinMarketCaps.svg'
 import { ReactComponent as LearningHubIcon } from 'assets/svg/icon/LearningHub.svg'
 import { ReactComponent as FAQIcon } from 'assets/svg/icon/HelpIcon.svg'
 import { ReactComponent as LockIcon } from 'assets/svg/icon/LockIcon.svg'
@@ -22,31 +20,28 @@ export const linksTemp = [
     link: '/swap',
   },
   {
-    baseurl: 'earn',
-    name: 'Earn',
+    baseurl: 'farms',
+    name: 'Farming',
     Icon: FarmIcon,
-    items: [
-      {
-        name: 'Farming',
-        link: '/earn/farms'
-      },
-      {
-        name: 'Staking',
-        link: '/earn/pools'
-      },
-    ]
+    link: '/farms',
+  },
+  {
+    baseurl: 'pools',
+    name: 'Staking Pools',
+    Icon: PoolIcon,
+    link: '/pools',
   },
   {
     baseurl: 'launchpad',
-    name: 'Launchpad',
+    name: 'SphynxPad',
     Icon: LaunchPadIcon,
     items: [
       {
-        name: 'Sphynx Pad',
+        name: 'LaunchPad',
         link: '/launchpad'
       },
       {
-        name: 'Projects on Sphynx Swap',
+        name: 'Projects to launch',
         link: '/launchpad/listing'
       },
       {
@@ -80,43 +75,17 @@ export const linksTemp = [
     link: '/bridge'
   },
   {
-    baseurl: 'coming-soon',
-    name: 'Coming Soon',
-    Icon: PredictionIcon,
-    items:[
-      {
-        name: 'NFT marketplace',
-        link: '/'
-      },
-      {
-        name: 'Prediciations',
-        link: '/'
-      },
-      {
-        name: 'Sphynx TV',
-        link: '/'
-      },
-    ]
-  },
-  {
     baseurl: 'faq',
     name: 'FAQ',
     Icon: FAQIcon,
-    items: [
-      {
-        name: 'Learning Hub',
-        link: 'https://www.sphynxlearning.co/'
-      },
-      {
-        name: 'CMC',
-        link: 'https://coinmarketcap.com/'
-      },
-      {
-        name: 'CoinGecko',
-        link: 'https://www.coingecko.com/en'
-      },
-    ]
-  }
+    link: '/faq' 
+  },
+  {
+    baseurl: 'learninghub',
+    name: 'Learning Hub',
+    Icon: LearningHubIcon,
+    link: 'https://www.sphynxlearning.co/'
+  },
 ]
 
 interface MenuSubEntry {

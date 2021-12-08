@@ -25,6 +25,8 @@ import { ReactComponent as TwitterIcon } from 'assets/svg/icon/TwitterIcon.svg'
 import { ReactComponent as SocialIcon2 } from 'assets/svg/icon/SocialIcon2.svg'
 import { ReactComponent as TelegramIcon } from 'assets/svg/icon/TelegramIcon.svg'
 import { ReactComponent as DiscordIcon } from 'assets/svg/icon/DiscordIcon.svg'
+import { ReactComponent as CoingeckoIcon } from 'assets/svg/icon/Coingecko.svg'
+import { ReactComponent as CoinMarketCapsIcon } from 'assets/svg/icon/CoinMarketCaps.svg'
 import axios from 'axios'
 import { BITQUERY_API, BITQUERY_API_KEY } from 'config/constants/endpoints'
 import storages from 'config/constants/storages'
@@ -773,7 +775,7 @@ const Menu = () => {
           ''
         )}
       </>
-    ), [isDark, menuToggled]
+    ), [isDark, menuToggled, removedAssets]
   )
 
   const MemoMenuCollapsed = useMemo(
@@ -869,6 +871,16 @@ const Menu = () => {
             <Link external href="https://discord.gg/ZEuDaFk4qz" aria-label="discord">
               <IconBox color="#2260DA">
                 <DiscordIcon width="15px" height="15px" />
+              </IconBox>
+            </Link>
+            <Link external href="https://www.coingecko.com/en" aria-label="coingecko">
+              <IconBox color="#55A08A">
+                <CoingeckoIcon width="15px" height="15px" />
+              </IconBox>
+            </Link>
+            <Link external href="https://coinmarketcap.com/" aria-label="coinmarketcap">
+              <IconBox color="#1150DA">
+                <CoinMarketCapsIcon width="15px" height="15px" />
               </IconBox>
             </Link>
           </SocialIconsWrapper>
