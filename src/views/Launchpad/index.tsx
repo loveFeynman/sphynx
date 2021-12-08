@@ -292,7 +292,7 @@ const Launchpad: React.FC = () => {
         <ValueCard value={`${project}`} desc="Projects">
           <NounProjectIcon />
         </ValueCard>
-        <ValueCard value={`${contribute}`} desc="Participants">
+        <ValueCard value={`${contribute ?? '0'}`} desc="Participants">
           <NounUserIcon />
         </ValueCard>
         <ValueCard value={`$ ${locked ?? '0'}`} desc="Total Liquidity Locked">
