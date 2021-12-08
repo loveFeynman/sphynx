@@ -372,7 +372,7 @@ const Farms: React.FC = () => {
             <Text fontSize="26px" color="white" bold>
               {t('Farms')}
             </Text>
-            <Text fontSize="15px" color="#777777">
+            <Text fontSize="15px">
               {t('Stake LP tokens to earn.')}
             </Text>
           </Flex>

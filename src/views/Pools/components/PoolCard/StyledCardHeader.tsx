@@ -56,7 +56,7 @@ const StyledCardHeader: React.FC<{
           <Heading color={isFinished ? 'textDisabled' : 'body'} scale="lg">
             {`${getHeadingPrefix()} ${earningToken.symbol}`}
           </Heading>
-          <Text color='#A7A7CC' fontSize='15px'>{getSubHeading()}</Text>
+          <Text color='white' fontSize='15px'>{getSubHeading()}</Text>
         </Flex>
       </Flex>
     </Wrapper>

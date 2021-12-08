@@ -96,7 +96,7 @@ const EarningsCell: React.FC<EarningsCellProps> = ({ pool, account, userDataLoad
   return (
     <StyledCell role="cell">
       <CellContent>
-        <Text fontSize="12px" color="#A7A7CC" textAlign="left" mb='4px'>
+        <Text fontSize="14px" color="white" textAlign="left" mb='4px'>
           {labelText}
         </Text>
         {!userDataLoaded && account ? (

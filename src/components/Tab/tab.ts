@@ -25,7 +25,7 @@ export const SwapTab = styled(Tab)<{borderBottom?: boolean}>`
   div {
     font-weight: 600;
     font-size: 14px;
-    color: #A7A7CC;
+    color: white;
     text-align: center;
     text-transform: capitalize;
   }

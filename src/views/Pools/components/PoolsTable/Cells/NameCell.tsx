@@ -70,7 +70,7 @@ const NameCell: React.FC<NameCellProps> = ({ pool }) => {
           {title}
         </Text>
         {showSubtitle && (
-          <Text fontSize={isMobile? "12px": "15px"} color="#777777">
+          <Text fontSize={isMobile? "12px": "15px"} color="white">
             {subtitle}
           </Text>
         )}

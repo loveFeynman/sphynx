@@ -18,10 +18,10 @@ const Wrapper = styled.div`
 
 const StyledLinkExternal = styled(LinkExternal)`
   font-weight: 400;
-  color: #A7A7CC;
+  color: white;
   font-size: 16px;
   > svg {
-    fill: #A7A7CC;
+    fill: white;
   }
 `
 
@@ -29,17 +29,17 @@ const SmallLinkExternal = styled(LinkExternal)`
   font-size: 12px;
   font-weight: 400;
   flex-flow: row-reverse;
-  color: #A7A7CC;
+  color: white;
   > svg {
     width: 15px;
-    fill: #A7A7CC;
+    fill: white;
     margin-right: 3px;
     margin-left: 0px;
   }
 `
 
 const BorderFlex = styled(Flex)`
-  color: #A7A7CC;
+  color: white;
   border-radius: 5px;
   border: 1px solid #2E2E55;
   padding: 8px;
@@ -63,7 +63,7 @@ const DetailsSection: React.FC<ExpandableSectionProps> = ({
   return (
     <Wrapper>
       <UnderLineFlex justifyContent="space-between">
-        <Text color="#A7A7CC" fontSize="14px" bold>{t('Total Liquidity')}:</Text>
+        <Text color="white" fontSize="14px" bold>{t('Total Liquidity')}:</Text>
         {totalValueFormatted ? <Text color="#F2C94C" fontSize="14px">{totalValueFormatted}</Text> : <Skeleton width={75} height={25} />}
       </UnderLineFlex>
       <Flex alignItems='center' flexDirection='column'>

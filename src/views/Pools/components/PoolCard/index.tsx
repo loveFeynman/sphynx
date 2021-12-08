@@ -41,7 +41,7 @@ const PoolCard: React.FC<{ pool: Pool; account: string }> = ({ pool, account }) 
             <CardActions pool={pool} stakedBalance={stakedBalance} />
           ) : (
             <>
-              <Text mb="10px" textTransform="uppercase" fontSize="14px" color="#A7A7CC">
+              <Text mb="10px" textTransform="uppercase" fontSize="14px" color="white">
                 {t('Start earning')}
               </Text>
               <ConnectWalletButton style={ColorButtonStyle}/>

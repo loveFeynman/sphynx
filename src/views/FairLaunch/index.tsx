@@ -2,6 +2,7 @@ import 'date-fns'
 import React, { useState, useEffect } from 'react'
 import { KeyboardDateTimePicker, MuiPickersUtilsProvider } from '@material-ui/pickers'
 import DateFnsUtils from '@date-io/date-fns'
+import { SPHYNX_ROUTER, V2_ROUTER } from 'config/constants/routers'
 import { ReactComponent as BellIcon } from 'assets/svg/icon/Bell.svg'
 import { ReactComponent as MainLogo } from 'assets/svg/icon/logo_new.svg'
 import * as ethers from 'ethers'
@@ -10,17 +11,26 @@ import { useTranslation } from 'contexts/Localization'
 import { isAddress } from '@ethersproject/address'
 import moment from 'moment'
 import useToast from 'hooks/useToast'
-import styled from 'styled-components'
+import styled, { keyframes } from 'styled-components'
 import { ERC20_ABI } from 'config/abi/erc20'
-import { useModal } from '@sphynxdex/uikit'
+import { useModal, AutoRenewIcon } from '@sphynxdex/uikit'
 import DisclaimerModal from 'components/DisclaimerModal/DisclaimerModal'
-import BigNumber from 'bignumber.js'
-import { BIG_TEN } from 'utils/bigNumber'
+import Select from 'components/Select/Select'
 import axios from 'axios'
-import { getPresaleContract } from 'utils/contractHelpers'
+import { getFairLaunchContract } from 'utils/contractHelpers'
 import { useWeb3React } from '@web3-react/core'
-import { getSphynxRouterAddress } from 'utils/addressHelpers'
+import { getFairLaunchAddress } from 'utils/addressHelpers'
 import { useHistory } from 'react-router-dom'
+
+const rotate = keyframes`
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+`
 
 const Wrapper = styled.div`
   display: flex;
@@ -51,6 +61,9 @@ const Wrapper = styled.div`
   }
   p.w140 {
     width: 140px;
+  }
+  .pendingTx {
+    animation: ${rotate} 2s linear infinite;
   }
   div.MuiTextField-root {
     margin-left: 16px;
@@ -204,11 +217,11 @@ const FeeCard = () => {
       <Sperate />
       <FeeWrapper>
         <p>
-          Current Fee: <span>2BNB</span>
+          Current Fee: <span>1BNB</span>
         </p>
         <VerticalSperator />
         <p>
-          Tokens Sold: <span>2%</span>
+          Tokens Listed: <span>2%</span>
         </p>
         <VerticalSperator />
         {/* <p>
@@ -262,13 +275,17 @@ const FillBtn = styled.button`
   border-radius: 5px;
   cursor: pointer;
   outline: none;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
   &:hover {
     background: linear-gradient(90deg, #722da9 0%, #e44bd4 100%);
     border: 1px solid #9b3aab;
   }
   &:disabled {
-    background: linear-gradient(90deg, #222 0%, #fff 100%);
+    background: linear-gradient(90deg, #722da9 0%, #e44bd4 100%);
     border: 1px solid #444;
+    cursor: not-allowed;
   }
 `
 
@@ -327,16 +344,9 @@ const Presale: React.FC = () => {
   const [tokenSymbol, setSymbol] = useState('')
   const [tokenDecimal, setDecimal] = useState('')
   const [totalSupply, setTotalSupply] = useState('')
-  const [tier1, setTier1] = useState('')
   const [tokenAmount, setTokenAmount] = useState('')
   const [bnbAmount, setBnbAmount] = useState('')
-  const [softCap, setSoftCap] = useState('')
-  const [hardCap, setHardCap] = useState('')
-  const [minBuy, setMinBuy] = useState('')
-  const [maxBuy, setMaxBuy] = useState('')
-  const [pancakeLiquidityRate, setPancakeLiquidityRate] = useState('')
-  const [sphynxLiquidityRate, setSphynxLiquidityRate] = useState('')
-  const [listingRate, setListingRate] = useState('')
+  const [balanceAmount, setBalanceAmount] = useState('')
   const [logoLink, setLogoLink] = useState('')
   const [webSiteLink, setWebSiteLink] = useState('')
   const [gitLink, setGitLink] = useState('')
@@ -345,19 +355,14 @@ const Presale: React.FC = () => {
   const [telegramLink, setTelegramLink] = useState('')
   const [projectDec, setProjectDec] = useState('')
   const [updateDec, setUpdateDec] = useState('')
-  const [certikAudit, setCertikAudit] = useState(false)
-  const [doxxedTeam, setDoxxedTeam] = useState(false)
-  const [utility, setUtility] = useState(false)
-  const [kyc, setKYC] = useState(false)
-  const [presaleStart, setPresaleStart] = useState(new Date())
-  const [presaleEnd, setPresaleEnd] = useState(new Date())
-  const [tier1Time, setTier1Time] = useState(new Date())
-  const [tier2Time, setTier2Time] = useState(new Date())
-  const [liquidityLock, setLiquidityLock] = useState(new Date())
+  const [liquidityType, setLiquidityType] = useState('')
+  const [launchTime, setLaunchTime] = useState(new Date())
+  const [unlockTime, setUnlockTime] = useState(new Date())
   const [step, setStep] = useState(1)
   const [disclaimerModalShow, setDisclaimerModalShow] = useState(true)
   const { toastSuccess, toastError } = useToast()
-  const presaleContract = getPresaleContract(signer)
+  const [pendingTx, setPendingTx] = useState(false)
+  const fairLaunchContract = getFairLaunchContract(signer)
   const history = useHistory()
 
   const handleChange = async (e) => {
@@ -372,10 +377,12 @@ const Presale: React.FC = () => {
         const symbol = await tokenContract.symbol()
         const decimals = await tokenContract.decimals()
         const total = await tokenContract.totalSupply()
+        const balance = await tokenContract.balanceOf(account)
         setName(name)
         setSymbol(symbol)
         setDecimal(decimals)
-        setTotalSupply(`${Number(total)/(10 ** 6)}`)
+        setBalanceAmount(ethers.utils.formatUnits(balance, decimals))
+        setTotalSupply(ethers.utils.formatUnits(total, decimals))
       } catch (err) {
         console.log('error', err.message)
       }
@@ -392,97 +399,57 @@ const Presale: React.FC = () => {
 
   const validate = async () => {
     if (!tokenAddress || !tokenName || !tokenSymbol) {
-      toastError('Oops, we can not parse token data, please inpute correct token address!')
+      toastError('Oops, we can not parse token data, please input correct token address!')
       setStep(1)
       return
     }
-    if (!parseFloat(tier1) || !parseFloat(tokenAmount) || !parseFloat(bnbAmount)) {
-      toastError('Please input presale rate correctly!')
+    if (!parseFloat(tokenAmount) || !parseFloat(bnbAmount)) {
+      toastError('Please input launch rate correctly!')
       setStep(2)
       return
     }
-    if (!parseFloat(softCap) || !parseFloat(hardCap)) {
-      toastError('Please input soft cap & hard cap!')
-      setStep(3)
-      return
-    }
-    if (parseFloat(softCap) * 2 < parseFloat(hardCap)) {
-      toastError('Softcap should be at least half of hardcap')
-      setStep(3)
-      return
-    }
-    if (!parseFloat(minBuy) || !parseFloat(maxBuy)) {
-      toastError('Please input contribution limit correctly!')
-      setStep(4)
-      return
-    }
-    if (parseFloat(minBuy) >= parseFloat(maxBuy)) {
-      toastError('Max buy amount should be greater than min buy amount!')
-      setStep(4)
-      return
-    }
-    if (!parseFloat(sphynxLiquidityRate) || parseFloat(sphynxLiquidityRate) < 5) {
-      toastError('Sphynx Liquidity amount should be more than 5%!')
-      setStep(5)
-      return
-    }
-    if (!parseFloat(listingRate)) {
-      toastError('Please input listing rate!')
-      setStep(7)
-      return
-    }
 
-    const presaleId = (await presaleContract.currentPresaleId()).toString()
-    const routerAddress = getSphynxRouterAddress()
-    const startTime = Math.floor(new Date(presaleStart).getTime() / 1000)
-    const tierOneTime = Math.floor(new Date(tier1Time).getTime() / 1000)
-    const tierTwoTime = Math.floor(new Date(tier2Time).getTime() / 1000)
-    const endTime = Math.floor(new Date(presaleEnd).getTime() / 1000)
-    const liquidityLockTime = Math.floor(new Date(liquidityLock).getTime() / 1000)
+    const launchId = (await fairLaunchContract.currentLaunchId()).toString()
 
-    const value: any = {
-      saleId: presaleId,
-      token: tokenAddress,
-      minContributeRate: new BigNumber(minBuy).times(BIG_TEN.pow(18)).toString(),
-      maxContributeRate: new BigNumber(maxBuy).times(BIG_TEN.pow(18)).toString(),
-      startTime: startTime.toString(),
-      tier1Time: tierOneTime.toString(),
-      tier2Time: tierTwoTime.toString(),
-      endTime: endTime.toString(),
-      liquidityLockTime: liquidityLockTime.toString(),
-      routerId: routerAddress,
-      tier1Rate: new BigNumber(tier1).toString(),
-      tier2Rate: new BigNumber(tokenAmount).toString(),
-      publicRate: new BigNumber(bnbAmount).toString(),
-      liquidityRate: listingRate,
-      softCap: new BigNumber(softCap).times(BIG_TEN.pow(18)).toString(),
-      hardCap: new BigNumber(hardCap).times(BIG_TEN.pow(18)).toString(),
-      routerRate: pancakeLiquidityRate,
-      defaultRouterRate: sphynxLiquidityRate,
-      isGold: kyc && utility && doxxedTeam && certikAudit,
-    }
+    const launchTimeStamp = Math.floor(new Date(launchTime).getTime() / 1000)
+    const lockTimeStamp = Math.floor(new Date(unlockTime).getTime() / 1000)
 
-    const fee = new BigNumber('0.001').times(BIG_TEN.pow(18)).toString()
-    presaleContract.createPresale(value, { value: fee }).then((res) => {
-      /* if presale created successfully */
-      const data: any = {
+    const router = liquidityType === 'sphynxswap' ? SPHYNX_ROUTER[chainId] : V2_ROUTER[chainId]
+
+    try {
+      setPendingTx(true)
+      const fee = ethers.utils.parseEther('0.00001')
+      const abi: any = ERC20_ABI
+      const tokenContract = new ethers.Contract(tokenAddress, abi, signer)
+      const allowance = await tokenContract.allowance(account, getFairLaunchAddress())
+      if (allowance < tokenAmount) {
+        const tx = await tokenContract.approve(getFairLaunchAddress(), '0xfffffffffffffffffffffffffffffffff')
+        await tx.wait()
+      }
+
+      const tx = await fairLaunchContract.createFairLaunch(
+        tokenAddress,
+        ethers.utils.parseUnits(tokenAmount, tokenDecimal),
+        ethers.utils.parseEther(bnbAmount),
+        launchTimeStamp,
+        router,
+        lockTimeStamp,
+        { value: fee.add(ethers.utils.parseEther(bnbAmount)) },
+      )
+      const receipt = await tx.wait()
+      const data = {
         chain_id: chainId,
-        sale_id: presaleId,
+        launch_id: launchId,
         owner_address: account,
         token_address: tokenAddress,
         token_name: tokenName,
         token_symbol: tokenSymbol,
-        token_decimal: tokenDecimal,
-        tier1,
-        tokenAmount,
-        bnbAmount,
-        soft_cap: softCap,
-        hard_cap: hardCap,
-        min_buy: minBuy,
-        max_buy: maxBuy,
-        router_rate: pancakeLiquidityRate,
-        default_router_rate: sphynxLiquidityRate,
-        listing_rate: listingRate,
+        token_decimals: tokenDecimal,
+        total_supply: totalSupply,
+        token_amount: tokenAmount,
+        native_amount: bnbAmount,
+        launch_time: launchTimeStamp,
+        lock_time: lockTimeStamp,
         logo_link: logoLink,
         website_link: webSiteLink,
         github_link: gitLink,
@@ -491,25 +458,23 @@ const Presale: React.FC = () => {
         telegram_link: telegramLink,
         project_dec: projectDec,
         update_dec: updateDec,
-        certik_audit: certikAudit,
-        doxxed_team: doxxedTeam,
-        utility,
-        kyc,
-        start_time: startTime,
-        end_time: endTime,
-        tier1_time: tierOneTime,
-        tier2_time: tierTwoTime,
-        lock_time: liquidityLockTime,
       }
-      axios.post(`${process.env.REACT_APP_BACKEND_API_URL2}/insertPresaleInfo`, { data }).then((response) => {
-        if (response.data) {
-          toastSuccess('Pushed!', 'Your presale info is saved successfully.')
-          history.push(`/launchpad/presale/${presaleId}`)
-        } else {
-          toastError('Failed!', 'Your action is failed.')
-        }
-      })
-    })
+      setPendingTx(false)
+      if (receipt.status === 1) {
+        axios.post(`${process.env.REACT_APP_BACKEND_API_URL2}/insertFairLaunchInfo`, data).then((response) => {
+          if (response.data) {
+            toastSuccess('Pushed!', 'Your fairlaunch info is saved successfully.')
+            history.push(`/fair-launchpad/manage/${launchId}`)
+          } else {
+            toastError('Failed!', 'Your action is failed.')
+          }
+        })
+      }
+    } catch (err) {
+      console.log('error', err)
+      setPendingTx(false)
+      toastError('Failed!', 'Your action is failed.')
+    }
   }
 
   const [onDisclaimerModal] = useModal(<DisclaimerModal />, false)
@@ -532,11 +497,10 @@ const Presale: React.FC = () => {
           <Notification>Get started in just a few simple steps!</Notification>
           <Sperate />
           <Notification>
-            Disclaimer: This process is entirely decentralized, we cannot be held 
-            responsible for incorrect entry of information or be held liable for 
-            anything related to your use of our platform. Please ensure you enter 
-            all your details to the best accuracy possible and that you are in 
-            compliance with your local laws and regulations.
+            Disclaimer: This process is entirely decentralized, we cannot be held responsible for incorrect entry of
+            information or be held liable for anything related to your use of our platform. Please ensure you enter all
+            your details to the best accuracy possible and that you are in compliance with your local laws and
+            regulations.
           </Notification>
           <Sperate />
           <WarningPanel>
@@ -585,19 +549,13 @@ const Presale: React.FC = () => {
             </StepWrapper>
             <Sperate />
             <StepWrapper number="2" stepName="Launch Rate" step={step} onClick={() => setStep(2)}>
-              <p className="description">
-                Your wallet balance: 0
-              </p>
+              <p className="description">Your wallet balance: {balanceAmount}</p>
               <Sperate />
-              <p className="description">
-                Please enter the amount of tokens for listing:
-              </p>
-              <MyInput value={tokenAmount} type="number" onChange={handleTokenAmount} style={{ width: '100%' }}/>
+              <p className="description">Please enter the amount of tokens for listing:</p>
+              <MyInput value={tokenAmount} type="number" onChange={handleTokenAmount} style={{ width: '100%' }} />
               <Sperate />
-              <p className="description">
-                Please enter the amount of BNB you will add:
-              </p>
-              <MyInput value={bnbAmount} type="number" onChange={handleBnbAmount} style={{ width: '100%' }}/>
+              <p className="description">Please enter the amount of BNB you will add:</p>
+              <MyInput value={bnbAmount} type="number" onChange={handleBnbAmount} style={{ width: '100%' }} />
               <Sperate />
               <InlineWrapper>
                 <LineBtn onClick={() => setStep(1)}>Back</LineBtn>
@@ -607,45 +565,63 @@ const Presale: React.FC = () => {
               </InlineWrapper>
             </StepWrapper>
             <Sperate />
-            <StepWrapper number="3" stepName="Timing" step={step} onClick={() => setStep(3)}>
+            <StepWrapper number="3" stepName="Router" step={step} onClick={() => setStep(3)}>
+              <InlineWrapper>
+                <p className="description w140">Liquidity</p>
+                <Select
+                  options={[
+                    {
+                      label: t('SphynxSwap'),
+                      value: 'sphynxswap',
+                    },
+                    {
+                      label: t('Pancakeswap'),
+                      value: 'pancakeswap',
+                    },
+                  ]}
+                  onChange={(option: any) => {
+                    setLiquidityType(option.value)
+                  }}
+                />
+              </InlineWrapper>
+            </StepWrapper>
+            <Sperate />
+            <StepWrapper number="4" stepName="Timing" step={step} onClick={() => setStep(4)}>
               <Sperate />
-              <p className="description">
-                Please set the start time for your launch and the liquidity lock time!
-              </p>
+              <p className="description">Please set the start time for your launch and the liquidity lock time!</p>
               <Sperate />
               <FlexWrapper>
                 <InlineWrapper>
                   <p className="description w110">Fair Launch Start Time</p>
                   <KeyboardDateTimePicker
-                    format="yyyy-MM-dd hh:mm:ss"
-                    value={presaleStart}
-                    onChange={(date, value) => setPresaleStart(date)}
+                    format="yyyy-MM-dd HH:mm:ss"
+                    value={launchTime}
+                    onChange={(date, value) => setLaunchTime(date)}
                   />
                 </InlineWrapper>
                 <MarginWrapper />
                 <InlineWrapper>
-                  <p className="description w110">Liquidity Lockup Time</p>
+                  <p className="description w110">Liquidity Unlock Time</p>
                   <KeyboardDateTimePicker
-                    format="yyyy-MM-dd hh:mm:ss"
-                    value={presaleEnd}
-                    onChange={(date, value) => setPresaleEnd(date)}
+                    format="yyyy-MM-dd HH:mm:ss"
+                    value={unlockTime}
+                    onChange={(date, value) => setUnlockTime(date)}
                   />
                 </InlineWrapper>
               </FlexWrapper>
               <Sperate />
               <InlineWrapper>
-                <LineBtn onClick={() => setStep(2)}>Back</LineBtn>
-                <FillBtn className="ml16" onClick={() => setStep(4)}>
+                <LineBtn onClick={() => setStep(3)}>Back</LineBtn>
+                <FillBtn className="ml16" onClick={() => setStep(5)}>
                   Finish
                 </FillBtn>
               </InlineWrapper>
             </StepWrapper>
             <Sperate />
-            <StepWrapper number="4" stepName="Additional Information" step={step} onClick={() => setStep(4)}>
+            <StepWrapper number="5" stepName="Additional Information" step={step} onClick={() => setStep(5)}>
               <p className="description">
-                Note the information in this section can be updated 
-                at any time by the presale creator while the presale is active. 
-                Any links left blank will not be displayed on your sale.
+                Note the information in this section can be updated at any time by the presale creator while the presale
+                is active. Any links left blank will not be displayed on your sale.
               </p>
               <Sperate />
               <p className="description">
@@ -679,14 +655,14 @@ const Presale: React.FC = () => {
               <MyInput onChange={(e) => setUpdateDec(e.target.value)} value={updateDec} style={{ width: '100%' }} />
               <Sperate />
               <InlineWrapper>
-                <LineBtn onClick={() => setStep(3)}>Back</LineBtn>
-                <FillBtn className="ml16" onClick={() => setStep(5)}>
+                <LineBtn onClick={() => setStep(4)}>Back</LineBtn>
+                <FillBtn className="ml16" onClick={() => setStep(6)}>
                   Next
                 </FillBtn>
               </InlineWrapper>
             </StepWrapper>
             <Sperate />
-            <StepWrapper number="5" stepName="Finalize" step={step} onClick={() => setStep(5)}>
+            <StepWrapper number="6" stepName="Finalize" step={step} onClick={() => setStep(6)}>
               <NoteWrapper style={{ maxWidth: 'unset' }}>
                 <FlexWrapper>
                   <p className="description w220">Token Name</p>
@@ -710,18 +686,19 @@ const Presale: React.FC = () => {
                 <Sperate />
                 <FlexWrapper>
                   <p className="description w220">Launch Timings</p>
-                  <p className="description">{moment(presaleStart).format('MMMM Do YYYY, h:mm a')}</p>
+                  <p className="description">{moment(launchTime).format('MMMM Do YYYY, h:mm a')}</p>
                 </FlexWrapper>
                 <Sperate />
                 <FlexWrapper>
-                  <p className="description w220">Lockup Time</p>
-                  <p className="description w220">{moment(presaleEnd).format('MMMM Do YYYY, h:mm a')}</p>
+                  <p className="description w220">Unlock Time</p>
+                  <p className="description w220">{moment(unlockTime).format('MMMM Do YYYY, h:mm a')}</p>
                 </FlexWrapper>
                 <Sperate />
                 <InlineWrapper>
                   <LineBtn onClick={() => setStep(1)}>Edit</LineBtn>
-                  <FillBtn className="ml16" onClick={validate}>
+                  <FillBtn className="ml16" onClick={validate} disabled={pendingTx}>
                     Submit
+                    {pendingTx && <AutoRenewIcon className="pendingTx" />}
                   </FillBtn>
                 </InlineWrapper>
               </NoteWrapper>

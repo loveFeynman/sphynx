@@ -37,7 +37,7 @@ const SaleInfo = styled.div`
 `
 
 const SaleInfoTitle = styled.div`
-    color: #A7A7CC;
+    color: white;
     font-weight: 600;
     font-size: 14px;
     margin-right: 5px;

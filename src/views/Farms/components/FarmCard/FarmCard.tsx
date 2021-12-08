@@ -53,7 +53,7 @@ const ExpandingWrapper = styled.div`
 const LabelText = styled(Text)`
   font-weight: 600;
   font-size: 14px;
-  color: #A7A7CC;
+  color: white;
 `
 
 const ValueText = styled(Text)`

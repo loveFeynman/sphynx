@@ -2,11 +2,11 @@ import 'date-fns'
 import React, { useEffect, useState } from 'react'
 import { MuiPickersUtilsProvider } from '@material-ui/pickers'
 import DateFnsUtils from '@date-io/date-fns'
-import { Text, Button } from '@sphynxdex/uikit'
+import { Text, Button, AutoRenewIcon } from '@sphynxdex/uikit'
 import { ReactComponent as CheckList } from 'assets/svg/icon/CheckList.svg'
 import { useTranslation } from 'contexts/Localization'
 import useToast from 'hooks/useToast'
-import styled from 'styled-components'
+import styled, { keyframes } from 'styled-components'
 import Select from 'components/Select/Select'
 import axios from 'axios'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
@@ -15,6 +15,16 @@ import { getPresaleContract } from 'utils/contractHelpers'
 import { getPresaleAddress } from 'utils/addressHelpers'
 import * as ethers from 'ethers'
 import { ERC20_ABI } from 'config/abi/erc20'
+
+const rotate = keyframes`
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+`
 
 const Wrapper = styled.div`
   display: flex;
@@ -71,6 +81,9 @@ const Wrapper = styled.div`
   }
   ${({ theme }) => theme.mediaQueries.xl} {
     align-items: flex-start;
+  }
+  .pendingTx {
+    animation: ${rotate} 2s linear infinite;
   }
 `
 
@@ -252,7 +265,7 @@ const DarkButton = styled(Button)`
 const PresaleManage: React.FC = () => {
   const { t } = useTranslation()
   const param: any = useParams()
-  const { chainId, library } = useActiveWeb3React()
+  const { chainId, library, account } = useActiveWeb3React()
   const signer = library.getSigner()
   const [logoLink, setLogoLink] = useState('')
   const [webSiteLink, setWebSiteLink] = useState('')
@@ -278,6 +291,12 @@ const PresaleManage: React.FC = () => {
   const [whitelist1, setWhitelist1] = useState('')
   const [whitelist2, setWhitelist2] = useState('')
   const [isWithDraw, setWithdraw] = useState(false)
+  const [pendingDeposit, setPendingDeposit] = useState(false)
+  const [pendingWhitelist, setPendingWhitelist] = useState(false)
+  const [pendingWhitelist1, setPendingWhitelist1] = useState(false)
+  const [pendingWhitelist2, setPendingWhitelist2] = useState(false)
+  const [pendingFinalize, setPendingFinalize] = useState(false)
+  const [pendingWithdraw, setPendingWithdraw] = useState(false)
 
   useEffect(() => {
     const isValue = !Number.isNaN(parseInt(param.saleId))
@@ -334,84 +353,171 @@ const PresaleManage: React.FC = () => {
   }, [presaleContract, tokenData, param.saleId])
 
   const handleDeposit = async () => {
-    if (tokenData) {
-      const abi: any = ERC20_ABI
-      const tokenContract = new ethers.Contract(tokenData.token_address, abi, signer)
-      const tx = await tokenContract.approve(getPresaleAddress(), '0xfffffffffffffffffffffffffffffffff')
-      await tx.wait()
-      const tx1 = await presaleContract.depositToken(param.saleId)
-      await tx1.wait()
-      toastSuccess('Success!', 'Your token is deposited successfully.')
+    try {
+      if (tokenData) {
+        setPendingDeposit(true)
+        const abi: any = ERC20_ABI
+        const tokenContract = new ethers.Contract(tokenData.token_address, abi, signer)
+        const approvedAmount = await tokenContract.allowance(account, getPresaleAddress())
+        const depositAmount = await presaleContract.getDepositAmount(param.saleId)
+        if (approvedAmount < depositAmount) {
+          const tx = await tokenContract.approve(getPresaleAddress(), '0xfffffffffffffffffffffffffffffffff')
+          await tx.wait()
+        }
+        const tx1 = await presaleContract.depositToken(param.saleId)
+        await tx1.wait()
+        toastSuccess('Success!', 'Your token is deposited successfully.')
+        setPendingDeposit(false)
+      }
+    } catch (err) {
+      if (err.data) {
+        toastError('Failed', err.data.message)
+      } else {
+        toastError('Failed', err.message)
+      }
+      setPendingDeposit(false)
     }
   }
 
   const handleFinalize = async () => {
-    const tx = await presaleContract.finalize(param.saleId)
-    const receipt = await tx.wait()
-    if (receipt.status === 1) {
-      if (raise > parseFloat(softCap)) {
-        axios
-          .post(`${process.env.REACT_APP_BACKEND_API_URL2}/inserttoken`, {
-            name: tokenData.token_name,
-            address: tokenData.token_address,
-            symbol: tokenData.token_symbol,
-            chainId,
-          })
-          .then((response) => {
-            if (response.data) {
-              toastSuccess('Success!', 'Your presale is finialized successfully.')
-              axios.post(`${process.env.REACT_APP_BACKEND_API_URL2}/setPresaleLiquidity`, {
-                saleId: param.saleId,
-                liquidity: raise,
-                chainId,
-              })
-            }
-          })
+    try {
+      setPendingFinalize(true)
+      const tx = await presaleContract.finalize(param.saleId)
+      const receipt = await tx.wait()
+      if (receipt.status === 1) {
+        if (raise > parseFloat(softCap)) {
+          axios
+            .post(`${process.env.REACT_APP_BACKEND_API_URL2}/inserttoken`, {
+              name: tokenData.token_name,
+              address: tokenData.token_address,
+              symbol: tokenData.token_symbol,
+              chainId,
+            })
+            .then((response) => {
+              if (response.data) {
+                toastSuccess('Success!', 'Your presale is finialized successfully.')
+                axios.post(`${process.env.REACT_APP_BACKEND_API_URL2}/setPresaleLiquidity`, {
+                  saleId: param.saleId,
+                  liquidity: raise,
+                  chainId,
+                })
+              }
+            })
+        }
+      }
+      setPendingFinalize(false)
+    } catch (err) {
+      setPendingFinalize(false)
+      if (err.data) {
+        toastError('Failed', err.data.message)
+      } else {
+        toastError('Failed', err.message)
       }
     }
   }
 
   const handleWithdraw = async () => {
-    const tx = await presaleContract.withdrawLiquidity(param.saleId)
-    const receipt = await tx.wait()
-    if (receipt.status === 1) {
-      axios.post(`${process.env.REACT_APP_BACKEND_API_URL2}/unlockPresaleLiquidty`, {
-        saleId: param.saleId,
-        chainId,
-      }).then((response) => {
-        if (response.data) {
-          toastSuccess('Success!', 'Liquidity is withdrawn successfully.')
-        }
-      })
+    try {
+      setPendingWithdraw(true)
+      const tx = await presaleContract.withdrawLiquidity(param.saleId)
+      const receipt = await tx.wait()
+      if (receipt.status === 1) {
+        axios
+          .post(`${process.env.REACT_APP_BACKEND_API_URL2}/unlockPresaleLiquidty`, {
+            saleId: param.saleId,
+            chainId,
+          })
+          .then((response) => {
+            if (response.data) {
+              toastSuccess('Success!', 'Liquidity is withdrawn successfully.')
+            }
+          })
+        setPendingWithdraw(false)
+      }
+    } catch (err) {
+      if (err.data) {
+        toastError('Failed', err.data.message)
+      } else {
+        toastError('Failed', err.message)
+      }
+      setPendingWithdraw(false)
     }
   }
 
   const enableWhiteList = async () => {
-    const tx = await presaleContract.enablewhitelist(param.saleId, true)
-    const receipt = await tx.wait()
-    if (receipt.status === 1) {
-      setIsWhiteList(true)
+    try {
+      setPendingWhitelist(true)
+      const tx = await presaleContract.enablewhitelist(param.saleId, true)
+      const receipt = await tx.wait()
+      if (receipt.status === 1) {
+        setIsWhiteList(true)
+        toastSuccess('Success', 'Whitelist enabled successfully!')
+      }
+      setPendingWhitelist(false)
+    } catch (err) {
+      setPendingWhitelist(false)
+      if (err.data) {
+        toastError('Failed', err.data.message)
+      } else {
+        toastError('Failed', err.message)
+      }
     }
   }
 
   const disableWhiteList = async () => {
-    const tx = await presaleContract.enablewhitelist(param.saleId, false)
-    const receipt = await tx.wait()
-    if (receipt.status === 1) {
-      setIsWhiteList(false)
+    try {
+      setPendingWhitelist(true)
+      const tx = await presaleContract.enablewhitelist(param.saleId, false)
+      const receipt = await tx.wait()
+      if (receipt.status === 1) {
+        setIsWhiteList(false)
+        toastSuccess('Success', 'Whitelist disabled successfully!')
+      }
+      setPendingWhitelist(false)
+    } catch (err) {
+      setPendingWhitelist(false)
+      if (err.data) {
+        toastError('Failed', err.data.message)
+      } else {
+        toastError('Failed', err.message)
+      }
     }
   }
 
   const enableWhiteList1 = async () => {
-    const whitelists = whitelist1.split(',')
-    const tx = await presaleContract.updatewhitelist(param.saleId, whitelists, '1')
-    const receipt = await tx.wait()
+    try {
+      setPendingWhitelist1(true)
+      const whitelists = whitelist1.split(',')
+      const tx = await presaleContract.updatewhitelist(param.saleId, whitelists, '1')
+      const receipt = await tx.wait()
+      setPendingWhitelist1(false)
+      toastSuccess('Success', 'Operation successfully!')
+    } catch (err) {
+      setPendingWhitelist1(false)
+      if (err.data) {
+        toastError('Failed', err.data.message)
+      } else {
+        toastError('Failed', err.message)
+      }
+    }
   }
 
   const enableWhiteList2 = async () => {
-    const whitelists = whitelist2.split(',')
-    const tx = await presaleContract.updatewhitelist(param.saleId, whitelists, '2')
-    const receipt = await tx.wait()
+    try {
+      setPendingWhitelist2(true)
+      const whitelists = whitelist2.split(',')
+      const tx = await presaleContract.updatewhitelist(param.saleId, whitelists, '2')
+      const receipt = await tx.wait()
+      setPendingWhitelist2(false)
+      toastSuccess('Success', 'Operation successfully!')
+    } catch (err) {
+      setPendingWhitelist2(false)
+      if (err.data) {
+        toastError('Failed', err.data.message)
+      } else {
+        toastError('Failed', err.message)
+      }
+    }
   }
 
   const handleUpdate = () => {
@@ -459,13 +565,13 @@ const PresaleManage: React.FC = () => {
           <Notification>Congratulations your presale is created successfully.</Notification>
           <Sperate />
           <p style={{ color: '#D91A00' }}>
-            If your token contains special transfers such as burn, rebase or something else you must ensure the DxSale
+            If your token contains special transfers such as burn, rebase or something else you must ensure the SphynxSale
             LP Router Address and the Presale Address are excluded from these features! Or you must set fees, burns or
             whatever else to be 0 or disabled for the duration of the presale and until the finalize button is clicked!
           </p>
           <Sperate />
           <Notification>
-            DxSale LP Router Address: 0x7519f576E666cD80c83BEF74Bc6a390aDDfb8e1C
+            Sphynx LP Router Address: 0x7519f576E666cD80c83BEF74Bc6a390aDDfb8e1C
             <br />
             Presale Address: 0x919Ce88872737b49FB861E68BeC43880DA824E6b
             <br />
@@ -525,12 +631,18 @@ const PresaleManage: React.FC = () => {
                 ''
               ) : !isWhiteList ? (
                 <>
-                  <DarkButton onClick={enableWhiteList}>Enable WhiteList</DarkButton>
+                  <DarkButton onClick={enableWhiteList} disabled={pendingWhitelist}>
+                    Enable WhiteList
+                    {pendingWhitelist && <AutoRenewIcon className="pendingTx" />}
+                  </DarkButton>
                   <Sperate />
                 </>
               ) : (
                 <>
-                  <DarkButton onClick={disableWhiteList}>Disable WhiteList</DarkButton>
+                  <DarkButton onClick={disableWhiteList} disabled={pendingWhitelist}>
+                    Disable WhiteList
+                    {pendingWhitelist && <AutoRenewIcon className="pendingTx" />}
+                  </DarkButton>
                   <Sperate />
                   <MyInput
                     onChange={(e) => setWhitelist1(e.target.value)}
@@ -538,7 +650,10 @@ const PresaleManage: React.FC = () => {
                     style={{ width: '100%' }}
                   />
                   <Sperate />
-                  <DarkButton onClick={enableWhiteList1}>Add WhiteList1</DarkButton>
+                  <DarkButton onClick={enableWhiteList1} disabled={pendingWhitelist1}>
+                    Add WhiteList1
+                    {pendingWhitelist1 && <AutoRenewIcon className="pendingTx" />}
+                  </DarkButton>
                   <Sperate />
                   <MyInput
                     onChange={(e) => setWhitelist2(e.target.value)}
@@ -546,7 +661,10 @@ const PresaleManage: React.FC = () => {
                     style={{ width: '100%' }}
                   />
                   <Sperate />
-                  <DarkButton onClick={enableWhiteList2}>Add WhiteList2</DarkButton>
+                  <DarkButton onClick={enableWhiteList2} disabled={pendingWhitelist2}>
+                    Add WhiteList2
+                    {pendingWhitelist2 && <AutoRenewIcon className="pendingTx" />}
+                  </DarkButton>
                   <Sperate />
                 </>
               )}
@@ -554,18 +672,28 @@ const PresaleManage: React.FC = () => {
                 isFinalize ? (
                   raise >= parseFloat(softCap) ? (
                     <>
-                      <DarkButton onClick={handleWithdraw} disabled={!liquidityUnlocked || isWithDraw}>
+                      <DarkButton
+                        onClick={handleWithdraw}
+                        disabled={!liquidityUnlocked || isWithDraw || pendingWithdraw}
+                      >
                         Withdraw Liquidity Token
+                        {pendingWithdraw && <AutoRenewIcon className="pendingTx" />}
                       </DarkButton>
                     </>
                   ) : (
                     ''
                   )
                 ) : (
-                  <ColorButton onClick={handleFinalize}>Finalize</ColorButton>
+                  <ColorButton onClick={handleFinalize} disabled={pendingFinalize}>
+                    Finalize
+                    {pendingFinalize && <AutoRenewIcon className="pendingTx" />}
+                  </ColorButton>
                 )
               ) : (
-                <ColorButton onClick={handleDeposit}>Deposit</ColorButton>
+                <ColorButton onClick={handleDeposit} disabled={pendingDeposit}>
+                  Deposit
+                  {pendingDeposit && <AutoRenewIcon className="pendingTx" />}
+                </ColorButton>
               )}
               <Sperate />
               <p className="description">
