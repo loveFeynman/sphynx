@@ -746,7 +746,7 @@ const Presale: React.FC = () => {
             <Sperate />
             <StepWrapper number="5" stepName="SphynxSwap Liquidity" step={step} onClick={() => setStep(5)}>
               <p className="description">
-                Enter the percentage of raised funds that should be allocated to Liquidity on SphynxSwap (Min 5%, Max
+                Enter the percentage of raised funds that should be allocated to Liquidity on SphynxSwap (Min 0%, Max
                 100%, We recommend &gt; 70%)
               </p>
               <MyInput
@@ -782,7 +782,7 @@ const Presale: React.FC = () => {
               </InlineWrapper>
             </StepWrapper>
             <Sperate />
-            <StepWrapper number="7" stepName="Sphynx/Pancake Listing Rate" step={step} onClick={() => setStep(7)}>
+            <StepWrapper number="7" stepName="SphynxSwap/PancakeSwap Listing Rate" step={step} onClick={() => setStep(7)}>
               <p className="description">
                 Enter the SphynxSwap listing price: (If I buy 1 BNB worth on Swap how many tokens do I get?
                 Usually this amount is lower than presale rate to allow for a higher listing price on Swap)

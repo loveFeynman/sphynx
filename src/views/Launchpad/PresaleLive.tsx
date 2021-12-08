@@ -229,7 +229,6 @@ const TokenAddressContainer = styled.div`
 const AddressFlex = styled(Flex)`
   flex-wrap: wrap;
   padding-bottom: 10px;
-  border-bottom: 1px solid #31314e;
   justify-content: space-between;
 `
 
@@ -256,8 +255,7 @@ const AddressWrapper = styled.div`
 `
 
 const AddressSendError = styled.div`
-  margin-top: -8px;
-  font-style: italic;
+  margin-top: -28px;
   font-weight: bold;
   font-size: 14px;
   line-height: 16px;
@@ -283,7 +281,7 @@ const WhitelistCard = styled.div`
   display: flex;
   align-items: center;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-evenly;
   border: 1px solid ${({ theme }) => (theme.isDark ? '#5E2B60' : '#4A5187')};
   box-sizing: border-box;
   border-radius: 5px;
@@ -304,7 +302,7 @@ const WhitelistCard = styled.div`
 const WhitelistTitle = styled(Text)`
   font-weight: 600;
   font-size: 15px;
-  margin-bottom: 20px;
+  margin-top: 16px;
   ${({ theme }) => theme.mediaQueries.sm} {
     font-size: 20px;
   }
@@ -322,10 +320,8 @@ const WhitelistSubText = styled(Text)`
 const WalletAddressError = styled.div`
   display: flex;
   justify-content: center;
-  position: absolute;
   align-items: center;
-  bottom: 30px;
-  padding: 17px;
+  margin-bottom: 24px;
   img {
     width: 20px;
     height: 20px;
@@ -343,6 +339,16 @@ const ContributeWrapper = styled.div`
   width: 100%;
   border: 1px solid ${({ theme }) => (theme.isDark ? '#5E2B60' : '#4A5187')};
   border-radius: 5px;
+  & > div > div {
+    font-size: 12px;
+  }
+  ${({ theme }) => theme.mediaQueries.xl} {
+    width: 49%;
+    margin: 0;
+    & > div > div {
+      font-size: 12px;
+    }
+  }
 `
 
 const TokenRateView = styled.div`
@@ -422,7 +428,6 @@ const DataItem = styled.div`
       padding: 5px 20px;
     }
     text-align: start;
-    font-size: 14px;
     color: #a7a7cc;
     font-style: normal;
     font-weight: 600;
@@ -435,7 +440,6 @@ const DataItem = styled.div`
     display: flex;
     padding: 5px 20px;
     text-align: start;
-    font-size: 14px;
     color: #f2c94c;
     font-style: normal;
     font-weight: 600;
@@ -831,8 +835,8 @@ const PresaleLive: React.FC = () => {
           <WarningTitle>DeFi Zone Warning</WarningTitle>
           <WarningSubTitle>
             This sale is listed in the DeFi Zone. Presales in this area use custom contracts that are not vetted by the
-            SphynxSale team. Developers of tokens in this area can block transfers, can stop users from claiming tokens, can
-            stop trading on exchanges and requires extra vetting. Participate at your own risk!
+            SphynxSale team. Developers of tokens in this area can block transfers, can stop users from claiming tokens,
+            can stop trading on exchanges and requires extra vetting. Participate at your own risk!
           </WarningSubTitle>
         </DefiFlex>
         <SoftFlex>
@@ -849,8 +853,16 @@ const PresaleLive: React.FC = () => {
       <TokenPresaleBody>
         <TokenPresaleContainder toggled={menuToggled}>
           <MainCardWrapper>
+            <Link style={{ marginBottom: '16px' }} href="/launchpad/listing">
+              Back to list
+            </Link>
             <TokenContainer>
-              <img src={tokenData && (tokenData.logo_link === "" ? DefaultLogoIcon : tokenData.logo_link)} width="64px" height="64px" alt="token icon" />
+              <img
+                src={tokenData && (tokenData.logo_link === '' ? DefaultLogoIcon : tokenData.logo_link)}
+                width="64px"
+                height="64px"
+                alt="token icon"
+              />
               <TokenSymbolWrapper>
                 <TokenSymbol>{tokenData && tokenData.token_symbol}</TokenSymbol>
                 <TokenName>{tokenData && tokenData.token_name}</TokenName>
@@ -858,8 +870,7 @@ const PresaleLive: React.FC = () => {
             </TokenContainer>
             <TokenDescription>
               <Text fontSize="14px" textAlign="left" color="white">
-                ${tokenData && tokenData.token_symbol} is a new reflection protocol on the Binance Smart Chain with a
-                deflationary burn mechanism that offers reflections to holders with 0% buy and sell tax.
+                {tokenData && tokenData.project_dec}
               </Text>
             </TokenDescription>
             <TokenAddressContainer>
@@ -885,14 +896,56 @@ const PresaleLive: React.FC = () => {
             </TokenAddressContainer>
             <Separate />
             <FlexWrapper>
-              <WhitelistCard style={{ padding: '75px 15px' }}>
-                <WhitelistTitle mb="16px">{isWhiteList ? 'WhiteList Enabled' : 'Public'} Sale</WhitelistTitle>
-                <WhitelistSubText mb="28px">
+              <ContributeWrapper>
+                {PRESALE_DATA.map((item, index) =>
+                  index === PRESALE_DATA.length - 1 ? (
+                    <DataLatestItem>
+                      <Text>{item.presaleItem}</Text>
+                      <Text>{item.presaleValue}</Text>
+                    </DataLatestItem>
+                  ) : (
+                    <DataItem>
+                      <Text>{item.presaleItem}</Text>
+                      <Text>{item.presaleValue}</Text>
+                    </DataItem>
+                  ),
+                )}
+              </ContributeWrapper>
+              <WhitelistCard>
+                <SocialIconsWrapper>
+                  <Link external href={tokenData && tokenData.website_link} aria-label="social2">
+                    <IconBox color="#710D89">
+                      <SocialIcon2 width="15px" height="15px" />
+                    </IconBox>
+                  </Link>
+                  <Link external href={tokenData && tokenData.github_link} aria-label="social2">
+                    <IconBox color="#3f4492">
+                      <img src={GitIcon} alt="Git Logo" width="15px" height="15px" />
+                    </IconBox>
+                  </Link>
+                  <Link external href={tokenData && tokenData.twitter_link} aria-label="twitter">
+                    <IconBox color="#33AAED">
+                      <TwitterIcon width="15px" height="15px" />
+                    </IconBox>
+                  </Link>
+                  <Link external href={tokenData && tokenData.reddit_link} aria-label="discord">
+                    <IconBox color="#2260DA">
+                      <img src={RedditIcon} alt="Git Logo" width="15px" height="15px" />
+                    </IconBox>
+                  </Link>
+                  <Link external href={tokenData && tokenData.telegram_link} aria-label="telegram">
+                    <IconBox color="#3E70D1">
+                      <TelegramIcon width="15px" height="15px" />
+                    </IconBox>
+                  </Link>
+                </SocialIconsWrapper>
+                <WhitelistTitle>{isWhiteList ? 'WhiteList Enabled' : 'Public'} Sale</WhitelistTitle>
+                <WhitelistSubText mb={isWhiteList ? '12px' : '28px'}>
                   {isWhiteList
                     ? 'Only Whitelisted Wallets can Purchase This Token!'
                     : 'Anybody can Purchase This Token!'}
                 </WhitelistSubText>
-                {isWhiteList && whiteList1 && <Text>Your wallet address is on the whitelist1!</Text>}
+                {isWhiteList && whiteList1 && <Text mb="24px">Your wallet address is on the whitelist1!</Text>}
                 {isWhiteList && whiteList2 && <Text>Your wallet address is on the whitelist2!</Text>}
                 {isWhiteList && !whiteList1 && !whiteList2 && (
                   <WalletAddressError>
@@ -900,8 +953,6 @@ const PresaleLive: React.FC = () => {
                     <Text>Your wallet address is not whitelisted</Text>
                   </WalletAddressError>
                 )}
-              </WhitelistCard>
-              <WhitelistCard>
                 {!failedSale ? (
                   presaleStatus ? (
                     <>
@@ -1031,49 +1082,6 @@ const PresaleLive: React.FC = () => {
               </WhitelistCard>
             </FlexWrapper>
             <Separate />
-            <ContributeWrapper>
-              {PRESALE_DATA.map((item, index) =>
-                index === PRESALE_DATA.length - 1 ? (
-                  <DataLatestItem>
-                    <Text>{item.presaleItem}</Text>
-                    <Text>{item.presaleValue}</Text>
-                  </DataLatestItem>
-                ) : (
-                  <DataItem>
-                    <Text>{item.presaleItem}</Text>
-                    <Text>{item.presaleValue}</Text>
-                  </DataItem>
-                ),
-              )}
-            </ContributeWrapper>
-            <Separate />
-            <SocialIconsWrapper>
-              <Link external href={tokenData&&tokenData.website_link} aria-label="social2">
-                <IconBox color="#710D89">
-                  <SocialIcon2 width="15px" height="15px" />
-                </IconBox>
-              </Link>
-              <Link external href={tokenData&&tokenData.github_link} aria-label="social2">
-                <IconBox color="#3f4492">
-                  <img src={GitIcon} alt='Git Logo' width="15px" height="15px" />
-                </IconBox>
-              </Link>
-              <Link external href={tokenData&&tokenData.twitter_link} aria-label="twitter">
-                <IconBox color="#33AAED">
-                  <TwitterIcon width="15px" height="15px" />
-                </IconBox>
-              </Link>
-              <Link external href={tokenData&&tokenData.reddit_link} aria-label="discord">
-                <IconBox color="#2260DA">
-                <img src={RedditIcon} alt='Git Logo' width="15px" height="15px" />
-                </IconBox>
-              </Link>
-              <Link external href={tokenData&&tokenData.telegram_link} aria-label="telegram">
-                <IconBox color="#3E70D1">
-                  <TelegramIcon width="15px" height="15px" />
-                </IconBox>
-              </Link>
-            </SocialIconsWrapper>
           </MainCardWrapper>
           <SubCardWrapper>
             <ThinkCardWrapper>
@@ -1103,9 +1111,7 @@ const PresaleLive: React.FC = () => {
               </ItemContainer>
               <Separate />
               <Link external href="https://discord.gg/ZEuDaFk4qz" aria-label="discord">
-                <ColorButton style={{ width: '180px' }}>
-                  Join Community
-                </ColorButton>
+                <ColorButton style={{ width: '180px' }}>Join Community</ColorButton>
               </Link>
             </ThinkCardWrapper>
           </SubCardWrapper>
