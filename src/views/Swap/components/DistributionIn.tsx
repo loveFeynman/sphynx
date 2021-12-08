@@ -7,10 +7,6 @@ import WatchIcon from 'components/Icon/WatchIcon'
 const DistributionWrapper = styled.div`
   display: flex;
   padding: 6px 12px;
-  svg {
-    width: 48px;
-    height: 48px;
-  }
   .dateString {
     font-size: 9px;
   }
@@ -96,8 +92,8 @@ const RewardsPanel: React.FC = () => {
       <Flex justifyContent="flex-end" alignItems="center">
         {/* <img src={StopwatchIcon} alt="stopwatch icon" width="90" height="90" /> */}
         <WatchIcon
-          width={document.body.clientWidth > 768 ? '61px' : '30px'}
-          height={document.body.clientWidth > 768 ? '72px' : '30px'}
+          width={document.body.clientWidth > 768 ? '61px' : '24px'}
+          height={document.body.clientWidth > 768 ? '72px' : '24px'}
           color={theme.isDark ? '#A7A7CC' : '#F2C94C'}
         />
         <DistributionContent>
@@ -131,9 +127,6 @@ const RewardsPanel: React.FC = () => {
                   useGrouping: false
                 })}</Text>
               <Text color="white" textTransform="uppercase" className="dateString">{t('min')}</Text>
-                  useGrouping: false,
-                })}
-              </Text>
             </TimeSpan>
             <Text color="white">:</Text>
             <TimeSpan>
