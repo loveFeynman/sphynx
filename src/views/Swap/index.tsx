@@ -199,7 +199,6 @@ export default function Swap({ history }: RouteComponentProps) {
   const [symbol, setSymbol] = useState('')
   const theme = useTheme()
   let { account, chainId } = useActiveWeb3React()
-  console.log("chainId", chainId)
   if (Number.isNaN(chainId) || isUndefined(chainId)) {
     chainId = 56
   }
@@ -381,8 +380,10 @@ export default function Swap({ history }: RouteComponentProps) {
             let tokenAmt, BNBAmt, isBuy
 
             if (
-              (event.quoteCurrency === wrappedCurrencySymbol && input < wrappedAddr[chainId]) ||
-              (event.quoteCurrency !== wrappedCurrencySymbol && input < BUSDAddr[chainId])
+              (event.quoteCurrency === wrappedCurrencySymbol &&
+                Web3.utils.toChecksumAddress(input) < Web3.utils.toChecksumAddress(wrappedAddr[chainId])) ||
+              (event.quoteCurrency !== wrappedCurrencySymbol &&
+                Web3.utils.toChecksumAddress(input) < Web3.utils.toChecksumAddress(BUSDAddr[chainId]))
             ) {
               tokenAmt = Math.abs(
                 parseFloat(ethers.utils.formatUnits(datas.amount0In + '', tokenDecimal)) -
@@ -511,8 +512,6 @@ export default function Swap({ history }: RouteComponentProps) {
       ab.abort()
     }
   }, [blockFlag])
-
-  
 
   const setDatas = (transactions, blockNumber) => {
     if (busyRef.current === false) {
@@ -1238,7 +1237,7 @@ export default function Swap({ history }: RouteComponentProps) {
           </SwapTabs>
           <AdvancedSwapDetailsDropdown trade={trade} />
           <TokenInfoWrapper>
-            <TokenInfo tokenData={tokenData} tokenAddress={input} chainId={chainId}/>
+            <TokenInfo tokenData={tokenData} tokenAddress={input} chainId={chainId} />
           </TokenInfoWrapper>
         </div>
         <div>
@@ -1250,7 +1249,12 @@ export default function Swap({ history }: RouteComponentProps) {
               price={tokenPrice}
             />
             <CoinStatsBoard tokenData={tokenData} chainId={chainId} input={input} />
-            <ChartContainer tokenAddress={input} tokenData={tokenData} routerVersion={routerVersion} />
+            <ChartContainer
+              tokenAddress={input}
+              tokenData={tokenData}
+              routerVersion={routerVersion}
+              chainId={chainId}
+            />
             <SwapTabs selectedTabClassName="is-selected" selectedTabPanelClassName="is-selected">
               <SwapTabList>
                 <SwapTab>

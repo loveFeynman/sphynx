@@ -18,7 +18,7 @@ const DistributionWrapper = styled.div`
     font-size: 12px;
   }
   .timeString {
-    fontSize: 11px;
+    fontsize: 11px;
   }
   ${({ theme }) => theme.mediaQueries.md} {
     flex-direction: column;
@@ -29,7 +29,7 @@ const DistributionWrapper = styled.div`
     padding: 12px 18px;
     margin: 12px;
     height: 80px;
-    background-color: ${({ theme }) => theme.isDark ? "transparent" : "#2A2E60"};
+    background-color: ${({ theme }) => (theme.isDark ? 'transparent' : '#2A2E60')};
     border-radius: 10px;
     .dateString {
       font-size: 12px;
@@ -38,7 +38,7 @@ const DistributionWrapper = styled.div`
       font-size: 16px;
     }
     .timeString {
-      fontSize: 14px;
+      fontsize: 14px;
     }
   }
 `
@@ -74,10 +74,9 @@ const RewardsPanel: React.FC = () => {
       const finishDate = new Date('11/29/2021 12:00:00 UTC').getTime()
       let remain = finishDate - new Date().getTime()
       if (remain < 0) {
-        for (; ;) {
-          remain += 3600 * 1000 * 24 * 7;
-          if (remain > 0)
-            break;
+        for (;;) {
+          remain += 3600 * 1000 * 24 * 7
+          if (remain > 0) break
         }
       }
       setRemainTime(remain)
@@ -88,7 +87,7 @@ const RewardsPanel: React.FC = () => {
     }, 1000)
     return () => {
       clearInterval(interval?.current)
-      ab.abort();
+      ab.abort()
     }
   }, [])
 
@@ -96,9 +95,13 @@ const RewardsPanel: React.FC = () => {
     <DistributionWrapper>
       <Flex justifyContent="flex-end" alignItems="center">
         {/* <img src={StopwatchIcon} alt="stopwatch icon" width="90" height="90" /> */}
-        <WatchIcon width="61px" height="72px" color={theme.isDark ? "white":"#F2C94C"}/>
+        <WatchIcon
+          width={document.body.clientWidth > 768 ? '61px' : '30px'}
+          height={document.body.clientWidth > 768 ? '72px' : '30px'}
+          color={theme.isDark ? '#A7A7CC' : '#F2C94C'}
+        />
         <DistributionContent>
-          <Text color={theme.isDark ? "#C32BB4" : "#F2C94C"} bold className="titleString">
+          <Text color={theme.isDark ? '#C32BB4' : '#F2C94C'} bold className="titleString">
             {t('Distribution In:')}
           </Text>
           <TimeContent>
@@ -106,7 +109,7 @@ const RewardsPanel: React.FC = () => {
               <Text color="white" textAlign="center" bold className="timeString">
                 {Math.floor(time / 86400000).toLocaleString('en-US', {
                   minimumIntegerDigits: 2,
-                  useGrouping: false
+                  useGrouping: false,
                 })}
               </Text>
               <Text color="white" textTransform="uppercase" className="dateString">{t('days')}</Text>
@@ -128,11 +131,14 @@ const RewardsPanel: React.FC = () => {
                   useGrouping: false
                 })}</Text>
               <Text color="white" textTransform="uppercase" className="dateString">{t('min')}</Text>
+                  useGrouping: false,
+                })}
+              </Text>
             </TimeSpan>
             <Text color="white">:</Text>
             <TimeSpan>
               <Text color="white" textAlign="center" bold className="timeString">
-                {Math.floor(time % 60000 / 1000).toLocaleString('en-US', {
+                {Math.floor((time % 60000) / 1000).toLocaleString('en-US', {
                   minimumIntegerDigits: 2,
                   useGrouping: false
                 })}</Text>

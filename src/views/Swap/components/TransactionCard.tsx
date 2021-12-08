@@ -6,7 +6,7 @@ import { useTranslation } from 'contexts/Localization'
 import useActiveWeb3React from '../../../hooks/useActiveWeb3React'
 import { formatPrice } from '../../../utils'
 
-const fontSize = window.screen.width > 768 ? "14px" : "12px"
+const fontSize = document.body.clientWidth > 768 ? "14px" : "12px"
 
 const TableWrapper = styled.div`
   background: ${({ theme }) => theme.isDark ? "#0E0E26": "#2A2E60"};

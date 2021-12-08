@@ -58,7 +58,16 @@ const GlobalStyle = createGlobalStyle`
   button {
     outline: none !important;
   }
-  .sc-gInthZ {
+  div.jHeWKE {
+    background: ${({ theme }) => (theme.isDark ? '#27262c !important' : '#191c41 !important')};
+  }
+  div.gaKhZj {
+    background: ${({ theme }) => (theme.isDark ? '#27262c !important' : '#191c41 !important')};
+  }
+  div.QBFwQ {
+    background: ${({ theme }) => (theme.isDark ? '#27262c !important' : '#191c41 !important')};
+  }
+  div.hlmFIr {
     background: ${({ theme }) => (theme.isDark ? '#27262c !important' : '#191c41 !important')};
   }
   .eTJGWm {
