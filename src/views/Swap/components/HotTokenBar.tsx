@@ -2,11 +2,9 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import Marquee from 'react-easy-marquee'
-// import { useDispatch, useSelector } from 'react-redux'
-// import moment from 'moment'
 import { useTranslation } from 'contexts/Localization'
 import { HotTokenType } from './types'
-// import { AppState } from '../../../state'
+import axios from 'axios'
 
 export interface HotTokenBarProps {
   tokens?: HotTokenType[] | null
@@ -44,177 +42,136 @@ const BarIntro = styled.div`
   }
 `
 
+const temp = [
+  {
+    currency: {
+      symbol: 'SPHYNX BSC',
+      name: 'SPHYNX BSC',
+      address: '0xd38ec16caf3464ca04929e847e4550dcff25b27a',
+    },
+  },
+  {
+    currency: {
+      symbol: 'MESSDOGE',
+      name: 'MessiahDoge',
+      address: '0x4551e4dd3ff4d3f379ffd4a6f992823bb1ac964a',
+    },
+  },
+  {
+    currency: {
+      symbol: '??',
+      name: '??',
+      address: '',
+    },
+  },
+  {
+    currency: {
+      symbol: '??',
+      name: '??',
+      address: '',
+    },
+  },
+  {
+    currency: {
+      symbol: '??',
+      name: '??',
+      address: '',
+    },
+  },
+  {
+    currency: {
+      symbol: '??',
+      name: '??',
+      address: '',
+    },
+  },
+  {
+    currency: {
+      symbol: '??',
+      name: '??',
+      address: '',
+    },
+  },
+  {
+    currency: {
+      symbol: '??',
+      name: '??',
+      address: '',
+    },
+  },
+  {
+    currency: {
+      symbol: '??',
+      name: '??',
+      address: '',
+    },
+  },
+  {
+    currency: {
+      symbol: '??',
+      name: '??',
+      address: '',
+    },
+  },
+  {
+    currency: {
+      symbol: '??',
+      name: '??',
+      address: '',
+    },
+  },
+  {
+    currency: {
+      symbol: '??',
+      name: '??',
+      address: '',
+    },
+  },
+  {
+    currency: {
+      symbol: '??',
+      name: '??',
+      address: '',
+    },
+  },
+  {
+    currency: {
+      symbol: '??',
+      name: '??',
+      address: '',
+    },
+  },
+  {
+    currency: {
+      symbol: '??',
+      name: '??',
+      address: '',
+    },
+  },
+]
+
 export default function HotTokenBar() {
-  const realData = [
-    {
-      currency: {
-        symbol: 'SPHYNX BSC',
-        name: 'SPHYNX BSC',
-        address: '0xd38ec16caf3464ca04929e847e4550dcff25b27a',
-      },
-    },
-    {
-      currency: {
-        symbol: 'MESSDOGE',
-        name: 'MessiahDoge',
-        address: '0x4551e4dd3ff4d3f379ffd4a6f992823bb1ac964a',
-      },
-    },
-    {
-      currency: {
-        symbol: '??',
-        name: '??',
-        address: '',
-      },
-    },
-    {
-      currency: {
-        symbol: '??',
-        name: '??',
-        address: '',
-      },
-    },
-    {
-      currency: {
-        symbol: '??',
-        name: '??',
-        address: '',
-      },
-    },
-    {
-      currency: {
-        symbol: '??',
-        name: '??',
-        address: '',
-      },
-    },
-    {
-      currency: {
-        symbol: '??',
-        name: '??',
-        address: '',
-      },
-    },
-    {
-      currency: {
-        symbol: '??',
-        name: '??',
-        address: '',
-      },
-    },
-    {
-      currency: {
-        symbol: '??',
-        name: '??',
-        address: '',
-      },
-    },
-    {
-      currency: {
-        symbol: '??',
-        name: '??',
-        address: '',
-      },
-    },
-    {
-      currency: {
-        symbol: '??',
-        name: '??',
-        address: '',
-      },
-    },
-    {
-      currency: {
-        symbol: '??',
-        name: '??',
-        address: '',
-      },
-    },
-    {
-      currency: {
-        symbol: '??',
-        name: '??',
-        address: '',
-      },
-    },
-    {
-      currency: {
-        symbol: '??',
-        name: '??',
-        address: '',
-      },
-    },
-    {
-      currency: {
-        symbol: '??',
-        name: '??',
-        address: '',
-      },
-    },
-  ]
+  const [realData, setRealData] = useState(temp)
 
   useEffect(() => {
-    const temp = new Date().getTime() - 1638771684343
-    if (Math.floor(temp / 1500000) % 2 === 0) {
-      let data = realData[0]
-      realData[0] = realData[1]
-      realData[1] = data
-    }
+    axios.get(`${process.env.REACT_APP_BACKEND_API_URL2}/getTrending`)
+    .then(res => {
+      let { data } = res
+      data = data.map((oneData) => {
+        return {
+          currency: {
+            symbol: oneData.token_symbol,
+            name: oneData.token_symbol,
+            address: oneData.token_address
+          }
+        }
+      })
+      
+      setRealData(data)
+    })
   }, [])
-  // const [data, setData] = React.useState([
-  //   {
-  //     currency: {
-  //       symbol: '',
-  //       name: '',
-  //     },
-  //   },
-  // ])
-  // const [loader, setLoader] = useState(false)
-  // const input = useSelector<AppState, AppState['inputReducer']>((state) => state.inputReducer.input)
-  // const dispatch = useDispatch()
+  
   const { t } = useTranslation()
-
-  // const prevDate = moment().subtract(1, 'day').format('YYYY-MM-DD')
-  // const currentDate = moment().format('YYYY-MM-DD')
-  // const getDataQuery = `
-  // {
-  //   ethereum(network: bsc) {
-  //     dexTrades(
-  //       options: {desc: "currencyAmount", limit: 10 }
-  //       date: {since: "${prevDate}", till: "${currentDate}"}
-  //       baseCurrency: {notIn: ["BNB", "", "WBNB", "BTCB", "ETH", "BUSD", "USDT", "USDC", "DAI"]}
-  //     ) {
-  //       currency: baseCurrency {
-  //         symbol
-  //         address
-  //       }
-  //       count
-  //       currencyAmount: baseAmount(in: USD)
-  //       dates: count(uniq: dates)
-  //       started: minimum(of: date)
-  //     }
-  //   }
-  // }`
-
-  // const handleClick = useCallback(async () => {
-  //   setLoader(true)
-  //   const bitConfig = {
-  //     headers: {
-  //       'X-API-KEY': BITQUERY_API_KEY,
-  //     },
-  //   }
-  //   const queryResult = await axios.post(BITQUERY_API, { query: getDataQuery }, bitConfig)
-  //   if (queryResult.data.data) {
-  //     setData(queryResult.data.data.ethereum.dexTrades)
-  //     setLoader(false)
-  //   }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [])
-
-  // React.useEffect(() => {
-  //   handleClick()
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [])
 
   return (
     <>

@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from "axios"
+import useToast from 'hooks/useToast';
 import styled from 'styled-components'
 
 const TokenInputWrapper = styled.div`
@@ -91,13 +93,23 @@ const GroupLayout = styled.div`
 `
 
 const TokenSection = (props) => {
-  const {tokenNumber} = props;
+  const {toastSuccess, toastError} = useToast()
+  const {tokenNumber, initialData} = props;
   const [tokenData, setTokenData] = useState({
     tokenAddress: '',
     tokenName: '',
     tokenSymbol: '',
-    chainId: '',
+    chainId: 0,
   })
+
+  useEffect(() => {
+    setTokenData({
+      tokenAddress: initialData.token_address,
+      tokenName: initialData.token_name,
+      tokenSymbol: initialData.token_symbol,
+      chainId: initialData.chain_id
+    })
+  }, [initialData])
   const handleChange = (e) => {
     console.log(e.target.value)
     // setTokenAddress(e.target.value)
@@ -106,6 +118,25 @@ const TokenSection = (props) => {
       [e.target.name]: e.target.value
     })
   }
+
+  const handleUpdate = async () => {
+    const data = {
+      tokenAddress: tokenData.tokenAddress,
+      tokenName: tokenData.tokenName,
+      tokenSymbol: tokenData.tokenSymbol,
+      chainId: tokenData.chainId,
+      id: tokenNumber
+    }
+
+    axios.post(`${process.env.REACT_APP_BACKEND_API_URL2}/updateTrendingInfo`, data)
+    .then(res => {
+      toastSuccess("Success", "Operation Successfully!")
+    })
+    .catch(err => {
+      toastError("Error", "Your action is failed!")
+    })
+  }
+
   return (
     <TokenInputWrapper>
       <Number>{tokenNumber}</Number>
@@ -126,7 +157,7 @@ const TokenSection = (props) => {
           <p className="description">Chain ID</p>
           <MyInput onChange={handleChange} name="chainId" value={tokenData.chainId} style={{ width: '100%' }} />
         </InputSectionWrapper>
-        <FillBtn >
+        <FillBtn onClick={handleUpdate}>
           Update
         </FillBtn>
       </GroupLayout>
