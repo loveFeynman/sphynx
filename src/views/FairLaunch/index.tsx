@@ -2,6 +2,7 @@ import 'date-fns'
 import React, { useState, useEffect } from 'react'
 import { KeyboardDateTimePicker, MuiPickersUtilsProvider } from '@material-ui/pickers'
 import DateFnsUtils from '@date-io/date-fns'
+import { SPHYNX_ROUTER, V2_ROUTER } from 'config/constants/routers'
 import { ReactComponent as BellIcon } from 'assets/svg/icon/Bell.svg'
 import { ReactComponent as MainLogo } from 'assets/svg/icon/logo_new.svg'
 import * as ethers from 'ethers'
@@ -413,10 +414,7 @@ const Presale: React.FC = () => {
     const launchTimeStamp = Math.floor(new Date(launchTime).getTime() / 1000)
     const lockTimeStamp = Math.floor(new Date(unlockTime).getTime() / 1000)
 
-    const router =
-      liquidityType === 'sphynxswap'
-        ? '0xE32374f7032006f412fCc3E9e0ee02a3C34f032A'
-        : '0xD99D1c33F9fC3444f8101754aBC46c52416550D1'
+    const router = liquidityType === 'sphynxswap' ? SPHYNX_ROUTER[chainId] : V2_ROUTER[chainId]
 
     try {
       setPendingTx(true)

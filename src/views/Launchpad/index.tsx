@@ -1,7 +1,11 @@
-import React, { useCallback } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'contexts/Localization'
+import { ChainId } from '@sphynxdex/sdk-multichain'
 import { Button, Text, Flex, Box, useMatchBreakpoints } from '@sphynxdex/uikit'
+import axios from "axios"
+import { getBNBPrice, getETHPrice } from 'utils/priceProvider'
+import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import { ReactComponent as MainLogo } from 'assets/svg/icon/logo_new.svg'
 import { ReactComponent as BinanceIcon1 } from 'assets/svg/icon/BinanceIcon1.svg'
 import { ReactComponent as BinanceIcon2 } from 'assets/svg/icon/BinanceIcon2.svg'
@@ -21,6 +25,7 @@ import styled from 'styled-components'
 import CommunityCard from 'components/CommunityCard'
 import ValueCard from 'components/ValueCard'
 import ImgCard from 'components/ImgCard'
+import { isUndefined } from 'lodash'
 
 const Wrapper = styled.div`
   display: flex;
@@ -210,10 +215,30 @@ const Launchpad: React.FC = () => {
   const { t } = useTranslation()
   const { isXl } = useMatchBreakpoints()
   const isMobile = !isXl
+  const [liquidity, setLiquidity] = useState('')
+  const [project, setProject] = useState(0)
+  const [locked, setLocked] = useState('')
+  const [contribute, setContribute] = useState(0)
+  const { chainId } = useActiveWeb3React()
 
-  const handleNetwork = useCallback(async () => {
-    console.log('handleNetwork')
-  }, [])
+  useEffect(() => {
+    const fetchData = async () => {
+      if(!Number.isNaN(chainId) && !isUndefined(chainId)) {
+        const nativePrice = chainId === ChainId.ETHEREUM ? await getETHPrice() : await getBNBPrice()
+        axios.get(`${process.env.REACT_APP_BACKEND_API_URL2}/getLaunchPadInfo/${chainId}`)
+        .then(response => {
+          console.log("response", response)
+          const data = response.data
+          setLiquidity(Number(data.liquidity * nativePrice).toFixed(3))
+          setProject(data.project)
+          setContribute(data.contribute)
+          setLocked(Number(data.lock * nativePrice).toFixed(3))
+        })
+      }
+    }
+    fetchData()
+  }, [chainId])
+
   return (
     <Wrapper>
       <PageHeader>
@@ -258,19 +283,19 @@ const Launchpad: React.FC = () => {
       </PresaleBox>
       <FlexWrapper style={{ marginTop: '32px' }}>
         <ValueCard
-          value="$ 0"
+          value={`$ ${liquidity}`}
           desc="Total Liquidity Raised"
           color="linear-gradient(90deg, #610D89 0%, #C42BB4 100%)"
         >
           <NounRaiseIcon />
         </ValueCard>
-        <ValueCard value="0" desc="Projects">
+        <ValueCard value={`${project}`} desc="Projects">
           <NounProjectIcon />
         </ValueCard>
-        <ValueCard value="0" desc="Participants">
+        <ValueCard value={`${contribute}`} desc="Participants">
           <NounUserIcon />
         </ValueCard>
-        <ValueCard value="$ 0" desc="Total Liquidity Locked">
+        <ValueCard value={`$ ${locked ?? '0'}`} desc="Total Liquidity Locked">
           <NounLockIcon />
         </ValueCard>
       </FlexWrapper>
