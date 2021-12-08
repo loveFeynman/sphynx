@@ -584,6 +584,13 @@ const Presale: React.FC = () => {
                   }}
                 />
               </InlineWrapper>
+              <Sperate />
+              <InlineWrapper>
+                <LineBtn onClick={() => setStep(2)}>Back</LineBtn>
+                <FillBtn className="ml16" onClick={() => setStep(4)}>
+                  Next
+                </FillBtn>
+              </InlineWrapper>
             </StepWrapper>
             <Sperate />
             <StepWrapper number="4" stepName="Timing" step={step} onClick={() => setStep(4)}>

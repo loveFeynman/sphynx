@@ -2,7 +2,7 @@ import 'date-fns'
 import React, { useEffect, useState } from 'react'
 import { MuiPickersUtilsProvider } from '@material-ui/pickers'
 import DateFnsUtils from '@date-io/date-fns'
-import { Text, Button, AutoRenewIcon } from '@sphynxdex/uikit'
+import { Text, Button, AutoRenewIcon, Link } from '@sphynxdex/uikit'
 import { ReactComponent as CheckList } from 'assets/svg/icon/CheckList.svg'
 import { useTranslation } from 'contexts/Localization'
 import useToast from 'hooks/useToast'
@@ -616,6 +616,16 @@ const PresaleManage: React.FC = () => {
                   readOnly
                   style={{ width: '80%' }}
                 />
+              </InlineWrapper>
+              <Sperate />
+              <InlineWrapper>
+                <p className="description w110">Presale Link</p>
+                <Link href={`/launchpad/live/${param.saleId}`}>{`https://thesphynx.co/launchpad/live/${param.saleId}`}</Link>
+              </InlineWrapper>
+              <Sperate />
+              <InlineWrapper>
+                <p className="description w110">Manage Link</p>
+                <Link href={`/launchpad/live/${param.saleId}`}>{`https://thesphynx.co/launchpad/presale/${param.saleId}`}</Link>
               </InlineWrapper>
               <Sperate />
               <WhitelistTitle>

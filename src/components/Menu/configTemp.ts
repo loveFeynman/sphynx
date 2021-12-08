@@ -21,7 +21,7 @@ export const linksTemp = [
   },
   {
     baseurl: 'farms',
-    name: 'Farming',
+    name: 'Farms',
     Icon: FarmIcon,
     link: '/farms',
   },
@@ -41,7 +41,7 @@ export const linksTemp = [
         link: '/launchpad'
       },
       {
-        name: 'Projects to launch',
+        name: 'Launchpad Listing',
         link: '/launchpad/listing'
       },
       {
@@ -53,26 +53,32 @@ export const linksTemp = [
         link: '/launchpad/fair/listing'
       },
       {
-        name: 'Sphynx Locks',
+        name: 'Locked tokens/Liquidity',
         link: '/launchpad/locker'
       },
       {
-        name: 'Sphynx Locker',
+        name: 'Lock Tokens/Liquidity',
         link: '/launchpad/locker/manage'
       },
     ]
-  },
-  {
-    baseurl: 'lottery',
-    name: 'Lottery',
-    Icon: IFOIcon,
-    link: '/lottery'
   },
   {
     baseurl: 'bridge',
     name: 'Bridge',
     Icon: BridgeIcon,
     link: '/bridge'
+  },
+  {
+    baseurl: 'nft',
+    name: 'SSC(NFT)',
+    Icon: PredictionIcon,
+    link: 'https://sovereignsphynxcouncil.co/'
+  },
+  {
+    baseurl: 'lottery',
+    name: 'Lottery',
+    Icon: IFOIcon,
+    link: '/lottery'
   },
   {
     baseurl: 'faq',
