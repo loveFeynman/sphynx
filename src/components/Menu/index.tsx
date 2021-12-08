@@ -775,7 +775,7 @@ const Menu = () => {
           ''
         )}
       </>
-    ), [isDark, menuToggled, removedAssets]
+    ), [isDark, menuToggled, removedAssets, showAllToken, tokenData, sum]
   )
 
   const MemoMenuCollapsed = useMemo(
