@@ -14,26 +14,25 @@ const CollectedWrapper = styled.div`
   justify-content: center;
   color: white;
   margin: 4px;
+  margin-left: 12px;
   border: 1px solid #5E2B60;
   border-radius: 5px;
-  padding: 12px 8px 10px;
-  height: 74px;
+  padding: 8px;
+  height: 64px;
   & > div:nth-child(1) {
     font-size: 11px;
     text-align: start;
   }
-  ${({ theme }) => theme.mediaQueries.md} {
+  ${({ theme }) => theme.mediaQueries.lg} {
     white-space: nowrap;
     width: 100%;
-    height: 104px;
+    height: 80px;
     max-width: 410px;
     div:nth-child(1) {
       font-size: 18px;
       text-align: center;
-      padding: 12px;
     }
-    padding: 22px 0px 20px;
-    margin: 16px;
+    padding: 12px;
   }
 `
 

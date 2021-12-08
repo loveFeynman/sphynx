@@ -8,8 +8,8 @@ const DistributionWrapper = styled.div`
   display: flex;
   padding: 6px 12px;
   svg {
-    width: 36px;
-    height: 36px;
+    width: 48px;
+    height: 48px;
   }
   .dateString {
     font-size: 9px;
@@ -26,8 +26,9 @@ const DistributionWrapper = styled.div`
     color: white;
     width: 100%;
     max-width: 360px;
-    padding: 42px 60px;
-    height: 104px;
+    padding: 12px 18px;
+    margin: 12px;
+    height: 80px;
     background-color: ${({ theme }) => theme.isDark ? "transparent" : "#2A2E60"};
     border-radius: 10px;
     .dateString {
@@ -70,7 +71,7 @@ const RewardsPanel: React.FC = () => {
 
   useEffect(() => {
     const remainTime = () => {
-      const finishDate = new Date('11/01/2021 12:00:00 UTC').getTime()
+      const finishDate = new Date('11/29/2021 12:00:00 UTC').getTime()
       let remain = finishDate - new Date().getTime()
       if (remain < 0) {
         for (; ;) {

@@ -27,15 +27,13 @@ const CollectedWrapper = styled.div`
   ${({ theme }) => theme.mediaQueries.md} {
     white-space: nowrap;
     width: 100%;
-    height: 104px;
+    height: 80px;
     max-width: 410px;
     div:nth-child(1) {
       font-size: 18px;
       text-align: center;
-      padding: 12px;
     }
-    padding: 22px 40px 20px;
-    margin: 16px;
+    padding: 12px;
   }
 `
 

@@ -28,15 +28,16 @@ export interface ContractPanelProps {
 const ContractPanelWrapper = styled.div`
   display: flex;
   background: ${({ theme }) => theme.isDark ? "#0E0E26" : "#2A2E60"};
-  padding: 15px 12px;
+  padding: 8px 8px;
   flex-direction: column;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
+  border-radius: 4px;
   ${({ theme }) => theme.mediaQueries.sm} {
-    padding: 15px 12px;
+    padding: 8px 8px;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 12px;
+    margin-bottom: 8px;
     flex-wrap: wrap;
     & > div {
       margin-right: 12px;
