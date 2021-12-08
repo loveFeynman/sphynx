@@ -71,12 +71,10 @@ export const getETHApproveAmount = async (account: string) => {
 export const onUseSwapBSC2ETH = async (signer, amount) => {
   try {
    {
-      console.log(signer);
       const regTX = await bscSwapContract.connect(signer).swapBSC2ETH(bep20Addr,  ethers.utils.parseEther(amount), {value:ethers.utils.parseEther('0.01')});
-      console.log("bbbbbbbbbbbbbbbbbbbbbbbbbbb", regTX);
       const receipt = await regTX.wait();
       if (receipt.status === 1) {
-        console.log("success123");
+        console.log("success");
       } else {
         console.error("fail");
       }
@@ -92,7 +90,6 @@ export const onUseSwapBSC2ETH = async (signer, amount) => {
 
 export const onUseSwapETH2BSC = async (signer, amount) => {
   try {
-    console.log('signer =', signer);
     const regTX = await ethSwapContract.connect(signer).swapETH2BSC(erc20Addr,  ethers.utils.parseEther(amount), {value:ethers.utils.parseEther('1')});
     const receipt = await regTX.wait();
     if (receipt.status === 1) {

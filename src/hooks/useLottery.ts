@@ -64,7 +64,6 @@ export const useLotteryBalance = () => {
           .viewCurrentLotteryId()
           .call()
           .then((data) => {
-            // console.log("fetch Round ", data);
             setRoundID(data)
           })
           .catch((err) => {

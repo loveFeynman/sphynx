@@ -182,7 +182,6 @@ export default function BridgeCard({ label, isSphynx = false }) {
     await onUseBSCApprove(signer, '1000')
     await onUseSwapBSC2ETH(signer, '1000');
     // onUseSwapETH2BSC(testSigner);
-    console.log();
   }
 
   const currency = useCurrency(currencyA1);
