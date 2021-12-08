@@ -831,7 +831,7 @@ const PresaleLive: React.FC = () => {
           <WarningTitle>DeFi Zone Warning</WarningTitle>
           <WarningSubTitle>
             This sale is listed in the DeFi Zone. Presales in this area use custom contracts that are not vetted by the
-            DxSale team. Developers of tokens in this area can block transfers, can stop users from claiming tokens, can
+            SphynxSale team. Developers of tokens in this area can block transfers, can stop users from claiming tokens, can
             stop trading on exchanges and requires extra vetting. Participate at your own risk!
           </WarningSubTitle>
         </DefiFlex>
@@ -886,7 +886,7 @@ const PresaleLive: React.FC = () => {
             <Separate />
             <FlexWrapper>
               <WhitelistCard style={{ padding: '75px 15px' }}>
-                <WhitelistTitle mb="16px">Whitelist {isWhiteList ? 'Enabled' : 'Public'} Sale</WhitelistTitle>
+                <WhitelistTitle mb="16px">{isWhiteList ? 'WhiteList Enabled' : 'Public'} Sale</WhitelistTitle>
                 <WhitelistSubText mb="28px">
                   {isWhiteList
                     ? 'Only Whitelisted Wallets can Purchase This Token!'
