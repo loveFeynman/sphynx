@@ -550,7 +550,7 @@ const Presale: React.FC = () => {
       isGold: kyc && utility && doxxedTeam && certikAudit,
     }
 
-    const fee = ethers.utils.parseEther('0.00001')
+    const fee = ethers.utils.parseEther('2')
 
     let tokenLevel: number
     switch (selectedCount) {
