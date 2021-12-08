@@ -285,10 +285,24 @@ const FairLaunchManage: React.FC = () => {
     try {
       const fee = ethers.utils.parseEther('0.00001')
       const tx = await fairLaunchContract.launch(parseInt(param.launchId), { value: fee })
-      await tx.wait()
+      const receipt = await tx.wait()
       setIsLaunched(true)
       setPendingLaunch(false)
-      toastSuccess('Success', 'Operation successfully!')
+      if(receipt.status === 1) {
+        toastSuccess('Success', 'Operation successfully!')
+        axios
+            .post(`${process.env.REACT_APP_BACKEND_API_URL2}/inserttoken`, {
+              name: tokenName,
+              address: tokenAddress,
+              symbol: tokenSymbol,
+              chainId,
+            })
+            .then((response) => {
+              console.log("response", response.data)
+            })
+      } else {
+        toastSuccess('Failed', 'Your action is failed!')  
+      }
     } catch (err) {
       setPendingLaunch(false)
       toastSuccess('Failed', 'Your action is failed!')
