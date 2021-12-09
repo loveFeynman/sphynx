@@ -49,16 +49,16 @@ export const linksTemp = [
         link: '/launchpad/fair'
       },
       {
-        name: 'Fair Launch List',
+        name: 'Fair Launch Directory',
         link: '/launchpad/fair/listing'
-      },
-      {
-        name: 'Locked tokens/Liquidity',
-        link: '/launchpad/locker'
       },
       {
         name: 'Lock Tokens/Liquidity',
         link: '/launchpad/locker/manage'
+      },
+      {
+        name: 'Lockers',
+        link: '/launchpad/locker'
       },
     ]
   },
