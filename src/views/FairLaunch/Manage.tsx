@@ -187,6 +187,15 @@ const ColorButton = styled(Button)`
   width: 176px;
 `
 
+const TimerWrapper = styled.div`
+  & p {
+    margin-bottom: 16px;
+  }
+  & div {
+    color: white;
+  }
+`
+
 const FairLaunchManage: React.FC = () => {
   const { t } = useTranslation()
   const param: any = useParams()
@@ -483,8 +492,10 @@ const FairLaunchManage: React.FC = () => {
             </Button>
           ) : (
             <>
+            <TimerWrapper>
               <Notification>{now >= parseInt(launchTime) ? 'Launch ends in:' : 'Launch starts in:'}</Notification>
               <TimerComponent time={ now >= parseInt(launchTime) ? launchTime : `${(parseInt(launchTime) + 600)}` } />
+              </TimerWrapper>
               {/* <Button disabled={!isAvailableLaunch} onClick={handleLaunchToken} mr="20px" mt="20px"> */}
               <Button disabled={!isAvailableLaunch || pendingLaunch} onClick={handleLaunchToken} mr="20px" mt="20px">
                 LAUNCH TOKEN

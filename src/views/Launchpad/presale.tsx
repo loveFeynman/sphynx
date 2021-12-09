@@ -30,7 +30,7 @@ const rotate = keyframes`
   to {
     transform: rotate(360deg);
   }
-`;
+`
 
 const Wrapper = styled.div`
   display: flex;
@@ -439,7 +439,13 @@ const Presale: React.FC = () => {
       setStep(1)
       return
     }
-    if (!parseFloat(tier1) || !parseFloat(tier2) || !parseFloat(tier3) || parseFloat(tier1) < parseFloat(tier2) || parseFloat(tier2) < parseFloat(tier3)) {
+    if (
+      !parseFloat(tier1) ||
+      !parseFloat(tier2) ||
+      !parseFloat(tier3) ||
+      parseFloat(tier1) < parseFloat(tier2) ||
+      parseFloat(tier2) < parseFloat(tier3)
+    ) {
       toastError('Please input presale rate correctly!')
       setStep(2)
       return
@@ -479,12 +485,12 @@ const Presale: React.FC = () => {
       setStep(6)
       return
     }
-    if(parseFloat(sphynxLiquidityRate) + parseFloat(pancakeLiquidityRate) < 50) {
+    if (parseFloat(sphynxLiquidityRate) + parseFloat(pancakeLiquidityRate) < 50) {
       toastError('Sum of Liquidity amount should be greater than 50%!')
       setStep(5)
       return
     }
-    if(parseFloat(sphynxLiquidityRate) + parseFloat(pancakeLiquidityRate) > 100) {
+    if (parseFloat(sphynxLiquidityRate) + parseFloat(pancakeLiquidityRate) > 100) {
       toastError('Sum of Liquidity amount should be less than 100%!')
       setStep(5)
       return
@@ -498,7 +504,7 @@ const Presale: React.FC = () => {
     if (new Date(presaleStart).getTime() < new Date().getTime() + 600000) {
       toastError('Presale start time must be more than 10 minutes after now!')
       setStep(9)
-      return;
+      return
     }
     if (
       new Date(presaleStart).getTime() > new Date(presaleEnd).getTime() ||
@@ -506,22 +512,22 @@ const Presale: React.FC = () => {
     ) {
       toastError('Presale period must be less than 3 days!')
       setStep(9)
-      return;
+      return
     }
     if (new Date(presaleStart).getTime() > new Date(tier1Time).getTime()) {
       toastError('Presale tier1 time must be greater than the presale start time!')
       setStep(9)
-      return;
+      return
     }
     if (new Date(tier1Time).getTime() > new Date(tier2Time).getTime()) {
       toastError('Presale tier2 time must be greater than the presale tier1 time!')
       setStep(9)
-      return;
+      return
     }
     if (new Date(liquidityLock).getTime() <= new Date(presaleEnd).getTime() + 3 * 30 * 24 * 3600 * 1000) {
       toastError('Liquidity lock time must be greater than 3 month from presale end time!')
       setStep(9)
-      return;
+      return
     }
 
     setPendingTx(true)
@@ -575,55 +581,58 @@ const Presale: React.FC = () => {
         break
     }
 
-    presaleContract.createPresale(value, { value: fee }).then((res) => {
-      /* if presale created successfully */
-      const data: any = {
-        chain_id: chainId,
-        sale_id: presaleId,
-        owner_address: account,
-        token_address: tokenAddress,
-        token_name: tokenName,
-        token_symbol: tokenSymbol,
-        token_decimal: tokenDecimal,
-        tier1,
-        tier2,
-        tier3,
-        soft_cap: softCap,
-        hard_cap: hardCap,
-        min_buy: minBuy,
-        max_buy: maxBuy,
-        router_rate: pancakeLiquidityRate,
-        default_router_rate: sphynxLiquidityRate,
-        listing_rate: listingRate,
-        logo_link: logoLink,
-        website_link: webSiteLink,
-        github_link: gitLink,
-        twitter_link: twitterLink,
-        reddit_link: redditLink,
-        telegram_link: telegramLink,
-        project_dec: projectDec,
-        update_dec: updateDec,
-        token_level: tokenLevel,
-        start_time: startTime,
-        end_time: endTime,
-        tier1_time: tierOneTime,
-        tier2_time: tierTwoTime,
-        lock_time: liquidityLockTime,
-      }
-
-      setPendingTx(false)
-      axios.post(`${process.env.REACT_APP_BACKEND_API_URL2}/insertPresaleInfo`, { data }).then((response) => {
-        if (response.data) {
-          toastSuccess('Pushed!', 'Your presale info is saved successfully.')
-          history.push(`/launchpad/presale/${presaleId}`)
-        } else {
-          toastError('Failed!', 'Your action is failed.')
+    presaleContract
+      .createPresale(value, { value: fee })
+      .then((res) => {
+        /* if presale created successfully */
+        const data: any = {
+          chain_id: chainId,
+          sale_id: presaleId,
+          owner_address: account,
+          token_address: tokenAddress,
+          token_name: tokenName,
+          token_symbol: tokenSymbol,
+          token_decimal: tokenDecimal,
+          tier1,
+          tier2,
+          tier3,
+          soft_cap: softCap,
+          hard_cap: hardCap,
+          min_buy: minBuy,
+          max_buy: maxBuy,
+          router_rate: pancakeLiquidityRate,
+          default_router_rate: sphynxLiquidityRate,
+          listing_rate: listingRate,
+          logo_link: logoLink,
+          website_link: webSiteLink,
+          github_link: gitLink,
+          twitter_link: twitterLink,
+          reddit_link: redditLink,
+          telegram_link: telegramLink,
+          project_dec: projectDec,
+          update_dec: updateDec,
+          token_level: tokenLevel,
+          start_time: startTime,
+          end_time: endTime,
+          tier1_time: tierOneTime,
+          tier2_time: tierTwoTime,
+          lock_time: liquidityLockTime,
         }
+
+        setPendingTx(false)
+        axios.post(`${process.env.REACT_APP_BACKEND_API_URL2}/insertPresaleInfo`, { data }).then((response) => {
+          if (response.data) {
+            toastSuccess('Pushed!', 'Your presale info is saved successfully.')
+            history.push(`/launchpad/presale/${presaleId}`)
+          } else {
+            toastError('Failed!', 'Your action is failed.')
+          }
+        })
       })
-    }).catch((err) => {
-      setPendingTx(false)
-      toastError('Failed!', 'Your action is failed.')
-    })
+      .catch((err) => {
+        setPendingTx(false)
+        toastError('Failed!', 'Your action is failed.')
+      })
   }
 
   const [onDisclaimerModal] = useModal(<DisclaimerModal />, false)
@@ -697,6 +706,8 @@ const Presale: React.FC = () => {
             </StepWrapper>
             <Sperate />
             <StepWrapper number="2" stepName="Presale Rate" step={step} onClick={() => setStep(2)}>
+              <p>* (set the same rate for single tier presale)</p>
+              <Sperate />
               <InlineWrapper>
                 <p className="description w110">Tier1(Per BNB)</p>
                 <MyInput className="ml16" value={tier1} onChange={handleTier1} />
@@ -769,10 +780,7 @@ const Presale: React.FC = () => {
                 Enter the percentage of raised funds that should be allocated to Liquidity on SphynxSwap (Min 0%, Max
                 100%, We recommend &gt; 70%)
               </p>
-              <MyInput
-                onChange={(e) => setSphynxLiquidityRate(e.target.value)}
-                value={sphynxLiquidityRate}
-              />
+              <MyInput onChange={(e) => setSphynxLiquidityRate(e.target.value)} value={sphynxLiquidityRate} />
               &nbsp; %
               <Sperate />
               <InlineWrapper>
@@ -788,10 +796,7 @@ const Presale: React.FC = () => {
                 Enter the percentage of raised funds that should be allocated to Liquidity on PancakeSwap (Min 0%, Max
                 100%, We recommend SphynxSwap)
               </p>
-              <MyInput
-                onChange={(e) => setPancakeLiquidityRate(e.target.value)}
-                value={pancakeLiquidityRate}
-              />
+              <MyInput onChange={(e) => setPancakeLiquidityRate(e.target.value)} value={pancakeLiquidityRate} />
               &nbsp; %
               <Sperate />
               <InlineWrapper>
@@ -802,7 +807,12 @@ const Presale: React.FC = () => {
               </InlineWrapper>
             </StepWrapper>
             <Sperate />
-            <StepWrapper number="7" stepName="SphynxSwap/PancakeSwap Listing Rate" step={step} onClick={() => setStep(7)}>
+            <StepWrapper
+              number="7"
+              stepName="SphynxSwap/PancakeSwap Listing Rate"
+              step={step}
+              onClick={() => setStep(7)}
+            >
               <p className="description">
                 Enter the SphynxSwap/Pancake swap listing price: (If I buy 1 BNB worth on Swap how many tokens do I get?
                 Usually this amount is lower than presale rate to allow for a higher listing price on Swap)
@@ -948,6 +958,9 @@ const Presale: React.FC = () => {
             </StepWrapper>
             <Sperate />
             <StepWrapper number="9" stepName="Timing" step={step} onClick={() => setStep(9)}>
+              <p>
+                * (set the same timer all the same for all tiers for single tier presale)
+              </p>
               <Sperate />
               <FlexWrapper>
                 <InlineWrapper>

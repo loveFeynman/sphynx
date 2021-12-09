@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useRef } from 'react'
-import styled from 'styled-components'
 import { Text } from '@sphynxdex/uikit'
 
 interface TimeProps {
@@ -56,24 +55,13 @@ const TimerComponent: React.FC<TimeProps> = ({ time }) => {
     else setDay(d.toString())
   }, [index])
 
-  const Wrapper = styled.div`
-    & span {
-        margin: 8px;
-        background: #c42bb4;
-        border-radius: 4px;
-        padding: 8px;
-    }
-  `
-
   return (
-    <Wrapper>
-      <Text color="#A7A7CC" fontSize="14px" bold>
-        <span>{day}</span>
-        <span>{hour}</span>
-        <span>{min}</span>
-        <span>{sec}</span>
-      </Text>
-    </Wrapper>
+    <Text color="#A7A7CC" fontSize="14px" bold>
+      <span style={{ margin: '8px', background: '#c42bb4', borderRadius: '4px', padding: '8px' }}>{day}</span>
+      <span style={{ margin: '8px', background: '#c42bb4', borderRadius: '4px', padding: '8px' }}>{hour}</span>
+      <span style={{ margin: '8px', background: '#c42bb4', borderRadius: '4px', padding: '8px' }}>{min}</span>
+      <span style={{ margin: '8px', background: '#c42bb4', borderRadius: '4px', padding: '8px' }}>{sec}</span>
+    </Text>
   )
 }
 
