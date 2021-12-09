@@ -37,20 +37,22 @@ const TokenSymbolWrapper = styled.div`
 const EndTimeWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  width: 100%;
+  justify-content: center;
+  align-items: center;
   flex: 1;
-  align-items: flex-end;
   div:first-child {
     font-weight: 600;
-    font-size: 13px;
+    font-size: 14px;
     white-space: nowrap;
     color: #f2c94c;
+    margin-bottom: 16px;
+    text-align: center;
   }
   div:last-child {
     font-weight: 600;
-    font-size: 11px;
     white-space: nowrap;
     color: white;
+    margin-bottom: 16px;
   }
 `
 
@@ -185,7 +187,7 @@ const TokenCard: React.FC<ImgCardProps> = ({
     }
   }
 
-  console.log("tokenState", tokenState)
+  console.log('tokenState', tokenState)
 
   return (
     <CardWrapper onClick={handleClicked}>
@@ -199,12 +201,12 @@ const TokenCard: React.FC<ImgCardProps> = ({
             <Text>{tokenName}</Text>
           </TokenSymbolWrapper>
         </TokenWrapper>
+      </CardHeader>
+      <CardBody>
         <EndTimeWrapper>
           <Text>Launch start in:</Text>
           <TimerComponent time={launchTime} />
         </EndTimeWrapper>
-      </CardHeader>
-      <CardBody>
         <ActiveSaleText state={tokenState}>{`${tokenState} Launch`}</ActiveSaleText>
         <SaleInfoWrapper>
           <SaleInfo>

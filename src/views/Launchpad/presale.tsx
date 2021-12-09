@@ -804,7 +804,7 @@ const Presale: React.FC = () => {
             <Sperate />
             <StepWrapper number="7" stepName="SphynxSwap/PancakeSwap Listing Rate" step={step} onClick={() => setStep(7)}>
               <p className="description">
-                Enter the SphynxSwap listing price: (If I buy 1 BNB worth on Swap how many tokens do I get?
+                Enter the SphynxSwap/Pancake swap listing price: (If I buy 1 BNB worth on Swap how many tokens do I get?
                 Usually this amount is lower than presale rate to allow for a higher listing price on Swap)
               </p>
               <MyInput onChange={(e) => setListingRate(e.target.value)} value={listingRate} />
