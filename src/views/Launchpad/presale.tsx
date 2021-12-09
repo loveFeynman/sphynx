@@ -746,12 +746,12 @@ const Presale: React.FC = () => {
               <Sperate />
               <FlexWrapper>
                 <InlineWrapper>
-                  <p className="description w80">Min Buy</p>
+                  <p className="description w110">Min Buy(BNB)</p>
                   <MyInput className="ml16" onChange={(e) => setMinBuy(e.target.value)} value={minBuy} />
                 </InlineWrapper>
                 <MarginWrapper />
                 <InlineWrapper>
-                  <p className="description w80">Max Buy</p>
+                  <p className="description w110">Max Buy(BNB)</p>
                   <MyInput className="ml16" onChange={(e) => setMaxBuy(e.target.value)} value={maxBuy} />
                 </InlineWrapper>
               </FlexWrapper>
