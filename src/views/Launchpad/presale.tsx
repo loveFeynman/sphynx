@@ -508,7 +508,7 @@ const Presale: React.FC = () => {
     }
     if (
       new Date(presaleStart).getTime() > new Date(presaleEnd).getTime() ||
-      new Date(presaleStart).getTime() + 3600 * 1000 * 24 * 3 <= new Date(presaleEnd).getTime()
+      new Date(presaleStart).getTime() + 3600 * 1000 * 24 * 2 <= new Date(presaleEnd).getTime()
     ) {
       toastError('Presale period must be less than 3 days!')
       setStep(9)
@@ -532,7 +532,6 @@ const Presale: React.FC = () => {
 
     setPendingTx(true)
     const presaleId = (await presaleContract.currentPresaleId()).toString()
-    console.log("presaleId", presaleId)
     const routerAddress = getRouterAddress()
     const startTime = Math.floor(new Date(presaleStart).getTime() / 1000)
     const tierOneTime = Math.floor(new Date(tier1Time).getTime() / 1000)
