@@ -434,101 +434,101 @@ const Presale: React.FC = () => {
   }
 
   const validate = async () => {
-    // if (!tokenAddress || !tokenName || !tokenSymbol) {
-    //   toastError('Oops, we can not parse token data, please input correct token address!')
-    //   setStep(1)
-    //   return
-    // }
-    // if (
-    //   !parseFloat(tier1) ||
-    //   !parseFloat(tier2) ||
-    //   !parseFloat(tier3) ||
-    //   parseFloat(tier1) < parseFloat(tier2) ||
-    //   parseFloat(tier2) < parseFloat(tier3)
-    // ) {
-    //   toastError('Please input presale rate correctly!')
-    //   setStep(2)
-    //   return
-    // }
-    // if (!parseFloat(softCap) || !parseFloat(hardCap)) {
-    //   toastError('Please input soft cap & hard cap!')
-    //   setStep(3)
-    //   return
-    // }
-    // if (parseFloat(softCap) * 2 < parseFloat(hardCap)) {
-    //   toastError('Softcap should be at least half of hardcap')
-    //   setStep(3)
-    //   return
-    // }
-    // if (parseFloat(hardCap) < parseFloat(softCap)) {
-    //   toastError('Hardcap should be greater than softcap')
-    //   setStep(3)
-    //   return
-    // }
-    // if (!parseFloat(minBuy) || !parseFloat(maxBuy)) {
-    //   toastError('Please input contribution limit correctly!')
-    //   setStep(4)
-    //   return
-    // }
-    // if (parseFloat(minBuy) > parseFloat(maxBuy)) {
-    //   toastError('Max buy amount should be greater than min buy amount!')
-    //   setStep(4)
-    //   return
-    // }
-    // if (Number.isNaN(parseInt(sphynxLiquidityRate))) {
-    //   toastError('Please input Sphynx Liquidity amount correctly!')
-    //   setStep(5)
-    //   return
-    // }
-    // if (Number.isNaN(parseInt(pancakeLiquidityRate))) {
-    //   toastError('Please input Pancake Liquidity amount correctly!')
-    //   setStep(6)
-    //   return
-    // }
-    // if (parseFloat(sphynxLiquidityRate) + parseFloat(pancakeLiquidityRate) < 50) {
-    //   toastError('Sum of Liquidity amount should be greater than 50%!')
-    //   setStep(5)
-    //   return
-    // }
-    // if (parseFloat(sphynxLiquidityRate) + parseFloat(pancakeLiquidityRate) > 100) {
-    //   toastError('Sum of Liquidity amount should be less than 100%!')
-    //   setStep(5)
-    //   return
-    // }
-    // if (!parseFloat(listingRate)) {
-    //   toastError('Please input listing rate!')
-    //   setStep(7)
-    //   return
-    // }
+    if (!tokenAddress || !tokenName || !tokenSymbol) {
+      toastError('Oops, we can not parse token data, please input correct token address!')
+      setStep(1)
+      return
+    }
+    if (
+      !parseFloat(tier1) ||
+      !parseFloat(tier2) ||
+      !parseFloat(tier3) ||
+      parseFloat(tier1) < parseFloat(tier2) ||
+      parseFloat(tier2) < parseFloat(tier3)
+    ) {
+      toastError('Please input presale rate correctly!')
+      setStep(2)
+      return
+    }
+    if (!parseFloat(softCap) || !parseFloat(hardCap)) {
+      toastError('Please input soft cap & hard cap!')
+      setStep(3)
+      return
+    }
+    if (parseFloat(softCap) * 2 < parseFloat(hardCap)) {
+      toastError('Softcap should be at least half of hardcap')
+      setStep(3)
+      return
+    }
+    if (parseFloat(hardCap) < parseFloat(softCap)) {
+      toastError('Hardcap should be greater than softcap')
+      setStep(3)
+      return
+    }
+    if (!parseFloat(minBuy) || !parseFloat(maxBuy)) {
+      toastError('Please input contribution limit correctly!')
+      setStep(4)
+      return
+    }
+    if (parseFloat(minBuy) > parseFloat(maxBuy)) {
+      toastError('Max buy amount should be greater than min buy amount!')
+      setStep(4)
+      return
+    }
+    if (Number.isNaN(parseInt(sphynxLiquidityRate))) {
+      toastError('Please input Sphynx Liquidity amount correctly!')
+      setStep(5)
+      return
+    }
+    if (Number.isNaN(parseInt(pancakeLiquidityRate))) {
+      toastError('Please input Pancake Liquidity amount correctly!')
+      setStep(6)
+      return
+    }
+    if (parseFloat(sphynxLiquidityRate) + parseFloat(pancakeLiquidityRate) < 50) {
+      toastError('Sum of Liquidity amount should be greater than 50%!')
+      setStep(5)
+      return
+    }
+    if (parseFloat(sphynxLiquidityRate) + parseFloat(pancakeLiquidityRate) > 100) {
+      toastError('Sum of Liquidity amount should be less than 100%!')
+      setStep(5)
+      return
+    }
+    if (!parseFloat(listingRate)) {
+      toastError('Please input listing rate!')
+      setStep(7)
+      return
+    }
 
-    // if (new Date(presaleStart).getTime() < new Date().getTime() + 600000) {
-    //   toastError('Presale start time must be more than 10 minutes after now!')
-    //   setStep(9)
-    //   return
-    // }
-    // if (
-    //   new Date(presaleStart).getTime() > new Date(presaleEnd).getTime() ||
-    //   new Date(presaleStart).getTime() + 3600 * 1000 * 24 * 3 <= new Date(presaleEnd).getTime()
-    // ) {
-    //   toastError('Presale period must be less than 3 days!')
-    //   setStep(9)
-    //   return
-    // }
-    // if (new Date(presaleStart).getTime() > new Date(tier1Time).getTime()) {
-    //   toastError('Presale tier1 time must be greater than the presale start time!')
-    //   setStep(9)
-    //   return
-    // }
-    // if (new Date(tier1Time).getTime() > new Date(tier2Time).getTime()) {
-    //   toastError('Presale tier2 time must be greater than the presale tier1 time!')
-    //   setStep(9)
-    //   return
-    // }
-    // if (new Date(liquidityLock).getTime() <= new Date(presaleEnd).getTime() + 3 * 30 * 24 * 3600 * 1000) {
-    //   toastError('Liquidity lock time must be greater than 3 month from presale end time!')
-    //   setStep(9)
-    //   return
-    // }
+    if (new Date(presaleStart).getTime() < new Date().getTime() + 600000) {
+      toastError('Presale start time must be more than 10 minutes after now!')
+      setStep(9)
+      return
+    }
+    if (
+      new Date(presaleStart).getTime() > new Date(presaleEnd).getTime() ||
+      new Date(presaleStart).getTime() + 3600 * 1000 * 24 * 3 <= new Date(presaleEnd).getTime()
+    ) {
+      toastError('Presale period must be less than 3 days!')
+      setStep(9)
+      return
+    }
+    if (new Date(presaleStart).getTime() > new Date(tier1Time).getTime()) {
+      toastError('Presale tier1 time must be greater than the presale start time!')
+      setStep(9)
+      return
+    }
+    if (new Date(tier1Time).getTime() > new Date(tier2Time).getTime()) {
+      toastError('Presale tier2 time must be greater than the presale tier1 time!')
+      setStep(9)
+      return
+    }
+    if (new Date(liquidityLock).getTime() <= new Date(presaleEnd).getTime() + 3 * 30 * 24 * 3600 * 1000) {
+      toastError('Liquidity lock time must be greater than 3 month from presale end time!')
+      setStep(9)
+      return
+    }
 
     setPendingTx(true)
     const presaleId = (await presaleContract.currentPresaleId()).toString()
