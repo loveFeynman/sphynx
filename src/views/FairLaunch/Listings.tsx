@@ -109,7 +109,7 @@ const FairLaunchListing: React.FC = () => {
         <TitleWrapper>
           <img src={ListIcon} alt="listIcon" />
           <Title>
-            <LogoTitle>Fair LaunchPad Listing</LogoTitle>
+            <LogoTitle>Fair LaunchPad Directory</LogoTitle>
           </Title>
         </TitleWrapper>
       </HeaderWrapper>

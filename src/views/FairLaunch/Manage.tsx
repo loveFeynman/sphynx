@@ -13,6 +13,7 @@ import { ReactComponent as CheckList } from 'assets/svg/icon/CheckList.svg'
 import { useTranslation } from 'contexts/Localization'
 import useToast from 'hooks/useToast'
 import styled, { keyframes } from 'styled-components'
+import TimerComponent from 'components/Timer/TimerComponent'
 
 const rotate = keyframes`
   from {
@@ -288,20 +289,20 @@ const FairLaunchManage: React.FC = () => {
       const receipt = await tx.wait()
       setIsLaunched(true)
       setPendingLaunch(false)
-      if(receipt.status === 1) {
+      if (receipt.status === 1) {
         toastSuccess('Success', 'Operation successfully!')
         axios
-            .post(`${process.env.REACT_APP_BACKEND_API_URL2}/inserttoken`, {
-              name: tokenName,
-              address: tokenAddress,
-              symbol: tokenSymbol,
-              chainId,
-            })
-            .then((response) => {
-              console.log("response", response.data)
-            })
+          .post(`${process.env.REACT_APP_BACKEND_API_URL2}/inserttoken`, {
+            name: tokenName,
+            address: tokenAddress,
+            symbol: tokenSymbol,
+            chainId,
+          })
+          .then((response) => {
+            console.log('response', response.data)
+          })
       } else {
-        toastSuccess('Failed', 'Your action is failed!')  
+        toastSuccess('Failed', 'Your action is failed!')
       }
     } catch (err) {
       setPendingLaunch(false)
@@ -482,6 +483,8 @@ const FairLaunchManage: React.FC = () => {
             </Button>
           ) : (
             <>
+              <Notification>{now >= parseInt(launchTime) ? 'Launch ends in:' : 'Launch starts in:'}</Notification>
+              <TimerComponent time={ now >= parseInt(launchTime) ? launchTime : `${(parseInt(launchTime) + 600)}` } />
               {/* <Button disabled={!isAvailableLaunch} onClick={handleLaunchToken} mr="20px" mt="20px"> */}
               <Button disabled={!isAvailableLaunch || pendingLaunch} onClick={handleLaunchToken} mr="20px" mt="20px">
                 LAUNCH TOKEN

@@ -129,7 +129,7 @@ const Presale: React.FC = () => {
         <TitleWrapper>
           <img src={ListIcon} alt="listIcon" />
           <Title>
-            <LogoTitle>LaunchPad Listings</LogoTitle>
+            <LogoTitle>Presale Directory</LogoTitle>
           </Title>
         </TitleWrapper>
       </HeaderWrapper>
