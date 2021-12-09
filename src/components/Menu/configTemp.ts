@@ -41,7 +41,7 @@ export const linksTemp = [
         link: '/launchpad'
       },
       {
-        name: 'Launchpad Listing',
+        name: 'Presale Directory',
         link: '/launchpad/listing'
       },
       {
