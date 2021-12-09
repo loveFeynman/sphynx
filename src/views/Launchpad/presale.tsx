@@ -454,7 +454,7 @@ const Presale: React.FC = () => {
       setStep(3)
       return
     }
-    if (parseFloat(hardCap) <= parseFloat(softCap)) {
+    if (parseFloat(hardCap) < parseFloat(softCap)) {
       toastError('Hardcap should be greater than softcap')
       setStep(3)
       return
@@ -464,7 +464,7 @@ const Presale: React.FC = () => {
       setStep(4)
       return
     }
-    if (parseFloat(minBuy) >= parseFloat(maxBuy)) {
+    if (parseFloat(minBuy) > parseFloat(maxBuy)) {
       toastError('Max buy amount should be greater than min buy amount!')
       setStep(4)
       return
@@ -495,13 +495,13 @@ const Presale: React.FC = () => {
       return
     }
 
-    if (new Date(presaleStart).getTime() <= new Date().getTime() + 600000) {
+    if (new Date(presaleStart).getTime() < new Date().getTime() + 600000) {
       toastError('Presale start time must be more than 10 minutes after now!')
       setStep(9)
       return;
     }
     if (
-      new Date(presaleStart).getTime() >= new Date(presaleEnd).getTime() ||
+      new Date(presaleStart).getTime() > new Date(presaleEnd).getTime() ||
       new Date(presaleStart).getTime() + 3600 * 1000 * 24 * 3 <= new Date(presaleEnd).getTime()
     ) {
       toastError('Presale period must be less than 3 days!')
