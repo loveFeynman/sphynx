@@ -750,7 +750,7 @@ const PresaleManage: React.FC = () => {
                         value: true,
                       },
                     ]}
-                    defaultValue={!certikAudit ? 1 : 0}
+                    defaultValue={certikAudit ? 1 : 0}
                     onChange={(option: any) => setCertikAudit(option.value)}
                   />
                 </InlineWrapper>
@@ -768,7 +768,7 @@ const PresaleManage: React.FC = () => {
                         value: true,
                       },
                     ]}
-                    defaultValue={!doxxedTeam ? 1 : 0}
+                    defaultValue={doxxedTeam ? 1 : 0}
                     onChange={(option: any) => setDoxxedTeam(option.value)}
                   />
                 </InlineWrapper>
@@ -788,7 +788,7 @@ const PresaleManage: React.FC = () => {
                         value: true,
                       },
                     ]}
-                    defaultValue={!utility ? 1 : 0}
+                    defaultValue={utility ? 1 : 0}
                     onChange={(option: any) => setUtility(option.value)}
                   />
                 </InlineWrapper>
@@ -806,7 +806,7 @@ const PresaleManage: React.FC = () => {
                         value: true,
                       },
                     ]}
-                    defaultValue={!kyc ? 1 : 0}
+                    defaultValue={kyc ? 1 : 0}
                     onChange={(option: any) => setKYC(option.value)}
                   />
                 </InlineWrapper>
