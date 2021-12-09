@@ -56,11 +56,63 @@ const TimerComponent: React.FC<TimeProps> = ({ time }) => {
   }, [index])
 
   return (
-    <Text color="#A7A7CC" fontSize="14px" bold>
-      <span style={{ margin: '8px', background: '#c42bb4', borderRadius: '4px', padding: '8px' }}>{day}</span>
-      <span style={{ margin: '8px', background: '#c42bb4', borderRadius: '4px', padding: '8px' }}>{hour}</span>
-      <span style={{ margin: '8px', background: '#c42bb4', borderRadius: '4px', padding: '8px' }}>{min}</span>
-      <span style={{ margin: '8px', background: '#c42bb4', borderRadius: '4px', padding: '8px' }}>{sec}</span>
+    <Text color="white" fontSize="14px" bold>
+      <span
+        style={{
+          margin: '8px',
+          background: '#c42bb4',
+          borderRadius: '4px',
+          width: '34px',
+          height: '34px',
+          display: 'inline-block',
+          textAlign: 'center',
+          lineHeight: '34px',
+        }}
+      >
+        {day}
+      </span>
+      <span
+        style={{
+          margin: '8px',
+          background: '#c42bb4',
+          borderRadius: '4px',
+          width: '34px',
+          height: '34px',
+          display: 'inline-block',
+          textAlign: 'center',
+          lineHeight: '34px',
+        }}
+      >
+        {hour}
+      </span>
+      <span
+        style={{
+          margin: '8px',
+          background: '#c42bb4',
+          borderRadius: '4px',
+          width: '34px',
+          height: '34px',
+          display: 'inline-block',
+          textAlign: 'center',
+          lineHeight: '34px',
+        }}
+      >
+        {min}
+      </span>
+      <span
+        style={{
+          margin: '8px',
+          background: '#c42bb4',
+          borderRadius: '4px',
+          width: '34px',
+          height: '34px',
+          display: 'inline-block',
+          textAlign: 'center',
+          lineHeight: '34px',
+        }}
+      >
+        {sec}
+      </span>
     </Text>
   )
 }

@@ -162,6 +162,7 @@ const AddressWrapper = styled.div`
 const SaleInfo = styled.div`
     display: flex;
     justify-content: space-between;
+    align-items: center;
     width: 100%;
 `
 
@@ -435,7 +436,7 @@ const DetailLocker: React.FC = () => {
                                 <tbody>
                                     {cpkSchedules && cpkSchedules.map((cell, index) => {
                                         return (
-                                            <tr key="key">
+                                            <tr key={cell.date}>
                                                 <td style={{ width: '15%' }}>
                                                     <Text fontSize='12px' color='white' style={{ textAlign: 'center' }}>{index + 1}</Text>
                                                 </td>

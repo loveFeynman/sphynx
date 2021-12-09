@@ -12,7 +12,7 @@ import axios from 'axios'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import { useParams } from 'react-router'
 import { getPresaleContract } from 'utils/contractHelpers'
-import { getPresaleAddress } from 'utils/addressHelpers'
+import { getPresaleAddress, getSphynxRouterAddress } from 'utils/addressHelpers'
 import * as ethers from 'ethers'
 import { ERC20_ABI } from 'config/abi/erc20'
 
@@ -386,6 +386,7 @@ const PresaleManage: React.FC = () => {
       const receipt = await tx.wait()
       if (receipt.status === 1) {
         if (raise > parseFloat(softCap)) {
+          toastSuccess('Success!', 'Your presale is finialized successfully.')
           axios
             .post(`${process.env.REACT_APP_BACKEND_API_URL2}/inserttoken`, {
               name: tokenData.token_name,
@@ -395,7 +396,6 @@ const PresaleManage: React.FC = () => {
             })
             .then((response) => {
               if (response.data) {
-                toastSuccess('Success!', 'Your presale is finialized successfully.')
                 axios.post(`${process.env.REACT_APP_BACKEND_API_URL2}/setPresaleLiquidity`, {
                   saleId: param.saleId,
                   liquidity: raise,
@@ -571,9 +571,9 @@ const PresaleManage: React.FC = () => {
           </p>
           <Sperate />
           <Notification>
-            Sphynx LP Router Address: 0x7519f576E666cD80c83BEF74Bc6a390aDDfb8e1C
+            Sphynx Router Address: {getSphynxRouterAddress()}
             <br />
-            Presale Address: 0x919Ce88872737b49FB861E68BeC43880DA824E6b
+            Presale Address: {getPresaleAddress()}
             <br />
             - You must deposit the required number of tokens to the presale address to start the sale (Click the Deposit
             Tokens button below)

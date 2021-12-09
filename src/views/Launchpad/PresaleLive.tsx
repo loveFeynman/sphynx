@@ -260,7 +260,7 @@ const AddressSendError = styled.div`
   font-size: 14px;
   line-height: 16px;
   letter-spacing: 0.15em;
-  color: #ff2f21;
+  color: #f2c94c;
   text-align: left;
 `
 

@@ -221,7 +221,7 @@ const FeeCard = () => {
         </p>
         <VerticalSperator />
         <p>
-          Tokens Listed: <span>2%</span>
+          Tokens Listed: <span>1.75%</span>
         </p>
         <VerticalSperator />
         {/* <p>
@@ -355,7 +355,7 @@ const Presale: React.FC = () => {
   const [telegramLink, setTelegramLink] = useState('')
   const [projectDec, setProjectDec] = useState('')
   const [updateDec, setUpdateDec] = useState('')
-  const [liquidityType, setLiquidityType] = useState('')
+  const [liquidityType, setLiquidityType] = useState('sphynxswap')
   const [launchTime, setLaunchTime] = useState(new Date())
   const [unlockTime, setUnlockTime] = useState(new Date())
   const [step, setStep] = useState(1)
@@ -409,6 +409,8 @@ const Presale: React.FC = () => {
       return
     }
 
+    setPendingTx(true)
+
     const launchId = (await fairLaunchContract.currentLaunchId()).toString()
 
     const now = Math.floor(new Date().getTime() / 1000)
@@ -426,9 +428,7 @@ const Presale: React.FC = () => {
       return
     }
     const router = liquidityType === 'sphynxswap' ? SPHYNX_ROUTER[chainId] : V2_ROUTER[chainId]
-
     try {
-      setPendingTx(true)
       const fee = ethers.utils.parseEther('0.1')
       const abi: any = ERC20_ABI
       const tokenContract = new ethers.Contract(tokenAddress, abi, signer)

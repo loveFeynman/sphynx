@@ -199,10 +199,9 @@ const TimerWrapper = styled.div`
 const FairLaunchManage: React.FC = () => {
   const { t } = useTranslation()
   const param: any = useParams()
-  const { library } = useActiveWeb3React()
+  const { library, chainId } = useActiveWeb3React()
   const signer = library.getSigner()
   const [launchData, setLaunchData] = useState({})
-  const { chainId } = useWeb3React()
   const [tokenName, setTokenName] = useState('')
   const [tokenSymbol, setTokenSymbol] = useState('')
   const [tokenAddress, setTokenAddress] = useState('')
@@ -377,7 +376,7 @@ const FairLaunchManage: React.FC = () => {
     }
 
     fetchData()
-  }, [launchTime, fairLaunchContract, isLaunched, param.launchId])
+  }, [launchTime, fairLaunchContract, isLaunched, param.launchId, chainId])
 
   useEffect(() => {
     const fetchData = async () => {
@@ -494,7 +493,7 @@ const FairLaunchManage: React.FC = () => {
             <>
             <TimerWrapper>
               <Notification>{now >= parseInt(launchTime) ? 'Launch ends in:' : 'Launch starts in:'}</Notification>
-              <TimerComponent time={ now >= parseInt(launchTime) ? launchTime : `${(parseInt(launchTime) + 600)}` } />
+              <TimerComponent time={ now <= parseInt(launchTime) ? launchTime : `${(parseInt(launchTime) + 600)}` } />
               </TimerWrapper>
               {/* <Button disabled={!isAvailableLaunch} onClick={handleLaunchToken} mr="20px" mt="20px"> */}
               <Button disabled={!isAvailableLaunch || pendingLaunch} onClick={handleLaunchToken} mr="20px" mt="20px">

@@ -430,7 +430,7 @@ const FairLaunchLive: React.FC = () => {
       }
       await RetrieverDataProcess();
     })();
-  }, [param])
+  }, [param, chainId])
 
   useEffect(() => {
     const fetchData = async () => {
