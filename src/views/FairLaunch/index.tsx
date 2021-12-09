@@ -563,10 +563,10 @@ const Presale: React.FC = () => {
               <p className="description">Your wallet balance: {balanceAmount}</p>
               <Sperate />
               <p className="description">Please enter the amount of tokens for listing:</p>
-              <MyInput value={tokenAmount} type="number" onChange={handleTokenAmount} style={{ width: '100%' }} />
+              <MyInput value={tokenAmount} type="number" onChange={handleTokenAmount} />
               <Sperate />
               <p className="description">Please enter the amount of BNB you will add:</p>
-              <MyInput value={bnbAmount} type="number" onChange={handleBnbAmount} style={{ width: '100%' }} />
+              <MyInput value={bnbAmount} type="number" onChange={handleBnbAmount} />
               <Sperate />
               <InlineWrapper>
                 <LineBtn onClick={() => setStep(1)}>Back</LineBtn>
