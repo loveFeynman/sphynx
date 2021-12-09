@@ -518,8 +518,8 @@ const Presale: React.FC = () => {
       setStep(9)
       return;
     }
-    if (new Date(liquidityLock).getTime() <= new Date(presaleEnd).getTime() + 30 * 24 * 3600 * 1000) {
-      toastError('Liquidity lock time must be greater than 6 month from presale end time!')
+    if (new Date(liquidityLock).getTime() <= new Date(presaleEnd).getTime() + 3 * 30 * 24 * 3600 * 1000) {
+      toastError('Liquidity lock time must be greater than 3 month from presale end time!')
       setStep(9)
       return;
     }

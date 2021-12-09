@@ -540,24 +540,37 @@ export default function Swap({ history }: RouteComponentProps) {
       try {
         let pairs = []
         let stablePairs = []
+        const tokenPairs = []
         if (chainId === ChainId.MAINNET) {
           let wBNBPair = await getPancakePairAddress(input, wrappedAddr[chainId], simpleRpcProvider, chainId)
-          if (wBNBPair !== null) pairs.push(wBNBPair.toLowerCase())
+          if (wBNBPair !== null) {
+            pairs.push(wBNBPair.toLowerCase())
+          }
           let wBNBPairV1 = await getPancakePairAddressV1(input, wrappedAddr[chainId], simpleRpcProvider)
-          if (wBNBPairV1 !== null) pairs.push(wBNBPairV1.toLowerCase())
+          if (wBNBPairV1 !== null) {
+            pairs.push(wBNBPairV1.toLowerCase())
+          }
           let wBNBPairSphynx = await getSphynxPairAddress(input, wrappedAddr[chainId], simpleRpcProvider, chainId)
-          if (wBNBPairSphynx !== null) pairs.push(wBNBPairSphynx.toLowerCase())
+          if (wBNBPairSphynx !== null) {
+            pairs.push(wBNBPairSphynx.toLowerCase())
+          }
           let BUSDPair = await getPancakePairAddress(input, BUSDAddr, simpleRpcProvider, chainId)
-          if (BUSDPair !== null) stablePairs.push(BUSDPair.toLowerCase())
+          if (BUSDPair !== null) {
+            stablePairs.push(BUSDPair.toLowerCase())
+          }
           let BUSDPairSphynx = await getSphynxPairAddress(input, BUSDAddr, simpleRpcProvider, chainId)
-          if (BUSDPairSphynx !== null) stablePairs.push(BUSDPairSphynx.toLowerCase())
+          if (BUSDPairSphynx !== null) {
+            stablePairs.push(BUSDPairSphynx.toLowerCase())
+          }
           setPairs(pairs)
           setStablePairs(stablePairs)
         }
 
         if (chainId === ChainId.ETHEREUM) {
           let wBNBPair = await getPancakePairAddress(input, wrappedAddr[chainId], simpleRpcETHProvider, chainId)
-          if (wBNBPair !== null) pairs.push(wBNBPair.toLowerCase())
+          if (wBNBPair !== null) {
+            pairs.push(wBNBPair.toLowerCase())
+          }
           setPairs(pairs)
         }
         const bnbPrice = chainId === ChainId.ETHEREUM ? await getETHPrice() : await getBNBPrice()
