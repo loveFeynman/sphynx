@@ -709,17 +709,17 @@ const Presale: React.FC = () => {
               <p>* (set the same rate for single tier presale)</p>
               <Sperate />
               <InlineWrapper>
-                <p className="description w110">Tier1(Per BNB)</p>
+                <p className="description w140">Tier1 *(Per BNB)</p>
                 <MyInput className="ml16" value={tier1} onChange={handleTier1} />
               </InlineWrapper>
               <Sperate />
               <InlineWrapper>
-                <p className="description w110">Tier2(Per BNB)</p>
+                <p className="description w140">Tier2 *(Per BNB)</p>
                 <MyInput className="ml16" value={tier2} onChange={handleTier2} />
               </InlineWrapper>
               <Sperate />
               <InlineWrapper>
-                <p className="description w110">Public(Per BNB)</p>
+                <p className="description w140">Public *(Per BNB)</p>
                 <MyInput className="ml16" value={tier3} onChange={handleTier3} />
               </InlineWrapper>
               <Sperate />
@@ -735,12 +735,12 @@ const Presale: React.FC = () => {
               <Sperate />
               <FlexWrapper>
                 <InlineWrapper>
-                  <p className="description w140">Soft Cap(BNB)</p>
+                  <p className="description w140">Soft Cap *(BNB)</p>
                   <MyInput className="ml16" onChange={(e) => setSoftCap(e.target.value)} value={softCap} />
                 </InlineWrapper>
                 <MarginWrapper />
                 <InlineWrapper>
-                  <p className="description w140">Hard Cap(BNB)</p>
+                  <p className="description w140">Hard Cap *(BNB)</p>
                   <MyInput className="ml16" onChange={(e) => setHardCap(e.target.value)} value={hardCap} />
                 </InlineWrapper>
               </FlexWrapper>
@@ -757,12 +757,12 @@ const Presale: React.FC = () => {
               <Sperate />
               <FlexWrapper>
                 <InlineWrapper>
-                  <p className="description w110">Min Buy(BNB)</p>
+                  <p className="description w110">Min Buy *(Per BNB)</p>
                   <MyInput className="ml16" onChange={(e) => setMinBuy(e.target.value)} value={minBuy} />
                 </InlineWrapper>
                 <MarginWrapper />
                 <InlineWrapper>
-                  <p className="description w110">Max Buy(BNB)</p>
+                  <p className="description w110">Max Buy *(Per BNB)</p>
                   <MyInput className="ml16" onChange={(e) => setMaxBuy(e.target.value)} value={maxBuy} />
                 </InlineWrapper>
               </FlexWrapper>
