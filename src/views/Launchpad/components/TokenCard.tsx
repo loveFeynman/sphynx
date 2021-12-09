@@ -94,7 +94,7 @@ const ProgressBar = styled.div`
 
 const Progress = styled.div<{ state }>`
   width: ${(props) => `${props.state}%`};
-  height: 12px;
+  height: 16px;
   background: linear-gradient(90deg, #610d89 0%, #c42bb4 100%);
   border-radius: 8px;
   padding: 1px;

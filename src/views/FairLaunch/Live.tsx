@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { useParams } from 'react-router'
 import { useHistory } from 'react-router-dom'
 import { useWeb3React } from '@web3-react/core'
-import { Button, Text, Flex } from '@sphynxdex/uikit'
+import { Button, Text, Flex, Link } from '@sphynxdex/uikit'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import axios from 'axios'
 import { useTranslation } from 'contexts/Localization'
@@ -483,6 +483,9 @@ const FairLaunchLive: React.FC = () => {
       <TokenPresaleBody>
         <TokenPresaleContainder toggled={menuToggled}>
           <MainCardWrapper>
+          <Link style={{ marginBottom: '16px' }} href="/launchpad/fair/listing">
+              Back to list
+            </Link>
             <TokenContainer>
               <img src={fairLaunchData && fairLaunchData.logo_link} width="64px" height="64px" alt="token icon" />
               <TokenSymbolWrapper>

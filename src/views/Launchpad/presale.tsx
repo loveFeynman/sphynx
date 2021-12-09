@@ -724,12 +724,12 @@ const Presale: React.FC = () => {
               <Sperate />
               <FlexWrapper>
                 <InlineWrapper>
-                  <p className="description w80">Soft Cap</p>
+                  <p className="description w140">Soft Cap(BNB)</p>
                   <MyInput className="ml16" onChange={(e) => setSoftCap(e.target.value)} value={softCap} />
                 </InlineWrapper>
                 <MarginWrapper />
                 <InlineWrapper>
-                  <p className="description w80">Hard Cap</p>
+                  <p className="description w140">Hard Cap(BNB)</p>
                   <MyInput className="ml16" onChange={(e) => setHardCap(e.target.value)} value={hardCap} />
                 </InlineWrapper>
               </FlexWrapper>
@@ -951,7 +951,7 @@ const Presale: React.FC = () => {
               <Sperate />
               <FlexWrapper>
                 <InlineWrapper>
-                  <p className="description w110">Presale Start Time</p>
+                  <p className="description w110">Tier 1 Start Time</p>
                   <KeyboardDateTimePicker
                     format="yyyy-MM-dd HH:mm:ss"
                     value={presaleStart}
@@ -971,7 +971,7 @@ const Presale: React.FC = () => {
               <Sperate />
               <FlexWrapper>
                 <InlineWrapper>
-                  <p className="description w110">Tier1 Time</p>
+                  <p className="description w110">Tier2 Start Time</p>
                   <KeyboardDateTimePicker
                     format="yyyy-MM-dd HH:mm:ss"
                     value={tier1Time}
@@ -980,7 +980,7 @@ const Presale: React.FC = () => {
                 </InlineWrapper>
                 <MarginWrapper />
                 <InlineWrapper>
-                  <p className="description w110">Tier2 Time</p>
+                  <p className="description w110">Public Start Time</p>
                   <KeyboardDateTimePicker
                     format="yyyy-MM-dd HH:mm:ss"
                     value={tier2Time}
@@ -997,6 +997,10 @@ const Presale: React.FC = () => {
                     value={liquidityLock}
                     onChange={(date, value) => setLiquidityLock(date)}
                   />
+                </InlineWrapper>
+                <MarginWrapper />
+                <InlineWrapper>
+                  <p className="description">Minimum 3 Months</p>
                 </InlineWrapper>
               </FlexWrapper>
               <Sperate />
@@ -1027,8 +1031,8 @@ const Presale: React.FC = () => {
                 <Sperate />
                 <FlexWrapper>
                   <p className="description w220">Soft/Hard Caps(BNB)</p>
-                  <p className="description w220">Soft Cap: {softCap}</p>
-                  <p className="description w220">Hard Cap: {hardCap}</p>
+                  <p className="description w220">Soft Cap(BNB): {softCap}</p>
+                  <p className="description w220">Hard Cap(BNB): {hardCap}</p>
                 </FlexWrapper>
                 <Sperate />
                 <FlexWrapper>
