@@ -484,7 +484,7 @@ const Presale: React.FC = () => {
       setStep(5)
       return
     }
-    if(parseFloat(sphynxLiquidityRate) + parseFloat(pancakeLiquidityRate) >= 100) {
+    if(parseFloat(sphynxLiquidityRate) + parseFloat(pancakeLiquidityRate) > 100) {
       toastError('Sum of Liquidity amount should be less than 100%!')
       setStep(5)
       return
