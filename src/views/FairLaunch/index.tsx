@@ -420,8 +420,8 @@ const Presale: React.FC = () => {
       setStep(4)
       return
     }
-    if((launchTimeStamp + 60 * 24 * 180) >= lockTimeStamp) {
-      toastError('Lock time should be greater than 6 months from launch time!')
+    if((launchTimeStamp + 60 * 24 * 90) >= lockTimeStamp) {
+      toastError('Lock time should be greater than 3 months from launch time!')
       setStep(4)
       return
     }
