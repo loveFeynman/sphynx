@@ -991,7 +991,7 @@ const Presale: React.FC = () => {
               <Sperate />
               <FlexWrapper>
                 <InlineWrapper>
-                  <p className="description w110">Liquidity Lockup Time</p>
+                  <p className="description w110">Liquidity Lock Time</p>
                   <KeyboardDateTimePicker
                     format="yyyy-MM-dd HH:mm:ss"
                     value={liquidityLock}
