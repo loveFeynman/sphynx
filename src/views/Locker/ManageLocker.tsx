@@ -42,6 +42,16 @@ const Wrapper = styled.div`
   margin-top: 24px;
   text-align: center;
   font-weight: bold;
+  .progressButtons {
+    & > button {
+      background: black;
+      color: white;
+      padding: 8px;
+      margin: 8px;
+      font-size: 12px;
+      height: 24px;
+    }
+  }
   p {
     line-height: 24px;
   }
@@ -547,7 +557,12 @@ const ManageLocker: React.FC = () => {
             valueLabelDisplay="auto"
             marks={marks}
           />
-          <Sperate />
+          <Flex justifyContent="center" alignItems="center" className="progressButtons">
+            <Button onClick={() => handleChangePercent(25)}>25%</Button>
+            <Button onClick={() => handleChangePercent(50)}>50%</Button>
+            <Button onClick={() => handleChangePercent(75)}>75%</Button>
+            <Button onClick={() => handleChangePercent(100)}>100%</Button>
+          </Flex>
           <InlineWrapper>
             <p className="description w110">Your Tokens to be Locked:</p>
             <p className="description w120">{userBalance * percent / 100}/{userBalance}</p>

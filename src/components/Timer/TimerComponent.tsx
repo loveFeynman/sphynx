@@ -59,10 +59,9 @@ const TimerComponent: React.FC<TimeProps> = ({ time }) => {
   const Wrapper = styled.div`
     & span {
         margin: 8px;
-        background: #eeccdd;
+        background: #c42bb4;
         border-radius: 4px;
         padding: 8px;
-        color: black;
     }
   `
 

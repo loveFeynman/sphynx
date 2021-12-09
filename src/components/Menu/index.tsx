@@ -762,7 +762,7 @@ const Menu = () => {
             <TokenListWrapper>{showAllToken ? tokenData : tokenData.slice(0, 3)}</TokenListWrapper>
             <ButtonWrapper style={menuToggled ? { justifyContent: 'center' } : {}} onClick={handleShowAllToken}>
               <WalletIcon />
-              {!menuToggled && <p>{showAllToken ? t('Show Some Tokens') : t('Show All Tokens')}</p>}
+              {!menuToggled && <p>{showAllToken ? t('Show Tokens') : t('Show All Tokens')}</p>}
             </ButtonWrapper>
             {removedAssets.length === 0 ? null : (
               <ButtonWrapper style={menuToggled ? { justifyContent: 'center' } : {}} onClick={showAllRemovedTokens}>

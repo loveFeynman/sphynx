@@ -76,7 +76,7 @@ const CardFooter = styled.div`
 `
 
 const ActiveSaleText = styled.span<{ state }>`
-  color: ${(props) => (props.state === 'active' ? '#00AC1C' : props.state === 'pending' ? '#FFC700' : '#D91A00')};
+  color: ${(props) => (props.state === 'active' ? '#00AC1C' : props.state === 'pending' ? '#FFC700' : 'white')};
   text-transform: uppercase;
   font-weight: 600;
   font-size: 10px;

@@ -420,7 +420,7 @@ const FairLaunchManage: React.FC = () => {
           <Sperate />
           <Notification>Congratulations your Fair Launch is scheduled!</Notification>
           <Sperate />
-          <p style={{ color: '#D91A00' }}>
+          <p style={{ color: 'white' }}>
             If your token contains special transfers such as burn, rebase or something else you must ensure the
             SphynxSwap Router Address is excluded from these features! Or you must set fees, burns or whatever else to
             be 0 or disabled for the duration of the presale and until the finalize button is clicked!

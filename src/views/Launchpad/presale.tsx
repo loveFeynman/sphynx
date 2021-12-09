@@ -807,7 +807,7 @@ const Presale: React.FC = () => {
                 Enter the SphynxSwap/Pancake swap listing price: (If I buy 1 BNB worth on Swap how many tokens do I get?
                 Usually this amount is lower than presale rate to allow for a higher listing price on Swap)
               </p>
-              <MyInput onChange={(e) => setListingRate(e.target.value)} value={listingRate} />
+              <MyInput onChange={(e) => setListingRate(e.target.value)} value={listingRate} /> (Per BNB)
               <Sperate />
               <InlineWrapper>
                 <LineBtn onClick={() => setStep(6)}>Back</LineBtn>
