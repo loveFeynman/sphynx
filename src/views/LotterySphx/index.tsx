@@ -113,8 +113,10 @@ const PrizePotCardContainer = styled.div`
   jusitfy-content: center;
   flex-direction: column;
   align-items: center;
+  max-width: 1392px;
+  margin: auto;
   
-  ${({ theme }) => theme.mediaQueries.md} {
+  ${({ theme }) => theme.mediaQueries.lg} {
     flex-direction: row;
     align-items: flex-start;
     justify-content: center;
@@ -365,7 +367,7 @@ export default function Lottery() {
         <Card bgColor={theme.isDark ? '#0E0E26' : '#2A2E60'} borderRadius="0 0 3px 3px" padding="40px">
           <SwapTabPanel>
             <PrizePotCardContainer>
-              <div style={{ margin: '16px' }}>
+              <div style={{ margin: '16px', width: '100%' }}>
                 {forceValue > 0 && (
                   <PrizePotCard
                     isNext={false}
@@ -378,7 +380,7 @@ export default function Lottery() {
                   />
                 )}
               </div>
-              <div style={{ margin: '16px' }}>
+              <div style={{ margin: '16px', width: '100%' }}>
                 {forceValue > 0 && (
                   <PrizePotCard
                     isNext
@@ -391,7 +393,7 @@ export default function Lottery() {
                   />
                 )}
               </div>
-              <div style={{ margin: '16px' }}>
+              <div style={{ margin: '16px', width: '100%' }}>
                 {forceValue > 0 && (
                   <LatestWinningCard
                     winningCards={winningCards}

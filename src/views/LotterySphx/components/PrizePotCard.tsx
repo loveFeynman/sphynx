@@ -18,15 +18,13 @@ import { FormattedNumber } from './FormattedNumber'
 import { SPHYNX_TOKEN_ADDRESS } from 'config/constants'
 
 const Container = styled.div<{ isDetail: boolean }>`
-  width: 300px;
+  width: 100%;
   background: ${({ theme }) => (theme.isDark ? '#1A1A3A' : '#20234E')};
   border-radius: 10px;
   min-height: 400px;
   position: relative;
   ${({ theme }) => theme.mediaQueries.md} {
-    min-width: 332px;
     min-height: 500px;
-
   }
 `
 const HeaderLabel = styled.div`
