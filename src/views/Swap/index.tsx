@@ -173,6 +173,7 @@ export default function Swap({ history }: RouteComponentProps) {
   const [pairs, setPairs] = useState([])
   const [stablePairs, setStablePairs] = useState([])
   const [transactionData, setTransactions] = useState([])
+  const [pairTokens, setPairTokens] = useState({})
   const stateRef = useRef([])
   const pairsRef = useRef([])
   const stablePairsRef = useRef([])
