@@ -1083,7 +1083,7 @@ const PresaleLive: React.FC = () => {
             </FlexWrapper>
             <Separate />
           </MainCardWrapper>
-          <SubCardWrapper>
+          {/* <SubCardWrapper>
             <ThinkCardWrapper>
               <LightIcon />
               <WhitelistTitle>What do you think?</WhitelistTitle>
@@ -1114,7 +1114,7 @@ const PresaleLive: React.FC = () => {
                 <ColorButton style={{ width: '180px' }}>Join Community</ColorButton>
               </Link>
             </ThinkCardWrapper>
-          </SubCardWrapper>
+          </SubCardWrapper> */}
         </TokenPresaleContainder>
       </TokenPresaleBody>
     </Wrapper>

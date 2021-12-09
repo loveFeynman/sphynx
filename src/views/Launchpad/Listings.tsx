@@ -78,6 +78,7 @@ const Presale: React.FC = () => {
                   startTime: cell.start_time,
                   endTime: cell.end_time,
                   tokenState: 'active',
+                  level: cell.token_level
                 }
                 let temp = (await presaleContract.totalContributionBNB(cell.sale_id)).toString()
                 const value = parseFloat(ethers.utils.formatUnits(temp, cell.decimal))
@@ -157,6 +158,7 @@ const Presale: React.FC = () => {
               startTime={item.startTime}
               endTime={item.endTime}
               tokenState={item.tokenState}
+              level={item.level}
             >
               <img src={item.tokenLogo} alt="token icon" />
             </TokenCard>

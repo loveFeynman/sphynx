@@ -549,7 +549,7 @@ const FairLaunchLive: React.FC = () => {
               </DataLatestItem>
             </ContributeWrapper>
           </MainCardWrapper>
-          <SubCardWrapper>
+          {/* <SubCardWrapper>
             <ThinkCardWrapper>
               <LightIcon />
               <WhitelistTitle>What do you think?</WhitelistTitle>
@@ -578,7 +578,7 @@ const FairLaunchLive: React.FC = () => {
               <Separate />
               <ColorButton style={{ width: '95%' }}>Join Community</ColorButton>
             </ThinkCardWrapper>
-          </SubCardWrapper>
+          </SubCardWrapper> */}
         </TokenPresaleContainder>
       </TokenPresaleBody>
     </Wrapper>

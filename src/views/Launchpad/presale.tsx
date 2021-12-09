@@ -573,7 +573,7 @@ const Presale: React.FC = () => {
         break
       case 2:
       case 3:
-        tokenLevel = SEARCH_OPTION.SLIVER
+        tokenLevel = SEARCH_OPTION.SILVER
         break
       case 4:
       default:

@@ -170,7 +170,7 @@ const SearchPanel: React.FC<PropsFunction> = ({ setSearchOption, setSearchKey, s
             },
             {
               label: t('Silver'),
-              value: SEARCH_OPTION.SLIVER,
+              value: SEARCH_OPTION.SILVER,
             },
             {
               label: t('Bronze'),

@@ -3,8 +3,9 @@ import styled from 'styled-components'
 import { Text } from '@sphynxdex/uikit'
 import { useHistory } from 'react-router-dom'
 import { useWeb3React } from '@web3-react/core'
+import { SEARCH_OPTION } from 'config/constants/launchpad'
 import TimerComponent from 'components/Timer/TimerComponent'
-import ContractHelper from 'components/ContractHelper';
+import ContractHelper from 'components/ContractHelper'
 import DefaultLogoIcon from 'assets/images/MainLogo.png'
 
 const CardWrapper = styled.div`
@@ -152,6 +153,13 @@ const TokenWrapper = styled.div`
   flex: 2;
 `
 
+const groupColor = {
+  [SEARCH_OPTION.GOLD]: '#ffbb00',
+  [SEARCH_OPTION.SILVER]: '#ccc',
+  [SEARCH_OPTION.BRONZE]: '#c85',
+  [SEARCH_OPTION.OTHER]: '#4FD'
+}
+
 interface ImgCardProps {
   saleId: number
   ownerAddress: string
@@ -167,6 +175,7 @@ interface ImgCardProps {
   startTime?: string
   endTime?: string
   tokenState?: string
+  level?: number
 }
 
 const TokenCard: React.FC<ImgCardProps> = ({
@@ -184,6 +193,7 @@ const TokenCard: React.FC<ImgCardProps> = ({
   startTime,
   endTime,
   tokenState,
+  level,
 }: ImgCardProps) => {
   const history = useHistory()
   const { account } = useWeb3React()
@@ -202,16 +212,25 @@ const TokenCard: React.FC<ImgCardProps> = ({
       <CardHeader>
         <TokenWrapper>
           <TokenImg>
-            <img src={tokenLogo === '' ? DefaultLogoIcon : tokenLogo } alt="token icon" />
+            <img src={tokenLogo === '' ? DefaultLogoIcon : tokenLogo} alt="token icon" />
           </TokenImg>
           <TokenSymbolWrapper>
             <Text>{tokenSymbole}</Text>
             <Text>{tokenName}</Text>
           </TokenSymbolWrapper>
         </TokenWrapper>
+        <EndTimeWrapper style={{fontWeight: 'bold', color: groupColor[level]}}>
+          {level === SEARCH_OPTION.GOLD
+            ? 'GOLD'
+            : level === SEARCH_OPTION.SILVER
+            ? 'SILVER'
+            : level === SEARCH_OPTION.BRONZE
+            ? 'BRONZE'
+            : 'OTHER'}
+        </EndTimeWrapper>
       </CardHeader>
       <CardBody>
-      <EndTimeWrapper>
+        <EndTimeWrapper>
           {now >= parseInt(startTime) ? (
             <>
               <Text>Sale end in:</Text>
@@ -224,7 +243,9 @@ const TokenCard: React.FC<ImgCardProps> = ({
             </>
           )}
         </EndTimeWrapper>
-        <ActiveSaleText state={tokenState}>{`${tokenState} Sale`}</ActiveSaleText>
+        <ActiveSaleText state={tokenState}>
+          {tokenState !== 'ended' ? `${tokenState} Sale` : 'Sale Ended'}
+        </ActiveSaleText>
         <ProgressBarWrapper>
           <ProgressBar>
             <Progress state={activeSale}>{activeSale.toFixed(2)}%</Progress>
