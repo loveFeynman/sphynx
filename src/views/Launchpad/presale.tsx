@@ -698,17 +698,17 @@ const Presale: React.FC = () => {
             <Sperate />
             <StepWrapper number="2" stepName="Presale Rate" step={step} onClick={() => setStep(2)}>
               <InlineWrapper>
-                <p className="description w110">Tier1</p>
+                <p className="description w110">Tier1(Per BNB)</p>
                 <MyInput className="ml16" value={tier1} onChange={handleTier1} />
               </InlineWrapper>
               <Sperate />
               <InlineWrapper>
-                <p className="description w110">Tier2</p>
+                <p className="description w110">Tier2(Per BNB)</p>
                 <MyInput className="ml16" value={tier2} onChange={handleTier2} />
               </InlineWrapper>
               <Sperate />
               <InlineWrapper>
-                <p className="description w110">Public</p>
+                <p className="description w110">Public(Per BNB)</p>
                 <MyInput className="ml16" value={tier3} onChange={handleTier3} />
               </InlineWrapper>
               <Sperate />

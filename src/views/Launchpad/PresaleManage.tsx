@@ -661,7 +661,7 @@ const PresaleManage: React.FC = () => {
                   />
                   <Sperate />
                   <DarkButton onClick={enableWhiteList1} disabled={pendingWhitelist1}>
-                    Add WhiteList1
+                    Add WhiteList Tier1
                     {pendingWhitelist1 && <AutoRenewIcon className="pendingTx" />}
                   </DarkButton>
                   <Sperate />
@@ -672,7 +672,7 @@ const PresaleManage: React.FC = () => {
                   />
                   <Sperate />
                   <DarkButton onClick={enableWhiteList2} disabled={pendingWhitelist2}>
-                    Add WhiteList2
+                    Add WhiteList Tier2
                     {pendingWhitelist2 && <AutoRenewIcon className="pendingTx" />}
                   </DarkButton>
                   <Sperate />
