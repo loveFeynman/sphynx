@@ -952,7 +952,7 @@ const Presale: React.FC = () => {
                 </InlineWrapper>
               </FlexWrapper>
               <Sperate />
-              <p className="description">*to verify your tier, please reach out to <Link style={{display: 'inline', textDecoration: 'underline', fontWeight: 500}} href="https://t.me/sphynxswapsupportbsc">https://t.me/sphynxswapsupportbsc</Link> and submit your information</p>
+              <p className="description">*to verify your tier, please reach out to <Link target="_blank" style={{display: 'inline', textDecoration: 'underline', fontWeight: 500}} href="https://t.me/sphynxswapsupportbsc">https://t.me/sphynxswapsupportbsc</Link> and submit your information</p>
               <Sperate />
               <InlineWrapper>
                 <LineBtn onClick={() => setStep(7)}>Back</LineBtn>
