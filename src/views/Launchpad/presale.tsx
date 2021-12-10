@@ -478,7 +478,7 @@ const Presale: React.FC = () => {
       setStep(4)
       return
     }
-    if (parseFloat(hardCap) > parseFloat(maxBuy)) {
+    if (parseFloat(hardCap) <= parseFloat(maxBuy)) {
       toastError('HardCap amount should be greater than max buy amount!')
       setStep(4)
       return
