@@ -357,8 +357,8 @@ const Launchpad: React.FC = () => {
             <DiscordIcon />
           </CommunityCard> */}
         </FlexWrapper>
-        <Title>For any questions to go to the support page</Title>
-        <UILink style={{display: 'inline', textDecoration: 'underline', fontWeight: 500}} href="https://t.me/sphynxswapsupportbsc">https://t.me/sphynxswapsupportbsc</UILink>
+        {/* <Title>For any questions to go to the support page</Title>
+        <UILink style={{display: 'inline', textDecoration: 'underline', fontWeight: 500}} href="https://t.me/sphynxswapsupportbsc">https://t.me/sphynxswapsupportbsc</UILink> */}
       </BottomFlex>
     </Wrapper>
   )
