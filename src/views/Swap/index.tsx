@@ -448,6 +448,7 @@ export default function Swap({ history }: RouteComponentProps) {
   }
 
   const getTransactions = async (blockNumber) => {
+    console.log("blockNumber", blockNumber)
     let cachedBlockNumber = blockNumber
     try {
       const currentWeb3 = chainId === ChainId.ETHEREUM ? web3ETH : datafeedWeb3
@@ -461,6 +462,7 @@ export default function Swap({ history }: RouteComponentProps) {
           if (info.length) {
             cachedBlockNumber = info[info.length - 1].blockNumber
           }
+          console.log("Information", info)
           info = info.filter((oneData) => oneData.blockNumber !== cachedBlockNumber)
           info = info.filter(
             (oneData) =>

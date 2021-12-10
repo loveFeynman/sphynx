@@ -478,6 +478,11 @@ const Presale: React.FC = () => {
       setStep(4)
       return
     }
+    if (parseFloat(hardCap) > parseFloat(maxBuy)) {
+      toastError('HardCap amount should be greater than max buy amount!')
+      setStep(4)
+      return
+    }
     if (Number.isNaN(parseInt(sphynxLiquidityRate))) {
       toastError('Please input Sphynx Liquidity amount correctly!')
       setStep(5)
