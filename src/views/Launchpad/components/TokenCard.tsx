@@ -7,6 +7,7 @@ import { SEARCH_OPTION } from 'config/constants/launchpad'
 import TimerComponent from 'components/Timer/TimerComponent'
 import ContractHelper from 'components/ContractHelper'
 import DefaultLogoIcon from 'assets/images/MainLogo.png'
+import { ChainId } from '@sphynxdex/sdk-multichain'
 
 const CardWrapper = styled.div`
   background: ${({ theme }) => (theme.isDark ? '#040413' : '#2A2E60')};
@@ -196,7 +197,8 @@ const TokenCard: React.FC<ImgCardProps> = ({
   level,
 }: ImgCardProps) => {
   const history = useHistory()
-  const { account } = useWeb3React()
+  const { account, chainId } = useWeb3React()
+  const nativeCurrency = chainId === ChainId.ETHEREUM ? 'ETH' : 'BNB'
   const now = Math.floor(new Date().getTime() / 1000)
 
   const handleClicked = () => {
@@ -262,14 +264,14 @@ const TokenCard: React.FC<ImgCardProps> = ({
           <SaleInfo>
             <SaleInfoTitle>Soft Cap / Hard Cap:</SaleInfoTitle>
             <SaleInfoValue>
-              {softCap}/{hardCap} BNB
+              {softCap}/{hardCap} {nativeCurrency}
             </SaleInfoValue>
           </SaleInfo>
           <Divider />
           <SaleInfo>
             <SaleInfoTitle>Min/Max Contribution:</SaleInfoTitle>
             <SaleInfoValue>
-              {minContribution}/{maxContribution} BNB
+              {minContribution}/{maxContribution} {nativeCurrency}
             </SaleInfoValue>
           </SaleInfo>
           <Divider />

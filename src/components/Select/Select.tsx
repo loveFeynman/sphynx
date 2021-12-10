@@ -10,7 +10,7 @@ const DropDownHeader = styled.div`
   justify-content: space-between;
   padding: 0px 16px;
   box-shadow: ${({ theme }) => theme.shadows.inset};
-  border: 1px solid #2E2E55;
+  border: 1px solid #2e2e55;
   border-radius: 5px;
   background: ${({ theme }) => theme.colors.input};
   transition: border-radius 0.15s;
@@ -106,7 +106,7 @@ const Select: React.FunctionComponent<SelectProps> = ({ options, defaultValue, o
   const containerRef = useRef(null)
   const dropdownRef = useRef(null)
   const [isOpen, setIsOpen] = useState(false)
-  const [selectedOptionIndex, setSelectedOptionIndex] = useState(defaultValue !== undefined? defaultValue: 0)
+  const [selectedOptionIndex, setSelectedOptionIndex] = useState(defaultValue !== undefined ? defaultValue : 0)
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 })
 
   const toggling = (event: React.MouseEvent<HTMLDivElement>) => {
@@ -143,7 +143,12 @@ const Select: React.FunctionComponent<SelectProps> = ({ options, defaultValue, o
     <DropDownContainer isOpen={isOpen} ref={containerRef} {...containerSize}>
       {containerSize.width !== 0 && (
         <DropDownHeader onClick={toggling}>
-          <Text color="white">{options[selectedOptionIndex].label}</Text>
+          <Text
+            color="white"
+            style={{ whiteSpace: 'nowrap', width: '100%', textOverflow: 'ellipsis', overflow: 'hidden' }}
+          >
+            {options[selectedOptionIndex].label}
+          </Text>
         </DropDownHeader>
       )}
       <ArrowDropDownIcon color="text" onClick={toggling} />

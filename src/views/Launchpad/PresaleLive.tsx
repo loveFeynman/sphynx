@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from 'react'
 import styled, { keyframes } from 'styled-components'
 import { useHistory } from 'react-router-dom'
 import { Button, Text, Flex, Link, AutoRenewIcon } from '@sphynxdex/uikit'
+import { ChainId } from '@sphynxdex/sdk-multichain'
 import { useTranslation } from 'contexts/Localization'
 import { useMenuToggle } from 'state/application/hooks'
 import { ERC20_ABI } from 'config/abi/erc20'
@@ -579,6 +580,9 @@ const PresaleLive: React.FC = () => {
   const [pendingWithdraw, setPendingWithdraw] = useState(false)
   const presaleAddress = getPresaleAddress()
   const timerRef = useRef<NodeJS.Timeout>()
+
+  const nativeCurrency = chainId === ChainId.ETHEREUM ? 'ETH' : 'BNB'
+
   const PRESALE_DATA = [
     {
       presaleItem: 'Sale ID:',
@@ -601,19 +605,19 @@ const PresaleLive: React.FC = () => {
     },
     {
       presaleItem: 'Soft Cap:',
-      presaleValue: `${tokenData && tokenData.soft_cap} BNB`,
+      presaleValue: `${tokenData && tokenData.soft_cap} ${nativeCurrency}`,
     },
     {
       presaleItem: 'Hard Cap:',
-      presaleValue: `${tokenData && tokenData.hard_cap} BNB`,
+      presaleValue: `${tokenData && tokenData.hard_cap} ${nativeCurrency}`,
     },
     {
       presaleItem: 'Presale Rate:',
-      presaleValue: `${tokenData && tokenData.tier3} ${tokenData && tokenData.token_symbol} per BNB`,
+      presaleValue: `${tokenData && tokenData.tier3} ${tokenData && tokenData.token_symbol} per ${nativeCurrency}`,
     },
     {
       presaleItem: 'SphynxSwap Listing Rate:',
-      presaleValue: `${tokenData && tokenData.listing_rate} ${tokenData && tokenData.token_symbol} per BNB`,
+      presaleValue: `${tokenData && tokenData.listing_rate} ${tokenData && tokenData.token_symbol} per ${nativeCurrency}`,
     },
     {
       presaleItem: 'SphynxSwap Liquidity:',
@@ -625,11 +629,11 @@ const PresaleLive: React.FC = () => {
     },
     {
       presaleItem: 'Minimum Contribution:',
-      presaleValue: `${tokenData && tokenData.min_buy} BNB`,
+      presaleValue: `${tokenData && tokenData.min_buy} ${nativeCurrency}`,
     },
     {
       presaleItem: 'Maximum Contribution:',
-      presaleValue: `${tokenData && tokenData.max_buy} BNB`,
+      presaleValue: `${tokenData && tokenData.max_buy} ${nativeCurrency}`,
     },
     {
       presaleItem: 'Presale Start Time:',
@@ -888,7 +892,7 @@ const PresaleLive: React.FC = () => {
                   <Text>{tokenData && tokenData.token_address}</Text>
                 </AddressWrapper>
               </AddressFlex>
-              <AddressSendError>Do not send BNB to the token address!</AddressSendError>
+              <AddressSendError>Do not send {nativeCurrency} to the token address!</AddressSendError>
               <CustomContract>
                 <SettingIcon />
                 <Text>Custom Contract</Text>
@@ -993,7 +997,7 @@ const PresaleLive: React.FC = () => {
                       </ProgressBarWrapper>
                       <TokenRateView>
                         <Text fontSize="14px" fontWeight="600" color="white" textAlign="left">
-                          1 BNB = {tokenData && tokenData.tier3} {tokenData && tokenData.token_symbol}{' '}
+                          1 {nativeCurrency} = {tokenData && tokenData.tier3} {tokenData && tokenData.token_symbol}{' '}
                         </Text>
                       </TokenRateView>
                       <ContributeFlex>
@@ -1037,7 +1041,7 @@ const PresaleLive: React.FC = () => {
                       This presale has failed!
                     </Text>
                     <Text textAlign="left" fontSize="12px" fontWeight="500" mt="16px" color="white">
-                      If you participated in the presale click the claim button below to claim your BNB!
+                      If you participated in the presale click the claim button below to claim your {nativeCurrency}!
                     </Text>
                     <ColorButton
                       style={{ width: '100%' }}
@@ -1046,7 +1050,7 @@ const PresaleLive: React.FC = () => {
                       onClick={handleClaimToken}
                       disabled={isClaimed || pendingClaim}
                     >
-                      Claim BNB
+                      Claim {nativeCurrency}
                       {pendingClaim && <AutoRenewIcon className="pendingTx" />}
                     </ColorButton>
                   </>
@@ -1056,7 +1060,7 @@ const PresaleLive: React.FC = () => {
                     Your Contributed Account:
                   </Text>
                   <Text fontSize="14px" fontWeight="600" textAlign="center" color="#F2C94C">
-                    {userContributeBNB}BNB
+                    {userContributeBNB}{nativeCurrency}
                   </Text>
                 </TokenAmountView>
                 <UnderLine />

@@ -21,6 +21,7 @@ import { useWeb3React } from '@web3-react/core'
 import { getRouterAddress } from 'utils/addressHelpers'
 import { useHistory } from 'react-router-dom'
 import { SEARCH_OPTION } from 'config/constants/launchpad'
+import { ChainId } from '@sphynxdex/sdk-multichain'
 
 const rotate = keyframes`
   from {
@@ -395,6 +396,8 @@ const Presale: React.FC = () => {
   const presaleContract = getPresaleContract(signer)
   const history = useHistory()
 
+  const nativeCurrency = chainId === ChainId.ETHEREUM ? 'ETH' : 'BNB'
+
   const handleChecked = (value) => {
     if (value) {
       setSelectedCount((c) => c + 1)
@@ -709,17 +712,17 @@ const Presale: React.FC = () => {
               <p>* (set the same rate for single tier presale)</p>
               <Sperate />
               <InlineWrapper>
-                <p className="description w140">Tier1 *(Per BNB)</p>
+                <p className="description w140">Tier1 *(Per {nativeCurrency})</p>
                 <MyInput className="ml16" value={tier1} onChange={handleTier1} />
               </InlineWrapper>
               <Sperate />
               <InlineWrapper>
-                <p className="description w140">Tier2 *(Per BNB)</p>
+                <p className="description w140">Tier2 *(Per {nativeCurrency})</p>
                 <MyInput className="ml16" value={tier2} onChange={handleTier2} />
               </InlineWrapper>
               <Sperate />
               <InlineWrapper>
-                <p className="description w140">Public *(Per BNB)</p>
+                <p className="description w140">Public *(Per {nativeCurrency})</p>
                 <MyInput className="ml16" value={tier3} onChange={handleTier3} />
               </InlineWrapper>
               <Sperate />
@@ -735,12 +738,12 @@ const Presale: React.FC = () => {
               <Sperate />
               <FlexWrapper>
                 <InlineWrapper>
-                  <p className="description w140">Soft Cap *(BNB)</p>
+                  <p className="description w140">Soft Cap *({nativeCurrency})</p>
                   <MyInput className="ml16" onChange={(e) => setSoftCap(e.target.value)} value={softCap} />
                 </InlineWrapper>
                 <MarginWrapper />
                 <InlineWrapper>
-                  <p className="description w140">Hard Cap *(BNB)</p>
+                  <p className="description w140">Hard Cap *({nativeCurrency})</p>
                   <MyInput className="ml16" onChange={(e) => setHardCap(e.target.value)} value={hardCap} />
                 </InlineWrapper>
               </FlexWrapper>
@@ -757,12 +760,12 @@ const Presale: React.FC = () => {
               <Sperate />
               <FlexWrapper>
                 <InlineWrapper>
-                  <p className="description w110">Min Buy *(Per BNB)</p>
+                  <p className="description w110">Min Buy *(Per {nativeCurrency})</p>
                   <MyInput className="ml16" onChange={(e) => setMinBuy(e.target.value)} value={minBuy} />
                 </InlineWrapper>
                 <MarginWrapper />
                 <InlineWrapper>
-                  <p className="description w110">Max Buy *(Per BNB)</p>
+                  <p className="description w110">Max Buy *(Per {nativeCurrency})</p>
                   <MyInput className="ml16" onChange={(e) => setMaxBuy(e.target.value)} value={maxBuy} />
                 </InlineWrapper>
               </FlexWrapper>
@@ -814,10 +817,10 @@ const Presale: React.FC = () => {
               onClick={() => setStep(7)}
             >
               <p className="description">
-                Enter the SphynxSwap/Pancake swap listing price: (If I buy 1 BNB worth on Swap how many tokens do I get?
+                Enter the SphynxSwap/Pancake swap listing price: (If I buy 1 {nativeCurrency} worth on Swap how many tokens do I get?
                 Usually this amount is lower than presale rate to allow for a higher listing price on Swap)
               </p>
-              <MyInput onChange={(e) => setListingRate(e.target.value)} value={listingRate} /> (Per BNB)
+              <MyInput onChange={(e) => setListingRate(e.target.value)} value={listingRate} /> (Per {nativeCurrency})
               <Sperate />
               <InlineWrapper>
                 <LineBtn onClick={() => setStep(6)}>Back</LineBtn>
@@ -1038,18 +1041,18 @@ const Presale: React.FC = () => {
                 </FlexWrapper>
                 <Sperate />
                 <FlexWrapper>
-                  <p className="description w220">Presale Rate(Per BNB)</p>
-                  <p className="description w220">{tier3}/BNB</p>
+                  <p className="description w220">Presale Rate(Per {nativeCurrency})</p>
+                  <p className="description w220">{tier3}/{nativeCurrency}</p>
                 </FlexWrapper>
                 <Sperate />
                 <FlexWrapper>
-                  <p className="description w220">Soft/Hard Caps(BNB)</p>
-                  <p className="description w220">Soft Cap(BNB): {softCap}</p>
-                  <p className="description w220">Hard Cap(BNB): {hardCap}</p>
+                  <p className="description w220">Soft/Hard Caps({nativeCurrency})</p>
+                  <p className="description w220">Soft Cap({nativeCurrency}): {softCap}</p>
+                  <p className="description w220">Hard Cap({nativeCurrency}): {hardCap}</p>
                 </FlexWrapper>
                 <Sperate />
                 <FlexWrapper>
-                  <p className="description w220">Contribution Limits(BNB)</p>
+                  <p className="description w220">Contribution Limits({nativeCurrency})</p>
                   <p className="description w220">Min: {minBuy}</p>
                   <p className="description w220">Max: {maxBuy}</p>
                 </FlexWrapper>
@@ -1069,7 +1072,7 @@ const Presale: React.FC = () => {
                 <FlexWrapper>
                   <p className="description w220">PancakeSwap Liquidity</p>
                   <p className="description w220">{pancakeLiquidityRate}</p>
-                  <p className="description">SphynxSwap Rate(Per BNB): {listingRate}</p>
+                  <p className="description">SphynxSwap Rate(Per {nativeCurrency}): {listingRate}</p>
                 </FlexWrapper>
                 <Sperate />
                 <InlineWrapper>

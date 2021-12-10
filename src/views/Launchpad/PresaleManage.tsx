@@ -15,6 +15,7 @@ import { getPresaleContract } from 'utils/contractHelpers'
 import { getPresaleAddress, getSphynxRouterAddress } from 'utils/addressHelpers'
 import * as ethers from 'ethers'
 import { ERC20_ABI } from 'config/abi/erc20'
+import { ChainId } from '@sphynxdex/sdk-multichain'
 
 const rotate = keyframes`
   from {
@@ -297,6 +298,8 @@ const PresaleManage: React.FC = () => {
   const [pendingWhitelist2, setPendingWhitelist2] = useState(false)
   const [pendingFinalize, setPendingFinalize] = useState(false)
   const [pendingWithdraw, setPendingWithdraw] = useState(false)
+
+  const nativeCurrency = chainId === ChainId.ETHEREUM ? 'ETH' : 'BNB'
 
   useEffect(() => {
     const isValue = !Number.isNaN(parseInt(param.saleId))
@@ -583,7 +586,7 @@ const PresaleManage: React.FC = () => {
             - Clicking the finalize button will list your token on PancakeSwap immediately. Listing will be done at the
             set PancakeSwap rate with liquidity locked by DxLock.
             <br />
-            - Once finalized your BNB will be released to the creation wallet.
+            - Once finalized your {nativeCurrency} will be released to the creation wallet.
             <br />
             Here is a summary of your presale (more details on the presale page):
             <br />
