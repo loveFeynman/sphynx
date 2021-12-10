@@ -346,7 +346,7 @@ const Launchpad: React.FC = () => {
             <TwitterIcon />
           </CommunityCard> */}
           <CommunityCard desc="Join us on Telegram">
-          <UILink href="https://t.me/sphynxswapsupportbsc">
+          <UILink target="_blank" href="https://t.me/sphynxswapsupportbsc">
             <TelegramIcon />
             </UILink>
           </CommunityCard>

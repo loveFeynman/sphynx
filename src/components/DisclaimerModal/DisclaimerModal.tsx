@@ -109,7 +109,7 @@ export default function DisclaimerModal({ onDismiss = () => null, modalState }: 
         </ModalTitle>
       </ModalHeader>
       <StyledModalBody>
-        <Text fontSize="14px">Please read the Terms and Conditions then agree to all the following to proceed!</Text>
+        <Text fontSize="18px">Please read the Terms and Conditions then agree to all the following to proceed!</Text>
         <CheckGroup>
           {TERMS_LIST.map((item, index) => (
             <TermRow key={item.id}>
@@ -121,7 +121,7 @@ export default function DisclaimerModal({ onDismiss = () => null, modalState }: 
                   onClick={() => handleChangeCheckbox(index)}
                 />
               </CheckboxWrapper>
-              <Text fontSize="12px">{item.text}</Text>
+              <Text fontSize="16px">{item.text}</Text>
             </TermRow>
           ))}
         </CheckGroup>
