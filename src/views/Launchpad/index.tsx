@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'contexts/Localization'
 import { ChainId } from '@sphynxdex/sdk-multichain'
-import { Button, Text, Flex, Box, useMatchBreakpoints } from '@sphynxdex/uikit'
+import { Button, Text, Flex, Box, useMatchBreakpoints, Link as UILink } from '@sphynxdex/uikit'
 import axios from "axios"
 import { getBNBPrice, getETHPrice } from 'utils/priceProvider'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
@@ -63,7 +63,7 @@ const WelcomeText = styled(Text)`
 
 const FlexWrapper = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   width: 100%;
   text-align: center;
   flex-wrap: wrap;
@@ -342,19 +342,23 @@ const Launchpad: React.FC = () => {
         <SubTitle>BE A PART OF ACTIVE COMMUNITY</SubTitle>
         <Sperate />
         <FlexWrapper>
-          <CommunityCard desc="Follow us on Twitter">
+          {/* <CommunityCard desc="Follow us on Twitter">
             <TwitterIcon />
-          </CommunityCard>
+          </CommunityCard> */}
           <CommunityCard desc="Join us on Telegram">
+          <UILink href="https://t.me/sphynxswapsupportbsc">
             <TelegramIcon />
+            </UILink>
           </CommunityCard>
           <CommunityCard desc="Read our Document">
             <DocumentIcon />
           </CommunityCard>
-          <CommunityCard desc="Join Discord">
+          {/* <CommunityCard desc="Join Discord">
             <DiscordIcon />
-          </CommunityCard>
+          </CommunityCard> */}
         </FlexWrapper>
+        <Title>For any questions to go to the support page</Title>
+        <UILink style={{display: 'inline', textDecoration: 'underline', fontWeight: 500}} href="https://t.me/sphynxswapsupportbsc">https://t.me/sphynxswapsupportbsc</UILink>
       </BottomFlex>
     </Wrapper>
   )

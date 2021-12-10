@@ -12,7 +12,7 @@ import { isAddress } from '@ethersproject/address'
 import useToast from 'hooks/useToast'
 import styled, { keyframes } from 'styled-components'
 import { ERC20_ABI } from 'config/abi/erc20'
-import { useModal, AutoRenewIcon } from '@sphynxdex/uikit'
+import { useModal, AutoRenewIcon, Link } from '@sphynxdex/uikit'
 import DisclaimerModal from 'components/DisclaimerModal/DisclaimerModal'
 import Select from 'components/Select/Select'
 import axios from 'axios'
@@ -951,6 +951,8 @@ const Presale: React.FC = () => {
                   />
                 </InlineWrapper>
               </FlexWrapper>
+              <Sperate />
+              <p className="description">*to verify your tier, please reach out to <Link style={{display: 'inline', textDecoration: 'underline', fontWeight: 500}} href="https://t.me/sphynxswapsupportbsc">https://t.me/sphynxswapsupportbsc</Link> and submit your information</p>
               <Sperate />
               <InlineWrapper>
                 <LineBtn onClick={() => setStep(7)}>Back</LineBtn>
