@@ -739,7 +739,7 @@ const PresaleManage: React.FC = () => {
               <p className="description">Any update you want to provide to participants</p>
               <MyInput onChange={(e) => setUpdateDec(e.target.value)} value={updateDec} style={{ width: '100%' }} />
               <Sperate />
-              <FlexWrapper>
+              {/* <FlexWrapper>
                 <InlineWrapper>
                   <p className="description w140">Certik audit</p>
                   <Select
@@ -813,7 +813,7 @@ const PresaleManage: React.FC = () => {
                     onChange={(option: any) => setKYC(option.value)}
                   />
                 </InlineWrapper>
-              </FlexWrapper>
+              </FlexWrapper> */}
               <Sperate />
               <ColorButton onClick={handleUpdate}>Update</ColorButton>
             </StepContainer>
