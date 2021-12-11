@@ -226,7 +226,7 @@ const VerticalSperator = styled.div`
   }
 `
 
-const FeeCard = (nativeCurrency) => {
+const FeeCard = ({nativeCurrency}) => {
   return (
     <CardWrapper>
       <MainLogo style={{ width: '60px', height: '60px' }} />

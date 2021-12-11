@@ -211,7 +211,7 @@ const VerticalSperator = styled.div`
   }
 `
 
-const FeeCard = (nativeCurrency) => {
+const FeeCard = ({nativeCurrency}) => {
   return (
     <CardWrapper>
       <MainLogo style={{ width: '60px', height: '60px' }} />
@@ -525,7 +525,7 @@ const Presale: React.FC = () => {
         </NoteWrapper>
         <Sperate />
         <ContentWrapper>
-          <FeeCard />
+          <FeeCard nativeCurrency={nativeCurrency} />
           <div style={{ marginTop: '24px', width: '100%', marginBottom: '24px' }}>
             <StepWrapper number="1" stepName="Token" step={step} onClick={() => setStep(1)}>
               <p className="description">Enter your token Address</p>
