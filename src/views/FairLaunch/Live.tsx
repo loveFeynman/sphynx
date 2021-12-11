@@ -4,6 +4,7 @@ import { useParams } from 'react-router'
 import { useHistory } from 'react-router-dom'
 import { useWeb3React } from '@web3-react/core'
 import { Button, Text, Flex, Link } from '@sphynxdex/uikit'
+import { ChainId } from '@sphynxdex/sdk-multichain'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import axios from 'axios'
 import { useTranslation } from 'contexts/Localization'
@@ -380,6 +381,7 @@ const FairLaunchLive: React.FC = () => {
   const [ isLaunched, setIsLaunched ] = useState(false);
   const fairLaunchContract = useMemo(() => getFairLaunchContract(signer), [signer])
   const history = useHistory()
+  const nativeCurrency = chainId === ChainId.ETHEREUM ? 'ETH' : 'BNB'
   
   const [fairLaunchData, setFairLaunchData] = useState({
     logo_link: "",
@@ -502,7 +504,7 @@ const FairLaunchLive: React.FC = () => {
                   <Text>{fairLaunchData.token_address}</Text>
                 </AddressWrapper>
               </AddressFlex>
-              <AddressSendError>Do not send BNB to the token address!</AddressSendError>
+              <AddressSendError>Do not send {nativeCurrency} to the token address!</AddressSendError>
               <CustomContract>
                 <SettingIcon />
                 <Text>Custom Contract</Text>
@@ -533,11 +535,11 @@ const FairLaunchLive: React.FC = () => {
               </DataItem>
               <DataItem>
                 <Text>Initial Liquidity</Text>
-                <Text>{fairLaunchData.native_amount} BNB</Text>
+                <Text>{fairLaunchData.native_amount} {nativeCurrency}</Text>
               </DataItem>
               <DataItem>
                 <Text>Listing Rate</Text>
-                <Text>{fairLaunchData.token_amount / fairLaunchData.native_amount} {fairLaunchData.token_symbol}/BNB</Text>
+                <Text>{fairLaunchData.token_amount / fairLaunchData.native_amount} {fairLaunchData.token_symbol}/{nativeCurrency}</Text>
               </DataItem>
               <DataItem>
                 <Text>Launch Time</Text>

@@ -226,14 +226,14 @@ const VerticalSperator = styled.div`
   }
 `
 
-const FeeCard = () => {
+const FeeCard = (nativeCurrency) => {
   return (
     <CardWrapper>
       <MainLogo style={{ width: '60px', height: '60px' }} />
       <Sperate />
       <FeeWrapper>
         <p>
-          Current Fee: <span>0.1BNB</span>
+          Current Fee: <span>0.1{nativeCurrency}</span>
         </p>
         <VerticalSperator />
         <p>
@@ -241,7 +241,7 @@ const FeeCard = () => {
         </p>
         <VerticalSperator />
         <p>
-          BNB Raised: <span>1.75%</span>
+          {nativeCurrency} Raised: <span>1.75%</span>
         </p>
       </FeeWrapper>
     </CardWrapper>
@@ -625,6 +625,10 @@ const Presale: React.FC = () => {
           tier1_time: tierOneTime,
           tier2_time: tierTwoTime,
           lock_time: liquidityLockTime,
+          certik_audit: certikAudit,
+          doxxed_team: doxxedTeam,
+          kyc,
+          utility
         }
 
         setPendingTx(false)
@@ -684,7 +688,7 @@ const Presale: React.FC = () => {
         </NoteWrapper>
         <Sperate />
         <ContentWrapper>
-          <FeeCard />
+          <FeeCard nativeCurrency={nativeCurrency} />
           <div style={{ marginTop: '24px', width: '100%', marginBottom: '24px' }}>
             <StepWrapper number="1" stepName="Token Address" step={step} onClick={() => setStep(1)}>
               <p className="description">Enter your token Address</p>

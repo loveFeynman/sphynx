@@ -6,6 +6,7 @@ import * as ethers from 'ethers'
 import { MuiPickersUtilsProvider } from '@material-ui/pickers'
 import DateFnsUtils from '@date-io/date-fns'
 import { Button, AutoRenewIcon, Link } from '@sphynxdex/uikit'
+import { ChainId } from '@sphynxdex/sdk-multichain'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import axios from 'axios'
 import { getFairLaunchContract } from 'utils/contractHelpers'
@@ -230,6 +231,8 @@ const FairLaunchManage: React.FC = () => {
   const [pendingWithdrawNative, setPendingWithdrawNative] = useState(false)
   const { toastSuccess, toastError } = useToast()
   const now = Math.floor(new Date().getTime() / 1000)
+
+  const nativeCurrency = chainId === ChainId.ETHEREUM ? 'ETH' : 'BNB'
 
   const fairLaunchContract = useMemo(() => getFairLaunchContract(signer), [signer])
 
@@ -476,7 +479,7 @@ const FairLaunchManage: React.FC = () => {
                 {pendingWithdrawToken && <AutoRenewIcon className="pendingTx" />}
               </Button>
               <Button disabled={isWithdrawBNB || pendingWithdrawNative} mt="20px" onClick={handleWithdrawBNB}>
-                WITHDRAW BNB
+                WITHDRAW {nativeCurrency}
                 {pendingWithdrawNative && <AutoRenewIcon className="pendingTx" />}
               </Button>
             </>

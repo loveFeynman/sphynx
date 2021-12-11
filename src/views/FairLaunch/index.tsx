@@ -14,6 +14,7 @@ import useToast from 'hooks/useToast'
 import styled, { keyframes } from 'styled-components'
 import { ERC20_ABI } from 'config/abi/erc20'
 import { useModal, AutoRenewIcon } from '@sphynxdex/uikit'
+import { ChainId } from '@sphynxdex/sdk-multichain'
 import DisclaimerModal from 'components/DisclaimerModal/DisclaimerModal'
 import Select from 'components/Select/Select'
 import axios from 'axios'
@@ -210,23 +211,20 @@ const VerticalSperator = styled.div`
   }
 `
 
-const FeeCard = () => {
+const FeeCard = (nativeCurrency) => {
   return (
     <CardWrapper>
       <MainLogo style={{ width: '60px', height: '60px' }} />
       <Sperate />
       <FeeWrapper>
         <p>
-          Current Fee: <span>0.1BNB</span>
+          Current Fee: <span>0.1{nativeCurrency}</span>
         </p>
         <VerticalSperator />
         <p>
           Tokens Listed: <span>1.75%</span>
         </p>
         <VerticalSperator />
-        {/* <p>
-          BNB Raised: <span>2%</span>
-        </p> */}
       </FeeWrapper>
     </CardWrapper>
   )
@@ -364,6 +362,8 @@ const Presale: React.FC = () => {
   const [pendingTx, setPendingTx] = useState(false)
   const fairLaunchContract = getFairLaunchContract(signer)
   const history = useHistory()
+
+  const nativeCurrency = chainId === ChainId.ETHEREUM ? 'ETH' : 'BNB'
 
   const handleChange = async (e) => {
     const value = e.target.value
@@ -565,7 +565,7 @@ const Presale: React.FC = () => {
               <p className="description">Please enter the amount of tokens for listing:</p>
               <MyInput value={tokenAmount} type="number" onChange={handleTokenAmount} />
               <Sperate />
-              <p className="description">Please enter the amount of BNB you will add:</p>
+              <p className="description">Please enter the amount of {nativeCurrency} you will add:</p>
               <MyInput value={bnbAmount} type="number" onChange={handleBnbAmount} />
               <Sperate />
               <InlineWrapper>
@@ -698,7 +698,7 @@ const Presale: React.FC = () => {
                 </FlexWrapper>
                 <Sperate />
                 <FlexWrapper>
-                  <p className="description w220">BNB Amount</p>
+                  <p className="description w220">{nativeCurrency} Amount</p>
                   <p className="description w220">{bnbAmount}</p>
                 </FlexWrapper>
                 <Sperate />
