@@ -803,9 +803,9 @@ const Presale: React.FC = () => {
               </InlineWrapper>
             </StepWrapper>
             <Sperate />
-            <StepWrapper number="6" stepName="PancakeSwap Liquidity" step={step} onClick={() => setStep(6)}>
+            <StepWrapper number="6" stepName={chainId === ChainId.ETHEREUM ? "UniSwap Liquidity" : "PancakeSwap Liquidity"} step={step} onClick={() => setStep(6)}>
               <p className="description">
-                Enter the percentage of raised funds that should be allocated to Liquidity on PancakeSwap (Min 0%, Max
+                Enter the percentage of raised funds that should be allocated to Liquidity on {chainId === ChainId.ETHEREUM ? "UniSwap" : "PancakeSwap"} (Min 0%, Max
                 100%, We recommend SphynxSwap)
               </p>
               <MyInput onChange={(e) => setPancakeLiquidityRate(e.target.value)} value={pancakeLiquidityRate} />
@@ -821,7 +821,7 @@ const Presale: React.FC = () => {
             <Sperate />
             <StepWrapper
               number="7"
-              stepName="SphynxSwap/PancakeSwap Listing Rate"
+              stepName={chainId === ChainId.ETHEREUM ? "SphynxSwap/UniSwap Listing Rate" : "SphynxSwap/PancakeSwap Listing Rate"}
               step={step}
               onClick={() => setStep(7)}
             >
@@ -1081,7 +1081,7 @@ const Presale: React.FC = () => {
                 </FlexWrapper>
                 <Sperate />
                 <FlexWrapper>
-                  <p className="description w220">PancakeSwap Liquidity</p>
+                  <p className="description w220">{chainId === ChainId.ETHEREUM ? "UniSwap Liquidity" : "PancakeSwap Liquidity"}</p>
                   <p className="description w220">{pancakeLiquidityRate}</p>
                   <p className="description">SphynxSwap Rate(Per {nativeCurrency}): {listingRate}</p>
                 </FlexWrapper>

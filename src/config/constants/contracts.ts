@@ -74,6 +74,7 @@ export default {
   presale: {
     56: '0x5077E7163A3Ce70901d1956c494FfE066d160b66',
     97: '0x048d235CeB5Dfd2D41266295D119b6445dbeC98B',
+    1: '0x49c092e5e74a3d8f6a64be3a8f22b1822b44b8bb'
   },
   sphynxRouter: {
     56: '0x0c8094a69e8e44404371676f07b2c32923b5699c',
@@ -82,6 +83,7 @@ export default {
   pancakeRouter: {
     56: '0x10ed43c718714eb63d5aa57b78b54704e256024e',
     97: '0xD99D1c33F9fC3444f8101754aBC46c52416550D1',
+    1: '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D'
   },
   locker: {
     56: '0x04431dfc909EcC40502FF637687fD3F184299C0B',
