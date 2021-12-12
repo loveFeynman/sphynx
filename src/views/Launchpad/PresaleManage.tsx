@@ -303,6 +303,10 @@ const PresaleManage: React.FC = () => {
 
   useEffect(() => {
     const isValue = !Number.isNaN(parseInt(param.saleId))
+    if(parseInt(param.chainId) !== chainId) {
+      alert("This page is for current Network.  Please switch network!")
+    }
+
     if (isValue && chainId) {
       axios
         .get(`${process.env.REACT_APP_BACKEND_API_URL2}/getPresaleInfo/${param.saleId}/${chainId}`)
@@ -623,12 +627,12 @@ const PresaleManage: React.FC = () => {
               <Sperate />
               <InlineWrapper>
                 <p className="description w110">Presale Link</p>
-                <Link href={`/launchpad/live/${param.saleId}`}>{`https://thesphynx.co/launchpad/live/${param.saleId}`}</Link>
+                <Link href={`/launchpad/live/${param.saleId}/${chainId}`}>{`https://thesphynx.co/launchpad/live/${param.saleId}/${chainId}`}</Link>
               </InlineWrapper>
               <Sperate />
               <InlineWrapper>
                 <p className="description w110">Manage Link</p>
-                <Link href={`/launchpad/live/${param.saleId}`}>{`https://thesphynx.co/launchpad/presale/${param.saleId}`}</Link>
+                <Link href={`/launchpad/presale/${param.saleId}/${chainId}`}>{`https://thesphynx.co/launchpad/presale/${param.saleId}/${chainId}`}</Link>
               </InlineWrapper>
               <Sperate />
               <WhitelistTitle>
