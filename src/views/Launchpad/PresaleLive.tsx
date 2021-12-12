@@ -565,6 +565,7 @@ const PresaleLive: React.FC = () => {
   const [userContributeToken, setUserContributeToken] = useState(0)
   const [totalTokenSupply, setTotalTokenSupply] = useState(0)
   const [isClaimed, setIsClaimed] = useState(false)
+  const [isDeposited, setIsDeposited] = useState(false)
   const [isWhiteList, setIsWhiteList] = useState(false)
   const [whiteList1, setWhiteList1] = useState(false)
   const [whiteList2, setWhiteList2] = useState(false)
@@ -582,7 +583,6 @@ const PresaleLive: React.FC = () => {
   const timerRef = useRef<NodeJS.Timeout>()
 
   const nativeCurrency = chainId === ChainId.ETHEREUM ? 'ETH' : 'BNB'
-
   const PRESALE_DATA = [
     {
       presaleItem: 'Sale ID:',
@@ -598,10 +598,9 @@ const PresaleLive: React.FC = () => {
     },
     {
       presaleItem: 'Tokens For Liquidity:',
-      presaleValue: `${
-        tokenData &&
+      presaleValue: `${tokenData &&
         (tokenData.listing_rate * tokenData.hard_cap * (tokenData.router_rate + tokenData.default_router_rate)) / 100
-      } ${tokenData && tokenData.token_symbol}`,
+        } ${tokenData && tokenData.token_symbol}`,
     },
     {
       presaleItem: 'Soft Cap:',
@@ -638,6 +637,14 @@ const PresaleLive: React.FC = () => {
     {
       presaleItem: 'Presale Start Time:',
       presaleValue: `${new Date(tokenData && tokenData.start_time * 1000).toString()}`,
+    },
+    {
+      presaleItem: 'Tier1 End Time:',
+      presaleValue: `${new Date(tokenData && tokenData.tier1_time * 1000).toString()}`,
+    },
+    {
+      presaleItem: 'Tier2 End Time:',
+      presaleValue: `${new Date(tokenData && tokenData.tier2_time * 1000).toString()}`,
     },
     {
       presaleItem: 'Presale End Time:',
@@ -717,6 +724,9 @@ const PresaleLive: React.FC = () => {
 
       temp = await presaleContract.isClaimed(param.saleId, account)
       setIsClaimed(temp)
+
+      temp = await presaleContract.isDeposited(param.saleId)
+      setIsDeposited(temp)
 
       temp = await presaleContract.iswhitelist(param.saleId)
       setIsWhiteList(temp)
@@ -943,20 +953,31 @@ const PresaleLive: React.FC = () => {
                     </IconBox>
                   </Link>
                 </SocialIconsWrapper>
-                <WhitelistTitle>{isWhiteList ? 'WhiteList Enabled' : 'Public'} Sale</WhitelistTitle>
-                <WhitelistSubText mb={isWhiteList ? '12px' : '28px'}>
-                  {isWhiteList
-                    ? 'Only Whitelisted Wallets can Purchase This Token!'
-                    : 'Anybody can Purchase This Token!'}
-                </WhitelistSubText>
-                {isWhiteList && whiteList1 && <Text mb="24px">Your wallet address is on the whitelist1!</Text>}
-                {isWhiteList && whiteList2 && <Text>Your wallet address is on the whitelist2!</Text>}
-                {isWhiteList && !whiteList1 && !whiteList2 && (
-                  <WalletAddressError>
-                    <img src={WarningIcon} alt="nuclear icon" />
-                    <Text>Your wallet address is not whitelisted</Text>
-                  </WalletAddressError>
-                )}
+                {publicSale
+                  ?
+                  <WhitelistTitle>Public Sale</WhitelistTitle>
+                  :
+                  <>
+                    <WhitelistTitle>{isWhiteList ? 'WhiteList Enabled' : 'Public'} Sale</WhitelistTitle>
+                    <WhitelistSubText mb={isWhiteList ? '12px' : '28px'}>
+                      {isDeposited
+                        ?
+                        isWhiteList
+                          ? 'Only Whitelisted Wallets can Purchase This Token!'
+                          : 'Anybody can Purchase This Token!'
+                        : 'This token is not deposited!'}
+                    </WhitelistSubText>
+                    {isWhiteList && whiteList1 && <Text mb="24px">Your wallet address is on the whitelist1!</Text>}
+                    {isWhiteList && whiteList2 && <Text>Your wallet address is on the whitelist2!</Text>}
+                    {isWhiteList && !whiteList1 && !whiteList2 && (
+                      <WalletAddressError>
+                        <img src={WarningIcon} alt="nuclear icon" />
+                        <Text>Your wallet address is not whitelisted</Text>
+                      </WalletAddressError>
+                    )}
+                  </>
+                }
+
                 {!failedSale ? (
                   presaleStatus ? (
                     <>
@@ -1013,22 +1034,22 @@ const PresaleLive: React.FC = () => {
                         <StopwatchIcon />
                         <Text fontSize="13px" fontWeight="600" style={{ margin: '0 10px' }}>
                           {privateSale1
-                            ? 'Private sale 1 ends in'
+                            ? 'Tier 1 ends in'
                             : privateSale2
-                            ? 'Private sale 2 ends in'
-                            : pendingSale
-                            ? 'Sale starts in'
-                            : 'Public sale ends in'}{' '}
+                              ? 'Tier 2 ends in'
+                              : pendingSale
+                                ? 'Sale starts in'
+                                : 'Public sale ends in'}{' '}
                         </Text>
                         <TimerComponent
                           time={
                             tokenData && privateSale1
                               ? tokenData?.tier1_time
                               : privateSale2
-                              ? tokenData?.tier2_time
-                              : pendingSale
-                              ? tokenData?.start_time
-                              : tokenData?.end_time
+                                ? tokenData?.tier2_time
+                                : pendingSale
+                                  ? tokenData?.start_time
+                                  : tokenData?.end_time
                           }
                         />
                       </Flex>
