@@ -839,7 +839,7 @@ const PresaleLive: React.FC = () => {
           <Flex alignItems="center">
             <WarningIcon2 width="40" height="40" />
             <Flex flexDirection="column" ml="10px">
-              <WarningTitleText>{t('3 Warnings Detected')}</WarningTitleText>
+              <WarningTitleText>{t('1 Warnings Detected')}</WarningTitleText>
             </Flex>
           </Flex>
         </Flex>
@@ -853,7 +853,7 @@ const PresaleLive: React.FC = () => {
             can stop trading on exchanges and requires extra vetting. Participate at your own risk!
           </WarningSubTitle>
         </DefiFlex>
-        <SoftFlex>
+        {/* <SoftFlex>
           <WarningTitle>Soft Cap Warning</WarningTitle>
           <WarningSubTitle>The softcap of this sale is very low.</WarningSubTitle>
         </SoftFlex>
@@ -862,7 +862,7 @@ const PresaleLive: React.FC = () => {
           <WarningSubTitle color="#1A1A3A" style={{ opacity: '0.7' }}>
             This sale has a very low liquidity percentage.
           </WarningSubTitle>
-        </LiquidityFlex>
+        </LiquidityFlex> */}
       </FlexWrapper>
       <TokenPresaleBody>
         <TokenPresaleContainder toggled={menuToggled}>
