@@ -9,7 +9,7 @@ import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import { ReactComponent as MainLogo } from 'assets/svg/icon/logo_new.svg'
 import { ReactComponent as BinanceIcon1 } from 'assets/svg/icon/BinanceIcon1.svg'
 import { ReactComponent as BinanceIcon2 } from 'assets/svg/icon/BinanceIcon2.svg'
-import { ReactComponent as EtheriumIcon } from 'assets/svg/icon/ETHTokenIcon.svg'
+import EthereumIcon from 'assets/png/icon/ethereumIcon.png'
 import { ReactComponent as TwitterIcon } from 'assets/svg/icon/TwitterFullIcon.svg'
 import { ReactComponent as TelegramIcon } from 'assets/svg/icon/TelegramFullIcon.svg'
 import { ReactComponent as DocumentIcon } from 'assets/svg/icon/DocumentIcon1.svg'
@@ -202,13 +202,13 @@ const BottomFlex = styled.div`
 
 const NetworkCard = ({ networkName, children }) => {
   return (
-    <>
+    <div style={{display: 'flex',  justifyContent: 'center', flexDirection: 'column'}}>
       {children}
       <Sperate />
       <Text fontSize="24px" bold>
         {networkName}
       </Text>
-    </>
+    </div>
   )
 }
 
@@ -305,22 +305,22 @@ const Launchpad: React.FC = () => {
           <Title>BLOCKCHAINS</Title>
           <SubTitle>Supported BlockChain</SubTitle>
           <Sperate />
-          <NetworkCard networkName={chainId === 56 ? "Binance" : "Etherium"}>
-            {chainId === 56
-              ?
-              <BinanceIcon1 width="150" />
-              :
-              <EtheriumIcon width="150" />
-            }
-          </NetworkCard>
-          <WaterMarkFlex>
+          <div style={{flexDirection: 'row', display: 'flex', gap: '20px'}}>
+            <NetworkCard networkName="Binance">
+              <BinanceIcon1 width="130" />
+            </NetworkCard>
+            <NetworkCard networkName="Ethereum">
+              <img src={EthereumIcon} alt="ether icon" width="130" style={{margin: 'auto 0'}}/>
+            </NetworkCard>
+          </div>
+          {/* <WaterMarkFlex>
             {chainId === 56
               ?
               <BinanceIcon2 width="150" />
               :
-              <EtheriumIcon width="150" />
+              <EthereumIcon width="150" />
             }
-          </WaterMarkFlex>
+          </WaterMarkFlex> */}
         </BinanceCard>
         <BinanceCard>
           <Title>ECOSYSTEM</Title>
