@@ -9,6 +9,7 @@ import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import { ReactComponent as MainLogo } from 'assets/svg/icon/logo_new.svg'
 import { ReactComponent as BinanceIcon1 } from 'assets/svg/icon/BinanceIcon1.svg'
 import { ReactComponent as BinanceIcon2 } from 'assets/svg/icon/BinanceIcon2.svg'
+import { ReactComponent as EtheriumIcon } from 'assets/svg/icon/ETHTokenIcon.svg'
 import { ReactComponent as TwitterIcon } from 'assets/svg/icon/TwitterFullIcon.svg'
 import { ReactComponent as TelegramIcon } from 'assets/svg/icon/TelegramFullIcon.svg'
 import { ReactComponent as DocumentIcon } from 'assets/svg/icon/DocumentIcon1.svg'
@@ -223,17 +224,17 @@ const Launchpad: React.FC = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      if(!Number.isNaN(chainId) && !isUndefined(chainId)) {
+      if (!Number.isNaN(chainId) && !isUndefined(chainId)) {
         const nativePrice = chainId === ChainId.ETHEREUM ? await getETHPrice() : await getBNBPrice()
         axios.get(`${process.env.REACT_APP_BACKEND_API_URL2}/getLaunchPadInfo/${chainId}`)
-        .then(response => {
-          console.log("response", response)
-          const data = response.data
-          setLiquidity(Number(data.liquidity * nativePrice).toFixed(3))
-          setProject(data.project)
-          setContribute(data.contribute)
-          setLocked(Number(data.lock * nativePrice).toFixed(3))
-        })
+          .then(response => {
+            console.log("response", response)
+            const data = response.data
+            setLiquidity(Number(data.liquidity * nativePrice).toFixed(3))
+            setProject(data.project)
+            setContribute(data.contribute)
+            setLocked(Number(data.lock * nativePrice).toFixed(3))
+          })
       }
     }
     fetchData()
@@ -304,11 +305,21 @@ const Launchpad: React.FC = () => {
           <Title>BLOCKCHAINS</Title>
           <SubTitle>Supported BlockChain</SubTitle>
           <Sperate />
-          <NetworkCard networkName="Binance">
-            <BinanceIcon1 width="150" />
+          <NetworkCard networkName={chainId === 56 ? "Binance" : "Etherium"}>
+            {chainId === 56
+              ?
+              <BinanceIcon1 width="150" />
+              :
+              <EtheriumIcon width="150" />
+            }
           </NetworkCard>
           <WaterMarkFlex>
-            <BinanceIcon2 width="150" />
+            {chainId === 56
+              ?
+              <BinanceIcon2 width="150" />
+              :
+              <EtheriumIcon width="150" />
+            }
           </WaterMarkFlex>
         </BinanceCard>
         <BinanceCard>
@@ -346,8 +357,8 @@ const Launchpad: React.FC = () => {
             <TwitterIcon />
           </CommunityCard> */}
           <CommunityCard desc="Join us on Telegram">
-          <UILink target="_blank" href="https://t.me/sphynxswapsupportbsc">
-            <TelegramIcon />
+            <UILink target="_blank" href="https://t.me/sphynxswapsupportbsc">
+              <TelegramIcon />
             </UILink>
           </CommunityCard>
           <CommunityCard desc="Read our Document">
