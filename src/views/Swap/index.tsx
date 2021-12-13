@@ -200,7 +200,6 @@ export default function Swap({ history }: RouteComponentProps) {
   const [symbol, setSymbol] = useState('')
   const theme = useTheme()
   let { account, chainId } = useActiveWeb3React()
-  alert(`ChainId: ${chainId}`);
   if (Number.isNaN(chainId) || isUndefined(chainId)) {
     chainId = 56
   }
