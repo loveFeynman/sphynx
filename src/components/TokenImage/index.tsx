@@ -7,7 +7,7 @@ import {
 } from '@sphynxdex/uikit'
 import tokens from 'config/constants/tokens'
 import { Token } from 'config/constants/types'
-import { getAddress } from 'utils/addressHelpers'
+import { ChainId } from '@sphynxdex/sdk-multichain'
 
 interface TokenPairImageProps extends Omit<UIKitTokenPairImageProps, 'primarySrc' | 'secondarySrc'> {
   primaryToken: Token
@@ -15,6 +15,10 @@ interface TokenPairImageProps extends Omit<UIKitTokenPairImageProps, 'primarySrc
 }
 
 const getImageUrlFromToken = (token: Token) => {
+  const getAddress = (address) => {
+    const chainId = parseInt(window?.ethereum?.networkVersion || window?.web3?.networkVersion || window?.trustwallet?.Provider?.chainId)
+    return address[chainId] ? address[chainId] : address[ChainId.MAINNET]
+  }
   const address = getAddress(token.symbol === 'BNB' ? tokens.wbnb.address : token.address)
   return `/images/tokens/${address}.svg`
 }
