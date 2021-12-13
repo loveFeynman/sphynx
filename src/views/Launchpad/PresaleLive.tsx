@@ -753,7 +753,8 @@ const PresaleLive: React.FC = () => {
     }
 
     if(parseInt(param.chainId) !== chainId) {
-      const network = param.chainId === ChainId.ETHEREUM ? 'ETHEREUM MAINNET' : 'Binance Smart Chain'
+      console.log("Param Chain Id", param.chainId)
+      const network = parseInt(param.chainId) === ChainId.ETHEREUM ? 'ETHEREUM MAINNET' : 'Binance Smart Chain'
       alert(`Please make sure you are on the ${network}!`)
     }
 
