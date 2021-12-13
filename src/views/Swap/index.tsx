@@ -162,7 +162,7 @@ const SwapPage = styled(Page)`
 /*
 declare support chainID for swap Page
 */
-const supportedChainID = [56]
+const supportedChainID = [56, 1]
 
 export default function Swap({ history }: RouteComponentProps) {
   const dispatch = useDispatch()
