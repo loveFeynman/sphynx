@@ -767,7 +767,6 @@ const PresaleLive: React.FC = () => {
         alert(`Please make sure you are on the ${network}!`)
       }
     }
-  }, [presaleContract, tokenData, param.saleId, account, signer, endSale, chainId, param.chainId])
   }, [ tokenData, param.saleId, account, endSale, chainId])
 
   const handlerChange = (e: any) => {

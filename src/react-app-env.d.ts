@@ -9,6 +9,11 @@ interface Window {
   BinanceChain?: {
     bnbSign?: (address: string, message: string) => Promise<{ publicKey: string; signature: string }>
   }
+  trustwallet?: {
+    Provider?: {
+      chainId: any
+    }
+  }
   TradingView?: any
   tvWidget?: any
   web3?: any
