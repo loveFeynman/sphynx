@@ -203,9 +203,9 @@ const TokenCard: React.FC<ImgCardProps> = ({
 
   const handleClicked = () => {
     if (account === ownerAddress) {
-      history.push(`/launchpad/presale/${saleId}`)
+      history.push(`/launchpad/presale/${saleId}/${chainId}`)
     } else {
-      history.push(`/launchpad/live/${saleId}`)
+      history.push(`/launchpad/live/${saleId}/${chainId}`)
     }
   }
 

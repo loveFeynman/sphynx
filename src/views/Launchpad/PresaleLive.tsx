@@ -750,6 +750,11 @@ const PresaleLive: React.FC = () => {
     if (tokenData) {
       fetchData()
     }
+
+    if(parseInt(param.chainId) !== chainId) {
+      alert("This page is for current Network.  Please switch network!")
+    }
+
   }, [presaleContract, tokenData, param.saleId, account, signer, endSale])
 
   const handlerChange = (e: any) => {

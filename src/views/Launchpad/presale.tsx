@@ -635,7 +635,7 @@ const Presale: React.FC = () => {
         axios.post(`${process.env.REACT_APP_BACKEND_API_URL2}/insertPresaleInfo`, { data }).then((response) => {
           if (response.data) {
             toastSuccess('Pushed!', 'Your presale info is saved successfully.')
-            history.push(`/launchpad/presale/${presaleId}`)
+            history.push(`/launchpad/presale/${presaleId}/${chainId}`)
           } else {
             toastError('Failed!', 'Your action is failed.')
           }

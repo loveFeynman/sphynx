@@ -260,8 +260,8 @@ const App: React.FC = () => {
                   <Route exact strict path="/launchpad" component={Launchpad} />
                   <Route exact strict path="/launchpad/presale" component={Presale} />
                   <Route exact strict path="/launchpad/listing" component={Listings} />
-                  <Route exact strict path="/launchpad/live/:saleId" component={PresaleLive} />
-                  <Route exact strict path="/launchpad/presale/:saleId" component={PresaleManage} />
+                  <Route exact strict path="/launchpad/live/:saleId/:chainId" component={PresaleLive} />
+                  <Route exact strict path="/launchpad/presale/:saleId/:chainId" component={PresaleManage} />
                   <Route exact strict path="/launchpad/fair" component = {FairLaunch} />
                   <Route exact strict path="/launchpad/fair/listing" component = {FairLaunchListing} />
                   <Route exact strict path="/launchpad/fair/manage/:launchId" component={FairLaunchManage} />
