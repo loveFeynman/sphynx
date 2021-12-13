@@ -583,6 +583,7 @@ const PresaleLive: React.FC = () => {
   const timerRef = useRef<NodeJS.Timeout>()
 
   const nativeCurrency = chainId === ChainId.ETHEREUM ? 'ETH' : 'BNB'
+  const swapName = chainId === ChainId.ETHEREUM ? 'Uniswap' : 'PancakeSwap'
   const PRESALE_DATA = [
     {
       presaleItem: 'Sale ID:',
@@ -623,7 +624,7 @@ const PresaleLive: React.FC = () => {
       presaleValue: `${tokenData && tokenData.default_router_rate}%`,
     },
     {
-      presaleItem: 'PancakeSwap Liquidity:',
+      presaleItem: `${swapName} Liquidity:`,
       presaleValue: `${tokenData && tokenData.router_rate}%`,
     },
     {
