@@ -244,7 +244,7 @@ const DetailLocker: React.FC = () => {
     const { account, chainId, library } = useWeb3React()
     const signer = library && library.getSigner()
     const { toastSuccess, toastError } = useToast()
-    const lockContract = getLockerContract(signer)
+    const lockContract = getLockerContract(signer, chainId)
     const { t } = useTranslation()
     const { isXl } = useMatchBreakpoints()
     const [tokenInfo, setTokenInfo] = useState(null)

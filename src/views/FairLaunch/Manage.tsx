@@ -235,7 +235,7 @@ const FairLaunchManage: React.FC = () => {
 
   const nativeCurrency = chainId === ChainId.ETHEREUM ? 'ETH' : 'BNB'
 
-  const fairLaunchContract = useMemo(() => getFairLaunchContract(signer), [signer])
+  const fairLaunchContract = useMemo(() => getFairLaunchContract(signer, chainId), [signer])
 
   const handleCancelLaunch = async () => {
     setPendingCancel(true)

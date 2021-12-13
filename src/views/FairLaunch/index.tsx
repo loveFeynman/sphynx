@@ -334,8 +334,7 @@ const StepWrapper = ({ number, stepName, children, step, onClick }) => {
 
 const Presale: React.FC = () => {
   const { t } = useTranslation()
-  const { account, chainId } = useWeb3React()
-  const { library } = useActiveWeb3React()
+  const { library, account, chainId } = useActiveWeb3React()
   const signer = library.getSigner()
   const [tokenAddress, setTokenAddress] = useState('')
   const [tokenName, setName] = useState('')
@@ -360,7 +359,7 @@ const Presale: React.FC = () => {
   const [disclaimerModalShow, setDisclaimerModalShow] = useState(true)
   const { toastSuccess, toastError } = useToast()
   const [pendingTx, setPendingTx] = useState(false)
-  const fairLaunchContract = getFairLaunchContract(signer)
+  const fairLaunchContract = getFairLaunchContract(signer, chainId)
   const history = useHistory()
 
   const nativeCurrency = chainId === ChainId.ETHEREUM ? 'ETH' : 'BNB'

@@ -185,7 +185,7 @@ const ManageLocker: React.FC = () => {
   const [totalSupply, setTotalSupply] = useState(0)
   const [userBalance, setUserBalance] = useState(0)
   const [tokenDecimals, setDecimals] = useState(18)
-  const lockContract = getLockerContract(signer)
+  const lockContract = getLockerContract(signer, chainId)
   const [isLPToken, setIsLPToken] = useState(false)
   const [unLock, setUnLock] = useState(new Date())
   const [logoLink, setLogoLink] = useState('')

@@ -380,7 +380,7 @@ const FairLaunchLive: React.FC = () => {
   const { menuToggled } = useMenuToggle()
   const [ statusDescription, setStatusDescription ] = useState("")
   const [ isLaunched, setIsLaunched ] = useState(false);
-  const fairLaunchContract = useMemo(() => getFairLaunchContract(signer), [signer])
+  const fairLaunchContract = useMemo(() => getFairLaunchContract(signer, chainId), [signer])
   const history = useHistory()
   const nativeCurrency = chainId === ChainId.ETHEREUM ? 'ETH' : 'BNB'
   
