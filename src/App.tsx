@@ -264,10 +264,10 @@ const App: React.FC = () => {
                   <Route exact strict path="/launchpad/presale/:saleId/:chainId" component={PresaleManage} />
                   <Route exact strict path="/launchpad/fair" component = {FairLaunch} />
                   <Route exact strict path="/launchpad/fair/listing" component = {FairLaunchListing} />
-                  <Route exact strict path="/launchpad/fair/manage/:launchId" component={FairLaunchManage} />
-                  <Route exact strict path="/launchpad/fair/live/:launchId" component={FairLaunchLive} />
+                  <Route exact strict path="/launchpad/fair/manage/:launchId/:chainId" component={FairLaunchManage} />
+                  <Route exact strict path="/launchpad/fair/live/:launchId/:chainId" component={FairLaunchLive} />
                   <Route exact strict path="/launchpad/locker" component={Locker} />
-                  <Route exact strict path="/launchpad/locker/tokendetail/:lockId" component={DetailLocker} />
+                  <Route exact strict path="/launchpad/locker/tokendetail/:lockId/:chainId" component={DetailLocker} />
                   <Route exact strict path="/launchpad/locker/manage" component={ManageLocker} />
                   <Route exact strict path="/lottery" component={Lottery} />
                   <Route exact strict path="/trending" component = {Trending} />

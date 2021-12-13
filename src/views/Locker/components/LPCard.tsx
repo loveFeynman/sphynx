@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import { Text } from '@sphynxdex/uikit'
 import { useHistory } from 'react-router-dom'
 import TimerComponent from 'components/Timer/TimerComponent'
+import useActiveWeb3React from 'hooks/useActiveWeb3React'
 
 const CardWrapper = styled.div`
   background: ${({ theme }) => (theme.isDark ? '#040413' : '#20234e')};
@@ -123,9 +124,10 @@ const LPCard: React.FC<TokenCardProps> = ({
   tokenAddress,
 }: TokenCardProps) => {
   const history = useHistory()
+  const { chainId } = useActiveWeb3React()
 
   const handleClicked = () => {
-    history.push(`/launchpad/locker/tokendetail/${id}`)
+    history.push(`/launchpad/locker/tokendetail/${id}/${chainId}`)
   }
 
   return (

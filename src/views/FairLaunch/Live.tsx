@@ -5,6 +5,7 @@ import { useHistory } from 'react-router-dom'
 import { useWeb3React } from '@web3-react/core'
 import { Button, Text, Flex, Link } from '@sphynxdex/uikit'
 import { ChainId } from '@sphynxdex/sdk-multichain'
+import NETWORK_NAMES from 'config/constants/networknames'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import axios from 'axios'
 import { useTranslation } from 'contexts/Localization'
@@ -402,6 +403,10 @@ const FairLaunchLive: React.FC = () => {
   }
 
   useEffect(() => {
+    if (chainId && parseInt(param.chainId) !== chainId) {
+      alert(`Please make sure you are on the ${NETWORK_NAMES[parseInt(param.chainId)]}!`)
+    }
+
     (async function fetchData() {
       const RetrieverDataProcess = async () => {
         const launchId = param.launchId;

@@ -6,6 +6,7 @@ import { ChainId } from '@sphynxdex/sdk-multichain'
 import { useTranslation } from 'contexts/Localization'
 import { useMenuToggle } from 'state/application/hooks'
 import { ERC20_ABI } from 'config/abi/erc20'
+import NETWORK_NAMES from 'config/constants/networknames'
 import { ReactComponent as MainLogo } from 'assets/svg/icon/WarningIcon.svg'
 import { ReactComponent as WarningIcon2 } from 'assets/svg/icon/WarningIcon2.svg'
 import { ReactComponent as SettingIcon } from 'assets/svg/icon/SettingIcon.svg'
@@ -692,6 +693,10 @@ const PresaleLive: React.FC = () => {
   }, [timerRef, tokenData])
 
   useEffect(() => {
+    if (chainId && parseInt(param.chainId) !== chainId) {
+      alert(`Please make sure you are on the ${NETWORK_NAMES[parseInt(param.chainId)]}!`)
+    }
+    
     const isValue = !Number.isNaN(parseInt(param.saleId))
     if (isValue && param.chainId) {
       axios
@@ -762,6 +767,7 @@ const PresaleLive: React.FC = () => {
         alert(`Please make sure you are on the ${network}!`)
       }
     }
+  }, [presaleContract, tokenData, param.saleId, account, signer, endSale, chainId, param.chainId])
   }, [ tokenData, param.saleId, account, endSale, chainId])
 
   const handlerChange = (e: any) => {
