@@ -433,7 +433,7 @@ const Presale: React.FC = () => {
       const tokenContract = new ethers.Contract(tokenAddress, abi, signer)
       const allowance = await tokenContract.allowance(account, getFairLaunchAddress())
       if (allowance < tokenAmount) {
-        const tx = await tokenContract.approve(getFairLaunchAddress(), '0xfffffffffffffffffffffffffffffffff')
+        const tx = await tokenContract.approve(getFairLaunchAddress(chainId), '0xfffffffffffffffffffffffffffffffff')
         await tx.wait()
       }
 

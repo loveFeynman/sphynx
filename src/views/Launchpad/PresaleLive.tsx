@@ -581,7 +581,7 @@ const PresaleLive: React.FC = () => {
   const [pendingContribute, setPendingContribute] = useState(false)
   const [pendingClaim, setPendingClaim] = useState(false)
   const [pendingWithdraw, setPendingWithdraw] = useState(false)
-  const presaleAddress = getPresaleAddress()
+  const presaleAddress = getPresaleAddress(chainId)
   const timerRef = useRef<NodeJS.Timeout>()
   const [loading, setLoading] = useState(true)
 

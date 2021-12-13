@@ -540,7 +540,7 @@ const Presale: React.FC = () => {
 
     setPendingTx(true)
     const presaleId = (await presaleContract.currentPresaleId()).toString()
-    const routerAddress = getRouterAddress()
+    const routerAddress = getRouterAddress(chainId)
     const startTime = Math.floor(new Date(presaleStart).getTime() / 1000)
     const tierOneTime = Math.floor(new Date(tier1Time).getTime() / 1000)
     const tierTwoTime = Math.floor(new Date(tier2Time).getTime() / 1000)

@@ -156,12 +156,12 @@ export const getBunnySpecialPredictionContract = (signer?: ethers.Signer | ether
 export const getFarmAuctionContract = (signer?: ethers.Signer | ethers.providers.Provider) => {
   return getContract(farmAuctionAbi, getFarmAuctionAddress(), signer) as FarmAuctionContract
 }
-export const getPresaleContract = (signer?: ethers.Signer | ethers.providers.Provider) => {
-  return getContract(presaleAbi, getPresaleAddress(), signer)
+export const getPresaleContract = (signer?: ethers.Signer | ethers.providers.Provider, chainId = 56) => {
+  return getContract(presaleAbi, getPresaleAddress(chainId), signer)
 }
-export const getLockerContract = (signer?: ethers.Signer | ethers.providers.Provider) => {
-  return getContract(lockerAbi, getLockerAddress(), signer)
+export const getLockerContract = (signer?: ethers.Signer | ethers.providers.Provider, chainId = 56) => {
+  return getContract(lockerAbi, getLockerAddress(chainId), signer)
 }
-export const getFairLaunchContract = (signer?: ethers.Signer | ethers.providers.Provider) => {
-  return getContract(fairLaunchAbi, getFairLaunchAddress(), signer)
+export const getFairLaunchContract = (signer?: ethers.Signer | ethers.providers.Provider, chainId = 56) => {
+  return getContract(fairLaunchAbi, getFairLaunchAddress(chainId), signer)
 }

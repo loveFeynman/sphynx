@@ -369,7 +369,7 @@ const PresaleManage: React.FC = () => {
         const approvedAmount = await tokenContract.allowance(account, getPresaleAddress())
         const depositAmount = await presaleContract.getDepositAmount(param.saleId)
         if (approvedAmount < depositAmount) {
-          const tx = await tokenContract.approve(getPresaleAddress(), '0xfffffffffffffffffffffffffffffffff')
+          const tx = await tokenContract.approve(getPresaleAddress(chainId), '0xfffffffffffffffffffffffffffffffff')
           await tx.wait()
         }
         const tx1 = await presaleContract.depositToken(param.saleId)
@@ -579,9 +579,9 @@ const PresaleManage: React.FC = () => {
           </p>
           <Sperate />
           <Notification>
-            Sphynx Router Address: {getSphynxRouterAddress()}
+            Sphynx Router Address: {getSphynxRouterAddress(chainId)}
             <br />
-            Presale Address: {getPresaleAddress()}
+            Presale Address: {getPresaleAddress(chainId)}
             <br />
             - You must deposit the required number of tokens to the presale address to start the sale (Click the Deposit
             Tokens button below)
