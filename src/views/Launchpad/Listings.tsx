@@ -54,6 +54,7 @@ const Presale: React.FC = () => {
 
       setIsLoading(true)
       setTokenList([])
+      console.log("data", data)
       axios.post(`${process.env.REACT_APP_BACKEND_API_URL2}/getAllPresaleInfo`, { data }).then(async (response) => {
         if (response.data) {
           let pages = 1
