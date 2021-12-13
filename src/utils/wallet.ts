@@ -52,7 +52,7 @@ export const registerToken = async (tokenAddress: string, tokenSymbol: string, t
 }
 
 export const switchNetwork = async (selectedChainID: string) => {
-  const provider = window.ethereum
+  const provider = window.ethereum?.isTrust ? window?.trustwallet?.Provider : window.ethereum
   if (provider) {
 
     try {
