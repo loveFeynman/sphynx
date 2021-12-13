@@ -16,6 +16,7 @@ import { getPresaleAddress, getSphynxRouterAddress } from 'utils/addressHelpers'
 import * as ethers from 'ethers'
 import { ERC20_ABI } from 'config/abi/erc20'
 import { ChainId } from '@sphynxdex/sdk-multichain'
+import NETWORK_NAMES from 'config/constants/networknames'
 
 const rotate = keyframes`
   from {
@@ -303,8 +304,8 @@ const PresaleManage: React.FC = () => {
 
   useEffect(() => {
     const isValue = !Number.isNaN(parseInt(param.saleId))
-    if(parseInt(param.chainId) !== chainId) {
-      alert("This page is for current Network.  Please switch network!")
+    if(chainId && parseInt(param.chainId) !== chainId) {
+      alert(`Please make sure you are on the ${NETWORK_NAMES[parseInt(param.chainId)]}!`)
     }
 
     if (isValue && chainId) {

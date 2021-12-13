@@ -6,6 +6,7 @@ import { ChainId } from '@sphynxdex/sdk-multichain'
 import { useTranslation } from 'contexts/Localization'
 import { useMenuToggle } from 'state/application/hooks'
 import { ERC20_ABI } from 'config/abi/erc20'
+import NETWORK_NAMES from 'config/constants/networknames'
 import { ReactComponent as MainLogo } from 'assets/svg/icon/WarningIcon.svg'
 import { ReactComponent as WarningIcon2 } from 'assets/svg/icon/WarningIcon2.svg'
 import { ReactComponent as SettingIcon } from 'assets/svg/icon/SettingIcon.svg'
@@ -752,10 +753,8 @@ const PresaleLive: React.FC = () => {
       fetchData()
     }
 
-    if(parseInt(param.chainId) !== chainId) {
-      console.log("Param Chain Id", param.chainId)
-      const network = parseInt(param.chainId) === ChainId.ETHEREUM ? 'ETHEREUM MAINNET' : 'Binance Smart Chain'
-      alert(`Please make sure you are on the ${network}!`)
+    if(chainId && parseInt(param.chainId) !== chainId) {
+      alert(`Please make sure you are on the ${NETWORK_NAMES[parseInt(param.chainId)]}!`)
     }
 
   }, [presaleContract, tokenData, param.saleId, account, signer, endSale, chainId, param.chainId])
