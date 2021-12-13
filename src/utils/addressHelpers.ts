@@ -1,11 +1,10 @@
-import { ChainId } from '@sphynxdex/sdk-multichain'
 import addresses from 'config/constants/contracts'
 import tokens from 'config/constants/tokens'
 import { Address } from 'config/constants/types'
 
 export const getAddress = (address: Address): string => {
   const chainId = parseInt(window?.ethereum?.networkVersion)
-  return address[chainId] ? address[chainId] : address[ChainId.MAINNET]
+  return address[chainId] ? address[chainId] : undefined
 }
 
 export const getCakeAddress = () => {
