@@ -753,10 +753,11 @@ const PresaleLive: React.FC = () => {
     }
 
     if(parseInt(param.chainId) !== chainId) {
-      alert("This page is for current Network.  Please switch network!")
+      const network = param.chainId === ChainId.ETHEREUM ? 'ETHEREUM MAINNET' : 'Binance Smart Chain'
+      alert(`Please make sure you are on the ${network}!`)
     }
 
-  }, [presaleContract, tokenData, param.saleId, account, signer, endSale])
+  }, [presaleContract, tokenData, param.saleId, account, signer, endSale, chainId, param.chainId])
 
   const handlerChange = (e: any) => {
     setContribute(e.target.value)
