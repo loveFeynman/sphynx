@@ -213,30 +213,30 @@ const MenuItem = styled.a<{ toggled: boolean }>`
   }
 `
 
-const MenuItemMobile = styled.a`
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 5px 16px;
-  margin: 5px 0;
-  border-radius: 5px;
-  text-decoration: none !important;
-  & p {
-    width: calc(100% - 32px);
-    font-size: 14px;
-    font-weight: 600;
-    color: white;
-  }
-  &:hover,
-  &.active {
-    background: #710d89;
-    p {
+const MenuItemDiv = styled.div<{ toggled: boolean }>`
+  display: none;
+  ${({ theme }) => theme.mediaQueries.xl} {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: ${(props) => (props.toggled ? '5px' : '5px 16px')};
+    margin: 5px 0;
+    border-radius: 5px;
+    text-decoration: none !important;
+    & p {
+      width: calc(100% - 32px);
+      font-size: 14px;
+      font-weight: 600;
       color: white;
     }
-  }
-  ${({ theme }) => theme.mediaQueries.xl} {
-    display: none;
+    &:hover,
+    &.active {
+      background: #710d89;
+      p {
+        color: white;
+      }
+    }
   }
 `
 
@@ -792,20 +792,20 @@ const Menu = () => {
             const href = link.link;
             if(href) {
               return (
-                <ReactLink to={link.link?.indexOf('https') !== 0 ? link.link : window.location.pathname}>
-                  <MenuItem
+                <ReactLink key={link.id} to={link.link?.indexOf('https') !== 0 ? link.link : window.location.pathname}>
+                  <MenuItemDiv
                     className={window.location.pathname == link.link && link.link !== '/' ? 'active' : ''}
                     style={menuToggled ? { justifyContent: 'center' } : {}}
-                    rel="noreferrer"
                     toggled={menuToggled}
                   >
                     <Icon />
-                  </MenuItem>
+                  </MenuItemDiv>
                 </ReactLink>
               )
             } else {
               return (
                 <MenuItem
+                  key={link.id}
                   className={window.location.pathname.includes(link.baseurl) && link.link !== '/' ? 'active' : ''}
                   style={menuToggled ? { justifyContent: 'center' } : {}}
                   rel="noreferrer"
