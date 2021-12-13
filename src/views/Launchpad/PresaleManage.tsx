@@ -284,7 +284,7 @@ const PresaleManage: React.FC = () => {
   const [raise, setRaise] = useState(0)
   const [tokenData, setTokenData] = useState(null)
   const { toastSuccess, toastError } = useToast()
-  const presaleContract = getPresaleContract(signer)
+  const presaleContract = getPresaleContract(signer, chainId)
   const [softCap, setSoftCap] = useState('')
   const [isDeposit, setIsDeposit] = useState(false)
   const [isFinalize, setIsFinalize] = useState(false)

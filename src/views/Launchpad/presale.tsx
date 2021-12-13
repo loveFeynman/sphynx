@@ -393,7 +393,7 @@ const Presale: React.FC = () => {
   const [step, setStep] = useState(1)
   const [disclaimerModalShow, setDisclaimerModalShow] = useState(true)
   const { toastSuccess, toastError } = useToast()
-  const presaleContract = getPresaleContract(signer)
+  const presaleContract = getPresaleContract(signer, chainId)
   const history = useHistory()
 
   const nativeCurrency = chainId === ChainId.ETHEREUM ? 'ETH' : 'BNB'

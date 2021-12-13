@@ -559,7 +559,7 @@ const PresaleLive: React.FC = () => {
   const [presaleStatus, setPresaleStatus] = useState(false)
   const { library, account, chainId } = useActiveWeb3React()
   const signer = library.getSigner()
-  const presaleContract = useMemo(() => getPresaleContract(signer), [signer])
+  const presaleContract = useMemo(() => getPresaleContract(signer, chainId), [signer])
   const [contribute, setContribute] = useState('')
   const [tokenData, setTokenData] = useState(null)
   const [raise, setRaise] = useState(0)

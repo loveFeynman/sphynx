@@ -32,7 +32,7 @@ const LoadingWrapper = styled.div`
 
 const Presale: React.FC = () => {
   const { chainId, library } = useActiveWeb3React()
-  const presaleContract = useMemo(() => getPresaleContract(library), [library])
+  const presaleContract = useMemo(() => getPresaleContract(library, chainId), [library])
   const { t } = useTranslation()
   const { menuToggled } = useMenuToggle()
   const [tokenList, setTokenList] = useState(null)
