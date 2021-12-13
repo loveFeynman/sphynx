@@ -1042,11 +1042,11 @@ const PresaleLive: React.FC = () => {
                         <StopwatchIcon />
                         <Text fontSize="13px" fontWeight="600" style={{ margin: '0 10px' }}>
                           {privateSale1
-                            ? 'Tier 1 ends in'
+                            ? 'Tier 1 sale ends in'
                             : privateSale2
-                              ? 'Tier 2 ends in'
+                              ? 'Tier 2 sale ends in'
                               : pendingSale
-                                ? 'Sale starts in'
+                                ? 'Presale starts in'
                                 : 'Public sale ends in'}{' '}
                         </Text>
                         <TimerComponent

@@ -721,12 +721,12 @@ const Presale: React.FC = () => {
               <p>* (set the same rate for single tier presale)</p>
               <Sperate />
               <InlineWrapper>
-                <p className="description w140">Tier1 *(Per {nativeCurrency})</p>
+                <p className="description w140">Tier 1 *(Per {nativeCurrency})</p>
                 <MyInput className="ml16" value={tier1} onChange={handleTier1} />
               </InlineWrapper>
               <Sperate />
               <InlineWrapper>
-                <p className="description w140">Tier2 *(Per {nativeCurrency})</p>
+                <p className="description w140">Tier 2 *(Per {nativeCurrency})</p>
                 <MyInput className="ml16" value={tier2} onChange={handleTier2} />
               </InlineWrapper>
               <Sperate />
