@@ -411,8 +411,6 @@ const Presale: React.FC = () => {
 
     setPendingTx(true)
 
-    const launchId = (await fairLaunchContract.currentLaunchId()).toString()
-
     const now = Math.floor(new Date().getTime() / 1000)
     const launchTimeStamp = Math.floor(new Date(launchTime).getTime() / 1000)
     const lockTimeStamp = Math.floor(new Date(unlockTime).getTime() / 1000)
@@ -429,6 +427,7 @@ const Presale: React.FC = () => {
     }
     const router = liquidityType === 'sphynxswap' ? SPHYNX_ROUTER[chainId] : V2_ROUTER[chainId]
     try {
+      const launchId = (await fairLaunchContract.currentLaunchId()).toString()
       const fee = ethers.utils.parseEther('0.1')
       const abi: any = ERC20_ABI
       const tokenContract = new ethers.Contract(tokenAddress, abi, signer)
@@ -586,7 +585,7 @@ const Presale: React.FC = () => {
                       value: 'sphynxswap',
                     },
                     {
-                      label: t('Pancakeswap'),
+                      label: chainId === ChainId.ETHEREUM ? t('UniSwap') : t('Pancakeswap'),
                       value: 'pancakeswap',
                     },
                   ]}

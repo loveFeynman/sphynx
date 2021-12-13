@@ -8,7 +8,7 @@ import styled, { useTheme } from 'styled-components'
 import FlexLayout from 'components/Layout/Flex'
 import Page from 'components/Layout/Page'
 import { ethers } from 'ethers'
-import {simpleRpcProvider} from 'utils/providers'
+import { simpleRpcProvider } from 'utils/providers'
 import { ERC20_ABI } from 'config/abi/erc20'
 import { getBNBPrice, getTokenPrice } from 'utils/priceProvider'
 import { useFarms, usePollFarmsData, usePriceCakeBusd } from 'state/farms/hooks'
@@ -28,7 +28,7 @@ import Select, { OptionProps } from 'components/Select/Select'
 import Loading from 'components/Loading'
 import { ReactComponent as FarmLogo } from 'assets/svg/icon/FarmIcon2.svg'
 import FarmCard, { FarmWithStakedValue } from './components/FarmCard/FarmCard'
-import { SwapTabs, SwapTabList, SwapTab, SwapTabPanel } from "../../components/Tab/tab";
+import { SwapTabs, SwapTabList, SwapTab, SwapTabPanel } from '../../components/Tab/tab'
 import SearchPannel from './components/SearchPannel'
 import Table from './components/FarmTable/FarmTable'
 import { RowProps } from './components/FarmTable/Row'
@@ -50,7 +50,7 @@ const getDisplayApr = (cakeRewardsApr?: number, lpRewardsApr?: number) => {
 const Farms: React.FC = () => {
   const [totalLiquidityUSD, setTotalLiquidity] = useState('')
   const [farmApr, setFarmApr] = useState(null)
-  
+
   useEffect(() => {
     const lpAddress = '0x93561354a5a4687c54a64cf0aba56a0a392ae882'
     const masterChef = getMasterChefAddress()
@@ -58,17 +58,21 @@ const Farms: React.FC = () => {
     const wBNBAddr = getWbnbAddress()
 
     const parseData = async () => {
-      const lpToken = new ethers.Contract(lpAddress, ERC20_ABI, simpleRpcProvider)
-      const wBNB = new ethers.Contract(wBNBAddr, ERC20_ABI, simpleRpcProvider)
-      const bnbBalance = await wBNB.balanceOf(lpAddress)
-      const bnbPrice = await getBNBPrice()
-      const totalSupply = await lpToken.totalSupply()
-      const masterChefBalance = await lpToken.balanceOf(masterChef)
-      const tokenPrice = await getTokenPrice(sphynxToken)
-      const totalLiquidity = bnbBalance * 2 / (10 ** 18) * bnbPrice * masterChefBalance / totalSupply
-      const apr = tokenPrice * 112.5 / totalLiquidity * 1000 * 365 * 100 *24
-      setTotalLiquidity(totalLiquidity.toFixed(2))
-      setFarmApr(apr.toFixed(2))
+      try {
+        const lpToken = new ethers.Contract(lpAddress, ERC20_ABI, simpleRpcProvider)
+        const wBNB = new ethers.Contract(wBNBAddr, ERC20_ABI, simpleRpcProvider)
+        const bnbBalance = await wBNB.balanceOf(lpAddress)
+        const bnbPrice = await getBNBPrice()
+        const totalSupply = await lpToken.totalSupply()
+        const masterChefBalance = await lpToken.balanceOf(masterChef)
+        const tokenPrice = await getTokenPrice(sphynxToken)
+        const totalLiquidity = (((bnbBalance * 2) / 10 ** 18) * bnbPrice * masterChefBalance) / totalSupply
+        const apr = ((tokenPrice * 112.5) / totalLiquidity) * 1000 * 365 * 100 * 24
+        setTotalLiquidity(totalLiquidity.toFixed(2))
+        setFarmApr(apr.toFixed(2))
+      } catch (err) {
+        console.log('error', err)
+      }
     }
 
     parseData()
@@ -209,7 +213,7 @@ const Farms: React.FC = () => {
   chosenFarmsLength.current = chosenFarmsMemoized.length
 
   useEffect(() => {
-    const ac = new AbortController();
+    const ac = new AbortController()
     const showMoreFarms = (entries) => {
       const [entry] = entries
       if (entry.isIntersecting) {
@@ -231,7 +235,7 @@ const Farms: React.FC = () => {
       setObserverIsSet(true)
     }
 
-    return () => ac.abort();
+    return () => ac.abort()
   }, [chosenFarmsMemoized, observerIsSet])
 
   const rowData = chosenFarmsMemoized.map((farm) => {
@@ -355,10 +359,9 @@ const Farms: React.FC = () => {
 
   const selectedTab = (tabIndex: number): void => {
     if (tabIndex === 0) {
-      location.pathname = "/farms"
-    }
-    else {
-      location.pathname = "/farms/history"
+      location.pathname = '/farms'
+    } else {
+      location.pathname = '/farms/history'
     }
   }
 
@@ -372,9 +375,7 @@ const Farms: React.FC = () => {
             <Text fontSize="26px" color="white" bold>
               {t('Farms')}
             </Text>
-            <Text fontSize="15px">
-              {t('Stake LP tokens to earn.')}
-            </Text>
+            <Text fontSize="15px">{t('Stake LP tokens to earn.')}</Text>
           </Flex>
         </Flex>
       </PageHeader>
@@ -432,23 +433,19 @@ const Farms: React.FC = () => {
           </FilterContainer>
         </ControlContainer> */}
         <SwapTabs
-          selectedTabClassName='is-selected'
-          selectedTabPanelClassName='is-selected'
+          selectedTabClassName="is-selected"
+          selectedTabPanelClassName="is-selected"
           onSelect={(tabIndex) => selectedTab(tabIndex)}
         >
           <SwapTabList>
             <SwapTab>
-              <Text>
-                {t('Live')}
-              </Text>
+              <Text>{t('Live')}</Text>
             </SwapTab>
             <SwapTab>
-              <Text>
-                {t('Finished')}
-              </Text>
+              <Text>{t('Finished')}</Text>
             </SwapTab>
           </SwapTabList>
-          <Card bgColor={theme.isDark ? "#0E0E26" : "#2A2E60"} borderRadius="0 0 3px 3px" padding="20px 10px">
+          <Card bgColor={theme.isDark ? '#0E0E26' : '#2A2E60'} borderRadius="0 0 3px 3px" padding="20px 10px">
             <SwapTabPanel>
               {renderContent()}
               {account && !userDataLoaded && stakedOnly && (

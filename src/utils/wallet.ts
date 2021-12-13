@@ -54,7 +54,6 @@ export const registerToken = async (tokenAddress: string, tokenSymbol: string, t
 export const switchNetwork = async (selectedChainID: string) => {
   const provider = window.ethereum?.isTrust ? window?.trustwallet?.Provider : window.ethereum
   if (provider) {
-
     try {
       await provider.request({
         method: 'wallet_switchEthereumChain',
@@ -71,7 +70,7 @@ export const switchNetwork = async (selectedChainID: string) => {
             params: [
               {
                 chainId: selectedChainID,
-                rpcUrl: 'https://main-light.eth.linkpool.io/',
+                rpcUrls: ['https://main-light.eth.linkpool.io/'],
               },
             ],
           });

@@ -462,7 +462,6 @@ export default function Swap({ history }: RouteComponentProps) {
           if (info.length) {
             cachedBlockNumber = info[info.length - 1].blockNumber
           }
-          console.log("Information", info)
           info = info.filter((oneData) => oneData.blockNumber !== cachedBlockNumber)
           info = info.filter(
             (oneData) =>
