@@ -11,6 +11,7 @@ import { useWeb3React } from '@web3-react/core'
 import { useParams } from 'react-router'
 import axios from 'axios'
 import { ColorButtonStyle } from 'style/buttonStyle'
+import NETWORK_NAMES from 'config/constants/networknames'
 
 const rotate = keyframes`
   from {
@@ -241,7 +242,7 @@ const TableWrapper = styled.div`
 const DetailLocker: React.FC = () => {
     const param: any = useParams()
     const { account, chainId, library } = useWeb3React()
-    const signer = library&&library.getSigner()
+    const signer = library && library.getSigner()
     const { toastSuccess, toastError } = useToast()
     const lockContract = getLockerContract(signer)
     const { t } = useTranslation()
@@ -256,12 +257,12 @@ const DetailLocker: React.FC = () => {
     useEffect(() => {
         const fetchData = async () => {
             const availableBalance = (await lockContract.getAvailableBalance(tokenInfo.lock_id)).toString()
-            if(Math.floor(new Date().getTime()/1000) > parseInt(tokenInfo.end_time) && availableBalance === '0'){
+            if (Math.floor(new Date().getTime() / 1000) > parseInt(tokenInfo.end_time) && availableBalance === '0') {
                 setIsDisabled(true)
             }
         }
 
-        if (tokenInfo && account.toLowerCase() === tokenInfo.owner_address.toLowerCase()){
+        if (tokenInfo && account.toLowerCase() === tokenInfo.owner_address.toLowerCase()) {
             setIsOwner(true)
             fetchData()
         }
@@ -270,6 +271,10 @@ const DetailLocker: React.FC = () => {
     }, [account, tokenInfo, lockContract])
 
     useEffect(() => {
+        if (chainId && parseInt(param.chainId) !== chainId) {
+            alert(`Please make sure you are on the ${NETWORK_NAMES[parseInt(param.chainId)]}!`)
+        }
+
         const isValue = !Number.isNaN(parseInt(param.lockId))
         if (isValue && chainId) {
             axios.get(`${process.env.REACT_APP_BACKEND_API_URL2}/getTokenLockInfo/${chainId}/${param.lockId}`)
@@ -296,7 +301,7 @@ const DetailLocker: React.FC = () => {
 
 
     useEffect(() => {
-        if(chainId&&tokenInfo){
+        if (chainId && tokenInfo) {
             axios.get(`${process.env.REACT_APP_BACKEND_API_URL2}/getTokenLockCount/${chainId}/${tokenInfo.lock_address}`)
                 .then((response) => {
                     if (response.data) {
@@ -310,13 +315,13 @@ const DetailLocker: React.FC = () => {
     const handleUnlockClick = async () => {
         try {
             const availableBalance = (await lockContract.getAvailableBalance(tokenInfo.lock_id)).toString()
-            if (availableBalance !== '0'){
+            if (availableBalance !== '0') {
                 setPendingUnlock(true)
                 await lockContract.withdrawToken(tokenInfo.lock_id)
                 setPendingUnlock(false)
                 toastSuccess("Success", "Unlock successfully!")
             }
-            else if(Math.floor(new Date().getTime()/1000) > parseInt(tokenInfo.end_time) && availableBalance === '0'){
+            else if (Math.floor(new Date().getTime() / 1000) > parseInt(tokenInfo.end_time) && availableBalance === '0') {
                 setIsDisabled(true)
             }
         } catch (err) {
@@ -342,9 +347,9 @@ const DetailLocker: React.FC = () => {
                 <TokenPresaleContainder>
                     {/* <SubCardWrapper>DYOR Area</SubCardWrapper> */}
                     <MainCardWrapper>
-                    <Link style={{ marginBottom: '16px' }} href="/launchpad/locker">
-                        Back to list
-                    </Link>
+                        <Link style={{ marginBottom: '16px' }} href="/launchpad/locker">
+                            Back to list
+                        </Link>
                         <CardHeader>
                             <TokenWrapper>
                                 <TokenImg>
@@ -358,7 +363,7 @@ const DetailLocker: React.FC = () => {
                         </CardHeader>
                         <AddressWrapper>
                             <Text color="white" bold>
-                                {tokenInfo.token_type&&'LP '}Token Address:
+                                {tokenInfo.token_type && 'LP '}Token Address:
                             </Text>
                             <Text>{tokenInfo.lock_address}</Text>
                         </AddressWrapper>
@@ -374,7 +379,7 @@ const DetailLocker: React.FC = () => {
                         <Divider />
                         <SaleInfo>
                             <SaleInfoTitle>
-                                Total Supply of {tokenInfo.token_type&&'LP '}Tokens:
+                                Total Supply of {tokenInfo.token_type && 'LP '}Tokens:
                             </SaleInfoTitle>
                             <SaleInfoValue>
                                 {tokenInfo.total_supply}
@@ -383,7 +388,7 @@ const DetailLocker: React.FC = () => {
                         <Divider />
                         <SaleInfo>
                             <SaleInfoTitle>
-                                Total Locked {tokenInfo.token_type&&'LP '}Tokens:
+                                Total Locked {tokenInfo.token_type && 'LP '}Tokens:
                             </SaleInfoTitle>
                             <SaleInfoValue>
                                 {tokenInfo.lock_supply}

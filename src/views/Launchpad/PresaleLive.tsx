@@ -688,6 +688,10 @@ const PresaleLive: React.FC = () => {
   }, [timerRef, tokenData])
 
   useEffect(() => {
+    if (chainId && parseInt(param.chainId) !== chainId) {
+      alert(`Please make sure you are on the ${NETWORK_NAMES[parseInt(param.chainId)]}!`)
+    }
+    
     const isValue = !Number.isNaN(parseInt(param.saleId))
     if (isValue && chainId) {
       axios
@@ -752,11 +756,6 @@ const PresaleLive: React.FC = () => {
     if (tokenData) {
       fetchData()
     }
-
-    if(chainId && parseInt(param.chainId) !== chainId) {
-      alert(`Please make sure you are on the ${NETWORK_NAMES[parseInt(param.chainId)]}!`)
-    }
-
   }, [presaleContract, tokenData, param.saleId, account, signer, endSale, chainId, param.chainId])
 
   const handlerChange = (e: any) => {
