@@ -5,7 +5,7 @@ import { Address } from 'config/constants/types'
 
 export const getAddress = (address: Address): string => {
   const chainId = parseInt(window?.ethereum?.networkVersion || window?.web3?.networkVersion || window?.trustwallet?.Provider?.chainId)
-  return address[chainId] ? address[chainId] : chainId ? address[ChainId.MAINNET] : undefined
+  return address[chainId] ? address[chainId] : undefined
 }
 
 export const getCakeAddress = () => {

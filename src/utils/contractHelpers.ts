@@ -67,6 +67,9 @@ import { ChainLinkOracleContract, FarmAuctionContract, PredictionsContract } fro
 
 const getContract = (abi: any, address: string, signer?: ethers.Signer | ethers.providers.Provider) => {
   const signerOrProvider = signer ?? simpleRpcProvider
+  if(address === undefined) {
+    return undefined
+  }
   return new ethers.Contract(address, abi, signerOrProvider)
 }
 
