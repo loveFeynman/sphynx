@@ -15,6 +15,7 @@ import { useTranslation } from 'contexts/Localization'
 import useToast from 'hooks/useToast'
 import styled, { keyframes } from 'styled-components'
 import TimerComponent from 'components/Timer/TimerComponent'
+import NETWORK_NAMES from 'config/constants/networknames'
 
 const rotate = keyframes`
   from {
@@ -382,6 +383,10 @@ const FairLaunchManage: React.FC = () => {
   }, [launchTime, fairLaunchContract, isLaunched, param.launchId, chainId])
 
   useEffect(() => {
+    if (chainId && parseInt(param.chainId) !== chainId) {
+      alert(`Please make sure you are on the ${NETWORK_NAMES[parseInt(param.chainId)]}!`)
+    }
+
     const fetchData = async () => {
       const launchId = param.launchId
       axios
@@ -457,14 +462,14 @@ const FairLaunchManage: React.FC = () => {
           <Notification>
             Manage Link:{' '}
             <Link
-              href={`/launchpad/fair/manage/${param.launchId}`}
-            >{`https://thesphynx.co/launchpad/fair/manage/${param.launchId}`}</Link>
+              href={`/launchpad/fair/manage/${param.launchId}/${chainId}`}
+            >{`https://thesphynx.co/launchpad/fair/manage/${param.launchId}/${chainId}`}</Link>
           </Notification>
           <Notification>
             Launch Link:{' '}
             <Link
-              href={`/launchpad/fair/live/${param.launchId}`}
-            >{`https://thesphynx.co/launchpad/fair/live/${param.launchId}`}</Link>
+              href={`/launchpad/fair/live/${param.launchId}/${chainId}`}
+            >{`https://thesphynx.co/launchpad/fair/live/${param.launchId}/${chainId}`}</Link>
           </Notification>
           <Sperate />
           {isCanceled ? (
