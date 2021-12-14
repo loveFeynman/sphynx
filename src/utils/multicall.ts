@@ -24,9 +24,7 @@ const multicall = async (abi: any[], calls: Call[]) => {
 
     return res
   } catch (error) {
-    console.log("error from multicall", error)
-    return null
-    // throw new Error(error)
+    throw new Error(error)
   }
 }
 

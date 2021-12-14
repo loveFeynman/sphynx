@@ -3,13 +3,10 @@ import addresses from 'config/constants/contracts'
 import tokens from 'config/constants/tokens'
 import { Address } from 'config/constants/types'
 
-export const getAddress = (address: Address, defaultChainId = 56): string => {
-  if(defaultChainId === 56) {
-    let chainId = parseInt(window?.ethereum?.networkVersion || window?.trustwallet?.Provider?.chainId)
-    if(chainId === undefined) {
-      chainId = defaultChainId
-    }
-    return address[chainId] ? address[chainId] : undefined
+export const getAddress = (address: Address, defaultChainId = null): string => {
+  if(defaultChainId === null) {
+    const chainId = parseInt(window?.ethereum?.networkVersion || window?.trustwallet?.Provider?.chainId)
+    return address[chainId] ? address[chainId] : address[ChainId.MAINNET]
   } 
   return address[defaultChainId] ? address[defaultChainId] : undefined
 }
