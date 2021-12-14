@@ -255,8 +255,9 @@ const Launchpad: React.FC = () => {
       <PresaleBox>
         <PresaleLogoFlex>
           <BinanceIcon1 width="40" height="40" />
+          <img src={EthereumIcon} alt="ether icon" width="40" style={{margin: '4px'}}/>
           <PresaleTextFlex>
-            <LogoTitle>Binance Chain Decentralized</LogoTitle>
+            <LogoTitle>Binance Chain & Ethereum Decentralized</LogoTitle>
             <LogoTitle>Protocols & Services</LogoTitle>
           </PresaleTextFlex>
         </PresaleLogoFlex>

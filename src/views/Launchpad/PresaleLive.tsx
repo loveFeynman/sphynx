@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState, useRef, useMemo } from 'react'
 import styled, { keyframes } from 'styled-components'
 import { useHistory } from 'react-router-dom'
 import { Button, Text, Flex, Link, AutoRenewIcon } from '@sphynxdex/uikit'
@@ -32,6 +32,7 @@ import GitIcon from 'assets/images/githubIcon.png'
 import RedditIcon from 'assets/images/redditIcon.png'
 import { ReactComponent as TelegramIcon } from 'assets/svg/icon/TelegramIcon.svg'
 import { ReactComponent as DiscordIcon } from 'assets/svg/icon/DiscordIcon.svg'
+import Loading from 'components/Loading'
 
 const rotate = keyframes`
   from {
@@ -558,7 +559,7 @@ const PresaleLive: React.FC = () => {
   const [presaleStatus, setPresaleStatus] = useState(false)
   const { library, account, chainId } = useActiveWeb3React()
   const signer = library.getSigner()
-  const presaleContract = getPresaleContract(signer)
+  const presaleContract = useMemo(() => getPresaleContract(signer), [signer])
   const [contribute, setContribute] = useState('')
   const [tokenData, setTokenData] = useState(null)
   const [raise, setRaise] = useState(0)
@@ -582,6 +583,7 @@ const PresaleLive: React.FC = () => {
   const [pendingWithdraw, setPendingWithdraw] = useState(false)
   const presaleAddress = getPresaleAddress()
   const timerRef = useRef<NodeJS.Timeout>()
+  const [loading, setLoading] = useState(true)
 
   const nativeCurrency = chainId === ChainId.ETHEREUM ? 'ETH' : 'BNB'
   const swapName = chainId === ChainId.ETHEREUM ? 'Uniswap' : 'PancakeSwap'
@@ -600,9 +602,10 @@ const PresaleLive: React.FC = () => {
     },
     {
       presaleItem: 'Tokens For Liquidity:',
-      presaleValue: `${tokenData &&
+      presaleValue: `${
+        tokenData &&
         (tokenData.listing_rate * tokenData.hard_cap * (tokenData.router_rate + tokenData.default_router_rate)) / 100
-        } ${tokenData && tokenData.token_symbol}`,
+      } ${tokenData && tokenData.token_symbol}`,
     },
     {
       presaleItem: 'Soft Cap:',
@@ -618,7 +621,9 @@ const PresaleLive: React.FC = () => {
     },
     {
       presaleItem: 'SphynxSwap Listing Rate:',
-      presaleValue: `${tokenData && tokenData.listing_rate} ${tokenData && tokenData.token_symbol} per ${nativeCurrency}`,
+      presaleValue: `${tokenData && tokenData.listing_rate} ${
+        tokenData && tokenData.token_symbol
+      } per ${nativeCurrency}`,
     },
     {
       presaleItem: 'SphynxSwap Liquidity:',
@@ -693,20 +698,20 @@ const PresaleLive: React.FC = () => {
     }
     
     const isValue = !Number.isNaN(parseInt(param.saleId))
-    if (isValue && chainId) {
+    if (isValue && param.chainId) {
       axios
-        .get(`${process.env.REACT_APP_BACKEND_API_URL2}/getPresaleInfo/${param.saleId}/${chainId}`)
+        .get(`${process.env.REACT_APP_BACKEND_API_URL2}/getPresaleInfo/${param.saleId}/${param.chainId}`)
         .then((response) => {
           if (response.data) {
-            console.log('responseData', response.data)
             setTokenData(response.data)
           }
         })
     }
-  }, [param.saleId, chainId])
+  }, [param.saleId, param.chainId])
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true)
       let temp: any
       let value: any
       /* from presale contract */
@@ -751,12 +756,19 @@ const PresaleLive: React.FC = () => {
 
       temp = await presaleContract.basewhitelist(account)
       setBaseWhiteList(temp)
+
+      setLoading(false)
     }
 
     if (tokenData) {
       fetchData()
+      if (parseInt(param.chainId) !== chainId) {
+        const network = parseInt(param.chainId) === ChainId.ETHEREUM ? 'ETHEREUM MAINNET' : 'Binance Smart Chain'
+        alert(`Please make sure you are on the ${network}!`)
+      }
     }
   }, [presaleContract, tokenData, param.saleId, account, signer, endSale, chainId, param.chainId])
+  }, [ tokenData, param.saleId, account, endSale, chainId])
 
   const handlerChange = (e: any) => {
     setContribute(e.target.value)
@@ -932,184 +944,189 @@ const PresaleLive: React.FC = () => {
                 )}
               </ContributeWrapper>
               <WhitelistCard>
-                <SocialIconsWrapper>
-                  <Link external href={tokenData && tokenData.website_link} aria-label="social2">
-                    <IconBox color="#710D89">
-                      <SocialIcon2 width="15px" height="15px" />
-                    </IconBox>
-                  </Link>
-                  <Link external href={tokenData && tokenData.github_link} aria-label="social2">
-                    <IconBox color="#3f4492">
-                      <img src={GitIcon} alt="Git Logo" width="15px" height="15px" />
-                    </IconBox>
-                  </Link>
-                  <Link external href={tokenData && tokenData.twitter_link} aria-label="twitter">
-                    <IconBox color="#33AAED">
-                      <TwitterIcon width="15px" height="15px" />
-                    </IconBox>
-                  </Link>
-                  <Link external href={tokenData && tokenData.reddit_link} aria-label="discord">
-                    <IconBox color="#2260DA">
-                      <img src={RedditIcon} alt="Git Logo" width="15px" height="15px" />
-                    </IconBox>
-                  </Link>
-                  <Link external href={tokenData && tokenData.telegram_link} aria-label="telegram">
-                    <IconBox color="#3E70D1">
-                      <TelegramIcon width="15px" height="15px" />
-                    </IconBox>
-                  </Link>
-                </SocialIconsWrapper>
-                {publicSale
-                  ?
-                  <WhitelistTitle>Public Sale</WhitelistTitle>
-                  :
+                {loading ? (
+                  <Loading />
+                ) : (
                   <>
-                    <WhitelistTitle>{isWhiteList ? 'WhiteList Enabled' : 'Public'} Sale</WhitelistTitle>
-                    <WhitelistSubText mb={isWhiteList ? '12px' : '28px'}>
-                      {isDeposited
-                        ?
-                        isWhiteList
-                          ? 'Only Whitelisted Wallets can Purchase This Token!'
-                          : 'Anybody can Purchase This Token!'
-                        : 'This token is not deposited!'}
-                    </WhitelistSubText>
-                    {isWhiteList && whiteList1 && <Text mb="24px">Your wallet address is on the whitelist1!</Text>}
-                    {isWhiteList && whiteList2 && <Text>Your wallet address is on the whitelist2!</Text>}
-                    {isWhiteList && !whiteList1 && !whiteList2 && baseWhiteList && <Text>Your wallet address is on the base whitelist!</Text>}
-                    {isWhiteList && !whiteList1 && !whiteList2 && !baseWhiteList && (
-                      <WalletAddressError>
-                        <img src={WarningIcon} alt="nuclear icon" />
-                        <Text>Your wallet address is not whitelisted</Text>
-                      </WalletAddressError>
+                    <SocialIconsWrapper>
+                      <Link external href={tokenData && tokenData.website_link} aria-label="social2">
+                        <IconBox color="#710D89">
+                          <SocialIcon2 width="15px" height="15px" />
+                        </IconBox>
+                      </Link>
+                      <Link external href={tokenData && tokenData.github_link} aria-label="social2">
+                        <IconBox color="#3f4492">
+                          <img src={GitIcon} alt="Git Logo" width="15px" height="15px" />
+                        </IconBox>
+                      </Link>
+                      <Link external href={tokenData && tokenData.twitter_link} aria-label="twitter">
+                        <IconBox color="#33AAED">
+                          <TwitterIcon width="15px" height="15px" />
+                        </IconBox>
+                      </Link>
+                      <Link external href={tokenData && tokenData.reddit_link} aria-label="discord">
+                        <IconBox color="#2260DA">
+                          <img src={RedditIcon} alt="Git Logo" width="15px" height="15px" />
+                        </IconBox>
+                      </Link>
+                      <Link external href={tokenData && tokenData.telegram_link} aria-label="telegram">
+                        <IconBox color="#3E70D1">
+                          <TelegramIcon width="15px" height="15px" />
+                        </IconBox>
+                      </Link>
+                    </SocialIconsWrapper>
+                    {publicSale ? (
+                      <WhitelistTitle>Public Sale</WhitelistTitle>
+                    ) : (
+                      <>
+                        <WhitelistTitle>{isWhiteList ? 'WhiteList Enabled' : 'Public'} Sale</WhitelistTitle>
+                        <WhitelistSubText mb={isWhiteList ? '12px' : '28px'}>
+                          {isDeposited
+                            ? isWhiteList
+                              ? 'Only Whitelisted Wallets can Purchase This Token!'
+                              : 'Anybody can Purchase This Token!'
+                            : 'This token is not deposited!'}
+                        </WhitelistSubText>
+                        {isWhiteList && whiteList1 && <Text mb="24px">Your wallet address is on the whitelist1!</Text>}
+                        {isWhiteList && whiteList2 && <Text>Your wallet address is on the whitelist2!</Text>}
+                        {isWhiteList && !whiteList1 && !whiteList2 && (
+                          <WalletAddressError>
+                            <img src={WarningIcon} alt="nuclear icon" />
+                            <Text>Your wallet address is not whitelisted</Text>
+                          </WalletAddressError>
+                        )}
+                      </>
                     )}
-                  </>
-                }
 
-                {!failedSale ? (
-                  presaleStatus ? (
-                    <>
-                      <Text textAlign="left" fontSize="14px" fontWeight="500" color="white">
-                        This presale has ended. Go back to the dashboard to view others!
-                      </Text>
-                      {/* <Link external href="https://pancakeswap.finance/swap" style={{ width: '100%' }}>
+                    {!failedSale ? (
+                      presaleStatus ? (
+                        <>
+                          <Text textAlign="left" fontSize="14px" fontWeight="500" color="white">
+                            This presale has ended. Go back to the dashboard to view others!
+                          </Text>
+                          {/* <Link external href="https://pancakeswap.finance/swap" style={{ width: '100%' }}>
                       <DarkButton style={{ width: '100%', textDecoration: 'none' }} mt="16px">
                         Trade on PancakeSwap
                       </DarkButton>
                     </Link> */}
-                      <DarkButton onClick={toSphynxSwap} style={{ width: '100%' }} mt="16px">
-                        Trade on SphynxSwap
-                      </DarkButton>
-                      <Text textAlign="left" fontSize="14px" fontWeight="500" mt="16px" color="white">
-                        If you participated in the presale click the claim button below to claim your tokens!
-                      </Text>
-                      <ColorButton
-                        style={{ width: '100%' }}
-                        mt="16px"
-                        mb="16px"
-                        onClick={handleClaimToken}
-                        disabled={isClaimed || pendingClaim}
-                      >
-                        {pendingClaim && <AutoRenewIcon className="pendingTx" />}
-                        Claim Token
-                      </ColorButton>
-                    </>
-                  ) : (
-                    <>
-                      <WhitelistTitle>
-                        Raised: {raise}/{tokenData?.hard_cap}
-                      </WhitelistTitle>
-                      <ProgressBarWrapper>
-                        <ProgressBar>
-                          <Progress state={(raise / tokenData?.hard_cap) * 100} />
-                        </ProgressBar>
-                      </ProgressBarWrapper>
-                      <TokenRateView>
-                        <Text fontSize="14px" fontWeight="600" color="white" textAlign="left">
-                          1 {nativeCurrency} = {tokenData && tokenData.tier3} {tokenData && tokenData.token_symbol}{' '}
-                        </Text>
-                      </TokenRateView>
-                      <ContributeFlex>
-                        <InputWrapper>
-                          <input placeholder="" onChange={handlerChange} />
-                        </InputWrapper>
-                        <ColorButton onClick={handleContribute} disabled={pendingContribute}>
-                          Contribute
-                          {pendingContribute && <AutoRenewIcon className="pendingTx" />}
-                        </ColorButton>
-                      </ContributeFlex>
-                      <Flex alignItems="center" style={{ width: '100%' }}>
-                        <StopwatchIcon />
-                        <Text fontSize="13px" fontWeight="600" style={{ margin: '0 10px' }}>
-                          {privateSale1
-                            ? 'Tier 1 ends in'
-                            : privateSale2
-                              ? 'Tier 2 ends in'
-                              : pendingSale
-                                ? 'Sale starts in'
-                                : 'Public sale ends in'}{' '}
-                        </Text>
-                        <TimerComponent
-                          time={
-                            tokenData && privateSale1
-                              ? tokenData?.tier1_time
-                              : privateSale2
-                                ? tokenData?.tier2_time
+                          <DarkButton onClick={toSphynxSwap} style={{ width: '100%' }} mt="16px">
+                            Trade on SphynxSwap
+                          </DarkButton>
+                          <Text textAlign="left" fontSize="14px" fontWeight="500" mt="16px" color="white">
+                            If you participated in the presale click the claim button below to claim your tokens!
+                          </Text>
+                          <ColorButton
+                            style={{ width: '100%' }}
+                            mt="16px"
+                            mb="16px"
+                            onClick={handleClaimToken}
+                            disabled={isClaimed || pendingClaim}
+                          >
+                            {pendingClaim && <AutoRenewIcon className="pendingTx" />}
+                            Claim Token
+                          </ColorButton>
+                        </>
+                      ) : (
+                        <>
+                          <WhitelistTitle>
+                            Raised: {raise}/{tokenData?.hard_cap}
+                          </WhitelistTitle>
+                          <ProgressBarWrapper>
+                            <ProgressBar>
+                              <Progress state={(raise / tokenData?.hard_cap) * 100} />
+                            </ProgressBar>
+                          </ProgressBarWrapper>
+                          <TokenRateView>
+                            <Text fontSize="14px" fontWeight="600" color="white" textAlign="left">
+                              1 {nativeCurrency} = {tokenData && tokenData.tier3} {tokenData && tokenData.token_symbol}{' '}
+                            </Text>
+                          </TokenRateView>
+                          <ContributeFlex>
+                            <InputWrapper>
+                              <input placeholder="" onChange={handlerChange} />
+                            </InputWrapper>
+                            <ColorButton onClick={handleContribute} disabled={pendingContribute}>
+                              Contribute
+                              {pendingContribute && <AutoRenewIcon className="pendingTx" />}
+                            </ColorButton>
+                          </ContributeFlex>
+                          <Flex alignItems="center" style={{ width: '100%' }}>
+                            <StopwatchIcon />
+                            <Text fontSize="13px" fontWeight="600" style={{ margin: '0 10px' }}>
+                              {privateSale1
+                                ? 'Tier 1 sale ends in'
+                                : privateSale2
+                                ? 'Tier 2 sale ends in'
                                 : pendingSale
+                                ? 'Presale starts in'
+                                : 'Public sale ends in'}{' '}
+                            </Text>
+                            <TimerComponent
+                              time={
+                                tokenData && privateSale1
+                                  ? tokenData?.tier1_time
+                                  : privateSale2
+                                  ? tokenData?.tier2_time
+                                  : pendingSale
                                   ? tokenData?.start_time
                                   : tokenData?.end_time
-                          }
-                        />
-                      </Flex>
-                      <UnderLine />
-                    </>
-                  )
-                ) : (
-                  <>
-                    <Text textAlign="left" fontSize="12px" fontWeight="500" color="white">
-                      This presale has failed!
-                    </Text>
-                    <Text textAlign="left" fontSize="12px" fontWeight="500" mt="16px" color="white">
-                      If you participated in the presale click the claim button below to claim your {nativeCurrency}!
-                    </Text>
-                    <ColorButton
-                      style={{ width: '100%' }}
-                      mt="16px"
-                      mb="16px"
-                      onClick={handleClaimToken}
-                      disabled={isClaimed || pendingClaim}
-                    >
-                      Claim {nativeCurrency}
-                      {pendingClaim && <AutoRenewIcon className="pendingTx" />}
-                    </ColorButton>
+                              }
+                            />
+                          </Flex>
+                          <UnderLine />
+                        </>
+                      )
+                    ) : (
+                      <>
+                        <Text textAlign="left" fontSize="12px" fontWeight="500" color="white">
+                          This presale has failed!
+                        </Text>
+                        <Text textAlign="left" fontSize="12px" fontWeight="500" mt="16px" color="white">
+                          If you participated in the presale click the claim button below to claim your {nativeCurrency}
+                          !
+                        </Text>
+                        <ColorButton
+                          style={{ width: '100%' }}
+                          mt="16px"
+                          mb="16px"
+                          onClick={handleClaimToken}
+                          disabled={isClaimed || pendingClaim}
+                        >
+                          Claim {nativeCurrency}
+                          {pendingClaim && <AutoRenewIcon className="pendingTx" />}
+                        </ColorButton>
+                      </>
+                    )}
+                    <TokenAmountView>
+                      <Text fontSize="14px" fontWeight="600" color="white">
+                        Your Contributed Account:
+                      </Text>
+                      <Text fontSize="14px" fontWeight="600" textAlign="center" color="#F2C94C">
+                        {userContributeBNB}
+                        {nativeCurrency}
+                      </Text>
+                    </TokenAmountView>
+                    <UnderLine />
+                    <TokenAmountView>
+                      <Text fontSize="14px" fontWeight="600" color="white">
+                        Your Reserved Tokens:
+                      </Text>
+                      <Text fontSize="14px" fontWeight="600" textAlign="center" color="#F2C94C">
+                        {userContributeToken} {tokenData && tokenData.token_symbol}
+                      </Text>
+                    </TokenAmountView>
+                    {!presaleStatus && !failedSale ? (
+                      <>
+                        <Separate />
+                        <DarkButton onClick={handleEmergencyWithdraw} disabled={pendingWithdraw}>
+                          Emergency Withdraw
+                          {pendingWithdraw && <AutoRenewIcon className="pendingTx" />}
+                        </DarkButton>
+                      </>
+                    ) : (
+                      ''
+                    )}
                   </>
-                )}
-                <TokenAmountView>
-                  <Text fontSize="14px" fontWeight="600" color="white">
-                    Your Contributed Account:
-                  </Text>
-                  <Text fontSize="14px" fontWeight="600" textAlign="center" color="#F2C94C">
-                    {userContributeBNB}{nativeCurrency}
-                  </Text>
-                </TokenAmountView>
-                <UnderLine />
-                <TokenAmountView>
-                  <Text fontSize="14px" fontWeight="600" color="white">
-                    Your Reserved Tokens:
-                  </Text>
-                  <Text fontSize="14px" fontWeight="600" textAlign="center" color="#F2C94C">
-                    {userContributeToken} {tokenData && tokenData.token_symbol}
-                  </Text>
-                </TokenAmountView>
-                {!presaleStatus && !failedSale ? (
-                  <>
-                    <Separate />
-                    <DarkButton onClick={handleEmergencyWithdraw} disabled={pendingWithdraw}>
-                      Emergency Withdraw
-                      {pendingWithdraw && <AutoRenewIcon className="pendingTx" />}
-                    </DarkButton>
-                  </>
-                ) : (
-                  ''
                 )}
               </WhitelistCard>
             </FlexWrapper>

@@ -588,8 +588,8 @@ const PresaleManage: React.FC = () => {
             <br />
             - The finalize button will become available once you hit your hard cap or presale time ends.
             <br />
-            - Clicking the finalize button will list your token on PancakeSwap immediately. Listing will be done at the
-            set PancakeSwap rate with liquidity locked by DxLock.
+            - Clicking the finalize button will list your token on Swap immediately. Listing will be done at the
+            set Swap rate with liquidity locked by SphynxLock.
             <br />
             - Once finalized your {nativeCurrency} will be released to the creation wallet.
             <br />

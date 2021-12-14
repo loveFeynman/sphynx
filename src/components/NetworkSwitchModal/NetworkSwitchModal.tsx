@@ -95,7 +95,13 @@ const NETWORK_LIST = [
   {
     ChainID: 1,
     btIcon: "/images/net/ethereum.png",
-    networkName: "Ethereum (coming soon)",
+    networkName: "Ethereum",
+    selected: false,
+  },
+  {
+    ChainID: 56,
+    btIcon: "/images/net/bsc.png",
+    networkName: "BSC",
     selected: false,
   },
   {
@@ -126,12 +132,6 @@ const NETWORK_LIST = [
     ChainID: 4441,
     btIcon: "/images/net/heco.png",
     networkName: "HECO (coming soon)",
-    selected: false,
-  },
-  {
-    ChainID: 56,
-    btIcon: "/images/net/bsc.png",
-    networkName: "BSC",
     selected: false,
   },
   {

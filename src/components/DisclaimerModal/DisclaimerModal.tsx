@@ -28,6 +28,7 @@ const StyledModalBody = styled(ModalBody)`
   padding: 24px;
   display: flex;
   flex-direction: column;
+  position: relative;
   gap: 26px;
 `
 

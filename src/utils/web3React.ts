@@ -11,8 +11,7 @@ const rpcUrl = getNodeUrl()
 export const injected = new InjectedConnector({ supportedChainIds: [1, 3, 4, 5, 42, 56, 97] })
 
 export const walletconnect = new WalletConnectConnector({
-  rpc: { 56: rpcUrl },
-  bridge: 'https://pancakeswap.bridge.walletconnect.org/',
+  rpc: { 56: rpcUrl, 1: getNodeUrl(1) },
   qrcode: true,
   // pollingInterval: POLLING_INTERVAL,
 })
