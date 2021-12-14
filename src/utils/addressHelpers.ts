@@ -5,7 +5,7 @@ import { Address } from 'config/constants/types'
 
 export const getAddress = (address: Address, defaultChainId = 56): string => {
   if(defaultChainId === 56) {
-    let chainId = parseInt(window?.ethereum?.networkVersion || window?.web3?.networkVersion || window?.trustwallet?.Provider?.chainId)
+    let chainId = parseInt(window?.ethereum?.networkVersion || window?.trustwallet?.Provider?.chainId)
     if(chainId === undefined) {
       chainId = defaultChainId
     }

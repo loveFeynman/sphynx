@@ -16,7 +16,7 @@ interface TokenPairImageProps extends Omit<UIKitTokenPairImageProps, 'primarySrc
 
 const getImageUrlFromToken = (token: Token) => {
   const getAddress = (address) => {
-    const chainId = parseInt(window?.ethereum?.networkVersion || window?.web3?.networkVersion || window?.trustwallet?.Provider?.chainId)
+    const chainId = parseInt(window?.ethereum?.networkVersion || window?.trustwallet?.Provider?.chainId)
     return address[chainId] ? address[chainId] : address[ChainId.MAINNET]
   }
   const address = getAddress(token.symbol === 'BNB' ? tokens.wbnb.address : token.address)
