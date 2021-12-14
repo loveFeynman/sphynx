@@ -707,7 +707,7 @@ const PresaleLive: React.FC = () => {
           }
         })
     }
-  }, [param.saleId, param.chainId])
+  }, [param.saleId, chainId])
 
   useEffect(() => {
     const fetchData = async () => {
