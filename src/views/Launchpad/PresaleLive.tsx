@@ -762,12 +762,7 @@ const PresaleLive: React.FC = () => {
 
     if (tokenData) {
       fetchData()
-      if (parseInt(param.chainId) !== chainId) {
-        const network = parseInt(param.chainId) === ChainId.ETHEREUM ? 'ETHEREUM MAINNET' : 'Binance Smart Chain'
-        alert(`Please make sure you are on the ${network}!`)
-      }
     }
-  }, [presaleContract, tokenData, param.saleId, account, signer, endSale, chainId, param.chainId])
   }, [ tokenData, param.saleId, account, endSale, chainId])
 
   const handlerChange = (e: any) => {
@@ -989,7 +984,8 @@ const PresaleLive: React.FC = () => {
                         </WhitelistSubText>
                         {isWhiteList && whiteList1 && <Text mb="24px">Your wallet address is on the whitelist1!</Text>}
                         {isWhiteList && whiteList2 && <Text>Your wallet address is on the whitelist2!</Text>}
-                        {isWhiteList && !whiteList1 && !whiteList2 && (
+                    {isWhiteList && !whiteList1 && !whiteList2 && baseWhiteList && <Text>Your wallet address is on the base whitelist!</Text>}
+                    {isWhiteList && !whiteList1 && !whiteList2 && !baseWhiteList && (
                           <WalletAddressError>
                             <img src={WarningIcon} alt="nuclear icon" />
                             <Text>Your wallet address is not whitelisted</Text>
