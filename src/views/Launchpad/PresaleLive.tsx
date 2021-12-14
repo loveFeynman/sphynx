@@ -711,7 +711,6 @@ const PresaleLive: React.FC = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      setLoading(true)
       let temp: any
       let value: any
       /* from presale contract */
@@ -767,7 +766,7 @@ const PresaleLive: React.FC = () => {
         alert(`Please make sure you are on the ${network}!`)
       }
     }
-  }, [ tokenData, param.saleId, account, endSale, chainId])
+  }, [ presaleContract, tokenData, param.saleId, account, endSale, chainId])
 
   const handlerChange = (e: any) => {
     setContribute(e.target.value)
