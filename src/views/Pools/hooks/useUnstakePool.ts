@@ -1,5 +1,7 @@
 import { useCallback } from 'react'
-import { useWeb3React } from '@web3-react/core'
+import useActiveWeb3React from 'hooks/useActiveWeb3React'
+import { ChainId } from '@sphynxdex/sdk-multichain'
+import useToast from 'hooks/useToast'
 import BigNumber from 'bignumber.js'
 import { useAppDispatch } from 'state'
 import { updateUserStakedBalance, updateUserBalance, updateUserPendingReward } from 'state/actions'
@@ -21,9 +23,10 @@ const sousEmergencyUnstake = async (sousChefContract) => {
 
 const useUnstakePool = (sousId, enableEmergencyWithdraw = false) => {
   const dispatch = useAppDispatch()
-  const { account } = useWeb3React()
+  const { account, chainId } = useActiveWeb3React()
   const masterChefContract = useMasterchef()
   const sousChefContract = useSousChef(sousId)
+  const { toastError } = useToast()
 
   const handleUnstake = useCallback(
     async (amount: string, decimals: number) => {
@@ -40,6 +43,10 @@ const useUnstakePool = (sousId, enableEmergencyWithdraw = false) => {
     },
     [account, dispatch, enableEmergencyWithdraw, masterChefContract, sousChefContract, sousId],
   )
+
+  if(chainId !== ChainId.MAINNET) {
+    return {}
+  }
 
   return { onUnstake: handleUnstake }
 }
