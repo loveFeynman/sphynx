@@ -761,10 +761,6 @@ const PresaleLive: React.FC = () => {
 
     if (tokenData) {
       fetchData()
-      if (parseInt(param.chainId) !== chainId) {
-        const network = parseInt(param.chainId) === ChainId.ETHEREUM ? 'ETHEREUM MAINNET' : 'Binance Smart Chain'
-        alert(`Please make sure you are on the ${network}!`)
-      }
     }
   }, [ presaleContract, tokenData, param.saleId, account, endSale, chainId])
 
@@ -774,6 +770,11 @@ const PresaleLive: React.FC = () => {
 
   const handleContribute = async () => {
     try {
+      if (parseInt(param.chainId) !== chainId) {
+        const network = parseInt(param.chainId) === ChainId.ETHEREUM ? 'ETHEREUM MAINNET' : 'Binance Smart Chain'
+        alert(`Please make sure you are on the ${network}!`)
+        return
+      }
       const isValue = !Number.isNaN(parseInt(param.saleId))
       if (isValue && parseFloat(contribute) > 0 && tokenData) {
         const value = ethers.utils.parseEther(contribute)
@@ -802,6 +803,11 @@ const PresaleLive: React.FC = () => {
 
   const handleClaimToken = async () => {
     try {
+      if (parseInt(param.chainId) !== chainId) {
+        const network = parseInt(param.chainId) === ChainId.ETHEREUM ? 'ETHEREUM MAINNET' : 'Binance Smart Chain'
+        alert(`Please make sure you are on the ${network}!`)
+        return
+      }
       setPendingClaim(true)
       const tx = await presaleContract.claimToken(param.saleId)
       await tx.wait()
@@ -819,6 +825,11 @@ const PresaleLive: React.FC = () => {
 
   const handleEmergencyWithdraw = async () => {
     try {
+      if (parseInt(param.chainId) !== chainId) {
+        const network = parseInt(param.chainId) === ChainId.ETHEREUM ? 'ETHEREUM MAINNET' : 'Binance Smart Chain'
+        alert(`Please make sure you are on the ${network}!`)
+        return
+      }
       setPendingWithdraw(true)
       const tx = await presaleContract.emergencyWithdraw(param.saleId)
       await tx.wait()
