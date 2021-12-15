@@ -166,7 +166,7 @@ export default function TokenInfo(props) {
           </IconWrapper>
         </Flex>
         <Flex style={{ width: 40 }}>
-          <Link href={getBscScanLink(result === false ? '' : result, 'token')} aria-label="bscscan" external>
+          <Link href={`${tokenLink}/${input}`} aria-label="scan" external>
             <BscscanIcon /> 
           </Link>
         </Flex>
