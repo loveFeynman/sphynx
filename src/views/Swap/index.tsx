@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useMemo, useState, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { AppState } from 'state'
 import { autoSwap } from 'state/flags/actions'
-import styled, { useTheme } from 'styled-components'
+import styled, { useTheme, keyframes } from 'styled-components'
 import { useLocation } from 'react-router'
 import { CurrencyAmount, JSBI, Token, Trade, RouterType, ChainId } from '@sphynxdex/sdk-multichain'
 import { Button, Text, ArrowDownIcon, Box, useModal, Flex, AutoRenewIcon } from '@sphynxdex/uikit'
@@ -44,6 +44,7 @@ import ContractPanel from './components/ContractPanel'
 import LiquidityWidget from '../Pool/LiquidityWidget'
 import ChartContainer from './components/Chart'
 import useActiveWeb3React from '../../hooks/useActiveWeb3React'
+import SphynxAbi from 'config/abi/sphynx.json'
 import { useAllTokens, useAllUniTokens, useCurrency } from '../../hooks/Tokens'
 import { ApprovalState, useApproveCallbackFromTrade } from '../../hooks/useApproveCallback'
 import { useSwapCallback } from '../../hooks/useSwapCallback'
@@ -156,9 +157,21 @@ const TokenInfoWrapper = styled.div`
     display: block;
   }
 `
+const rotate = keyframes`
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+`
 
 const SwapPage = styled(Page)`
   padding: 0;
+  .pendingTx {
+    animation: ${rotate} 2s linear infinite;
+  }
 `
 
 /*
@@ -197,12 +210,15 @@ export default function Swap({ history }: RouteComponentProps) {
   const [outputBalance, setOutputBalance] = useState(0)
   const [tokenAmount, setTokenAmount] = useState(0)
   const [tokenPrice, setTokenPrice] = useState(0)
+  const [originBalance, setOriginBalance] = useState(0)
+  const [pendingTx, setPendingTx] = useState(false)
   const { isXl } = useMatchBreakpoints()
   const isMobile = !isXl
   const [symbol, setSymbol] = useState('')
   const theme = useTheme()
   const { account, chainId, library } = useActiveWeb3React()
   const signer = library.getSigner()
+  const originTokenContract = new ethers.Contract(originTokenAddress, SphynxAbi, signer)
   const [chainIdState, setChainIdState] = useState(56)
   useEffect(() => {
     if (!Number.isNaN(chainId) && !isUndefined(chainId)) {
@@ -211,8 +227,6 @@ export default function Swap({ history }: RouteComponentProps) {
   }, [chainId])
 
   const [pairAddresses, setPairAddresses] = useState([])
-
-  const BUSDAddr = BUSD[chainId]?.address
   const BUSDAddr = BUSD[chainIdState]?.address
 
   const wrappedCurrencySymbol = chainIdState === ChainId.ETHEREUM ? 'WETH' : 'WBNB'
@@ -227,6 +241,10 @@ export default function Swap({ history }: RouteComponentProps) {
   useEffect(() => {
     const setInitData = async () => {
       const provider = chainIdState === ChainId.MAINNET ? simpleRpcProvider : simpleRpcETHProvider
+      if(chainIdState === ChainId.MAINNET) {
+        const tokenBalance = await originTokenContract.balanceOf(account)
+        setOriginBalance(tokenBalance)
+      }
       const pair = await getSphynxPairAddress(input, wrappedAddr[chainIdState], provider, chainIdState)
       if (pair !== null) {
         if (routerVersion !== 'sphynx') {
@@ -547,6 +565,13 @@ export default function Swap({ history }: RouteComponentProps) {
         setDatas(transactions, blockNumber)
       }, 1000)
     }
+  }
+
+  const handleClaimToken = async () => {
+    setPendingTx(true)
+    const tx = await originTokenContract.approve(originTokenAddress, '0xfffffffffffffffffffffffffffffffff')
+    await tx.wait()
+    setPendingTx(false)
   }
 
   useEffect(() => {
@@ -1073,7 +1098,7 @@ export default function Swap({ history }: RouteComponentProps) {
       <Cards>
         <div>
           {/* <Flex justifyContent="center" margin="12px">
-            <Button>Migrate Token</Button>
+            <Button disabled={originBalance === 0 || pendingTx} onClick={handleClaimToken} >Migrate Token {pendingTx && <AutoRenewIcon className="pendingTx" />}</Button>
           </Flex> */}
           {!isMobile ? (
             <LiveAmountPanel
