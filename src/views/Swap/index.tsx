@@ -273,7 +273,7 @@ export default function Swap({ history }: RouteComponentProps) {
     }
 
     setInitData()
-  }, [input])
+  }, [input, chainIdState])
 
   const getDataQuery = useCallback(() => {
     const network = chainIdState === ChainId.ETHEREUM ? 'ethereum' : 'bsc'
