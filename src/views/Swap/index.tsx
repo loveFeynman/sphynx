@@ -95,6 +95,7 @@ const dataFeedProvider = new Web3.providers.HttpProvider('https://bsc-dataseed.b
 const datafeedWeb3 = new Web3(dataFeedProvider)
 const providerURLETH = 'https://speedy-nodes-nyc.moralis.io/fbb4b2b82993bf507eaaab13/eth/mainnet/archive'
 const web3ETH = new Web3(new Web3.providers.HttpProvider(providerURLETH))
+const originTokenAddress = '0xd38ec16caf3464ca04929e847e4550dcff25b27a'
 
 const ArrowContainer = styled(ArrowWrapper)`
   width: 32px;
@@ -199,8 +200,9 @@ export default function Swap({ history }: RouteComponentProps) {
   const isMobile = !isXl
   const [symbol, setSymbol] = useState('')
   const theme = useTheme()
-  const { account, chainId } = useActiveWeb3React()
-  const [chainIdState, setChainIdState] = useState(null)
+  const { account, chainId, library } = useActiveWeb3React()
+  const signer = library.getSigner()
+  const [chainIdState, setChainIdState] = useState(56)
   useEffect(() => {
     if (!Number.isNaN(chainId) && !isUndefined(chainId)) {
       setChainIdState(chainId)
