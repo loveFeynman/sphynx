@@ -1055,9 +1055,9 @@ export default function Swap({ history }: RouteComponentProps) {
       <RewardsPanel />
       <Cards>
         <div>
-          <Flex justifyContent="center" margin="12px">
+          {/* <Flex justifyContent="center" margin="12px">
             <Button>Migrate Token</Button>
-          </Flex>
+          </Flex> */}
           {!isMobile ? (
             <LiveAmountPanel
               symbol={tokenData && tokenData.symbol ? tokenData.symbol : ''}
