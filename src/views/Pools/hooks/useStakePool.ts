@@ -1,5 +1,7 @@
 import { useCallback } from 'react'
-import { useWeb3React } from '@web3-react/core'
+import useActiveWeb3React from 'hooks/useActiveWeb3React'
+import { ChainId } from '@sphynxdex/sdk-multichain'
+import useToast from 'hooks/useToast'
 import { useAppDispatch } from 'state'
 import { updateUserStakedBalance, updateUserBalance } from 'state/actions'
 import { stakeFarm } from 'utils/calls'
@@ -26,7 +28,7 @@ const sousStakeBnb = async (sousChefContract, amount) => {
 
 const useStakePool = (sousId: number, isUsingBnb = false) => {
   const dispatch = useAppDispatch()
-  const { account } = useWeb3React()
+  const { account, chainId } = useActiveWeb3React()
   const masterChefContract = useMasterchef()
   const sousChefContract = useSousChef(sousId)
 
@@ -44,6 +46,10 @@ const useStakePool = (sousId: number, isUsingBnb = false) => {
     },
     [account, dispatch, isUsingBnb, masterChefContract, sousChefContract, sousId],
   )
+
+  if(chainId !== ChainId.MAINNET) {
+    return {}
+  }
 
   return { onStake: handleStake }
 }

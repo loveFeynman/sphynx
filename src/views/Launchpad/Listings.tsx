@@ -32,7 +32,7 @@ const LoadingWrapper = styled.div`
 
 const Presale: React.FC = () => {
   const { chainId, library } = useActiveWeb3React()
-  const presaleContract = useMemo(() => getPresaleContract(library), [library])
+  const presaleContract = useMemo(() => getPresaleContract(library, chainId), [library])
   const { t } = useTranslation()
   const { menuToggled } = useMenuToggle()
   const [tokenList, setTokenList] = useState(null)
@@ -54,6 +54,7 @@ const Presale: React.FC = () => {
 
       setIsLoading(true)
       setTokenList([])
+      console.log("data", data)
       axios.post(`${process.env.REACT_APP_BACKEND_API_URL2}/getAllPresaleInfo`, { data }).then(async (response) => {
         if (response.data) {
           let pages = 1

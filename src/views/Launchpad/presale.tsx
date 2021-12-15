@@ -393,7 +393,7 @@ const Presale: React.FC = () => {
   const [step, setStep] = useState(1)
   const [disclaimerModalShow, setDisclaimerModalShow] = useState(true)
   const { toastSuccess, toastError } = useToast()
-  const presaleContract = getPresaleContract(signer)
+  const presaleContract = getPresaleContract(signer, chainId)
   const history = useHistory()
 
   const nativeCurrency = chainId === ChainId.ETHEREUM ? 'ETH' : 'BNB'
@@ -540,7 +540,7 @@ const Presale: React.FC = () => {
 
     setPendingTx(true)
     const presaleId = (await presaleContract.currentPresaleId()).toString()
-    const routerAddress = getRouterAddress()
+    const routerAddress = getRouterAddress(chainId)
     const startTime = Math.floor(new Date(presaleStart).getTime() / 1000)
     const tierOneTime = Math.floor(new Date(tier1Time).getTime() / 1000)
     const tierTwoTime = Math.floor(new Date(tier2Time).getTime() / 1000)

@@ -75,7 +75,7 @@ const AppMenuItemComponent: React.FC<AppMenuItemComponentProps> = props => {
         className={className}
         component={forwardRef((props: NavLinkProps, ref: any) => <NavLink exact {...props} innerRef={ref} />)}
         to={link}
-        onClick={handleClickMobileMenu}
+        onClick={handleClickMobileMenu !== false ? handleClickMobileMenu : undefined}
       >
         {children}
       </ListItem>

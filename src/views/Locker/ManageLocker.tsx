@@ -185,7 +185,7 @@ const ManageLocker: React.FC = () => {
   const [totalSupply, setTotalSupply] = useState(0)
   const [userBalance, setUserBalance] = useState(0)
   const [tokenDecimals, setDecimals] = useState(18)
-  const lockContract = getLockerContract(signer)
+  const lockContract = getLockerContract(signer, chainId)
   const [isLPToken, setIsLPToken] = useState(false)
   const [unLock, setUnLock] = useState(new Date())
   const [logoLink, setLogoLink] = useState('')
@@ -262,7 +262,7 @@ const ManageLocker: React.FC = () => {
       try {
         const abi: any = ERC20_ABI
         const tokenContract = new ethers.Contract(tokenAddress, abi, library)
-        const allowance = await tokenContract.allowance(account, getLockerAddress())
+        const allowance = await tokenContract.allowance(account, getLockerAddress(chainId))
         const value = parseFloat(ethers.utils.formatUnits(allowance, tokenDecimals))
 
         if (value > (totalSupply * percent / 100)) {
@@ -399,7 +399,7 @@ const ManageLocker: React.FC = () => {
       setPendingApprove(true)
       const abi: any = ERC20_ABI
       const tokenContract = new ethers.Contract(tokenAddress, abi, signer)
-      tokenContract.approve(getLockerAddress(), MaxUint256)
+      tokenContract.approve(getLockerAddress(chainId), MaxUint256)
         .then((res) => {
           setIsApprove(false)
           setIsSubmit(true)

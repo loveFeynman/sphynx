@@ -334,8 +334,7 @@ const StepWrapper = ({ number, stepName, children, step, onClick }) => {
 
 const Presale: React.FC = () => {
   const { t } = useTranslation()
-  const { account, chainId } = useWeb3React()
-  const { library } = useActiveWeb3React()
+  const { library, account, chainId } = useActiveWeb3React()
   const signer = library.getSigner()
   const [tokenAddress, setTokenAddress] = useState('')
   const [tokenName, setName] = useState('')
@@ -360,7 +359,7 @@ const Presale: React.FC = () => {
   const [disclaimerModalShow, setDisclaimerModalShow] = useState(true)
   const { toastSuccess, toastError } = useToast()
   const [pendingTx, setPendingTx] = useState(false)
-  const fairLaunchContract = getFairLaunchContract(signer)
+  const fairLaunchContract = getFairLaunchContract(signer, chainId)
   const history = useHistory()
 
   const nativeCurrency = chainId === ChainId.ETHEREUM ? 'ETH' : 'BNB'
@@ -411,8 +410,6 @@ const Presale: React.FC = () => {
 
     setPendingTx(true)
 
-    const launchId = (await fairLaunchContract.currentLaunchId()).toString()
-
     const now = Math.floor(new Date().getTime() / 1000)
     const launchTimeStamp = Math.floor(new Date(launchTime).getTime() / 1000)
     const lockTimeStamp = Math.floor(new Date(unlockTime).getTime() / 1000)
@@ -429,12 +426,13 @@ const Presale: React.FC = () => {
     }
     const router = liquidityType === 'sphynxswap' ? SPHYNX_ROUTER[chainId] : V2_ROUTER[chainId]
     try {
+      const launchId = (await fairLaunchContract.currentLaunchId()).toString()
       const fee = ethers.utils.parseEther('0.1')
       const abi: any = ERC20_ABI
       const tokenContract = new ethers.Contract(tokenAddress, abi, signer)
       const allowance = await tokenContract.allowance(account, getFairLaunchAddress())
       if (allowance < tokenAmount) {
-        const tx = await tokenContract.approve(getFairLaunchAddress(), '0xfffffffffffffffffffffffffffffffff')
+        const tx = await tokenContract.approve(getFairLaunchAddress(chainId), '0xfffffffffffffffffffffffffffffffff')
         await tx.wait()
       }
 
@@ -586,7 +584,7 @@ const Presale: React.FC = () => {
                       value: 'sphynxswap',
                     },
                     {
-                      label: t('Pancakeswap'),
+                      label: chainId === ChainId.ETHEREUM ? t('UniSwap') : t('Pancakeswap'),
                       value: 'pancakeswap',
                     },
                   ]}

@@ -12,7 +12,7 @@ interface MulticallOptions {
   requireSuccess?: boolean
 }
 
-const multicall = async <T = any>(abi: any[], calls: Call[]): Promise<T> => {
+const multicall = async (abi: any[], calls: Call[]) => {
   try {
     const multi = getMulticallContract()
     const itf = new ethers.utils.Interface(abi)

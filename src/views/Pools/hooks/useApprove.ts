@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
-import { useWeb3React } from '@web3-react/core'
+import useActiveWeb3React from 'hooks/useActiveWeb3React'
+import { ChainId } from '@sphynxdex/sdk-multichain'
 import { ethers, Contract } from 'ethers'
 import BigNumber from 'bignumber.js'
 import { useAppDispatch } from 'state'
@@ -14,7 +15,7 @@ export const useApprovePool = (lpContract: Contract, sousId, earningTokenSymbol)
   const { toastSuccess, toastError } = useToast()
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
-  const { account } = useWeb3React()
+  const { account, chainId } = useActiveWeb3React()
   const sousChefContract = useSousChef(sousId)
 
   const handleApprove = useCallback(async () => {
@@ -41,6 +42,10 @@ export const useApprovePool = (lpContract: Contract, sousId, earningTokenSymbol)
     }
   }, [account, dispatch, lpContract, sousChefContract, sousId, earningTokenSymbol, t, toastError, toastSuccess])
 
+  if(chainId !== ChainId.MAINNET) {
+    return {}
+  }
+
   return { handleApprove, requestedApproval }
 }
 
@@ -51,6 +56,11 @@ export const useVaultApprove = (setLastUpdated: () => void) => {
   const { toastSuccess, toastError } = useToast()
   const cakeVaultContract = useCakeVaultContract()
   const cakeContract = useCake()
+  const { chainId } = useActiveWeb3React()
+
+  if(chainId !== ChainId.MAINNET) {
+    return {}
+  }
 
   const handleApprove = async () => {
     const tx = await cakeContract.approve(cakeVaultContract.address, ethers.constants.MaxUint256)
@@ -71,10 +81,11 @@ export const useVaultApprove = (setLastUpdated: () => void) => {
 
 export const useCheckVaultApprovalStatus = () => {
   const [isVaultApproved, setIsVaultApproved] = useState(false)
-  const { account } = useWeb3React()
+  const { account, chainId } = useActiveWeb3React()
   const cakeContract = useCake()
   const cakeVaultContract = useCakeVaultContract()
   const { lastUpdated, setLastUpdated } = useLastUpdated()
+
   useEffect(() => {
     const checkApprovalStatus = async () => {
       try {

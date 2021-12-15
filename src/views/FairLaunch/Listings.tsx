@@ -39,7 +39,7 @@ const FairLaunchListing: React.FC = () => {
   const [searchKey, setSearchKey] = useState('')
   const [pageIndex, setPageIndex] = useState(0)
   const [pageCount, setPageCount] = useState(1)
-  const fairLaunchContract = useMemo(() => getFairLaunchContract(library), [library])
+  const fairLaunchContract = useMemo(() => getFairLaunchContract(library, chainId), [library])
 
   useEffect(() => {
     const fetchData = async () => {

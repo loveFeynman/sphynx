@@ -4,13 +4,12 @@ import { Text, Flex, Box } from '@sphynxdex/uikit'
 import LotteryLatestMark from 'assets/svg/icon/LotteryLatestMark.svg'
 
 const Container = styled.div`
-  width: 300px;
+  width: 100%;
   background: ${({ theme }) => (theme.isDark ? '#1A1A3A' : '#20234E')};
   border-radius: 10px;
   min-height: 400px;
   position: relative;
   ${({ theme }) => theme.mediaQueries.md} {
-    min-width: 332px;
     min-height: 500px;
   }
 `
@@ -64,7 +63,7 @@ export default function LatestWinningCard({
         <Box pt="42px">
           <img src={LotteryLatestMark} alt="Logo" />
         </Box>
-        <Text fontSize="20px" fontWeight="600" mt="1rem">Latest Winning Numbers</Text>
+        <Text fontSize="20px" fontWeight="600" mt="1rem" textAlign="center">Latest Winning Numbers</Text>
         <WinningNumberContainer>
           <Grid>
           {winningCards.map((item) => (

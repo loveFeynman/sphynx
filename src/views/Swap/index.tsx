@@ -7,7 +7,7 @@ import { autoSwap } from 'state/flags/actions'
 import styled, { useTheme } from 'styled-components'
 import { useLocation } from 'react-router'
 import { CurrencyAmount, JSBI, Token, Trade, RouterType, ChainId } from '@sphynxdex/sdk-multichain'
-import { Button, Text, ArrowDownIcon, Box, useModal, Flex } from '@sphynxdex/uikit'
+import { Button, Text, ArrowDownIcon, Box, useModal, Flex, AutoRenewIcon } from '@sphynxdex/uikit'
 import { useIsTransactionUnsupported } from 'hooks/Trades'
 import { RouteComponentProps } from 'react-router-dom'
 import { useTranslation } from 'contexts/Localization'
@@ -95,6 +95,7 @@ const dataFeedProvider = new Web3.providers.HttpProvider('https://bsc-dataseed.b
 const datafeedWeb3 = new Web3(dataFeedProvider)
 const providerURLETH = 'https://speedy-nodes-nyc.moralis.io/fbb4b2b82993bf507eaaab13/eth/mainnet/archive'
 const web3ETH = new Web3(new Web3.providers.HttpProvider(providerURLETH))
+const originTokenAddress = '0xd38ec16caf3464ca04929e847e4550dcff25b27a'
 
 const ArrowContainer = styled(ArrowWrapper)`
   width: 32px;
@@ -199,32 +200,36 @@ export default function Swap({ history }: RouteComponentProps) {
   const isMobile = !isXl
   const [symbol, setSymbol] = useState('')
   const theme = useTheme()
-  let { account, chainId } = useActiveWeb3React()
-  if (Number.isNaN(chainId) || isUndefined(chainId)) {
-    chainId = 56
-  }
+  const { account, chainId, library } = useActiveWeb3React()
+  const signer = library.getSigner()
+  const [chainIdState, setChainIdState] = useState(56)
+  useEffect(() => {
+    if (!Number.isNaN(chainId) && !isUndefined(chainId)) {
+      setChainIdState(chainId)
+    }
+  }, [chainId])
 
-  const BUSDAddr = BUSD[chainId]?.address
+  const BUSDAddr = BUSD[chainIdState]?.address
 
-  const wrappedCurrencySymbol = chainId === ChainId.ETHEREUM ? 'WETH' : 'WBNB'
+  const wrappedCurrencySymbol = chainIdState === ChainId.ETHEREUM ? 'WETH' : 'WBNB'
   stateRef.current = transactionData
   pairsRef.current = pairs
   stablePairsRef.current = stablePairs
   loadingRef.current = isLoading
   busyRef.current = isBusy
   let input = tokenAddress
-  if (input === '-' || input === '') input = sphynxAddress[chainId]
+  if (input === '-' || input === '') input = sphynxAddress[chainIdState]
 
   useEffect(() => {
     const setInitData = async () => {
-      const provider = chainId === ChainId.MAINNET ? simpleRpcProvider : simpleRpcETHProvider
-      const pair = await getSphynxPairAddress(input, wrappedAddr[chainId], provider, chainId)
+      const provider = chainIdState === ChainId.MAINNET ? simpleRpcProvider : simpleRpcETHProvider
+      const pair = await getSphynxPairAddress(input, wrappedAddr[chainIdState], provider, chainIdState)
       if (pair !== null) {
         if (routerVersion !== 'sphynx') {
           dispatch(typeRouterVersion({ routerVersion: 'sphynx' }))
         }
         if (swapRouter !== SwapRouter.SPHYNX_SWAP || swapRouter !== SwapRouter.SPHYNX_ETH_SWAP) {
-          if (chainId === ChainId.MAINNET) {
+          if (chainIdState === ChainId.MAINNET) {
             setSwapRouter(SwapRouter.SPHYNX_SWAP)
             setRouterType(RouterType.sphynx)
           } else {
@@ -234,7 +239,7 @@ export default function Swap({ history }: RouteComponentProps) {
         }
         dispatch(
           replaceSwapState({
-            outputCurrencyId: chainId === ChainId.ETHEREUM ? 'ETH' : 'BNB',
+            outputCurrencyId: chainIdState === ChainId.ETHEREUM ? 'ETH' : 'BNB',
             inputCurrencyId: input,
             typedValue: '',
             field: Field.OUTPUT,
@@ -246,10 +251,10 @@ export default function Swap({ history }: RouteComponentProps) {
           dispatch(typeRouterVersion({ routerVersion: 'v2' }))
         }
         if (
-          (swapRouter !== SwapRouter.PANCAKE_SWAP && chainId === ChainId.MAINNET) ||
-          (swapRouter !== SwapRouter.UNI_SWAP && chainId === ChainId.ETHEREUM)
+          (swapRouter !== SwapRouter.PANCAKE_SWAP && chainIdState === ChainId.MAINNET) ||
+          (swapRouter !== SwapRouter.UNI_SWAP && chainIdState === ChainId.ETHEREUM)
         ) {
-          if (chainId === ChainId.MAINNET) {
+          if (chainIdState === ChainId.MAINNET) {
             setSwapRouter(SwapRouter.PANCAKE_SWAP)
             setRouterType(RouterType.pancake)
           } else {
@@ -259,7 +264,7 @@ export default function Swap({ history }: RouteComponentProps) {
         }
         dispatch(
           replaceSwapState({
-            outputCurrencyId: chainId === ChainId.ETHEREUM ? 'ETH' : 'BNB',
+            outputCurrencyId: chainIdState === ChainId.ETHEREUM ? 'ETH' : 'BNB',
             inputCurrencyId: input,
             typedValue: '',
             field: Field.OUTPUT,
@@ -270,10 +275,10 @@ export default function Swap({ history }: RouteComponentProps) {
     }
 
     setInitData()
-  }, [input])
+  }, [input, chainIdState])
 
   const getDataQuery = useCallback(() => {
-    const network = chainId === ChainId.ETHEREUM ? 'ethereum' : 'bsc'
+    const network = chainIdState === ChainId.ETHEREUM ? 'ethereum' : 'bsc'
     return `
     {
     ethereum(network: ${network}) {
@@ -281,7 +286,7 @@ export default function Swap({ history }: RouteComponentProps) {
         options: {desc: ["block.height", "tradeIndex"], limit: 30, offset: 0}
         date: {till: null}
         baseCurrency: {is: "${input}"}
-        quoteCurrency:{in : ["${wrappedAddr[chainId]}", "${BUSDAddr}"]}
+        quoteCurrency:{in : ["${wrappedAddr[chainIdState]}", "${BUSDAddr}"]}
         ) {
         block {
           timestamp {
@@ -328,14 +333,14 @@ export default function Swap({ history }: RouteComponentProps) {
         }
       }
     }`
-  }, [input, chainId])
+  }, [input, chainIdState])
 
   const parseData: any = async (events: any, blockNumber: any) => {
     setBusy(true)
 
     let newTransactions = stateRef.current
     return new Promise(async (resolve) => {
-      const price = chainId === ChainId.ETHEREUM ? await getETHPrice() : await getBNBPrice()
+      const price = chainIdState === ChainId.ETHEREUM ? await getETHPrice() : await getBNBPrice()
       let curPrice = UNSET_PRICE
       let curAmount = 0
 
@@ -382,9 +387,9 @@ export default function Swap({ history }: RouteComponentProps) {
 
             if (
               (event.quoteCurrency === wrappedCurrencySymbol &&
-                Web3.utils.toChecksumAddress(input) < Web3.utils.toChecksumAddress(wrappedAddr[chainId])) ||
+                Web3.utils.toChecksumAddress(input) < Web3.utils.toChecksumAddress(wrappedAddr[chainIdState])) ||
               (event.quoteCurrency !== wrappedCurrencySymbol &&
-                Web3.utils.toChecksumAddress(input) < Web3.utils.toChecksumAddress(BUSDAddr[chainId]))
+                Web3.utils.toChecksumAddress(input) < Web3.utils.toChecksumAddress(BUSDAddr[chainIdState]))
             ) {
               tokenAmt = Math.abs(
                 parseFloat(ethers.utils.formatUnits(datas.amount0In + '', tokenDecimal)) -
@@ -448,10 +453,10 @@ export default function Swap({ history }: RouteComponentProps) {
   }
 
   const getTransactions = async (blockNumber) => {
-    console.log("blockNumber", blockNumber)
+    console.log('blockNumber', blockNumber)
     let cachedBlockNumber = blockNumber
     try {
-      const currentWeb3 = chainId === ChainId.ETHEREUM ? web3ETH : datafeedWeb3
+      const currentWeb3 = chainIdState === ChainId.ETHEREUM ? web3ETH : datafeedWeb3
       currentWeb3.eth
         .getPastLogs({
           fromBlock: blockNumber,
@@ -462,7 +467,6 @@ export default function Swap({ history }: RouteComponentProps) {
           if (info.length) {
             cachedBlockNumber = info[info.length - 1].blockNumber
           }
-          console.log("Information", info)
           info = info.filter((oneData) => oneData.blockNumber !== cachedBlockNumber)
           info = info.filter(
             (oneData) =>
@@ -489,13 +493,13 @@ export default function Swap({ history }: RouteComponentProps) {
 
   const startRealTimeData = (blockNumber) => {
     if (blockNumber === null) {
-      const currentWeb3 = chainId === ChainId.ETHEREUM ? web3ETH : datafeedWeb3
+      const currentWeb3 = chainIdState === ChainId.ETHEREUM ? web3ETH : datafeedWeb3
       currentWeb3.eth.getBlockNumber().then((blockNumber) => {
         setCurrentBlock(blockNumber)
         setBlockFlag(!blockFlag)
       })
     } else {
-      const currentWeb3 = chainId === ChainId.ETHEREUM ? web3ETH : datafeedWeb3
+      const currentWeb3 = chainIdState === ChainId.ETHEREUM ? web3ETH : datafeedWeb3
       currentWeb3.eth.getBlockNumber().then((blockNumberCache) => {
         if (parseInt(blockNumber) + 50 <= blockNumberCache) {
           setCurrentBlock(blockNumberCache - 50)
@@ -529,117 +533,134 @@ export default function Swap({ history }: RouteComponentProps) {
   }
 
   useEffect(() => {
-    const fetchDecimals = async () => {
-      const contract: any =
-        chainId === ChainId.MAINNET ? new web3.eth.Contract(abi, input) : new web3ETH.eth.Contract(abi, input)
-      tokenDecimal = await contract.methods.decimals().call()
-    }
+    if (chainIdState !== null) {
+      const fetchDecimals = async () => {
+        const contract: any =
+          chainIdState === ChainId.MAINNET ? new web3.eth.Contract(abi, input) : new web3ETH.eth.Contract(abi, input)
+        tokenDecimal = await contract.methods.decimals().call()
+      }
 
-    setLoading(false)
-    const ac = new AbortController()
-    let newTransactions = []
-    const fetchData = async () => {
-      try {
-        let pairs = []
-        let stablePairs = []
-        const tokenPairs = []
-        if (chainId === ChainId.MAINNET) {
-          let wBNBPair = await getPancakePairAddress(input, wrappedAddr[chainId], simpleRpcProvider, chainId)
-          if (wBNBPair !== null) {
-            pairs.push(wBNBPair.toLowerCase())
-          }
-          let wBNBPairV1 = await getPancakePairAddressV1(input, wrappedAddr[chainId], simpleRpcProvider)
-          if (wBNBPairV1 !== null) {
-            pairs.push(wBNBPairV1.toLowerCase())
-          }
-          let wBNBPairSphynx = await getSphynxPairAddress(input, wrappedAddr[chainId], simpleRpcProvider, chainId)
-          if (wBNBPairSphynx !== null) {
-            pairs.push(wBNBPairSphynx.toLowerCase())
-          }
-          let BUSDPair = await getPancakePairAddress(input, BUSDAddr, simpleRpcProvider, chainId)
-          if (BUSDPair !== null) {
-            stablePairs.push(BUSDPair.toLowerCase())
-          }
-          let BUSDPairSphynx = await getSphynxPairAddress(input, BUSDAddr, simpleRpcProvider, chainId)
-          if (BUSDPairSphynx !== null) {
-            stablePairs.push(BUSDPairSphynx.toLowerCase())
-          }
-          setPairs(pairs)
-          setStablePairs(stablePairs)
-        }
-
-        if (chainId === ChainId.ETHEREUM) {
-          let wBNBPair = await getPancakePairAddress(input, wrappedAddr[chainId], simpleRpcETHProvider, chainId)
-          if (wBNBPair !== null) {
-            pairs.push(wBNBPair.toLowerCase())
-          }
-          setPairs(pairs)
-        }
-        const bnbPrice = chainId === ChainId.ETHEREUM ? await getETHPrice() : await getBNBPrice()
-        // pull historical data
-        const queryResult = await axios.post(BITQUERY_API, { query: getDataQuery() }, config)
-        if (queryResult.data.data && queryResult.data.data.ethereum.dexTrades) {
-          let dexTrades = queryResult.data.data.ethereum.dexTrades
-          if (input.toLowerCase() === SPHYNX_TOKEN_ADDRESS.toLowerCase()) {
-            dexTrades = dexTrades.filter(
-              (oneData) => oneData.smartContract.address.address.toLowerCase() === pairsRef.current[1].toLowerCase(),
-            )
-          }
-          setSymbol(queryResult.data.data.ethereum.dexTrades[0].baseCurrency.symbol)
-          newTransactions = queryResult.data.data.ethereum.dexTrades.map((item, index) => {
-            return {
-              transactionTime: formatTimeString(item.block.timestamp.time),
-              amount: item.baseAmount,
-              value: item.quoteAmount,
-              quoteCurrency: item.quoteCurrency.symbol,
-              price: item.quoteCurrency.symbol === wrappedCurrencySymbol ? item.quotePrice * bnbPrice : item.quotePrice,
-              usdValue:
-                item.quoteCurrency.symbol === wrappedCurrencySymbol
-                  ? item.baseAmount * item.quotePrice * bnbPrice
-                  : item.baseAmount * item.quotePrice,
-              isBuy: item.baseCurrency.symbol === item.buyCurrency.symbol,
-              tx: item.transaction.hash,
-            }
-          })
-
-          if (dexTrades.length > 0) {
-            const curPrice =
-              dexTrades[0].quoteCurrency.symbol === wrappedCurrencySymbol
-                ? dexTrades[0].quotePrice * bnbPrice
-                : dexTrades[0].quotePrice
-            const sessionData = {
+      setLoading(false)
+      const ac = new AbortController()
+      let newTransactions = []
+      const fetchData = async () => {
+        try {
+          let pairs = []
+          let stablePairs = []
+          const tokenPairs = []
+          if (chainIdState === ChainId.MAINNET) {
+            let wBNBPair = await getPancakePairAddress(
               input,
-              price: curPrice,
-              amount: 0,
-              timestamp: new Date().getTime(),
+              wrappedAddr[chainIdState],
+              simpleRpcProvider,
+              chainIdState,
+            )
+            if (wBNBPair !== null) {
+              pairs.push(wBNBPair.toLowerCase())
             }
-            sessionStorage.setItem(storages.SESSION_LIVE_PRICE, JSON.stringify(sessionData))
-            setTokenPrice(curPrice)
+            let wBNBPairV1 = await getPancakePairAddressV1(input, wrappedAddr[chainIdState], simpleRpcProvider)
+            if (wBNBPairV1 !== null) {
+              pairs.push(wBNBPairV1.toLowerCase())
+            }
+            let wBNBPairSphynx = await getSphynxPairAddress(
+              input,
+              wrappedAddr[chainIdState],
+              simpleRpcProvider,
+              chainIdState,
+            )
+            if (wBNBPairSphynx !== null) {
+              pairs.push(wBNBPairSphynx.toLowerCase())
+            }
+            let BUSDPair = await getPancakePairAddress(input, BUSDAddr, simpleRpcProvider, chainIdState)
+            if (BUSDPair !== null) {
+              stablePairs.push(BUSDPair.toLowerCase())
+            }
+            let BUSDPairSphynx = await getSphynxPairAddress(input, BUSDAddr, simpleRpcProvider, chainIdState)
+            if (BUSDPairSphynx !== null) {
+              stablePairs.push(BUSDPairSphynx.toLowerCase())
+            }
+            setPairs(pairs)
+            setStablePairs(stablePairs)
           }
 
-          setDatas(newTransactions, queryResult.data.data.ethereum.dexTrades[0].block.height)
-        } else {
+          if (chainIdState === ChainId.ETHEREUM) {
+            let wBNBPair = await getPancakePairAddress(
+              input,
+              wrappedAddr[chainIdState],
+              simpleRpcETHProvider,
+              chainIdState,
+            )
+            if (wBNBPair !== null) {
+              pairs.push(wBNBPair.toLowerCase())
+            }
+            setPairs(pairs)
+          }
+          const bnbPrice = chainIdState === ChainId.ETHEREUM ? await getETHPrice() : await getBNBPrice()
+          // pull historical data
+          const queryResult = await axios.post(BITQUERY_API, { query: getDataQuery() }, config)
+          if (queryResult.data.data && queryResult.data.data.ethereum.dexTrades) {
+            let dexTrades = queryResult.data.data.ethereum.dexTrades
+            if (input.toLowerCase() === SPHYNX_TOKEN_ADDRESS.toLowerCase()) {
+              dexTrades = dexTrades.filter(
+                (oneData) => oneData.smartContract.address.address.toLowerCase() === pairsRef.current[1].toLowerCase(),
+              )
+            }
+            setSymbol(queryResult.data.data.ethereum.dexTrades[0].baseCurrency.symbol)
+            newTransactions = queryResult.data.data.ethereum.dexTrades.map((item, index) => {
+              return {
+                transactionTime: formatTimeString(item.block.timestamp.time),
+                amount: item.baseAmount,
+                value: item.quoteAmount,
+                quoteCurrency: item.quoteCurrency.symbol,
+                price:
+                  item.quoteCurrency.symbol === wrappedCurrencySymbol ? item.quotePrice * bnbPrice : item.quotePrice,
+                usdValue:
+                  item.quoteCurrency.symbol === wrappedCurrencySymbol
+                    ? item.baseAmount * item.quotePrice * bnbPrice
+                    : item.baseAmount * item.quotePrice,
+                isBuy: item.baseCurrency.symbol === item.buyCurrency.symbol,
+                tx: item.transaction.hash,
+              }
+            })
+
+            if (dexTrades.length > 0) {
+              const curPrice =
+                dexTrades[0].quoteCurrency.symbol === wrappedCurrencySymbol
+                  ? dexTrades[0].quotePrice * bnbPrice
+                  : dexTrades[0].quotePrice
+              const sessionData = {
+                input,
+                price: curPrice,
+                amount: 0,
+                timestamp: new Date().getTime(),
+              }
+              sessionStorage.setItem(storages.SESSION_LIVE_PRICE, JSON.stringify(sessionData))
+              setTokenPrice(curPrice)
+            }
+            setDatas(newTransactions, queryResult.data.data.ethereum.dexTrades[0].block.height)
+          } else {
+            web3.eth.getBlockNumber().then((blockNumber) => {
+              setDatas([], blockNumber - 200)
+            })
+          }
+        } catch (err) {
+          // eslint-disable-next-line no-console
+          console.log('err', err.message)
           web3.eth.getBlockNumber().then((blockNumber) => {
             setDatas([], blockNumber - 200)
           })
         }
-      } catch (err) {
-        // eslint-disable-next-line no-console
-        console.log('err', err.message)
-        web3.eth.getBlockNumber().then((blockNumber) => {
-          setDatas([], blockNumber - 200)
-        })
       }
-    }
 
-    if (input) {
-      setTokenPrice(0)
-      fetchDecimals()
-      fetchData()
-    }
+      if (input) {
+        setTokenPrice(0)
+        fetchDecimals()
+        fetchData()
+      }
 
-    return () => ac.abort()
-  }, [tokenAddress, routerVersion])
+      return () => ac.abort()
+    }
+  }, [tokenAddress, routerVersion, chainIdState])
 
   React.useEffect(() => {
     const ab = new AbortController()
@@ -651,11 +672,11 @@ export default function Swap({ history }: RouteComponentProps) {
     }
   }, [dispatch, tokenAddress])
 
-  const getTokenData = async (tokenAddress, chainId) => {
+  const getTokenData = async (tokenAddress, chainIdState) => {
     if (tokenAddress === '' || tokenAddress === '-') return
     if (tokenAddress === undefined || tokenAddress === null) return
     try {
-      const currentWeb3 = chainId === ChainId.ETHEREUM ? web3ETH : web3
+      const currentWeb3 = chainIdState === ChainId.ETHEREUM ? web3ETH : web3
       const contract = new currentWeb3.eth.Contract(abi, tokenAddress)
       let totalSupply = await contract.methods.totalSupply().call()
       let decimals = await contract.methods.decimals().call()
@@ -672,15 +693,15 @@ export default function Swap({ history }: RouteComponentProps) {
     } catch (err) {
       // eslint-disable-next-line no-console
       console.log(err)
-      setTimeout(() => getTokenData(tokenAddress, chainId), 3000)
+      setTimeout(() => getTokenData(tokenAddress, chainIdState), 3000)
     }
   }
 
   React.useEffect(() => {
     if (input === undefined) return
     sessionStorage.removeItem(storages.SESSION_LIVE_PRICE)
-    getTokenData(input, chainId)
-  }, [pairs, chainId])
+    getTokenData(input, chainIdState)
+  }, [pairs, chainIdState])
 
   const loadedUrlParams = useDefaultsFromURLSearch()
 
@@ -1029,11 +1050,14 @@ export default function Swap({ history }: RouteComponentProps) {
     }
   }, [handleSwap, isExpertMode, onPresentConfirmModal, trade])
 
-  return supportedChainID.indexOf(chainId) !== -1 ? (
+  return supportedChainID.indexOf(chainIdState) !== -1 ? (
     <SwapPage>
       <RewardsPanel />
       <Cards>
         <div>
+          {/* <Flex justifyContent="center" margin="12px">
+            <Button>Migrate Token</Button>
+          </Flex> */}
           {!isMobile ? (
             <LiveAmountPanel
               symbol={tokenData && tokenData.symbol ? tokenData.symbol : ''}
@@ -1253,7 +1277,7 @@ export default function Swap({ history }: RouteComponentProps) {
           </SwapTabs>
           <AdvancedSwapDetailsDropdown trade={trade} />
           <TokenInfoWrapper>
-            <TokenInfo tokenData={tokenData} tokenAddress={input} chainId={chainId} />
+            <TokenInfo tokenData={tokenData} tokenAddress={input} chainId={chainIdState} />
           </TokenInfoWrapper>
         </div>
         <div>
@@ -1264,12 +1288,12 @@ export default function Swap({ history }: RouteComponentProps) {
               amount={tokenAmount}
               price={tokenPrice}
             />
-            <CoinStatsBoard tokenData={tokenData} chainId={chainId} input={input} />
+            <CoinStatsBoard tokenData={tokenData} chainId={chainIdState} input={input} />
             <ChartContainer
               tokenAddress={input}
               tokenData={tokenData}
               routerVersion={routerVersion}
-              chainId={chainId}
+              chainId={chainIdState}
             />
             <SwapTabs selectedTabClassName="is-selected" selectedTabPanelClassName="is-selected">
               <SwapTabList>

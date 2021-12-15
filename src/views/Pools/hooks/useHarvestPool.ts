@@ -1,5 +1,7 @@
 import { useCallback } from 'react'
-import { useWeb3React } from '@web3-react/core'
+import useActiveWeb3React from 'hooks/useActiveWeb3React'
+import { ChainId } from '@sphynxdex/sdk-multichain'
+import useToast from 'hooks/useToast'
 import { useAppDispatch } from 'state'
 import { updateUserBalance, updateUserPendingReward } from 'state/actions'
 import { harvestFarm } from 'utils/calls'
@@ -25,9 +27,10 @@ const harvestPoolBnb = async (sousChefContract) => {
 
 const useHarvestPool = (sousId, isUsingBnb = false) => {
   const dispatch = useAppDispatch()
-  const { account } = useWeb3React()
+  const { account, chainId } = useActiveWeb3React()
   const sousChefContract = useSousChef(sousId)
   const masterChefContract = useMasterchef()
+  const { toastError } = useToast()
 
   const handleHarvest = useCallback(async () => {
     if (sousId === 0) {
@@ -40,6 +43,10 @@ const useHarvestPool = (sousId, isUsingBnb = false) => {
     dispatch(updateUserPendingReward(sousId, account))
     dispatch(updateUserBalance(sousId, account))
   }, [account, dispatch, isUsingBnb, masterChefContract, sousChefContract, sousId])
+
+  if(chainId !== ChainId.MAINNET) {
+    return {}
+  }
 
   return { onReward: handleHarvest }
 }

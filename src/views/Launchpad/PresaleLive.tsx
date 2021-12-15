@@ -559,7 +559,7 @@ const PresaleLive: React.FC = () => {
   const [presaleStatus, setPresaleStatus] = useState(false)
   const { library, account, chainId } = useActiveWeb3React()
   const signer = library.getSigner()
-  const presaleContract = useMemo(() => getPresaleContract(signer), [signer])
+  const presaleContract = useMemo(() => getPresaleContract(signer, chainId), [signer])
   const [contribute, setContribute] = useState('')
   const [tokenData, setTokenData] = useState(null)
   const [raise, setRaise] = useState(0)
@@ -581,7 +581,7 @@ const PresaleLive: React.FC = () => {
   const [pendingContribute, setPendingContribute] = useState(false)
   const [pendingClaim, setPendingClaim] = useState(false)
   const [pendingWithdraw, setPendingWithdraw] = useState(false)
-  const presaleAddress = getPresaleAddress()
+  const presaleAddress = getPresaleAddress(chainId)
   const timerRef = useRef<NodeJS.Timeout>()
   const [loading, setLoading] = useState(true)
 
@@ -711,7 +711,6 @@ const PresaleLive: React.FC = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      setLoading(true)
       let temp: any
       let value: any
       /* from presale contract */
@@ -763,7 +762,7 @@ const PresaleLive: React.FC = () => {
     if (tokenData) {
       fetchData()
     }
-  }, [ tokenData, param.saleId, account, endSale, chainId])
+  }, [ presaleContract, tokenData, param.saleId, account, endSale, chainId])
 
   const handlerChange = (e: any) => {
     setContribute(e.target.value)
@@ -771,6 +770,11 @@ const PresaleLive: React.FC = () => {
 
   const handleContribute = async () => {
     try {
+      if (parseInt(param.chainId) !== chainId) {
+        const network = parseInt(param.chainId) === ChainId.ETHEREUM ? 'ETHEREUM MAINNET' : 'Binance Smart Chain'
+        alert(`Please make sure you are on the ${network}!`)
+        return
+      }
       const isValue = !Number.isNaN(parseInt(param.saleId))
       if (isValue && parseFloat(contribute) > 0 && tokenData) {
         const value = ethers.utils.parseEther(contribute)
@@ -799,6 +803,11 @@ const PresaleLive: React.FC = () => {
 
   const handleClaimToken = async () => {
     try {
+      if (parseInt(param.chainId) !== chainId) {
+        const network = parseInt(param.chainId) === ChainId.ETHEREUM ? 'ETHEREUM MAINNET' : 'Binance Smart Chain'
+        alert(`Please make sure you are on the ${network}!`)
+        return
+      }
       setPendingClaim(true)
       const tx = await presaleContract.claimToken(param.saleId)
       await tx.wait()
@@ -816,6 +825,11 @@ const PresaleLive: React.FC = () => {
 
   const handleEmergencyWithdraw = async () => {
     try {
+      if (parseInt(param.chainId) !== chainId) {
+        const network = parseInt(param.chainId) === ChainId.ETHEREUM ? 'ETHEREUM MAINNET' : 'Binance Smart Chain'
+        alert(`Please make sure you are on the ${network}!`)
+        return
+      }
       setPendingWithdraw(true)
       const tx = await presaleContract.emergencyWithdraw(param.saleId)
       await tx.wait()

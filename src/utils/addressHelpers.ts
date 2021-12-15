@@ -1,10 +1,14 @@
+import { ChainId } from '@sphynxdex/sdk-multichain'
 import addresses from 'config/constants/contracts'
 import tokens from 'config/constants/tokens'
 import { Address } from 'config/constants/types'
 
-export const getAddress = (address: Address): string => {
-  const chainId = parseInt(window?.ethereum?.networkVersion)
-  return address[chainId] ? address[chainId] : undefined
+export const getAddress = (address: Address, defaultChainId = null): string => {
+  if(defaultChainId === null) {
+    const chainId = parseInt(window?.ethereum?.networkVersion || window?.trustwallet?.Provider?.chainId)
+    return address[chainId] ? address[chainId] : address[ChainId.MAINNET]
+  } 
+  return address[defaultChainId] ? address[defaultChainId] : undefined
 }
 
 export const getCakeAddress = () => {
@@ -67,18 +71,18 @@ export const getBunnySpecialPredictionAddress = () => {
 export const getFarmAuctionAddress = () => {
   return getAddress(addresses.farmAuction)
 }
-export const getPresaleAddress = () => {
-  return getAddress(addresses.presale)
+export const getPresaleAddress = (chainId = 56) => {
+  return getAddress(addresses.presale, chainId)
 }
-export const getSphynxRouterAddress = () => {
-  return getAddress(addresses.sphynxRouter)
+export const getSphynxRouterAddress = (chainId = 56) => {
+  return getAddress(addresses.sphynxRouter, chainId)
 }
-export const getRouterAddress = () => {
-  return getAddress(addresses.pancakeRouter)
+export const getRouterAddress = (chainId = 56) => {
+  return getAddress(addresses.pancakeRouter, chainId)
 }
-export const getLockerAddress = () => {
-  return getAddress(addresses.locker)
+export const getLockerAddress = (chainId = 56) => {
+  return getAddress(addresses.locker, chainId)
 }
-export const getFairLaunchAddress = () => {
-  return getAddress(addresses.fairLaunch)
+export const getFairLaunchAddress = (chainId = 56) => {
+  return getAddress(addresses.fairLaunch, chainId)
 }
