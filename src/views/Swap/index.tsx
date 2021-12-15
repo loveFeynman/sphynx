@@ -7,7 +7,7 @@ import { autoSwap } from 'state/flags/actions'
 import styled, { useTheme } from 'styled-components'
 import { useLocation } from 'react-router'
 import { CurrencyAmount, JSBI, Token, Trade, RouterType, ChainId } from '@sphynxdex/sdk-multichain'
-import { Button, Text, ArrowDownIcon, Box, useModal, Flex } from '@sphynxdex/uikit'
+import { Button, Text, ArrowDownIcon, Box, useModal, Flex, AutoRenewIcon } from '@sphynxdex/uikit'
 import { useIsTransactionUnsupported } from 'hooks/Trades'
 import { RouteComponentProps } from 'react-router-dom'
 import { useTranslation } from 'contexts/Localization'
@@ -200,13 +200,13 @@ export default function Swap({ history }: RouteComponentProps) {
   const [symbol, setSymbol] = useState('')
   const theme = useTheme()
   const { account, chainId } = useActiveWeb3React()
-  const [chainIdState, setChainIdState] = useState(null);
+  const [chainIdState, setChainIdState] = useState(null)
   useEffect(() => {
     if (!Number.isNaN(chainId) && !isUndefined(chainId)) {
       setChainIdState(chainId)
-    } 
+    }
   }, [chainId])
-  
+
   const BUSDAddr = BUSD[chainIdState]?.address
 
   const wrappedCurrencySymbol = chainIdState === ChainId.ETHEREUM ? 'WETH' : 'WBNB'
@@ -451,7 +451,7 @@ export default function Swap({ history }: RouteComponentProps) {
   }
 
   const getTransactions = async (blockNumber) => {
-    console.log("blockNumber", blockNumber)
+    console.log('blockNumber', blockNumber)
     let cachedBlockNumber = blockNumber
     try {
       const currentWeb3 = chainIdState === ChainId.ETHEREUM ? web3ETH : datafeedWeb3
@@ -531,13 +531,13 @@ export default function Swap({ history }: RouteComponentProps) {
   }
 
   useEffect(() => {
-    if(chainIdState !== null) {
+    if (chainIdState !== null) {
       const fetchDecimals = async () => {
         const contract: any =
-        chainIdState === ChainId.MAINNET ? new web3.eth.Contract(abi, input) : new web3ETH.eth.Contract(abi, input)
+          chainIdState === ChainId.MAINNET ? new web3.eth.Contract(abi, input) : new web3ETH.eth.Contract(abi, input)
         tokenDecimal = await contract.methods.decimals().call()
       }
-  
+
       setLoading(false)
       const ac = new AbortController()
       let newTransactions = []
@@ -547,7 +547,12 @@ export default function Swap({ history }: RouteComponentProps) {
           let stablePairs = []
           const tokenPairs = []
           if (chainIdState === ChainId.MAINNET) {
-            let wBNBPair = await getPancakePairAddress(input, wrappedAddr[chainIdState], simpleRpcProvider, chainIdState)
+            let wBNBPair = await getPancakePairAddress(
+              input,
+              wrappedAddr[chainIdState],
+              simpleRpcProvider,
+              chainIdState,
+            )
             if (wBNBPair !== null) {
               pairs.push(wBNBPair.toLowerCase())
             }
@@ -555,7 +560,12 @@ export default function Swap({ history }: RouteComponentProps) {
             if (wBNBPairV1 !== null) {
               pairs.push(wBNBPairV1.toLowerCase())
             }
-            let wBNBPairSphynx = await getSphynxPairAddress(input, wrappedAddr[chainIdState], simpleRpcProvider, chainIdState)
+            let wBNBPairSphynx = await getSphynxPairAddress(
+              input,
+              wrappedAddr[chainIdState],
+              simpleRpcProvider,
+              chainIdState,
+            )
             if (wBNBPairSphynx !== null) {
               pairs.push(wBNBPairSphynx.toLowerCase())
             }
@@ -570,9 +580,14 @@ export default function Swap({ history }: RouteComponentProps) {
             setPairs(pairs)
             setStablePairs(stablePairs)
           }
-  
+
           if (chainIdState === ChainId.ETHEREUM) {
-            let wBNBPair = await getPancakePairAddress(input, wrappedAddr[chainIdState], simpleRpcETHProvider, chainIdState)
+            let wBNBPair = await getPancakePairAddress(
+              input,
+              wrappedAddr[chainIdState],
+              simpleRpcETHProvider,
+              chainIdState,
+            )
             if (wBNBPair !== null) {
               pairs.push(wBNBPair.toLowerCase())
             }
@@ -595,7 +610,8 @@ export default function Swap({ history }: RouteComponentProps) {
                 amount: item.baseAmount,
                 value: item.quoteAmount,
                 quoteCurrency: item.quoteCurrency.symbol,
-                price: item.quoteCurrency.symbol === wrappedCurrencySymbol ? item.quotePrice * bnbPrice : item.quotePrice,
+                price:
+                  item.quoteCurrency.symbol === wrappedCurrencySymbol ? item.quotePrice * bnbPrice : item.quotePrice,
                 usdValue:
                   item.quoteCurrency.symbol === wrappedCurrencySymbol
                     ? item.baseAmount * item.quotePrice * bnbPrice
@@ -604,7 +620,7 @@ export default function Swap({ history }: RouteComponentProps) {
                 tx: item.transaction.hash,
               }
             })
-  
+
             if (dexTrades.length > 0) {
               const curPrice =
                 dexTrades[0].quoteCurrency.symbol === wrappedCurrencySymbol
@@ -633,13 +649,13 @@ export default function Swap({ history }: RouteComponentProps) {
           })
         }
       }
-  
+
       if (input) {
         setTokenPrice(0)
         fetchDecimals()
         fetchData()
       }
-  
+
       return () => ac.abort()
     }
   }, [tokenAddress, routerVersion, chainIdState])
@@ -1037,6 +1053,9 @@ export default function Swap({ history }: RouteComponentProps) {
       <RewardsPanel />
       <Cards>
         <div>
+          <Flex justifyContent="center" margin="12px">
+            <Button>Migrate Token</Button>
+          </Flex>
           {!isMobile ? (
             <LiveAmountPanel
               symbol={tokenData && tokenData.symbol ? tokenData.symbol : ''}
