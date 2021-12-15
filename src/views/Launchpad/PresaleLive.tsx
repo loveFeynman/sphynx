@@ -707,7 +707,7 @@ const PresaleLive: React.FC = () => {
           }
         })
     }
-  }, [param.saleId, param.chainId])
+  }, [param.saleId, chainId])
 
   useEffect(() => {
     const fetchData = async () => {
@@ -998,7 +998,8 @@ const PresaleLive: React.FC = () => {
                         </WhitelistSubText>
                         {isWhiteList && whiteList1 && <Text mb="24px">Your wallet address is on the whitelist1!</Text>}
                         {isWhiteList && whiteList2 && <Text>Your wallet address is on the whitelist2!</Text>}
-                        {isWhiteList && !whiteList1 && !whiteList2 && (
+                    {isWhiteList && !whiteList1 && !whiteList2 && baseWhiteList && <Text>Your wallet address is on the base whitelist!</Text>}
+                    {isWhiteList && !whiteList1 && !whiteList2 && !baseWhiteList && (
                           <WalletAddressError>
                             <img src={WarningIcon} alt="nuclear icon" />
                             <Text>Your wallet address is not whitelisted</Text>
