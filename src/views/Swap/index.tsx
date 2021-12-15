@@ -241,12 +241,9 @@ export default function Swap({ history }: RouteComponentProps) {
   useEffect(() => {
     const setInitData = async () => {
       const provider = chainIdState === ChainId.MAINNET ? simpleRpcProvider : simpleRpcETHProvider
-      if(chainIdState === ChainId.MAINNET) {
-        const tokenBalance = await originTokenContract.balanceOf(account)
-        setOriginBalance(tokenBalance)
-      }
       const pair = await getSphynxPairAddress(input, wrappedAddr[chainIdState], provider, chainIdState)
-      if (pair !== null) {
+      console.log("PAIR", pair)
+      if (pair !== null && pair !== undefined) {
         if (routerVersion !== 'sphynx') {
           dispatch(typeRouterVersion({ routerVersion: 'sphynx' }))
         }
@@ -293,6 +290,11 @@ export default function Swap({ history }: RouteComponentProps) {
             recipient: null,
           }),
         )
+      }
+
+      if(chainIdState === ChainId.MAINNET) {
+        const tokenBalance = await originTokenContract.balanceOf(account)
+        setOriginBalance(tokenBalance)
       }
     }
 
