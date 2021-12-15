@@ -12,7 +12,7 @@ import { topTrades } from '../../../utils/apiServices'
 const fontSize = document.body.clientWidth > 768 ? "14px" : "12px"
 
 const TableWrapper = styled.div`
-  background: ${({ theme }) => theme.isDark ? "#0E0E26": "#2A2E60"};
+  background: ${({ theme }) => theme.isDark ? "#0E0E26" : "#2A2E60"};
   border-radius: 8px;
   height: 100%;
   max-height: 500px;
@@ -51,10 +51,10 @@ const TableWrapper = styled.div`
           word-break: break-word;
           font-weight: 600;
           &.success {
-            color: ${({ theme }) => theme.isDark ? "#219653": "#77BF3E"};
+            color: ${({ theme }) => theme.isDark ? "#219653" : "#77BF3E"};
           }
           &.error {
-            color: ${({ theme }) => theme.isDark ? "#EB5757": "#F84364"};
+            color: ${({ theme }) => theme.isDark ? "#EB5757" : "#F84364"};
           }
         }
       }
@@ -128,7 +128,9 @@ const BuyersCard = (props) => {
           </table>
         </TableWrapper>
       ) : (
-        <Spinner />
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <Spinner />
+        </div>
       )}
     </>
   )

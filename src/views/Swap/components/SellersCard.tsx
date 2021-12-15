@@ -139,7 +139,9 @@ const SellersCard = (props) => {
           </table>
         </TableWrapper>
       ) : (
-        <Spinner />
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <Spinner />
+        </div>
       )}
     </>
   )

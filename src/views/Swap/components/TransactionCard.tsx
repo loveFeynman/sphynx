@@ -135,7 +135,9 @@ const TransactionCard: React.FC<TransactionProps> = (props) => {
           </table>
         </TableWrapper>
       ) : (
-        <Spinner />
+        <div style={{display: 'flex', justifyContent: 'center'}}>
+          <Spinner />
+        </div>
       )}
     </>
   )
