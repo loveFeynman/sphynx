@@ -109,7 +109,6 @@ const Presale: React.FC = () => {
             setTokenList(list)
             setIsLoading(false)
           } catch (error) {
-            alert(`error: ${error.message}`)
             console.log('error', error)
             setIsLoading(false)
           }
