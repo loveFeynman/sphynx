@@ -26,6 +26,7 @@ import SwapIcon from 'components/Icon/SwapIcon'
 import { typeInput, marketCap, typeRouterVersion } from 'state/input/actions'
 import { BITQUERY_API, BITQUERY_API_KEY } from 'config/constants/endpoints'
 import SwapRouter, { messages } from 'config/constants/swaps'
+import LPToken_ABI from 'config/abi/lpToken.json'
 import AddressInputPanel from './components/AddressInputPanel'
 import Card, { GreyCard } from '../../components/Card'
 import ConfirmSwapModal from './components/ConfirmSwapModal'
@@ -204,6 +205,8 @@ export default function Swap({ history }: RouteComponentProps) {
     chainId = 56
   }
 
+  const [pairAddresses, setPairAddresses] = useState([])
+
   const BUSDAddr = BUSD[chainId]?.address
 
   const wrappedCurrencySymbol = chainId === ChainId.ETHEREUM ? 'WETH' : 'WBNB'
@@ -330,6 +333,25 @@ export default function Swap({ history }: RouteComponentProps) {
     }`
   }, [input, chainId])
 
+  const isToken0EqualInput = async (address) => {
+    if (pairAddresses[address] === undefined) {
+      try {
+        const lpAbi: any = LPToken_ABI
+        const lpContract = new ethers.Contract(address, lpAbi, simpleRpcProvider)
+        const token0 = await lpContract.token0()
+        const flag = Web3.utils.toChecksumAddress(token0) === Web3.utils.toChecksumAddress(input) ? true : false
+        pairAddresses[address] = flag
+        return flag
+      }
+      catch (err) {
+        return false
+      }
+    }
+    else {
+      return pairAddresses[address]
+    }
+  }
+
   const parseData: any = async (events: any, blockNumber: any) => {
     setBusy(true)
 
@@ -377,33 +399,27 @@ export default function Swap({ history }: RouteComponentProps) {
               ],
               event.data,
             )
-
             let tokenAmt, BNBAmt, isBuy
 
-            if (
-              (event.quoteCurrency === wrappedCurrencySymbol &&
-                Web3.utils.toChecksumAddress(input) < Web3.utils.toChecksumAddress(wrappedAddr[chainId])) ||
-              (event.quoteCurrency !== wrappedCurrencySymbol &&
-                Web3.utils.toChecksumAddress(input) < Web3.utils.toChecksumAddress(BUSDAddr[chainId]))
-            ) {
+            if (await isToken0EqualInput(event.address)) {
               tokenAmt = Math.abs(
                 parseFloat(ethers.utils.formatUnits(datas.amount0In + '', tokenDecimal)) -
-                  parseFloat(ethers.utils.formatUnits(datas.amount0Out + '', tokenDecimal)),
+                parseFloat(ethers.utils.formatUnits(datas.amount0Out + '', tokenDecimal)),
               )
 
               isBuy = datas.amount1In === '0'
               BNBAmt = Math.abs(
                 parseFloat(ethers.utils.formatUnits(datas.amount1In + '', 18)) -
-                  parseFloat(ethers.utils.formatUnits(datas.amount1Out + '', 18)),
+                parseFloat(ethers.utils.formatUnits(datas.amount1Out + '', 18)),
               )
             } else {
               BNBAmt = Math.abs(
                 parseFloat(ethers.utils.formatUnits(datas.amount0In + '', 18)) -
-                  parseFloat(ethers.utils.formatUnits(datas.amount0Out + '', 18)),
+                parseFloat(ethers.utils.formatUnits(datas.amount0Out + '', 18)),
               )
               tokenAmt = Math.abs(
                 parseFloat(ethers.utils.formatUnits(datas.amount1In + '', tokenDecimal)) -
-                  parseFloat(ethers.utils.formatUnits(datas.amount1Out + '', tokenDecimal)),
+                parseFloat(ethers.utils.formatUnits(datas.amount1Out + '', tokenDecimal)),
               )
               isBuy = datas.amount0In === '0'
             }
