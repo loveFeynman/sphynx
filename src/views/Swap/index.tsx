@@ -98,7 +98,7 @@ const datafeedWeb3 = new Web3(dataFeedProvider)
 const providerURLETH = 'https://speedy-nodes-nyc.moralis.io/fbb4b2b82993bf507eaaab13/eth/mainnet/archive'
 const web3ETH = new Web3(new Web3.providers.HttpProvider(providerURLETH))
 const originTokenAddress = '0xd38ec16caf3464ca04929e847e4550dcff25b27a'
-const newTokenAddress = '0x5030636eC915d31945E7B5fF124fE4697395BDE5'
+const newTokenAddress = '0xe64972C311840cFaf2267DCfD365571F9D9544d9'
 
 const ArrowContainer = styled(ArrowWrapper)`
   width: 32px;

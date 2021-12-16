@@ -4,7 +4,7 @@ export const wrappedAddr = {
 }
 
 export const sphynxAddress = {
-  56: '0x5030636eC915d31945E7B5fF124fE4697395BDE5',
+  56: '0xe64972C311840cFaf2267DCfD365571F9D9544d9',
   1: '0x1f9840a85d5af5bf1d1762f925bdaddc4201f984',
 }
 

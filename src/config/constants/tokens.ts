@@ -3,7 +3,7 @@ import { ChainId, Token } from '@sphynxdex/sdk-multichain'
 export const SPHYNX: { [chainId: number]: Token } = {
   [ChainId.MAINNET]: new Token(
     ChainId.MAINNET,
-    '0x5030636eC915d31945E7B5fF124fE4697395BDE5',
+    '0xe64972C311840cFaf2267DCfD365571F9D9544d9',
     18,
     'SPHYNX',
     'Sphynx BSC',
@@ -90,7 +90,7 @@ const tokens = {
   sphynx: {
     symbol: 'SPHYNX',
     address: {
-      56: '0x5030636eC915d31945E7B5fF124fE4697395BDE5',
+      56: '0xe64972C311840cFaf2267DCfD365571F9D9544d9',
       97: '0xEE0C0E647d6E78d74C42E3747e0c38Cef41d6C88',
     },
     decimals: 18,
