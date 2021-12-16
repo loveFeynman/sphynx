@@ -315,7 +315,7 @@ const ManageLocker: React.FC = () => {
           const lpContract = new ethers.Contract(value, lpAbi, signer)
           const decimals = await lpContract.decimals()
           const bgSupply = await lpContract.totalSupply()
-          const uBalance = await lpContract.getBalanceOf(account)
+          const uBalance = await lpContract.balanceOf(account)
           const supply = parseFloat(ethers.utils.formatUnits(bgSupply, decimals))
           const balance = parseFloat(ethers.utils.formatUnits(uBalance, decimals))
           setTotalSupply(supply)
