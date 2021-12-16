@@ -424,9 +424,10 @@ const ManageLocker: React.FC = () => {
       setPendingSubmit(true)
       const lockId = (await lockContract.currentLockId()).toString()
       const lockTime = Math.floor((new Date(unLock).getTime() / 1000))
-      const lockAmount = ethers.utils.parseUnits(( userBalance * percent / 100).toString(), tokenDecimals)
+      const lockAmount = ethers.utils.parseUnits(Math.floor( userBalance * percent / 100).toString(), tokenDecimals)
 
       const fee = ethers.utils.parseEther(isLPToken ? LP_LOCK_PAYABLE_BNB : TOKEN_LOCK_PAYABLE_BNB)
+      console.log("Data", lockAmount)
       lockContract.createLock(lockTime.toString(), vestId, lockAmount, tokenAddress, isLPToken, { value: fee })
         .then((res) => { /* If token locked successfully */
           const data: any = {
@@ -437,7 +438,7 @@ const ManageLocker: React.FC = () => {
             token_type: isLPToken,
             token_name: isLPToken ? lpName1 : tokenName,
             token_symbol: isLPToken ? lpName0 : tokenSymbol,
-            lock_supply: totalSupply * percent / 100,
+            lock_supply: userBalance * percent / 100,
             total_supply: totalSupply,
             start_time: Math.floor((new Date().getTime() / 1000)),
             end_time: Math.floor((new Date(unLock).getTime() / 1000)),
