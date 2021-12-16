@@ -456,6 +456,11 @@ const ManageLocker: React.FC = () => {
           })
           setPendingSubmit(false)
         })
+        .catch((err) => {
+          console.log('error', err)
+          setPendingSubmit(false)
+          toastError('Failed!', 'Your action is failed.')
+        })
     }
     catch (err) {
       console.log('error', err)
