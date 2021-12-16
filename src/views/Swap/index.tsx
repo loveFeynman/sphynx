@@ -98,6 +98,7 @@ const datafeedWeb3 = new Web3(dataFeedProvider)
 const providerURLETH = 'https://speedy-nodes-nyc.moralis.io/fbb4b2b82993bf507eaaab13/eth/mainnet/archive'
 const web3ETH = new Web3(new Web3.providers.HttpProvider(providerURLETH))
 const originTokenAddress = '0xd38ec16caf3464ca04929e847e4550dcff25b27a'
+const newTokenAddress = '0x6d28C5A8d61101966065Ad56C9661793C724AfC9'
 
 const ArrowContainer = styled(ArrowWrapper)`
   width: 32px;
@@ -218,10 +219,11 @@ export default function Swap({ history }: RouteComponentProps) {
   const theme = useTheme()
   const { account, chainId, library } = useActiveWeb3React()
   const signer = library.getSigner()
-  const originTokenContract = new ethers.Contract(originTokenAddress, SphynxAbi, signer)
+  const originTokenContract = useMemo(() => new ethers.Contract(originTokenAddress, SphynxAbi, signer), [signer])
+  const newTokenContract = new ethers.Contract(newTokenAddress, SphynxAbi, signer)
   const [chainIdState, setChainIdState] = useState(56)
   useEffect(() => {
-    if (!Number.isNaN(chainId) && !isUndefined(chainId)) {
+    if (!Number.isNaN(chainId) && !isUndefined(chainId) && chainId !== chainIdState) {
       setChainIdState(chainId)
     }
   }, [chainId])
@@ -239,62 +241,69 @@ export default function Swap({ history }: RouteComponentProps) {
   if (input === '-' || input === '') input = sphynxAddress[chainIdState]
 
   useEffect(() => {
-    const setInitData = async () => {
-      const provider = chainIdState === ChainId.MAINNET ? simpleRpcProvider : simpleRpcETHProvider
-      const pair = await getSphynxPairAddress(input, wrappedAddr[chainIdState], provider, chainIdState)
-      console.log("PAIR", pair)
-      if (pair !== null && pair !== undefined) {
-        if (routerVersion !== 'sphynx') {
-          dispatch(typeRouterVersion({ routerVersion: 'sphynx' }))
-        }
-        if (swapRouter !== SwapRouter.SPHYNX_SWAP || swapRouter !== SwapRouter.SPHYNX_ETH_SWAP) {
-          if (chainIdState === ChainId.MAINNET) {
-            setSwapRouter(SwapRouter.SPHYNX_SWAP)
-            setRouterType(RouterType.sphynx)
-          } else {
-            setSwapRouter(SwapRouter.SPHYNX_ETH_SWAP)
-            setRouterType(RouterType.sphynxeth)
-          }
-        }
-        dispatch(
-          replaceSwapState({
-            outputCurrencyId: chainIdState === ChainId.ETHEREUM ? 'ETH' : 'BNB',
-            inputCurrencyId: input,
-            typedValue: '',
-            field: Field.OUTPUT,
-            recipient: null,
-          }),
-        )
-      } else {
-        if (routerVersion !== 'v2') {
-          dispatch(typeRouterVersion({ routerVersion: 'v2' }))
-        }
-        if (
-          (swapRouter !== SwapRouter.PANCAKE_SWAP && chainIdState === ChainId.MAINNET) ||
-          (swapRouter !== SwapRouter.UNI_SWAP && chainIdState === ChainId.ETHEREUM)
-        ) {
-          if (chainIdState === ChainId.MAINNET) {
-            setSwapRouter(SwapRouter.PANCAKE_SWAP)
-            setRouterType(RouterType.pancake)
-          } else {
-            setSwapRouter(SwapRouter.UNI_SWAP)
-            setRouterType(RouterType.uniswap)
-          }
-        }
-        dispatch(
-          replaceSwapState({
-            outputCurrencyId: chainIdState === ChainId.ETHEREUM ? 'ETH' : 'BNB',
-            inputCurrencyId: input,
-            typedValue: '',
-            field: Field.OUTPUT,
-            recipient: null,
-          }),
-        )
-      }
+    const setBalance = async () => {
+      const tokenBalance = await originTokenContract.balanceOf(account)
+      setOriginBalance(tokenBalance)
+    }
+    setBalance()
+  }, [originTokenContract])
 
-      if(chainIdState === ChainId.MAINNET) {
-        const tokenBalance = await originTokenContract.balanceOf(account)
-        setOriginBalance(tokenBalance)
+  useEffect(() => {
+    const setInitData = async () => {
+      try {
+        const provider = chainIdState === ChainId.MAINNET ? simpleRpcProvider : simpleRpcETHProvider
+        const pair = await getSphynxPairAddress(input, wrappedAddr[chainIdState], provider, chainIdState)
+        console.log('PPAAAAAAAIR', pair)
+        if (pair !== null && pair !== undefined) {
+          if (routerVersion !== 'sphynx') {
+            dispatch(typeRouterVersion({ routerVersion: 'sphynx' }))
+          }
+          if (swapRouter !== SwapRouter.SPHYNX_SWAP || swapRouter !== SwapRouter.SPHYNX_ETH_SWAP) {
+            if (chainIdState === ChainId.MAINNET) {
+              setSwapRouter(SwapRouter.SPHYNX_SWAP)
+              setRouterType(RouterType.sphynx)
+            } else {
+              setSwapRouter(SwapRouter.SPHYNX_ETH_SWAP)
+              setRouterType(RouterType.sphynxeth)
+            }
+          }
+          dispatch(
+            replaceSwapState({
+              outputCurrencyId: chainIdState === ChainId.ETHEREUM ? 'ETH' : 'BNB',
+              inputCurrencyId: input,
+              typedValue: '',
+              field: Field.OUTPUT,
+              recipient: null,
+            }),
+          )
+        } else {
+          if (routerVersion !== 'v2') {
+            dispatch(typeRouterVersion({ routerVersion: 'v2' }))
+          }
+          if (
+            (swapRouter !== SwapRouter.PANCAKE_SWAP && chainIdState === ChainId.MAINNET) ||
+            (swapRouter !== SwapRouter.UNI_SWAP && chainIdState === ChainId.ETHEREUM)
+          ) {
+            if (chainIdState === ChainId.MAINNET) {
+              setSwapRouter(SwapRouter.PANCAKE_SWAP)
+              setRouterType(RouterType.pancake)
+            } else {
+              setSwapRouter(SwapRouter.UNI_SWAP)
+              setRouterType(RouterType.uniswap)
+            }
+          }
+          dispatch(
+            replaceSwapState({
+              outputCurrencyId: chainIdState === ChainId.ETHEREUM ? 'ETH' : 'BNB',
+              inputCurrencyId: input,
+              typedValue: '',
+              field: Field.OUTPUT,
+              recipient: null,
+            }),
+          )
+        }
+      } catch (err) {
+        console.log('ERERERRRRRRRRRRR', err)
       }
     }
 
@@ -368,12 +377,10 @@ export default function Swap({ history }: RouteComponentProps) {
         const flag = Web3.utils.toChecksumAddress(token0) === Web3.utils.toChecksumAddress(input) ? true : false
         pairAddresses[address] = flag
         return flag
-      }
-      catch (err) {
+      } catch (err) {
         return false
       }
-    }
-    else {
+    } else {
       return pairAddresses[address]
     }
   }
@@ -430,22 +437,22 @@ export default function Swap({ history }: RouteComponentProps) {
             if (await isToken0EqualInput(event.address)) {
               tokenAmt = Math.abs(
                 parseFloat(ethers.utils.formatUnits(datas.amount0In + '', tokenDecimal)) -
-                parseFloat(ethers.utils.formatUnits(datas.amount0Out + '', tokenDecimal)),
+                  parseFloat(ethers.utils.formatUnits(datas.amount0Out + '', tokenDecimal)),
               )
 
               isBuy = datas.amount1In === '0'
               BNBAmt = Math.abs(
                 parseFloat(ethers.utils.formatUnits(datas.amount1In + '', 18)) -
-                parseFloat(ethers.utils.formatUnits(datas.amount1Out + '', 18)),
+                  parseFloat(ethers.utils.formatUnits(datas.amount1Out + '', 18)),
               )
             } else {
               BNBAmt = Math.abs(
                 parseFloat(ethers.utils.formatUnits(datas.amount0In + '', 18)) -
-                parseFloat(ethers.utils.formatUnits(datas.amount0Out + '', 18)),
+                  parseFloat(ethers.utils.formatUnits(datas.amount0Out + '', 18)),
               )
               tokenAmt = Math.abs(
                 parseFloat(ethers.utils.formatUnits(datas.amount1In + '', tokenDecimal)) -
-                parseFloat(ethers.utils.formatUnits(datas.amount1Out + '', tokenDecimal)),
+                  parseFloat(ethers.utils.formatUnits(datas.amount1Out + '', tokenDecimal)),
               )
               isBuy = datas.amount0In === '0'
             }
@@ -571,9 +578,15 @@ export default function Swap({ history }: RouteComponentProps) {
 
   const handleClaimToken = async () => {
     setPendingTx(true)
-    const tx = await originTokenContract.approve(originTokenAddress, '0xfffffffffffffffffffffffffffffffff')
-    await tx.wait()
-    setPendingTx(false)
+    try {
+      const tx = await originTokenContract.approve(newTokenAddress, '0xfffffffffffffffffffffffffffffffff')
+      await tx.wait()
+      const tx1 = await newTokenContract.claimToken(originBalance)
+      await tx1.wait()
+      setPendingTx(false)
+    } catch (err) {
+      setPendingTx(false)
+    }
   }
 
   useEffect(() => {
@@ -1099,9 +1112,11 @@ export default function Swap({ history }: RouteComponentProps) {
       <RewardsPanel />
       <Cards>
         <div>
-          {/* <Flex justifyContent="center" margin="12px">
-            <Button disabled={originBalance === 0 || pendingTx} onClick={handleClaimToken} >Migrate Token {pendingTx && <AutoRenewIcon className="pendingTx" />}</Button>
-          </Flex> */}
+          <Flex justifyContent="center" margin="12px">
+            <Button disabled={originBalance === 0 || pendingTx} onClick={handleClaimToken}>
+              Migrate Token {pendingTx && <AutoRenewIcon className="pendingTx" />}
+            </Button>
+          </Flex>
           {!isMobile ? (
             <LiveAmountPanel
               symbol={tokenData && tokenData.symbol ? tokenData.symbol : ''}

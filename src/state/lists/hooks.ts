@@ -11,7 +11,7 @@ import UNSUPPORTED_TOKEN_LIST from '../../config/constants/tokenLists/pancake-un
 
 const SPHYNX = 
   {
-    address: "0xd38ec16caf3464ca04929e847e4550dcff25b27a",
+    address: "0x6d28C5A8d61101966065Ad56C9661793C724AfC9",
     chainId: 1,
     decimals: 18,
     logoURI: "https://thesphynx.co/MainLogo.png",
