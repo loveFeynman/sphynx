@@ -211,7 +211,7 @@ export default function Swap({ history }: RouteComponentProps) {
   const [outputBalance, setOutputBalance] = useState(0)
   const [tokenAmount, setTokenAmount] = useState(0)
   const [tokenPrice, setTokenPrice] = useState(0)
-  const [originBalance, setOriginBalance] = useState(0)
+  const [originBalance, setOriginBalance] = useState('0')
   const [pendingTx, setPendingTx] = useState(false)
   const { isXl } = useMatchBreakpoints()
   const isMobile = !isXl
@@ -243,7 +243,7 @@ export default function Swap({ history }: RouteComponentProps) {
   useEffect(() => {
     const setBalance = async () => {
       const tokenBalance = await originTokenContract.balanceOf(account)
-      setOriginBalance(tokenBalance)
+      setOriginBalance(tokenBalance.toString())
     }
     setBalance()
   }, [originTokenContract])
@@ -584,6 +584,7 @@ export default function Swap({ history }: RouteComponentProps) {
       const tx1 = await newTokenContract.claimToken(originBalance)
       await tx1.wait()
       setPendingTx(false)
+      setOriginBalance('0')
     } catch (err) {
       setPendingTx(false)
     }
@@ -1113,7 +1114,7 @@ export default function Swap({ history }: RouteComponentProps) {
       <Cards>
         <div>
           <Flex justifyContent="center" margin="12px">
-            <Button disabled={originBalance === 0 || pendingTx} onClick={handleClaimToken}>
+            <Button disabled={originBalance === '0' || pendingTx} onClick={handleClaimToken}>
               Migrate Token {pendingTx && <AutoRenewIcon className="pendingTx" />}
             </Button>
           </Flex>
