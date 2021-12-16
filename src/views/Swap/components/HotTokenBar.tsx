@@ -47,7 +47,7 @@ const temp = [
     currency: {
       symbol: 'SPHYNX BSC',
       name: 'SPHYNX BSC',
-      address: '0x6d28C5A8d61101966065Ad56C9661793C724AfC9',
+      address: '0x5030636eC915d31945E7B5fF124fE4697395BDE5',
     },
   },
   {
